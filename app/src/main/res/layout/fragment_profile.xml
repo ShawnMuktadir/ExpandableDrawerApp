@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/dim5"
+        tools:context=".ui.StartActivity">
+
+<!--        <de.hdodenhof.circleimageview.CircleImageView-->
+<!--            android:id="@+id/profile_image"-->
+<!--            android:layout_width="150dp"-->
+<!--            android:layout_height="150dp"-->
+<!--            android:layout_gravity="center_horizontal"-->
+<!--            android:layout_marginTop="@dimen/margin_30"-->
+<!--            android:layout_marginBottom="@dimen/margin_30"-->
+<!--            android:padding="10dp"-->
+<!--            android:src="@drawable/blank_profile_pic"-->
+<!--            app:civ_border_color="@color/blackColor"-->
+<!--            app:civ_border_width="2dp" />-->
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profile_image"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/blank_profile_pic"
+            app:civ_circle_background_color="@android:color/transparent"
+            app:civ_border_color="@android:color/darker_gray"
+            app:civ_border_width="@dimen/dim2"
+            android:visibility="visible" />
+
+
+        <LinearLayout
+            android:id="@+id/linearLayoutName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/lightBg"
+            android:layout_below="@+id/profile_image"
+            android:layout_marginTop="@dimen/dim5"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="@dimen/margin_20">
+
+            <TextView
+                android:id="@+id/user_fullName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_20"
+                android:layout_weight="1"
+                android:gravity="fill_vertical"
+                android:padding="5dp"
+                android:text="Full Name"
+                android:textColor="@color/blackColor"
+                android:textSize="@dimen/font_size_18"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayoutPhone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/linearLayoutName"
+            android:layout_marginLeft="@dimen/margin_30"
+            android:layout_marginTop="@dimen/margin_30"
+            android:layout_marginRight="@dimen/margin_30"
+            android:layout_marginBottom="@dimen/margin_20"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <Button
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginRight="@dimen/margin_10"
+                android:layout_weight="0"
+                android:background="@drawable/ic_perm_phone_msg_white_48px"
+                android:backgroundTint="@color/blackColor" />
+
+            <TextView
+                android:id="@+id/user_mobile_no"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="fill_vertical"
+                android:paddingLeft="@dimen/margin_10"
+                android:text="User Phone No"
+                android:textSize="@dimen/title_20" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayoutPhoneVehicle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_30"
+            android:layout_marginRight="@dimen/margin_30"
+            android:layout_below="@+id/linearLayoutPhone"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <Button
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginRight="@dimen/margin_10"
+                android:layout_weight="0"
+                android:background="@drawable/ic_directions_car_white_48px"
+                android:backgroundTint="@color/blackColor" />
+
+            <TextView
+                android:id="@+id/user_vehicle_no"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_20"
+                android:layout_marginBottom="@dimen/margin_20"
+                android:layout_weight="1"
+                android:gravity="fill_vertical"
+                android:paddingLeft="@dimen/margin_10"
+                android:text="Vehicle No"
+                android:textSize="@dimen/title_20" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_30"
+            android:layout_marginRight="@dimen/margin_30"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <Button
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginRight="@dimen/margin_10"
+                android:layout_weight="0"
+                android:background="@drawable/ic_email_black_24dp"
+                android:backgroundTint="@color/blackColor" />
+
+            <TextView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_20"
+                android:layout_marginBottom="@dimen/margin_20"
+                android:layout_weight="1"
+                android:gravity="fill_vertical"
+                android:paddingLeft="@dimen/margin_10"
+                android:text="User Email"
+                android:textSize="@dimen/title_20" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="@dimen/font_size_20"
+            android:layout_marginRight="@dimen/font_size_20"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:layout_gravity="bottom"
+                android:layout_margin="@dimen/margin_10"
+                android:background="@color/blackColor"
+                android:text="Edit Info"
+                android:textColor="@color/whiteColor" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+</ScrollView>
