@@ -102,10 +102,16 @@
     <string name="parking_slots">Parking Slots</string>
     <string name="subject_to_availability">Subject to availability</string>
     <string name="get_direction">Get Direction</string>
-    <string name="welcome_to_locc_parking">Welcome To LOCC Parking</string>
-    <string name="search_parking">Search Parking</string>
+    <string name="welcome_to_locc_parking">Welcome, LOCC Parking</string>
+    <string name="search_parking">Where to?</string>
     <string name="pay_bill">Pay Bill</string>
     <string name="cancel">Cancel</string>
     <string name="reserve">Reserve</string>
+    <string name="exit_message">Please Press here to exit!</string>
+    <string name="law">Law</string>
+    <string name="demo_price">Tk 100/h</string>
+    <string name="distance">16km</string>
+    <string name="availability">Availability</string>
+    <string name="time">1hr</string>
 
 </resources>

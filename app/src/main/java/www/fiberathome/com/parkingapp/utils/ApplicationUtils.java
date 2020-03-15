@@ -5,7 +5,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -81,6 +86,45 @@ public class ApplicationUtils {
         InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(((Activity) mContext).getWindow().getCurrentFocus().getWindowToken(), 0);
     }
+
+    public static void showExitDialog(final Activity activity) {
+        android.app.AlertDialog.Builder dialogBuilder = new android.app.AlertDialog.Builder(activity, R.style.Theme_AppCompat_NoActionBar);
+        LayoutInflater inflater = activity.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.exit_alert, null);
+        dialogBuilder.setView(dialogView);
+        TextView tv_exit = (TextView) dialogView.findViewById(R.id.tv_exit);
+        View outside_view = dialogView.findViewById(R.id.outside_view);
+        final android.app.AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        if (alertDialog.getWindow() != null)
+            alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        alertDialog.setCancelable(false);
+        alertDialog.show();
+
+//        WindowManager.LayoutParams lp = alertDialog.getWindow().getAttributes();
+//        lp.dimAmount = 0.4f;
+//        alertDialog.getWindow().setAttributes(lp);
+//        alertDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        outside_view.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                alertDialog.dismiss();
+
+                return false;
+            }
+        });
+
+        tv_exit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+                activity.finish();
+            }
+        });
+
+    }
+
 
 
 }

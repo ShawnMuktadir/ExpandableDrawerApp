@@ -13,7 +13,7 @@ import com.android.volley.toolbox.StringRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import www.fiberathome.com.parkingapp.utils.AppConfig;
+import www.fiberathome.com.parkingapp.base.AppConfig;
 
 public class HttpService extends IntentService {
 

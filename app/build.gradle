@@ -82,5 +82,9 @@ dependencies {
     implementation 'com.intuit.sdp:sdp-android:1.0.6'
     implementation 'com.intuit.ssp:ssp-android:1.0.6'
 
+    //pdf view
+    implementation 'com.github.barteksc:android-pdf-viewer:2.8.2'
+    //for duration takes this library
+    implementation 'com.akexorcist:googledirectionlibrary:1.0.4' // Custom Google Direction API
 
 }

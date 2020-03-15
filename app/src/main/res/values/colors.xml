@@ -12,4 +12,131 @@
     <color name="blackColor">#000000</color>
     <color name="blue">#8398E8</color>
 
+    //ponno color resource
+    <color name="exColorPrimary">#25A848</color>
+    <color name="fab_color">#EDFDCC</color>
+    <color name="black">#000</color>
+    <color name="black2">#161616</color>
+    <color name="white">#fff</color>
+    <color name="white2">#FDFEFE</color>
+    <color name="white3">#FBFCFC</color>
+    <color name="off_white">#F1F1F1</color>
+    <color name="gloss_white">#f6f8f9</color>
+    <color name="transparent">#00000000</color>
+    <color name="dark_gray">#585757</color>
+    <color name="light_gray">#EFEFEF</color>
+    <color name="gray">#767676</color>
+    <color name="gray2">#A6A6A6</color>
+    <color name="treeGray">#CCCCCC</color>
+    <color name="gray3">#C6C6C6</color>
+    <color name="gray4">#E6E6E6</color>
+    <color name="silver">#868888</color>
+    <color name="green">#3CA45C</color>
+    <color name="green2">#348B4E</color>
+    <color name="green3">#77EE57</color>
+    <color name="green4">#C5F1BB</color>
+    <color name="green5">#3CA45C</color>
+    <color name="dark_green">#425C35</color>
+    <color name="dark_green2">#3C9111</color>
+    <color name="light_green">#f1ffde</color>
+    <color name="light_green2">#73CA86</color>
+    <color name="due_red">#DC3545</color>
+    <color name="transparent_white">#99FFFFFF</color>
+    <color name="transparent_green">#996AA84F</color>
+    <color name="transparent_black">#99000000</color>
+    <color name="transparent_gray">#0C000000</color>
+    <color name="trans_dark_green">#9951833B</color>
+    <color name="light_olive">#949D52</color>
+    <color name="navy_blue">#001BA3</color>
+    <color name="red">#D32F2F</color>
+    <color name="dark_red">#A30000</color>
+    <color name="light_red">#FFF4F4</color>
+    <color name="dark_yellow">#EBE22D</color>
+    <color name="sale_today_bar_color">#E2F9C2</color>
+    <color name="colorOrange">#FF9800</color>
+    <color name="time">#42E691</color>
+    <color name="colorPaste">#42E691</color>
+
+    <color name="tab_background_selected">#FFFFFF</color>
+    <color name="tab_background">#F1F1F1</color>
+    <!--<color name="tab_background">#F7F5F5</color>-->
+    <color name="tab_text_selected">#3CA45C</color>
+    <color name="tab_text_unselected">#3CA45C</color>
+    <color name="gray_update">#ECECEC</color>
+    <color name="update_color_green">#3CB879</color>
+    <color name="filled_color_green">#73B837</color>
+    <color name="update_view">#76B63C</color>
+    <color name="update_red">#FF6766</color>
+    <color name="exNavHeaderBG">#37B045</color>
+    <color name="transparent_red">#99DC3545</color>
+    <color name="active_tab_color">#3CB879</color>
+    <color name="inactive_tab_color">#ffffff</color>
+    <color name="placeholder_background">#dddddd</color>
+    <color name="arc_menu">#4CAF50</color>
+    <color name="my_spinner_text_color">#808080</color>
+
+    <color name="new_tab_background_selected">#FFFFFF</color>
+    <color name="new_tab_background">#FDFEFE</color>
+    <color name="new_tab_text_selected">#326f35</color>
+    <color name="new_tab_text_unselected">#5e9f37</color>
+
+
+    <color
+        name="purple_start">#9b256b</color>
+    <color
+        name="purple_end">#5d2761</color>
+
+    <!-- 427BBA, 0f93b8 -->
+    <color
+        name="blue_start">#0f93b8</color>
+    <color
+        name="blue_end">#0f93b8</color>
+    <color
+        name="lgrey_start">#BFC0C0</color>
+    <color
+        name="lgrey_end">#AEB2B7</color>
+    <color
+        name="dgrey_start">#4E4F50</color>
+    <color
+        name="dgrey_end">#2C3137</color>
+    <color
+        name="item_grey_start">#B4B8BA</color>
+    <color
+        name="item_grey_end">#62707C</color>
+    <color
+        name="black_start">#333333</color>
+    <color
+        name="black_end">#181818</color>
+    <color
+        name="grey_start">#CBCBCB</color>
+    <color
+        name="grey_end">#8C9DAE</color>
+    <color
+        name="blue_badges_mayor">#095b72</color>
+    <color
+        name="vlgrey">#EEEEEE</color>
+    <color
+        name="color_score_list_adapter_highlight">#EEEEEE</color>
+    <color
+        name="color_score_mayor_section_background">#DDDDDD</color>
+    <color
+        name="color_bright_green">#a6da00</color>
+    <color
+        name="tip_detail_actions_background">#c7c7c7</color>
+    <color
+        name="user_details_activity_general">#FF555555</color>
+
+    <color name="material_light_primary_text">#DE000000</color>
+    <color name="material_light_hint_text">#61000000</color>
+    <color name="material_light_active_icon">#8A000000</color>
+    <color name="material_ripple_light">#1F000000</color>
+    <color name="divider_color">#1F000000</color>
+    <color name="active_icon_color">#8A000000</color>
+    <color name="cards_and_dialogs_color">@android:color/white</color>
+    <color name="quantum_grey_600">#757575</color>
+
+    <color name="colorTextPrimary">#FFFFFF</color>
+    <color name="colorTextDisable">#66FFFFFF</color>
+
+
 </resources>

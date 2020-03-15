@@ -2,7 +2,6 @@ package www.fiberathome.com.parkingapp.ui.parking;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -14,7 +13,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
@@ -34,6 +32,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -42,7 +41,7 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionEvent;
 import www.fiberathome.com.parkingapp.model.SensorArea;
-import www.fiberathome.com.parkingapp.utils.AppConfig;
+import www.fiberathome.com.parkingapp.base.AppConfig;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -67,6 +66,10 @@ public class ParkingFragment extends Fragment {
     TextView textViewParkingAreaCount;
     @BindView(R.id.textViewParkingAreaName)
     TextView textViewParkingAreaName;
+    @BindView(R.id.textViewParkingDistance)
+    TextView textViewParkingDistance;
+    @BindView(R.id.textViewParkingTravelTime)
+    TextView textViewParkingTravelTime;
 
     private Context context;
     private View view;
@@ -75,9 +78,9 @@ public class ParkingFragment extends Fragment {
     private ParkingAdapter parkingAdapter;
     private String name, count;
     private LatLng location;
+    private double distance;
+    private String[] duration;
     private ProgressDialog progressDialog;
-
-    private View.OnClickListener onClickListener;
 
     public ParkingFragment() {
         // Required empty public constructor
@@ -109,7 +112,7 @@ public class ParkingFragment extends Fragment {
         imageViewBack.setOnClickListener(v -> {
             BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
             navBar.setVisibility(View.VISIBLE);
-            layoutVisible(false, "", "", null);
+            layoutVisible(false, "", "", 0.0, null);
         });
 
         btnGetDirection.setOnClickListener(v -> {
@@ -202,10 +205,12 @@ public class ParkingFragment extends Fragment {
         textViewNoData.setVisibility(View.GONE);
     }
 
-    public void layoutVisible(boolean isVisible, String name, String count, LatLng location) {
+    public void layoutVisible(boolean isVisible, String name, String count, double distance, LatLng location) {
         this.name = name;
         this.count = count;
         this.location = location;
+        this.distance = distance;
+        this.duration = duration;
 
         if (isVisible) {
             BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
@@ -213,6 +218,8 @@ public class ParkingFragment extends Fragment {
             linearLayoutBottom.setVisibility(View.VISIBLE);
             textViewParkingAreaCount.setText(count);
             textViewParkingAreaName.setText(name);
+            textViewParkingDistance.setText(new DecimalFormat("##.##").format(distance) + " km");
+//            textViewParkingTravelTime.setText(duration[0]);
         } else {
             BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
             navBar.setVisibility(View.VISIBLE);

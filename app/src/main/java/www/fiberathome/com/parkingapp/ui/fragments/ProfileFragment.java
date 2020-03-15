@@ -17,7 +17,7 @@ import com.bumptech.glide.Glide;
 
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.User;
-import www.fiberathome.com.parkingapp.utils.AppConfig;
+import www.fiberathome.com.parkingapp.base.AppConfig;
 import www.fiberathome.com.parkingapp.utils.SharedPreManager;
 
 /**
@@ -66,7 +66,7 @@ public class ProfileFragment extends Fragment {
 
         String url = AppConfig.IMAGES_URL + user.getProfilePic() + ".jpg";
         Log.e("URL", url);
-        Glide.with(getActivity()).load(url).placeholder(R.drawable.blank_profile_pic).into(userProfilePic);
+        Glide.with(getActivity()).load(url).placeholder(R.drawable.blank_profile).into(userProfilePic);
 
         return view;
     }

@@ -14,7 +14,7 @@ import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.response.CommonResponse;
 import www.fiberathome.com.parkingapp.model.response.ParkingResponse;
-import www.fiberathome.com.parkingapp.utils.AppConfig;
+import www.fiberathome.com.parkingapp.base.AppConfig;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 
 public class APIInteractorImpl implements APIInteractor {

@@ -16,27 +16,28 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/dim5"
+                android:layout_margin="@dimen/_7sdp"
                 android:padding="@dimen/dim3"
                 android:text="@string/welcome_to_locc_parking"
                 android:textColor="@color/blackColor"
-                android:textSize="20sp"
+                android:textSize="@dimen/_12ssp"
                 android:textStyle="normal" />
 
             <EditText
                 android:id="@+id/editTextParking"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/dim5"
-                android:background="@drawable/stroke_box"
+                android:layout_margin="@dimen/_7sdp"
+                android:padding="@dimen/dim3"
                 android:elevation="@dimen/dim3"
+                android:background="@android:color/background_light"
                 android:hint="@string/search_parking"
-                android:imeOptions="actionSearch"
-                android:padding="@dimen/dim5" />
+                android:imeOptions="actionSearch" />
+
+<!--            android:background="@drawable/stroke_box"-->
 
 <!--            <FrameLayout-->
 <!--                android:layout_width="match_parent"-->
@@ -46,14 +47,13 @@
                     android:id="@+id/recyclerViewParking"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/dim5"
+                    android:layout_margin="@dimen/dim3"
+                    android:padding="@dimen/dim3"
+                    android:elevation="@dimen/dim3"
                     android:clipToPadding="false"
                     android:overScrollMode="never"
                     android:background="?android:attr/selectableItemBackground"
-                    android:padding="@dimen/margin_3"
                     android:scrollbars="vertical" />
-
-
 
 <!--            </FrameLayout>-->
 
@@ -71,30 +71,25 @@
         android:textSize="18sp"
         android:visibility="gone" />
 
-    <!--    <include layout="@layout/bottom_sheet"-->
-    <!--        android:visibility="visible"/>-->
-
     <LinearLayout
         android:id="@+id/linearLayoutBottom"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_35sdp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
         android:layout_alignParentBottom="true"
         android:background="@android:color/white"
-        android:orientation="vertical"
-        android:visibility="gone">
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="2"
-            android:visibility="gone"
             android:orientation="horizontal">
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight=".5"
-                android:visibility="gone"
                 android:background="@color/whiteColor"
                 android:orientation="vertical">
 
@@ -103,7 +98,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:visibility="gone"
                     android:text="@string/demo_number"
                     android:textColor="@color/blackColor"
                     android:textSize="@dimen/font_size_25"
@@ -112,7 +106,6 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:visibility="gone"
                     android:layout_gravity="center"
                     android:background="@android:color/darker_gray"
                     android:gravity="center"
@@ -123,38 +116,83 @@
 
             </LinearLayout>
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="@dimen/dim5"
+                android:orientation="vertical"
                 android:layout_weight="1.5"
                 android:background="@android:color/white"
                 android:gravity="center"
                 android:padding="@dimen/dim2">
 
-                <TextView
-                    android:id="@+id/textViewParkingAreaName"
+                <LinearLayout
+                    android:id="@+id/linearLayoutParkingAreaName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dim2"
-                    android:maxLines="1"
-                    android:padding="@dimen/dim3"
-                    android:text="@string/parking_area_name"
-                    android:textColor="@android:color/black"
-                    android:textSize="14sp"
-                    android:textStyle="normal" />
+                    android:weightSum="2"
+                    android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/textViewParkingAreaAddress"
+                    <TextView
+                        android:id="@+id/textViewParkingAreaName"
+                        android:layout_width="0dp"
+                        android:layout_weight="1.5"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dim2"
+                        android:maxLines="1"
+                        android:padding="@dimen/dim3"
+                        android:text="@string/parking_area_name"
+                        android:textColor="@android:color/black"
+                        android:textSize="14sp"
+                        android:textStyle="normal" />
+
+                    <TextView
+                        android:id="@+id/textViewParkingDistance"
+                        android:layout_width="0dp"
+                        android:layout_weight="0.5"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        android:gravity="end"
+                        android:padding="@dimen/dim3"
+                        android:text="@string/distance"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/_10ssp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linearLayoutParkingAvailability"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/textViewParkingAreaName"
-                    android:padding="@dimen/dim3"
-                    android:text="@string/subject_to_availability"
-                    android:textColor="@color/blue"
-                    android:textSize="12sp" />
+                    android:weightSum="2"
+                    android:orientation="horizontal">
 
-            </RelativeLayout>
+                    <TextView
+                        android:id="@+id/textViewParkingAreaAddress"
+                        android:layout_width="0dp"
+                        android:layout_weight="1.5"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/linearLayoutParkingAreaName"
+                        android:padding="@dimen/dim3"
+                        android:text="@string/subject_to_availability"
+                        android:textColor="@color/blue"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/textViewParkingTravelTime"
+                        android:layout_width="0dp"
+                        android:layout_weight="0.5"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        android:visibility="gone"
+                        android:gravity="end"
+                        android:padding="@dimen/dim3"
+                        android:text="@string/time"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/_10ssp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout

@@ -5,11 +5,15 @@ import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
+
 import com.google.android.material.navigation.NavigationView;
+
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.widget.Toolbar;
+
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,6 +33,7 @@ import com.google.android.gms.maps.model.Marker;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
 import www.fiberathome.com.parkingapp.GoogleMapWebService.GooglePlaceSearchNearbySearchListener;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.gps.GPSTracker;
@@ -164,12 +169,14 @@ public class BlankDialogMapFragment extends Fragment implements NavigationView.O
 
 
     }
+
     private void refreshUserGPSLocation() {
         if (userLocationMarker != null)
             userLocationMarker.remove();
 
         GlobalVars.IsFakeGPS = false;
         MyLocation userLocation = GlobalVars.getUserLocation();
+//        Timber.e("Current Location -> %s ", userLocation);
         if (userLocation != null) {
             LatLng userLatLng = new LatLng(userLocation.latitude, userLocation.longitude);
             //userLocationMarker = googleMap.addMarker(new MarkerOptions().position(userLatLng).title("Your Location").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_mylocation)));
@@ -231,9 +238,6 @@ public class BlankDialogMapFragment extends Fragment implements NavigationView.O
 //    }
 
 
-
-
-
     @Override
     public void onGPSTrackerLocationChanged(Location location) {
         double latitude = location.getLatitude();
@@ -254,7 +258,7 @@ public class BlankDialogMapFragment extends Fragment implements NavigationView.O
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.nearest:
                 // get the nearest sensor information
                 nearest.setText("Reverse Spot");

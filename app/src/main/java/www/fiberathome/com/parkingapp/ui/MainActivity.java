@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 
-import com.bumptech.glide.Glide;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 
@@ -25,7 +24,6 @@ import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
 
 import android.os.Handler;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -52,15 +50,16 @@ import www.fiberathome.com.parkingapp.ui.fragments.BookingDetailsFragment;
 import www.fiberathome.com.parkingapp.ui.fragments.BookingFragment;
 import www.fiberathome.com.parkingapp.ui.fragments.ChangePasswordFragment;
 import www.fiberathome.com.parkingapp.ui.fragments.HomeFragment;
-import www.fiberathome.com.parkingapp.ui.fragments.NotificationFragment;
+import www.fiberathome.com.parkingapp.ui.fragments.LawFragment;
 import www.fiberathome.com.parkingapp.ui.parking.ParkingFragment;
 import www.fiberathome.com.parkingapp.ui.fragments.ProfileFragment;
-import www.fiberathome.com.parkingapp.utils.AppConfig;
+import www.fiberathome.com.parkingapp.base.AppConfig;
+import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.SharedPreManager;
 
 public class MainActivity extends AppCompatActivity implements MainView, BottomNavigationView.OnNavigationItemSelectedListener, DialogForm.DialogFormListener {
 
-//    NavigationView.OnNavigationItemSelectedListener,
+    //    NavigationView.OnNavigationItemSelectedListener,
     private Context context;
     private Toolbar toolbar;
     private NavigationView navigationView;
@@ -71,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements MainView, BottomN
     private TextView userVehicleNo;
     private ImageView userProfilePic;
     private BottomNavigationView bottomNavigationView;
+    boolean doubleBackToExitPressedOnce = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -248,9 +248,9 @@ public class MainActivity extends AppCompatActivity implements MainView, BottomN
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new BookingFragment()).commit();
                 break;
 
-            case R.id.nav_notification:
-                toolbar.setTitle("Notification");
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new NotificationFragment()).commit();
+            case R.id.nav_law:
+                toolbar.setTitle("Law");
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LawFragment()).commit();
                 break;
 
             case R.id.nav_profile:
@@ -320,24 +320,30 @@ public class MainActivity extends AppCompatActivity implements MainView, BottomN
 
     @Override
     public void onBackPressed() {
-//        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-//            // Close the Navigation Drawer
-//            drawerLayout.closeDrawer(GravityCompat.START);
-//        } else {
-//
-//            // Move the MainActivity with Map Fragement
-//            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
-//        }
-        super.onBackPressed();
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+        this.doubleBackToExitPressedOnce = true;
+        ApplicationUtils.showExitDialog(this);
+//        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+//        ApplicationUtils.showMessageDialog("Please click BACK again to exit", context);
 
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce = false;
+            }
+        }, 2000);
     }
 
     @Override
     public void applyTexts(String username, String password, String mobile) {
 
-        Log.e("UserName: ", username);
-        Log.e("Pass: ", password);
-        Log.e("Mobile: ", mobile);
+        Timber.e(username);
+        Timber.e(password);
+        Timber.e(mobile);
     }
 
     public void replaceFragmentWithBundle(String s) {

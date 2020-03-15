@@ -1,33 +1,34 @@
 package www.fiberathome.com.parkingapp.ui.parking;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
-import android.os.Bundle;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.akexorcist.googledirection.DirectionCallback;
+import com.akexorcist.googledirection.GoogleDirection;
+import com.akexorcist.googledirection.constant.RequestResult;
+import com.akexorcist.googledirection.constant.TransportMode;
+import com.akexorcist.googledirection.model.Direction;
+import com.akexorcist.googledirection.model.Info;
+import com.akexorcist.googledirection.model.Leg;
+import com.akexorcist.googledirection.model.Route;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.model.GlobalVars;
 import www.fiberathome.com.parkingapp.model.SensorArea;
 
 public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -61,8 +62,14 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         parkingViewHolder.textViewParkingAreaName.setText(sensorArea.getParkingArea());
         parkingViewHolder.textViewParkingAreaCount.setText(sensorArea.getCount());
 
+        double distance = distance(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude, sensorArea.getLat(), sensorArea.getLng());
+//        String[] duration = getDestinationInfo(new LatLng(sensorArea.getLat(), sensorArea.getLng()));
+//        Timber.e("duration -> %s", duration);
+        parkingViewHolder.textViewParkingDistance.setText(new DecimalFormat("##.##").format(distance) + " km");
+        Timber.e("distance -> %s", parkingViewHolder.textViewParkingDistance.getText());
+
         parkingViewHolder.card_view.setOnClickListener(v -> {
-            parkingFragment.layoutVisible(true, sensorArea.getParkingArea(), sensorArea.getCount(), new LatLng(sensorArea.getLat(), sensorArea.getLng()));
+            parkingFragment.layoutVisible(true, sensorArea.getParkingArea(), sensorArea.getCount(), distance, new LatLng(sensorArea.getLat(), sensorArea.getLng()));
             selectedItem = position;
             notifyDataSetChanged();
         });
@@ -74,6 +81,97 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             //Hide view visibility
             parkingViewHolder.view.setVisibility(View.GONE);
         }
+    }
+
+    private String[] getDestinationInfo(LatLng latLngDestination) {
+//        progressDialog();
+        String serverKey = context.getResources().getString(R.string.google_maps_key); // Api Key For Google Direction API \\
+        final LatLng origin = new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude);
+        final LatLng destination = latLngDestination;
+        final String[] duration = new String[1];
+        //-------------Using AK Exorcist Google Direction Library---------------\\
+        GoogleDirection.withServerKey(serverKey)
+                .from(origin)
+                .to(destination)
+                .transportMode(TransportMode.DRIVING)
+                .execute(new DirectionCallback() {
+                    @Override
+                    public void onDirectionSuccess(Direction direction, String rawBody) {
+//                        dismissDialog();
+                        String status = direction.getStatus();
+                        if (status.equals(RequestResult.OK)) {
+                            Route route = direction.getRouteList().get(0);
+                            Leg leg = route.getLegList().get(0);
+                            Info distanceInfo = leg.getDistance();
+                            Info durationInfo = leg.getDuration();
+                            String distance = distanceInfo.getText();
+                            duration[0] = durationInfo.getText();
+
+                            //------------Displaying Distance and Time-----------------\\
+                            Timber.e("Distance Duration -> %s -> %s", distance, duration[0]);
+//                            showingDistanceTime(distance, duration); // Showing distance and time to the user in the UI \\
+//                            String message = "Total Distance is " + distance + " and Estimated Time is " + duration;
+//                            StaticMethods.customSnackBar(consumerHomeActivity.parentLayout, message,
+//                                    getResources().getColor(R.color.colorPrimary),
+//                                    getResources().getColor(R.color.colorWhite), 3000);
+
+                            //--------------Drawing Path-----------------\\
+//                            ArrayList<LatLng> directionPositionList = leg.getDirectionPoint();
+//                            PolylineOptions polylineOptions = DirectionConverter.createPolyline(getActivity(),
+//                                    directionPositionList, 5, getResources().getColor(R.color.colorPrimary));
+//                            googleMap.addPolyline(polylineOptions);
+                            //--------------------------------------------\\
+
+                            //-----------Zooming the map according to marker bounds-------------\\
+//                            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+//                            builder.include(origin);
+//                            builder.include(destination);
+//                            LatLngBounds bounds = builder.build();
+//
+//                            int width = getResources().getDisplayMetrics().widthPixels;
+//                            int height = getResources().getDisplayMetrics().heightPixels;
+//                            int padding = (int) (width * 0.20); // offset from edges of the map 10% of screen
+//
+//                            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
+//                            googleMap.animateCamera(cu);
+                            //------------------------------------------------------------------\\
+
+                        } else if (status.equals(RequestResult.NOT_FOUND)) {
+                            Toast.makeText(context, "No routes exist", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onDirectionFailure(Throwable t) {
+                        // Do something here
+                    }
+                });
+        //-------------------------------------------------------------------------------\\
+        return new String[]{duration[0]};
+
+    }
+
+    private double distance(double lat1, double lon1, double lat2, double lon2) {
+        double theta = lon1 - lon2;
+        double mile = Math.sin(deg2rad(lat1))
+                * Math.sin(deg2rad(lat2))
+                + Math.cos(deg2rad(lat1))
+                * Math.cos(deg2rad(lat2))
+                * Math.cos(deg2rad(theta));
+        mile = Math.acos(mile);
+        mile = rad2deg(mile);
+        mile = mile * 60 * 1.1515;
+        double km = mile / 0.62137;
+        Timber.e("distance -> %s", km);
+        return (km);
+    }
+
+    private double deg2rad(double deg) {
+        return (deg * Math.PI / 180.0);
+    }
+
+    private double rad2deg(double rad) {
+        return (rad * 180.0 / Math.PI);
     }
 
     @Override
@@ -97,6 +195,8 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         TextView textViewParkingAreaAddress;
         @BindView(R.id.card_view)
         CardView card_view;
+        @BindView(R.id.textViewParkingDistance)
+        TextView textViewParkingDistance;
         @BindView(R.id.view)
         View view;
 

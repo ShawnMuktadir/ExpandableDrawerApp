@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.model.SensorArea;
-import www.fiberathome.com.parkingapp.utils.AppConfig;
+import www.fiberathome.com.parkingapp.base.AppConfig;
 
 public class ParkingPresenterImpl implements ParkingPresenter {
 

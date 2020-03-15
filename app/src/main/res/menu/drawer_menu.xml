@@ -23,10 +23,17 @@
             android:title="@string/bookings" />
 
         <item
-            android:id="@+id/nav_notification"
-            android:icon="@drawable/ic_notification"
+            android:id="@+id/nav_law"
+            android:icon="@drawable/ic_law"
             android:iconTint="@color/blackColor"
-            android:title="@string/notification" />
+            android:title="@string/law" />
+
+
+<!--        <item-->
+<!--            android:id="@+id/nav_notification"-->
+<!--            android:icon="@drawable/ic_notification"-->
+<!--            android:iconTint="@color/blackColor"-->
+<!--            android:title="@string/law" />-->
 
 
         <item

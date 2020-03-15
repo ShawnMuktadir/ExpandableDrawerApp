@@ -30,7 +30,7 @@
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:layout_centerHorizontal="true"
-            android:src="@drawable/blank_profile_pic"
+            android:src="@drawable/blank_profile"
             app:civ_circle_background_color="@android:color/transparent"
             app:civ_border_color="@android:color/darker_gray"
             app:civ_border_width="@dimen/dim2"
