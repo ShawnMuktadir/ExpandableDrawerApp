@@ -42,6 +42,7 @@ import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionEvent;
 import www.fiberathome.com.parkingapp.model.SensorArea;
 import www.fiberathome.com.parkingapp.base.AppConfig;
+import www.fiberathome.com.parkingapp.ui.fragments.HomeFragment;
 
 /**
  * A simple {@link Fragment} subclass.

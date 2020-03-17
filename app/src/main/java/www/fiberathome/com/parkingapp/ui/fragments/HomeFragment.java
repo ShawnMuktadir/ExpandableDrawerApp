@@ -100,6 +100,7 @@ import www.fiberathome.com.parkingapp.GoogleMapWebService.DirectionsParser;
 import www.fiberathome.com.parkingapp.GoogleMapWebService.GooglePlaceSearchNearbySearchListener;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
+import www.fiberathome.com.parkingapp.eventBus.GetDirectionAfterButtonClickEvent;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionEvent;
 import www.fiberathome.com.parkingapp.eventBus.SetMarkerEvent;
 import www.fiberathome.com.parkingapp.gps.GPSTracker;
@@ -227,7 +228,7 @@ public class HomeFragment extends Fragment implements
         });
 
         btnGetDirection.setOnClickListener(v -> {
-            EventBus.getDefault().post(new GetDirectionEvent(location));
+            EventBus.getDefault().post(new GetDirectionAfterButtonClickEvent(location));
         });
     }
 
@@ -873,9 +874,9 @@ public class HomeFragment extends Fragment implements
                         //move map camera
                         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 15));
 
-                        String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), searchPlaceLatLng);
-                        TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
-                        taskRequestDirections.execute(url);
+//                        String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), searchPlaceLatLng);
+//                        TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
+//                        taskRequestDirections.execute(url);
                     }
 
                 }
@@ -1132,11 +1133,48 @@ public class HomeFragment extends Fragment implements
     public void onMessageEvent(SetMarkerEvent event) {
         Toast.makeText(getActivity(), "Geche", Toast.LENGTH_SHORT).show();
         fetchSensors();
-        Timber.e("Zoom call hoiche");
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(event.location, 13));
-//        String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), event.location);
-//        TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
-//        taskRequestDirections.execute(url);
+        Timber.e("Marker boshche");
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(event.location);
+        markerOptions.title(name);
+        markerOptions.draggable(true);
+        coordList.add(new LatLng(event.location.latitude, event.location.longitude));
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+        googleMap.addMarker(markerOptions);
+        //move map camera
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 15));
+
+//        final Handler handler = new Handler();
+//        handler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                // Do something after 2s = 2000ms
+//                EventBus.getDefault().post(new GetDirectionAfterButtonClickEvent(event.location));
+//                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(event.location, 15));
+//                String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), event.location);
+//                TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
+//                taskRequestDirections.execute(url);
+//            }
+//        }, 500);
+//        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(event.location, 13));
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void customEventReceived(GetDirectionAfterButtonClickEvent event) {
+        Toast.makeText(getActivity(), "GetDirectionAfterButtonClickEvent Event Received", Toast.LENGTH_SHORT).show();
+//        fetchSensors();
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // Do something after 2s = 2000ms
+                EventBus.getDefault().post(new SetMarkerEvent(event.location));
+                layoutVisible(true, name, count, distance, event.location);
+                String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), event.location);
+                TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
+                taskRequestDirections.execute(url);
+            }
+        }, 1000);
     }
 
 }

@@ -12,7 +12,7 @@ public class GlobalVars {
 
     public enum DrawerType {KEYWORDS, SEARCH_PLACES, FAVORITE_PLACES};
 
-    public static MyLocation location = new MyLocation(10.7629886, 106.6821975);
+    public static MyLocation location = new MyLocation(23.7821, 90.4161);
     public static PlaceInfo currentPlace;
     public static List<PlaceInfo> currentPlaceList;
     public static List<PlaceInfo> currentGooglePlaceList;
@@ -24,7 +24,7 @@ public class GlobalVars {
     public static String currentPhotoPath;
 
     public static boolean IsFakeGPS = false;
-    public static MyLocation fakeLocation = new MyLocation(10.7629886, 106.6821975); //University of Science, District 5
+    public static MyLocation fakeLocation = new MyLocation(23.7821, 90.4161); //Gulshan 1
 
     public static MyLocation getUserLocation() {
         if (IsFakeGPS) {

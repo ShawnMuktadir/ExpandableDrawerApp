@@ -30,6 +30,7 @@ import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.GlobalVars;
 import www.fiberathome.com.parkingapp.model.SensorArea;
+import www.fiberathome.com.parkingapp.ui.fragments.HomeFragment;
 
 public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -38,7 +39,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private ParkingFragment parkingFragment;
     private int selectedItem;
 
-    public ParkingAdapter(Context context, ParkingFragment parkingFragment, ArrayList<SensorArea> sensorAreas) {
+    public ParkingAdapter(Context context, ParkingFragment parkingFragment,  ArrayList<SensorArea> sensorAreas) {
         this.context = context;
         this.parkingFragment = parkingFragment;
         this.sensorAreas = sensorAreas;
@@ -83,7 +84,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
-    private String[] getDestinationInfo(LatLng latLngDestination) {
+    private void getDestinationInfo(LatLng latLngDestination) {
 //        progressDialog();
         String serverKey = context.getResources().getString(R.string.google_maps_key); // Api Key For Google Direction API \\
         final LatLng origin = new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude);
@@ -147,7 +148,6 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     }
                 });
         //-------------------------------------------------------------------------------\\
-        return new String[]{duration[0]};
 
     }
 

@@ -52,7 +52,7 @@
         android:id="@+id/linearLayoutBottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="visible"
+        android:visibility="gone"
         android:layout_alignParentBottom="true"
         android:background="@android:color/white"
         android:orientation="vertical">
