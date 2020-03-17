@@ -19,6 +19,7 @@ import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -66,6 +67,7 @@ import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRe
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -98,6 +100,7 @@ import www.fiberathome.com.parkingapp.GoogleMapWebService.DirectionsParser;
 import www.fiberathome.com.parkingapp.GoogleMapWebService.GooglePlaceSearchNearbySearchListener;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
+import www.fiberathome.com.parkingapp.eventBus.GetDirectionEvent;
 import www.fiberathome.com.parkingapp.eventBus.SetMarkerEvent;
 import www.fiberathome.com.parkingapp.gps.GPSTracker;
 import www.fiberathome.com.parkingapp.gps.GPSTrackerListener;
@@ -114,18 +117,32 @@ import www.fiberathome.com.parkingapp.base.AppConfig;
  * A simple {@link Fragment} subclass.
  */
 
-
 public class HomeFragment extends Fragment implements
         OnMapReadyCallback, GooglePlaceSearchNearbySearchListener, GoogleMap.OnMarkerClickListener,
         GPSTrackerListener, GoogleMap.OnInfoWindowClickListener, View.OnClickListener,
         GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener, GoogleMap.OnCameraIdleListener, LocationListener, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
-    @BindView(R.id.imgMyLocation)
-    ImageView imgMyLocation;
-    //Create field for map button.
-    private View locationButton;
+    @BindView(R.id.btnGetDirection)
+    Button btnGetDirection;
+    @BindView(R.id.imageViewBack)
+    ImageView imageViewBack;
+    @BindView(R.id.textViewParkingAreaCount)
+    TextView textViewParkingAreaCount;
+    @BindView(R.id.textViewParkingAreaName)
+    TextView textViewParkingAreaName;
+    @BindView(R.id.textViewParkingDistance)
+    TextView textViewParkingDistance;
+    @BindView(R.id.textViewParkingTravelTime)
+    TextView textViewParkingTravelTime;
+    @BindView(R.id.linearLayoutBottom)
+    LinearLayout linearLayoutBottom;
 
+    private Context context;
+    private String name, count;
+    private LatLng location;
+    private double distance;
+    private String duration;
     private static final String TAG = HomeFragment.class.getSimpleName();
     // google map objects
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -146,7 +163,6 @@ public class HomeFragment extends Fragment implements
     ArrayList<LatLng> coordList = new ArrayList<LatLng>();
     private SupportMapFragment supportMapFragment;
     private View mapView;
-    ;
     private GoogleMap googleMap;
     private Marker userLocationMarker;
     private GPSTracker gpsTracker;
@@ -177,7 +193,9 @@ public class HomeFragment extends Fragment implements
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
+        context = getActivity();
 
         if (!checkPermission()) {
             requestPermission();
@@ -192,28 +210,25 @@ public class HomeFragment extends Fragment implements
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_home, container, false);
         ButterKnife.bind(this, view);
+        setListeners();
         try {
             initialize();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        setListeners();
         return view;
     }
 
     private void setListeners() {
-//        imgMyLocation.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-////                getMyLocation();
-//                if (googleMap != null) {
-//                    if (locationButton != null)
-//                        locationButton.callOnClick();
-//
-//                }
-//
-//            }
-//        });
+        imageViewBack.setOnClickListener(v -> {
+            BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
+            navBar.setVisibility(View.VISIBLE);
+            layoutVisible(false, "", "", 0.0, null);
+        });
+
+        btnGetDirection.setOnClickListener(v -> {
+            EventBus.getDefault().post(new GetDirectionEvent(location));
+        });
     }
 
     @Override
@@ -238,7 +253,7 @@ public class HomeFragment extends Fragment implements
     @Override
     public void onPause() {
         super.onPause();
-        gpsTracker.stopUsingGPS();
+//        gpsTracker.stopUsingGPS();
     }
 
     @Override
@@ -248,6 +263,7 @@ public class HomeFragment extends Fragment implements
         gpsTracker.stopUsingGPS();
     }
 
+    @Override
     public void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
@@ -293,6 +309,28 @@ public class HomeFragment extends Fragment implements
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST);
             return;
+        }
+    }
+
+    public void layoutVisible(boolean isVisible, String name, String count, double distance, LatLng location) {
+        this.name = name;
+        this.count = count;
+        this.location = location;
+        this.distance = distance;
+        this.duration = duration;
+
+        if (isVisible) {
+            BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
+            navBar.setVisibility(View.GONE);
+            linearLayoutBottom.setVisibility(View.VISIBLE);
+            textViewParkingAreaCount.setText(count);
+            textViewParkingAreaName.setText(name);
+            textViewParkingDistance.setText(new DecimalFormat("##.##").format(distance) + " km");
+//            textViewParkingTravelTime.setText(duration);
+        } else {
+            BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
+            navBar.setVisibility(View.VISIBLE);
+            linearLayoutBottom.setVisibility(View.GONE);
         }
     }
 
@@ -1092,13 +1130,13 @@ public class HomeFragment extends Fragment implements
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(SetMarkerEvent event) {
-//        Toast.makeText(getActivity(), "Geche", Toast.LENGTH_SHORT).show()
+        Toast.makeText(getActivity(), "Geche", Toast.LENGTH_SHORT).show();
         fetchSensors();
         Timber.e("Zoom call hoiche");
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(event.location, 13));
-        String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), event.location);
-        TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
-        taskRequestDirections.execute(url);
+//        String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), event.location);
+//        TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
+//        taskRequestDirections.execute(url);
     }
 
 }

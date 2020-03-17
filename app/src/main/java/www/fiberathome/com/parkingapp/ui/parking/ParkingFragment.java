@@ -56,12 +56,12 @@ public class ParkingFragment extends Fragment {
     TextView textViewNoData;
     @BindView(R.id.linearLayoutBottom)
     LinearLayout linearLayoutBottom;
-    @BindView(R.id.imageViewBack)
-    ImageView imageViewBack;
     @BindView(R.id.editTextParking)
     EditText editTextParking;
     @BindView(R.id.btnGetDirection)
     Button btnGetDirection;
+    @BindView(R.id.imageViewBack)
+    ImageView imageViewBack;
     @BindView(R.id.textViewParkingAreaCount)
     TextView textViewParkingAreaCount;
     @BindView(R.id.textViewParkingAreaName)
@@ -79,7 +79,7 @@ public class ParkingFragment extends Fragment {
     private String name, count;
     private LatLng location;
     private double distance;
-    private String[] duration;
+    private String duration;
     private ProgressDialog progressDialog;
 
     public ParkingFragment() {

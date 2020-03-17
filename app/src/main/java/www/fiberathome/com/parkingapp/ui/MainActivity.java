@@ -295,13 +295,13 @@ public class MainActivity extends AppCompatActivity implements MainView, BottomN
             @Override
             public void run() {
                 // Do something after 2s = 2000ms
-
                 bottomNavigationView.setVisibility(View.VISIBLE);
                 EventBus.getDefault().post(new SetMarkerEvent(event.location));
             }
         }, 500);
     }
 
+    @Override
     public void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
