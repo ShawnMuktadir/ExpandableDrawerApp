@@ -49,6 +49,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.eventBus.GetDirectionAfterButtonClickEvent;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionEvent;
 import www.fiberathome.com.parkingapp.eventBus.SetMarkerEvent;
 import www.fiberathome.com.parkingapp.model.User;
@@ -304,13 +305,13 @@ public class MainActivity extends AppCompatActivity implements MainView, BottomN
             @Override
             public void run() {
                 // Do something after 2s = 2000ms
-
                 bottomNavigationView.setVisibility(View.VISIBLE);
                 EventBus.getDefault().post(new SetMarkerEvent(event.location));
             }
         }, 1000);
     }
 
+    @Override
     public void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
