@@ -77,14 +77,25 @@ public class ParkingFragment extends Fragment {
     private Handler handler;
     private ArrayList<SensorArea> sensorAreas;
     private ParkingAdapter parkingAdapter;
-    private String name, count;
-    private LatLng location;
-    private double distance;
-    private String duration;
+    public String name, count;
+    public LatLng location;
+    public double distance;
+    public String duration;
     private ProgressDialog progressDialog;
+    private HomeFragment homeFragment;
 
     public ParkingFragment() {
         // Required empty public constructor
+    }
+
+    public static ParkingFragment newInstance(HomeFragment homeFragment) {
+        ParkingFragment parkingFragment = new ParkingFragment();
+        parkingFragment.initializeFragment(homeFragment);
+        return parkingFragment;
+    }
+
+    private void initializeFragment(HomeFragment homeFragment) {
+        this.homeFragment = homeFragment;
     }
 
     @Override
@@ -144,8 +155,8 @@ public class ParkingFragment extends Fragment {
         this.sensorAreas = sensorAreas;
         recyclerViewParking.setHasFixedSize(true);
         recyclerViewParking.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
-
-        parkingAdapter = new ParkingAdapter(context, this, sensorAreas);
+        homeFragment = new HomeFragment();
+        parkingAdapter = new ParkingAdapter(context, this, homeFragment, sensorAreas);
         recyclerViewParking.setAdapter(parkingAdapter);
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

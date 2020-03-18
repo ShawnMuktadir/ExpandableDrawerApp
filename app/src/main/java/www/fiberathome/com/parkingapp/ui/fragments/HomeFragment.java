@@ -1,6 +1,7 @@
 package www.fiberathome.com.parkingapp.ui.fragments;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -11,7 +12,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,10 +19,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Interpolator;
-import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,22 +42,18 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.Autocomplete;
@@ -66,11 +61,11 @@ import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -89,15 +84,14 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.GoogleMapWebService.DirectionsParser;
 import www.fiberathome.com.parkingapp.GoogleMapWebService.GooglePlaceSearchNearbySearchListener;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
+import www.fiberathome.com.parkingapp.eventBus.GetDirectionAfterButtonClickEvent;
+import www.fiberathome.com.parkingapp.eventBus.GetDirectionEvent;
+import www.fiberathome.com.parkingapp.eventBus.GetDirectionForSearchEvent;
 import www.fiberathome.com.parkingapp.eventBus.SetMarkerEvent;
 import www.fiberathome.com.parkingapp.gps.GPSTracker;
 import www.fiberathome.com.parkingapp.gps.GPSTrackerListener;
@@ -124,8 +118,29 @@ public class HomeFragment extends Fragment implements
         GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener, GoogleMap.OnCameraIdleListener, LocationListener, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
-    @BindView(R.id.imgMyLocation)
-    ImageView imgMyLocation;
+    @BindView(R.id.btnGetDirection)
+    Button btnGetDirection;
+    @BindView(R.id.imageViewBack)
+    ImageView imageViewBack;
+    @BindView(R.id.textViewParkingAreaCount)
+    TextView textViewParkingAreaCount;
+    @BindView(R.id.textViewParkingAreaName)
+    TextView textViewParkingAreaName;
+    @BindView(R.id.textViewParkingDistance)
+    TextView textViewParkingDistance;
+    @BindView(R.id.textViewParkingTravelTime)
+    TextView textViewParkingTravelTime;
+    @BindView(R.id.linearLayoutBottom)
+    LinearLayout linearLayoutBottom;
+    @BindView(R.id.linearLayoutNameCount)
+    LinearLayout linearLayoutNameCount;
+
+    private Context context;
+    private String name, count;
+    private LatLng location;
+    private double distance;
+    private String duration;
+
     //Create field for map button.
     private View locationButton;
 
@@ -173,6 +188,8 @@ public class HomeFragment extends Fragment implements
     private Marker mCurrLocationMarker;
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
+    private int getDirectionButtonClicked = 0;
+    private ProgressDialog progressDialog;
 
 
     public HomeFragment() {
@@ -181,7 +198,9 @@ public class HomeFragment extends Fragment implements
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
+        context = getActivity();
 
         if (!checkPermission()) {
             requestPermission();
@@ -196,6 +215,7 @@ public class HomeFragment extends Fragment implements
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_home, container, false);
         ButterKnife.bind(this, view);
+        setListeners();
         try {
             initialize();
         } catch (IOException e) {
@@ -205,20 +225,103 @@ public class HomeFragment extends Fragment implements
         return view;
     }
 
-//    private void setListeners() {
-////        imgMyLocation.setOnClickListener(new View.OnClickListener() {
-////            @Override
-////            public void onClick(View v) {
-//////                getMyLocation();
-////                if (googleMap != null) {
-////                    if (locationButton != null)
-////                        locationButton.callOnClick();
-////
-////                }
-////
-////            }
-////        });
-//    }
+    private void setListeners() {
+        imageViewBack.setOnClickListener(v -> {
+            if (googleMap != null) {
+                googleMap.clear();
+                fetchSensors();
+                BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
+                navBar.setVisibility(View.VISIBLE);
+                layoutVisible(false, "", "", 0.0, null);
+            }
+        });
+
+        btnGetDirection.setOnClickListener(v -> {
+            if (getDirectionButtonClicked == 0) {
+                getDirectionButtonClicked=2;
+                if (location != null) {
+                    EventBus.getDefault().post(new GetDirectionAfterButtonClickEvent(location));
+//                    progressDialog = new ProgressDialog(getActivity());
+//                    progressDialog.setMessage("Please wait...");
+//                    progressDialog.show();
+//                btnGetDirection.setVisibility(View.GONE);
+                    MarkerOptions markerOptions = new MarkerOptions();
+                    markerOptions.position(location);
+                    markerOptions.title(name);
+                    markerOptions.draggable(true);
+                    coordList.add(new LatLng(location.latitude, location.longitude));
+                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                    googleMap.addMarker(markerOptions);
+//              move map camera
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 13));
+                    linearLayoutNameCount.setVisibility(View.VISIBLE);
+                    imageViewBack.setVisibility(View.VISIBLE);
+                    btnGetDirection.setText("Cancel Direction");
+                    btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.red));
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
+                    btnGetDirection.setLayoutParams(layoutParams);
+                }
+
+//                if (searchPlaceLatLng != null) {
+//                    EventBus.getDefault().post(new GetDirectionForSearchEvent(searchPlaceLatLng));
+//                    progressDialog = new ProgressDialog(getActivity());
+//                    progressDialog.setMessage("Please wait...");
+//                    progressDialog.show();
+//                    btnGetDirection.setVisibility(View.VISIBLE);
+//                    linearLayoutNameCount.setVisibility(View.VISIBLE);
+//                    imageViewBack.setVisibility(View.VISIBLE);
+//                    btnGetDirection.setText("Cancel Direction");
+//                    btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.red));
+//                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
+//                    btnGetDirection.setLayoutParams(layoutParams);
+//                    progressDialog.dismiss();
+//                }
+            } else if (getDirectionButtonClicked == 2) {
+                getDirectionButtonClicked=0;
+                if (googleMap != null) {
+                    googleMap.clear();
+                    fetchSensors();
+
+                    btnGetDirection.setVisibility(View.GONE);
+                    imageViewBack.setVisibility(View.GONE);
+                    linearLayoutNameCount.setVisibility(View.GONE);
+                    btnGetDirection.setText("Get Direction");
+                    btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
+                    linearLayoutBottom.setVisibility(View.VISIBLE);
+//                    btnGetDirection.setVisibility(View.VISIBLE);
+//                    linearLayoutNameCount.setVisibility(View.VISIBLE);
+//                    imageViewBack.setVisibility(View.VISIBLE);
+                    BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
+                    navBar.setVisibility(View.VISIBLE);
+                }
+            } else if (getDirectionButtonClicked == 1) {
+                getDirectionButtonClicked++;
+                EventBus.getDefault().post(new GetDirectionForSearchEvent(searchPlaceLatLng));
+                    //initialize the progress dialog and show it
+//                    progressDialog = new ProgressDialog(getActivity());
+//                    progressDialog.setMessage("Please wait...");
+//                    progressDialog.show();
+                    fetchSensors();
+                    MarkerOptions markerOptions = new MarkerOptions();
+                    markerOptions.position(searchPlaceLatLng);
+                    markerOptions.title(name);
+                    markerOptions.draggable(true);
+                    coordList.add(new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));
+                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                    googleMap.addMarker(markerOptions);
+//              move map camera
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 13));
+                    btnGetDirection.setVisibility(View.VISIBLE);
+                    linearLayoutNameCount.setVisibility(View.VISIBLE);
+                    imageViewBack.setVisibility(View.VISIBLE);
+                    btnGetDirection.setText("Cancel Direction");
+                    btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.red));
+//                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
+//                    btnGetDirection.setLayoutParams(layoutParams);
+                }
+
+        });
+    }
 
 //    private GoogleMap.OnMyLocationChangeListener myLocationChangeListener = new GoogleMap.OnMyLocationChangeListener() {
 //        @Override
@@ -276,11 +379,11 @@ public class HomeFragment extends Fragment implements
     @Override
     public void onPause() {
         super.onPause();
-        gpsTracker.stopUsingGPS();
+//        gpsTracker.stopUsingGPS();
         //stop location updates when Activity is no longer active
-//        if (mGoogleApiClient != null) {
-//            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-//        }
+        if (mGoogleApiClient != null) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+        }
     }
 
     @Override
@@ -648,6 +751,29 @@ public class HomeFragment extends Fragment implements
         return accessFineLocation == PackageManager.PERMISSION_GRANTED && accessCoarseLocation == PackageManager.PERMISSION_GRANTED;
     }
 
+    public void layoutVisible(boolean isVisible, String name, String count,
+                              double distance, LatLng location) {
+        this.name = name;
+        this.count = count;
+        this.location = location;
+        this.distance = distance;
+        this.duration = duration;
+
+        if (isVisible) {
+//            BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
+//            navBar.setVisibility(View.GONE);
+            linearLayoutBottom.setVisibility(View.VISIBLE);
+            textViewParkingAreaCount.setText(count);
+            textViewParkingAreaName.setText(name);
+            textViewParkingDistance.setText(new DecimalFormat("##.##").format(distance) + " km");
+//            textViewParkingTravelTime.setText(duration);
+        } else {
+            BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
+            navBar.setVisibility(View.VISIBLE);
+            linearLayoutBottom.setVisibility(View.GONE);
+        }
+    }
+
     /**
      * REQUEST PERMISSION FOR: ACCESS FINE LOCATION & ACCESS COARSE LOCATION
      * ===================================================================================
@@ -800,20 +926,22 @@ public class HomeFragment extends Fragment implements
                         googleMap.addMarker(markerOptions);
                         //move map camera
                         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 15));
-
-                        String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), searchPlaceLatLng);
-                        TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
-                        if (googleMap!=null){
-                            googleMap.clear();
-                            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-                            googleMap.addMarker(markerOptions);
-                            fetchSensors();
-                            taskRequestDirections.execute(url);
-                        }
-
-
+                        BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
+                        navBar.setVisibility(View.GONE);
+                        linearLayoutBottom.setVisibility(View.VISIBLE);
+                        btnGetDirection.setVisibility(View.VISIBLE);
+                        imageViewBack.setVisibility(View.VISIBLE);
+                        getDirectionButtonClicked = 1;
+//                        String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), searchPlaceLatLng);
+//                        TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
+//                        if (googleMap != null) {
+//                            googleMap.clear();
+//                            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+//                            googleMap.addMarker(markerOptions);
+//                            fetchSensors();
+//                            taskRequestDirections.execute(url);
+//                        }
                     }
-
                 }
 
                 @Override
@@ -829,7 +957,7 @@ public class HomeFragment extends Fragment implements
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
         //inflate menu
-        inflater.inflate(R.menu.menu_search, menu);
+//        inflater.inflate(R.menu.menu_search, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -1082,14 +1210,95 @@ public class HomeFragment extends Fragment implements
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(SetMarkerEvent event) {
-//        Toast.makeText(getActivity(), "Geche", Toast.LENGTH_SHORT).show()
+//        Toast.makeText(getActivity(), "Geche", Toast.LENGTH_SHORT).show();
+        layoutVisible(true, name, count, distance, event.location);
         fetchSensors();
         Timber.e("Zoom call hoiche");
-//        googleMap.clear();
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(event.location);
+        markerOptions.title(name);
+        markerOptions.draggable(true);
+        coordList.add(new LatLng(event.location.latitude, event.location.longitude));
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+        googleMap.addMarker(markerOptions);
+        //move map camera
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(event.location, 13));
-        String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), event.location);
-        TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
-        taskRequestDirections.execute(url);
+//        final Handler handler = new Handler();
+////        handler.postDelayed(new Runnable() {
+////            @Override
+////            public void run() {
+////                EventBus.getDefault().post(new GetDirectionAfterButtonClickEvent(event.location));
+////            }
+////        }, 500);
+
+//        String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), event.location);
+//        TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
+//        taskRequestDirections.execute(url);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCustomDirectionEvent(GetDirectionAfterButtonClickEvent event) {
+        Toast.makeText(getActivity(), "Adapter Click e Geche", Toast.LENGTH_SHORT).show();
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if(googleMap!=null)
+                    googleMap.clear();
+                // Do something after 2s = 2000ms
+//                progressDialog.dismiss();
+                btnGetDirection.setVisibility(View.VISIBLE);
+                linearLayoutNameCount.setVisibility(View.VISIBLE);
+                imageViewBack.setVisibility(View.VISIBLE);
+                String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), event.location);
+                TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
+                taskRequestDirections.execute(url);
+            }
+        }, 1000);
+
+//        String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), event.location);
+//        TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
+//        taskRequestDirections.execute(url);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSearchDirectionEvent(GetDirectionForSearchEvent event) {
+        Toast.makeText(getActivity(), "Search Click e Geche", Toast.LENGTH_SHORT).show();
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if(googleMap!=null)
+                    googleMap.clear();
+//                progressDialog.dismiss();
+                btnGetDirection.setVisibility(View.VISIBLE);
+                linearLayoutNameCount.setVisibility(View.VISIBLE);
+                imageViewBack.setVisibility(View.VISIBLE);
+                // Do something after 2s = 2000ms
+                EventBus.getDefault().post(new SetMarkerEvent(event.location));
+                BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
+                navBar.setVisibility(View.GONE);
+                linearLayoutBottom.setVisibility(View.VISIBLE);
+                linearLayoutNameCount.setVisibility(View.VISIBLE);
+                imageViewBack.setVisibility(View.VISIBLE);
+                MarkerOptions markerOptions = new MarkerOptions();
+                markerOptions.position(searchPlaceLatLng);
+                markerOptions.title(name);
+                markerOptions.draggable(true);
+                coordList.add(new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));
+                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                googleMap.addMarker(markerOptions);
+//              move map camera
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 13));
+                String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), searchPlaceLatLng);
+                TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
+                taskRequestDirections.execute(url);
+            }
+        }, 500);
+
+//        String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), event.location);
+//        TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
+//        taskRequestDirections.execute(url);
     }
 
     public class TaskRequestDirections extends AsyncTask<String, Void, String> {
@@ -1196,11 +1405,15 @@ public class HomeFragment extends Fragment implements
                 polylineOptions.addAll(points);
                 polylineOptions.width(7);
                 if (flag == 1) {
+                    if (googleMap!=null)
+                        googleMap.clear();
                     polylineOptions.color(Color.BLACK);
                     polylineOptions.width(5);
                 } else if (flag == 2) {
-                    polylineOptions.color(Color.RED);
-                    polylineOptions.width(4);
+                    if (googleMap!=null)
+                        googleMap.clear();
+                    polylineOptions.color(Color.BLACK);
+                    polylineOptions.width(5);
                 }
                 flag++;
 

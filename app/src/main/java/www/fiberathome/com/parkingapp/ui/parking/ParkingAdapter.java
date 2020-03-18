@@ -14,6 +14,8 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.maps.model.LatLng;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
@@ -22,19 +24,24 @@ import butterknife.ButterKnife;
 import okhttp3.Route;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.eventBus.GetDirectionEvent;
 import www.fiberathome.com.parkingapp.model.GlobalVars;
 import www.fiberathome.com.parkingapp.model.SensorArea;
+import www.fiberathome.com.parkingapp.ui.fragments.HomeFragment;
 
 public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context context;
     private ArrayList<SensorArea> sensorAreas;
     private ParkingFragment parkingFragment;
+    private HomeFragment homeFragment;
     private int selectedItem;
+    public LatLng location;
 
-    public ParkingAdapter(Context context, ParkingFragment parkingFragment, ArrayList<SensorArea> sensorAreas) {
+    public ParkingAdapter(Context context, ParkingFragment parkingFragment, HomeFragment homeFragment, ArrayList<SensorArea> sensorAreas) {
         this.context = context;
         this.parkingFragment = parkingFragment;
+        this.homeFragment = homeFragment;
         this.sensorAreas = sensorAreas;
         selectedItem = -1;
     }
@@ -63,7 +70,10 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         Timber.e("distance -> %s", parkingViewHolder.textViewParkingDistance.getText());
 
         parkingViewHolder.card_view.setOnClickListener(v -> {
-            parkingFragment.layoutVisible(true, sensorArea.getParkingArea(), sensorArea.getCount(), distance, new LatLng(sensorArea.getLat(), sensorArea.getLng()));
+            EventBus.getDefault().post(new GetDirectionEvent(new LatLng(sensorArea.getLat(), sensorArea.getLng())));
+//            parkingFragment.layoutVisible(true, sensorArea.getParkingArea(), sensorArea.getCount(), distance, new LatLng(sensorArea.getLat(), sensorArea.getLng()));
+            homeFragment = new HomeFragment();
+            homeFragment.layoutVisible(true, sensorArea.getParkingArea(), sensorArea.getCount(), distance, new LatLng(sensorArea.getLat(), sensorArea.getLng()));
             selectedItem = position;
             notifyDataSetChanged();
         });

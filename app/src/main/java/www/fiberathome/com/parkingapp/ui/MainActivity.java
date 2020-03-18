@@ -8,10 +8,6 @@ import android.graphics.Bitmap;
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 
@@ -23,7 +19,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.location.Location;
 import android.os.Bundle;
 
 import androidx.appcompat.widget.Toolbar;
@@ -36,7 +31,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.maps.model.LatLng;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
@@ -54,7 +48,6 @@ import www.fiberathome.com.parkingapp.eventBus.GetDirectionEvent;
 import www.fiberathome.com.parkingapp.eventBus.SetMarkerEvent;
 import www.fiberathome.com.parkingapp.model.User;
 import www.fiberathome.com.parkingapp.ui.fragments.BookingDetailsFragment;
-import www.fiberathome.com.parkingapp.ui.fragments.BookingFragment;
 import www.fiberathome.com.parkingapp.ui.fragments.ChangePasswordFragment;
 import www.fiberathome.com.parkingapp.ui.fragments.HomeFragment;
 import www.fiberathome.com.parkingapp.ui.fragments.LawFragment;
@@ -131,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements MainView, BottomN
         String url = AppConfig.IMAGES_URL + user.getProfilePic() + ".jpg";
         Timber.e(url);
 //        Glide.with(this).load(url).placeholder(R.drawable.blank_profile_pic).into(userProfilePic);  //Todo
-
+//
 
 //        QRCode = headerView.findViewById(R.id.header_qrcode);
 
@@ -184,19 +177,19 @@ public class MainActivity extends AppCompatActivity implements MainView, BottomN
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
-        if (menu instanceof MenuBuilder) {
-            ((MenuBuilder) menu).setOptionalIconsVisible(true);
-        }
-
-        //change menu icon color programmatically & changing a particular icon of one of menus, use break in the for loop
-        for (int i = 0; i < menu.size(); i++) {
-            Drawable drawable = menu.getItem(i).getIcon();
-            if (drawable != null) {
-                drawable.mutate();
-                drawable.setColorFilter(context.getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.SRC_ATOP);
-                break;
-            }
-        }
+//        if (menu instanceof MenuBuilder) {
+//            ((MenuBuilder) menu).setOptionalIconsVisible(true);
+//        }
+//
+//        //change menu icon color programmatically & changing a particular icon of one of menus, use break in the for loop
+//        for (int i = 0; i < menu.size(); i++) {
+//            Drawable drawable = menu.getItem(i).getIcon();
+//            if (drawable != null) {
+//                drawable.mutate();
+//                drawable.setColorFilter(context.getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.SRC_ATOP);
+//                break;
+//            }
+//        }
         return true;
     }
 
@@ -214,7 +207,6 @@ public class MainActivity extends AppCompatActivity implements MainView, BottomN
         DrawableCompat.setTintMode(wrapDrawable, PorterDuff.Mode.SRC_IN);
         return wrapDrawable;
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -248,6 +240,7 @@ public class MainActivity extends AppCompatActivity implements MainView, BottomN
             case R.id.nav_parking:
                 toolbar.setTitle("Parking");
 //                ParkingPresenter parkingPresenter = new ParkingPresenterImpl(context,getSupportFragmentManager());
+//                HomeFragment homeFragment = new HomeFragment();
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ParkingFragment()).commit();
                 break;
 
@@ -260,7 +253,6 @@ public class MainActivity extends AppCompatActivity implements MainView, BottomN
                 toolbar.setTitle("Notification");
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new NotificationFragment()).commit();
                 break;
-
 
 
             case R.id.nav_profile:
