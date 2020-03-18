@@ -85,6 +85,6 @@ dependencies {
     //pdf view
     implementation 'com.github.barteksc:android-pdf-viewer:2.8.2'
     //for duration takes this library
-    implementation 'com.akexorcist:googledirectionlibrary:1.0.4' // Custom Google Direction API
+//    implementation 'com.akexorcist:googledirectionlibrary:1.0.4' // Custom Google Direction API
 
 }

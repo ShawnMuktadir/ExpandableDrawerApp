@@ -12,7 +12,8 @@ public class GlobalVars {
 
     public enum DrawerType {KEYWORDS, SEARCH_PLACES, FAVORITE_PLACES};
 
-    public static MyLocation location = new MyLocation(10.7629886, 106.6821975);
+//    public static MyLocation location = new MyLocation(10.7629886, 106.6821975);
+    public static MyLocation location = new MyLocation(23.7744775, 90.4157134);
     public static PlaceInfo currentPlace;
     public static List<PlaceInfo> currentPlaceList;
     public static List<PlaceInfo> currentGooglePlaceList;
@@ -24,7 +25,8 @@ public class GlobalVars {
     public static String currentPhotoPath;
 
     public static boolean IsFakeGPS = false;
-    public static MyLocation fakeLocation = new MyLocation(10.7629886, 106.6821975); //University of Science, District 5
+//    public static MyLocation fakeLocation = new MyLocation(10.7629886, 106.6821975); //University of Science, District 5
+    public static MyLocation fakeLocation = new MyLocation(23.7744762, 90.4157136); //Fiber @ Home
 
     public static MyLocation getUserLocation() {
         if (IsFakeGPS) {
@@ -50,8 +52,4 @@ public class GlobalVars {
     public static void setAvatar(String avatar) {
         PlayerPrefs.getInstance().SetString("avatar", avatar);
     }
-
-
-
-
 }

@@ -113,5 +113,6 @@
     <string name="distance">16km</string>
     <string name="availability">Availability</string>
     <string name="time">1hr</string>
+    <string name="menu_search">Search...</string>
 
 </resources>

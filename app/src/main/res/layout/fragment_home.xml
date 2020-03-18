@@ -24,6 +24,7 @@
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
             android:text="@string/find_nearest"
+            android:visibility="gone"
             android:textColor="@android:color/white"
             android:textSize="13dp"
             android:textStyle="bold" />

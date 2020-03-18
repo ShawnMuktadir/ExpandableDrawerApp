@@ -2,6 +2,7 @@ package www.fiberathome.com.parkingapp.ui.fragments;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -13,6 +14,9 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Interpolator;
@@ -29,15 +33,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import com.akexorcist.googledirection.DirectionCallback;
-import com.akexorcist.googledirection.GoogleDirection;
-import com.akexorcist.googledirection.constant.RequestResult;
-import com.akexorcist.googledirection.constant.TransportMode;
-import com.akexorcist.googledirection.model.Direction;
-import com.akexorcist.googledirection.model.Info;
-import com.akexorcist.googledirection.model.Leg;
-import com.akexorcist.googledirection.model.Route;
-import com.akexorcist.googledirection.util.DirectionConverter;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -48,6 +43,7 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -62,10 +58,14 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -107,6 +107,9 @@ import www.fiberathome.com.parkingapp.model.SensorList;
 import www.fiberathome.com.parkingapp.module.PlayerPrefs;
 import www.fiberathome.com.parkingapp.ui.DialogForm;
 import www.fiberathome.com.parkingapp.base.AppConfig;
+
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
 
 // Add an import statement for the client library.
 
@@ -156,6 +159,7 @@ public class HomeFragment extends Fragment implements
     private boolean isMyServerDone = false;
     private String sensorStatus = "Occupied";
     private static final int LOCATION_REQUEST = 500;
+    private static final int AUTOCOMPLETE_REQUEST_CODE = 22;
     public int flag = 0;
     ArrayList<LatLng> listPoints;
     public static DecimalFormat df1 = new DecimalFormat(".##");
@@ -197,41 +201,75 @@ public class HomeFragment extends Fragment implements
         } catch (IOException e) {
             e.printStackTrace();
         }
-        setListeners();
+//        setListeners();
         return view;
     }
 
-    private void setListeners() {
-//        imgMyLocation.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-////                getMyLocation();
-//                if (googleMap != null) {
-//                    if (locationButton != null)
-//                        locationButton.callOnClick();
+//    private void setListeners() {
+////        imgMyLocation.setOnClickListener(new View.OnClickListener() {
+////            @Override
+////            public void onClick(View v) {
+//////                getMyLocation();
+////                if (googleMap != null) {
+////                    if (locationButton != null)
+////                        locationButton.callOnClick();
+////
+////                }
+////
+////            }
+////        });
+//    }
+
+//    private GoogleMap.OnMyLocationChangeListener myLocationChangeListener = new GoogleMap.OnMyLocationChangeListener() {
+//        @Override
+//        public void onMyLocationChange(Location location) {
+//            LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
+////            if (googleMap != null) {
+////                googleMap.clear();
+////            googleMap.addMarker(new MarkerOptions()
+////                    .position(loc)
+////                    .title("Current Position"))
+////                    .setIcon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running));
+////            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(loc, 15));
+////            googleMap.addMarker(new MarkerOptions().position(loc)).setVisible(true);
 //
-//                }
+//            // Move the camera instantly to location with a zoom of 15.
+////            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 15));
 //
-//            }
-//        });
+//            // Zoom in, animating the camera.
+////            googleMap.animateCamera(CameraUpdateFactory.zoomTo(14), 2000, null);
+////            }
+//            Timber.e("OnMyLocationChangeListener onMyLocationChange called");
+//        }
+//    };
+
+    //useful method for making marker
+//    private void drawMarker(Location location) {
+//        if (googleMap != null) {
+//            googleMap.clear();
+//            LatLng gps = new LatLng(location.getLatitude(), location.getLongitude());
+//            googleMap.addMarker(new MarkerOptions()
+//                    .position(gps)
+//                    .title("Current Position"))
+//                    .setIcon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running));
+//            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(gps, 12));
+//        }
+//    }
+
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         nearest.setOnClickListener(this);
-    }
-
-    //useful method for making marker
-    private void drawMarker(Location location) {
-        if (googleMap != null) {
-            googleMap.clear();
-            LatLng gps = new LatLng(location.getLatitude(), location.getLongitude());
-            googleMap.addMarker(new MarkerOptions()
-                    .position(gps)
-                    .title("Current Position"))
-                    .setIcon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running));
-            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(gps, 12));
+        if (mGoogleApiClient != null &&
+                ContextCompat.checkSelfPermission(getActivity(),
+                        Manifest.permission.ACCESS_FINE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED) {
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
         }
     }
 
@@ -239,6 +277,10 @@ public class HomeFragment extends Fragment implements
     public void onPause() {
         super.onPause();
         gpsTracker.stopUsingGPS();
+        //stop location updates when Activity is no longer active
+//        if (mGoogleApiClient != null) {
+//            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+//        }
     }
 
     @Override
@@ -246,11 +288,6 @@ public class HomeFragment extends Fragment implements
         EventBus.getDefault().unregister(this);
         super.onStop();
         gpsTracker.stopUsingGPS();
-    }
-
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -270,9 +307,9 @@ public class HomeFragment extends Fragment implements
     @Override
     public void onMapReady(GoogleMap mMap) {
         this.googleMap = mMap;
-        this.googleMap.setOnInfoWindowClickListener(this);
-        mMap.setMyLocationEnabled(true);
-
+        googleMap.setOnInfoWindowClickListener(this);
+        googleMap.setMyLocationEnabled(true);
+//        googleMap.setOnMyLocationChangeListener(myLocationChangeListener);
         initGPS();
         refreshUserGPSLocation();
         geoLocate();
@@ -327,183 +364,84 @@ public class HomeFragment extends Fragment implements
 
     }
 
-
-    public class TaskRequestDirections extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... strings) {
-            String responseString = "";
-            responseString = requestDirection(strings[0]);
-            return responseString;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            //Parse json here
-            TaskParser taskParser = new TaskParser();
-            taskParser.execute(s);
-        }
-    }
-
-    private String requestDirection(String reqUrl) {
-        String responseString = "";
-        InputStream inputStream = null;
-        HttpURLConnection httpURLConnection = null;
-        try {
-            URL url = new URL(reqUrl);
-            httpURLConnection = (HttpURLConnection) url.openConnection();
-            httpURLConnection.connect();
-
-            //Get the response result
-            inputStream = httpURLConnection.getInputStream();
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-
-            StringBuffer stringBuffer = new StringBuffer();
-            String line = "";
-            while ((line = bufferedReader.readLine()) != null) {
-                stringBuffer.append(line);
-            }
-
-            responseString = stringBuffer.toString();
-            bufferedReader.close();
-            inputStreamReader.close();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            httpURLConnection.disconnect();
-        }
-        return responseString;
-    }
-
-    public class TaskParser extends AsyncTask<String, Void, List<List<HashMap<String, String>>>> {
-
-        @Override
-        protected List<List<HashMap<String, String>>> doInBackground(String... strings) {
-            JSONObject jsonObject = null;
-            List<List<HashMap<String, String>>> routes = null;
-            try {
-                jsonObject = new JSONObject(strings[0]);
-                DirectionsParser directionsParser = new DirectionsParser();
-                routes = directionsParser.parse(jsonObject);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return routes;
-        }
-
-        @Override
-        protected void onPostExecute(List<List<HashMap<String, String>>> lists) {
-            //Get list route and display it into the map
-
-            ArrayList points = null;
-
-            PolylineOptions polylineOptions = null;
-            MarkerOptions markerOptions = new MarkerOptions();
-            String distance = "";
-            String duration = "";
-
-            if (lists.size() < 1) {
-                Toast.makeText(getActivity(), "No Points", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            for (List<HashMap<String, String>> path : lists) {
-                points = new ArrayList();
-                polylineOptions = new PolylineOptions();
-
-                for (HashMap<String, String> point : path) {
-                    double lat = Double.parseDouble(point.get("lat"));
-                    double lon = Double.parseDouble(point.get("lon"));
-
-                    points.add(new LatLng(lat, lon));
-                }
-
-
-                polylineOptions.addAll(points);
-                polylineOptions.width(7);
-                if (flag == 1) {
-                    polylineOptions.color(Color.GREEN);
-                    polylineOptions.width(4);
-                } else if (flag == 2) {
-                    polylineOptions.color(Color.RED);
-                    polylineOptions.width(4);
-                }
-                flag++;
-
-                polylineOptions.geodesic(true);
-
-            }
-
-            if (polylineOptions != null) {
-                googleMap.addPolyline(polylineOptions);
-
-            } else {
-                Toast.makeText(getActivity(), "Direction not found!", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
     @Override
     public void onLocationChanged(Location location) {
         Timber.e("onLocationChanged called");
+//        Toast.makeText(getActivity(), "Location Changed " + location.getLatitude()
+//                + location.getLongitude(), Toast.LENGTH_LONG).show();
         this.mLastLocation = location;
         fetchSensors();
-        if (googleMap != null) {
-            googleMap.clear();
-        }
+//        if (googleMap != null)
+//            googleMap.clear();
+//        Timber.d("Firing onLocationChanged..............................................");
+
+//        this.mLastLocation = location;
+//        updateUI();
         //  Place current location marker
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
-        markerOptions.title("Current Position");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running));
-        mCurrLocationMarker = googleMap.addMarker(markerOptions);
+//        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+//        MarkerOptions markerOptions = new MarkerOptions();
+//        markerOptions.position(latLng);
+//        markerOptions.title("Current Position");
+//        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+//        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running));
+//        googleMap.addMarker(markerOptions);
+//        mCurrLocationMarker = googleMap.addMarker(markerOptions);
 
         //move map camera
+//        googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
 //        googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+//        if(mCurrLocationMarker == null) {
+//            Timber.e("mCurrLocationMarker is null");
+////            mCurrLocationMarker = googleMap.addMarker(new MarkerOptions().position(latLng));
+////                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running)));
+//        } else {
+//            Timber.e("mCurrLocationMarker is not null");
+//            mCurrLocationMarker.remove();
+//            mCurrLocationMarker.setPosition(latLng);
+//        }
 
 //        //stop location updates
-        if (mGoogleApiClient != null) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-        }
+//        if (mGoogleApiClient != null) {
+//            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+//        }
+
+//        googleMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
+//            @Override
+//            public void onCameraIdle() {
+//                LatLng center = googleMap.getCameraPosition().target;
+//                if (marker != null) {
+//                    marker.remove();
+//                    googleMap.addMarker(new MarkerOptions().position(center).title("New Position"));
+////                    LatLng latLng1 = marker.getPosition();
+//                }
+//            }
+//        });
     }
 
-    public double showDistance(LatLng from, LatLng to) {
+    private void updateUI() {
+        Timber.d("UI update initiated .............");
+        if (null != mLastLocation) {
 
-        int Radius = 6371;// radius of earth in Km
-        double lat1 = from.latitude;
-        double lat2 = to.latitude;
-        double lon1 = from.longitude;
-        double lon2 = to.longitude;
-        double dLat = Math.toRadians(lat2 - lat1);
-        double dLon = Math.toRadians(lon2 - lon1);
-        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
-                + Math.cos(Math.toRadians(lat1))
-                * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon / 2)
-                * Math.sin(dLon / 2);
-        double c = 2 * Math.asin(Math.sqrt(a));
-        double valueResult = Radius * c;
+            LatLng allLatLang = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
 
-        double km = valueResult / 1;
-        DecimalFormat newFormat = new DecimalFormat("####");
-        int kmInDec = Integer.parseInt(newFormat.format(km));
-        double meter = valueResult % 1000;
-        int meterInDec = Integer.parseInt(newFormat.format(meter));
-        Timber.i("" + valueResult + "   KM  " + kmInDec
-                + " Meter   " + meterInDec);
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(allLatLang);
+            markerOptions.title("Current Position");
+            markerOptions.snippet("Users Basic Information");
+//            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
+            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running));
+            mCurrLocationMarker = googleMap.addMarker(markerOptions);
 
-        return (Radius * c);
+            //You can add this lines if you want to show the realtime data change on any TextView
+            String lat = String.valueOf(mLastLocation.getLatitude());
+            String lng = String.valueOf(mLastLocation.getLongitude());
+            Timber.e("Latitude: " + lat + "\n" +
+                    "Longitude: " + lng + "\n" +
+                    "Accuracy: " + mLastLocation.getAccuracy() + "\n" +
+                    "Provider: " + mLastLocation.getProvider());
+        } else {
+            Timber.d("location is null ...............");
+        }
     }
 
     @Override
@@ -548,34 +486,34 @@ public class HomeFragment extends Fragment implements
 
     @Override
     public void onInfoWindowClick(Marker marker) {
-        //Toast.makeText(getContext(),marker.getTitle(),Toast.LENGTH_LONG).show();
+        Timber.e("onInfoWindowClick -> %s", marker.getTitle());
         String spotstatus = marker.getSnippet();
         String spotid = marker.getTitle();
 
-        if (spotstatus.equalsIgnoreCase("Empty") || spotstatus.equalsIgnoreCase("Occupied.")) {
-            //Toast.makeTextHome(getContext(),"Sensor details will be shown here..",Toast.LENGTH_SHORT);
-
-            selectedSensor = marker.getTitle();
-            Log.e("openDialog", "openDialog");
-            openDialog(selectedSensor);
-
-            //R.id.nearest:
-            // get the nearest sensor information
-            selectedSensor = marker.getTitle();
-
-            //parkingReqSpot.setText(selectedSensor.toString());
-
-            selectedSensorStatus = "Empty";
-
-            nearest.setText("Reverse Spot");
-            Toast.makeText(getContext(), marker.getTitle() + " Is Selected For Reservation!", Toast.LENGTH_SHORT).show();
-
-            Log.e("MarkerClick", "Sensor details will be shown here..");
-        } else {
-            nearest.setText("Find Nearest");
-            selectedSensorStatus = "Occupied";
-            Toast.makeText(getContext(), marker.getTitle() + " Is already occupied, please an empty parking space.", Toast.LENGTH_LONG).show();
-        }
+//        if (spotstatus.equalsIgnoreCase("Empty") || spotstatus.equalsIgnoreCase("Occupied.")) {
+//            //Toast.makeTextHome(getContext(),"Sensor details will be shown here..",Toast.LENGTH_SHORT);
+//
+//            selectedSensor = marker.getTitle();
+//            Timber.e("openDialog");
+//            openDialog(selectedSensor);
+//
+//            //R.id.nearest:
+//            // get the nearest sensor information
+//            selectedSensor = marker.getTitle();
+//
+//            //parkingReqSpot.setText(selectedSensor.toString());
+//
+//            selectedSensorStatus = "Empty";
+//
+//            nearest.setText("Reverse Spot");
+//            Toast.makeText(getContext(), marker.getTitle() + " Is Selected For Reservation!", Toast.LENGTH_SHORT).show();
+//
+//            Timber.e("Sensor details will be shown here..");
+//        } else {
+//            nearest.setText("Find Nearest");
+//            selectedSensorStatus = "Occupied";
+//            Toast.makeText(getContext(), marker.getTitle() + " Is already occupied, please an empty parking space.", Toast.LENGTH_LONG).show();
+//        }
     }
 
     @Override
@@ -588,6 +526,42 @@ public class HomeFragment extends Fragment implements
                 CameraUpdate location = CameraUpdateFactory.newLatLngZoom(nearestRouteCoordinate, 18);
                 googleMap.animateCamera(location);
                 break;
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+//            case R.id.search:
+//                onSearchCalled();
+//                return true;
+            case android.R.id.home:
+                if (getActivity() != null)
+                    getActivity().finish();
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Place place = Autocomplete.getPlaceFromIntent(data);
+                Timber.i("Place: " + place.getName() + ", " + place.getId() + ", " + place.getAddress());
+                Toast.makeText(getActivity(), "ID: " + place.getId() + "address:" + place.getAddress() + "Name:" + place.getName() + " latlong: " + place.getLatLng(), Toast.LENGTH_SHORT).show();
+                String address = place.getAddress();
+                // do query with address
+
+            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+                // TODO: Handle the error.
+                Status status = Autocomplete.getStatusFromIntent(data);
+                Toast.makeText(getActivity(), "Error: " + status.getStatusMessage(), Toast.LENGTH_LONG).show();
+                Timber.i(status.getStatusMessage());
+            } else if (resultCode == RESULT_CANCELED) {
+                // The user canceled the operation.
+            }
         }
     }
 
@@ -668,10 +642,10 @@ public class HomeFragment extends Fragment implements
      * if there is not permission granted, just enable the permission.
      */
     private boolean checkPermission() {
-        int access_fine_location = ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION);
-        int access_coarse_location = ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION);
+        int accessFineLocation = ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION);
+        int accessCoarseLocation = ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION);
 
-        return access_fine_location == PackageManager.PERMISSION_GRANTED && access_coarse_location == PackageManager.PERMISSION_GRANTED;
+        return accessFineLocation == PackageManager.PERMISSION_GRANTED && accessCoarseLocation == PackageManager.PERMISSION_GRANTED;
     }
 
     /**
@@ -711,28 +685,18 @@ public class HomeFragment extends Fragment implements
     }
 
     private void initGPS() {
+        Timber.e("initGPS");
         gpsTracker = new GPSTracker(getContext(), this);
+//        googleMap.setOnMyLocationChangeListener(myLocationChangeListener);
         if (gpsTracker.canGetLocation()) {
             double latitude = gpsTracker.getLatitude();
             double longitude = gpsTracker.getLongitude();
 
             if (latitude != 0.0 || longitude != 0.0) {
                 GlobalVars.location = new MyLocation(latitude, longitude);
-//                // latitude and longitude
-//                double latitude2 = 17.385044;
-//                double longitude2 = 78.486671;
-//
-//// create marker
-//                MarkerOptions marker = new MarkerOptions().position(new LatLng(latitude, longitude)).title("Hello Maps");
-//
-//// Changing marker icon
-//                 marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.car_icon));   //setIcon()));
-//
-//// adding marker
-//                googleMap.addMarker(marker);
                 Timber.e("Current Location -> %s -> %s ", GlobalVars.location.latitude, GlobalVars.location.longitude);
             }
-            googleMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude)));
+//            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude),15));
 //            userLocationMarker = googleMap.addMarker(new MarkerOptions().position(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude)).title("").icon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running)));
 
         } else {
@@ -781,11 +745,11 @@ public class HomeFragment extends Fragment implements
             // Enable / Disable Compass icon
             googleMap.getUiSettings().setCompassEnabled(true);
             // Enable / Disable Rotate gesture
-//            googleMap.getUiSettings().setRotateGesturesEnabled(true);
+            googleMap.getUiSettings().setRotateGesturesEnabled(true);
             // Enable / Disable zooming functionality
             googleMap.getUiSettings().setZoomGesturesEnabled(true);
 
-            BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.car_icon);
+//            BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.car_icon);
 
             //_marker.setIcon(icon);
         }
@@ -809,10 +773,12 @@ public class HomeFragment extends Fragment implements
         PlacesClient placesClient = Places.createClient(getActivity().getApplicationContext());
         placesClient.findAutocompletePredictions(FindAutocompletePredictionsRequest.builder().build());
 
+
         // Initialize the AutocompleteSupportFragment.
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment) getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+
         if (autocompleteFragment != null) {
-            autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG));
+            autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG, Place.Field.ADDRESS_COMPONENTS, Place.Field.PLUS_CODE, Place.Field.TYPES));
             Timber.d(String.valueOf(Place.Field.ID));
             Timber.d(String.valueOf(Place.Field.NAME));
             autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
@@ -837,7 +803,15 @@ public class HomeFragment extends Fragment implements
 
                         String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), searchPlaceLatLng);
                         TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
-                        taskRequestDirections.execute(url);
+                        if (googleMap!=null){
+                            googleMap.clear();
+                            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                            googleMap.addMarker(markerOptions);
+                            fetchSensors();
+                            taskRequestDirections.execute(url);
+                        }
+
+
                     }
 
                 }
@@ -845,13 +819,29 @@ public class HomeFragment extends Fragment implements
                 @Override
                 public void onError(Status status) {
                     // TODO: Handle the error.
-                    Timber.i("An error occurred: " + status);
+                    Timber.i("An error occurred: -> %s", status);
 //                    Toast.makeText(getActivity(), "Place selection failed: " + status.getStatusMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         }
     }
 
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
+        //inflate menu
+        inflater.inflate(R.menu.menu_search, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    private void onSearchCalled() {
+// Set the fields to specify which types of place data to return.
+        List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG);
+        // Start the autocomplete intent.
+        Intent intent = new Autocomplete.IntentBuilder(
+                AutocompleteActivityMode.FULLSCREEN, fields).setCountry("BAN") //Bangladesh
+                .build(getActivity());
+        startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
+    }
 
     public void fetchSensors() {
 
@@ -1095,10 +1085,162 @@ public class HomeFragment extends Fragment implements
 //        Toast.makeText(getActivity(), "Geche", Toast.LENGTH_SHORT).show()
         fetchSensors();
         Timber.e("Zoom call hoiche");
+//        googleMap.clear();
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(event.location, 13));
         String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), event.location);
         TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
         taskRequestDirections.execute(url);
     }
 
+    public class TaskRequestDirections extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String responseString = "";
+            responseString = requestDirection(strings[0]);
+            return responseString;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            //Parse json here
+            TaskParser taskParser = new TaskParser();
+            taskParser.execute(s);
+        }
+    }
+
+    private String requestDirection(String reqUrl) {
+        String responseString = "";
+        InputStream inputStream = null;
+        HttpURLConnection httpURLConnection = null;
+        try {
+            URL url = new URL(reqUrl);
+            httpURLConnection = (HttpURLConnection) url.openConnection();
+            httpURLConnection.connect();
+
+            //Get the response result
+            inputStream = httpURLConnection.getInputStream();
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+            StringBuffer stringBuffer = new StringBuffer();
+            String line = "";
+            while ((line = bufferedReader.readLine()) != null) {
+                stringBuffer.append(line);
+            }
+
+            responseString = stringBuffer.toString();
+            bufferedReader.close();
+            inputStreamReader.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            httpURLConnection.disconnect();
+        }
+        return responseString;
+    }
+
+    public class TaskParser extends AsyncTask<String, Void, List<List<HashMap<String, String>>>> {
+
+        @Override
+        protected List<List<HashMap<String, String>>> doInBackground(String... strings) {
+            JSONObject jsonObject = null;
+            List<List<HashMap<String, String>>> routes = null;
+            try {
+                jsonObject = new JSONObject(strings[0]);
+                DirectionsParser directionsParser = new DirectionsParser();
+                routes = directionsParser.parse(jsonObject);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return routes;
+        }
+
+        @Override
+        protected void onPostExecute(List<List<HashMap<String, String>>> lists) {
+            //Get list route and display it into the map
+
+            ArrayList points = null;
+
+            PolylineOptions polylineOptions = null;
+            MarkerOptions markerOptions = new MarkerOptions();
+            String distance = "";
+            String duration = "";
+
+            if (lists.size() < 1) {
+                Toast.makeText(getActivity(), "No Points", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            for (List<HashMap<String, String>> path : lists) {
+                points = new ArrayList();
+                polylineOptions = new PolylineOptions();
+
+                for (HashMap<String, String> point : path) {
+                    double lat = Double.parseDouble(point.get("lat"));
+                    double lon = Double.parseDouble(point.get("lon"));
+
+                    points.add(new LatLng(lat, lon));
+                }
+
+
+                polylineOptions.addAll(points);
+                polylineOptions.width(7);
+                if (flag == 1) {
+                    polylineOptions.color(Color.BLACK);
+                    polylineOptions.width(5);
+                } else if (flag == 2) {
+                    polylineOptions.color(Color.RED);
+                    polylineOptions.width(4);
+                }
+                flag++;
+
+                polylineOptions.geodesic(true);
+
+            }
+
+            if (polylineOptions != null) {
+                googleMap.addPolyline(polylineOptions);
+
+            } else {
+                Toast.makeText(getActivity(), "Direction not found!", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    public double showDistance(LatLng from, LatLng to) {
+
+        int Radius = 6371;// radius of earth in Km
+        double lat1 = from.latitude;
+        double lat2 = to.latitude;
+        double lon1 = from.longitude;
+        double lon2 = to.longitude;
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(Math.toRadians(lat1))
+                * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon / 2)
+                * Math.sin(dLon / 2);
+        double c = 2 * Math.asin(Math.sqrt(a));
+        double valueResult = Radius * c;
+
+        double km = valueResult / 1;
+        DecimalFormat newFormat = new DecimalFormat("####");
+        int kmInDec = Integer.parseInt(newFormat.format(km));
+        double meter = valueResult % 1000;
+        int meterInDec = Integer.parseInt(newFormat.format(meter));
+        Timber.i("" + valueResult + "   KM  " + kmInDec
+                + " Meter   " + meterInDec);
+
+        return (Radius * c);
+    }
 }

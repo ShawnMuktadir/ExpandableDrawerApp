@@ -25,14 +25,12 @@ import www.fiberathome.com.parkingapp.utils.SharedPreManager;
  */
 public class ProfileFragment extends Fragment {
 
-
     private TextView fullnameTV;
     private TextView mobileNoTV;
     private TextView vehicleNoTV;
     private ImageView userProfilePic;
 
     private Button editProfile;
-
 
     public ProfileFragment() {
         // Required empty public constructor

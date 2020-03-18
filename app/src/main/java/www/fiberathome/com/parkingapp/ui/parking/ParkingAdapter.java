@@ -1,6 +1,8 @@
 package www.fiberathome.com.parkingapp.ui.parking;
 
 import android.content.Context;
+import android.graphics.Path;
+import android.icu.text.IDNA;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,15 +12,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.akexorcist.googledirection.DirectionCallback;
-import com.akexorcist.googledirection.GoogleDirection;
-import com.akexorcist.googledirection.constant.RequestResult;
-import com.akexorcist.googledirection.constant.TransportMode;
-import com.akexorcist.googledirection.model.Direction;
-import com.akexorcist.googledirection.model.Info;
-import com.akexorcist.googledirection.model.Leg;
-import com.akexorcist.googledirection.model.Route;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.text.DecimalFormat;
@@ -26,6 +19,7 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import okhttp3.Route;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.GlobalVars;
@@ -82,74 +76,76 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             parkingViewHolder.view.setVisibility(View.GONE);
         }
     }
-
-    private String[] getDestinationInfo(LatLng latLngDestination) {
-//        progressDialog();
-        String serverKey = context.getResources().getString(R.string.google_maps_key); // Api Key For Google Direction API \\
-        final LatLng origin = new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude);
-        final LatLng destination = latLngDestination;
-        final String[] duration = new String[1];
-        //-------------Using AK Exorcist Google Direction Library---------------\\
-        GoogleDirection.withServerKey(serverKey)
-                .from(origin)
-                .to(destination)
-                .transportMode(TransportMode.DRIVING)
-                .execute(new DirectionCallback() {
-                    @Override
-                    public void onDirectionSuccess(Direction direction, String rawBody) {
-//                        dismissDialog();
-                        String status = direction.getStatus();
-                        if (status.equals(RequestResult.OK)) {
-                            Route route = direction.getRouteList().get(0);
-                            Leg leg = route.getLegList().get(0);
-                            Info distanceInfo = leg.getDistance();
-                            Info durationInfo = leg.getDuration();
-                            String distance = distanceInfo.getText();
-                            duration[0] = durationInfo.getText();
-
-                            //------------Displaying Distance and Time-----------------\\
-                            Timber.e("Distance Duration -> %s -> %s", distance, duration[0]);
-//                            showingDistanceTime(distance, duration); // Showing distance and time to the user in the UI \\
-//                            String message = "Total Distance is " + distance + " and Estimated Time is " + duration;
-//                            StaticMethods.customSnackBar(consumerHomeActivity.parentLayout, message,
-//                                    getResources().getColor(R.color.colorPrimary),
-//                                    getResources().getColor(R.color.colorWhite), 3000);
-
-                            //--------------Drawing Path-----------------\\
-//                            ArrayList<LatLng> directionPositionList = leg.getDirectionPoint();
-//                            PolylineOptions polylineOptions = DirectionConverter.createPolyline(getActivity(),
-//                                    directionPositionList, 5, getResources().getColor(R.color.colorPrimary));
-//                            googleMap.addPolyline(polylineOptions);
-                            //--------------------------------------------\\
-
-                            //-----------Zooming the map according to marker bounds-------------\\
-//                            LatLngBounds.Builder builder = new LatLngBounds.Builder();
-//                            builder.include(origin);
-//                            builder.include(destination);
-//                            LatLngBounds bounds = builder.build();
+    /**
+     * Draw polyline on map, get distance and duration of the route
+     *
+//     * @param latLngDestination LatLng of the destination
+     */
+//    private void getDestinationInfo(LatLng latLngDestination) {
+////        progressDialog();
+//        String serverKey = getResources().getString(R.string.google_maps_key); // Api Key For Google Direction API \\
+//        final LatLng origin = new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude);
+//        final LatLng destination = latLngDestination;
+//        //-------------Using AK Exorcist Google Direction Library---------------\\
+//        GoogleDirection.withServerKey(serverKey)
+//                .from(origin)
+//                .to(destination)
+//                .transportMode(TransportMode.DRIVING)
+//                .execute(new DirectionCallback() {
+//                    @Override
+//                    public void onDirectionSuccess(Path.Direction direction, String rawBody) {
+////                        dismissDialog();
+//                        String status = direction.getStatus();
+//                        if (status.equals(RequestResult.OK)) {
+//                            Route route = direction.getRouteList().get(0);
+//                            Leg leg = route.getLegList().get(0);
+//                            IDNA.Info distanceInfo = leg.getDistance();
+//                            Info durationInfo = leg.getDuration();
+//                            String distance = distanceInfo.getText();
+//                            String duration = durationInfo.getText();
 //
-//                            int width = getResources().getDisplayMetrics().widthPixels;
-//                            int height = getResources().getDisplayMetrics().heightPixels;
-//                            int padding = (int) (width * 0.20); // offset from edges of the map 10% of screen
+//                            //------------Displaying Distance and Time-----------------\\
+//                            Timber.e("Distance Duration -> %s -> %s", distance, duration);
+////                            showingDistanceTime(distance, duration); // Showing distance and time to the user in the UI \\
+////                            String message = "Total Distance is " + distance + " and Estimated Time is " + duration;
+////                            StaticMethods.customSnackBar(consumerHomeActivity.parentLayout, message,
+////                                    getResources().getColor(R.color.colorPrimary),
+////                                    getResources().getColor(R.color.colorWhite), 3000);
 //
-//                            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
-//                            googleMap.animateCamera(cu);
-                            //------------------------------------------------------------------\\
-
-                        } else if (status.equals(RequestResult.NOT_FOUND)) {
-                            Toast.makeText(context, "No routes exist", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onDirectionFailure(Throwable t) {
-                        // Do something here
-                    }
-                });
-        //-------------------------------------------------------------------------------\\
-        return new String[]{duration[0]};
-
-    }
+//                            //--------------Drawing Path-----------------\\
+////                            ArrayList<LatLng> directionPositionList = leg.getDirectionPoint();
+////                            PolylineOptions polylineOptions = DirectionConverter.createPolyline(getActivity(),
+////                                    directionPositionList, 5, getResources().getColor(R.color.colorPrimary));
+////                            googleMap.addPolyline(polylineOptions);
+//                            //--------------------------------------------\\
+//
+//                            //-----------Zooming the map according to marker bounds-------------\\
+////                            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+////                            builder.include(origin);
+////                            builder.include(destination);
+////                            LatLngBounds bounds = builder.build();
+////
+////                            int width = getResources().getDisplayMetrics().widthPixels;
+////                            int height = getResources().getDisplayMetrics().heightPixels;
+////                            int padding = (int) (width * 0.20); // offset from edges of the map 10% of screen
+////
+////                            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
+////                            googleMap.animateCamera(cu);
+//                            //------------------------------------------------------------------\\
+//
+//                        } else if (status.equals(RequestResult.NOT_FOUND)) {
+//                            Toast.makeText(getActivity(), "No routes exist", Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onDirectionFailure(Throwable t) {
+//                        // Do something here
+//                    }
+//                });
+//        //-------------------------------------------------------------------------------\\
+//
+//    }
 
     private double distance(double lat1, double lon1, double lat2, double lon2) {
         double theta = lon1 - lon2;

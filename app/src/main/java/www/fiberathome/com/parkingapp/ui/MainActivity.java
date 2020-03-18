@@ -8,6 +8,10 @@ import android.graphics.Bitmap;
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 
@@ -19,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.os.Bundle;
 
 import androidx.appcompat.widget.Toolbar;
@@ -31,6 +36,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.maps.model.LatLng;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
@@ -51,6 +57,7 @@ import www.fiberathome.com.parkingapp.ui.fragments.BookingFragment;
 import www.fiberathome.com.parkingapp.ui.fragments.ChangePasswordFragment;
 import www.fiberathome.com.parkingapp.ui.fragments.HomeFragment;
 import www.fiberathome.com.parkingapp.ui.fragments.LawFragment;
+import www.fiberathome.com.parkingapp.ui.fragments.NotificationFragment;
 import www.fiberathome.com.parkingapp.ui.parking.ParkingFragment;
 import www.fiberathome.com.parkingapp.ui.fragments.ProfileFragment;
 import www.fiberathome.com.parkingapp.base.AppConfig;
@@ -243,15 +250,17 @@ public class MainActivity extends AppCompatActivity implements MainView, BottomN
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ParkingFragment()).commit();
                 break;
 
-            case R.id.nav_booking:
-                toolbar.setTitle("Booking");
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new BookingFragment()).commit();
-                break;
-
             case R.id.nav_law:
                 toolbar.setTitle("Law");
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LawFragment()).commit();
                 break;
+
+            case R.id.nav_notification:
+                toolbar.setTitle("Notification");
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new NotificationFragment()).commit();
+                break;
+
+
 
             case R.id.nav_profile:
                 toolbar.setTitle("Profile");
@@ -299,7 +308,7 @@ public class MainActivity extends AppCompatActivity implements MainView, BottomN
                 bottomNavigationView.setVisibility(View.VISIBLE);
                 EventBus.getDefault().post(new SetMarkerEvent(event.location));
             }
-        }, 500);
+        }, 1000);
     }
 
     public void onStart() {

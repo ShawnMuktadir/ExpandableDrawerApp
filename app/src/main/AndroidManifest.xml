@@ -33,7 +33,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:networkSecurityConfig="@xml/network_security_config"
-        tools:targetApi="n">
+        tools:targetApi="n"
+        tools:ignore="AllowBackup">
 
         <activity
             android:name=".ui.StartActivity"

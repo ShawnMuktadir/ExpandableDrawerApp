@@ -16,11 +16,11 @@
             android:iconTint="@color/blackColor"
             android:title="@string/parking" />
 
-        <item
-            android:id="@+id/nav_booking"
-            android:icon="@drawable/ic_options"
-            android:iconTint="@color/blackColor"
-            android:title="@string/bookings" />
+<!--        <item-->
+<!--            android:id="@+id/nav_booking"-->
+<!--            android:icon="@drawable/ic_options"-->
+<!--            android:iconTint="@color/blackColor"-->
+<!--            android:title="@string/bookings" />-->
 
         <item
             android:id="@+id/nav_law"
@@ -29,11 +29,11 @@
             android:title="@string/law" />
 
 
-<!--        <item-->
-<!--            android:id="@+id/nav_notification"-->
-<!--            android:icon="@drawable/ic_notification"-->
-<!--            android:iconTint="@color/blackColor"-->
-<!--            android:title="@string/law" />-->
+        <item
+            android:id="@+id/nav_notification"
+            android:icon="@drawable/ic_notification"
+            android:iconTint="@color/blackColor"
+            android:title="@string/notification" />
 
 
         <item
