@@ -12,7 +12,11 @@ import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -123,6 +127,48 @@ public class ApplicationUtils {
             }
         });
 
+    }
+
+    public static void addFragmentToActivity(@NonNull FragmentManager fragmentManager,
+                                             @NonNull Fragment fragment, int frameId) {
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(frameId, fragment);
+        transaction.commit();
+    }
+
+    public static void addFragmentToActivityWithBackStack(@NonNull FragmentManager fragmentManager,
+                                                          @NonNull Fragment fragment, int frameId, String title) {
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(frameId, fragment);
+        transaction.addToBackStack(title);
+        transaction.commit();
+    }
+
+    public static void refreshFragment(@NonNull FragmentManager fragmentManager,
+                                       @NonNull Fragment fragment, int frameId) {
+        // Reload current fragment
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+//        transaction.setCustomAnimations(android.R.anim.fade_in,
+//                android.R.anim.fade_out);
+        transaction.replace(frameId, fragment);
+        transaction.detach(fragment);
+        transaction.attach(fragment);
+        transaction.commit();
+    }
+
+    public static Fragment recreateFragment(@NonNull FragmentManager fragmentManager,
+                                            @NonNull Fragment fragment) {
+        try {
+            Fragment.SavedState savedState = fragmentManager.saveFragmentInstanceState(fragment);
+
+            Fragment newInstance = fragment.getClass().newInstance();
+            newInstance.setInitialSavedState(savedState);
+
+            return newInstance;
+        } catch (Exception e) // InstantiationException, IllegalAccessException
+        {
+            throw new RuntimeException("Cannot reinstantiate fragment " + fragment.getClass().getName(), e);
+        }
     }
 
 

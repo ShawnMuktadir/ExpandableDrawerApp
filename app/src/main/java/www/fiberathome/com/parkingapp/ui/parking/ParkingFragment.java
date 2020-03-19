@@ -37,6 +37,7 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionEvent;
@@ -49,6 +50,7 @@ import www.fiberathome.com.parkingapp.ui.fragments.HomeFragment;
  */
 public class ParkingFragment extends Fragment {
 
+    private static final String TAG = "ParkingFRagment";
     @BindView(R.id.recyclerViewParking)
     RecyclerView recyclerViewParking;
     @BindView(R.id.swipeRefreshLayout)
@@ -82,20 +84,9 @@ public class ParkingFragment extends Fragment {
     public double distance;
     public String duration;
     private ProgressDialog progressDialog;
-    private HomeFragment homeFragment;
 
     public ParkingFragment() {
         // Required empty public constructor
-    }
-
-    public static ParkingFragment newInstance(HomeFragment homeFragment) {
-        ParkingFragment parkingFragment = new ParkingFragment();
-        parkingFragment.initializeFragment(homeFragment);
-        return parkingFragment;
-    }
-
-    private void initializeFragment(HomeFragment homeFragment) {
-        this.homeFragment = homeFragment;
     }
 
     @Override
@@ -103,6 +94,12 @@ public class ParkingFragment extends Fragment {
         setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
         context = getActivity();
+
+        ParkingFragment fragment = new ParkingFragment(); //Your Fragment
+        SensorArea sensorArea = new SensorArea(); // Your Object
+        Bundle bundleParcelable = new Bundle();
+        bundleParcelable.putParcelable("sensor", sensorArea); // Key, value
+        fragment.setArguments(bundleParcelable);
     }
 
     @Override
@@ -155,8 +152,7 @@ public class ParkingFragment extends Fragment {
         this.sensorAreas = sensorAreas;
         recyclerViewParking.setHasFixedSize(true);
         recyclerViewParking.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
-        homeFragment = new HomeFragment();
-        parkingAdapter = new ParkingAdapter(context, this, homeFragment, sensorAreas);
+        parkingAdapter = new ParkingAdapter(context, this, sensorAreas);
         recyclerViewParking.setAdapter(parkingAdapter);
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -223,6 +219,17 @@ public class ParkingFragment extends Fragment {
         this.location = location;
         this.distance = distance;
         this.duration = duration;
+
+        Timber.e("name -> %s", name);
+        Timber.e("count -> %s", count);
+        Timber.e("location -> %s", location);
+        Timber.e("distance -> %s", distance);
+
+        ParkingFragment fragment = new ParkingFragment(); //Your Fragment
+        SensorArea car = new SensorArea(); // Your Object
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("carInfo", car); // Key, value
+        fragment.setArguments(bundle);
 
         if (isVisible) {
             BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);

@@ -3,6 +3,7 @@ package www.fiberathome.com.parkingapp.ui.parking;
 import android.content.Context;
 import android.graphics.Path;
 import android.icu.text.IDNA;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,8 +12,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -25,8 +28,10 @@ import okhttp3.Route;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionEvent;
+import www.fiberathome.com.parkingapp.eventBus.SetMarkerEvent;
 import www.fiberathome.com.parkingapp.model.GlobalVars;
 import www.fiberathome.com.parkingapp.model.SensorArea;
+import www.fiberathome.com.parkingapp.ui.MainActivity;
 import www.fiberathome.com.parkingapp.ui.fragments.HomeFragment;
 
 public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -36,12 +41,12 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private ParkingFragment parkingFragment;
     private HomeFragment homeFragment;
     private int selectedItem;
+    private double distance;
     public LatLng location;
 
-    public ParkingAdapter(Context context, ParkingFragment parkingFragment, HomeFragment homeFragment, ArrayList<SensorArea> sensorAreas) {
+    public ParkingAdapter(Context context, ParkingFragment parkingFragment, ArrayList<SensorArea> sensorAreas) {
         this.context = context;
         this.parkingFragment = parkingFragment;
-        this.homeFragment = homeFragment;
         this.sensorAreas = sensorAreas;
         selectedItem = -1;
     }
@@ -63,7 +68,8 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         parkingViewHolder.textViewParkingAreaName.setText(sensorArea.getParkingArea());
         parkingViewHolder.textViewParkingAreaCount.setText(sensorArea.getCount());
 
-        double distance = distance(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude, sensorArea.getLat(), sensorArea.getLng());
+        distance = distance(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude, sensorArea.getLat(), sensorArea.getLng());
+        sensorArea.setDistance(distance);
 //        String[] duration = getDestinationInfo(new LatLng(sensorArea.getLat(), sensorArea.getLng()));
 //        Timber.e("duration -> %s", duration);
         parkingViewHolder.textViewParkingDistance.setText(new DecimalFormat("##.##").format(distance) + " km");
@@ -71,9 +77,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         parkingViewHolder.card_view.setOnClickListener(v -> {
             EventBus.getDefault().post(new GetDirectionEvent(new LatLng(sensorArea.getLat(), sensorArea.getLng())));
-//            parkingFragment.layoutVisible(true, sensorArea.getParkingArea(), sensorArea.getCount(), distance, new LatLng(sensorArea.getLat(), sensorArea.getLng()));
-            homeFragment = new HomeFragment();
-            homeFragment.layoutVisible(true, sensorArea.getParkingArea(), sensorArea.getCount(), distance, new LatLng(sensorArea.getLat(), sensorArea.getLng()));
+            parkingFragment.layoutVisible(true, sensorArea.getParkingArea(), sensorArea.getCount(), distance, new LatLng(sensorArea.getLat(), sensorArea.getLng()));
             selectedItem = position;
             notifyDataSetChanged();
         });

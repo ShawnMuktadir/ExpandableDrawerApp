@@ -97,10 +97,14 @@ import www.fiberathome.com.parkingapp.gps.GPSTracker;
 import www.fiberathome.com.parkingapp.gps.GPSTrackerListener;
 import www.fiberathome.com.parkingapp.model.GlobalVars;
 import www.fiberathome.com.parkingapp.model.MyLocation;
+import www.fiberathome.com.parkingapp.model.SensorArea;
 import www.fiberathome.com.parkingapp.model.SensorList;
 import www.fiberathome.com.parkingapp.module.PlayerPrefs;
 import www.fiberathome.com.parkingapp.ui.DialogForm;
 import www.fiberathome.com.parkingapp.base.AppConfig;
+import www.fiberathome.com.parkingapp.ui.MainActivity;
+import www.fiberathome.com.parkingapp.ui.parking.ParkingFragment;
+import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -164,7 +168,6 @@ public class HomeFragment extends Fragment implements
     ArrayList<LatLng> coordList = new ArrayList<LatLng>();
     private SupportMapFragment supportMapFragment;
     private View mapView;
-    ;
     private GoogleMap googleMap;
     private Marker userLocationMarker;
     private GPSTracker gpsTracker;
@@ -191,7 +194,6 @@ public class HomeFragment extends Fragment implements
     private int getDirectionButtonClicked = 0;
     private ProgressDialog progressDialog;
 
-
     public HomeFragment() {
 
     }
@@ -215,6 +217,21 @@ public class HomeFragment extends Fragment implements
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_home, container, false);
         ButterKnife.bind(this, view);
+
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            SensorArea sensorArea = bundle.getParcelable("sensor"); // Key
+            Timber.e("sensorArea -> %s", sensorArea);
+            if (sensorArea != null) {
+                textViewParkingAreaName.setText(sensorArea.getParkingArea());
+                textViewParkingAreaCount.setText(sensorArea.getCount());
+                textViewParkingDistance.setText(String.valueOf(sensorArea.getDistance()));
+            } else {
+                Toast.makeText(context, "Genjam", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Timber.e("Genjam");
+        }
         setListeners();
         try {
             initialize();
@@ -238,13 +255,14 @@ public class HomeFragment extends Fragment implements
 
         btnGetDirection.setOnClickListener(v -> {
             if (getDirectionButtonClicked == 0) {
-                getDirectionButtonClicked=2;
+                getDirectionButtonClicked = 2;
                 if (location != null) {
                     EventBus.getDefault().post(new GetDirectionAfterButtonClickEvent(location));
 //                    progressDialog = new ProgressDialog(getActivity());
 //                    progressDialog.setMessage("Please wait...");
 //                    progressDialog.show();
 //                btnGetDirection.setVisibility(View.GONE);
+                    fetchSensors();
                     MarkerOptions markerOptions = new MarkerOptions();
                     markerOptions.position(location);
                     markerOptions.title(name);
@@ -254,12 +272,15 @@ public class HomeFragment extends Fragment implements
                     googleMap.addMarker(markerOptions);
 //              move map camera
                     googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 13));
-                    linearLayoutNameCount.setVisibility(View.VISIBLE);
+//                    linearLayoutNameCount.setVisibility(View.VISIBLE);
+                    linearLayoutBottom.setVisibility(View.VISIBLE);
                     imageViewBack.setVisibility(View.VISIBLE);
                     btnGetDirection.setText("Cancel Direction");
                     btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.red));
-                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
-                    btnGetDirection.setLayoutParams(layoutParams);
+                    BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
+                    navBar.setVisibility(View.GONE);
+//                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
+//                    btnGetDirection.setLayoutParams(layoutParams);
                 }
 
 //                if (searchPlaceLatLng != null) {
@@ -277,48 +298,45 @@ public class HomeFragment extends Fragment implements
 //                    progressDialog.dismiss();
 //                }
             } else if (getDirectionButtonClicked == 2) {
-                getDirectionButtonClicked=0;
+                getDirectionButtonClicked = 0;
                 if (googleMap != null) {
                     googleMap.clear();
                     fetchSensors();
-
-                    btnGetDirection.setVisibility(View.GONE);
-                    imageViewBack.setVisibility(View.GONE);
+                    linearLayoutBottom.setVisibility(View.GONE);
                     linearLayoutNameCount.setVisibility(View.GONE);
                     btnGetDirection.setText("Get Direction");
                     btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
-                    linearLayoutBottom.setVisibility(View.VISIBLE);
-//                    btnGetDirection.setVisibility(View.VISIBLE);
-//                    linearLayoutNameCount.setVisibility(View.VISIBLE);
-//                    imageViewBack.setVisibility(View.VISIBLE);
                     BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
                     navBar.setVisibility(View.VISIBLE);
                 }
             } else if (getDirectionButtonClicked == 1) {
-                getDirectionButtonClicked++;
+                getDirectionButtonClicked = 2;
                 EventBus.getDefault().post(new GetDirectionForSearchEvent(searchPlaceLatLng));
-                    //initialize the progress dialog and show it
+                //initialize the progress dialog and show it
 //                    progressDialog = new ProgressDialog(getActivity());
 //                    progressDialog.setMessage("Please wait...");
 //                    progressDialog.show();
-                    fetchSensors();
-                    MarkerOptions markerOptions = new MarkerOptions();
-                    markerOptions.position(searchPlaceLatLng);
-                    markerOptions.title(name);
-                    markerOptions.draggable(true);
-                    coordList.add(new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));
-                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-                    googleMap.addMarker(markerOptions);
+                fetchSensors();
+                MarkerOptions markerOptions = new MarkerOptions();
+                markerOptions.position(searchPlaceLatLng);
+                markerOptions.title(name);
+                markerOptions.draggable(true);
+                coordList.add(new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));
+                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                googleMap.addMarker(markerOptions);
 //              move map camera
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 13));
-                    btnGetDirection.setVisibility(View.VISIBLE);
-                    linearLayoutNameCount.setVisibility(View.VISIBLE);
-                    imageViewBack.setVisibility(View.VISIBLE);
-                    btnGetDirection.setText("Cancel Direction");
-                    btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.red));
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 13));
+//                    linearLayoutNameCount.setVisibility(View.VISIBLE);
+                linearLayoutBottom.setVisibility(View.VISIBLE);
+                linearLayoutNameCount.setVisibility(View.VISIBLE);
+                imageViewBack.setVisibility(View.VISIBLE);
+                btnGetDirection.setText("Cancel Direction");
+                btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.red));
+                BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
+                navBar.setVisibility(View.GONE);
 //                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
 //                    btnGetDirection.setLayoutParams(layoutParams);
-                }
+            }
 
         });
     }
@@ -763,9 +781,9 @@ public class HomeFragment extends Fragment implements
 //            BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
 //            navBar.setVisibility(View.GONE);
             linearLayoutBottom.setVisibility(View.VISIBLE);
-            textViewParkingAreaCount.setText(count);
-            textViewParkingAreaName.setText(name);
-            textViewParkingDistance.setText(new DecimalFormat("##.##").format(distance) + " km");
+//            textViewParkingAreaCount.setText(count);
+//            textViewParkingAreaName.setText(name);
+//            textViewParkingDistance.setText(new DecimalFormat("##.##").format(distance) + " km");
 //            textViewParkingTravelTime.setText(duration);
         } else {
             BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
@@ -929,6 +947,7 @@ public class HomeFragment extends Fragment implements
                         BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
                         navBar.setVisibility(View.GONE);
                         linearLayoutBottom.setVisibility(View.VISIBLE);
+                        linearLayoutNameCount.setVisibility(View.VISIBLE);
                         btnGetDirection.setVisibility(View.VISIBLE);
                         imageViewBack.setVisibility(View.VISIBLE);
                         getDirectionButtonClicked = 1;
@@ -952,23 +971,6 @@ public class HomeFragment extends Fragment implements
                 }
             });
         }
-    }
-
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
-        //inflate menu
-//        inflater.inflate(R.menu.menu_search, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    private void onSearchCalled() {
-// Set the fields to specify which types of place data to return.
-        List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG);
-        // Start the autocomplete intent.
-        Intent intent = new Autocomplete.IntentBuilder(
-                AutocompleteActivityMode.FULLSCREEN, fields).setCountry("BAN") //Bangladesh
-                .build(getActivity());
-        startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
     }
 
     public void fetchSensors() {
@@ -1243,18 +1245,20 @@ public class HomeFragment extends Fragment implements
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if(googleMap!=null)
-                    googleMap.clear();
+//                if(googleMap!=null)
+//                    googleMap.clear();
                 // Do something after 2s = 2000ms
 //                progressDialog.dismiss();
                 btnGetDirection.setVisibility(View.VISIBLE);
-                linearLayoutNameCount.setVisibility(View.VISIBLE);
+//                linearLayoutNameCount.setVisibility(View.VISIBLE);
+                linearLayoutBottom.setVisibility(View.VISIBLE);
                 imageViewBack.setVisibility(View.VISIBLE);
                 String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), event.location);
                 TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
                 taskRequestDirections.execute(url);
             }
         }, 1000);
+
 
 //        String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), event.location);
 //        TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
@@ -1268,19 +1272,11 @@ public class HomeFragment extends Fragment implements
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if(googleMap!=null)
-                    googleMap.clear();
+//                if(googleMap!=null)
+//                    googleMap.clear();
 //                progressDialog.dismiss();
-                btnGetDirection.setVisibility(View.VISIBLE);
-                linearLayoutNameCount.setVisibility(View.VISIBLE);
-                imageViewBack.setVisibility(View.VISIBLE);
-                // Do something after 2s = 2000ms
-                EventBus.getDefault().post(new SetMarkerEvent(event.location));
-                BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
-                navBar.setVisibility(View.GONE);
-                linearLayoutBottom.setVisibility(View.VISIBLE);
-                linearLayoutNameCount.setVisibility(View.VISIBLE);
-                imageViewBack.setVisibility(View.VISIBLE);
+                searchPlaceLatLng = event.location;
+                EventBus.getDefault().post(new SetMarkerEvent(searchPlaceLatLng));
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(searchPlaceLatLng);
                 markerOptions.title(name);
@@ -1288,13 +1284,17 @@ public class HomeFragment extends Fragment implements
                 coordList.add(new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));
                 markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
                 googleMap.addMarker(markerOptions);
-//              move map camera
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 13));
+                //move map camera
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 15));
+                btnGetDirection.setVisibility(View.VISIBLE);
+//                linearLayoutNameCount.setVisibility(View.VISIBLE);
+                linearLayoutBottom.setVisibility(View.VISIBLE);
+                imageViewBack.setVisibility(View.VISIBLE);
                 String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), searchPlaceLatLng);
                 TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
                 taskRequestDirections.execute(url);
             }
-        }, 500);
+        }, 1000);
 
 //        String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), event.location);
 //        TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
@@ -1385,10 +1385,10 @@ public class HomeFragment extends Fragment implements
             String distance = "";
             String duration = "";
 
-            if (lists.size() < 1) {
-                Toast.makeText(getActivity(), "No Points", Toast.LENGTH_SHORT).show();
-                return;
-            }
+//            if (lists.size() < 1) {
+//                Toast.makeText(getActivity(), "No Points", Toast.LENGTH_SHORT).show();
+//                return;
+//            }
 
             for (List<HashMap<String, String>> path : lists) {
                 points = new ArrayList();
@@ -1405,16 +1405,17 @@ public class HomeFragment extends Fragment implements
                 polylineOptions.addAll(points);
                 polylineOptions.width(7);
                 if (flag == 1) {
-                    if (googleMap!=null)
-                        googleMap.clear();
-                    polylineOptions.color(Color.BLACK);
-                    polylineOptions.width(5);
-                } else if (flag == 2) {
-                    if (googleMap!=null)
-                        googleMap.clear();
+//                    if (googleMap != null)
+//                        googleMap.clear();
                     polylineOptions.color(Color.BLACK);
                     polylineOptions.width(5);
                 }
+//                else if (flag == 2) {
+////                    if (googleMap != null)
+////                        googleMap.clear();
+//                    polylineOptions.color(Color.BLACK);
+//                    polylineOptions.width(5);
+//                }
                 flag++;
 
                 polylineOptions.geodesic(true);

@@ -28,17 +28,17 @@ public class ParkingPresenterImpl implements ParkingPresenter {
 
             @Override
             public void onResponse(String response) {
-                Log.e(ParkingPresenterImpl.class.getCanonicalName(), "" + response);
+                Timber.e("onResponse -> %s", response);
                 try {
                     JSONObject object = new JSONObject(response);
                     JSONArray jsonArray = object.getJSONArray("sensors");
-                    for (int i =0 ; i<jsonArray.length(); i++ ) {
+                    for (int i = 0; i < jsonArray.length(); i++) {
                         SensorArea sensorArea = new SensorArea();
                         JSONArray array = jsonArray.getJSONArray(i);
                         sensorArea.setParkingArea(array.get(1).toString());
                         sensorArea.setLat(Double.parseDouble(array.get(2).toString()));
                         sensorArea.setLng(Double.parseDouble(array.get(3).toString()));
-                        sensorArea.setCount(array.get(4).toString()) ;
+                        sensorArea.setCount(array.get(4).toString());
                         sensorAreas.add(sensorArea);
                     }
                 } catch (JSONException e) {
