@@ -429,7 +429,7 @@ public class HomeFragment extends Fragment implements
     public void onMapReady(GoogleMap mMap) {
         this.googleMap = mMap;
         googleMap.setOnInfoWindowClickListener(this);
-        googleMap.setMyLocationEnabled(true);
+//        googleMap.setMyLocationEnabled(true);
 //        googleMap.setOnMyLocationChangeListener(myLocationChangeListener);
         initGPS();
         refreshUserGPSLocation();
@@ -1338,7 +1338,6 @@ public class HomeFragment extends Fragment implements
             while ((line = bufferedReader.readLine()) != null) {
                 stringBuffer.append(line);
             }
-
             responseString = stringBuffer.toString();
             bufferedReader.close();
             inputStreamReader.close();
