@@ -26,6 +26,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
+import timber.log.Timber;
 import www.fiberathome.com.parkingapp.BuildConfig;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.preference.StaticData;
@@ -169,6 +170,29 @@ public class ApplicationUtils {
         {
             throw new RuntimeException("Cannot reinstantiate fragment " + fragment.getClass().getName(), e);
         }
+    }
+
+    private static double deg2rad(double deg) {
+        return (deg * Math.PI / 180.0);
+    }
+
+    private static double rad2deg(double rad) {
+        return (rad * 180.0 / Math.PI);
+    }
+
+    public static double distance(double lat1, double lon1, double lat2, double lon2) {
+        double theta = lon1 - lon2;
+        double mile = Math.sin(deg2rad(lat1))
+                * Math.sin(deg2rad(lat2))
+                + Math.cos(deg2rad(lat1))
+                * Math.cos(deg2rad(lat2))
+                * Math.cos(deg2rad(theta));
+        mile = Math.acos(mile);
+        mile = rad2deg(mile);
+        mile = mile * 60 * 1.1515;
+        double km = mile / 0.62137;
+        Timber.e("distance -> %s", km);
+        return (km);
     }
 
 

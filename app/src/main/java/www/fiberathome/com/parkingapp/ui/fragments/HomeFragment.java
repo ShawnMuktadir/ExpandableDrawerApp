@@ -6,16 +6,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,7 +59,6 @@ import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -81,6 +79,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -91,6 +90,7 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionAfterButtonClickEvent;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionEvent;
+import www.fiberathome.com.parkingapp.eventBus.GetDirectionForMarkerEvent;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionForSearchEvent;
 import www.fiberathome.com.parkingapp.eventBus.SetMarkerEvent;
 import www.fiberathome.com.parkingapp.gps.GPSTracker;
@@ -102,8 +102,6 @@ import www.fiberathome.com.parkingapp.model.SensorList;
 import www.fiberathome.com.parkingapp.module.PlayerPrefs;
 import www.fiberathome.com.parkingapp.ui.DialogForm;
 import www.fiberathome.com.parkingapp.base.AppConfig;
-import www.fiberathome.com.parkingapp.ui.MainActivity;
-import www.fiberathome.com.parkingapp.ui.parking.ParkingFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 
 import static android.app.Activity.RESULT_CANCELED;
@@ -122,6 +120,7 @@ public class HomeFragment extends Fragment implements
         GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener, GoogleMap.OnCameraIdleListener, LocationListener, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
+    //from adapter
     @BindView(R.id.btnGetDirection)
     Button btnGetDirection;
     @BindView(R.id.imageViewBack)
@@ -139,11 +138,47 @@ public class HomeFragment extends Fragment implements
     @BindView(R.id.linearLayoutNameCount)
     LinearLayout linearLayoutNameCount;
 
+    //from search
+    @BindView(R.id.btnSearchGetDirection)
+    Button btnSearchGetDirection;
+    @BindView(R.id.imageViewSearchBack)
+    ImageView imageViewSearchBack;
+    @BindView(R.id.textViewSearchParkingAreaCount)
+    TextView textViewSearchParkingAreaCount;
+    @BindView(R.id.textViewSearchParkingAreaName)
+    TextView textViewSearchParkingAreaName;
+    @BindView(R.id.textViewSearchParkingDistance)
+    TextView textViewSearchParkingDistance;
+    @BindView(R.id.textViewSearchParkingTravelTime)
+    TextView textViewSearchParkingTravelTime;
+    @BindView(R.id.linearLayoutSearchBottom)
+    LinearLayout linearLayoutSearchBottom;
+    @BindView(R.id.linearLayoutSearchNameCount)
+    LinearLayout linearLayoutSearchNameCount;
+
+    //from marker
+    @BindView(R.id.btnMarkerGetDirection)
+    Button btnMarkerGetDirection;
+    @BindView(R.id.imageViewMarkerBack)
+    ImageView imageViewMarkerBack;
+    @BindView(R.id.textViewMarkerParkingAreaCount)
+    TextView textViewMarkerParkingAreaCount;
+    @BindView(R.id.textViewMarkerParkingAreaName)
+    TextView textViewMarkerParkingAreaName;
+    @BindView(R.id.textViewMarkerParkingDistance)
+    TextView textViewMarkerParkingDistance;
+    @BindView(R.id.textViewMarkerParkingTravelTime)
+    TextView textViewMarkerParkingTravelTime;
+    @BindView(R.id.linearLayoutMarkerBottom)
+    LinearLayout linearLayoutMarkerBottom;
+    @BindView(R.id.linearLayoutMarkerNameCount)
+    LinearLayout linearLayoutMarkerNameCount;
+
     private Context context;
     private String name, count;
-    private LatLng location;
     private double distance;
     private String duration;
+    private String address, city, state, country, subAdminArea, test, knownName, postalCode = "";
 
     //Create field for map button.
     private View locationButton;
@@ -161,8 +196,10 @@ public class HomeFragment extends Fragment implements
     public double nLongitude;
 
     /*Authors: Shawn And  Maruf*/
-    public LatLng nearestRouteCoordinate;
-    public LatLng searchPlaceLatLng;
+    private LatLng location;
+    private LatLng nearestRouteCoordinate;
+    private LatLng searchPlaceLatLng;
+    private LatLng markerPlaceLatLng;
     // global view
     View view;
     ArrayList<LatLng> coordList = new ArrayList<LatLng>();
@@ -192,6 +229,8 @@ public class HomeFragment extends Fragment implements
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
     private int getDirectionButtonClicked = 0;
+    private int getDirectionSearchButtonClicked = 0;
+    private int getDirectionMarkerButtonClicked = 0;
     private ProgressDialog progressDialog;
 
     public HomeFragment() {
@@ -238,11 +277,11 @@ public class HomeFragment extends Fragment implements
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        setListeners();
         return view;
     }
 
     private void setListeners() {
+
         imageViewBack.setOnClickListener(v -> {
             if (googleMap != null) {
                 googleMap.clear();
@@ -253,9 +292,29 @@ public class HomeFragment extends Fragment implements
             }
         });
 
+        imageViewSearchBack.setOnClickListener(v -> {
+            if (googleMap != null) {
+                googleMap.clear();
+                fetchSensors();
+                BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
+                navBar.setVisibility(View.VISIBLE);
+                layoutSearchVisible(false, "", "", 0.0, null);
+            }
+        });
+
+        imageViewMarkerBack.setOnClickListener(v -> {
+            if (googleMap != null) {
+                googleMap.clear();
+                fetchSensors();
+                BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
+                navBar.setVisibility(View.VISIBLE);
+                layoutMarkerVisible(false, "", "", 0.0, null);
+            }
+        });
+
         btnGetDirection.setOnClickListener(v -> {
             if (getDirectionButtonClicked == 0) {
-                getDirectionButtonClicked = 2;
+                getDirectionButtonClicked++;
                 if (location != null) {
                     EventBus.getDefault().post(new GetDirectionAfterButtonClickEvent(location));
 //                    progressDialog = new ProgressDialog(getActivity());
@@ -274,6 +333,8 @@ public class HomeFragment extends Fragment implements
                     googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 13));
 //                    linearLayoutNameCount.setVisibility(View.VISIBLE);
                     linearLayoutBottom.setVisibility(View.VISIBLE);
+                    linearLayoutSearchBottom.setVisibility(View.GONE);
+                    linearLayoutMarkerBottom.setVisibility(View.GONE);
                     imageViewBack.setVisibility(View.VISIBLE);
                     btnGetDirection.setText("Cancel Direction");
                     btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.red));
@@ -282,62 +343,121 @@ public class HomeFragment extends Fragment implements
 //                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
 //                    btnGetDirection.setLayoutParams(layoutParams);
                 }
-
-//                if (searchPlaceLatLng != null) {
-//                    EventBus.getDefault().post(new GetDirectionForSearchEvent(searchPlaceLatLng));
-//                    progressDialog = new ProgressDialog(getActivity());
-//                    progressDialog.setMessage("Please wait...");
-//                    progressDialog.show();
-//                    btnGetDirection.setVisibility(View.VISIBLE);
-//                    linearLayoutNameCount.setVisibility(View.VISIBLE);
-//                    imageViewBack.setVisibility(View.VISIBLE);
-//                    btnGetDirection.setText("Cancel Direction");
-//                    btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.red));
-//                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
-//                    btnGetDirection.setLayoutParams(layoutParams);
-//                    progressDialog.dismiss();
-//                }
-            } else if (getDirectionButtonClicked == 2) {
-                getDirectionButtonClicked = 0;
+            } else if (getDirectionButtonClicked == 1) {
+                getDirectionButtonClicked--;
                 if (googleMap != null) {
                     googleMap.clear();
                     fetchSensors();
+                    layoutVisible(false, "", "", 0.0, null);
                     linearLayoutBottom.setVisibility(View.GONE);
-                    linearLayoutNameCount.setVisibility(View.GONE);
+                    linearLayoutSearchBottom.setVisibility(View.GONE);
+                    linearLayoutMarkerBottom.setVisibility(View.GONE);
+//                    linearLayoutNameCount.setVisibility(View.GONE);
                     btnGetDirection.setText("Get Direction");
                     btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
                     BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
                     navBar.setVisibility(View.VISIBLE);
                 }
-            } else if (getDirectionButtonClicked == 1) {
-                getDirectionButtonClicked = 2;
-                EventBus.getDefault().post(new GetDirectionForSearchEvent(searchPlaceLatLng));
-                //initialize the progress dialog and show it
+            }
+        });
+
+        btnSearchGetDirection.setOnClickListener(v -> {
+            if (getDirectionSearchButtonClicked == 0) {
+                getDirectionSearchButtonClicked++;
+                if (searchPlaceLatLng != null) {
+                    EventBus.getDefault().post(new GetDirectionForSearchEvent(searchPlaceLatLng));
 //                    progressDialog = new ProgressDialog(getActivity());
 //                    progressDialog.setMessage("Please wait...");
 //                    progressDialog.show();
-                fetchSensors();
-                MarkerOptions markerOptions = new MarkerOptions();
-                markerOptions.position(searchPlaceLatLng);
-                markerOptions.title(name);
-                markerOptions.draggable(true);
-                coordList.add(new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));
-                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-                googleMap.addMarker(markerOptions);
+//                btnGetDirection.setVisibility(View.GONE);
+                    fetchSensors();
+                    MarkerOptions markerOptions = new MarkerOptions();
+                    markerOptions.position(searchPlaceLatLng);
+                    markerOptions.title(name);
+                    markerOptions.draggable(true);
+                    coordList.add(new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));
+                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                    googleMap.addMarker(markerOptions);
 //              move map camera
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 13));
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 13));
 //                    linearLayoutNameCount.setVisibility(View.VISIBLE);
-                linearLayoutBottom.setVisibility(View.VISIBLE);
-                linearLayoutNameCount.setVisibility(View.VISIBLE);
-                imageViewBack.setVisibility(View.VISIBLE);
-                btnGetDirection.setText("Cancel Direction");
-                btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.red));
-                BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
-                navBar.setVisibility(View.GONE);
+                    linearLayoutSearchBottom.setVisibility(View.VISIBLE);
+                    linearLayoutBottom.setVisibility(View.GONE);
+                    linearLayoutMarkerBottom.setVisibility(View.GONE);
+                    imageViewSearchBack.setVisibility(View.VISIBLE);
+                    btnSearchGetDirection.setText("Cancel Direction");
+                    btnSearchGetDirection.setBackgroundColor(context.getResources().getColor(R.color.red));
+                    BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
+                    navBar.setVisibility(View.GONE);
 //                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
 //                    btnGetDirection.setLayoutParams(layoutParams);
+                }
+            } else if (getDirectionSearchButtonClicked == 1) {
+                getDirectionSearchButtonClicked--;
+                if (googleMap != null) {
+                    googleMap.clear();
+                    fetchSensors();
+                    layoutSearchVisible(false, "", "", 0.0, null);
+                    btnSearchGetDirection.setText("Get Direction");
+                    btnSearchGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
+                    linearLayoutBottom.setVisibility(View.GONE);
+                    linearLayoutSearchBottom.setVisibility(View.GONE);
+                    linearLayoutMarkerBottom.setVisibility(View.GONE);
+//                    linearLayoutSearchNameCount.setVisibility(View.GONE);
+                    BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
+                    navBar.setVisibility(View.VISIBLE);
+                }
             }
+        });
 
+        btnMarkerGetDirection.setOnClickListener(v -> {
+            if (getDirectionMarkerButtonClicked == 0) {
+                getDirectionMarkerButtonClicked++;
+                if (markerPlaceLatLng != null) {
+                    EventBus.getDefault().post(new GetDirectionForMarkerEvent(markerPlaceLatLng));
+//                    progressDialog = new ProgressDialog(getActivity());
+//                    progressDialog.setMessage("Please wait...");
+//                    progressDialog.show();
+//                btnGetDirection.setVisibility(View.GONE);
+                    fetchSensors();
+                    MarkerOptions markerOptions = new MarkerOptions();
+                    markerOptions.position(markerPlaceLatLng);
+                    markerOptions.title(name);
+                    markerOptions.draggable(true);
+                    coordList.add(new LatLng(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude));
+                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                    googleMap.addMarker(markerOptions);
+//              move map camera
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 13));
+//                    linearLayoutNameCount.setVisibility(View.VISIBLE);
+                    linearLayoutSearchBottom.setVisibility(View.GONE);
+                    linearLayoutBottom.setVisibility(View.GONE);
+                    linearLayoutMarkerBottom.setVisibility(View.VISIBLE);
+                    imageViewMarkerBack.setVisibility(View.VISIBLE);
+                    btnMarkerGetDirection.setText("Cancel Direction");
+                    btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.red));
+                    BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
+                    navBar.setVisibility(View.GONE);
+//                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
+//                    btnGetDirection.setLayoutParams(layoutParams);
+                }
+            } else if (getDirectionMarkerButtonClicked == 1) {
+                getDirectionMarkerButtonClicked--;
+                if (googleMap != null) {
+                    googleMap.clear();
+                    fetchSensors();
+                    layoutMarkerVisible(false, "", "", 0.0, null);
+                    linearLayoutBottom.setVisibility(View.GONE);
+                    linearLayoutSearchBottom.setVisibility(View.GONE);
+//                    linearLayoutMarkerNameCount.setVisibility(View.GONE);
+//                    imageViewMarkerBack.setVisibility(View.GONE);
+//                    btnMarkerGetDirection.setVisibility(View.GONE);
+                    btnMarkerGetDirection.setText("Get Direction");
+                    btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
+                    BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
+                    navBar.setVisibility(View.VISIBLE);
+                }
+            }
         });
     }
 
@@ -428,13 +548,6 @@ public class HomeFragment extends Fragment implements
     @Override
     public void onMapReady(GoogleMap mMap) {
         this.googleMap = mMap;
-        googleMap.setOnInfoWindowClickListener(this);
-//        googleMap.setMyLocationEnabled(true);
-//        googleMap.setOnMyLocationChangeListener(myLocationChangeListener);
-        initGPS();
-        refreshUserGPSLocation();
-        geoLocate();
-//        getDestinationInfo(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude));
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(getActivity(),
                     Manifest.permission.ACCESS_FINE_LOCATION)
@@ -452,6 +565,14 @@ public class HomeFragment extends Fragment implements
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST);
             return;
         }
+        googleMap.setOnInfoWindowClickListener(this);
+//        googleMap.setMyLocationEnabled(true);
+//        googleMap.setOnMyLocationChangeListener(myLocationChangeListener);
+        initGPS();
+        refreshUserGPSLocation();
+        geoLocate();
+//        getDestinationInfo(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude));
+
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -488,10 +609,14 @@ public class HomeFragment extends Fragment implements
     @Override
     public void onLocationChanged(Location location) {
         Timber.e("onLocationChanged called");
+//        googleMap.clear();
+        this.mLastLocation = location;
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(
+                new LatLng(location.getLatitude(), location.getLongitude()), 15);
+        googleMap.animateCamera(cameraUpdate);
+        fetchSensors();
 //        Toast.makeText(getActivity(), "Location Changed " + location.getLatitude()
 //                + location.getLongitude(), Toast.LENGTH_LONG).show();
-        this.mLastLocation = location;
-        fetchSensors();
 //        if (googleMap != null)
 //            googleMap.clear();
 //        Timber.d("Firing onLocationChanged..............................................");
@@ -499,22 +624,22 @@ public class HomeFragment extends Fragment implements
 //        this.mLastLocation = location;
 //        updateUI();
         //  Place current location marker
-//        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-//        MarkerOptions markerOptions = new MarkerOptions();
-//        markerOptions.position(latLng);
-//        markerOptions.title("Current Position");
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(latLng);
+        markerOptions.title("Current Position");
 //        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
 //        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running));
-//        googleMap.addMarker(markerOptions);
-//        mCurrLocationMarker = googleMap.addMarker(markerOptions);
+        googleMap.addMarker(markerOptions);
+        mCurrLocationMarker = googleMap.addMarker(markerOptions);
 
         //move map camera
-//        googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-//        googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
 //        if(mCurrLocationMarker == null) {
 //            Timber.e("mCurrLocationMarker is null");
-////            mCurrLocationMarker = googleMap.addMarker(new MarkerOptions().position(latLng));
-////                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running)));
+//            mCurrLocationMarker = googleMap.addMarker(new MarkerOptions().position(latLng))
+//                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running));
 //        } else {
 //            Timber.e("mCurrLocationMarker is not null");
 //            mCurrLocationMarker.remove();
@@ -522,9 +647,9 @@ public class HomeFragment extends Fragment implements
 //        }
 
 //        //stop location updates
-//        if (mGoogleApiClient != null) {
-//            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-//        }
+        if (mGoogleApiClient != null) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+        }
 
 //        googleMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
 //            @Override
@@ -610,13 +735,17 @@ public class HomeFragment extends Fragment implements
         Timber.e("onInfoWindowClick -> %s", marker.getTitle());
         String spotstatus = marker.getSnippet();
         String spotid = marker.getTitle();
-
+        markerPlaceLatLng = new LatLng(marker.getPosition().latitude, marker.getPosition().longitude);
+        String markerPositionName = getCompleteAddressString(marker.getPosition().latitude, marker.getPosition().longitude);
+        layoutMarkerVisible(true, markerPositionName, "1", ApplicationUtils.distance(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude, marker.getPosition().latitude, marker.getPosition().longitude), marker.getPosition());
 //        if (spotstatus.equalsIgnoreCase("Empty") || spotstatus.equalsIgnoreCase("Occupied.")) {
 //            //Toast.makeTextHome(getContext(),"Sensor details will be shown here..",Toast.LENGTH_SHORT);
 //
 //            selectedSensor = marker.getTitle();
 //            Timber.e("openDialog");
 //            openDialog(selectedSensor);
+//
+//
 //
 //            //R.id.nearest:
 //            // get the nearest sensor information
@@ -781,14 +910,60 @@ public class HomeFragment extends Fragment implements
 //            BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
 //            navBar.setVisibility(View.GONE);
             linearLayoutBottom.setVisibility(View.VISIBLE);
-//            textViewParkingAreaCount.setText(count);
-//            textViewParkingAreaName.setText(name);
-//            textViewParkingDistance.setText(new DecimalFormat("##.##").format(distance) + " km");
+            textViewParkingAreaCount.setText(count);
+            textViewParkingAreaName.setText(name);
+            textViewParkingDistance.setText(new DecimalFormat("##.##").format(distance) + " km");
 //            textViewParkingTravelTime.setText(duration);
         } else {
             BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
             navBar.setVisibility(View.VISIBLE);
             linearLayoutBottom.setVisibility(View.GONE);
+        }
+    }
+
+    public void layoutSearchVisible(boolean isVisible, String name, String count,
+                                    double distance, LatLng location) {
+        this.name = name;
+        this.count = count;
+        this.location = location;
+        this.distance = distance;
+        this.duration = duration;
+
+        if (isVisible) {
+            BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
+            navBar.setVisibility(View.GONE);
+            linearLayoutSearchBottom.setVisibility(View.VISIBLE);
+            textViewSearchParkingAreaCount.setText(count);
+            textViewSearchParkingAreaName.setText(name);
+            textViewSearchParkingDistance.setText(new DecimalFormat("##.##").format(distance) + " km");
+//            textViewSearchParkingTravelTime.setText(duration);
+        } else {
+            BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
+            navBar.setVisibility(View.VISIBLE);
+            linearLayoutSearchBottom.setVisibility(View.GONE);
+        }
+    }
+
+    public void layoutMarkerVisible(boolean isVisible, String name, String count,
+                                    double distance, LatLng location) {
+        this.name = name;
+        this.count = count;
+        this.location = location;
+        this.distance = distance;
+        this.duration = duration;
+
+        if (isVisible) {
+            BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
+            navBar.setVisibility(View.GONE);
+            linearLayoutMarkerBottom.setVisibility(View.VISIBLE);
+            textViewMarkerParkingAreaCount.setText(count);
+            textViewMarkerParkingAreaName.setText(name);
+            textViewMarkerParkingDistance.setText(new DecimalFormat("##.##").format(distance) + " km");
+//            textViewMarkerParkingTravelTime.setText(duration);
+        } else {
+            BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
+            navBar.setVisibility(View.VISIBLE);
+            linearLayoutMarkerBottom.setVisibility(View.GONE);
         }
     }
 
@@ -901,7 +1076,7 @@ public class HomeFragment extends Fragment implements
 
     private void geoLocate() {
         String apiKey = getString(R.string.google_maps_key);
-        Log.d("apiKey", apiKey);
+        Timber.e("apiKey -> %s", apiKey);
 
         /**
          * Initialize Places. For simplicity, the API key is hard-coded. In a production
@@ -950,6 +1125,13 @@ public class HomeFragment extends Fragment implements
                         linearLayoutNameCount.setVisibility(View.VISIBLE);
                         btnGetDirection.setVisibility(View.VISIBLE);
                         imageViewBack.setVisibility(View.VISIBLE);
+//                        String searchPlaceName = getCompleteAddressString(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude);
+                        getAddress(getActivity(), searchPlaceLatLng.latitude, searchPlaceLatLng.longitude);
+                        String searchPlaceName = address;
+                        distance = ApplicationUtils.distance(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude, searchPlaceLatLng.latitude, searchPlaceLatLng.longitude);
+                        double searchPlaceDistance = distance;
+                        Timber.e("searchPlaceName -> %s", searchPlaceName);
+                        layoutSearchVisible(true, searchPlaceName, "0", distance, searchPlaceLatLng);
                         getDirectionButtonClicked = 1;
 //                        String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), searchPlaceLatLng);
 //                        TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
@@ -973,7 +1155,61 @@ public class HomeFragment extends Fragment implements
         }
     }
 
-    public void fetchSensors() {
+    private String getCompleteAddressString(double LATITUDE, double LONGITUDE) {
+        String strAdd = "";
+        Geocoder geocoder = new Geocoder(getActivity(), Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(LATITUDE, LONGITUDE, 1);
+            if (addresses != null) {
+                Address returnedAddress = addresses.get(0);
+                StringBuilder strReturnedAddress = new StringBuilder("");
+
+                for (int i = 0; i <= returnedAddress.getMaxAddressLineIndex(); i++) {
+                    strReturnedAddress.append(returnedAddress.getAddressLine(i)).append("\n");
+                }
+                strAdd = strReturnedAddress.toString();
+                Timber.e("My Current loction address -> %s", strReturnedAddress.toString());
+            } else {
+                Timber.e("My Current loction address -> %s", "No Address returned!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+//                        Timber.e("My Current loction address -> ", e.getMessage() + "Canont get Address!");
+        }
+        return strAdd;
+    }
+
+    public void getAddress(Context context, double LATITUDE, double LONGITUDE) {
+        //Set Address
+        try {
+            Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+            List<Address> addresses = geocoder.getFromLocation(LATITUDE, LONGITUDE, 1);
+
+            if (addresses != null && addresses.size() > 0) {
+                address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+                test = addresses.get(0).getAddressLine(1); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+                city = addresses.get(0).getLocality();
+                subAdminArea = addresses.get(0).getSubAdminArea();
+                state = addresses.get(0).getAdminArea();
+                country = addresses.get(0).getCountryName();
+                postalCode = addresses.get(0).getPostalCode();
+                knownName = addresses.get(0).getFeatureName(); // Only if available else return NULL
+                Timber.e("getAddress:  address -> %s", address);
+                Timber.e("getAddress:  city -> %s", city);
+                Timber.e("getAddress:  country -> %s", country);
+                Timber.e("getAddress:  test -> %s", test);
+                Timber.e("getAddress:  premises -> %s", subAdminArea);
+                Timber.e("getAddress:  state -> %s", state);
+                Timber.e("getAddress:  postalCode -> %s", postalCode);
+                Timber.e("getAddress:  knownName -> %s", knownName);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void fetchSensors() {
 
         StringRequest strReq = new StringRequest(Request.Method.POST, AppConfig.URL_FETCH_SENSORS, new Response.Listener<String>() {
             @Override
@@ -1245,10 +1481,29 @@ public class HomeFragment extends Fragment implements
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-//                if(googleMap!=null)
+//                if (googleMap != null)
 //                    googleMap.clear();
                 // Do something after 2s = 2000ms
 //                progressDialog.dismiss();
+//                btnGetDirection.setVisibility(View.VISIBLE);
+////                linearLayoutNameCount.setVisibility(View.VISIBLE);
+//                linearLayoutBottom.setVisibility(View.VISIBLE);
+//                imageViewBack.setVisibility(View.VISIBLE);
+//                String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), event.location);
+//                TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
+//                taskRequestDirections.execute(url);
+
+                location = event.location;
+                EventBus.getDefault().post(new SetMarkerEvent(location));
+                MarkerOptions markerOptions = new MarkerOptions();
+                markerOptions.position(location);
+                markerOptions.title(name);
+                markerOptions.draggable(true);
+                coordList.add(new LatLng(location.latitude, location.longitude));
+                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                googleMap.addMarker(markerOptions);
+                //move map camera
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 15));
                 btnGetDirection.setVisibility(View.VISIBLE);
 //                linearLayoutNameCount.setVisibility(View.VISIBLE);
                 linearLayoutBottom.setVisibility(View.VISIBLE);
@@ -1256,6 +1511,8 @@ public class HomeFragment extends Fragment implements
                 String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), event.location);
                 TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
                 taskRequestDirections.execute(url);
+
+
             }
         }, 1000);
 
@@ -1272,7 +1529,7 @@ public class HomeFragment extends Fragment implements
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-//                if(googleMap!=null)
+//                if (googleMap != null)
 //                    googleMap.clear();
 //                progressDialog.dismiss();
                 searchPlaceLatLng = event.location;
@@ -1286,11 +1543,47 @@ public class HomeFragment extends Fragment implements
                 googleMap.addMarker(markerOptions);
                 //move map camera
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 15));
-                btnGetDirection.setVisibility(View.VISIBLE);
+                btnSearchGetDirection.setVisibility(View.VISIBLE);
 //                linearLayoutNameCount.setVisibility(View.VISIBLE);
-                linearLayoutBottom.setVisibility(View.VISIBLE);
-                imageViewBack.setVisibility(View.VISIBLE);
+                linearLayoutSearchBottom.setVisibility(View.VISIBLE);
+                imageViewSearchBack.setVisibility(View.VISIBLE);
                 String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), searchPlaceLatLng);
+                TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
+                taskRequestDirections.execute(url);
+            }
+        }, 1000);
+
+//        String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), event.location);
+//        TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
+//        taskRequestDirections.execute(url);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMarkerDirectionEvent(GetDirectionForMarkerEvent event) {
+        Toast.makeText(getActivity(), "Marker Click e Geche", Toast.LENGTH_SHORT).show();
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+//                if (googleMap != null)
+//                    googleMap.clear();
+//                progressDialog.dismiss();
+                markerPlaceLatLng = event.location;
+                EventBus.getDefault().post(new SetMarkerEvent(markerPlaceLatLng));
+                MarkerOptions markerOptions = new MarkerOptions();
+                markerOptions.position(markerPlaceLatLng);
+                markerOptions.title(name);
+                markerOptions.draggable(true);
+                coordList.add(new LatLng(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude));
+                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                googleMap.addMarker(markerOptions);
+                //move map camera
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerPlaceLatLng, 15));
+                btnMarkerGetDirection.setVisibility(View.VISIBLE);
+//                linearLayoutNameCount.setVisibility(View.VISIBLE);
+//                linearLayoutMarkerBottom.setVisibility(View.VISIBLE);
+//                imageViewMarkerBack.setVisibility(View.VISIBLE);
+                String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), markerPlaceLatLng);
                 TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
                 taskRequestDirections.execute(url);
             }
@@ -1378,48 +1671,53 @@ public class HomeFragment extends Fragment implements
             //Get list route and display it into the map
 
             ArrayList points = null;
-
             PolylineOptions polylineOptions = null;
             MarkerOptions markerOptions = new MarkerOptions();
             String distance = "";
             String duration = "";
 
-//            if (lists.size() < 1) {
-//                Toast.makeText(getActivity(), "No Points", Toast.LENGTH_SHORT).show();
-//                return;
-//            }
+            if (lists.size() < 1) {
+                Toast.makeText(getActivity(), "No Points", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
             for (List<HashMap<String, String>> path : lists) {
                 points = new ArrayList();
                 polylineOptions = new PolylineOptions();
-
+//                for (int j = 0; j < path.size(); j++) {
                 for (HashMap<String, String> point : path) {
                     double lat = Double.parseDouble(point.get("lat"));
                     double lon = Double.parseDouble(point.get("lon"));
+//                        if (j == 0) {    // Get distance from the list
+//                            distance = (String) point.get("distance");
+//                            continue;
+//                        } else if (j == 1) { // Get duration from the list
+//                            duration = (String) point.get("duration");
+//                            continue;
+//                        }
+
+                    Timber.e("duration -> %s", duration);
 
                     points.add(new LatLng(lat, lon));
                 }
-
-
-                polylineOptions.addAll(points);
-                polylineOptions.width(7);
-                if (flag == 1) {
+            }
+            polylineOptions.addAll(points);
+            polylineOptions.width(10);
+            if (flag == 1) {
 //                    if (googleMap != null)
 //                        googleMap.clear();
-                    polylineOptions.color(Color.BLACK);
-                    polylineOptions.width(5);
-                }
+                polylineOptions.color(Color.BLACK);
+                polylineOptions.width(10);
+            }
 //                else if (flag == 2) {
 ////                    if (googleMap != null)
 ////                        googleMap.clear();
 //                    polylineOptions.color(Color.BLACK);
 //                    polylineOptions.width(5);
 //                }
-                flag++;
+            flag++;
 
-                polylineOptions.geodesic(true);
-
-            }
+            polylineOptions.geodesic(true);
 
             if (polylineOptions != null) {
                 googleMap.addPolyline(polylineOptions);
@@ -1428,32 +1726,32 @@ public class HomeFragment extends Fragment implements
                 Toast.makeText(getActivity(), "Direction not found!", Toast.LENGTH_SHORT).show();
             }
         }
-    }
 
-    public double showDistance(LatLng from, LatLng to) {
+        public double showDistance(LatLng from, LatLng to) {
 
-        int Radius = 6371;// radius of earth in Km
-        double lat1 = from.latitude;
-        double lat2 = to.latitude;
-        double lon1 = from.longitude;
-        double lon2 = to.longitude;
-        double dLat = Math.toRadians(lat2 - lat1);
-        double dLon = Math.toRadians(lon2 - lon1);
-        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
-                + Math.cos(Math.toRadians(lat1))
-                * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon / 2)
-                * Math.sin(dLon / 2);
-        double c = 2 * Math.asin(Math.sqrt(a));
-        double valueResult = Radius * c;
+            int Radius = 6371;// radius of earth in Km
+            double lat1 = from.latitude;
+            double lat2 = to.latitude;
+            double lon1 = from.longitude;
+            double lon2 = to.longitude;
+            double dLat = Math.toRadians(lat2 - lat1);
+            double dLon = Math.toRadians(lon2 - lon1);
+            double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                    + Math.cos(Math.toRadians(lat1))
+                    * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon / 2)
+                    * Math.sin(dLon / 2);
+            double c = 2 * Math.asin(Math.sqrt(a));
+            double valueResult = Radius * c;
 
-        double km = valueResult / 1;
-        DecimalFormat newFormat = new DecimalFormat("####");
-        int kmInDec = Integer.parseInt(newFormat.format(km));
-        double meter = valueResult % 1000;
-        int meterInDec = Integer.parseInt(newFormat.format(meter));
-        Timber.i("" + valueResult + "   KM  " + kmInDec
-                + " Meter   " + meterInDec);
+            double km = valueResult / 1;
+            DecimalFormat newFormat = new DecimalFormat("####");
+            int kmInDec = Integer.parseInt(newFormat.format(km));
+            double meter = valueResult % 1000;
+            int meterInDec = Integer.parseInt(newFormat.format(meter));
+            Timber.i("" + valueResult + "   KM  " + kmInDec
+                    + " Meter   " + meterInDec);
 
-        return (Radius * c);
+            return (Radius * c);
+        }
     }
 }
