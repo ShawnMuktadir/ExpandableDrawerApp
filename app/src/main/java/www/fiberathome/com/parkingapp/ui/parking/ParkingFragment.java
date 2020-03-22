@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -51,6 +52,7 @@ import www.fiberathome.com.parkingapp.ui.fragments.HomeFragment;
 public class ParkingFragment extends Fragment {
 
     private static final String TAG = "ParkingFRagment";
+
     @BindView(R.id.recyclerViewParking)
     RecyclerView recyclerViewParking;
     @BindView(R.id.swipeRefreshLayout)
@@ -125,6 +127,7 @@ public class ParkingFragment extends Fragment {
         });
 
         btnGetDirection.setOnClickListener(v -> {
+            Toast.makeText(context, "Parking Fragment theke geche", Toast.LENGTH_SHORT).show();
             EventBus.getDefault().post(new GetDirectionEvent(location));
         });
 
@@ -225,11 +228,11 @@ public class ParkingFragment extends Fragment {
         Timber.e("location -> %s", location);
         Timber.e("distance -> %s", distance);
 
-        ParkingFragment fragment = new ParkingFragment(); //Your Fragment
-        SensorArea car = new SensorArea(); // Your Object
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("carInfo", car); // Key, value
-        fragment.setArguments(bundle);
+//        ParkingFragment fragment = new ParkingFragment(); //Your Fragment
+//        SensorArea car = new SensorArea(); // Your Object
+//        Bundle bundle = new Bundle();
+//        bundle.putParcelable("carInfo", car); // Key, value
+//        fragment.setArguments(bundle);
 
         if (isVisible) {
             BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);

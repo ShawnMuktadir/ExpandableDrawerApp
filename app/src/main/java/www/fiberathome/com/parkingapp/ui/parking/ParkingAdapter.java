@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -28,6 +29,7 @@ import okhttp3.Route;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionEvent;
+import www.fiberathome.com.parkingapp.eventBus.GetSensorInfoEvent;
 import www.fiberathome.com.parkingapp.eventBus.SetMarkerEvent;
 import www.fiberathome.com.parkingapp.model.GlobalVars;
 import www.fiberathome.com.parkingapp.model.SensorArea;
@@ -77,6 +79,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         parkingViewHolder.card_view.setOnClickListener(v -> {
             EventBus.getDefault().post(new GetDirectionEvent(new LatLng(sensorArea.getLat(), sensorArea.getLng())));
+            EventBus.getDefault().post(new GetSensorInfoEvent(sensorArea.getParkingArea(), sensorArea.getCount(), distance));
 //            parkingFragment.layoutVisible(true, sensorArea.getParkingArea(), sensorArea.getCount(), distance, new LatLng(sensorArea.getLat(), sensorArea.getLng()));
             selectedItem = position;
             notifyDataSetChanged();
@@ -90,10 +93,11 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             parkingViewHolder.view.setVisibility(View.GONE);
         }
     }
+
     /**
      * Draw polyline on map, get distance and duration of the route
-     *
-//     * @param latLngDestination LatLng of the destination
+     * <p>
+     * //     * @param latLngDestination LatLng of the destination
      */
 //    private void getDestinationInfo(LatLng latLngDestination) {
 ////        progressDialog();
@@ -160,7 +164,6 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 //        //-------------------------------------------------------------------------------\\
 //
 //    }
-
     private double distance(double lat1, double lon1, double lat2, double lon2) {
         double theta = lon1 - lon2;
         double mile = Math.sin(deg2rad(lat1))

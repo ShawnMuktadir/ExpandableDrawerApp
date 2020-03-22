@@ -240,7 +240,6 @@ public class MainActivity extends AppCompatActivity implements MainView, BottomN
             case R.id.nav_parking:
                 toolbar.setTitle("Parking");
 //                ParkingPresenter parkingPresenter = new ParkingPresenterImpl(context,getSupportFragmentManager());
-//                HomeFragment homeFragment = new HomeFragment();
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ParkingFragment()).commit();
                 break;
 

@@ -84,6 +84,9 @@ dependencies {
 
     //pdf view
     implementation 'com.github.barteksc:android-pdf-viewer:2.8.2'
+    //Add live data and view model dependency
+    def lifecycle_version = "1.1.1"
+    implementation "android.arch.lifecycle:extensions:$lifecycle_version"
     //for duration takes this library
 //    implementation 'com.akexorcist:googledirectionlibrary:1.0.4' // Custom Google Direction API
 

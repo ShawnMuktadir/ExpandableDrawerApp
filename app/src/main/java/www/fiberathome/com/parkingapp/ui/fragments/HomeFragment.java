@@ -92,6 +92,7 @@ import www.fiberathome.com.parkingapp.eventBus.GetDirectionAfterButtonClickEvent
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionEvent;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionForMarkerEvent;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionForSearchEvent;
+import www.fiberathome.com.parkingapp.eventBus.GetSensorInfoEvent;
 import www.fiberathome.com.parkingapp.eventBus.SetMarkerEvent;
 import www.fiberathome.com.parkingapp.gps.GPSTracker;
 import www.fiberathome.com.parkingapp.gps.GPSTrackerListener;
@@ -1492,7 +1493,6 @@ public class HomeFragment extends Fragment implements
 //                String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), event.location);
 //                TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
 //                taskRequestDirections.execute(url);
-
                 location = event.location;
                 EventBus.getDefault().post(new SetMarkerEvent(location));
                 MarkerOptions markerOptions = new MarkerOptions();
@@ -1515,8 +1515,6 @@ public class HomeFragment extends Fragment implements
 
             }
         }, 1000);
-
-
 //        String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), event.location);
 //        TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
 //        taskRequestDirections.execute(url);
@@ -1586,6 +1584,45 @@ public class HomeFragment extends Fragment implements
                 String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), markerPlaceLatLng);
                 TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
                 taskRequestDirections.execute(url);
+            }
+        }, 1000);
+
+//        String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), event.location);
+//        TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
+//        taskRequestDirections.execute(url);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSensorDetailsEvent(GetSensorInfoEvent event) {
+        Toast.makeText(getActivity(), "GetSensorInfoEvent e Geche", Toast.LENGTH_SHORT).show();
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+//                if (googleMap != null)
+//                    googleMap.clear();
+//                progressDialog.dismiss();
+                textViewMarkerParkingAreaName.setText(event.areaName);
+                textViewMarkerParkingAreaCount.setText(event.parkingCount);
+                textViewMarkerParkingDistance.setText(String.valueOf(event.distance));
+//                markerPlaceLatLng = event.location;
+//                EventBus.getDefault().post(new SetMarkerEvent(markerPlaceLatLng));
+//                MarkerOptions markerOptions = new MarkerOptions();
+//                markerOptions.position(markerPlaceLatLng);
+//                markerOptions.title(name);
+//                markerOptions.draggable(true);
+//                coordList.add(new LatLng(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude));
+//                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+//                googleMap.addMarker(markerOptions);
+//                //move map camera
+//                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerPlaceLatLng, 15));
+//                btnMarkerGetDirection.setVisibility(View.VISIBLE);
+////                linearLayoutNameCount.setVisibility(View.VISIBLE);
+////                linearLayoutMarkerBottom.setVisibility(View.VISIBLE);
+////                imageViewMarkerBack.setVisibility(View.VISIBLE);
+//                String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), markerPlaceLatLng);
+//                TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
+//                taskRequestDirections.execute(url);
             }
         }, 1000);
 
