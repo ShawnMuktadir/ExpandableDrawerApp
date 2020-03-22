@@ -262,15 +262,14 @@ public class ParkingFragment extends Fragment {
             @Override
             public void onResponse(String response) {
                 progressDialog.dismiss();
-                // Log.e(ParkingFragment.class.getCanonicalName(), "" + response);
+                Timber.e(ParkingFragment.class.getCanonicalName(), "" + response);
                 try {
                     JSONObject object = new JSONObject(response);
                     JSONArray jsonArray = object.getJSONArray("sensors");
                     for (int i = 0; i < jsonArray.length(); i++) {
                         SensorArea sensorArea = new SensorArea();
-
                         JSONArray array = jsonArray.getJSONArray(i);
-                        // Log.e("Array " + i, array.getString(1));
+                        Timber.e("Array " + i, array.getString(1));
                         sensorArea.setParkingArea(array.getString(1).trim());
                         sensorArea.setLat(Double.parseDouble(array.getString(2).trim()));
                         sensorArea.setLng(Double.parseDouble(array.getString(3).trim()));

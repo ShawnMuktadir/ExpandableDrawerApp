@@ -194,7 +194,4 @@ public class ApplicationUtils {
         Timber.e("distance -> %s", km);
         return (km);
     }
-
-
-
 }

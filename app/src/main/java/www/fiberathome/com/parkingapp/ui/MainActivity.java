@@ -287,21 +287,6 @@ public class MainActivity extends AppCompatActivity implements MainView, BottomN
         return true;
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(GetDirectionEvent event) {
-//        Toast.makeText(getApplicationContext(), event.message, Toast.LENGTH_SHORT).show();
-        bottomNavigationView.setSelectedItemId(R.id.nav_home);
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                // Do something after 2s = 2000ms
-                bottomNavigationView.setVisibility(View.VISIBLE);
-                EventBus.getDefault().post(new SetMarkerEvent(event.location));
-            }
-        }, 1000);
-    }
-
     @Override
     public void onStart() {
         super.onStart();
@@ -366,5 +351,20 @@ public class MainActivity extends AppCompatActivity implements MainView, BottomN
     @Override
     public void setTitle() {
         toolbar.setTitle(context.getResources().getString(R.string.home));
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(GetDirectionEvent event) {
+//        Toast.makeText(getApplicationContext(), event.message, Toast.LENGTH_SHORT).show();
+        bottomNavigationView.setSelectedItemId(R.id.nav_home);
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // Do something after 2s = 2000ms
+                bottomNavigationView.setVisibility(View.GONE);
+                EventBus.getDefault().post(new SetMarkerEvent(event.location));
+            }
+        }, 1000);
     }
 }

@@ -14,6 +14,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -89,10 +90,8 @@ import www.fiberathome.com.parkingapp.GoogleMapWebService.GooglePlaceSearchNearb
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionAfterButtonClickEvent;
-import www.fiberathome.com.parkingapp.eventBus.GetDirectionEvent;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionForMarkerEvent;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionForSearchEvent;
-import www.fiberathome.com.parkingapp.eventBus.GetSensorInfoEvent;
 import www.fiberathome.com.parkingapp.eventBus.SetMarkerEvent;
 import www.fiberathome.com.parkingapp.gps.GPSTracker;
 import www.fiberathome.com.parkingapp.gps.GPSTrackerListener;
@@ -232,7 +231,9 @@ public class HomeFragment extends Fragment implements
     private int getDirectionButtonClicked = 0;
     private int getDirectionSearchButtonClicked = 0;
     private int getDirectionMarkerButtonClicked = 0;
+    private long mLastClickTime = 0;
     private ProgressDialog progressDialog;
+    private int markerAlreadyClicked = 0;
 
     public HomeFragment() {
 
@@ -286,30 +287,42 @@ public class HomeFragment extends Fragment implements
         imageViewBack.setOnClickListener(v -> {
             if (googleMap != null) {
                 googleMap.clear();
+                onLocationChanged(mLastLocation);
                 fetchSensors();
                 BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
                 navBar.setVisibility(View.VISIBLE);
                 layoutVisible(false, "", "", 0.0, null);
+                linearLayoutBottom.setVisibility(View.GONE);
+                linearLayoutSearchBottom.setVisibility(View.GONE);
+                linearLayoutMarkerBottom.setVisibility(View.GONE);
             }
         });
 
         imageViewSearchBack.setOnClickListener(v -> {
             if (googleMap != null) {
                 googleMap.clear();
+                onLocationChanged(mLastLocation);
                 fetchSensors();
                 BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
                 navBar.setVisibility(View.VISIBLE);
                 layoutSearchVisible(false, "", "", 0.0, null);
+                linearLayoutBottom.setVisibility(View.GONE);
+                linearLayoutSearchBottom.setVisibility(View.GONE);
+                linearLayoutMarkerBottom.setVisibility(View.GONE);
             }
         });
 
         imageViewMarkerBack.setOnClickListener(v -> {
             if (googleMap != null) {
                 googleMap.clear();
+                onLocationChanged(mLastLocation);
                 fetchSensors();
                 BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
                 navBar.setVisibility(View.VISIBLE);
                 layoutMarkerVisible(false, "", "", 0.0, null);
+                linearLayoutBottom.setVisibility(View.GONE);
+                linearLayoutSearchBottom.setVisibility(View.GONE);
+                linearLayoutMarkerBottom.setVisibility(View.GONE);
             }
         });
 
@@ -322,6 +335,7 @@ public class HomeFragment extends Fragment implements
 //                    progressDialog.setMessage("Please wait...");
 //                    progressDialog.show();
 //                btnGetDirection.setVisibility(View.GONE);
+                    onLocationChanged(mLastLocation);
                     fetchSensors();
                     MarkerOptions markerOptions = new MarkerOptions();
                     markerOptions.position(location);
@@ -348,6 +362,7 @@ public class HomeFragment extends Fragment implements
                 getDirectionButtonClicked--;
                 if (googleMap != null) {
                     googleMap.clear();
+                    onLocationChanged(mLastLocation);
                     fetchSensors();
                     layoutVisible(false, "", "", 0.0, null);
                     linearLayoutBottom.setVisibility(View.GONE);
@@ -371,6 +386,7 @@ public class HomeFragment extends Fragment implements
 //                    progressDialog.setMessage("Please wait...");
 //                    progressDialog.show();
 //                btnGetDirection.setVisibility(View.GONE);
+                    onLocationChanged(mLastLocation);
                     fetchSensors();
                     MarkerOptions markerOptions = new MarkerOptions();
                     markerOptions.position(searchPlaceLatLng);
@@ -397,6 +413,7 @@ public class HomeFragment extends Fragment implements
                 getDirectionSearchButtonClicked--;
                 if (googleMap != null) {
                     googleMap.clear();
+                    onLocationChanged(mLastLocation);
                     fetchSensors();
                     layoutSearchVisible(false, "", "", 0.0, null);
                     btnSearchGetDirection.setText("Get Direction");
@@ -420,6 +437,7 @@ public class HomeFragment extends Fragment implements
 //                    progressDialog.setMessage("Please wait...");
 //                    progressDialog.show();
 //                btnGetDirection.setVisibility(View.GONE);
+                    onLocationChanged(mLastLocation);
                     fetchSensors();
                     MarkerOptions markerOptions = new MarkerOptions();
                     markerOptions.position(markerPlaceLatLng);
@@ -446,6 +464,7 @@ public class HomeFragment extends Fragment implements
                 getDirectionMarkerButtonClicked--;
                 if (googleMap != null) {
                     googleMap.clear();
+                    onLocationChanged(mLastLocation);
                     fetchSensors();
                     layoutMarkerVisible(false, "", "", 0.0, null);
                     linearLayoutBottom.setVisibility(View.GONE);
@@ -518,7 +537,7 @@ public class HomeFragment extends Fragment implements
     @Override
     public void onPause() {
         super.onPause();
-//        gpsTracker.stopUsingGPS();
+        gpsTracker.stopUsingGPS();
         //stop location updates when Activity is no longer active
         if (mGoogleApiClient != null) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
@@ -549,6 +568,9 @@ public class HomeFragment extends Fragment implements
     @Override
     public void onMapReady(GoogleMap mMap) {
         this.googleMap = mMap;
+        initGPS();
+        refreshUserGPSLocation();
+        geoLocate();
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(getActivity(),
                     Manifest.permission.ACCESS_FINE_LOCATION)
@@ -569,9 +591,7 @@ public class HomeFragment extends Fragment implements
         googleMap.setOnInfoWindowClickListener(this);
 //        googleMap.setMyLocationEnabled(true);
 //        googleMap.setOnMyLocationChangeListener(myLocationChangeListener);
-        initGPS();
-        refreshUserGPSLocation();
-        geoLocate();
+
 //        getDestinationInfo(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude));
 
     }
@@ -734,20 +754,50 @@ public class HomeFragment extends Fragment implements
     @Override
     public void onInfoWindowClick(Marker marker) {
         Timber.e("onInfoWindowClick -> %s", marker.getTitle());
-        String spotstatus = marker.getSnippet();
-        String spotid = marker.getTitle();
-        markerPlaceLatLng = new LatLng(marker.getPosition().latitude, marker.getPosition().longitude);
-        String markerPositionName = getCompleteAddressString(marker.getPosition().latitude, marker.getPosition().longitude);
-        layoutMarkerVisible(true, markerPositionName, "1", ApplicationUtils.distance(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude, marker.getPosition().latitude, marker.getPosition().longitude), marker.getPosition());
+//        markerAlreadyClicked = 1;
+        if (markerAlreadyClicked == 1) {
+            if (googleMap != null)
+                googleMap.clear();
+            fetchSensors();
+            if (getActivity() != null) {
+                BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
+                navBar.setVisibility(View.VISIBLE);
+            }
+            linearLayoutMarkerBottom.setVisibility(View.GONE);
+            linearLayoutBottom.setVisibility(View.GONE);
+            linearLayoutSearchBottom.setVisibility(View.GONE);
+            onLocationChanged(mLastLocation);
+            markerAlreadyClicked--;
+            Timber.e("onInfoWindowClick markerAlreadyClicked -> %s", markerAlreadyClicked);
+            return;
+        } else {
+            Timber.e("onInfoWindowClick else markerAlreadyClicked -> %s", markerAlreadyClicked);
+            if (googleMap != null)
+                googleMap.clear();
+            fetchSensors();
+            onLocationChanged(mLastLocation);
+            String spotstatus = marker.getSnippet();
+            String spotid = marker.getTitle();
+            // Preventing multiple clicks, using threshold of 1 second
+//        if (SystemClock.elapsedRealtime() - mLastClickTime < 1000 ) {
+//            if (googleMap != null)
+//                googleMap.clear();
+//            return;
+//        }
+            markerPlaceLatLng = new LatLng(marker.getPosition().latitude, marker.getPosition().longitude);
+//        String markerPositionName = getAddress(getActivity(), marker.getPosition().latitude, marker.getPosition().longitude);
+            getAddress(getActivity(), markerPlaceLatLng.latitude, markerPlaceLatLng.longitude);
+            String searchPlaceName = address;
+            layoutMarkerVisible(true, searchPlaceName, "1", ApplicationUtils.distance(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude, marker.getPosition().latitude, marker.getPosition().longitude), marker.getPosition());
+            markerAlreadyClicked++;
+        }
 //        if (spotstatus.equalsIgnoreCase("Empty") || spotstatus.equalsIgnoreCase("Occupied.")) {
 //            //Toast.makeTextHome(getContext(),"Sensor details will be shown here..",Toast.LENGTH_SHORT);
 //
 //            selectedSensor = marker.getTitle();
 //            Timber.e("openDialog");
 //            openDialog(selectedSensor);
-//
-//
-//
+
 //            //R.id.nearest:
 //            // get the nearest sensor information
 //            selectedSensor = marker.getTitle();
@@ -1107,6 +1157,8 @@ public class HomeFragment extends Fragment implements
                     Timber.i("Place: => %s", place.getLatLng());
                     String name = place.getName();
                     Timber.e(name);
+                    if (googleMap != null)
+                        googleMap.clear();
                     searchPlaceLatLng = place.getLatLng();
                     Timber.e(String.valueOf(searchPlaceLatLng));
 
@@ -1493,6 +1545,7 @@ public class HomeFragment extends Fragment implements
 //                String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), event.location);
 //                TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
 //                taskRequestDirections.execute(url);
+                onLocationChanged(mLastLocation);
                 location = event.location;
                 EventBus.getDefault().post(new SetMarkerEvent(location));
                 MarkerOptions markerOptions = new MarkerOptions();
@@ -1530,6 +1583,7 @@ public class HomeFragment extends Fragment implements
 //                if (googleMap != null)
 //                    googleMap.clear();
 //                progressDialog.dismiss();
+                onLocationChanged(mLastLocation);
                 searchPlaceLatLng = event.location;
                 EventBus.getDefault().post(new SetMarkerEvent(searchPlaceLatLng));
                 MarkerOptions markerOptions = new MarkerOptions();
@@ -1566,6 +1620,7 @@ public class HomeFragment extends Fragment implements
 //                if (googleMap != null)
 //                    googleMap.clear();
 //                progressDialog.dismiss();
+                onLocationChanged(mLastLocation);
                 markerPlaceLatLng = event.location;
                 EventBus.getDefault().post(new SetMarkerEvent(markerPlaceLatLng));
                 MarkerOptions markerOptions = new MarkerOptions();
@@ -1584,45 +1639,6 @@ public class HomeFragment extends Fragment implements
                 String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), markerPlaceLatLng);
                 TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
                 taskRequestDirections.execute(url);
-            }
-        }, 1000);
-
-//        String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), event.location);
-//        TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
-//        taskRequestDirections.execute(url);
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onSensorDetailsEvent(GetSensorInfoEvent event) {
-        Toast.makeText(getActivity(), "GetSensorInfoEvent e Geche", Toast.LENGTH_SHORT).show();
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-//                if (googleMap != null)
-//                    googleMap.clear();
-//                progressDialog.dismiss();
-                textViewMarkerParkingAreaName.setText(event.areaName);
-                textViewMarkerParkingAreaCount.setText(event.parkingCount);
-                textViewMarkerParkingDistance.setText(String.valueOf(event.distance));
-//                markerPlaceLatLng = event.location;
-//                EventBus.getDefault().post(new SetMarkerEvent(markerPlaceLatLng));
-//                MarkerOptions markerOptions = new MarkerOptions();
-//                markerOptions.position(markerPlaceLatLng);
-//                markerOptions.title(name);
-//                markerOptions.draggable(true);
-//                coordList.add(new LatLng(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude));
-//                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-//                googleMap.addMarker(markerOptions);
-//                //move map camera
-//                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerPlaceLatLng, 15));
-//                btnMarkerGetDirection.setVisibility(View.VISIBLE);
-////                linearLayoutNameCount.setVisibility(View.VISIBLE);
-////                linearLayoutMarkerBottom.setVisibility(View.VISIBLE);
-////                imageViewMarkerBack.setVisibility(View.VISIBLE);
-//                String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), markerPlaceLatLng);
-//                TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
-//                taskRequestDirections.execute(url);
             }
         }, 1000);
 
@@ -1733,7 +1749,7 @@ public class HomeFragment extends Fragment implements
 //                            continue;
 //                        }
 
-                    Timber.e("duration -> %s", duration);
+//                    Timber.e("duration -> %s", duration);
 
                     points.add(new LatLng(lat, lon));
                 }
