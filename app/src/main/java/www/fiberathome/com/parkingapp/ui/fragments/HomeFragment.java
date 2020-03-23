@@ -14,8 +14,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,8 +58,8 @@ import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -88,9 +86,9 @@ import timber.log.Timber;
 import www.fiberathome.com.parkingapp.GoogleMapWebService.DirectionsParser;
 import www.fiberathome.com.parkingapp.GoogleMapWebService.GooglePlaceSearchNearbySearchListener;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.base.AppConfig;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionAfterButtonClickEvent;
-import www.fiberathome.com.parkingapp.eventBus.GetDirectionEvent;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionForSearchEvent;
 import www.fiberathome.com.parkingapp.eventBus.SetMarkerEvent;
 import www.fiberathome.com.parkingapp.gps.GPSTracker;
@@ -101,10 +99,7 @@ import www.fiberathome.com.parkingapp.model.SensorArea;
 import www.fiberathome.com.parkingapp.model.SensorList;
 import www.fiberathome.com.parkingapp.module.PlayerPrefs;
 import www.fiberathome.com.parkingapp.ui.DialogForm;
-import www.fiberathome.com.parkingapp.base.AppConfig;
-import www.fiberathome.com.parkingapp.ui.MainActivity;
-import www.fiberathome.com.parkingapp.ui.parking.ParkingFragment;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.SharedData;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -183,6 +178,9 @@ public class HomeFragment extends Fragment implements
     public static DecimalFormat df1 = new DecimalFormat(".##");
     public static DecimalFormat df2 = new DecimalFormat(".##");
 
+
+    //Todo: Get SensorArea Data in Suitable LifeCycle Method from SharedData after selecting from Parking Adapter
+
     private List<LatLng> polyLineList;
     private Marker marker;
     private LocationManager mLocationManager;
@@ -218,19 +216,30 @@ public class HomeFragment extends Fragment implements
         view = inflater.inflate(R.layout.fragment_home, container, false);
         ButterKnife.bind(this, view);
 
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            SensorArea sensorArea = bundle.getParcelable("sensor"); // Key
-            Timber.e("sensorArea -> %s", sensorArea);
-            if (sensorArea != null) {
-                textViewParkingAreaName.setText(sensorArea.getParkingArea());
-                textViewParkingAreaCount.setText(sensorArea.getCount());
-                textViewParkingDistance.setText(String.valueOf(sensorArea.getDistance()));
-            } else {
-                Toast.makeText(context, "Genjam", Toast.LENGTH_SHORT).show();
-            }
+//        Bundle bundle = getArguments();
+//        if (bundle != null) {
+//            SensorArea sensorArea = bundle.getParcelable("sensor"); // Key
+//            Timber.e("sensorArea -> %s", sensorArea);
+//            if (sensorArea != null) {
+//                textViewParkingAreaName.setText(sensorArea.getParkingArea());
+//                textViewParkingAreaCount.setText(sensorArea.getCount());
+//                textViewParkingDistance.setText(String.valueOf(sensorArea.getDistance()));
+//            } else {
+//                Toast.makeText(context, "Genjam", Toast.LENGTH_SHORT).show();
+//            }
+//        } else {
+//            Timber.e("Genjam");
+//        }
+
+        //Check SharedData to see if any Parking Option Has Been Selected from ParkingAdapter
+        if (SharedData.getInstance().getSensorArea() != null) {
+            SensorArea sensorArea = SharedData.getInstance().getSensorArea();
+            Timber.e("Sensor Area from SharedData -> %s", new Gson().toJson(sensorArea));
+            textViewParkingAreaName.setText(sensorArea.getParkingArea());
+            textViewParkingAreaCount.setText(sensorArea.getCount());
+            textViewParkingDistance.setText(String.valueOf(sensorArea.getDistance()));
         } else {
-            Timber.e("Genjam");
+            Toast.makeText(context, "Genjam", Toast.LENGTH_SHORT).show();
         }
         setListeners();
         try {

@@ -39,11 +39,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.base.AppConfig;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionEvent;
 import www.fiberathome.com.parkingapp.model.SensorArea;
-import www.fiberathome.com.parkingapp.base.AppConfig;
-import www.fiberathome.com.parkingapp.ui.fragments.HomeFragment;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -224,6 +223,7 @@ public class ParkingFragment extends Fragment {
         Timber.e("count -> %s", count);
         Timber.e("location -> %s", location);
         Timber.e("distance -> %s", distance);
+        Timber.e("isVisible -> %s", isVisible);
 
         ParkingFragment fragment = new ParkingFragment(); //Your Fragment
         SensorArea car = new SensorArea(); // Your Object
@@ -232,6 +232,7 @@ public class ParkingFragment extends Fragment {
         fragment.setArguments(bundle);
 
         if (isVisible) {
+            Timber.e("isVisible True");
             BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
             navBar.setVisibility(View.GONE);
             linearLayoutBottom.setVisibility(View.VISIBLE);

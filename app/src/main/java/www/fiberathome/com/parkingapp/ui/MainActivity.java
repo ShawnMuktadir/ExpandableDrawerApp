@@ -56,6 +56,7 @@ import www.fiberathome.com.parkingapp.ui.parking.ParkingFragment;
 import www.fiberathome.com.parkingapp.ui.fragments.ProfileFragment;
 import www.fiberathome.com.parkingapp.base.AppConfig;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.SharedData;
 import www.fiberathome.com.parkingapp.utils.SharedPreManager;
 
 public class MainActivity extends AppCompatActivity implements MainView, BottomNavigationView.OnNavigationItemSelectedListener, DialogForm.DialogFormListener {
@@ -242,6 +243,7 @@ public class MainActivity extends AppCompatActivity implements MainView, BottomN
 //                ParkingPresenter parkingPresenter = new ParkingPresenterImpl(context,getSupportFragmentManager());
 //                HomeFragment homeFragment = new HomeFragment();
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ParkingFragment()).commit();
+                SharedData.getInstance().setSensorArea(null);// Remove any previous data from SharedData's sensor Data Parking Information
                 break;
 
             case R.id.nav_law:
@@ -367,5 +369,10 @@ public class MainActivity extends AppCompatActivity implements MainView, BottomN
     @Override
     public void setTitle() {
         toolbar.setTitle(context.getResources().getString(R.string.home));
+    }
+
+    public void replaceFragment() {
+        toolbar.setTitle("Home");
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
     }
 }
