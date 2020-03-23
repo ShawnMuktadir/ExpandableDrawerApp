@@ -55,7 +55,6 @@ public class ParkingPresenterImpl implements ParkingPresenter {
         };
 
         ParkingApp.getInstance().addToRequestQueue(strReq);
-
         Timber.e("Shaua -> %s", sensorAreas.get(0).getParkingArea());
         return sensorAreas;
     }

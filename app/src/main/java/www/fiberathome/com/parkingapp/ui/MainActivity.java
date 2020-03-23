@@ -241,7 +241,6 @@ public class MainActivity extends AppCompatActivity implements MainView, BottomN
             case R.id.nav_parking:
                 toolbar.setTitle("Parking");
 //                ParkingPresenter parkingPresenter = new ParkingPresenterImpl(context,getSupportFragmentManager());
-//                HomeFragment homeFragment = new HomeFragment();
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ParkingFragment()).commit();
                 SharedData.getInstance().setSensorArea(null);// Remove any previous data from SharedData's sensor Data Parking Information
                 break;
@@ -288,21 +287,6 @@ public class MainActivity extends AppCompatActivity implements MainView, BottomN
         }
 //        drawerLayout.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(GetDirectionEvent event) {
-//        Toast.makeText(getApplicationContext(), event.message, Toast.LENGTH_SHORT).show();
-        bottomNavigationView.setSelectedItemId(R.id.nav_home);
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                // Do something after 2s = 2000ms
-                bottomNavigationView.setVisibility(View.VISIBLE);
-                EventBus.getDefault().post(new SetMarkerEvent(event.location));
-            }
-        }, 1000);
     }
 
     @Override
@@ -374,5 +358,20 @@ public class MainActivity extends AppCompatActivity implements MainView, BottomN
     public void replaceFragment() {
         toolbar.setTitle("Home");
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(GetDirectionEvent event) {
+//        Toast.makeText(getApplicationContext(), event.message, Toast.LENGTH_SHORT).show();
+        bottomNavigationView.setSelectedItemId(R.id.nav_home);
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // Do something after 2s = 2000ms
+                bottomNavigationView.setVisibility(View.GONE);
+                EventBus.getDefault().post(new SetMarkerEvent(event.location));
+            }
+        }, 1000);
     }
 }

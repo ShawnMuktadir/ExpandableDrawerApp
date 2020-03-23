@@ -22,10 +22,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.eventBus.GetDirectionAfterButtonClickEvent;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionEvent;
 import www.fiberathome.com.parkingapp.model.GlobalVars;
 import www.fiberathome.com.parkingapp.model.SensorArea;
-import www.fiberathome.com.parkingapp.ui.MainActivity;
 import www.fiberathome.com.parkingapp.ui.fragments.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.SharedData;
 
@@ -72,6 +72,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         parkingViewHolder.card_view.setOnClickListener(v -> {
             EventBus.getDefault().post(new GetDirectionEvent(new LatLng(sensorArea.getLat(), sensorArea.getLng())));
+//            parkingFragment.layoutVisible(true, sensorArea.getParkingArea(), sensorArea.getCount(), distance, new LatLng(sensorArea.getLat(), sensorArea.getLng()));
 
             //data is set in SharedData to retrieve this data in HomeFragment
             Timber.e("Sensor Area to SharedData -> %s", new Gson().toJson(sensorArea));
@@ -92,10 +93,11 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             parkingViewHolder.view.setVisibility(View.GONE);
         }
     }
+
     /**
      * Draw polyline on map, get distance and duration of the route
-     *
-//     * @param latLngDestination LatLng of the destination
+     * <p>
+     * //     * @param latLngDestination LatLng of the destination
      */
 //    private void getDestinationInfo(LatLng latLngDestination) {
 ////        progressDialog();
@@ -162,7 +164,6 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 //        //-------------------------------------------------------------------------------\\
 //
 //    }
-
     private double distance(double lat1, double lon1, double lat2, double lon2) {
         double theta = lon1 - lon2;
         double mile = Math.sin(deg2rad(lat1))

@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -50,6 +51,7 @@ import www.fiberathome.com.parkingapp.model.SensorArea;
 public class ParkingFragment extends Fragment {
 
     private static final String TAG = "ParkingFRagment";
+
     @BindView(R.id.recyclerViewParking)
     RecyclerView recyclerViewParking;
     @BindView(R.id.swipeRefreshLayout)
@@ -124,6 +126,7 @@ public class ParkingFragment extends Fragment {
         });
 
         btnGetDirection.setOnClickListener(v -> {
+            Toast.makeText(context, "Parking Fragment theke geche", Toast.LENGTH_SHORT).show();
             EventBus.getDefault().post(new GetDirectionEvent(location));
         });
 
@@ -225,11 +228,11 @@ public class ParkingFragment extends Fragment {
         Timber.e("distance -> %s", distance);
         Timber.e("isVisible -> %s", isVisible);
 
-        ParkingFragment fragment = new ParkingFragment(); //Your Fragment
-        SensorArea car = new SensorArea(); // Your Object
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("carInfo", car); // Key, value
-        fragment.setArguments(bundle);
+//        ParkingFragment fragment = new ParkingFragment(); //Your Fragment
+//        SensorArea car = new SensorArea(); // Your Object
+//        Bundle bundle = new Bundle();
+//        bundle.putParcelable("carInfo", car); // Key, value
+//        fragment.setArguments(bundle);
 
         if (isVisible) {
             Timber.e("isVisible True");
@@ -260,15 +263,14 @@ public class ParkingFragment extends Fragment {
             @Override
             public void onResponse(String response) {
                 progressDialog.dismiss();
-                // Log.e(ParkingFragment.class.getCanonicalName(), "" + response);
+                Timber.e(ParkingFragment.class.getCanonicalName(), "" + response);
                 try {
                     JSONObject object = new JSONObject(response);
                     JSONArray jsonArray = object.getJSONArray("sensors");
                     for (int i = 0; i < jsonArray.length(); i++) {
                         SensorArea sensorArea = new SensorArea();
-
                         JSONArray array = jsonArray.getJSONArray(i);
-                        // Log.e("Array " + i, array.getString(1));
+                        Timber.e("Array " + i, array.getString(1));
                         sensorArea.setParkingArea(array.getString(1).trim());
                         sensorArea.setLat(Double.parseDouble(array.getString(2).trim()));
                         sensorArea.setLng(Double.parseDouble(array.getString(3).trim()));
