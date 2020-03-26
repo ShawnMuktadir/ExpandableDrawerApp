@@ -102,8 +102,8 @@
     <string name="parking_slots">Parking Slots</string>
     <string name="subject_to_availability">Subject to availability</string>
     <string name="get_direction">Get Direction</string>
-    <string name="welcome_to_locc_parking">Welcome, LOCC Parking</string>
-    <string name="search_parking">Where to?</string>
+    <string name="welcome_to_locc_parking">Welcome, LOCC Smart Parking</string>
+    <string name="search_parking">Search Parking</string>
     <string name="pay_bill">Pay Bill</string>
     <string name="cancel">Cancel</string>
     <string name="reserve">Reserve</string>

@@ -300,7 +300,7 @@ public class HomeFragment extends Fragment implements
         if (SharedData.getInstance().getSensorArea() != null) {
             SensorArea sensorArea = SharedData.getInstance().getSensorArea();
             Timber.e("Sensor Area from SharedData -> %s", new Gson().toJson(sensorArea));
-            textViewParkingAreaName.setText(sensorArea.getParkingArea());
+            textViewParkingAreaName.setText(ApplicationUtils.capitalize(sensorArea.getParkingArea()));
             textViewParkingAreaCount.setText(sensorArea.getCount());
             String distance = new DecimalFormat("##.##").format(sensorArea.getDistance()) + " km";
             textViewParkingDistance.setText(distance);
@@ -1028,7 +1028,7 @@ public class HomeFragment extends Fragment implements
             navBar.setVisibility(View.GONE);
             linearLayoutSearchBottom.setVisibility(View.VISIBLE);
             textViewSearchParkingAreaCount.setText(count);
-            textViewSearchParkingAreaName.setText(name);
+            textViewSearchParkingAreaName.setText(ApplicationUtils.capitalize(name));
             textViewSearchParkingDistance.setText(new DecimalFormat("##.##").format(distance) + " km");
 //            textViewSearchParkingTravelTime.setText(duration);
         } else {
@@ -1051,7 +1051,7 @@ public class HomeFragment extends Fragment implements
             navBar.setVisibility(View.GONE);
             linearLayoutMarkerBottom.setVisibility(View.VISIBLE);
             textViewMarkerParkingAreaCount.setText(count);
-            textViewMarkerParkingAreaName.setText(name);
+            textViewMarkerParkingAreaName.setText(ApplicationUtils.capitalize(name));
             textViewMarkerParkingDistance.setText(new DecimalFormat("##.##").format(distance) + " km");
 //            textViewMarkerParkingTravelTime.setText(duration);
         } else {
@@ -1191,9 +1191,10 @@ public class HomeFragment extends Fragment implements
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment) getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment);
         if (autocompleteFragment != null) {
             autocompleteFragment.setCountries("BD");
-        }
-
-        if (autocompleteFragment != null) {
+            autocompleteFragment.setHint("Where to?");
+//        }
+//
+//        if (autocompleteFragment != null) {
             autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG, Place.Field.ADDRESS_COMPONENTS, Place.Field.PLUS_CODE, Place.Field.TYPES));
             Timber.d(String.valueOf(Place.Field.ID));
             Timber.d(String.valueOf(Place.Field.NAME));
@@ -1549,7 +1550,7 @@ public class HomeFragment extends Fragment implements
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(SetMarkerEvent event) {
 //        Toast.makeText(getActivity(), "Geche", Toast.LENGTH_SHORT).show();
-        layoutVisible(true, name, count, distance, event.location);
+        layoutVisible(true, ApplicationUtils.capitalize(name), count, distance, event.location);
         fetchSensors();
         Timber.e("Zoom call hoiche");
         MarkerOptions markerOptions = new MarkerOptions();

@@ -26,36 +26,49 @@
                 android:textSize="@dimen/_12ssp"
                 android:textStyle="normal" />
 
+<!--            <FrameLayout-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_margin="10dp"-->
+            <!--                android:background="#cccccc" >-->
+
             <EditText
                 android:id="@+id/editTextParking"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/dim50"
                 android:layout_margin="@dimen/_7sdp"
-                android:padding="@dimen/dim3"
+                android:background="@drawable/white_border"
                 android:elevation="@dimen/dim3"
-                android:background="@android:color/background_light"
+                android:singleLine="true"
                 android:hint="@string/search_parking"
-                android:imeOptions="actionSearch" />
+                android:imeOptions="actionSearch"
+                android:padding="@dimen/dim3" />
 
-<!--            android:background="@drawable/stroke_box"-->
-
-<!--            <FrameLayout-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="match_parent">-->
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerViewParking"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/dim3"
-                    android:padding="@dimen/dim3"
-                    android:elevation="@dimen/dim3"
-                    android:clipToPadding="false"
-                    android:overScrollMode="never"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:scrollbars="vertical" />
+<!--            <Button-->
+<!--                android:id="@+id/btn_clear"-->
+<!--                android:layout_width="25dp"-->
+<!--                android:layout_height="25dp"-->
+<!--                android:layout_gravity="end|center_vertical"-->
+<!--                android:layout_marginEnd="10dp"-->
+<!--                android:layout_marginRight="10dp"-->
+<!--                android:background="@drawable/ic_clear"-->
+<!--                android:visibility="gone" />-->
 
 <!--            </FrameLayout>-->
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewParking"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dim3"
+                android:background="?android:attr/selectableItemBackground"
+                android:clipToPadding="false"
+                android:elevation="@dimen/dim3"
+                android:overScrollMode="never"
+                android:padding="@dimen/dim3"
+                android:scrollbars="vertical" />
+
+            <!--            </FrameLayout>-->
 
         </LinearLayout>
 
@@ -75,16 +88,16 @@
         android:id="@+id/linearLayoutBottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         android:layout_alignParentBottom="true"
         android:background="@android:color/white"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:weightSum="2"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="2">
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -120,25 +133,25 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="@dimen/dim5"
-                android:orientation="vertical"
                 android:layout_weight="1.5"
                 android:background="@android:color/white"
                 android:gravity="center"
+                android:orientation="vertical"
                 android:padding="@dimen/dim2">
 
                 <LinearLayout
                     android:id="@+id/linearLayoutParkingAreaName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:weightSum="2"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:weightSum="2">
 
                     <TextView
                         android:id="@+id/textViewParkingAreaName"
                         android:layout_width="0dp"
-                        android:layout_weight="1.5"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/dim2"
+                        android:layout_weight="1.5"
                         android:maxLines="1"
                         android:padding="@dimen/dim3"
                         android:text="@string/parking_area_name"
@@ -149,10 +162,10 @@
                     <TextView
                         android:id="@+id/textViewParkingDistance"
                         android:layout_width="0dp"
-                        android:layout_weight="0.5"
                         android:layout_height="wrap_content"
-                        android:maxLines="1"
+                        android:layout_weight="0.5"
                         android:gravity="end"
+                        android:maxLines="1"
                         android:padding="@dimen/dim3"
                         android:text="@string/distance"
                         android:textColor="@android:color/black"
@@ -164,15 +177,15 @@
                     android:id="@+id/linearLayoutParkingAvailability"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:weightSum="2"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:weightSum="2">
 
                     <TextView
                         android:id="@+id/textViewParkingAreaAddress"
                         android:layout_width="0dp"
-                        android:layout_weight="1.5"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/linearLayoutParkingAreaName"
+                        android:layout_weight="1.5"
                         android:padding="@dimen/dim3"
                         android:text="@string/subject_to_availability"
                         android:textColor="@color/blue"
@@ -181,16 +194,16 @@
                     <TextView
                         android:id="@+id/textViewParkingTravelTime"
                         android:layout_width="0dp"
-                        android:layout_weight="0.5"
                         android:layout_height="wrap_content"
-                        android:maxLines="1"
-                        android:visibility="gone"
+                        android:layout_weight="0.5"
                         android:gravity="end"
+                        android:maxLines="1"
                         android:padding="@dimen/dim3"
                         android:text="@string/time"
                         android:textColor="@android:color/black"
                         android:textSize="@dimen/_10ssp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:visibility="gone" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
@@ -199,10 +212,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:padding="@dimen/dim3"
             android:layout_gravity="center_vertical"
             android:background="@android:color/white"
             android:orientation="horizontal"
+            android:padding="@dimen/dim3"
             android:weightSum="2">
 
             <ImageView

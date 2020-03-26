@@ -1,5 +1,6 @@
 package www.fiberathome.com.parkingapp.ui.parking;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -44,6 +46,7 @@ import www.fiberathome.com.parkingapp.base.AppConfig;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionEvent;
 import www.fiberathome.com.parkingapp.model.SensorArea;
+import www.fiberathome.com.parkingapp.utils.OnEditTextRightDrawableTouchListener;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -62,6 +65,8 @@ public class ParkingFragment extends Fragment {
     LinearLayout linearLayoutBottom;
     @BindView(R.id.editTextParking)
     EditText editTextParking;
+    //    @BindView(R.id.btn_clear)
+//    Button btn_clear;
     @BindView(R.id.btnGetDirection)
     Button btnGetDirection;
     @BindView(R.id.imageViewBack)
@@ -96,11 +101,11 @@ public class ParkingFragment extends Fragment {
         super.onCreate(savedInstanceState);
         context = getActivity();
 
-        ParkingFragment fragment = new ParkingFragment(); //Your Fragment
-        SensorArea sensorArea = new SensorArea(); // Your Object
-        Bundle bundleParcelable = new Bundle();
-        bundleParcelable.putParcelable("sensor", sensorArea); // Key, value
-        fragment.setArguments(bundleParcelable);
+//        ParkingFragment fragment = new ParkingFragment(); //Your Fragment
+//        SensorArea sensorArea = new SensorArea(); // Your Object
+//        Bundle bundleParcelable = new Bundle();
+//        bundleParcelable.putParcelable("sensor", sensorArea); // Key, value
+//        fragment.setArguments(bundleParcelable);
     }
 
     @Override
@@ -108,6 +113,8 @@ public class ParkingFragment extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_parking, container, false);
         ButterKnife.bind(this, view);
+        //set on text change listener for edittext
+//        editTextParking.addTextChangedListener(textWatcher());
         initUI();
         setListeners();
         fetchAreas();
@@ -119,6 +126,7 @@ public class ParkingFragment extends Fragment {
     }
 
     private void setListeners() {
+
         imageViewBack.setOnClickListener(v -> {
             BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
             navBar.setVisibility(View.VISIBLE);
@@ -137,8 +145,12 @@ public class ParkingFragment extends Fragment {
             }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+//                if (charSequence.length() > 0) {
+//                    ivClearSearchText.setVisibility(View.VISIBLE);
+//                } else {
+//                    ivClearSearchText.setVisibility(View.GONE);
+//                }
             }
 
             @Override
@@ -146,9 +158,65 @@ public class ParkingFragment extends Fragment {
                 if (s.length() > 0) {
                     filter(s.toString());
                 }
+
+                //drawing cross button if text appears programmatically
+                if (s.length() > 0) {
+                    editTextParking.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_clear, 0);
+                } else {
+                    editTextParking.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                }
             }
         });
+        //handle drawable cross button click listener programmatically
+        editTextParking.setOnTouchListener(
+                new OnEditTextRightDrawableTouchListener(editTextParking) {
+                    @SuppressLint("ClickableViewAccessibility")
+                    @Override
+                    public void OnDrawableClick() {
+                        // The right drawable was clicked. Your action goes here.
+                        editTextParking.setText("");
+                        fetchAreas();
+                    }
+                });
+
+//        btn_clear.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                editTextParking.setText("");
+//            }
+//        });
     }
+
+
+//    private TextWatcher textWatcher() {
+//        return new TextWatcher() {
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                if (!editTextParking.getText().toString().equals("")) {
+//                    //if edittext include text
+//                    btn_clear.setVisibility(View.VISIBLE);
+////                    textView.setText(editText.getText().toString());
+//                } else {
+//                    //not include text
+//                    btn_clear.setVisibility(View.GONE);
+////                    textView.setText("Edittext cleared!");
+////                    Toast.makeText(EditTextActivity.this, "All texts have gone!!!", Toast.LENGTH_SHORT).show();
+//                }
+//
+//            }
+//
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//
+//            }
+//        };
+//    }
 
     private void setFragmentControls(ArrayList<SensorArea> sensorAreas) {
         this.sensorAreas = sensorAreas;
@@ -188,6 +256,7 @@ public class ParkingFragment extends Fragment {
 
         for (SensorArea item : sensorAreas) {
             if (item.getParkingArea().toLowerCase().contains(text.toLowerCase()) || item.getCount().toLowerCase().contains(text.toLowerCase())) {
+                hideNoData();
                 filteredList.add(item);
             }
         }
@@ -200,22 +269,22 @@ public class ParkingFragment extends Fragment {
     }
 
 
-    public void setNoData() {
+    private void setNoData() {
         textViewNoData.setVisibility(View.VISIBLE);
         textViewNoData.setText(context.getString(R.string.no_record_found));
     }
 
-    public void swipeRefreshStatus(boolean status) {
+    private void swipeRefreshStatus(boolean status) {
         if (swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(status);
         }
     }
 
-    public void hideNoData() {
+    private void hideNoData() {
         textViewNoData.setVisibility(View.GONE);
     }
 
-    public void layoutVisible(boolean isVisible, String name, String count, double distance, String duration, LatLng location) {
+    private void layoutVisible(boolean isVisible, String name, String count, double distance, String duration, LatLng location) {
         this.name = name;
         this.count = count;
         this.location = location;
@@ -228,12 +297,6 @@ public class ParkingFragment extends Fragment {
         Timber.e("distance -> %s", distance);
         Timber.e("isVisible -> %s", isVisible);
         Timber.e("duration -> %s", duration);
-
-//        ParkingFragment fragment = new ParkingFragment(); //Your Fragment
-//        SensorArea car = new SensorArea(); // Your Object
-//        Bundle bundle = new Bundle();
-//        bundle.putParcelable("carInfo", car); // Key, value
-//        fragment.setArguments(bundle);
 
         if (isVisible) {
             Timber.e("isVisible True");
