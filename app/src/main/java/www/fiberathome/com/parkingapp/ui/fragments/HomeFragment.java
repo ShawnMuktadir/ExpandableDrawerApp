@@ -51,6 +51,7 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -260,7 +261,12 @@ public class HomeFragment extends Fragment implements
         setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
         context = getActivity();
-
+        if (mGoogleApiClient != null &&
+                ContextCompat.checkSelfPermission(getActivity(),
+                        Manifest.permission.ACCESS_FINE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED) {
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        }
         if (!checkPermission()) {
             requestPermission();
         }
@@ -560,12 +566,14 @@ public class HomeFragment extends Fragment implements
     public void onResume() {
         super.onResume();
         nearest.setOnClickListener(this);
-        if (mGoogleApiClient != null &&
-                ContextCompat.checkSelfPermission(getActivity(),
-                        Manifest.permission.ACCESS_FINE_LOCATION)
-                        == PackageManager.PERMISSION_GRANTED) {
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-        }
+
+//        if (mGoogleApiClient != null &&
+//                ContextCompat.checkSelfPermission(getActivity(),
+//                        Manifest.permission.ACCESS_FINE_LOCATION)
+//                        == PackageManager.PERMISSION_GRANTED) {
+//            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+//        }
+
     }
 
     @Override
@@ -1181,6 +1189,9 @@ public class HomeFragment extends Fragment implements
 
         // Initialize the AutocompleteSupportFragment.
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment) getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+        if (autocompleteFragment != null) {
+            autocompleteFragment.setCountries("BD");
+        }
 
         if (autocompleteFragment != null) {
             autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG, Place.Field.ADDRESS_COMPONENTS, Place.Field.PLUS_CODE, Place.Field.TYPES));
@@ -1845,6 +1856,7 @@ public class HomeFragment extends Fragment implements
 
             return (Radius * c);
         }
+
     }
 
     /**
