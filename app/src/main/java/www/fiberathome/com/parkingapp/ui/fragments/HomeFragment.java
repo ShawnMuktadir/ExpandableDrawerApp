@@ -823,8 +823,8 @@ public class HomeFragment extends Fragment implements
 //        String markerPositionName = getAddress(getActivity(), marker.getPosition().latitude, marker.getPosition().longitude);
             getAddress(getActivity(), markerPlaceLatLng.latitude, markerPlaceLatLng.longitude);
             String searchPlaceName = address;
-            layoutMarkerVisible(true, searchPlaceName, "1", ApplicationUtils.distance(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude, marker.getPosition().latitude, marker.getPosition().longitude), marker.getPosition());
-            markerAlreadyClicked++;
+            layoutMarkerVisible(true, searchPlaceName, "1", ApplicationUtils.distance(mLastLocation.getLatitude(), mLastLocation.getLongitude(), marker.getPosition().latitude, marker.getPosition().longitude), marker.getPosition());
+            markerAlreadyClicked = 0;
         }
 //        if (spotstatus.equalsIgnoreCase("Empty") || spotstatus.equalsIgnoreCase("Occupied.")) {
 //            //Toast.makeTextHome(getContext(),"Sensor details will be shown here..",Toast.LENGTH_SHORT);
@@ -1217,7 +1217,7 @@ public class HomeFragment extends Fragment implements
 //                        String searchPlaceName = getCompleteAddressString(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude);
                         getAddress(getActivity(), searchPlaceLatLng.latitude, searchPlaceLatLng.longitude);
                         String searchPlaceName = address;
-                        distance = ApplicationUtils.distance(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude, searchPlaceLatLng.latitude, searchPlaceLatLng.longitude);
+                        distance = ApplicationUtils.distance(mLastLocation.getLatitude(), mLastLocation.getLongitude(), searchPlaceLatLng.latitude, searchPlaceLatLng.longitude);
                         double searchPlaceDistance = distance;
                         Timber.e("searchPlaceName -> %s", searchPlaceName);
                         layoutSearchVisible(true, searchPlaceName, "0", distance, searchPlaceLatLng);
