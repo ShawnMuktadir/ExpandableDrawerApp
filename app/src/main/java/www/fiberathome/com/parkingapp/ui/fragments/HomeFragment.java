@@ -673,7 +673,7 @@ public class HomeFragment extends Fragment implements
     public void onLocationChanged(Location location) {
         Timber.e("onLocationChanged called");
 //        googleMap.clear();
-        this.mLastLocation = location;
+        HomeFragment.mLastLocation = location;
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(
                 new LatLng(location.getLatitude(), location.getLongitude()), 15);
         googleMap.animateCamera(cameraUpdate);
@@ -691,7 +691,7 @@ public class HomeFragment extends Fragment implements
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
         markerOptions.title("Current Position");
-//        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
 //        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running));
         googleMap.addMarker(markerOptions);
         mCurrLocationMarker = googleMap.addMarker(markerOptions);
