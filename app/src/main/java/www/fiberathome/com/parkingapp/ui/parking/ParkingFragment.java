@@ -47,6 +47,8 @@ import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionEvent;
 import www.fiberathome.com.parkingapp.model.SensorArea;
 import www.fiberathome.com.parkingapp.utils.OnEditTextRightDrawableTouchListener;
+import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -187,37 +189,6 @@ public class ParkingFragment extends Fragment {
 //        });
     }
 
-
-//    private TextWatcher textWatcher() {
-//        return new TextWatcher() {
-//
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                if (!editTextParking.getText().toString().equals("")) {
-//                    //if edittext include text
-//                    btn_clear.setVisibility(View.VISIBLE);
-////                    textView.setText(editText.getText().toString());
-//                } else {
-//                    //not include text
-//                    btn_clear.setVisibility(View.GONE);
-////                    textView.setText("Edittext cleared!");
-////                    Toast.makeText(EditTextActivity.this, "All texts have gone!!!", Toast.LENGTH_SHORT).show();
-//                }
-//
-//            }
-//
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//
-//            }
-//        };
-//    }
-
     private void setFragmentControls(ArrayList<SensorArea> sensorAreas) {
         this.sensorAreas = sensorAreas;
         recyclerViewParking.setHasFixedSize(true);
@@ -261,6 +232,12 @@ public class ParkingFragment extends Fragment {
             }
         }
 
+        if (filteredList.isEmpty()) {
+//            Toast.makeText(context, "No data", Toast.LENGTH_LONG).show();
+            TastyToastUtils.showTastyErrorToast(context, "No data");
+//            setNoData();
+        }
+
         parkingAdapter.filterList(filteredList);
     }
 
@@ -271,7 +248,7 @@ public class ParkingFragment extends Fragment {
 
     private void setNoData() {
         textViewNoData.setVisibility(View.VISIBLE);
-        textViewNoData.setText(context.getString(R.string.no_record_found));
+//        textViewNoData.setText(context.getString(R.string.no_record_found));
     }
 
     private void swipeRefreshStatus(boolean status) {

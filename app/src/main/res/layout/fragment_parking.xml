@@ -26,12 +26,6 @@
                 android:textSize="@dimen/_12ssp"
                 android:textStyle="normal" />
 
-<!--            <FrameLayout-->
-            <!--                android:layout_width="match_parent"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                android:layout_margin="10dp"-->
-            <!--                android:background="#cccccc" >-->
-
             <EditText
                 android:id="@+id/editTextParking"
                 android:layout_width="match_parent"
@@ -39,22 +33,10 @@
                 android:layout_margin="@dimen/_7sdp"
                 android:background="@drawable/white_border"
                 android:elevation="@dimen/dim3"
-                android:singleLine="true"
                 android:hint="@string/search_parking"
                 android:imeOptions="actionSearch"
-                android:padding="@dimen/dim3" />
-
-<!--            <Button-->
-<!--                android:id="@+id/btn_clear"-->
-<!--                android:layout_width="25dp"-->
-<!--                android:layout_height="25dp"-->
-<!--                android:layout_gravity="end|center_vertical"-->
-<!--                android:layout_marginEnd="10dp"-->
-<!--                android:layout_marginRight="10dp"-->
-<!--                android:background="@drawable/ic_clear"-->
-<!--                android:visibility="gone" />-->
-
-<!--            </FrameLayout>-->
+                android:padding="@dimen/dim3"
+                android:singleLine="true" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewParking"
@@ -67,9 +49,6 @@
                 android:overScrollMode="never"
                 android:padding="@dimen/dim3"
                 android:scrollbars="vertical" />
-
-            <!--            </FrameLayout>-->
-
         </LinearLayout>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
