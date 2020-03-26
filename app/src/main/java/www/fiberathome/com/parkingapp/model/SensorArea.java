@@ -12,6 +12,7 @@ public class SensorArea implements Parcelable {
     private double lng;
     private double distance;
     private String count;
+    private String duration;
     private boolean isChecked;
 
     public SensorArea() {
@@ -107,6 +108,14 @@ public class SensorArea implements Parcelable {
 
     public void setChecked(boolean checked) {
         isChecked = checked;
+    }
+
+    public String getDuration() {
+        return duration;
+    }
+
+    public void setDuration(String duration) {
+        this.duration = duration;
     }
 
     //    public SensorArea(String parkingArea, String count, boolean isChecked) {

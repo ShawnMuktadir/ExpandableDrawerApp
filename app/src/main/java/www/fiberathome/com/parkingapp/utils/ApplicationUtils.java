@@ -5,18 +5,30 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
+import com.akexorcist.googledirection.DirectionCallback;
+import com.akexorcist.googledirection.GoogleDirection;
+import com.akexorcist.googledirection.constant.RequestResult;
+import com.akexorcist.googledirection.constant.TransportMode;
+import com.akexorcist.googledirection.model.Direction;
+import com.akexorcist.googledirection.model.Info;
+import com.akexorcist.googledirection.model.Leg;
+import com.akexorcist.googledirection.model.Route;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -29,8 +41,10 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.BuildConfig;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.model.GlobalVars;
 import www.fiberathome.com.parkingapp.preference.StaticData;
 import www.fiberathome.com.parkingapp.preference.utils.ConnectivityInterceptor;
+import www.fiberathome.com.parkingapp.ui.fragments.HomeFragment;
 
 public class ApplicationUtils {
 
@@ -91,6 +105,40 @@ public class ApplicationUtils {
         InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(((Activity) mContext).getWindow().getCurrentFocus().getWindowToken(), 0);
     }
+
+    public static void hideKeyboard(final Activity activity) {
+        Timber.e("hideKeyboard -> ");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            if (activity != null) {
+                                final InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+                                final View view = activity.getCurrentFocus();
+                                if (view != null) {
+                                    final IBinder binder = view.getWindowToken();
+                                    imm.hideSoftInputFromWindow(binder, 0);
+                                    imm.showSoftInputFromInputMethod(binder, 0);
+                                }
+                            }
+                        } catch (final Exception e) {
+                            Timber.d(e, "-> %s Exception to hide keyboard", ApplicationUtils.class.getSimpleName());
+                        }
+                    }
+                });
+            }
+        }).start();
+
+    }
+
 
     public static void showExitDialog(final Activity activity) {
         android.app.AlertDialog.Builder dialogBuilder = new android.app.AlertDialog.Builder(activity, R.style.Theme_AppCompat_NoActionBar);
@@ -193,5 +241,88 @@ public class ApplicationUtils {
         double km = mile / 0.62137;
         Timber.e("distance -> %s", km);
         return (km);
+    }
+
+    public static String capitalize(String str) {
+        if(str == null || str.isEmpty()) {
+            return str;
+        }
+
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
+
+    /**
+     * Draw polyline on map, get distance and duration of the route using akexorcist library
+     * (used for getting duration between location)
+     *
+     * @param latLngDestination LatLng of the destination
+     */
+    public static void getDestinationInfo(Context context, LatLng latLngDestination, TextView textView) {
+//        progressDialog();
+        String serverKey = context.getResources().getString(R.string.google_maps_key); // Api Key For Google Direction API \\
+        final LatLng origin = new LatLng(HomeFragment.mLastLocation.getLatitude(), HomeFragment.mLastLocation.getLongitude());
+//        final LatLng origin = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+        final LatLng destination = latLngDestination;
+        //-------------Using AK Exorcist Google Direction Library---------------\\
+        GoogleDirection.withServerKey(serverKey)
+                .from(origin)
+                .to(destination)
+                .transportMode(TransportMode.DRIVING)
+                .execute(new DirectionCallback() {
+                    @Override
+                    public void onDirectionSuccess(Direction direction, String rawBody) {
+//                        dismissDialog();
+                        String status = direction.getStatus();
+                        if (status.equals(RequestResult.OK)) {
+                            Route route = direction.getRouteList().get(0);
+                            Leg leg = route.getLegList().get(0);
+                            Info distanceInfo = leg.getDistance();
+                            Info durationInfo = leg.getDuration();
+                            String distance = distanceInfo.getText();
+                            String duration = durationInfo.getText();
+                            textView.setText(duration);
+//                            textViewSearchParkingTravelTime.setText(duration);
+//                            textViewMarkerParkingTravelTime.setText(duration);
+                            //------------Displaying Distance and Time-----------------\\
+//                            showingDistanceTime(distance, duration); // Showing distance and time to the user in the UI \\
+                            String message = "Total Distance is " + distance + " and Estimated Time is " + duration;
+                            Timber.e("duration message -> %s", message);
+//                            StaticMethods.customSnackBar(consumerHomeActivity.parentLayout, message,
+//                                    getResources().getColor(R.color.colorPrimary),
+//                                    getResources().getColor(R.color.colorWhite), 3000);
+
+                            //--------------Drawing Path-----------------\\
+//                            ArrayList<LatLng> directionPositionList = leg.getDirectionPoint();
+//                            PolylineOptions polylineOptions = DirectionConverter.createPolyline(getActivity(),
+//                                    directionPositionList, 5, getResources().getColor(R.color.colorPrimary));
+//                            googleMap.addPolyline(polylineOptions);
+                            //--------------------------------------------\\
+
+                            //-----------Zooming the map according to marker bounds-------------\\
+//                            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+//                            builder.include(origin);
+//                            builder.include(destination);
+//                            LatLngBounds bounds = builder.build();
+//
+//                            int width = getResources().getDisplayMetrics().widthPixels;
+//                            int height = getResources().getDisplayMetrics().heightPixels;
+//                            int padding = (int) (width * 0.20); // offset from edges of the map 10% of screen
+//
+//                            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
+//                            googleMap.animateCamera(cu);
+                            //------------------------------------------------------------------\\
+
+                        } else if (status.equals(RequestResult.NOT_FOUND)) {
+                            Toast.makeText(context, "No routes exist", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onDirectionFailure(Throwable t) {
+                        // Do something here
+                    }
+                });
+        //-------------------------------------------------------------------------------\\
+
     }
 }

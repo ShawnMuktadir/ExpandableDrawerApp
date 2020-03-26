@@ -110,9 +110,9 @@
     <string name="exit_message">Please Press here to exit!</string>
     <string name="law">Law</string>
     <string name="demo_price">Tk 100/h</string>
-    <string name="distance">16km</string>
+    <string name="distance"> </string>
     <string name="availability">Availability</string>
-    <string name="time">1hr</string>
+    <string name="time"> </string>
     <string name="menu_search">Search...</string>
 
 </resources>

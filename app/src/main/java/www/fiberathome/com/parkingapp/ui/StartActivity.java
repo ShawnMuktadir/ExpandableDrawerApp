@@ -6,10 +6,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.iotsens.sdk.IoTSensApiClient;
-import com.iotsens.sdk.IoTSensApiClientBuilder;
-import com.iotsens.sdk.sensors.SensorsRequest;
-import com.iotsens.sdk.sensors.SensorsRequestBuilder;
+//import com.iotsens.sdk.IoTSensApiClient;
+//import com.iotsens.sdk.IoTSensApiClientBuilder;
+//import com.iotsens.sdk.sensors.SensorsRequest;
+//import com.iotsens.sdk.sensors.SensorsRequestBuilder;
 
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.utils.BaseActivity;
@@ -28,9 +28,9 @@ public class StartActivity extends BaseActivity implements View.OnClickListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
 
-        IoTSensApiClient apiClient = IoTSensApiClientBuilder.aIoTSensClient().withApplication(APPLICATION_ID).withSecret(SECRET).withDefaultUser(DEFAULT_USER).build();
-
-        SensorsRequest sensorsRequest = SensorsRequestBuilder.aSensorRequest().build();
+//        IoTSensApiClient apiClient = IoTSensApiClientBuilder.aIoTSensClient().withApplication(APPLICATION_ID).withSecret(SECRET).withDefaultUser(DEFAULT_USER).build();
+//
+//        SensorsRequest sensorsRequest = SensorsRequestBuilder.aSensorRequest().build();
 
         if (SharedPreManager.getInstance(getApplicationContext()).isLoggedIn()) {
             splash();

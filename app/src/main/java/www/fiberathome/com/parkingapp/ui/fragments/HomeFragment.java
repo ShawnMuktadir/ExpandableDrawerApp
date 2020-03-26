@@ -32,6 +32,15 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.akexorcist.googledirection.DirectionCallback;
+import com.akexorcist.googledirection.GoogleDirection;
+import com.akexorcist.googledirection.constant.RequestResult;
+import com.akexorcist.googledirection.constant.TransportMode;
+import com.akexorcist.googledirection.model.Direction;
+import com.akexorcist.googledirection.model.Info;
+import com.akexorcist.googledirection.model.Leg;
+import com.akexorcist.googledirection.model.Route;
+import com.akexorcist.googledirection.util.DirectionConverter;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -49,6 +58,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -230,7 +240,7 @@ public class HomeFragment extends Fragment implements
     private Marker marker;
     private LocationManager mLocationManager;
 
-    private Location mLastLocation;
+    public static Location mLastLocation;
     private Marker mCurrLocationMarker;
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
@@ -286,9 +296,13 @@ public class HomeFragment extends Fragment implements
             Timber.e("Sensor Area from SharedData -> %s", new Gson().toJson(sensorArea));
             textViewParkingAreaName.setText(sensorArea.getParkingArea());
             textViewParkingAreaCount.setText(sensorArea.getCount());
-            textViewParkingDistance.setText(String.valueOf(sensorArea.getDistance()));
+            String distance = new DecimalFormat("##.##").format(sensorArea.getDistance()) + " km";
+            textViewParkingDistance.setText(distance);
+//            textViewParkingTravelTime.setText(sensorArea.getDuration());
+            ApplicationUtils.getDestinationInfo(context, new LatLng(sensorArea.getLat(), sensorArea.getLng()), textViewParkingTravelTime);
+
         } else {
-            Toast.makeText(context, "Genjam", Toast.LENGTH_SHORT).show();
+            Timber.e("Genjam");
         }
         setListeners();
         try {
@@ -312,6 +326,7 @@ public class HomeFragment extends Fragment implements
                 linearLayoutBottom.setVisibility(View.GONE);
                 linearLayoutSearchBottom.setVisibility(View.GONE);
                 linearLayoutMarkerBottom.setVisibility(View.GONE);
+                SharedData.getInstance().setSensorArea(null);
             }
         });
 
@@ -390,6 +405,7 @@ public class HomeFragment extends Fragment implements
                     btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
                     BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
                     navBar.setVisibility(View.VISIBLE);
+                    SharedData.getInstance().setSensorArea(null);
                 }
             }
         });
@@ -534,6 +550,7 @@ public class HomeFragment extends Fragment implements
 //        }
 //    }
 
+    @Override
     public void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
@@ -554,7 +571,7 @@ public class HomeFragment extends Fragment implements
     @Override
     public void onPause() {
         super.onPause();
-        gpsTracker.stopUsingGPS();
+//        gpsTracker.stopUsingGPS();
         //stop location updates when Activity is no longer active
         if (mGoogleApiClient != null) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
@@ -565,7 +582,7 @@ public class HomeFragment extends Fragment implements
     public void onStop() {
         EventBus.getDefault().unregister(this);
         super.onStop();
-        gpsTracker.stopUsingGPS();
+//        gpsTracker.stopUsingGPS();
     }
 
     @Override
@@ -802,6 +819,7 @@ public class HomeFragment extends Fragment implements
 //            return;
 //        }
             markerPlaceLatLng = new LatLng(marker.getPosition().latitude, marker.getPosition().longitude);
+            getDestinationInfo(markerPlaceLatLng);
 //        String markerPositionName = getAddress(getActivity(), marker.getPosition().latitude, marker.getPosition().longitude);
             getAddress(getActivity(), markerPlaceLatLng.latitude, markerPlaceLatLng.longitude);
             String searchPlaceName = address;
@@ -978,9 +996,9 @@ public class HomeFragment extends Fragment implements
 //            BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
 //            navBar.setVisibility(View.GONE);
             linearLayoutBottom.setVisibility(View.VISIBLE);
-            textViewParkingAreaCount.setText(count);
-            textViewParkingAreaName.setText(name);
-            textViewParkingDistance.setText(new DecimalFormat("##.##").format(distance) + " km");
+//            textViewParkingAreaCount.setText(count);
+//            textViewParkingAreaName.setText(name);
+//            textViewParkingDistance.setText(new DecimalFormat("##.##").format(distance) + " km");
 //            textViewParkingTravelTime.setText(duration);
         } else {
             BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
@@ -1073,7 +1091,7 @@ public class HomeFragment extends Fragment implements
 
     private void initGPS() {
         Timber.e("initGPS");
-        gpsTracker = new GPSTracker(getContext(), this);
+        gpsTracker = new GPSTracker(getContext());
 //        googleMap.setOnMyLocationChangeListener(myLocationChangeListener);
         if (gpsTracker.canGetLocation()) {
             double latitude = gpsTracker.getLatitude();
@@ -1191,6 +1209,7 @@ public class HomeFragment extends Fragment implements
                         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 15));
                         BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
                         navBar.setVisibility(View.GONE);
+                        getDestinationInfo(searchPlaceLatLng);
                         linearLayoutBottom.setVisibility(View.VISIBLE);
                         linearLayoutNameCount.setVisibility(View.VISIBLE);
                         btnGetDirection.setVisibility(View.VISIBLE);
@@ -1578,7 +1597,8 @@ public class HomeFragment extends Fragment implements
 //                linearLayoutNameCount.setVisibility(View.VISIBLE);
                 linearLayoutBottom.setVisibility(View.VISIBLE);
                 imageViewBack.setVisibility(View.VISIBLE);
-                String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), event.location);
+//                String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), event.location);
+                String url = getDirectionsUrl(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), event.location);
                 TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
                 taskRequestDirections.execute(url);
 
@@ -1616,7 +1636,8 @@ public class HomeFragment extends Fragment implements
 //                linearLayoutNameCount.setVisibility(View.VISIBLE);
                 linearLayoutSearchBottom.setVisibility(View.VISIBLE);
                 imageViewSearchBack.setVisibility(View.VISIBLE);
-                String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), searchPlaceLatLng);
+//                String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), searchPlaceLatLng);
+                String url = getDirectionsUrl(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), searchPlaceLatLng);
                 TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
                 taskRequestDirections.execute(url);
             }
@@ -1653,7 +1674,8 @@ public class HomeFragment extends Fragment implements
 //                linearLayoutNameCount.setVisibility(View.VISIBLE);
 //                linearLayoutMarkerBottom.setVisibility(View.VISIBLE);
 //                imageViewMarkerBack.setVisibility(View.VISIBLE);
-                String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), markerPlaceLatLng);
+//                String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), markerPlaceLatLng);
+                String url = getDirectionsUrl(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), markerPlaceLatLng);
                 TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
                 taskRequestDirections.execute(url);
             }
@@ -1824,4 +1846,79 @@ public class HomeFragment extends Fragment implements
             return (Radius * c);
         }
     }
+
+    /**
+     * Draw polyline on map, get distance and duration of the route
+     *
+     * @param latLngDestination LatLng of the destination
+     */
+    private void getDestinationInfo(LatLng latLngDestination) {
+//        progressDialog();
+        String serverKey = getResources().getString(R.string.google_maps_key); // Api Key For Google Direction API \\
+//        final LatLng origin = new LatLng(GlobalVars.getUserLocation().latitude,GlobalVars.getUserLocation().longitude);
+        final LatLng origin = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+        final LatLng destination = latLngDestination;
+        //-------------Using AK Exorcist Google Direction Library---------------\\
+        GoogleDirection.withServerKey(serverKey)
+                .from(origin)
+                .to(destination)
+                .transportMode(TransportMode.DRIVING)
+                .execute(new DirectionCallback() {
+                    @Override
+                    public void onDirectionSuccess(Direction direction, String rawBody) {
+//                        dismissDialog();
+                        String status = direction.getStatus();
+                        if (status.equals(RequestResult.OK)) {
+                            Route route = direction.getRouteList().get(0);
+                            Leg leg = route.getLegList().get(0);
+                            Info distanceInfo = leg.getDistance();
+                            Info durationInfo = leg.getDuration();
+                            String distance = distanceInfo.getText();
+                            String duration = durationInfo.getText();
+                            textViewParkingTravelTime.setText(duration);
+                            textViewSearchParkingTravelTime.setText(duration);
+                            textViewMarkerParkingTravelTime.setText(duration);
+                            //------------Displaying Distance and Time-----------------\\
+//                            showingDistanceTime(distance, duration); // Showing distance and time to the user in the UI \\
+                            String message = "Total Distance is " + distance + " and Estimated Time is " + duration;
+                            Timber.e("duration message -> %s", message);
+//                            StaticMethods.customSnackBar(consumerHomeActivity.parentLayout, message,
+//                                    getResources().getColor(R.color.colorPrimary),
+//                                    getResources().getColor(R.color.colorWhite), 3000);
+
+                            //--------------Drawing Path-----------------\\
+//                            ArrayList<LatLng> directionPositionList = leg.getDirectionPoint();
+//                            PolylineOptions polylineOptions = DirectionConverter.createPolyline(getActivity(),
+//                                    directionPositionList, 5, getResources().getColor(R.color.colorPrimary));
+//                            googleMap.addPolyline(polylineOptions);
+                            //--------------------------------------------\\
+
+                            //-----------Zooming the map according to marker bounds-------------\\
+//                            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+//                            builder.include(origin);
+//                            builder.include(destination);
+//                            LatLngBounds bounds = builder.build();
+//
+//                            int width = getResources().getDisplayMetrics().widthPixels;
+//                            int height = getResources().getDisplayMetrics().heightPixels;
+//                            int padding = (int) (width * 0.20); // offset from edges of the map 10% of screen
+//
+//                            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
+//                            googleMap.animateCamera(cu);
+                            //------------------------------------------------------------------\\
+
+                        } else if (status.equals(RequestResult.NOT_FOUND)) {
+                            Toast.makeText(context, "No routes exist", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onDirectionFailure(Throwable t) {
+                        // Do something here
+                    }
+                });
+        //-------------------------------------------------------------------------------\\
+
+    }
+
 }

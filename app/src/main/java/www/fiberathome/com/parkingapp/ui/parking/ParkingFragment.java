@@ -122,7 +122,7 @@ public class ParkingFragment extends Fragment {
         imageViewBack.setOnClickListener(v -> {
             BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
             navBar.setVisibility(View.VISIBLE);
-            layoutVisible(false, "", "", 0.0, null);
+            layoutVisible(false, "", "", 0.0, "", null);
         });
 
         btnGetDirection.setOnClickListener(v -> {
@@ -215,7 +215,7 @@ public class ParkingFragment extends Fragment {
         textViewNoData.setVisibility(View.GONE);
     }
 
-    public void layoutVisible(boolean isVisible, String name, String count, double distance, LatLng location) {
+    public void layoutVisible(boolean isVisible, String name, String count, double distance, String duration, LatLng location) {
         this.name = name;
         this.count = count;
         this.location = location;
@@ -227,6 +227,7 @@ public class ParkingFragment extends Fragment {
         Timber.e("location -> %s", location);
         Timber.e("distance -> %s", distance);
         Timber.e("isVisible -> %s", isVisible);
+        Timber.e("duration -> %s", duration);
 
 //        ParkingFragment fragment = new ParkingFragment(); //Your Fragment
 //        SensorArea car = new SensorArea(); // Your Object
@@ -242,7 +243,7 @@ public class ParkingFragment extends Fragment {
             textViewParkingAreaCount.setText(count);
             textViewParkingAreaName.setText(name);
             textViewParkingDistance.setText(new DecimalFormat("##.##").format(distance) + " km");
-//            textViewParkingTravelTime.setText(duration[0]);
+            textViewParkingTravelTime.setText(duration);
         } else {
             BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
             navBar.setVisibility(View.VISIBLE);
@@ -251,7 +252,6 @@ public class ParkingFragment extends Fragment {
     }
 
     private void fetchAreas() {
-
         //initialize the progress dialog and show it
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage("Fetching The Parking Slots....");
@@ -295,4 +295,5 @@ public class ParkingFragment extends Fragment {
 
         ParkingApp.getInstance().addToRequestQueue(strReq);
     }
+
 }

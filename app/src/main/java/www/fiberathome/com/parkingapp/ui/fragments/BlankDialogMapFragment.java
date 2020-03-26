@@ -141,7 +141,7 @@ public class BlankDialogMapFragment extends Fragment implements NavigationView.O
     }
 
     private void initGPS() {
-        gpsTracker = new GPSTracker(getContext(), this);
+        gpsTracker = new GPSTracker(getContext());
         if (gpsTracker.canGetLocation()) {
             double latitude = gpsTracker.getLatitude();
             double longitude = gpsTracker.getLongitude();

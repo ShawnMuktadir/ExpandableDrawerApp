@@ -1,5 +1,7 @@
 package www.fiberathome.com.parkingapp.Architecture.Importer;
 
+import android.net.Uri;
+
 import com.google.android.gms.maps.model.LatLng;
 
 import www.fiberathome.com.parkingapp.model.MyLocation;
@@ -7,7 +9,7 @@ import www.fiberathome.com.parkingapp.model.MyLocation;
 public class PlaceInfo {
 
     public String googlePlaceId;
-    public int placeId;
+    public String id;
     public String name;
     public String address;
     public double lat;
@@ -16,15 +18,32 @@ public class PlaceInfo {
     public String phoneNumber;
     public String internationaPhoneNumber;
     public String rating;
-    public String keword;
+    public String keyword;
 
-    public PlaceInfo(){
+    private Uri websiteUri;
+    private LatLng latlng;
+    private String attributions;
+    private float rating1;
+
+    public PlaceInfo() {
 
     }
 
-    public PlaceInfo(String googlePlaceId, int placeId, String name, String address, double lat, double lng, String website, String phoneNumber, String internationaPhoneNumber, String rating, String keword) {
+    public PlaceInfo(String name, String address, String phoneNumber, String id, Uri websiteUri,
+                     LatLng latlng, float rating1, String attributions) {
+        this.name = name;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+        this.id = id;
+        this.websiteUri = websiteUri;
+        this.latlng = latlng;
+        this.rating1 = rating1;
+        this.attributions = attributions;
+    }
+
+    public PlaceInfo(String googlePlaceId, String id, String name, String address, double lat, double lng, String website, String phoneNumber, String internationaPhoneNumber, String rating, String keyword) {
         this.googlePlaceId = googlePlaceId;
-        this.placeId = placeId;
+        this.id = id;
         this.name = name;
         this.address = address;
         this.lat = lat;
@@ -33,7 +52,7 @@ public class PlaceInfo {
         this.phoneNumber = phoneNumber;
         this.internationaPhoneNumber = internationaPhoneNumber;
         this.rating = rating;
-        this.keword = keword;
+        this.keyword = keyword;
     }
 
 
@@ -45,13 +64,6 @@ public class PlaceInfo {
         this.googlePlaceId = googlePlaceId;
     }
 
-    public int getPlaceId() {
-        return placeId;
-    }
-
-    public void setPlaceId(int placeId) {
-        this.placeId = placeId;
-    }
 
     public String getName() {
         return name;
@@ -59,6 +71,14 @@ public class PlaceInfo {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getAddress() {
@@ -89,6 +109,38 @@ public class PlaceInfo {
         return website;
     }
 
+    public Uri getWebsiteUri() {
+        return websiteUri;
+    }
+
+    public void setWebsiteUri(Uri websiteUri) {
+        this.websiteUri = websiteUri;
+    }
+
+    public LatLng getLatlng() {
+        return latlng;
+    }
+
+    public void setLatlng(LatLng latlng) {
+        this.latlng = latlng;
+    }
+
+    public String getAttributions() {
+        return attributions;
+    }
+
+    public void setAttributions(String attributions) {
+        this.attributions = attributions;
+    }
+
+    public float getRating1() {
+        return rating1;
+    }
+
+    public void setRating1(float rating1) {
+        this.rating1 = rating1;
+    }
+
     public void setWebsite(String website) {
         this.website = website;
     }
@@ -117,27 +169,27 @@ public class PlaceInfo {
         this.rating = rating;
     }
 
-    public String getKeword() {
-        return keword;
+    public String getKeyword() {
+        return keyword;
     }
 
-    public void setKeword(String keword) {
-        this.keword = keword;
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
     }
 
-    public String getStandardPlaceId(){
-        if (placeId <= 0){
+    public String getStandardPlaceId() {
+        if (Integer.parseInt(id) <= 0) {
             return googlePlaceId;
         }
 
-        return String.valueOf(placeId);
+        return String.valueOf(id);
     }
 
-    public LatLng toLatLng(){
+    public LatLng toLatLng() {
         return new LatLng(lat, lng);
     }
 
-    public MyLocation toMyLocation(){
+    public MyLocation toMyLocation() {
         return new MyLocation(lat, lng);
     }
 }
