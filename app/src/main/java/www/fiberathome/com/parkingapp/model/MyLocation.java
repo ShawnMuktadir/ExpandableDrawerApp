@@ -1,6 +1,8 @@
 package www.fiberathome.com.parkingapp.model;
 
 
+import android.location.Location;
+
 import com.google.android.gms.maps.model.LatLng;
 
 import org.simpleframework.xml.Attribute;
@@ -18,7 +20,7 @@ public class MyLocation {
         this.longitude = longitude;
     }
 
-    public String distanceTo(MyLocation location){
+    public String distanceTo(MyLocation location) {
         double Radius = 6371000.0; // meter
         double dLat = Math.toRadians(this.latitude - location.latitude);
         double dLong = Math.toRadians(this.longitude - location.latitude);
@@ -34,7 +36,7 @@ public class MyLocation {
         return String.format("%.2f km", Radius * c / 1000);
     }
 
-    public LatLng toLatLng(){
+    public LatLng toLatLng() {
         return new LatLng(this.latitude, this.longitude);
     }
 }

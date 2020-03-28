@@ -261,7 +261,7 @@ public class ApplicationUtils {
     public static void getDestinationInfo(Context context, LatLng latLngDestination, TextView textView) {
 //        progressDialog();
         String serverKey = context.getResources().getString(R.string.google_maps_key); // Api Key For Google Direction API \\
-        final LatLng origin = new LatLng(HomeFragment.mLastLocation.getLatitude(), HomeFragment.mLastLocation.getLongitude());
+        final LatLng origin = new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude);
 //        final LatLng origin = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
         final LatLng destination = latLngDestination;
         //-------------Using AK Exorcist Google Direction Library---------------\\
