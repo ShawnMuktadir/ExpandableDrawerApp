@@ -243,7 +243,7 @@ public class HomeFragment extends Fragment implements
     ArrayList<LatLng> listPoints;
     public static DecimalFormat df1 = new DecimalFormat(".##");
     public static DecimalFormat df2 = new DecimalFormat(".##");
-
+    private AutocompleteSupportFragment autocompleteFragment;
 
     //Todo: Get SensorArea Data in Suitable LifeCycle Method from SharedData after selecting from Parking Adapter
 
@@ -413,6 +413,7 @@ public class HomeFragment extends Fragment implements
                 getDirectionButtonClicked--;
                 if (googleMap != null) {
                     googleMap.clear();
+                    autocompleteFragment.setText("");
 //                    onLocationChanged(mLastLocation);
                     onLocationChanged(currentBestLocation);
                     fetchSensors();
@@ -467,6 +468,7 @@ public class HomeFragment extends Fragment implements
                 getDirectionSearchButtonClicked--;
                 if (googleMap != null) {
                     googleMap.clear();
+                    autocompleteFragment.setText("");
 //                    onLocationChanged(mLastLocation);
                     onLocationChanged(currentBestLocation);
                     fetchSensors();
@@ -520,6 +522,7 @@ public class HomeFragment extends Fragment implements
                 getDirectionMarkerButtonClicked--;
                 if (googleMap != null) {
                     googleMap.clear();
+                    autocompleteFragment.setText("");
 //                    onLocationChanged(mLastLocation);
                     onLocationChanged(currentBestLocation);
                     fetchSensors();
@@ -1384,10 +1387,11 @@ public class HomeFragment extends Fragment implements
 
 
         // Initialize the AutocompleteSupportFragment.
-        AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment) getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+        autocompleteFragment = (AutocompleteSupportFragment) getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment);
         if (autocompleteFragment != null) {
             autocompleteFragment.setCountries("BD");
             autocompleteFragment.setHint("Where to?");
+            autocompleteFragment.onPictureInPictureModeChanged(true);
 //        }
 //
 //        if (autocompleteFragment != null) {
