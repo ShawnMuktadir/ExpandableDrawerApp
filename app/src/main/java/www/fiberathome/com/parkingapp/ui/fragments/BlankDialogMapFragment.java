@@ -33,8 +33,7 @@ import com.google.android.gms.maps.model.Marker;
 import java.util.ArrayList;
 import java.util.List;
 
-import timber.log.Timber;
-import www.fiberathome.com.parkingapp.GoogleMapWebService.GooglePlaceSearchNearbySearchListener;
+import www.fiberathome.com.parkingapp.GoogleMapWebServiceNDistance.GooglePlaceSearchNearbySearchListener;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.gps.GPSTracker;
 import www.fiberathome.com.parkingapp.gps.GPSTrackerListener;

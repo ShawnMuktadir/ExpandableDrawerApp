@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.GoogleMapWebService;
+package www.fiberathome.com.parkingapp.GoogleMapWebServiceNDistance;
 
 import www.fiberathome.com.parkingapp.model.SensorList;
 

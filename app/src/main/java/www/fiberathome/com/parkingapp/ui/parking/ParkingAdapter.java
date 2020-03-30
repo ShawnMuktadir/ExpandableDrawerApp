@@ -1,5 +1,6 @@
 package www.fiberathome.com.parkingapp.ui.parking;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,11 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
@@ -25,10 +22,8 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
-import www.fiberathome.com.parkingapp.GoogleMapWebService.CalculateDistanceTime;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionEvent;
-import www.fiberathome.com.parkingapp.model.GlobalVars;
 import www.fiberathome.com.parkingapp.model.SensorArea;
 import www.fiberathome.com.parkingapp.ui.MainActivity;
 import www.fiberathome.com.parkingapp.ui.fragments.HomeFragment;
@@ -65,6 +60,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return new ParkingViewHolder(itemView);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
         ParkingViewHolder parkingViewHolder = (ParkingViewHolder) viewHolder;
@@ -72,7 +68,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         parkingViewHolder.textViewParkingAreaName.setText(ApplicationUtils.capitalize(sensorArea.getParkingArea()));
         parkingViewHolder.textViewParkingAreaCount.setText(sensorArea.getCount());
 
-        distance = ApplicationUtils.distance(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude, sensorArea.getLat(), sensorArea.getLng());
+        distance = ApplicationUtils.distance(HomeFragment.currentLocation.getLatitude(), HomeFragment.currentLocation.getLongitude(), sensorArea.getLat(), sensorArea.getLng());
         sensorArea.setDistance(distance);
 //        String[] duration = getDestinationInfo(new LatLng(sensorArea.getLat(), sensorArea.getLng()));
 //        Timber.e("duration -> %s", duration);

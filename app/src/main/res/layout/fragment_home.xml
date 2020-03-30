@@ -82,6 +82,17 @@
         </RelativeLayout>
     </fragment>
 
+    <ImageButton
+        android:id="@+id/currentLocationImageButton"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="25dp"
+        android:layout_marginEnd="15dp"
+        android:contentDescription="@null"
+        app:srcCompat="@drawable/current_location_vector_icon" />
+
     <LinearLayout
         android:id="@+id/linearLayoutBottom"
         android:layout_width="match_parent"

@@ -1,6 +1,5 @@
-package www.fiberathome.com.parkingapp.GoogleMapWebService;
+package www.fiberathome.com.parkingapp.GoogleMapWebServiceNDistance;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;

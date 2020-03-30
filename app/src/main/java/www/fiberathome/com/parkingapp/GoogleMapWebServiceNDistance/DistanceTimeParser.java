@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.GoogleMapWebService;
+package www.fiberathome.com.parkingapp.GoogleMapWebServiceNDistance;
 
 import org.json.JSONArray;
 import org.json.JSONException;

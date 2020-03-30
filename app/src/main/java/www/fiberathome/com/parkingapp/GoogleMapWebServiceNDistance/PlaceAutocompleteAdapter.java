@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.GoogleMapWebService;
+package www.fiberathome.com.parkingapp.GoogleMapWebServiceNDistance;
 
 /*
  * Copyright (C) 2015 Google Inc. All Rights Reserved.

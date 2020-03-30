@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.GoogleMapWebService;
+package www.fiberathome.com.parkingapp.GoogleMapWebServiceNDistance;
 
 import com.google.android.gms.maps.model.LatLng;
 

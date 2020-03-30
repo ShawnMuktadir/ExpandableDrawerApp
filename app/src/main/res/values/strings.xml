@@ -32,8 +32,8 @@
     <string name="title_activity_map">Map</string>
 
 
-    <!-- Google Map API -->
-    <string name="google_maps_key">AIzaSyDMWfYh5kjSQTALbZb-C0lSNACpcH5RDU4</string>
+<!--    &lt;!&ndash; Google Map API &ndash;&gt;-->
+<!--    <string name="google_maps_key">AIzaSyDMWfYh5kjSQTALbZb-C0lSNACpcH5RDU4</string>-->
 
     <!-- otp button -->
     <string name="btn_retrive_otp">Retrive OTP</string>
