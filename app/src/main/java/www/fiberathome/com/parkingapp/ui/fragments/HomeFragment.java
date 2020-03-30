@@ -261,6 +261,7 @@ public class HomeFragment extends Fragment implements
     private int getDirectionMarkerButtonClicked = 0;
     private ProgressDialog progressDialog;
     private int markerAlreadyClicked = 0;
+    private int fromMarkerRouteDrawn = 0;
 
     public HomeFragment() {
 
@@ -471,7 +472,7 @@ public class HomeFragment extends Fragment implements
 
     @NonNull
     private CameraPosition getCameraPositionWithBearing(LatLng latLng) {
-        return new CameraPosition.Builder().target(latLng).zoom(16).build();
+        return new CameraPosition.Builder().target(latLng).zoom(13).build();
     }
 
     private void showMarker(@NonNull Location currentLocation) {
@@ -1139,9 +1140,6 @@ public class HomeFragment extends Fragment implements
                 BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
                 navBar.setVisibility(View.VISIBLE);
             }
-            linearLayoutMarkerBottom.setVisibility(View.GONE);
-            linearLayoutBottom.setVisibility(View.GONE);
-            linearLayoutSearchBottom.setVisibility(View.GONE);
 //            onLocationChanged(mLastLocation);
 //            onLocationChanged(currentLocation);
             LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
@@ -1151,9 +1149,17 @@ public class HomeFragment extends Fragment implements
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
 //            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running));
             googleMap.addMarker(markerOptions);
-            markerAlreadyClicked--;
+            linearLayoutMarkerBottom.setVisibility(View.GONE);
+            linearLayoutBottom.setVisibility(View.GONE);
+            linearLayoutSearchBottom.setVisibility(View.GONE);
+            btnMarkerGetDirection.setText("Get Direction");
+            getDirectionMarkerButtonClicked = 0;
+            if (fromMarkerRouteDrawn == 1) {
+                ApplicationUtils.showMessageDialog("Some Message", context);
+            }
+            btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
+            markerAlreadyClicked = 0;
             Timber.e("onInfoWindowClick markerAlreadyClicked -> %s", markerAlreadyClicked);
-            return;
         } else {
             Timber.e("onInfoWindowClick else markerAlreadyClicked -> %s", markerAlreadyClicked);
             if (googleMap != null)
@@ -1170,16 +1176,18 @@ public class HomeFragment extends Fragment implements
             googleMap.addMarker(markerOptions);
             String spotstatus = marker.getSnippet();
             String spotid = marker.getTitle();
-            // Preventing multiple clicks, using threshold of 1 second
 
             markerPlaceLatLng = new LatLng(marker.getPosition().latitude, marker.getPosition().longitude);
             getDestinationInfo(markerPlaceLatLng);
 //        String markerPositionName = getAddress(getActivity(), marker.getPosition().latitude, marker.getPosition().longitude);
             getAddress(getActivity(), markerPlaceLatLng.latitude, markerPlaceLatLng.longitude);
             String searchPlaceName = address;
-            layoutMarkerVisible(true, searchPlaceName, "1", ApplicationUtils.distance(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude, marker.getPosition().latitude, marker.getPosition().longitude), marker.getPosition());
-            markerAlreadyClicked = 0;
+            layoutMarkerVisible(true, searchPlaceName, "1", ApplicationUtils.distance(currentLocation.getLatitude(), currentLocation.getLongitude(), marker.getPosition().latitude, marker.getPosition().longitude), marker.getPosition());
+            markerAlreadyClicked++;
+            Timber.e("onInfoWindowClick else last markerAlreadyClicked -> %s", markerAlreadyClicked);
+//            markerAlreadyClicked = 0;
         }
+//        markerAlreadyClicked = 0;
 //        if (spotstatus.equalsIgnoreCase("Empty") || spotstatus.equalsIgnoreCase("Occupied.")) {
 //            //Toast.makeTextHome(getContext(),"Sensor details will be shown here..",Toast.LENGTH_SHORT);
 //
@@ -1556,7 +1564,7 @@ public class HomeFragment extends Fragment implements
             googleMap.setTrafficEnabled(true);
             googleMap.setIndoorEnabled(false);
 
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng, 15));
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng, 13));
 
             googleMap.getUiSettings().setAllGesturesEnabled(true);
             // Disable: Disable zooming controls
@@ -1627,7 +1635,7 @@ public class HomeFragment extends Fragment implements
                         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
                         googleMap.addMarker(markerOptions);
                         //move map camera
-                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 15));
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 13));
                         BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
                         navBar.setVisibility(View.GONE);
                         getDestinationInfo(searchPlaceLatLng);
@@ -1744,7 +1752,7 @@ public class HomeFragment extends Fragment implements
                         String latitude1 = jsonObject.get("latitude").toString();
                         String longitude1 = jsonObject.get("longitude").toString();
                         // find distance
-                        double tDistance = distance(Double.valueOf(latitude1), Double.valueOf(longitude1), GlobalVars.location.latitude, GlobalVars.location.longitude);
+                        double tDistance = distance(Double.valueOf(latitude1), Double.valueOf(longitude1), currentLocation.getLatitude(), currentLocation.getLongitude());
                         //Log.e("tDistance:",""+tDistance);
                         if (tDistance < nDistance) {
                             nDistance = tDistance;
@@ -1753,7 +1761,6 @@ public class HomeFragment extends Fragment implements
                         }
 
                         if (jsonObject.get("s_status").toString().equalsIgnoreCase("1")) {
-
                             if (jsonObject.get("reserve_status").toString().equalsIgnoreCase("1")) {
                                 sensorStatus = "Occupied";
                                 double lat = Double.parseDouble(latitude1);
@@ -2015,7 +2022,7 @@ public class HomeFragment extends Fragment implements
                 markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
                 googleMap.addMarker(markerOptions);
                 //move map camera
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 15));
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 13));
                 btnGetDirection.setVisibility(View.VISIBLE);
 //                linearLayoutNameCount.setVisibility(View.VISIBLE);
                 linearLayoutBottom.setVisibility(View.VISIBLE);
@@ -2056,7 +2063,7 @@ public class HomeFragment extends Fragment implements
                 markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
                 googleMap.addMarker(markerOptions);
                 //move map camera
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 15));
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 13));
                 btnSearchGetDirection.setVisibility(View.VISIBLE);
 //                linearLayoutNameCount.setVisibility(View.VISIBLE);
                 linearLayoutSearchBottom.setVisibility(View.VISIBLE);
@@ -2096,7 +2103,7 @@ public class HomeFragment extends Fragment implements
                 markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
                 googleMap.addMarker(markerOptions);
                 //move map camera
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerPlaceLatLng, 15));
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerPlaceLatLng, 13));
                 btnMarkerGetDirection.setVisibility(View.VISIBLE);
 //                linearLayoutNameCount.setVisibility(View.VISIBLE);
 //                linearLayoutMarkerBottom.setVisibility(View.VISIBLE);
@@ -2106,6 +2113,7 @@ public class HomeFragment extends Fragment implements
                 String url = getDirectionsUrl(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), markerPlaceLatLng);
                 TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
                 taskRequestDirections.execute(url);
+                fromMarkerRouteDrawn = 1;
             }
         }, 1000);
 
