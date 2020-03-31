@@ -271,6 +271,7 @@ public class HomeFragment extends Fragment implements
     private ProgressDialog progressDialog;
     private int markerAlreadyClicked = 0;
     private int fromMarkerRouteDrawn = 0;
+    private static float angle;
 
     public HomeFragment() {
 
@@ -885,6 +886,13 @@ public class HomeFragment extends Fragment implements
         //smoothly move the current position in Google Maps
         refreshMapPosition(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), 45);
 
+        locationUpdate(location);
+        if (currentLocation != null) {
+            double bearing = angleFromCoordinate(currentLocation.getLatitude(), currentLocation.getLongitude(), location.getLatitude(), location.getLongitude());
+            changeMarkerPosition(bearing);
+        }
+        currentLocation = location;
+
 //        currentLocation = getLastBestLocation();
 //        Timber.e("currentBestLocation from getLastBestLocation()-> %s", currentLocation);
 //        getLastBestLocation();
@@ -948,6 +956,51 @@ public class HomeFragment extends Fragment implements
 //                }
 //            }
 //        });
+    }
+
+    private void locationUpdate(Location location) {
+        LatLng latLng = new LatLng((location.getLatitude()), (location.getLongitude()));
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(latLng);
+        markerOptions.title("Current Position");
+        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.car));
+        googleMap.clear();
+        marker = googleMap.addMarker(markerOptions);
+        CameraPosition position = CameraPosition.builder()
+                .target(new LatLng(location.getLatitude(), location.getLongitude()))
+                .zoom(19)
+                .tilt(30)
+                .build();
+        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(position));
+    }
+
+    private void changeMarkerPosition(double position) {
+        float direction = (float) position;
+        Timber.e("LocationBearing -> %s", direction);
+
+        if (direction == 360.0) {
+            //default
+            marker.setRotation(angle);
+        } else {
+            marker.setRotation(direction);
+            angle = direction;
+        }
+    }
+
+    private double angleFromCoordinate(double lat1, double long1, double lat2,
+                                       double long2) {
+        double dLon = (long2 - long1);
+
+        double y = Math.sin(dLon) * Math.cos(lat2);
+        double x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1)
+                * Math.cos(lat2) * Math.cos(dLon);
+
+        double brng = Math.atan2(x, y);
+
+        brng = Math.toDegrees(brng);
+        brng = (brng + 360) % 360;
+        brng = 360 - brng;
+        return brng;
     }
 
     private void refreshMapPosition(LatLng pos, float angle) {
