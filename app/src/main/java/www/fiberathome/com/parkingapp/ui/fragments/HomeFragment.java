@@ -140,7 +140,6 @@ import static android.app.Activity.RESULT_OK;
  * A simple {@link Fragment} subclass.
  */
 
-
 public class HomeFragment extends Fragment implements
         OnMapReadyCallback, GooglePlaceSearchNearbySearchListener, GoogleMap.OnMarkerClickListener,
         GPSTrackerListener, GoogleMap.OnInfoWindowClickListener, View.OnClickListener,
