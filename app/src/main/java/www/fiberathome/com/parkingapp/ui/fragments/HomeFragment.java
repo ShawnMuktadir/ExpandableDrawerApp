@@ -1,6 +1,7 @@
 package www.fiberathome.com.parkingapp.ui.fragments;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -15,11 +16,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -61,10 +65,14 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.JointType;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.maps.model.SquareCap;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
@@ -98,6 +106,8 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.GoogleMapWebServiceNDistance.DirectionsParser;
 import www.fiberathome.com.parkingapp.GoogleMapWebServiceNDistance.GooglePlaceSearchNearbySearchListener;
@@ -315,22 +325,7 @@ public class HomeFragment extends Fragment implements
         initUI(view);
         fetchSensors();
         setListeners();
-//        Bundle bundle = getArguments();
-//        if (bundle != null) {
-//            SensorArea sensorArea = bundle.getParcelable("sensor"); // Key
-//            Timber.e("sensorArea -> %s", sensorArea);
-//            if (sensorArea != null) {
-//                textViewParkingAreaName.setText(sensorArea.getParkingArea());
-//                textViewParkingAreaCount.setText(sensorArea.getCount());
-//                textViewParkingDistance.setText(String.valueOf(sensorArea.getDistance()));
-//            } else {
-//                Toast.makeText(context, "Genjam", Toast.LENGTH_SHORT).show();
-//            }
-//        } else {
-//            Timber.e("Genjam");
-//        }
 
-        //Check SharedData to see if any Parking Option Has Been Selected from ParkingAdapter
         if (SharedData.getInstance().getSensorArea() != null) {
             SensorArea sensorArea = SharedData.getInstance().getSensorArea();
             Timber.e("Sensor Area from SharedData -> %s", new Gson().toJson(sensorArea));
@@ -492,7 +487,6 @@ public class HomeFragment extends Fragment implements
         imageViewBack.setOnClickListener(v -> {
             if (googleMap != null) {
                 googleMap.clear();
-//                onLocationChanged(mLastLocation);
 //                onLocationChanged(currentLocation);
 //                showMarker(currentLocation);
                 LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
@@ -889,6 +883,9 @@ public class HomeFragment extends Fragment implements
 //        this.mLastLocation = location;
 //        currentLocation = location;
         currentLocationMarker.setPosition(new LatLng(location.getLatitude(), location.getLongitude()));
+        //smoothly move the current position in Google Maps
+        refreshMapPosition(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), 45);
+
 //        currentLocation = getLastBestLocation();
 //        Timber.e("currentBestLocation from getLastBestLocation()-> %s", currentLocation);
 //        getLastBestLocation();
@@ -952,6 +949,15 @@ public class HomeFragment extends Fragment implements
 //                }
 //            }
 //        });
+    }
+
+    private void refreshMapPosition(LatLng pos, float angle) {
+        CameraPosition.Builder positionBuilder = new CameraPosition.Builder();
+        positionBuilder.target(pos);
+        positionBuilder.zoom(15f);
+        positionBuilder.bearing(angle);
+        positionBuilder.tilt(60);
+        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(positionBuilder.build()));
     }
 
     /**
@@ -1156,7 +1162,12 @@ public class HomeFragment extends Fragment implements
             getDirectionMarkerButtonClicked = 0;
             if (fromMarkerRouteDrawn == 1) {
                 ApplicationUtils.showMessageDialog("Some Message", context);
+                fetchSensors();
             }
+//            else {
+//                fromMarkerRouteDrawn = 0;
+//                fetchSensors();
+//            }
             btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
             markerAlreadyClicked = 0;
             Timber.e("onInfoWindowClick markerAlreadyClicked -> %s", markerAlreadyClicked);
@@ -1182,7 +1193,9 @@ public class HomeFragment extends Fragment implements
 //        String markerPositionName = getAddress(getActivity(), marker.getPosition().latitude, marker.getPosition().longitude);
             getAddress(getActivity(), markerPlaceLatLng.latitude, markerPlaceLatLng.longitude);
             String searchPlaceName = address;
-            layoutMarkerVisible(true, searchPlaceName, "1", ApplicationUtils.distance(currentLocation.getLatitude(), currentLocation.getLongitude(), marker.getPosition().latitude, marker.getPosition().longitude), marker.getPosition());
+            TaskParser taskParser = new TaskParser();
+//            layoutMarkerVisible(true, searchPlaceName, "1", ApplicationUtils.distance(currentLocation.getLatitude(), currentLocation.getLongitude(), marker.getPosition().latitude, marker.getPosition().longitude), marker.getPosition());
+            layoutMarkerVisible(true, searchPlaceName, "1", taskParser.showDistance(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), new LatLng(marker.getPosition().latitude, marker.getPosition().longitude)), marker.getPosition());
             markerAlreadyClicked++;
             Timber.e("onInfoWindowClick else last markerAlreadyClicked -> %s", markerAlreadyClicked);
 //            markerAlreadyClicked = 0;
@@ -1224,68 +1237,6 @@ public class HomeFragment extends Fragment implements
                 CameraUpdate location = CameraUpdateFactory.newLatLngZoom(nearestRouteCoordinate, 18);
                 googleMap.animateCamera(location);
                 break;
-
-            case R.id.btnMarkerGetDirection:
-//                if (getDirectionMarkerButtonClicked == 0) {
-//                    if (markerPlaceLatLng != null) {
-////                    if (googleMap != null) {
-////                        googleMap.clear();
-////                    }
-//                        EventBus.getDefault().post(new GetDirectionForMarkerEvent(markerPlaceLatLng));
-////                    progressDialog = new ProgressDialog(getActivity());
-////                    progressDialog.setMessage("Please wait...");
-////                    progressDialog.show();
-////                btnGetDirection.setVisibility(View.GONE);
-////                    onLocationChanged(mLastLocation);
-//                        onLocationChanged(currentLocation);
-////                    showMarker(currentLocation);
-//                        fetchSensors();
-//                        MarkerOptions markerOptions = new MarkerOptions();
-//                        markerOptions.position(markerPlaceLatLng);
-//                        markerOptions.title(name);
-//                        markerOptions.draggable(true);
-//                        coordList.add(new LatLng(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude));
-//                        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-//                        googleMap.addMarker(markerOptions);
-////              move map camera
-//                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 13));
-////                    linearLayoutNameCount.setVisibility(View.VISIBLE);
-//                        linearLayoutSearchBottom.setVisibility(View.GONE);
-//                        linearLayoutBottom.setVisibility(View.GONE);
-//                        linearLayoutMarkerBottom.setVisibility(View.VISIBLE);
-//                        imageViewMarkerBack.setVisibility(View.VISIBLE);
-//                        btnMarkerGetDirection.setText("Cancel Direction");
-//                        btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.red));
-//                        BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
-//                        navBar.setVisibility(View.GONE);
-////                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
-////                    btnGetDirection.setLayoutParams(layoutParams);
-//                        getDirectionMarkerButtonClicked++;
-//                    }
-//                }
-//                else {
-//                    Toast.makeText(context, "Second Click hoiche", Toast.LENGTH_SHORT).show();
-//                    if (googleMap != null)
-//                        googleMap.clear();
-//
-//                    autocompleteFragment.setText("");
-////                    onLocationChanged(mLastLocation);
-//                    onLocationChanged(currentLocation);
-////                    showMarker(currentLocation);
-//                    fetchSensors();
-//                    layoutMarkerVisible(false, "", "", 0.0, null);
-//                    linearLayoutMarkerBottom.setVisibility(View.GONE);
-//                    linearLayoutSearchBottom.setVisibility(View.GONE);
-//                    linearLayoutBottom.setVisibility(View.GONE);
-////                    linearLayoutMarkerNameCount.setVisibility(View.GONE);
-////                    imageViewMarkerBack.setVisibility(View.GONE);
-////                    btnMarkerGetDirection.setVisibility(View.GONE);
-//                    btnMarkerGetDirection.setText("Get Direction");
-//                    btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
-//                    BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
-//                    navBar.setVisibility(View.VISIBLE);
-//                    getDirectionMarkerButtonClicked--;
-//                }
 
             default:
                 break;
@@ -1646,7 +1597,9 @@ public class HomeFragment extends Fragment implements
 //                        String searchPlaceName = getCompleteAddressString(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude);
                         getAddress(getActivity(), searchPlaceLatLng.latitude, searchPlaceLatLng.longitude);
                         String searchPlaceName = address;
-                        distance = ApplicationUtils.distance(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude, searchPlaceLatLng.latitude, searchPlaceLatLng.longitude);
+                        TaskParser taskParser = new TaskParser();
+//                        distance = ApplicationUtils.distance(currentLocation.getLatitude(), currentLocation.getLongitude(), searchPlaceLatLng.latitude, searchPlaceLatLng.longitude);
+                        distance = taskParser.showDistance(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));
                         double searchPlaceDistance = distance;
                         Timber.e("searchPlaceName -> %s", searchPlaceName);
                         layoutSearchVisible(true, searchPlaceName, "0", distance, searchPlaceLatLng);
@@ -1825,21 +1778,16 @@ public class HomeFragment extends Fragment implements
     public void openDialog(String sId) {
 
         String selectedSpt = sId;
-
         DialogForm dialogForm = new DialogForm();
-
         Bundle bundle = new Bundle();
         bundle.putString("selectedSpt", selectedSpt);
-
         dialogForm.setArguments(bundle);
-
-
         dialogForm.show(getFragmentManager(), "dialog form");
 
     }
 
     private void showMessage(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
 
@@ -2178,6 +2126,7 @@ public class HomeFragment extends Fragment implements
         return responseString;
     }
 
+    @SuppressLint("StaticFieldLeak")
     public class TaskParser extends AsyncTask<String, Void, List<List<HashMap<String, String>>>> {
 
         @Override
@@ -2276,7 +2225,7 @@ public class HomeFragment extends Fragment implements
             int kmInDec = Integer.parseInt(newFormat.format(km));
             double meter = valueResult % 1000;
             int meterInDec = Integer.parseInt(newFormat.format(meter));
-            Timber.i("" + valueResult + "   KM  " + kmInDec
+            Timber.i("showDistance" + valueResult + "   KM  " + kmInDec
                     + " Meter   " + meterInDec);
 
             return (Radius * c);
@@ -2356,6 +2305,53 @@ public class HomeFragment extends Fragment implements
                 });
         //-------------------------------------------------------------------------------\\
 
+    }
+
+    private float getBearing(LatLng startPosition, LatLng newPos) {
+        double lat = Math.abs(startPosition.latitude - newPos.latitude);
+        double lng = Math.abs(startPosition.longitude - newPos.longitude);
+
+        if (startPosition.latitude < newPos.latitude && startPosition.longitude < newPos.longitude)
+            return (float) (Math.toDegrees(Math.atan(lng / lat)));
+        else if ((startPosition.latitude >= newPos.latitude && startPosition.longitude < newPos.longitude))
+            return (float) ((90 - Math.toDegrees(Math.atan(lng / lat))) + 90);
+        else if ((startPosition.latitude >= newPos.latitude && startPosition.longitude >= newPos.longitude))
+            return (float) (Math.toDegrees(Math.atan(lng / lat)) + 180);
+        else if ((startPosition.latitude < newPos.latitude && startPosition.longitude >= newPos.longitude))
+            return (float) ((90 - Math.toDegrees(Math.atan(lng / lat)) + 270));
+        return -1;
+    }
+
+    private List<LatLng> decodePoly(String encoded) {
+        List<LatLng> poly = new ArrayList<LatLng>();
+        int index = 0, len = encoded.length();
+        int lat = 0, lng = 0;
+
+        while (index < len) {
+            int b, shift = 0, result = 0;
+            do {
+                b = encoded.charAt(index++) - 63;
+                result |= (b & 0x1f) << shift;
+                shift += 5;
+            } while (b >= 0x20);
+            int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+            lat += dlat;
+
+            shift = 0;
+            result = 0;
+            do {
+                b = encoded.charAt(index++) - 63;
+                result |= (b & 0x1f) << shift;
+                shift += 5;
+            } while (b >= 0x20);
+            int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+            lng += dlng;
+
+            LatLng p = new LatLng((((double) lat / 1E5)),
+                    (((double) lng / 1E5)));
+            poly.add(p);
+        }
+        return poly;
     }
 
 }
