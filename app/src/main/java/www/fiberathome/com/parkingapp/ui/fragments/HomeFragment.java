@@ -18,11 +18,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
@@ -89,6 +91,7 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
+import com.logicbeanzs.carrouteanimation.CarMoveAnim;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -251,7 +254,7 @@ public class HomeFragment extends Fragment implements
     public double nLongitude;
 
     /*Authors: Shawn And  Maruf*/
-    private LatLng location;
+    public static LatLng location;
     private LatLng nearestRouteCoordinate;
     private LatLng searchPlaceLatLng;
     private LatLng markerPlaceLatLng;
@@ -295,14 +298,17 @@ public class HomeFragment extends Fragment implements
     private static float angle;
 
     //car animation
-    private Queue<LatLng> points = new LinkedList<>();
-
-    private AnimatorSet animatorSet = new AnimatorSet();
+//    private Queue<LatLng> points = new LinkedList<>();
+//
+//    private AnimatorSet animatorSet = new AnimatorSet();
 
     // Give your Server URL here >> where you get car location update
 //    public static final String URL_DRIVER_LOCATION_ON_RIDE = "*******";
-    public static final String URL_DRIVER_LOCATION_ON_RIDE = "https://maps.googleapis.com/maps/api/directions/json?origin=23.7828451,90.3600365&destination=23.727756,90.419726&key=AIzaSyDMWfYh5kjSQTALbZb-C0lSNACpcH5RDU4";
-    private boolean isFirstPosition = true;
+//    public static final String URL_DRIVER_LOCATION_ON_RIDE = "https://maps.googleapis.com/maps/api/directions/json?origin=23.7828451,90.3600365&destination=23.727756,90.419726&key=AIzaSyDMWfYh5kjSQTALbZb-C0lSNACpcH5RDU4";
+//    private boolean isFirstPosition = true;
+    private boolean isFirstTime = false;
+    private boolean isMarkerRotating = false;
+    GoogleMap.CancelableCallback callback;
 
     public HomeFragment() {
 
@@ -322,6 +328,7 @@ public class HomeFragment extends Fragment implements
             if (locationResult.getLastLocation() == null)
                 return;
             currentLocation = locationResult.getLastLocation();
+            Timber.e("mLocationCallback currentLocation -> %s", currentLocation);
             if (firstTimeFlag && googleMap != null) {
                 animateCamera(currentLocation);
                 firstTimeFlag = false;
@@ -344,6 +351,16 @@ public class HomeFragment extends Fragment implements
         if (!checkPermission()) {
             requestPermission();
         }
+        callback = new GoogleMap.CancelableCallback() {
+            @Override
+            public void onFinish() {
+            }
+            @Override
+            public void onCancel() {
+            }
+        };
+
+
         listPoints = new ArrayList<>();
         polyLineList = new ArrayList<>();
         mLocationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
@@ -383,21 +400,35 @@ public class HomeFragment extends Fragment implements
     @Override
     public void onMapReady(GoogleMap mMap) {
         this.googleMap = mMap;
-//        refreshUserGPSLocation();
+        googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         currentLocation = getLastBestLocation();
         Timber.e("getLastBestLocation currentBestLocation onMapReady -> %s", currentLocation);
-        //Registering the listener to update location for every 100m displacement
-        startLocationUpdates();
-        //getting the latest point from the queue for every 5 seconds
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            SubscribetoTimer();
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(getActivity(),
+                    Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                buildGoogleApiClient();
+//                googleMap.setMyLocationEnabled(true);
+            }
+        } else {
+            buildGoogleApiClient();
+//            googleMap.setMyLocationEnabled(true);
         }
-//        initGPS();
         geoLocate();
-        googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        googleMap.setOnInfoWindowClickListener(this);
+
+//        refreshUserGPSLocation();
+        //Registering the listener to update location for every 100m displacement
+//        startLocationUpdates();
+        //getting the latest point from the queue for every 5 seconds
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//            SubscribetoTimer();
+//        }
+//        initGPS();
+//        geoLocate();
 //        googleMap.setMyLocationEnabled(true);
 //        googleMap.getUiSettings().setMyLocationButtonEnabled(true);
-        googleMap.setOnInfoWindowClickListener(this);
+
         //  Place current location marker
 //        LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
 //        MarkerOptions markerOptions = new MarkerOptions();
@@ -445,17 +476,6 @@ public class HomeFragment extends Fragment implements
 //        initGPS();
 //        refreshUserGPSLocation();
 //        geoLocate();
-//        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            if (ContextCompat.checkSelfPermission(getActivity(),
-//                    Manifest.permission.ACCESS_FINE_LOCATION)
-//                    == PackageManager.PERMISSION_GRANTED) {
-//                buildGoogleApiClient();
-//                googleMap.setMyLocationEnabled(true);
-//            }
-//        } else {
-//            buildGoogleApiClient();
-//            googleMap.setMyLocationEnabled(true);
-//        }
 //        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
 //                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION)
 //                != PackageManager.PERMISSION_GRANTED) {
@@ -470,79 +490,79 @@ public class HomeFragment extends Fragment implements
     }
 
     // Trigger new location updates at interval
-    @SuppressLint("MissingPermission")
-    protected void startLocationUpdates() {
-
-        // Create the location request to start receiving updates
-        LocationRequest mLocationRequest = new LocationRequest();
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mLocationRequest.setSmallestDisplacement(100f);
-        mLocationRequest.setInterval(0);
-        mLocationRequest.setFastestInterval(0);
-
-        // Create LocationSettingsRequest object using location request
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
-        builder.addLocationRequest(mLocationRequest);
-        LocationSettingsRequest locationSettingsRequest = builder.build();
-
-        // Check whether location settings are satisfied
-        // https://developers.google.com/android/reference/com/google/android/gms/location/SettingsClient
-        SettingsClient settingsClient = LocationServices.getSettingsClient(getActivity());
-        settingsClient.checkLocationSettings(locationSettingsRequest);
-
-        // new Google API SDK v11 uses getFusedLocationProviderClient(this)
-        getFusedLocationProviderClient(getActivity()).requestLocationUpdates(mLocationRequest, new LocationCallback() {
-                    @Override
-                    public void onLocationResult(LocationResult locationResult) {
-                        points.add(new LatLng(locationResult.getLastLocation().getLatitude(), locationResult.getLastLocation().getLongitude()));
-
-                    }
-                },
-                Looper.myLooper());
-    }
-
-    @SuppressLint("CheckResult")
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private void SubscribetoTimer() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            Observable.interval(5, TimeUnit.MILLISECONDS)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Consumer<Long>() {
-                        @Override
-                        public void accept(Long aLong) throws Exception {
-                            SendNextPoints();
-                        }
-                    });
-        }
-    }
-
-
-    private void SendNextPoints() {
-
-        if (!animatorSet.isRunning() && !points.isEmpty())
-            UpdateMarker(points.poll()); // taking the points f rom head of the queue.
-
-    }
-
-    private void UpdateMarker(LatLng newlatlng) {
-
-        if (marker != null) {
-            float bearingangle = Calculatebearingagle(newlatlng);
-            marker.setAnchor(0.5f, 0.5f);
-            animatorSet = new AnimatorSet();
-            animatorSet.playTogether(rotateMarker(Float.isNaN(bearingangle) ? -1 : bearingangle, marker.getRotation()), moveVechile(newlatlng, marker.getPosition()));
-            animatorSet.start();
-        } else
-            AddMarker(newlatlng);
-
-
-        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition
-                (new CameraPosition.Builder().target(newlatlng)
-                        .zoom(16f).build()));
-
-
-    }
+//    @SuppressLint("MissingPermission")
+//    protected void startLocationUpdates() {
+//
+//        // Create the location request to start receiving updates
+//        LocationRequest mLocationRequest = new LocationRequest();
+//        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+//        mLocationRequest.setSmallestDisplacement(100f);
+//        mLocationRequest.setInterval(0);
+//        mLocationRequest.setFastestInterval(0);
+//
+//        // Create LocationSettingsRequest object using location request
+//        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
+//        builder.addLocationRequest(mLocationRequest);
+//        LocationSettingsRequest locationSettingsRequest = builder.build();
+//
+//        // Check whether location settings are satisfied
+//        // https://developers.google.com/android/reference/com/google/android/gms/location/SettingsClient
+//        SettingsClient settingsClient = LocationServices.getSettingsClient(getActivity());
+//        settingsClient.checkLocationSettings(locationSettingsRequest);
+//
+//        // new Google API SDK v11 uses getFusedLocationProviderClient(this)
+//        getFusedLocationProviderClient(getActivity()).requestLocationUpdates(mLocationRequest, new LocationCallback() {
+//                    @Override
+//                    public void onLocationResult(LocationResult locationResult) {
+//                        points.add(new LatLng(locationResult.getLastLocation().getLatitude(), locationResult.getLastLocation().getLongitude()));
+//
+//                    }
+//                },
+//                Looper.myLooper());
+//    }
+//
+//    @SuppressLint("CheckResult")
+//    @RequiresApi(api = Build.VERSION_CODES.N)
+//    private void SubscribetoTimer() {
+//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+//            Observable.interval(5, TimeUnit.MILLISECONDS)
+//                    .subscribeOn(Schedulers.io())
+//                    .observeOn(AndroidSchedulers.mainThread())
+//                    .subscribe(new Consumer<Long>() {
+//                        @Override
+//                        public void accept(Long aLong) throws Exception {
+//                            SendNextPoints();
+//                        }
+//                    });
+//        }
+//    }
+//
+//
+//    private void SendNextPoints() {
+//
+//        if (!animatorSet.isRunning() && !points.isEmpty())
+//            UpdateMarker(points.poll()); // taking the points f rom head of the queue.
+//
+//    }
+//
+//    private void UpdateMarker(LatLng newlatlng) {
+//
+//        if (marker != null) {
+//            float bearingangle = Calculatebearingagle(newlatlng);
+//            marker.setAnchor(0.5f, 0.5f);
+//            animatorSet = new AnimatorSet();
+//            animatorSet.playTogether(rotateMarker(Float.isNaN(bearingangle) ? -1 : bearingangle, marker.getRotation()), moveVechile(newlatlng, marker.getPosition()));
+//            animatorSet.start();
+//        } else
+//            AddMarker(newlatlng);
+//
+//
+//        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition
+//                (new CameraPosition.Builder().target(newlatlng)
+//                        .zoom(16f).build()));
+//
+//
+//    }
 
     private void AddMarker(LatLng initialpos) {
 
@@ -651,15 +671,18 @@ public class HomeFragment extends Fragment implements
     }
 
     private void showMarker(@NonNull Location currentLocation) {
+        Timber.d("showMarker call hoiche");
         LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
         if (currentLocationMarker == null)
-            currentLocationMarker = googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker()).position(latLng));
+            currentLocationMarker = googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker()).position(latLng).flat(true));
+//            currentLocationMarker = googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car_small)).position(latLng).flat(true));
         else
             MarkerAnimation.animateMarkerToGB(currentLocationMarker, latLng, new LatLngInterpolator.Spherical());
     }
 
     private void initUI(View view) {
         view.findViewById(R.id.currentLocationImageButton).setOnClickListener(clickListener);
+        autocompleteFragment = (AutocompleteSupportFragment) getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment);
     }
 
     private void setListeners() {
@@ -667,15 +690,15 @@ public class HomeFragment extends Fragment implements
         imageViewBack.setOnClickListener(v -> {
             if (googleMap != null) {
                 googleMap.clear();
-//                onLocationChanged(currentLocation);
+                onLocationChanged(currentLocation);
 //                showMarker(currentLocation);
                 LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(latLng);
                 markerOptions.title("Current Position");
-                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-//            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running));
-                googleMap.addMarker(markerOptions);
+//                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car_small));
+                googleMap.addMarker(markerOptions).setFlat(true);
                 fetchSensors();
                 BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
                 navBar.setVisibility(View.VISIBLE);
@@ -690,16 +713,16 @@ public class HomeFragment extends Fragment implements
         imageViewSearchBack.setOnClickListener(v -> {
             if (googleMap != null) {
                 googleMap.clear();
-//                onLocationChanged(currentLocation);
+                onLocationChanged(currentLocation);
 //                showMarker(currentLocation);
                 autocompleteFragment.setText("");
                 LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(latLng);
                 markerOptions.title("Current Position");
-                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-//            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running));
-                googleMap.addMarker(markerOptions);
+//                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car_small));
+                googleMap.addMarker(markerOptions).setFlat(true);
                 fetchSensors();
                 BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
                 navBar.setVisibility(View.VISIBLE);
@@ -713,15 +736,15 @@ public class HomeFragment extends Fragment implements
         imageViewMarkerBack.setOnClickListener(v -> {
             if (googleMap != null) {
                 googleMap.clear();
-//            onLocationChanged(currentLocation);
-//            showMarker(currentLocation);
+                onLocationChanged(currentLocation);
+//                showMarker(currentLocation);
                 LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(latLng);
                 markerOptions.title("Current Position");
-                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-//            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running));
-                googleMap.addMarker(markerOptions);
+//                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car_small));
+                googleMap.addMarker(markerOptions).setFlat(true);
                 fetchSensors();
                 BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
                 navBar.setVisibility(View.VISIBLE);
@@ -752,7 +775,7 @@ public class HomeFragment extends Fragment implements
                     markerOptions.draggable(true);
                     coordList.add(new LatLng(location.latitude, location.longitude));
                     markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-                    googleMap.addMarker(markerOptions);
+                    googleMap.addMarker(markerOptions).setFlat(true);
 //              move map camera
                     googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 13));
 //                    linearLayoutNameCount.setVisibility(View.VISIBLE);
@@ -773,15 +796,15 @@ public class HomeFragment extends Fragment implements
                     googleMap.clear();
                     autocompleteFragment.setText("");
 //                    onLocationChanged(mLastLocation);
-//                    onLocationChanged(currentLocation);
+                    onLocationChanged(currentLocation);
 //                    showMarker(currentLocation);
                     LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
                     MarkerOptions markerOptions = new MarkerOptions();
                     markerOptions.position(latLng);
                     markerOptions.title("Current Position");
-                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-//            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running));
-                    googleMap.addMarker(markerOptions);
+//                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car_small));
+                    googleMap.addMarker(markerOptions).setFlat(true);
                     fetchSensors();
                     layoutVisible(false, "", "", 0.0, null);
                     linearLayoutBottom.setVisibility(View.GONE);
@@ -806,15 +829,15 @@ public class HomeFragment extends Fragment implements
 //                    progressDialog.setMessage("Please wait...");
 //                    progressDialog.show();
 //                btnGetDirection.setVisibility(View.GONE);
-//                    onLocationChanged(currentLocation);
+                    onLocationChanged(currentLocation);
 //                    showMarker(currentLocation);
                     LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
                     MarkerOptions markerOptions = new MarkerOptions();
                     markerOptions.position(latLng);
                     markerOptions.title("Current Position");
-                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-//            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running));
-                    googleMap.addMarker(markerOptions);
+//                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car_small));
+                    googleMap.addMarker(markerOptions).setFlat(true);
                     fetchSensors();
                     MarkerOptions markerDestinationPositionOptions = new MarkerOptions();
                     markerDestinationPositionOptions.position(searchPlaceLatLng);
@@ -822,7 +845,7 @@ public class HomeFragment extends Fragment implements
                     markerDestinationPositionOptions.draggable(true);
                     coordList.add(new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));
                     markerDestinationPositionOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-                    googleMap.addMarker(markerDestinationPositionOptions);
+                    googleMap.addMarker(markerDestinationPositionOptions).setFlat(true);
 //              move map camera
                     googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 13));
 //                    linearLayoutNameCount.setVisibility(View.VISIBLE);
@@ -843,15 +866,15 @@ public class HomeFragment extends Fragment implements
                     googleMap.clear();
                     autocompleteFragment.setText("");
 //                    onLocationChanged(mLastLocation);
-//                    onLocationChanged(currentLocation);
+                    onLocationChanged(currentLocation);
 //                    showMarker(currentLocation);
                     LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
                     MarkerOptions markerOptions = new MarkerOptions();
                     markerOptions.position(latLng);
                     markerOptions.title("Current Position");
-                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-//            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running));
-                    googleMap.addMarker(markerOptions);
+//                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car_small));
+                    googleMap.addMarker(markerOptions).setFlat(true);
                     fetchSensors();
                     layoutSearchVisible(false, "", "", 0.0, null);
                     btnSearchGetDirection.setText("Get Direction");
@@ -877,6 +900,7 @@ public class HomeFragment extends Fragment implements
 //                btnGetDirection.setVisibility(View.GONE);
 //                    onLocationChanged(mLastLocation);
                     onLocationChanged(currentLocation);
+//                    showMarker(currentLocation);
                     fetchSensors();
                     MarkerOptions markerOptions = new MarkerOptions();
                     markerOptions.position(markerPlaceLatLng);
@@ -884,7 +908,7 @@ public class HomeFragment extends Fragment implements
                     markerOptions.draggable(true);
                     coordList.add(new LatLng(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude));
                     markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-                    googleMap.addMarker(markerOptions);
+                    googleMap.addMarker(markerOptions).setFlat(true);
 //              move map camera
                     googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 13));
 //                    linearLayoutNameCount.setVisibility(View.VISIBLE);
@@ -904,14 +928,14 @@ public class HomeFragment extends Fragment implements
                 if (googleMap != null) {
                     googleMap.clear();
                     autocompleteFragment.setText("");
-//                    onLocationChanged(currentLocation);
+                    onLocationChanged(currentLocation);
                     LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
                     MarkerOptions markerOptions = new MarkerOptions();
                     markerOptions.position(latLng);
                     markerOptions.title("Current Position");
-                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-//            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running));
-                    googleMap.addMarker(markerOptions);
+//                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car_small));
+                    googleMap.addMarker(markerOptions).setFlat(true);
                     fetchSensors();
                     layoutMarkerVisible(false, "", "", 0.0, null);
                     linearLayoutBottom.setVisibility(View.GONE);
@@ -1062,10 +1086,50 @@ public class HomeFragment extends Fragment implements
     @Override
     public void onLocationChanged(Location location) {
         Timber.e("onLocationChanged called");
-//        this.mLastLocation = location;
+//        Toast.makeText(getActivity(), "Location Changed " + location.getLatitude()
+//                + location.getLongitude(), Toast.LENGTH_LONG).show();
         currentLocation = location;
+        if (currentLocationMarker != null) {
+            currentLocationMarker.remove();
+            fetchSensors();
+            Timber.d("Firing onLocationChanged..............................................");
+//            currentLocation = location;
+//            updateUI();
+        }
+//        if (isFirstTime) {
+//          Place current location marker
+        LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(latLng);
+        markerOptions.title("Current Position");
+//          markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car_small));
+        currentLocationMarker = googleMap.addMarker(markerOptions);
+
+        //move map camera
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+//          googleMap.animateCamera(CameraUpdateFactory.zoomTo(13));
+//            CameraUpdate center =
+//                    CameraUpdateFactory.newLatLng(latLng);
+//            CameraUpdate zoom = CameraUpdateFactory.zoomTo(13);
+
+//            googleMap.moveCamera(center);
+//            googleMap.animateCamera(zoom);
+        //move map camera
+        // mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,15.0f));
+//            isFirstTime = false;
+    }
+
+//        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), 13));
+//        if(currentLocationMarker == null) {
+//            currentLocationMarker = googleMap.addMarker(new MarkerOptions().position(new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude()))
+//                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+//        } else {
+//            currentLocationMarker.setPosition(new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude()));
+//        }
+
 //        currentLocationMarker.setPosition(new LatLng(location.getLatitude(), location.getLongitude()));
-        //smoothly move the current position in Google Maps
+    //smoothly move the current position in Google Maps
 //        refreshMapPosition(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), 45);
 
 //        locationUpdate(location);
@@ -1092,25 +1156,9 @@ public class HomeFragment extends Fragment implements
 
 //        Toast.makeText(getActivity(), "Location Changed " + location.getLatitude()
 //                + location.getLongitude(), Toast.LENGTH_LONG).show();
-//        if (googleMap != null)
-//            googleMap.clear();
-//        Timber.d("Firing onLocationChanged..............................................");
 
-//        this.mLastLocation = location;
-//        updateUI();
-        //  Place current location marker
-//        LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-//        MarkerOptions markerOptions = new MarkerOptions();
-//        markerOptions.position(latLng);
-//        markerOptions.title("Current Position");
-////        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-//        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running));
-//        googleMap.addMarker(markerOptions);
-//        currentLocationMarker = googleMap.addMarker(markerOptions);
-////
-////        move map camera
-//        googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-//        googleMap.animateCamera(CameraUpdateFactory.zoomTo(13));
+    //  Place current location marker
+
 
 //        if(mCurrLocationMarker == null) {
 //            Timber.e("mCurrLocationMarker is null");
@@ -1138,7 +1186,7 @@ public class HomeFragment extends Fragment implements
 //                }
 //            }
 //        });
-    }
+//    }
 
     private void locationUpdate(Location location) {
         LatLng latLng = new LatLng((location.getLatitude()), (location.getLongitude()));
@@ -1303,26 +1351,26 @@ public class HomeFragment extends Fragment implements
     }
 
     private void updateUI() {
-        Timber.d("UI update initiated .............");
-        if (null != mLastLocation) {
+        Timber.d("updateUI called .............");
+        if (null != currentLocation) {
 
-            LatLng allLatLang = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+            LatLng allLatLang = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
 
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(allLatLang);
             markerOptions.title("Current Position");
             markerOptions.snippet("Users Basic Information");
 //            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
-            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running));
+            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car_small));
             currentLocationMarker = googleMap.addMarker(markerOptions);
 
             //You can add this lines if you want to show the realtime data change on any TextView
-            String lat = String.valueOf(mLastLocation.getLatitude());
-            String lng = String.valueOf(mLastLocation.getLongitude());
+            String lat = String.valueOf(currentLocation.getLatitude());
+            String lng = String.valueOf(currentLocation.getLongitude());
             Timber.e("Latitude: " + lat + "\n" +
                     "Longitude: " + lng + "\n" +
-                    "Accuracy: " + mLastLocation.getAccuracy() + "\n" +
-                    "Provider: " + mLastLocation.getProvider());
+                    "Accuracy: " + currentLocation.getAccuracy() + "\n" +
+                    "Provider: " + currentLocation.getProvider());
         } else {
             Timber.d("location is null ...............");
         }
@@ -1381,14 +1429,14 @@ public class HomeFragment extends Fragment implements
                 navBar.setVisibility(View.VISIBLE);
             }
 //            onLocationChanged(mLastLocation);
-//            onLocationChanged(currentLocation);
+            onLocationChanged(currentLocation);
             LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(latLng);
             markerOptions.title("Current Position");
-            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-//            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running));
-            googleMap.addMarker(markerOptions);
+//            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car_small));
+            googleMap.addMarker(markerOptions).setFlat(true);
             linearLayoutMarkerBottom.setVisibility(View.GONE);
             linearLayoutBottom.setVisibility(View.GONE);
             linearLayoutSearchBottom.setVisibility(View.GONE);
@@ -1410,14 +1458,14 @@ public class HomeFragment extends Fragment implements
                 googleMap.clear();
             fetchSensors();
 //            onLocationChanged(mLastLocation);
-//            onLocationChanged(currentLocation);
+            onLocationChanged(currentLocation);
             LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(latLng);
             markerOptions.title("Current Position");
-            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-//            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running));
-            googleMap.addMarker(markerOptions);
+//            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car_small));
+            googleMap.addMarker(markerOptions).setFlat(true);
             String spotstatus = marker.getSnippet();
             String spotid = marker.getTitle();
 
@@ -1769,7 +1817,7 @@ public class HomeFragment extends Fragment implements
     }
 
     private void geoLocate() {
-        String apiKey = getString(R.string.google_maps_key);
+        String apiKey = context.getResources().getString(R.string.google_maps_key);
         Timber.e("apiKey -> %s", apiKey);
 
         /**
@@ -1786,16 +1834,12 @@ public class HomeFragment extends Fragment implements
         PlacesClient placesClient = Places.createClient(getActivity().getApplicationContext());
         placesClient.findAutocompletePredictions(FindAutocompletePredictionsRequest.builder().build());
 
-
         // Initialize the AutocompleteSupportFragment.
         autocompleteFragment = (AutocompleteSupportFragment) getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment);
         if (autocompleteFragment != null) {
             autocompleteFragment.setCountries("BD");
             autocompleteFragment.setHint("Where to?");
             autocompleteFragment.onPictureInPictureModeChanged(true);
-//        }
-//
-//        if (autocompleteFragment != null) {
             autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG, Place.Field.ADDRESS_COMPONENTS, Place.Field.PLUS_CODE, Place.Field.TYPES));
             Timber.d(String.valueOf(Place.Field.ID));
             Timber.d(String.valueOf(Place.Field.NAME));
@@ -1817,7 +1861,7 @@ public class HomeFragment extends Fragment implements
                         markerOptions.draggable(true);
                         coordList.add(new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));
                         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-                        googleMap.addMarker(markerOptions);
+                        googleMap.addMarker(markerOptions).setFlat(true);
                         //move map camera
                         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 13));
                         BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
@@ -1938,8 +1982,9 @@ public class HomeFragment extends Fragment implements
                         String latitude1 = jsonObject.get("latitude").toString();
                         String longitude1 = jsonObject.get("longitude").toString();
                         // find distance
-                        double tDistance = distance(Double.valueOf(latitude1), Double.valueOf(longitude1), currentLocation.getLatitude(), currentLocation.getLongitude());
-                        //Log.e("tDistance:",""+tDistance);
+//                        double tDistance = distance(Double.valueOf(latitude1), Double.valueOf(longitude1), currentLocation.getLatitude(), currentLocation.getLongitude());
+                        double tDistance = distance(ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1), currentLocation.getLatitude(), currentLocation.getLongitude());
+                        Timber.e("tDistance: -> %s", tDistance);
                         if (tDistance < nDistance) {
                             nDistance = tDistance;
                             nLatitude = Double.parseDouble(latitude1);
@@ -2192,7 +2237,7 @@ public class HomeFragment extends Fragment implements
 //                taskRequestDirections.execute(url);
 //                onLocationChanged(mLastLocation);
                 onLocationChanged(currentLocation);
-                showMarker(currentLocation);
+//                showMarker(currentLocation);
                 location = event.location;
                 EventBus.getDefault().post(new SetMarkerEvent(location));
                 MarkerOptions markerOptions = new MarkerOptions();
@@ -2214,6 +2259,12 @@ public class HomeFragment extends Fragment implements
                 TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
                 taskRequestDirections.execute(url);
 
+//                double bearing = bearingBetweenLocations(currentLocationMarker.getPosition(), event.location);
+//                double bearing = getBearing(currentLocationMarker.getPosition(), event.location);
+//                rotateMarker(currentLocationMarker, (float) bearing);
+                CarMoveAnim.startcarAnimation(currentLocationMarker, googleMap,
+                        new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
+                        event.location, 3000, callback);
 
             }
         }, 1000);
@@ -2234,7 +2285,7 @@ public class HomeFragment extends Fragment implements
 //                progressDialog.dismiss();
 //                onLocationChanged(mLastLocation);
                 onLocationChanged(currentLocation);
-                showMarker(currentLocation);
+//                showMarker(currentLocation);
                 searchPlaceLatLng = event.location;
                 EventBus.getDefault().post(new SetMarkerEvent(searchPlaceLatLng));
                 MarkerOptions markerOptions = new MarkerOptions();
@@ -2254,6 +2305,15 @@ public class HomeFragment extends Fragment implements
                 String url = getDirectionsUrl(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), searchPlaceLatLng);
                 TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
                 taskRequestDirections.execute(url);
+
+//                double bearing = bearingBetweenLocations(currentLocationMarker.getPosition(), event.location);
+//                double bearing = getBearing(currentLocationMarker.getPosition(), event.location);
+//                rotateMarker(currentLocationMarker, (float) bearing);
+
+                //duration refers to the animation time. By default it will take 3000 even if 0 is passed.
+                CarMoveAnim.startcarAnimation(currentLocationMarker, googleMap,
+                        new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
+                        searchPlaceLatLng, 3000, callback);
             }
         }, 1000);
 
@@ -2274,7 +2334,7 @@ public class HomeFragment extends Fragment implements
 //                progressDialog.dismiss();
 //                onLocationChanged(mLastLocation);
                 onLocationChanged(currentLocation);
-                showMarker(currentLocation);
+//                showMarker(currentLocation);
                 markerPlaceLatLng = event.location;
                 EventBus.getDefault().post(new SetMarkerEvent(markerPlaceLatLng));
                 MarkerOptions markerOptions = new MarkerOptions();
@@ -2295,6 +2355,16 @@ public class HomeFragment extends Fragment implements
                 String url = getDirectionsUrl(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), markerPlaceLatLng);
                 TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
                 taskRequestDirections.execute(url);
+//car bearing
+//                double bearing = bearingBetweenLocations(currentLocationMarker.getPosition(), event.location);
+//                double bearing = getBearing(currentLocationMarker.getPosition(), event.location);
+//                rotateMarker(currentLocationMarker, (float) bearing);
+
+//duration refers to the animation time. By default it will take 3000 even if 0 is passed.
+                CarMoveAnim.startcarAnimation(currentLocationMarker, googleMap,
+                        new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
+                        markerPlaceLatLng, 3000, callback);
+
                 fromMarkerRouteDrawn = 1;
 
             }
@@ -2589,4 +2659,58 @@ public class HomeFragment extends Fragment implements
         return poly;
     }
 
+    //  The following code will give you bearing between two locations:
+    private double bearingBetweenLocations(LatLng latLng1, LatLng latLng2) {
+
+        double PI = 3.14159;
+        double lat1 = latLng1.latitude * PI / 180;
+        double long1 = latLng1.longitude * PI / 180;
+        double lat2 = latLng2.latitude * PI / 180;
+        double long2 = latLng2.longitude * PI / 180;
+
+        double dLon = (long2 - long1);
+
+        double y = Math.sin(dLon) * Math.cos(lat2);
+        double x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1)
+                * Math.cos(lat2) * Math.cos(dLon);
+
+        double brng = Math.atan2(y, x);
+
+        brng = Math.toDegrees(brng);
+        brng = (brng + 360) % 360;
+
+        return brng;
+    }
+
+    //   Finally, we need to rotate the car-marker by the angle that we get from above method.
+    private void rotateMarker(final Marker marker, final float toRotation) {
+        if (!isMarkerRotating) {
+            final Handler handler = new Handler();
+            final long start = SystemClock.uptimeMillis();
+            final float startRotation = marker.getRotation();
+            final long duration = 1000;
+
+            final Interpolator interpolator = new LinearInterpolator();
+
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    isMarkerRotating = true;
+
+                    long elapsed = SystemClock.uptimeMillis() - start;
+                    float t = interpolator.getInterpolation((float) elapsed / duration);
+
+                    float rot = t * toRotation + (1 - t) * startRotation;
+
+                    marker.setRotation(-rot > 180 ? rot / 2 : rot);
+                    if (t < 1.0) {
+                        // Post again 16ms later.
+                        handler.postDelayed(this, 16);
+                    } else {
+                        isMarkerRotating = false;
+                    }
+                }
+            });
+        }
+    }
 }

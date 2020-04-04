@@ -23,6 +23,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.eventBus.GetDirectionAfterButtonClickEvent;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionEvent;
 import www.fiberathome.com.parkingapp.model.SensorArea;
 import www.fiberathome.com.parkingapp.ui.MainActivity;
@@ -91,9 +92,9 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             //Pop the Parking Fragment and Replace it with HomeFragment
             MainActivity parentActivity = (MainActivity) context;
             parentActivity.replaceFragment();
-//            parkingFragment.layoutVisible(true, sensorArea.getParkingArea(), sensorArea.getCount(), distance, new LatLng(sensorArea.getLat(), sensorArea.getLng()));
             selectedItem = position;
             notifyDataSetChanged();
+//            EventBus.getDefault().post(new GetDirectionAfterButtonClickEvent(HomeFragment.location));
         });
 
         if (position == selectedItem) {

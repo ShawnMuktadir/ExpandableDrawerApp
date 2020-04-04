@@ -31,6 +31,11 @@ import com.akexorcist.googledirection.model.Route;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Interceptor;
@@ -99,8 +104,60 @@ public class ApplicationUtils {
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
         }
-
     }
+
+    public static double convertToDouble(String value) {
+        double intValue;
+        try {
+            intValue = Double.parseDouble(value);
+        } catch (NumberFormatException ex) {
+            intValue = 0.00;
+        } catch (NullPointerException ex) {
+            intValue = 0.00;
+        }
+        return intValue;
+    }
+
+    public static float convertToFloat(String value) {
+        float intValue;
+        try {
+            intValue = Float.parseFloat(value);
+        } catch (NumberFormatException ex) {
+            intValue = 0.0f;
+        } catch (NullPointerException ex) {
+            intValue = 0.0f;
+        }
+        return intValue;
+    }
+
+    public static int convertToInt(String value) {
+        int intValue = 0;
+        try {
+            intValue = Integer.parseInt(value);
+        } catch (NumberFormatException ex) {
+            intValue = 0;
+        } catch (NullPointerException ex) {
+            intValue = 0;
+        }
+        return intValue;
+    }
+
+    public static long convertToLong(String value) {
+        long longValue = 0;
+        try {
+            longValue = Long.parseLong(value);
+        } catch (NumberFormatException ex) {
+            longValue = 0;
+        } catch (NullPointerException ex) {
+            longValue = 0;
+        }
+        return longValue;
+    }
+
+    public static void createToastMessage(Context context, String message) {
+        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+    }
+
     public static void hideKeyboard(Context mContext) {
         InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(((Activity) mContext).getWindow().getCurrentFocus().getWindowToken(), 0);
@@ -136,8 +193,44 @@ public class ApplicationUtils {
                 });
             }
         }).start();
+    }
+
+    public static String getCurrentDate() {
+        Date c = Calendar.getInstance().getTime();
+        Timber.e("Current time => %s", c);
+
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        String formattedDate = df.format(c);
+        return formattedDate;
+    }
+
+    public static String getTime(String dateTime) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.US);
+        SimpleDateFormat expectedFormat = new SimpleDateFormat("hh:mm a", Locale.US);
+        try {
+            Date dT = dateFormat.parse(dateTime);
+            return expectedFormat.format(dT);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+    public static String addCountryPrefix(String number) {
+        if (number != null && android.text.TextUtils.isDigitsOnly(number)) {
+            if (number.length() > 2) {
+                if (number.substring(0, 2).equals("88")) {
+                    return number;
+                } else
+                    return "+88" + number;
+            } else
+                return "88";
+        } else
+            return "88";
 
     }
+
+
 
 
     public static void showExitDialog(final Activity activity) {
@@ -245,7 +338,7 @@ public class ApplicationUtils {
     }
 
     public static String capitalize(String str) {
-        if(str == null || str.isEmpty()) {
+        if (str == null || str.isEmpty()) {
             return str;
         }
 
