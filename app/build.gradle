@@ -66,6 +66,9 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
     implementation 'com.google.android.gms:play-services-places:17.0.0'
     implementation 'com.google.android.libraries.places:places:2.2.0'
+    //for specific city
+    implementation 'com.google.maps.android:android-maps-utils:0.5+'
+
     implementation 'androidx.multidex:multidex:2.0.1'
     //butterknife dependency
     implementation 'com.jakewharton:butterknife:10.1.0'

@@ -56,6 +56,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -66,6 +67,7 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -82,7 +84,11 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.SquareCap;
 import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.AutocompletePrediction;
+import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
 import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.RectangularBounds;
+import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.Autocomplete;
@@ -91,6 +97,7 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
+import com.google.maps.android.SphericalUtil;
 import com.logicbeanzs.carrouteanimation.CarMoveAnim;
 
 import org.greenrobot.eventbus.EventBus;
@@ -279,6 +286,7 @@ public class HomeFragment extends Fragment implements
     public static DecimalFormat df1 = new DecimalFormat(".##");
     public static DecimalFormat df2 = new DecimalFormat(".##");
     private AutocompleteSupportFragment autocompleteFragment;
+    private AutocompleteFilter typeFilter;
 
     //Todo: Get SensorArea Data in Suitable LifeCycle Method from SharedData after selecting from Parking Adapter
 
@@ -355,6 +363,7 @@ public class HomeFragment extends Fragment implements
             @Override
             public void onFinish() {
             }
+
             @Override
             public void onCancel() {
             }
@@ -674,8 +683,8 @@ public class HomeFragment extends Fragment implements
         Timber.d("showMarker call hoiche");
         LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
         if (currentLocationMarker == null)
-            currentLocationMarker = googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker()).position(latLng).flat(true));
-//            currentLocationMarker = googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car_small)).position(latLng).flat(true));
+//            currentLocationMarker = googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker()).position(latLng).flat(true));
+            currentLocationMarker = googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car_small)).position(latLng).flat(true));
         else
             MarkerAnimation.animateMarkerToGB(currentLocationMarker, latLng, new LatLngInterpolator.Spherical());
     }
@@ -1830,9 +1839,57 @@ public class HomeFragment extends Fragment implements
             }
         }
 
+        final double HEADING_NORTH_EAST = 45;
+        final double HEADING_SOUTH_WEST = 215;
+        final double diagonalBoundsSize = 1000; // 1km
+
         // Create a new Places client instance.
         PlacesClient placesClient = Places.createClient(getActivity().getApplicationContext());
         placesClient.findAutocompletePredictions(FindAutocompletePredictionsRequest.builder().build());
+
+//        LatLng center = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+//        LatLng northSide = SphericalUtil.computeOffset(center, diagonalBoundsSize / 2, HEADING_NORTH_EAST);
+//        LatLng southSide = SphericalUtil.computeOffset(center, diagonalBoundsSize / 2, HEADING_SOUTH_WEST);
+//        AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
+        // Create a RectangularBounds object.
+//        RectangularBounds bounds = RectangularBounds.newInstance(southSide, northSide);
+//        RectangularBounds bounds = RectangularBounds.newInstance(new LatLng(23.622641, 90.499794),
+//                new LatLng(23.999941, 90.420273));
+        // Use the builder to create a FindAutocompletePredictionsRequest.
+//        FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
+        // Call either setLocationBias() OR setLocationRestriction().
+//                .setLocationBias(bounds)
+//                .setLocationRestriction(bounds)
+//                .setOrigin(center)
+//                .setCountries("BD")
+//                .setTypeFilter(TypeFilter.ADDRESS)
+//                .setSessionToken(token)
+//                .setQuery("query")
+//                .build();
+
+//        placesClient.findAutocompletePredictions(request).addOnSuccessListener((response) -> {
+//            for (AutocompletePrediction prediction : response.getAutocompletePredictions()) {
+//                Timber.e("prediction -> %s", prediction.getPlaceId());
+//                Timber.e(TAG, prediction.getPrimaryText(null).toString());
+//            }
+//        }).addOnFailureListener((exception) -> {
+//            if (exception instanceof ApiException) {
+//                ApiException apiException = (ApiException) exception;
+//                Timber.e(TAG, "Place not found: " + apiException.getStatusCode());
+//            }
+//        });
+
+//        typeFilter = new AutocompleteFilter.Builder()
+//                .setTypeFilter(AutocompleteFilter.TYPE_FILTER_ADDRESS)
+//                .setTypeFilter(3)
+//                .build();
+//        RectangularBounds bounds = RectangularBounds.newInstance(northSide, southSide);
+//                .include(northSide)
+//                .include(southSide)
+//                .build();
+
+//        autocompleteFragment.setLocationRestriction(bounds);
+//        autocompleteFragment.setTypeFilter(typeFilter);
 
         // Initialize the AutocompleteSupportFragment.
         autocompleteFragment = (AutocompleteSupportFragment) getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment);
@@ -1841,6 +1898,10 @@ public class HomeFragment extends Fragment implements
             autocompleteFragment.setHint("Where to?");
             autocompleteFragment.onPictureInPictureModeChanged(true);
             autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG, Place.Field.ADDRESS_COMPONENTS, Place.Field.PLUS_CODE, Place.Field.TYPES));
+//Location Restriction from abdullahpur to kachpur bridge
+//            autocompleteFragment.setLocationRestriction(RectangularBounds.newInstance(
+//                    new LatLng(23.7036, 90.5176), //kachpur bridge
+//                    new LatLng(24.3895, 91.1657))); //abdullahpur
             Timber.d(String.valueOf(Place.Field.ID));
             Timber.d(String.valueOf(Place.Field.NAME));
             autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
@@ -2264,7 +2325,7 @@ public class HomeFragment extends Fragment implements
 //                rotateMarker(currentLocationMarker, (float) bearing);
                 CarMoveAnim.startcarAnimation(currentLocationMarker, googleMap,
                         new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
-                        event.location, 3000, callback);
+                        event.location, 0, callback);
 
             }
         }, 1000);
@@ -2313,7 +2374,7 @@ public class HomeFragment extends Fragment implements
                 //duration refers to the animation time. By default it will take 3000 even if 0 is passed.
                 CarMoveAnim.startcarAnimation(currentLocationMarker, googleMap,
                         new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
-                        searchPlaceLatLng, 3000, callback);
+                        searchPlaceLatLng, 0, callback);
             }
         }, 1000);
 
@@ -2363,7 +2424,7 @@ public class HomeFragment extends Fragment implements
 //duration refers to the animation time. By default it will take 3000 even if 0 is passed.
                 CarMoveAnim.startcarAnimation(currentLocationMarker, googleMap,
                         new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
-                        markerPlaceLatLng, 3000, callback);
+                        markerPlaceLatLng, 0, callback);
 
                 fromMarkerRouteDrawn = 1;
 
