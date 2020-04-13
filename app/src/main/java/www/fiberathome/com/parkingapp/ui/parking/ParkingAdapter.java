@@ -148,7 +148,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
 
-    public class ParkingViewHolder extends RecyclerView.ViewHolder {
+    public static class ParkingViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.textViewParkingAreaName)
         TextView textViewParkingAreaName;

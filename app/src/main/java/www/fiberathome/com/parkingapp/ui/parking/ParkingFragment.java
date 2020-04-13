@@ -102,12 +102,6 @@ public class ParkingFragment extends Fragment {
         setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
         context = getActivity();
-
-//        ParkingFragment fragment = new ParkingFragment(); //Your Fragment
-//        SensorArea sensorArea = new SensorArea(); // Your Object
-//        Bundle bundleParcelable = new Bundle();
-//        bundleParcelable.putParcelable("sensor", sensorArea); // Key, value
-//        fragment.setArguments(bundleParcelable);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package www.fiberathome.com.parkingapp.ui.fragments;
 
 import android.Manifest;
-import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
@@ -19,7 +18,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,7 +25,6 @@ import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -36,7 +33,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -49,14 +45,12 @@ import com.akexorcist.googledirection.model.Direction;
 import com.akexorcist.googledirection.model.Info;
 import com.akexorcist.googledirection.model.Leg;
 import com.akexorcist.googledirection.model.Route;
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -65,8 +59,6 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -75,20 +67,12 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.JointType;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.maps.model.SquareCap;
 import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.AutocompletePrediction;
-import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
 import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.model.RectangularBounds;
-import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.Autocomplete;
@@ -97,8 +81,6 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
-import com.google.maps.android.SphericalUtil;
-import com.logicbeanzs.carrouteanimation.CarMoveAnim;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -117,27 +99,11 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.TimeUnit;
-
-import java.util.LinkedList;
-import java.util.Objects;
-import java.util.Queue;
-import java.util.concurrent.TimeUnit;
-
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import retrofit2.Call;
-import retrofit2.Callback;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.GoogleMapWebServiceNDistance.DirectionsParser;
 import www.fiberathome.com.parkingapp.GoogleMapWebServiceNDistance.GooglePlaceSearchNearbySearchListener;
@@ -164,6 +130,7 @@ import www.fiberathome.com.parkingapp.utils.SharedData;
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
+import static www.fiberathome.com.parkingapp.utils.ApplicationUtils.distance;
 
 // Add an import statement for the client library.
 
@@ -234,7 +201,7 @@ public class HomeFragment extends Fragment implements
     LinearLayout linearLayoutMarkerNameCount;
 
     private Context context;
-    private String name, count;
+    private String name, count = "";
     private double distance;
     private String duration;
     private String address, city, state, country, subAdminArea, test, knownName, postalCode = "";
@@ -287,6 +254,7 @@ public class HomeFragment extends Fragment implements
     public static DecimalFormat df2 = new DecimalFormat(".##");
     private AutocompleteSupportFragment autocompleteFragment;
     private AutocompleteFilter typeFilter;
+    private String parkingNumberOfIndividualMarker = "";
 
     //Todo: Get SensorArea Data in Suitable LifeCycle Method from SharedData after selecting from Parking Adapter
 
@@ -317,6 +285,7 @@ public class HomeFragment extends Fragment implements
     private boolean isFirstTime = false;
     private boolean isMarkerRotating = false;
     GoogleMap.CancelableCallback callback;
+    private boolean animatePath, repeatDrawingPath;
 
     public HomeFragment() {
 
@@ -359,15 +328,15 @@ public class HomeFragment extends Fragment implements
         if (!checkPermission()) {
             requestPermission();
         }
-        callback = new GoogleMap.CancelableCallback() {
-            @Override
-            public void onFinish() {
-            }
-
-            @Override
-            public void onCancel() {
-            }
-        };
+//        callback = new GoogleMap.CancelableCallback() {
+//            @Override
+//            public void onFinish() {
+//            }
+//
+//            @Override
+//            public void onCancel() {
+//            }
+//        };
 
 
         listPoints = new ArrayList<>();
@@ -392,7 +361,7 @@ public class HomeFragment extends Fragment implements
             String distance = new DecimalFormat("##.##").format(sensorArea.getDistance()) + " km";
             textViewParkingDistance.setText(distance);
 //            textViewParkingTravelTime.setText(sensorArea.getDuration());
-            getDestinationInfo(new LatLng(sensorArea.getLat(), sensorArea.getLng()));
+            getDestinationInfoForDuration(new LatLng(sensorArea.getLat(), sensorArea.getLng()));
 
         } else {
             Timber.e("Genjam");
@@ -1116,7 +1085,7 @@ public class HomeFragment extends Fragment implements
         currentLocationMarker = googleMap.addMarker(markerOptions);
 
         //move map camera
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+//        googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
 //          googleMap.animateCamera(CameraUpdateFactory.zoomTo(13));
 //            CameraUpdate center =
 //                    CameraUpdateFactory.newLatLng(latLng);
@@ -1428,6 +1397,7 @@ public class HomeFragment extends Fragment implements
     @Override
     public void onInfoWindowClick(Marker marker) {
         Timber.e("onInfoWindowClick -> %s", marker.getTitle());
+
 //        markerAlreadyClicked = 1;
         if (markerAlreadyClicked == 1) {
             if (googleMap != null)
@@ -1473,19 +1443,48 @@ public class HomeFragment extends Fragment implements
             markerOptions.position(latLng);
             markerOptions.title("Current Position");
 //            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car_small));
+        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car_small));
             googleMap.addMarker(markerOptions).setFlat(true);
             String spotstatus = marker.getSnippet();
             String spotid = marker.getTitle();
 
+            //calculate Duration
             markerPlaceLatLng = new LatLng(marker.getPosition().latitude, marker.getPosition().longitude);
-            getDestinationInfo(markerPlaceLatLng);
-//        String markerPositionName = getAddress(getActivity(), marker.getPosition().latitude, marker.getPosition().longitude);
+            getDestinationInfoForDuration(markerPlaceLatLng);
+
+            for (int i = 0; i < clickEventJsonArray.length(); i++) {
+                JSONObject jsonObject;
+                try {
+                    jsonObject = clickEventJsonArray.getJSONObject(i);
+                    String latitude1 = jsonObject.get("latitude").toString();
+                    String longitude1 = jsonObject.get("longitude").toString();
+                    String uid = jsonObject.get("uid").toString();
+
+//                    if(spotid.equalsIgnoreCase(uid)){
+//                        String parkingNumberOfIndividualMarker = jsonObject.get("no_of_parking").toString();
+//                        textViewMarkerParkingAreaCount.setText(parkingNumberOfIndividualMarker);
+//                        Timber.e("parkingNumberOfIndividualMarker -> %s", parkingNumberOfIndividualMarker);
+//                    }
+
+                    double distanceForCount = calculateDistance(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude, ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1));
+                    Timber.e("DistanceForCount -> %s", distanceForCount);
+                    if (distanceForCount < 0.1) {
+                        String parkingNumberOfIndividualMarker = jsonObject.get("no_of_parking").toString();
+                        textViewMarkerParkingAreaCount.setText(parkingNumberOfIndividualMarker);
+                        Timber.e("parkingNumberOfIndividualMarker -> %s", parkingNumberOfIndividualMarker);
+                        break;
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
             getAddress(getActivity(), markerPlaceLatLng.latitude, markerPlaceLatLng.longitude);
             String searchPlaceName = address;
             TaskParser taskParser = new TaskParser();
 //            layoutMarkerVisible(true, searchPlaceName, "1", ApplicationUtils.distance(currentLocation.getLatitude(), currentLocation.getLongitude(), marker.getPosition().latitude, marker.getPosition().longitude), marker.getPosition());
-            layoutMarkerVisible(true, searchPlaceName, "1", taskParser.showDistance(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), new LatLng(marker.getPosition().latitude, marker.getPosition().longitude)), marker.getPosition());
+            layoutMarkerVisible(true, searchPlaceName, textViewMarkerParkingAreaCount.getText().toString(), taskParser.showDistance(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), new LatLng(marker.getPosition().latitude, marker.getPosition().longitude)), marker.getPosition());
+            Timber.e("layoutMarkerVisible textViewMarkerParkingAreaCount -> %s", textViewMarkerParkingAreaCount.getText().toString());
             markerAlreadyClicked++;
             Timber.e("onInfoWindowClick else last markerAlreadyClicked -> %s", markerAlreadyClicked);
 //            markerAlreadyClicked = 0;
@@ -1699,8 +1698,9 @@ public class HomeFragment extends Fragment implements
                                     double distance, LatLng location) {
         this.name = name;
         this.count = count;
-        this.location = location;
+        Timber.e("layoutMarkerVisible count -> %s", count);
         this.distance = distance;
+        this.location = location;
         this.duration = duration;
 
         if (isVisible) {
@@ -1708,6 +1708,7 @@ public class HomeFragment extends Fragment implements
             navBar.setVisibility(View.GONE);
             linearLayoutMarkerBottom.setVisibility(View.VISIBLE);
             textViewMarkerParkingAreaCount.setText(count);
+//            textViewMarkerParkingAreaCount.setText(parkingNumberOfIndividualMarker);
             textViewMarkerParkingAreaName.setText(ApplicationUtils.capitalize(name));
             textViewMarkerParkingDistance.setText(new DecimalFormat("##.##").format(distance) + " km");
 //            textViewMarkerParkingTravelTime.setText(duration);
@@ -1927,7 +1928,7 @@ public class HomeFragment extends Fragment implements
                         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 13));
                         BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
                         navBar.setVisibility(View.GONE);
-                        getDestinationInfo(searchPlaceLatLng);
+                        getDestinationInfoForDuration(searchPlaceLatLng);
                         linearLayoutBottom.setVisibility(View.VISIBLE);
                         linearLayoutNameCount.setVisibility(View.VISIBLE);
                         btnGetDirection.setVisibility(View.VISIBLE);
@@ -2018,33 +2019,37 @@ public class HomeFragment extends Fragment implements
         }
     }
 
+    JSONArray clickEventJsonArray;
+
     private void fetchSensors() {
 
         StringRequest strReq = new StringRequest(Request.Method.POST, AppConfig.URL_FETCH_SENSORS, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-
                 Timber.e(" Sensor Response -> %s", response);
-
-//                if (googleMap != null) {
-//                    googleMap.clear();
-//                }
-
                 try {
                     JSONObject object = new JSONObject(response);
-
                     JSONArray jsonArray = object.getJSONArray("sensors");
+                    clickEventJsonArray = object.getJSONArray("sensors");
+                    Timber.e(" Sensor JSONArray -> %s", jsonArray);
 
                     for (int i = 0; i < jsonArray.length(); i++) {
+
+
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        // Log.e("Sensor Info: ", Jasonobject.toString());
-                        // Log.e("Sensor Info: ", Jasonobject.get("uid").toString());
 
                         String latitude1 = jsonObject.get("latitude").toString();
                         String longitude1 = jsonObject.get("longitude").toString();
+////
+//                        for (int j = 0; j < jsonArray.length(); j++) {
+//                            parkingNumberOfIndividualMarker = jsonObject.get("no_of_parking").toString();
+//                        }
+//                        markerParkingCount(parkingNumberOfIndividualMarker);
+
                         // find distance
 //                        double tDistance = distance(Double.valueOf(latitude1), Double.valueOf(longitude1), currentLocation.getLatitude(), currentLocation.getLongitude());
-                        double tDistance = distance(ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1), currentLocation.getLatitude(), currentLocation.getLongitude());
+
+                        double tDistance = calculateDistance(ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1), currentLocation.getLatitude(), currentLocation.getLongitude());
                         Timber.e("tDistance: -> %s", tDistance);
                         if (tDistance < nDistance) {
                             nDistance = tDistance;
@@ -2059,6 +2064,7 @@ public class HomeFragment extends Fragment implements
                                 double lon = Double.parseDouble(longitude1);
                                 if (googleMap != null) {
                                     MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).title(jsonObject.get("uid").toString()).snippet("Booked And Parked").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
+                                    Timber.e("Booked position -> %s", new LatLng(lat, lon));
                                     googleMap.addMarker(marker);
                                 }
                             } else {
@@ -2068,6 +2074,7 @@ public class HomeFragment extends Fragment implements
 
                                 if (googleMap != null) {
                                     MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).title(jsonObject.get("uid").toString()).snippet("Occupied.").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
+                                    Timber.e("Occupied position -> %s", new LatLng(lat, lon));
                                     googleMap.addMarker(marker);
                                 }
                             }
@@ -2076,9 +2083,11 @@ public class HomeFragment extends Fragment implements
                                 sensorStatus = "Occupied";
                                 double lat = Double.parseDouble(latitude1);
                                 double lon = Double.parseDouble(longitude1);
-
-                                MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).title(jsonObject.get("uid").toString()).snippet("Booked but No Vehicle").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
-                                googleMap.addMarker(marker);
+                                if (googleMap != null) {
+                                    MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).title(jsonObject.get("uid").toString()).snippet("Booked but No Vehicle").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
+                                    Timber.e("No Vehicle position -> %s", new LatLng(lat, lon));
+                                    googleMap.addMarker(marker);
+                                }
 
                             } else {
                                 sensorStatus = "Empty";
@@ -2087,6 +2096,7 @@ public class HomeFragment extends Fragment implements
                                 if (googleMap != null) {
                                     MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).title(jsonObject.get("uid").toString()).snippet("Empty").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
                                     googleMap.addMarker(marker);
+                                    Timber.e("Empty position -> %s", new LatLng(lat, lon));
                                 }
                             }
                         }
@@ -2107,7 +2117,6 @@ public class HomeFragment extends Fragment implements
         }) {
 
         };
-
         ParkingApp.getInstance().addToRequestQueue(strReq);
     }
 
@@ -2130,7 +2139,7 @@ public class HomeFragment extends Fragment implements
     }
 
 
-    private double distance(Double latitude, Double longitude, double e, double f) {
+    private double calculateDistance(Double latitude, Double longitude, double e, double f) {
         double d2r = Math.PI / 180;
 
         double dlong = (longitude - f) * d2r;
@@ -2320,12 +2329,13 @@ public class HomeFragment extends Fragment implements
                 TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
                 taskRequestDirections.execute(url);
 
+
 //                double bearing = bearingBetweenLocations(currentLocationMarker.getPosition(), event.location);
 //                double bearing = getBearing(currentLocationMarker.getPosition(), event.location);
 //                rotateMarker(currentLocationMarker, (float) bearing);
-                CarMoveAnim.startcarAnimation(currentLocationMarker, googleMap,
-                        new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
-                        event.location, 0, callback);
+//                CarMoveAnim.startcarAnimation(currentLocationMarker, googleMap,
+//                        new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
+//                        event.location, 0, callback);
 
             }
         }, 1000);
@@ -2372,9 +2382,9 @@ public class HomeFragment extends Fragment implements
 //                rotateMarker(currentLocationMarker, (float) bearing);
 
                 //duration refers to the animation time. By default it will take 3000 even if 0 is passed.
-                CarMoveAnim.startcarAnimation(currentLocationMarker, googleMap,
-                        new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
-                        searchPlaceLatLng, 0, callback);
+//                CarMoveAnim.startcarAnimation(currentLocationMarker, googleMap,
+//                        new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
+//                        searchPlaceLatLng, 0, callback);
             }
         }, 1000);
 
@@ -2421,10 +2431,10 @@ public class HomeFragment extends Fragment implements
 //                double bearing = getBearing(currentLocationMarker.getPosition(), event.location);
 //                rotateMarker(currentLocationMarker, (float) bearing);
 
-//duration refers to the animation time. By default it will take 3000 even if 0 is passed.
-                CarMoveAnim.startcarAnimation(currentLocationMarker, googleMap,
-                        new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
-                        markerPlaceLatLng, 0, callback);
+//             duration refers to the animation time. By default it will take 3000 even if 0 is passed.
+//                CarMoveAnim.startcarAnimation(currentLocationMarker, googleMap,
+//                        new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
+//                        markerPlaceLatLng, 0, callback);
 
                 fromMarkerRouteDrawn = 1;
 
@@ -2564,7 +2574,6 @@ public class HomeFragment extends Fragment implements
 
             if (polylineOptions != null) {
                 googleMap.addPolyline(polylineOptions);
-
             } else {
                 Toast.makeText(getActivity(), "Direction not found!", Toast.LENGTH_SHORT).show();
             }
@@ -2604,7 +2613,7 @@ public class HomeFragment extends Fragment implements
      *
      * @param latLngDestination LatLng of the destination
      */
-    private void getDestinationInfo(LatLng latLngDestination) {
+    private void getDestinationInfoForDuration(LatLng latLngDestination) {
 //        progressDialog();
         String serverKey = getResources().getString(R.string.google_maps_key); // Api Key For Google Direction API \\
 //        final LatLng origin = new LatLng(GlobalVars.getUserLocation().latitude,GlobalVars.getUserLocation().longitude);
@@ -2741,6 +2750,29 @@ public class HomeFragment extends Fragment implements
         brng = (brng + 360) % 360;
 
         return brng;
+    }
+
+    /**
+     * calculates the distance between two locations in MILES
+     */
+    private double distanceInMiles(double lat1, double lng1, double lat2, double lng2) {
+
+        double earthRadius = 3958.75; // in miles, change to 6371 for kilometer output
+
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLng = Math.toRadians(lng2 - lng1);
+
+        double sindLat = Math.sin(dLat / 2);
+        double sindLng = Math.sin(dLng / 2);
+
+        double a = Math.pow(sindLat, 2) + Math.pow(sindLng, 2)
+                * Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2));
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        double dist = earthRadius * c;
+
+        return dist; // output distance, in MILES
     }
 
     //   Finally, we need to rotate the car-marker by the angle that we get from above method.

@@ -1,95 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
-    <fragment
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".ui.MapActivity">
+        android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/nearest"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center_horizontal"
-            android:visibility="gone"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
-            android:background="@color/colorPrimary"
-            android:padding="10dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:text="@string/find_nearest"
-            android:textColor="@android:color/white"
-            android:textSize="13dp"
-            android:textStyle="bold" />
-
-        <RelativeLayout
-            android:id="@+id/relLayout1"
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp"
-            android:background="@drawable/white_border"
-            android:elevation="10dp">
+            android:layout_height="match_parent"
+            tools:context=".ui.MapActivity">
 
-            <fragment
-                android:id="@+id/autocomplete_fragment"
-                android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+            <Button
+                android:id="@+id/nearest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:background="@color/colorPrimary"
+                android:padding="10dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:text="@string/find_nearest"
+                android:textColor="@android:color/white"
+                android:textSize="13dp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <RelativeLayout
+                android:id="@+id/relLayout1"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </RelativeLayout>
+                android:layout_height="50dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/white_border"
+                android:elevation="10dp">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dim50"
-            android:layout_marginTop="@dimen/dim10"
-            android:layout_marginRight="@dimen/dim10"
-            android:layout_marginLeft="@dimen/dim10"
-            android:elevation="@dimen/dim10"
-            android:visibility="gone"
-            android:background="@drawable/white_border"
-            android:id="@+id/relativeLayout1">
+                <fragment
+                    android:id="@+id/autocomplete_fragment"
+                    android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </RelativeLayout>
 
-            <ImageView
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:id="@+id/ic_magnify"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="10dp"
-                android:src="@drawable/quantum_ic_search_grey600_24"
-                android:tint="@color/black"/>
-
-            <AutoCompleteTextView
+            <RelativeLayout
+                android:id="@+id/relativeLayout1"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_toRightOf="@+id/ic_magnify"
-                android:layout_centerVertical="true"
-                android:textSize="@dimen/dimTex15"
-                android:textColor="#000"
-                android:id="@+id/input_search"
-                android:background="@null"
-                android:hint="Where To?"
-                android:imeOptions="actionSearch"/>
+                android:layout_height="@dimen/dim50"
+                android:layout_marginLeft="@dimen/dim10"
+                android:layout_marginTop="@dimen/dim10"
+                android:layout_marginRight="@dimen/dim10"
+                android:background="@drawable/white_border"
+                android:elevation="@dimen/dim10"
+                android:visibility="gone">
 
-        </RelativeLayout>
-    </fragment>
+                <ImageView
+                    android:id="@+id/ic_magnify"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="10dp"
+                    android:src="@drawable/quantum_ic_search_grey600_24"
+                    android:tint="@color/black" />
+
+                <AutoCompleteTextView
+                    android:id="@+id/input_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/ic_magnify"
+                    android:background="@null"
+                    android:hint="Where To?"
+                    android:imeOptions="actionSearch"
+                    android:textColor="#000"
+                    android:textSize="@dimen/dimTex15" />
+
+            </RelativeLayout>
+        </fragment>
+<!--        <com.amalbit.trail.RouteOverlayView-->
+<!--            android:id="@+id/mapOverlayView"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent" />-->
+    </FrameLayout>
 
     <ImageButton
         android:id="@+id/currentLocationImageButton"
         android:layout_width="40dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginBottom="25dp"
+        android:layout_alignParentBottom="true"
         android:layout_marginEnd="15dp"
+        android:layout_marginBottom="25dp"
         android:contentDescription="@null"
         app:srcCompat="@drawable/current_location_vector_icon" />
 
@@ -97,17 +108,17 @@
         android:id="@+id/linearLayoutBottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         android:layout_alignParentBottom="true"
         android:background="@android:color/white"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <LinearLayout
             android:id="@+id/linearLayoutNameCount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:weightSum="2"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="2">
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -143,25 +154,25 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="@dimen/dim5"
-                android:orientation="vertical"
                 android:layout_weight="1.5"
                 android:background="@android:color/white"
                 android:gravity="center"
+                android:orientation="vertical"
                 android:padding="@dimen/dim2">
 
                 <LinearLayout
                     android:id="@+id/linearLayoutParkingAreaName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:weightSum="2"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:weightSum="2">
 
                     <TextView
                         android:id="@+id/textViewParkingAreaName"
                         android:layout_width="0dp"
-                        android:layout_weight="1.5"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/dim2"
+                        android:layout_weight="1.5"
                         android:maxLines="2"
                         android:padding="@dimen/dim3"
                         android:text="@string/parking_area_name"
@@ -172,10 +183,10 @@
                     <TextView
                         android:id="@+id/textViewParkingDistance"
                         android:layout_width="0dp"
-                        android:layout_weight="0.5"
                         android:layout_height="wrap_content"
-                        android:maxLines="1"
+                        android:layout_weight="0.5"
                         android:gravity="end"
+                        android:maxLines="1"
                         android:padding="@dimen/dim3"
                         android:text="@string/distance"
                         android:textColor="@android:color/black"
@@ -187,15 +198,15 @@
                     android:id="@+id/linearLayoutParkingAvailability"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:weightSum="2"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:weightSum="2">
 
                     <TextView
                         android:id="@+id/textViewParkingAreaAddress"
                         android:layout_width="0dp"
-                        android:layout_weight="1.5"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/linearLayoutParkingAreaName"
+                        android:layout_weight="1.5"
                         android:padding="@dimen/dim3"
                         android:text="@string/subject_to_availability"
                         android:textColor="@color/blue"
@@ -204,16 +215,16 @@
                     <TextView
                         android:id="@+id/textViewParkingTravelTime"
                         android:layout_width="0dp"
-                        android:layout_weight="0.5"
                         android:layout_height="wrap_content"
-                        android:maxLines="1"
-                        android:visibility="visible"
+                        android:layout_weight="0.5"
                         android:gravity="end"
+                        android:maxLines="1"
                         android:padding="@dimen/dim3"
                         android:text="@string/time"
                         android:textColor="@android:color/black"
                         android:textSize="@dimen/_10ssp"
-                        android:textStyle="normal" />
+                        android:textStyle="normal"
+                        android:visibility="visible" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
@@ -222,10 +233,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:padding="@dimen/dim3"
             android:layout_gravity="center_vertical"
             android:background="@android:color/white"
             android:orientation="horizontal"
+            android:padding="@dimen/dim3"
             android:weightSum="2">
 
             <ImageView
@@ -241,9 +252,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.7"
+                android:background="#000"
                 android:foreground="?attr/selectableItemBackground"
                 android:text="@string/get_direction"
-                android:background="#000"
                 android:textColor="#fff" />
         </LinearLayout>
     </LinearLayout>
@@ -252,17 +263,17 @@
         android:id="@+id/linearLayoutSearchBottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         android:layout_alignParentBottom="true"
         android:background="@android:color/white"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <LinearLayout
             android:id="@+id/linearLayoutSearchNameCount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:weightSum="2"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="2">
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -298,25 +309,25 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="@dimen/dim5"
-                android:orientation="vertical"
                 android:layout_weight="1.5"
                 android:background="@android:color/white"
                 android:gravity="center"
+                android:orientation="vertical"
                 android:padding="@dimen/dim2">
 
                 <LinearLayout
                     android:id="@+id/linearLayoutSearchParkingAreaName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:weightSum="2"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:weightSum="2">
 
                     <TextView
                         android:id="@+id/textViewSearchParkingAreaName"
                         android:layout_width="0dp"
-                        android:layout_weight="1.5"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/dim2"
+                        android:layout_weight="1.5"
                         android:maxLines="2"
                         android:padding="@dimen/dim3"
                         android:text="@string/parking_area_name"
@@ -327,10 +338,10 @@
                     <TextView
                         android:id="@+id/textViewSearchParkingDistance"
                         android:layout_width="0dp"
-                        android:layout_weight="0.5"
                         android:layout_height="wrap_content"
-                        android:maxLines="1"
+                        android:layout_weight="0.5"
                         android:gravity="end"
+                        android:maxLines="1"
                         android:padding="@dimen/dim3"
                         android:text="@string/distance"
                         android:textColor="@android:color/black"
@@ -342,15 +353,15 @@
                     android:id="@+id/linearLayoutSearchParkingAvailability"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:weightSum="2"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:weightSum="2">
 
                     <TextView
                         android:id="@+id/textViewSearchParkingAreaAddress"
                         android:layout_width="0dp"
-                        android:layout_weight="1.5"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/linearLayoutParkingAreaName"
+                        android:layout_weight="1.5"
                         android:padding="@dimen/dim3"
                         android:text="@string/subject_to_availability"
                         android:textColor="@color/blue"
@@ -359,10 +370,10 @@
                     <TextView
                         android:id="@+id/textViewSearchParkingTravelTime"
                         android:layout_width="0dp"
-                        android:layout_weight="0.5"
                         android:layout_height="wrap_content"
-                        android:maxLines="1"
+                        android:layout_weight="0.5"
                         android:gravity="end"
+                        android:maxLines="1"
                         android:padding="@dimen/dim3"
                         android:text="@string/time"
                         android:textColor="@android:color/black"
@@ -376,10 +387,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:padding="@dimen/dim3"
             android:layout_gravity="center_vertical"
             android:background="@android:color/white"
             android:orientation="horizontal"
+            android:padding="@dimen/dim3"
             android:weightSum="2">
 
             <ImageView
@@ -395,9 +406,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.7"
+                android:background="#000"
                 android:foreground="?attr/selectableItemBackground"
                 android:text="@string/get_direction"
-                android:background="#000"
                 android:textColor="#fff" />
         </LinearLayout>
     </LinearLayout>
@@ -406,17 +417,17 @@
         android:id="@+id/linearLayoutMarkerBottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         android:layout_alignParentBottom="true"
         android:background="@android:color/white"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <LinearLayout
             android:id="@+id/linearLayoutMarkerNameCount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:weightSum="2"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="2">
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -452,25 +463,25 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="@dimen/dim5"
-                android:orientation="vertical"
                 android:layout_weight="1.5"
                 android:background="@android:color/white"
                 android:gravity="center"
+                android:orientation="vertical"
                 android:padding="@dimen/dim2">
 
                 <LinearLayout
                     android:id="@+id/linearLayoutMarkerParkingAreaName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:weightSum="2"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:weightSum="2">
 
                     <TextView
                         android:id="@+id/textViewMarkerParkingAreaName"
                         android:layout_width="0dp"
-                        android:layout_weight="1.5"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/dim2"
+                        android:layout_weight="1.5"
                         android:maxLines="2"
                         android:padding="@dimen/dim3"
                         android:text="@string/parking_area_name"
@@ -481,10 +492,10 @@
                     <TextView
                         android:id="@+id/textViewMarkerParkingDistance"
                         android:layout_width="0dp"
-                        android:layout_weight="0.5"
                         android:layout_height="wrap_content"
-                        android:maxLines="1"
+                        android:layout_weight="0.5"
                         android:gravity="end"
+                        android:maxLines="1"
                         android:padding="@dimen/dim3"
                         android:text="@string/distance"
                         android:textColor="@android:color/black"
@@ -496,15 +507,15 @@
                     android:id="@+id/linearLayoutMarkerParkingAvailability"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:weightSum="2"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:weightSum="2">
 
                     <TextView
                         android:id="@+id/textViewMarkerParkingAreaAddress"
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/linearLayoutParkingAreaName"
+                        android:layout_weight="1"
                         android:padding="@dimen/dim3"
                         android:text="@string/subject_to_availability"
                         android:textColor="@color/blue"
@@ -513,10 +524,10 @@
                     <TextView
                         android:id="@+id/textViewMarkerParkingTravelTime"
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:maxLines="1"
+                        android:layout_weight="1"
                         android:gravity="end"
+                        android:maxLines="1"
                         android:padding="@dimen/dim3"
                         android:text="@string/time"
                         android:textColor="@android:color/black"
@@ -530,10 +541,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:padding="@dimen/dim3"
             android:layout_gravity="center_vertical"
             android:background="@android:color/white"
             android:orientation="horizontal"
+            android:padding="@dimen/dim3"
             android:weightSum="2">
 
             <ImageView
@@ -549,9 +560,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.7"
+                android:background="#000"
                 android:foreground="?attr/selectableItemBackground"
                 android:text="@string/get_direction"
-                android:background="#000"
                 android:textColor="#fff" />
         </LinearLayout>
     </LinearLayout>
