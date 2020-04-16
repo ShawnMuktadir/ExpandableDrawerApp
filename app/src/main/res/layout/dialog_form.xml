@@ -33,6 +33,7 @@
             android:id="@+id/parking_req_start_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+
             android:layout_marginTop="@dimen/margin_20"
             android:scaleX="0.8"
             android:scaleY="0.8"

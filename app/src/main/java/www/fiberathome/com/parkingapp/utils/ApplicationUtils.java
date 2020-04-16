@@ -3,6 +3,8 @@ package www.fiberathome.com.parkingapp.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.IBinder;
@@ -35,6 +37,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -231,8 +234,6 @@ public class ApplicationUtils {
     }
 
 
-
-
     public static void showExitDialog(final Activity activity) {
         android.app.AlertDialog.Builder dialogBuilder = new android.app.AlertDialog.Builder(activity, R.style.Theme_AppCompat_NoActionBar);
         LayoutInflater inflater = activity.getLayoutInflater();
@@ -351,10 +352,10 @@ public class ApplicationUtils {
      *
      * @param latLngDestination LatLng of the destination
      */
-    public static void getDestinationInfo(Context context, LatLng latLngDestination, TextView textView) {
+    public static void getDestinationDurationInfo(Context context, LatLng latLngDestination, TextView textView) {
 //        progressDialog();
         String serverKey = context.getResources().getString(R.string.google_maps_key); // Api Key For Google Direction API \\
-        final LatLng origin = new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude);
+        final LatLng origin = new LatLng(HomeFragment.currentLocation.getLatitude(), HomeFragment.currentLocation.getLongitude());
 //        final LatLng origin = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
         final LatLng destination = latLngDestination;
         //-------------Using AK Exorcist Google Direction Library---------------\\
@@ -375,6 +376,7 @@ public class ApplicationUtils {
                             String distance = distanceInfo.getText();
                             String duration = durationInfo.getText();
                             textView.setText(duration);
+                            Timber.e("getDestinationDurationInfo duration -> %s", textView.getText().toString());
 //                            textViewSearchParkingTravelTime.setText(duration);
 //                            textViewMarkerParkingTravelTime.setText(duration);
                             //------------Displaying Distance and Time-----------------\\

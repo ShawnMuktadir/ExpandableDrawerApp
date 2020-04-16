@@ -114,5 +114,6 @@
     <string name="availability">Availability</string>
     <string name="time"> </string>
     <string name="menu_search">Search...</string>
+    <string name="bottom_Sheet_text">Choose a spot or swipe up for more</string>
 
 </resources>

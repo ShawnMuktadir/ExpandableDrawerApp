@@ -5,9 +5,12 @@ import android.app.Dialog;
 import android.app.Notification;
 import android.content.Context;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.appcompat.app.AppCompatDialogFragment;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,7 +49,7 @@ import static www.fiberathome.com.parkingapp.utils.NotificationClass.CHANNEL_HIG
 
 public class DialogForm extends AppCompatDialogFragment {
 
-//    private EditText usernameEt;
+    //    private EditText usernameEt;
 //    private EditText passwordEt;
 //    private EditText mobileET;
     private DialogFormListener listener;
@@ -58,8 +61,6 @@ public class DialogForm extends AppCompatDialogFragment {
     private Button reservePayment;
     private Button reserveCancel;
 
-
-
     private TextView reserveBillAmountTV;
     private TextView reserveIdTV;
     private ImageView paymentGateIV;
@@ -67,14 +68,12 @@ public class DialogForm extends AppCompatDialogFragment {
     private Calendar calendar;
     private String format = "";
 
-
     public String selectedSpt;
 
     private NotificationManagerCompat notificationManager;
 
 
-
-
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -91,22 +90,16 @@ public class DialogForm extends AppCompatDialogFragment {
                 .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                 .build();
 
-
-
-
-
         if (getArguments() != null) {
-            selectedSpt = getArguments().getString("selectedSpt","");
+            selectedSpt = getArguments().getString("selectedSpt", "");
 
         }
 
-
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_form, null);
-
+//        View view = inflater.inflate(R.layout.booking_dialog_form, null);
         builder.setView(view)
                 .setTitle("Parking Spot Reservation");
-
 
 //                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 //                    @Override
@@ -153,7 +146,6 @@ public class DialogForm extends AppCompatDialogFragment {
 
         parkingReqEndTime = (TimePicker) view.findViewById(R.id.parking_req_end_time);
 
-
         reserveFinal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -162,8 +154,8 @@ public class DialogForm extends AppCompatDialogFragment {
                 int hour;
                 int min;
 
-                String startTimestamp = parkingReqStartDate.getYear()+"-"+(parkingReqStartDate.getMonth()+1)+"-"+parkingReqStartDate.getDayOfMonth()+" "+parkingReqStartTime.getCurrentHour()+":"+parkingReqStartTime.getCurrentMinute();
-                String endTimestamp = parkingReqEndDate.getYear()+"-"+(parkingReqEndDate.getMonth()+1)+"-"+parkingReqEndDate.getDayOfMonth()+" "+parkingReqEndTime.getCurrentHour()+":"+parkingReqEndTime.getCurrentMinute();
+                String startTimestamp = parkingReqStartDate.getYear() + "-" + (parkingReqStartDate.getMonth() + 1) + "-" + parkingReqStartDate.getDayOfMonth() + " " + parkingReqStartTime.getCurrentHour() + ":" + parkingReqStartTime.getCurrentMinute();
+                String endTimestamp = parkingReqEndDate.getYear() + "-" + (parkingReqEndDate.getMonth() + 1) + "-" + parkingReqEndDate.getDayOfMonth() + " " + parkingReqEndTime.getCurrentHour() + ":" + parkingReqEndTime.getCurrentMinute();
 
                 //String startTime =  showTime(parkingReqStartTime.getCurrentHour(),  parkingReqStartTime.getCurrentMinute());
 
@@ -199,17 +191,14 @@ public class DialogForm extends AppCompatDialogFragment {
         reservePayment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Toast.makeText(getContext(),"Your Reservation is Completed! ",Toast.LENGTH_SHORT);
-                Log.e("Reservation:", "Your Reservation is Completed!");
-
+                Toast.makeText(getContext(), "Your Reservation is Completed! ", Toast.LENGTH_SHORT).show();
+                Timber.e("Reservation: Your Reservation is Completed!");
                 notificationManager.notify(1, notification);
-
                 dismiss();
             }
         });
 
-                return builder.create();
+        return builder.create();
     }
 
 
@@ -228,7 +217,7 @@ public class DialogForm extends AppCompatDialogFragment {
 
                     Timber.e(jsonObject.toString());
 
-                    if (!jsonObject.getBoolean("error")){
+                    if (!jsonObject.getBoolean("error")) {
 
                         Timber.e(jsonObject.getString("reservation"));
                         Timber.e(jsonObject.getString("bill"));
@@ -239,8 +228,8 @@ public class DialogForm extends AppCompatDialogFragment {
                         parkingReqStartDate.setVisibility(getView().GONE);
                         parkingReqEndDate.setVisibility(getView().GONE);
 
-                        reserveBillAmountTV.setText("Net Payable Apount: "+jsonObject.getString("bill"));
-                        reserveIdTV.setText("Your Reservation Id: NMC00"+jsonObject.getString("reservation"));
+                        reserveBillAmountTV.setText("Net Payable Apount: " + jsonObject.getString("bill"));
+                        reserveIdTV.setText("Your Reservation Id: NMC00" + jsonObject.getString("reservation"));
                         reservePayment.setVisibility(getView().VISIBLE);
                         reserveBillAmountTV.setVisibility(getView().VISIBLE);
                         paymentGateIV.setVisibility(getView().VISIBLE);
@@ -252,7 +241,7 @@ public class DialogForm extends AppCompatDialogFragment {
                         // getting the reservation from the response
                         //JSONObject reservationJson = jsonObject.getJSONObject("reservation");
 
-                        JSONObject reservationJson=new JSONObject(response);
+                        JSONObject reservationJson = new JSONObject(response);
 
                         reservation.setId(reservationJson.getInt("reservation"));
 
@@ -261,8 +250,8 @@ public class DialogForm extends AppCompatDialogFragment {
                         //reservation.setTimeEnd(reservationJson.getString("time_end"));
                         //reservation.setSpotId(reservationJson.getString("spot_id"));
 
-                    }else{
-                        Toast.makeText(getContext(),"Reservation Failed! Please Try Again. ",Toast.LENGTH_SHORT);
+                    } else {
+                        Toast.makeText(getContext(), "Reservation Failed! Please Try Again. ", Toast.LENGTH_SHORT).show();
                     }
 
                 } catch (JSONException e) {
@@ -275,7 +264,7 @@ public class DialogForm extends AppCompatDialogFragment {
             public void onErrorResponse(VolleyError error) {
                 //Log.e("Volley Error", error.getMessage());
             }
-        }){
+        }) {
 
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
@@ -287,6 +276,7 @@ public class DialogForm extends AppCompatDialogFragment {
                 return params;
             }
         };
+
         ParkingApp.getInstance().addToRequestQueue(stringRequest, TAG);
     }
 
@@ -327,7 +317,7 @@ public class DialogForm extends AppCompatDialogFragment {
         }
     }
 
-    public interface DialogFormListener{
+    public interface DialogFormListener {
         void applyTexts(String username, String password, String mobile);
     }
 }

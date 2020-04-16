@@ -3,6 +3,7 @@ package www.fiberathome.com.parkingapp.utils;
 import com.google.gson.Gson;
 
 import timber.log.Timber;
+import www.fiberathome.com.parkingapp.model.BookingSensors;
 import www.fiberathome.com.parkingapp.model.SensorArea;
 
 /*Created by MiQ0717 on 23-Mar-2020.*/
@@ -37,5 +38,16 @@ public final class SharedData {
     public void setSensorArea(SensorArea sensorArea) {
         Timber.e("Sensor Area in SharedData -> %s", new Gson().toJson(sensorArea));
         this.sensorArea = sensorArea;
+    }
+
+    private BookingSensors bookingSensors;
+
+    public BookingSensors getBookingSensors() {
+        return bookingSensors;
+    }
+
+    public void setBookingSensors(BookingSensors bookingSensors) {
+        Timber.e("BookingSensor Area in SharedData -> %s", new Gson().toJson(bookingSensors));
+        this.bookingSensors = bookingSensors;
     }
 }

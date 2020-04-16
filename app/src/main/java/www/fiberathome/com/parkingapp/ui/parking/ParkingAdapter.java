@@ -86,7 +86,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             EventBus.getDefault().post(new GetDirectionEvent(new LatLng(sensorArea.getLat(), sensorArea.getLng())));
 //            parkingFragment.layoutVisible(true, sensorArea.getParkingArea(), sensorArea.getCount(), distance, duration, new LatLng(sensorArea.getLat(), sensorArea.getLng()));
 
-            //data is set in SharedData to retrieve this data in HomeFragment
+            //data is set in SharedData, to retrieve this data in HomeFragment
             Timber.e("Sensor Area to SharedData -> %s", new Gson().toJson(sensorArea));
             SharedData.getInstance().setSensorArea(sensorArea);
             //Pop the Parking Fragment and Replace it with HomeFragment
