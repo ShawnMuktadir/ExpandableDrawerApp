@@ -115,8 +115,9 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdap
             Collections.swap(bookingSensorsArrayList, position, 0);
             notifyItemMoved(position, 0);
             notifyDataSetChanged();
-            homeFragment.layoutBottomSheetVisible(true, bookingSensors.getParkingArea(), bookingSensors.getCount(), distance,
-                    bookingViewHolder.textViewParkingTravelTime.getText().toString(), new LatLng(bookingSensors.getLat(), bookingSensors.getLng()));
+            homeFragment.layoutBottomSheetVisible(true, bookingSensors.getParkingArea(), bookingSensors.getCount(),
+                    ApplicationUtils.convertToDouble(adapterDistance),
+                    adapterDuration, new LatLng(bookingSensors.getLat(), bookingSensors.getLng()));
 
             homeFragment.bottomSheetBehavior.setHideable(true);
             homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
@@ -130,11 +131,13 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdap
         return (null != bookingSensorsArrayList ? bookingSensorsArrayList.size() : 0);
     }
 
+    private String adapterDistance;
+    private String adapterDuration;
+
     private void getDestinationDurationInfo(Context context, LatLng latLngDestination, BookingSensorAdapter.BookingViewHolder bookingViewHolder) {
 //        progressDialog();
         String serverKey = context.getResources().getString(R.string.google_maps_key); // Api Key For Google Direction API \\
-        final LatLng origin = new LatLng(HomeFragment.currentLocation.getLatitude(), HomeFragment.currentLocation.getLongitude());
-//        final LatLng origin = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+        final LatLng origin = new LatLng(homeFragment.currentLocation.getLatitude(), homeFragment.currentLocation.getLongitude());
         final LatLng destination = latLngDestination;
         //-------------Using AK Exorcist Google Direction Library---------------\\
         GoogleDirection.withServerKey(serverKey)
@@ -152,8 +155,10 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdap
                             Info distanceInfo = leg.getDistance();
                             Info durationInfo = leg.getDuration();
                             String distance = distanceInfo.getText();
-                            duration = durationInfo.getText();
-                            bookingViewHolder.textViewParkingTravelTime.setText(duration);
+                            String duration = durationInfo.getText();
+                            adapterDistance = distance;
+                            adapterDuration = duration;
+                            bookingViewHolder.textViewParkingTravelTime.setText(adapterDuration);
                             Timber.e("getDestinationDurationInfo duration -> %s", bookingViewHolder.textViewParkingTravelTime.getText().toString());
 //                            textViewSearchParkingTravelTime.setText(duration);
 //                            textViewMarkerParkingTravelTime.setText(duration);

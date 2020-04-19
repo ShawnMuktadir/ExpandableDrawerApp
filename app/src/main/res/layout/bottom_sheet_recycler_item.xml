@@ -7,8 +7,7 @@
     android:layout_gravity="center"
     android:clickable="true"
     android:focusable="true"
-    android:orientation="vertical"
-    android:layout_margin="@dimen/dim5">
+    android:orientation="vertical">
 
 <!--    android:background="@drawable/activated_color_selector"-->
 <!--    android:foreground="?selectableItemBackground"-->
@@ -19,7 +18,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_margin="@dimen/dim5"
         android:weightSum="3.35">
 
         <View

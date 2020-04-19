@@ -16,6 +16,8 @@ import com.google.android.gms.maps.model.Marker;
 
 public class MarkerAnimation {
 
+    private static float bearing = 0.5f;
+
     public static void animateMarkerToGB(final Marker marker, final LatLng finalPosition, final LatLngInterpolator latLngInterpolator) {
         final LatLng startPosition = marker.getPosition();
         final Handler handler = new Handler();
@@ -36,6 +38,9 @@ public class MarkerAnimation {
                 v = interpolator.getInterpolation(t);
 
                 marker.setPosition(latLngInterpolator.interpolate(v, startPosition, finalPosition));
+                marker.setRotation(bearing);
+                marker.setRotation((float) getBearingBetweenTwoPoints(new LatLng(startPosition.latitude, startPosition.longitude),
+                        new LatLng(finalPosition.latitude, finalPosition.longitude)));
 
                 // Repeat till progress is complete.
                 if (t < 1) {
@@ -44,6 +49,35 @@ public class MarkerAnimation {
                 }
             }
         });
+    }
+
+    private static double getBearingBetweenTwoPoints(LatLng latLng1, LatLng latLng2) {
+
+        double lat1 = degreesToRadians(latLng1.latitude);
+        double long1 = degreesToRadians(latLng1.longitude);
+        double lat2 = degreesToRadians(latLng2.latitude);
+        double long2 = degreesToRadians(latLng2.longitude);
+
+
+        double dLon = (long2 - long1);
+
+
+        double y = Math.sin(dLon) * Math.cos(lat2);
+        double x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1)
+                * Math.cos(lat2) * Math.cos(dLon);
+
+        double radiansBearing = Math.atan2(y, x);
+
+
+        return radiansToDegrees(radiansBearing);
+    }
+
+    private static double degreesToRadians(double degrees) {
+        return degrees * Math.PI / 180.0;
+    }
+
+    private static double radiansToDegrees(double radians) {
+        return radians * 180.0 / Math.PI;
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)

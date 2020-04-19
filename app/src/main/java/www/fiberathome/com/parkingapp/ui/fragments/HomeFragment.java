@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -181,18 +182,20 @@ public class HomeFragment extends Fragment implements
     Button btnSearchGetDirection;
     @BindView(R.id.imageViewSearchBack)
     ImageView imageViewSearchBack;
-    @BindView(R.id.textViewSearchParkingAreaCount)
-    TextView textViewSearchParkingAreaCount;
-    @BindView(R.id.textViewSearchParkingAreaName)
-    TextView textViewSearchParkingAreaName;
-    @BindView(R.id.textViewSearchParkingDistance)
-    TextView textViewSearchParkingDistance;
-    @BindView(R.id.textViewSearchParkingTravelTime)
-    TextView textViewSearchParkingTravelTime;
+    //    @BindView(R.id.textViewSearchParkingAreaCount)
+//    TextView textViewSearchParkingAreaCount;
+//    @BindView(R.id.textViewSearchParkingAreaName)
+//    TextView textViewSearchParkingAreaName;
+//    @BindView(R.id.textViewSearchParkingDistance)
+//    TextView textViewSearchParkingDistance;
+//    @BindView(R.id.textViewSearchParkingTravelTime)
+//    TextView textViewSearchParkingTravelTime;
     @BindView(R.id.linearLayoutSearchBottom)
     LinearLayout linearLayoutSearchBottom;
-    @BindView(R.id.linearLayoutSearchNameCount)
-    LinearLayout linearLayoutSearchNameCount;
+    @BindView(R.id.linearLayoutSearchBottomButton)
+    LinearLayout linearLayoutSearchBottomButton;
+//    @BindView(R.id.linearLayoutSearchNameCount)
+//    LinearLayout linearLayoutSearchNameCount;
 
     //from marker
     @BindView(R.id.btnMarkerGetDirection)
@@ -293,7 +296,7 @@ public class HomeFragment extends Fragment implements
     private LocationManager mLocationManager;
 
     public Location mLastLocation;
-    private static GoogleApiClient mGoogleApiClient;
+    private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
     private int getDirectionButtonClicked = 0;
     private int getDirectionSearchButtonClicked = 0;
@@ -318,6 +321,7 @@ public class HomeFragment extends Fragment implements
     GoogleMap.CancelableCallback callback;
     private boolean animatePath, repeatDrawingPath;
     private int bottomSheetSearch = 0;
+    private float bearing = 0.5f;
 
     public HomeFragment() {
 
@@ -348,6 +352,7 @@ public class HomeFragment extends Fragment implements
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        Timber.e("onCreate called");
         setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
         context = getActivity();
@@ -377,6 +382,7 @@ public class HomeFragment extends Fragment implements
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Timber.e("onCreateView called");
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_home, container, false);
         ButterKnife.bind(this, view);
@@ -406,7 +412,6 @@ public class HomeFragment extends Fragment implements
                     case BottomSheetBehavior.STATE_HALF_EXPANDED:
                         break;
                 }
-
             }
 
             @Override
@@ -431,7 +436,8 @@ public class HomeFragment extends Fragment implements
             String distance = new DecimalFormat("##.##").format(sensorArea.getDistance()) + " km";
             textViewParkingDistance.setText(distance);
 //            textViewParkingTravelTime.setText(sensorArea.getDuration());
-            getDestinationInfoForDuration(new LatLng(sensorArea.getLat(), sensorArea.getLng()));
+            getDestinationInfoForDuration(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
+                    new LatLng(sensorArea.getLat(), sensorArea.getLng()));
         } else {
             Timber.e("Genjam");
         }
@@ -446,6 +452,7 @@ public class HomeFragment extends Fragment implements
 
     @Override
     public void onMapReady(GoogleMap mMap) {
+        Timber.e("onMapReady called");
         this.googleMap = mMap;
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         currentLocation = getLastBestLocation();
@@ -462,8 +469,8 @@ public class HomeFragment extends Fragment implements
 //            googleMap.setMyLocationEnabled(true);
         }
         geoLocate();
-        googleMap.setMyLocationEnabled(true);
-        googleMap.getUiSettings().setMyLocationButtonEnabled(true);
+//        googleMap.setMyLocationEnabled(true);
+//        googleMap.getUiSettings().setMyLocationButtonEnabled(true);
         googleMap.setOnInfoWindowClickListener(this);
 
 //        refreshUserGPSLocation();
@@ -613,13 +620,13 @@ public class HomeFragment extends Fragment implements
 //
 //    }
 
-    private void AddMarker(LatLng initialpos) {
-
-        MarkerOptions markerOptions = new MarkerOptions().position(initialpos).flat(true).icon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running));
-        marker = googleMap.addMarker(markerOptions);
-
-
-    }
+//    private void AddMarker(LatLng initialpos) {
+//
+//        MarkerOptions markerOptions = new MarkerOptions().position(initialpos).flat(true).icon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running));
+//        marker = googleMap.addMarker(markerOptions);
+//
+//
+//    }
 
     private float Calculatebearingagle(LatLng newlatlng) {
         Location destinationLoc = new Location("service Provider");
@@ -629,7 +636,6 @@ public class HomeFragment extends Fragment implements
 
         destinationLoc.setLatitude(newlatlng.latitude);
         destinationLoc.setLongitude(newlatlng.longitude);
-
 
         return userLoc.bearingTo(destinationLoc);
 
@@ -723,10 +729,12 @@ public class HomeFragment extends Fragment implements
     private void showMarker(@NonNull Location currentLocation) {
         Timber.d("showMarker call hoiche");
         LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-        if (currentLocationMarker == null)
+        if (currentLocationMarker == null) {
 //            currentLocationMarker = googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker()).position(latLng).flat(true));
-            currentLocationMarker = googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car_small)).position(latLng).flat(true));
-        else
+            currentLocationMarker = googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car_small)).position(latLng).flat(true)
+                    .anchor(0.5f, 0.5f)
+                    .rotation(bearing));
+        } else
             MarkerAnimation.animateMarkerToGB(currentLocationMarker, latLng, new LatLngInterpolator.Spherical());
     }
 
@@ -780,7 +788,7 @@ public class HomeFragment extends Fragment implements
                 fetchSensors();
                 BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
                 navBar.setVisibility(View.VISIBLE);
-                layoutSearchVisible(false, "", "", 0.0, null,"");
+                layoutSearchVisible(false, "", "", 0.0, null);
                 linearLayoutBottom.setVisibility(View.GONE);
                 linearLayoutSearchBottom.setVisibility(View.GONE);
                 linearLayoutMarkerBottom.setVisibility(View.GONE);
@@ -929,7 +937,8 @@ public class HomeFragment extends Fragment implements
 //              move map camera
                     googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 13));
 //                    linearLayoutNameCount.setVisibility(View.VISIBLE);
-                    linearLayoutSearchBottom.setVisibility(View.VISIBLE);
+//                    linearLayoutSearchBottom.setVisibility(View.VISIBLE);
+                    linearLayoutSearchBottomButton.setVisibility(View.VISIBLE);
                     linearLayoutBottom.setVisibility(View.GONE);
                     linearLayoutMarkerBottom.setVisibility(View.GONE);
                     imageViewSearchBack.setVisibility(View.VISIBLE);
@@ -959,7 +968,7 @@ public class HomeFragment extends Fragment implements
                     markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car_small));
                     googleMap.addMarker(markerOptions).setFlat(true);
                     fetchSensors();
-                    layoutSearchVisible(false, "", "", 0.0, null,"");
+                    layoutSearchVisible(false, "", "", 0.0, null);
                     btnSearchGetDirection.setText("Get Direction");
                     btnSearchGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
                     linearLayoutBottom.setVisibility(View.GONE);
@@ -1143,12 +1152,14 @@ public class HomeFragment extends Fragment implements
 
     @Override
     public void onStart() {
+        Timber.e("onStart called");
         super.onStart();
         EventBus.getDefault().register(this);
     }
 
     @Override
     public void onResume() {
+        Timber.e("onResume called");
         super.onResume();
         nearest.setOnClickListener(this);
         if (isGooglePlayServicesAvailable()) {
@@ -1159,6 +1170,7 @@ public class HomeFragment extends Fragment implements
 
     @Override
     public void onPause() {
+        Timber.e("onPause called");
         super.onPause();
 //        gpsTracker.stopUsingGPS();
         //stop location updates when Activity is no longer active
@@ -1169,6 +1181,7 @@ public class HomeFragment extends Fragment implements
 
     @Override
     public void onStop() {
+        Timber.e("onStop called");
         EventBus.getDefault().unregister(this);
         super.onStop();
 //        gpsTracker.stopUsingGPS();
@@ -1178,6 +1191,7 @@ public class HomeFragment extends Fragment implements
 
     @Override
     public void onDestroy() {
+        Timber.e("onDestroy called");
         super.onDestroy();
         fusedLocationProviderClient = null;
         googleMap = null;
@@ -1235,7 +1249,7 @@ public class HomeFragment extends Fragment implements
 
     @Override
     public void onLocationChanged(Location location) {
-        Timber.e("onLocationChanged called");
+//        Timber.e("onLocationChanged called");
 //        Toast.makeText(getActivity(), "Location Changed " + location.getLatitude()
 //                + location.getLongitude(), Toast.LENGTH_LONG).show();
         currentLocation = location;
@@ -1626,7 +1640,8 @@ public class HomeFragment extends Fragment implements
 
             //calculate Duration
             markerPlaceLatLng = new LatLng(marker.getPosition().latitude, marker.getPosition().longitude);
-            getDestinationInfoForDuration(markerPlaceLatLng);
+            getDestinationInfoForDuration(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
+                    markerPlaceLatLng);
 
             for (int i = 0; i < clickEventJsonArray.length(); i++) {
                 JSONObject jsonObject;
@@ -1850,7 +1865,7 @@ public class HomeFragment extends Fragment implements
 
     @SuppressLint("SetTextI18n")
     public void layoutSearchVisible(boolean isVisible, String name, String count,
-                                    double distance, LatLng location, String duration) {
+                                    double distance, LatLng location) {
         this.name = name;
         this.count = count;
         this.searchPlaceLatLng = location;
@@ -1861,11 +1876,11 @@ public class HomeFragment extends Fragment implements
             BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
             navBar.setVisibility(View.GONE);
             linearLayoutSearchBottom.setVisibility(View.VISIBLE);
-            textViewSearchParkingAreaCount.setText(count);
-            textViewSearchParkingAreaName.setText(ApplicationUtils.capitalize(name));
-            textViewSearchParkingDistance.setText(new DecimalFormat("##.##").format(distance) + " km");
+//            textViewSearchParkingAreaCount.setText(count);
+//            textViewSearchParkingAreaName.setText(ApplicationUtils.capitalize(name));
+//            textViewSearchParkingDistance.setText(new DecimalFormat("##.##").format(distance) + " km");
 //            getDestinationInfoForDuration(new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));
-            textViewSearchParkingTravelTime.setText(duration);
+//            textViewSearchParkingTravelTime.setText(duration);
         } else {
             BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
             navBar.setVisibility(View.VISIBLE);
@@ -1938,7 +1953,8 @@ public class HomeFragment extends Fragment implements
             textViewBottomSheetParkingAreaName.setText(ApplicationUtils.capitalize(name));
             textViewBottomSheetParkingDistance.setText(new DecimalFormat("##.##").format(distance) + " km");
             textViewMarkerParkingTravelTime.setText(duration);
-            getDestinationInfoForDuration(new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
+            getDestinationInfoForDuration(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
+                    new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
         } else {
             BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
             navBar.setVisibility(View.VISIBLE);
@@ -2053,6 +2069,9 @@ public class HomeFragment extends Fragment implements
         }
     }
 
+    private BookingSensors bookingSensors;
+    private ArrayList<BookingSensors> bookingSensorsArrayList = new ArrayList<>();
+
     private void geoLocate() {
         String apiKey = context.getResources().getString(R.string.google_maps_key);
         Timber.e("apiKey -> %s", apiKey);
@@ -2135,17 +2154,19 @@ public class HomeFragment extends Fragment implements
             autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
                 @Override
                 public void onPlaceSelected(@NonNull Place place) {
+
+                    bottomSheetSearch = 0;
                     Timber.i("Place: => %s", place.getLatLng());
                     String name = place.getName();
                     Timber.e(name);
                     if (googleMap != null)
                         googleMap.clear();
-                    bottomSheetBehavior.setPeekHeight(300);
+                    bottomSheetBehavior.setPeekHeight(320);
                     searchPlaceLatLng = place.getLatLng();
                     Timber.e(String.valueOf(searchPlaceLatLng));
 
                     if (searchPlaceLatLng != null) {
-                        bottomSheetSearch = 0;
+//                        bottomSheetSearch = 0;
                         MarkerOptions markerOptions = new MarkerOptions();
                         markerOptions.position(searchPlaceLatLng);
                         markerOptions.title(name);
@@ -2158,89 +2179,68 @@ public class HomeFragment extends Fragment implements
                         fetchSensors();
                         BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
                         navBar.setVisibility(View.GONE);
-                        linearLayoutBottom.setVisibility(View.VISIBLE);
-                        linearLayoutNameCount.setVisibility(View.VISIBLE);
-                        btnGetDirection.setVisibility(View.VISIBLE);
-                        imageViewBack.setVisibility(View.VISIBLE);
+//                        linearLayoutBottom.setVisibility(View.VISIBLE);
+//                        linearLayoutNameCount.setVisibility(View.VISIBLE);
+                        linearLayoutSearchBottom.setVisibility(View.VISIBLE);
+                        linearLayoutSearchBottomButton.setVisibility(View.VISIBLE);
+                        btnSearchGetDirection.setVisibility(View.VISIBLE);
+                        imageViewSearchBack.setVisibility(View.VISIBLE);
 //                        String searchPlaceName = getCompleteAddressString(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude);
+                        bottomSheetSearch = 0;
                         getAddress(getActivity(), searchPlaceLatLng.latitude, searchPlaceLatLng.longitude);
                         String searchPlaceName = address;
                         Timber.e("searchPlaceName -> %s", searchPlaceName);
                         TaskParser taskParser = new TaskParser();
+//                        if (bottomSheetSearch == 0 && bottomSheetSearch == 1)
+//                            bottomSheetBehavior.setPeekHeight(320);
 //                        distance = ApplicationUtils.distance(currentLocation.getLatitude(), currentLocation.getLongitude(), searchPlaceLatLng.latitude, searchPlaceLatLng.longitude);
                         distance = taskParser.showDistance(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));
                         double searchPlaceDistance = distance;
-                        getDestinationInfoForDuration(searchPlaceLatLng);
+                        getDestinationInfoForDuration(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), searchPlaceLatLng);
 
-                        BookingSensors bookingSensors = new BookingSensors(searchPlaceName, searchPlaceLatLng.latitude, searchPlaceLatLng.longitude, searchPlaceDistance, "0", duration);
-                        ArrayList<BookingSensors> bookingSensorsArrayList = new ArrayList<>();
+                        bookingSensors = new BookingSensors(searchPlaceName, searchPlaceLatLng.latitude, searchPlaceLatLng.longitude, searchPlaceDistance, "0", duration);
+//                        bookingSensorsArrayList = new ArrayList<>();
                         bookingSensorsArrayList.add(bookingSensors);
-                        bookingSensorAdapter.notifyDataSetChanged();
-                        bottomSheetBehavior.setPeekHeight(300);
-                        setBottomSheetFragmentControls(bookingSensorsArrayList);
-                        layoutSearchVisible(true, searchPlaceName, "0", searchPlaceDistance, searchPlaceLatLng, duration);
-//                        bottomSheetSearch++;
-//                        if (bottomSheetSearch == 1) {
-                            for (int i = 0; i < searchPlaceEventJsonArray.length(); i++) {
-                                JSONObject jsonObject;
-                                try {
-                                    jsonObject = searchPlaceEventJsonArray.getJSONObject(i);
-                                    String latitude1 = jsonObject.get("latitude").toString();
-                                    String longitude1 = jsonObject.get("longitude").toString();
 
-                                    double distanceForCount = calculateDistance(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude,
-                                            ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1));
-                                    Timber.e("DistanceForCount -> %s", distanceForCount);
-                                    if (distanceForCount < 2) {
-                                        getAddress(getActivity(), ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1));
-                                        String nearbyAreaName = address;
-                                        String parkingNumberOfNearbyDistanceLoc = jsonObject.get("no_of_parking").toString();
-                                        distance = taskParser.showDistance(new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude),
-                                                new LatLng(ApplicationUtils.convertToDouble(latitude1),
-                                                        ApplicationUtils.convertToDouble(longitude1)));
-                                        double nearbyDistance = distance;
-//                                        bottomSheetSearch = 1;
-                                        getDestinationInfoForDuration(new LatLng(ApplicationUtils.convertToDouble(latitude1),
-                                                ApplicationUtils.convertToDouble(longitude1)));
-//                                    textViewMarkerParkingAreaCount.setText(parkingNumberOfIndividualMarker);
-//                                    Timber.e("parkingNumberOfIndividualMarker -> %s", parkingNumberOfIndividualMarker);
-//                                    break;
+                        for (int i = 0; i < searchPlaceEventJsonArray.length(); i++) {
+                            JSONObject jsonObject;
+                            try {
+                                jsonObject = searchPlaceEventJsonArray.getJSONObject(i);
+                                String latitude1 = jsonObject.get("latitude").toString();
+                                String longitude1 = jsonObject.get("longitude").toString();
 
-                                        bookingSensors = new BookingSensors(nearbyAreaName, ApplicationUtils.convertToDouble(latitude1),
-                                                ApplicationUtils.convertToDouble(longitude1), nearbyDistance, parkingNumberOfNearbyDistanceLoc, duration);
-                                        bookingSensorsArrayList.add(bookingSensors);
-                                        bookingSensorAdapter.notifyDataSetChanged();
-                                        bottomSheetBehavior.setPeekHeight(300);
-                                        bottomSheetBehavior.setHalfExpandedRatio(0.5f);
-                                        setBottomSheetFragmentControls(bookingSensorsArrayList);
-//                                    ArrayList<BookingSensors> bookingSensorsNearbyLocArrayList = new ArrayList<>();
-//                                    bookingSensorsArrayList.add(bookingSensors);
-//                                    bookingSensorAdapter.notifyDataSetChanged();
-//                                    bottomSheetBehavior.setPeekHeight(300);
-//                                    setBottomSheetFragmentControls(bookingSensorsArrayList);
-                                    }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
+                                double distanceForNearbyLoc = calculateDistance(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude,
+                                        ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1));
+                                Timber.e("DistanceForNearbyLoc -> %s", distanceForNearbyLoc);
+
+                                if (distanceForNearbyLoc < 3) {
+                                    bottomSheetSearch = 1;
+                                    distance = taskParser.showDistance(new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude),
+                                            new LatLng(ApplicationUtils.convertToDouble(latitude1),
+                                                    ApplicationUtils.convertToDouble(longitude1)));
+                                    double nearbyDistance = distance;
+                                    Timber.e("DistanceForNearbyLoc -> %s", distanceForNearbyLoc);
+                                    origin = new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude);
+                                    getDestinationInfoForDuration(origin,
+                                            new LatLng(ApplicationUtils.convertToDouble(latitude1),
+                                                    ApplicationUtils.convertToDouble(longitude1)));
+                                    getAddress(getActivity(), ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1));
+                                    String nearbyAreaName = address;
+                                    String parkingNumberOfNearbyDistanceLoc = jsonObject.get("no_of_parking").toString();
+                                    bookingSensors = new BookingSensors(nearbyAreaName, ApplicationUtils.convertToDouble(latitude1),
+                                            ApplicationUtils.convertToDouble(longitude1), ApplicationUtils.convertToDouble(nearByDistance), parkingNumberOfNearbyDistanceLoc, nearByDuration);
+                                    bookingSensorsArrayList.add(bookingSensors);
+                                    bottomSheetBehavior.setPeekHeight(320);
                                 }
-//                            }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         }
-//                        bookingSensorAdapter.notifyDataSetChanged();
-//                        bottomSheetBehavior.setPeekHeight(300);
-//                        bottomSheetBehavior.setHalfExpandedRatio(0.5f);
-//                        setBottomSheetFragmentControls(bookingSensorsArrayList);
-
-//                        layoutSearchVisible(true, searchPlaceName, "0", distance, searchPlaceLatLng);
+//                        bookingSensorsArrayList.clear();
+//                        bookingSensorsArrayList.add(bookingSensors);
+                        setBottomSheetRecyclerViewAdapter(bookingSensorsArrayList);
+                        Timber.e("setBottomSheetRecyclerViewAdapter(bookingSensorsArrayList) call hoiche for loop");
                         getDirectionButtonClicked = 1;
-//                        bottomSheetSearch = 0;
-//                        String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), searchPlaceLatLng);
-//                        TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
-//                        if (googleMap != null) {
-//                            googleMap.clear();
-//                            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-//                            googleMap.addMarker(markerOptions);
-//                            fetchSensors();
-//                            taskRequestDirections.execute(url);
-//                        }
                     }
                 }
 
@@ -2251,9 +2251,7 @@ public class HomeFragment extends Fragment implements
 //                    Toast.makeText(getActivity(), "Place selection failed: " + status.getStatusMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
-//            bottomSheetSearch = 0;
         }
-//        bottomSheetSearch = 0;
     }
 
     public String getCompleteAddressString(double LATITUDE, double LONGITUDE) {
@@ -2450,7 +2448,6 @@ public class HomeFragment extends Fragment implements
 
                     setBottomSheetFragmentControls(bookingSensorsList);
                     Collections.sort(bookingSensorsArrayListGlobal, BookingSensors.BY_DISTANCE_ASCENDING_ORDER);
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -2509,82 +2506,19 @@ public class HomeFragment extends Fragment implements
             }
         }));
         ViewCompat.setNestedScrollingEnabled(bottomSheetRecyclerView, false);
-        bookingSensorAdapter = new BookingSensorAdapter(context, this, bookingSensorsArrayListGlobal);
-        bottomSheetRecyclerView.setAdapter(bookingSensorAdapter);
-        bookingSensorAdapter.notifyDataSetChanged();
-        bottomSheetRecyclerView.getAdapter().notifyDataSetChanged();
+        setBottomSheetRecyclerViewAdapter(bookingSensorsArrayListGlobal);
+//        bookingSensorAdapter = new BookingSensorAdapter(context, this, bookingSensorsArrayListGlobal);
+//        bottomSheetRecyclerView.setAdapter(bookingSensorAdapter);
+//        bookingSensorAdapter.notifyDataSetChanged();
+//        bottomSheetRecyclerView.getAdapter().notifyDataSetChanged();
+
         Timber.e("booking sensor recyclerView -> %s", bottomSheetRecyclerView.getAdapter().getItemCount());
 
     }
 
-    private void getDestinationDurationInfo(Context context, LatLng latLngDestination, TextView textView) {
-//        progressDialog();
-        String serverKey = context.getResources().getString(R.string.google_maps_key); // Api Key For Google Direction API \\
-        final LatLng origin = new LatLng(HomeFragment.currentLocation.getLatitude(), HomeFragment.currentLocation.getLongitude());
-//        final LatLng origin = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-        final LatLng destination = latLngDestination;
-        //-------------Using AK Exorcist Google Direction Library---------------\\
-        GoogleDirection.withServerKey(serverKey)
-                .from(origin)
-                .to(destination)
-                .transportMode(TransportMode.DRIVING)
-                .execute(new DirectionCallback() {
-                    @Override
-                    public void onDirectionSuccess(Direction direction, String rawBody) {
-//                        dismissDialog();
-                        String status = direction.getStatus();
-                        if (status.equals(RequestResult.OK)) {
-                            Route route = direction.getRouteList().get(0);
-                            Leg leg = route.getLegList().get(0);
-                            Info distanceInfo = leg.getDistance();
-                            Info durationInfo = leg.getDuration();
-                            String distance = distanceInfo.getText();
-                            duration = durationInfo.getText();
-                            textView.setText(duration);
-                            Timber.e("getDestinationDurationInfo duration -> %s", textView.getText().toString());
-//                            textViewSearchParkingTravelTime.setText(duration);
-//                            textViewMarkerParkingTravelTime.setText(duration);
-                            //------------Displaying Distance and Time-----------------\\
-//                            showingDistanceTime(distance, duration); // Showing distance and time to the user in the UI \\
-                            String message = "Total Distance is " + distance + " and Estimated Time is " + duration;
-                            Timber.e("duration message -> %s", message);
-//                            StaticMethods.customSnackBar(consumerHomeActivity.parentLayout, message,
-//                                    getResources().getColor(R.color.colorPrimary),
-//                                    getResources().getColor(R.color.colorWhite), 3000);
-
-                            //--------------Drawing Path-----------------\\
-//                            ArrayList<LatLng> directionPositionList = leg.getDirectionPoint();
-//                            PolylineOptions polylineOptions = DirectionConverter.createPolyline(getActivity(),
-//                                    directionPositionList, 5, getResources().getColor(R.color.colorPrimary));
-//                            googleMap.addPolyline(polylineOptions);
-                            //--------------------------------------------\\
-
-                            //-----------Zooming the map according to marker bounds-------------\\
-//                            LatLngBounds.Builder builder = new LatLngBounds.Builder();
-//                            builder.include(origin);
-//                            builder.include(destination);
-//                            LatLngBounds bounds = builder.build();
-//
-//                            int width = getResources().getDisplayMetrics().widthPixels;
-//                            int height = getResources().getDisplayMetrics().heightPixels;
-//                            int padding = (int) (width * 0.20); // offset from edges of the map 10% of screen
-//
-//                            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
-//                            googleMap.animateCamera(cu);
-                            //------------------------------------------------------------------\\
-
-                        } else if (status.equals(RequestResult.NOT_FOUND)) {
-                            Toast.makeText(context, "No routes exist", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onDirectionFailure(Throwable t) {
-                        // Do something here
-                    }
-                });
-        //-------------------------------------------------------------------------------\\
-
+    private void setBottomSheetRecyclerViewAdapter(ArrayList<BookingSensors> bookingSensors) {
+        bookingSensorAdapter = new BookingSensorAdapter(context, this, bookingSensors);
+        bottomSheetRecyclerView.setAdapter(bookingSensorAdapter);
     }
 
     /**
@@ -2637,94 +2571,6 @@ public class HomeFragment extends Fragment implements
         return url;
     }
 
-//    private void showDirection(String url) throws IOException {
-//        final OkHttpClient client = new OkHttpClient();
-//        MediaType JSON = MediaType.get("application/json; charset=utf-8");
-//
-//        okhttp3.Request request = new okhttp3.Request.Builder()
-//                .url(url)
-//                .build();
-//
-//        Call call = client.newCall(request);
-//        call.enqueue(new Callback() {
-//            @Override
-//            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-//                Timber.e("Route onFailire");
-//            }
-//
-//            @Override
-//            public void onResponse(@NotNull Call call, @NotNull okhttp3.Response response) throws IOException {
-//                Timber.e("Route onResponse");
-//                new ParserTask().execute();
-//            }
-//        });
-//    }
-
-//    private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
-//
-//        // Parsing the data in non-ui thread
-//        @Override
-//        protected List<List<HashMap<String, String>>> doInBackground(String... jsonData) {
-//
-//            JSONObject jsonObject;
-//            List<List<HashMap<String, String>>> routes = null;
-//
-//            try {
-//                jsonObject = new JSONObject(jsonData[0]);
-//                Timber.i("Parser JSONObject: " + jsonObject.toString());
-//
-//                // Starts parsing data
-//                routes = new DirectionsJSONParser().parse(jsonObject);
-//                Timber.i("Parser Routes: " + routes.toString());
-//            } catch (Exception e) {
-//                Timber.i(e.toString());
-//                e.printStackTrace();
-//            }
-//            return routes;
-//        }
-//
-//        // Executes in UI thread, after the parsing process
-//        @Override
-//        protected void onPostExecute(List<List<HashMap<String, String>>> result) {
-//
-//            try {
-//                ArrayList<LatLng> points = null;
-//                PolylineOptions lineOptions = null;
-//
-//                // Traversing through all the routes
-//                for (int i = 0; i < result.size(); i++) {
-//                    points = new ArrayList<LatLng>();
-//                    lineOptions = new PolylineOptions();
-//
-//                    // Fetching i-th route
-//                    List<HashMap<String, String>> path = result.get(i);
-//
-//                    // Fetching all the points in i-th route
-//                    for (int j = 0; j < path.size(); j++) {
-//                        HashMap<String, String> point = path.get(j);
-//
-//                        double lat = Double.parseDouble(point.get("lat"));
-//                        double lng = Double.parseDouble(point.get("lng"));
-//                        LatLng position = new LatLng(lat, lng);
-//
-//                        points.add(position);
-//                    }
-//
-//                    // Adding all the points in the route to LineOptions
-//                    lineOptions.addAll(points);
-//                    lineOptions.width(5);
-//                    lineOptions.color(Color.BLUE);
-//                }
-//
-//                // Drawing polyline in the Google Map for the i-th route
-//                googleMap.addPolyline(lineOptions);
-//            } catch (Exception e) {
-//                Timber.i(e.toString());
-//                e.printStackTrace();
-//            }
-//        }
-//    }
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(SetMarkerEvent event) {
 //        Toast.makeText(getActivity(), "Geche", Toast.LENGTH_SHORT).show();
@@ -2755,7 +2601,7 @@ public class HomeFragment extends Fragment implements
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCustomDirectionEvent(GetDirectionAfterButtonClickEvent event) {
-        Toast.makeText(getActivity(), "Adapter Click e Geche", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getActivity(), "Adapter Click e Geche", Toast.LENGTH_SHORT).show();
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -2801,7 +2647,7 @@ public class HomeFragment extends Fragment implements
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onBottomSheetDirectionEvent(GetDirectionBottomSheetEvent event) {
-        Toast.makeText(getActivity(), "BottomSheet Click e Geche", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getActivity(), "BottomSheet Click e Geche", Toast.LENGTH_SHORT).show();
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -2847,7 +2693,7 @@ public class HomeFragment extends Fragment implements
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSearchDirectionEvent(GetDirectionForSearchEvent event) {
-        Toast.makeText(getActivity(), "Search Click e Geche", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getActivity(), "Search Click e Geche", Toast.LENGTH_SHORT).show();
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -2871,7 +2717,10 @@ public class HomeFragment extends Fragment implements
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 13));
                 btnSearchGetDirection.setVisibility(View.VISIBLE);
 //                linearLayoutNameCount.setVisibility(View.VISIBLE);
-                linearLayoutSearchBottom.setVisibility(View.VISIBLE);
+//                linearLayoutSearchBottom.setVisibility(View.VISIBLE);
+                linearLayoutSearchBottomButton.setVisibility(View.VISIBLE);
+                linearLayoutBottom.setVisibility(View.GONE);
+                linearLayoutMarkerBottom.setVisibility(View.GONE);
                 imageViewSearchBack.setVisibility(View.VISIBLE);
 //                String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), searchPlaceLatLng);
                 String url = getDirectionsUrl(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), searchPlaceLatLng);
@@ -2892,7 +2741,7 @@ public class HomeFragment extends Fragment implements
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMarkerDirectionEvent(GetDirectionForMarkerEvent event) {
-        Toast.makeText(getActivity(), "Marker Click e Geche", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getActivity(), "Marker Click e Geche", Toast.LENGTH_SHORT).show();
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -2937,12 +2786,9 @@ public class HomeFragment extends Fragment implements
 
             }
         }, 1000);
-
-//        String url = getDirectionsUrl(new LatLng(GlobalVars.getUserLocation().latitude, GlobalVars.getUserLocation().longitude), event.location);
-//        TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
-//        taskRequestDirections.execute(url);
     }
 
+    @SuppressLint("StaticFieldLeak")
     public class TaskRequestDirections extends AsyncTask<String, Void, String> {
 
         @Override
@@ -3102,7 +2948,6 @@ public class HomeFragment extends Fragment implements
 
             return (Radius * c);
         }
-
     }
 
     /**
@@ -3110,10 +2955,18 @@ public class HomeFragment extends Fragment implements
      *
      * @param latLngDestination LatLng of the destination
      */
-    private void getDestinationInfoForDuration(LatLng latLngDestination) {
+
+    private LatLng origin;
+    private String nearByDistance;
+    private String nearByDuration;
+
+    private void getDestinationInfoForDuration(LatLng origin, LatLng latLngDestination) {
+        this.origin = origin;
+        Timber.e("getDestinationInfoForDuration origin -> %s", origin);
+        Timber.e("getDestinationInfoForDuration bottomSheetSearch -> %s", bottomSheetSearch);
 //        progressDialog();
         String serverKey = getResources().getString(R.string.google_maps_key); // Api Key For Google Direction API \\
-        final LatLng origin;
+//        final LatLng origin;
         if (searchPlaceLatLng != null && bottomSheetSearch == 1) {
             Timber.e("1st if condition getDestinationInfoForDuration");
             origin = new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude);
@@ -3124,13 +2977,15 @@ public class HomeFragment extends Fragment implements
             Timber.e("else condition getDestinationInfoForDuration");
             origin = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
         }
-        final LatLng destination = latLngDestination;
+//        final LatLng destination = latLngDestination;
+        LatLng destination = latLngDestination;
         //-------------Using AK Exorcist Google Direction Library---------------\\
         GoogleDirection.withServerKey(serverKey)
                 .from(origin)
                 .to(destination)
                 .transportMode(TransportMode.DRIVING)
                 .execute(new DirectionCallback() {
+
                     @Override
                     public void onDirectionSuccess(Direction direction, String rawBody) {
 //                        dismissDialog();
@@ -3143,9 +2998,12 @@ public class HomeFragment extends Fragment implements
                             String distance = distanceInfo.getText();
                             String duration = durationInfo.getText();
                             textViewParkingTravelTime.setText(duration);
-                            textViewSearchParkingTravelTime.setText(duration);
+//                            if (bottomSheetSearch == 0)
+//                            textViewSearchParkingTravelTime.setText(duration);
                             textViewMarkerParkingTravelTime.setText(duration);
                             textViewBottomSheetParkingTravelTime.setText(duration);
+                            nearByDuration = duration;
+                            nearByDistance = distance;
                             //------------Displaying Distance and Time-----------------\\
 //                            showingDistanceTime(distance, duration); // Showing distance and time to the user in the UI \\
                             String message = "Total Distance is " + distance + " and Estimated Time is " + duration;
@@ -3188,6 +3046,7 @@ public class HomeFragment extends Fragment implements
         //-------------------------------------------------------------------------------\\
 
     }
+
 
     private float getBearing(LatLng startPosition, LatLng newPos) {
         double lat = Math.abs(startPosition.latitude - newPos.latitude);
