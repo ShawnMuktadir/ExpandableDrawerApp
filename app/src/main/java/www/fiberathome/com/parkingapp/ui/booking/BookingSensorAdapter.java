@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.lifecycle.ViewModel;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SortedList;
 
@@ -79,22 +80,26 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdap
 
     }
 
+    BookingSensors bookingSensors;
+
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull BookingViewHolder viewHolder, int position) {
 
         BookingViewHolder bookingViewHolder = (BookingViewHolder) viewHolder;
 
-        BookingSensors bookingSensors = bookingSensorsArrayList.get(position);
+        bookingSensors = bookingSensorsArrayList.get(position);
 
         bookingViewHolder.textViewParkingAreaName.setText(ApplicationUtils.capitalize(bookingSensors.getParkingArea().trim()));
         bookingViewHolder.textViewParkingAreaCount.setText(bookingSensors.getCount());
 
-        double distance = ApplicationUtils.distance(HomeFragment.currentLocation.getLatitude(), HomeFragment.currentLocation.getLongitude(),
-                bookingSensors.getLat(), bookingSensors.getLng());
-        bookingSensors.setDistance(distance);
-        bookingViewHolder.textViewParkingDistance.setText(new DecimalFormat("##.##").format(distance) + " km");
-        Timber.e("adapter distance -> %s", bookingViewHolder.textViewParkingDistance.getText());
+//        double distance = ApplicationUtils.distance(HomeFragment.currentLocation.getLatitude(), HomeFragment.currentLocation.getLongitude(),
+//                bookingSensors.getLat(), bookingSensors.getLng());
+//        bookingSensors.setDistance(bookingSensors.getDistance());
+//        bookingViewHolder.textViewParkingDistance.setText(new DecimalFormat("##.##").format(adapterDistance) + " km");
+//        Timber.e("adapter distance -> %s", bookingViewHolder.textViewParkingDistance.getText());
+        bookingViewHolder.textViewParkingDistance.setText(bookingSensors.getDistance());
+        bookingViewHolder.textViewParkingTravelTime.setText(bookingSensors.getDuration());
 
         //setting value for duration
         getDestinationDurationInfo(context, new LatLng(bookingSensors.getLat(), bookingSensors.getLng()), bookingViewHolder);
@@ -116,11 +121,12 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdap
             notifyItemMoved(position, 0);
             notifyDataSetChanged();
             homeFragment.layoutBottomSheetVisible(true, bookingSensors.getParkingArea(), bookingSensors.getCount(),
-                    ApplicationUtils.convertToDouble(adapterDistance),
-                    adapterDuration, new LatLng(bookingSensors.getLat(), bookingSensors.getLng()));
+                    bookingViewHolder.textViewParkingDistance.getText().toString(),
+                    bookingViewHolder.textViewParkingTravelTime.getText().toString(),
+                    new LatLng(bookingSensors.getLat(), bookingSensors.getLng()));
 
-            homeFragment.bottomSheetBehavior.setHideable(true);
-            homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
+            homeFragment.bottomSheetBehavior.setHideable(false);
+//            homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
             homeFragment.bottomSheetBehavior.setPeekHeight(300);
         });
     }
@@ -131,14 +137,23 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdap
         return (null != bookingSensorsArrayList ? bookingSensorsArrayList.size() : 0);
     }
 
+    //    private LatLng origin;
     private String adapterDistance;
     private String adapterDuration;
+    private LatLng origin;
 
     private void getDestinationDurationInfo(Context context, LatLng latLngDestination, BookingSensorAdapter.BookingViewHolder bookingViewHolder) {
-//        progressDialog();
+
         String serverKey = context.getResources().getString(R.string.google_maps_key); // Api Key For Google Direction API \\
-        final LatLng origin = new LatLng(homeFragment.currentLocation.getLatitude(), homeFragment.currentLocation.getLongitude());
-        final LatLng destination = latLngDestination;
+        if (homeFragment.searchPlaceLatLng != null && homeFragment.bottomSheetSearch == 1) {
+            origin = new LatLng(homeFragment.searchPlaceLatLng.latitude, homeFragment.searchPlaceLatLng.longitude);
+        } else if (homeFragment.searchPlaceLatLng != null && homeFragment.bottomSheetSearch == 0) {
+            origin = new LatLng(HomeFragment.currentLocation.getLatitude(), HomeFragment.currentLocation.getLongitude());
+        } else {
+            origin = new LatLng(HomeFragment.currentLocation.getLatitude(), HomeFragment.currentLocation.getLongitude());
+        }
+
+        LatLng destination = latLngDestination;
         //-------------Using AK Exorcist Google Direction Library---------------\\
         GoogleDirection.withServerKey(serverKey)
                 .from(origin)
@@ -158,38 +173,15 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdap
                             String duration = durationInfo.getText();
                             adapterDistance = distance;
                             adapterDuration = duration;
+//                            bookingSensors.setDistance(adapterDistance);
+//                            bookingSensors.setDuration(adapterDuration);
+                            bookingViewHolder.textViewParkingDistance.setText(adapterDistance);
                             bookingViewHolder.textViewParkingTravelTime.setText(adapterDuration);
                             Timber.e("getDestinationDurationInfo duration -> %s", bookingViewHolder.textViewParkingTravelTime.getText().toString());
-//                            textViewSearchParkingTravelTime.setText(duration);
-//                            textViewMarkerParkingTravelTime.setText(duration);
                             //------------Displaying Distance and Time-----------------\\
 //                            showingDistanceTime(distance, duration); // Showing distance and time to the user in the UI \\
                             String message = "Total Distance is " + distance + " and Estimated Time is " + duration;
                             Timber.e("duration message -> %s", message);
-//                            StaticMethods.customSnackBar(consumerHomeActivity.parentLayout, message,
-//                                    getResources().getColor(R.color.colorPrimary),
-//                                    getResources().getColor(R.color.colorWhite), 3000);
-
-                            //--------------Drawing Path-----------------\\
-//                            ArrayList<LatLng> directionPositionList = leg.getDirectionPoint();
-//                            PolylineOptions polylineOptions = DirectionConverter.createPolyline(getActivity(),
-//                                    directionPositionList, 5, getResources().getColor(R.color.colorPrimary));
-//                            googleMap.addPolyline(polylineOptions);
-                            //--------------------------------------------\\
-
-                            //-----------Zooming the map according to marker bounds-------------\\
-//                            LatLngBounds.Builder builder = new LatLngBounds.Builder();
-//                            builder.include(origin);
-//                            builder.include(destination);
-//                            LatLngBounds bounds = builder.build();
-//
-//                            int width = getResources().getDisplayMetrics().widthPixels;
-//                            int height = getResources().getDisplayMetrics().heightPixels;
-//                            int padding = (int) (width * 0.20); // offset from edges of the map 10% of screen
-//
-//                            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
-//                            googleMap.animateCamera(cu);
-                            //------------------------------------------------------------------\\
 
                         } else if (status.equals(RequestResult.NOT_FOUND)) {
                             Toast.makeText(context, "No routes exist", Toast.LENGTH_SHORT).show();
@@ -203,6 +195,12 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdap
                 });
         //-------------------------------------------------------------------------------\\
 
+    }
+
+    public void updateData(ArrayList<BookingSensors> bookingSensors) {
+        bookingSensorsArrayList.clear();
+        bookingSensorsArrayList.addAll(bookingSensors);
+        notifyDataSetChanged();
     }
 
     public void clear() {

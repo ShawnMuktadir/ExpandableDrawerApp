@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import timber.log.Timber;
+
 /**
  * Created by NgocTri on 12/11/2017.
  */
@@ -21,9 +23,12 @@ public class DirectionsParser {
     public List<List<HashMap<String, String>>> parse(JSONObject jObject) {
 
         List<List<HashMap<String, String>>> routes = new ArrayList<List<HashMap<String, String>>>();
+        HashMap<String,Object> hashMap=new HashMap<>();
         JSONArray jRoutes = null;
         JSONArray jLegs = null;
         JSONArray jSteps = null;
+        double totalDistance = 0;
+        long totalDuration = 0;
 
         try {
 
@@ -38,6 +43,11 @@ public class DirectionsParser {
                 //Loop for all legs
                 for (int j = 0; j < jLegs.length(); j++) {
                     jSteps = ((JSONObject) jLegs.get(j)).getJSONArray("steps");
+                    JSONObject legs1 = jLegs.getJSONObject(j);
+                    JSONObject distance = legs1.getJSONObject("distance");
+                    JSONObject duration = legs1.getJSONObject("duration");
+                    totalDistance = totalDistance+distance.getLong("value");
+                    totalDuration = totalDuration+duration.getLong("value");
 
                     //Loop for all steps
                     for (int k = 0; k < jSteps.length(); k++) {
@@ -55,6 +65,13 @@ public class DirectionsParser {
                     }
                     routes.add(path);
                 }
+                totalDistance/=1000;
+                totalDuration/=60;
+                totalDistance= Math.round(totalDistance* 10) / 10.0;
+                hashMap.put("distance",totalDistance);
+                hashMap.put("duration",totalDuration);
+                Timber.e("Direction Parser distance -> %s", String.valueOf(totalDistance));
+                Timber.e("Direction Parser duration -> %s", String.valueOf(totalDuration));
             }
 
         } catch (JSONException e) {

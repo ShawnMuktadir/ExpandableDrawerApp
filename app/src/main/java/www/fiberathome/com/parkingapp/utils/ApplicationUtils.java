@@ -345,4 +345,29 @@ public class ApplicationUtils {
 
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
+
+    public static String getCompleteAddressString(Context context, double LATITUDE, double LONGITUDE) {
+
+        String strAdd = "";
+        Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(LATITUDE, LONGITUDE, 1);
+            if (addresses != null) {
+                Address returnedAddress = addresses.get(0);
+                StringBuilder strReturnedAddress = new StringBuilder();
+
+                for (int i = 0; i <= returnedAddress.getMaxAddressLineIndex(); i++) {
+                    strReturnedAddress.append(returnedAddress.getAddressLine(i)).append("\n");
+                }
+                strAdd = strReturnedAddress.toString();
+                Timber.e("My Current loction address -> %s", strReturnedAddress.toString());
+            } else {
+                Timber.e("My Current loction address -> %s", "No Address returned!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+//                        Timber.e("My Current loction address -> ", e.getMessage() + "Canont get Address!");
+        }
+        return strAdd;
+    }
 }

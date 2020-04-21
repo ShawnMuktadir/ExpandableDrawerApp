@@ -50,17 +50,14 @@ import www.fiberathome.com.parkingapp.utils.OnEditTextRightDrawableTouchListener
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class ParkingFragment extends Fragment {
 
     private static final String TAG = "ParkingFRagment";
 
     @BindView(R.id.recyclerViewParking)
     RecyclerView recyclerViewParking;
-    @BindView(R.id.swipeRefreshLayout)
-    SwipeRefreshLayout swipeRefreshLayout;
+//    @BindView(R.id.swipeRefreshLayout)
+//    SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.textViewNoData)
     TextView textViewNoData;
     @BindView(R.id.linearLayoutBottom)
@@ -190,31 +187,31 @@ public class ParkingFragment extends Fragment {
         parkingAdapter = new ParkingAdapter(context, this, sensorAreas);
         recyclerViewParking.setAdapter(parkingAdapter);
 
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                refreshing.run();
-            }
-        });
+//        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//                refreshing.run();
+//            }
+//        });
         // Configure the refreshing colors
-        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_green_dark, android.R.color.holo_blue_dark, android.R.color.holo_orange_light, android.R.color.holo_red_light);
+//        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_green_dark, android.R.color.holo_blue_dark, android.R.color.holo_orange_light, android.R.color.holo_red_light);
     }
 
-    private final Runnable refreshing = new Runnable() {
-        public void run() {
-            try {
-                if (isRefreshing()) {
-                    fetchAreas();
-                    swipeRefreshStatus(false);
-                    handler.postDelayed(this, 5000);
-                } else {
-                    swipeRefreshLayout.setRefreshing(false);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    };
+//    private final Runnable refreshing = new Runnable() {
+//        public void run() {
+//            try {
+//                if (isRefreshing()) {
+//                    fetchAreas();
+//                    swipeRefreshStatus(false);
+//                    handler.postDelayed(this, 5000);
+//                } else {
+////                    swipeRefreshLayout.setRefreshing(false);
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    };
 
     private void filter(String text) {
         ArrayList<SensorArea> filteredList = new ArrayList<>();
@@ -235,9 +232,9 @@ public class ParkingFragment extends Fragment {
         parkingAdapter.filterList(filteredList);
     }
 
-    private boolean isRefreshing() {
-        return swipeRefreshLayout.isRefreshing();
-    }
+//    private boolean isRefreshing() {
+//        return swipeRefreshLayout.isRefreshing();
+//    }
 
 
     private void setNoData() {
@@ -245,11 +242,11 @@ public class ParkingFragment extends Fragment {
 //        textViewNoData.setText(context.getString(R.string.no_record_found));
     }
 
-    private void swipeRefreshStatus(boolean status) {
-        if (swipeRefreshLayout.isRefreshing()) {
-            swipeRefreshLayout.setRefreshing(status);
-        }
-    }
+//    private void swipeRefreshStatus(boolean status) {
+//        if (swipeRefreshLayout.isRefreshing()) {
+//            swipeRefreshLayout.setRefreshing(status);
+//        }
+//    }
 
     private void hideNoData() {
         textViewNoData.setVisibility(View.GONE);

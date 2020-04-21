@@ -40,7 +40,13 @@
             android:layout_height="wrap_content"
             android:minHeight="@dimen/_510sdp"
             android:layout_margin="@dimen/dim5"
+            android:paddingBottom="@dimen/dim50"
+            android:clipToPadding="false"
             android:nestedScrollingEnabled="false"
+            android:scrollbarSize="@dimen/dim3"
+            android:scrollbarThumbVertical="@android:color/darker_gray"
+            android:scrollbars="vertical"
+            android:scrollbarStyle="outsideInset"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     </LinearLayout>
