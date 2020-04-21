@@ -34,7 +34,7 @@ public class BookingSensors {
         this.duration = duration;
     }
 
-    public static final Comparator<BookingSensors> BY_DISTANCE_ASCENDING_ORDER = new Comparator<BookingSensors>() {
+    public static final Comparator<BookingSensors> BY_NAME_ASCENDING_ORDER = new Comparator<BookingSensors>() {
         @Override
         public int compare(BookingSensors bookingSensors, BookingSensors t1) {
 //            return Double.compare(t1.getDistance(), bookingSensors.getDistance());

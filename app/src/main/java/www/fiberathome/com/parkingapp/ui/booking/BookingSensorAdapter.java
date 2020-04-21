@@ -80,15 +80,13 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdap
 
     }
 
-    BookingSensors bookingSensors;
-
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull BookingViewHolder viewHolder, int position) {
 
         BookingViewHolder bookingViewHolder = (BookingViewHolder) viewHolder;
 
-        bookingSensors = bookingSensorsArrayList.get(position);
+        BookingSensors bookingSensors = bookingSensorsArrayList.get(position);
 
         bookingViewHolder.textViewParkingAreaName.setText(ApplicationUtils.capitalize(bookingSensors.getParkingArea().trim()));
         bookingViewHolder.textViewParkingAreaCount.setText(bookingSensors.getCount());
@@ -117,9 +115,9 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdap
         bookingViewHolder.itemView.setBackgroundColor(selectedItem == position ? Color.LTGRAY : Color.TRANSPARENT);
 
         bookingViewHolder.itemView.setOnClickListener(v -> {
-            Collections.swap(bookingSensorsArrayList, position, 0);
-            notifyItemMoved(position, 0);
-            notifyDataSetChanged();
+//            Collections.swap(bookingSensorsArrayList, position, 0);
+//            notifyItemMoved(position, 0);
+//            notifyDataSetChanged();
             homeFragment.layoutBottomSheetVisible(true, bookingSensors.getParkingArea(), bookingSensors.getCount(),
                     bookingViewHolder.textViewParkingDistance.getText().toString(),
                     bookingViewHolder.textViewParkingTravelTime.getText().toString(),
@@ -214,14 +212,13 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdap
         notifyDataSetChanged();
     }
 
-
     public void swapeItem(int fromPosition, int toPosition) {
         Timber.e("swapeItem call hoiche");
         Collections.swap(bookingSensorsArrayList, fromPosition, toPosition);
         notifyItemMoved(fromPosition, toPosition);
     }
 
-    public static class BookingViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class BookingViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         @BindView(R.id.textViewParkingAreaName)
         public TextView textViewParkingAreaName;
@@ -256,6 +253,15 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdap
 //            notifyItemChanged(selectedItem);
 
             // Do your another stuff for your onClick
+            // get position
+            int pos = getAdapterPosition();
+
+            // check if item still exists
+            if(pos != RecyclerView.NO_POSITION){
+                Timber.e("adpter position click hoiche");
+                BookingSensors clickedDataItem = bookingSensorsArrayList.get(pos);
+                Toast.makeText(v.getContext(), "You clicked " + clickedDataItem.getParkingArea(), Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }

@@ -18,7 +18,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -852,6 +851,7 @@ public class HomeFragment extends Fragment implements
                 markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car_small));
                 googleMap.addMarker(markerOptions).setFlat(true);
                 fetchSensors();
+                fetchBottomSheetSensors();
                 BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
                 navBar.setVisibility(View.VISIBLE);
                 layoutBottomSheetVisible(false, "", "", "", "", null);
@@ -2471,7 +2471,7 @@ public class HomeFragment extends Fragment implements
 
                     setBottomSheetFragmentControls(bookingSensorsList);
                     Timber.e("test bookingSensorsList -> %s", new Gson().toJson(bookingSensorsList));
-                    Collections.sort(bookingSensorsArrayListGlobal, BookingSensors.BY_DISTANCE_ASCENDING_ORDER);
+                    Collections.sort(bookingSensorsArrayListGlobal, BookingSensors.BY_NAME_ASCENDING_ORDER);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
