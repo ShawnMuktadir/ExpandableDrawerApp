@@ -224,9 +224,9 @@ public class HomeFragment extends Fragment implements
     @BindView(R.id.textViewBottomSheetParkingAreaName)
     TextView textViewBottomSheetParkingAreaName;
     @BindView(R.id.textViewBottomSheetParkingDistance)
-    TextView textViewBottomSheetParkingDistance;
+    public TextView textViewBottomSheetParkingDistance;
     @BindView(R.id.textViewBottomSheetParkingTravelTime)
-    TextView textViewBottomSheetParkingTravelTime;
+    public TextView textViewBottomSheetParkingTravelTime;
     @BindView(R.id.linearLayoutBottomSheetBottom)
     LinearLayout linearLayoutBottomSheetBottom;
     @BindView(R.id.linearLayoutBottomSheetNameCount)
@@ -423,7 +423,7 @@ public class HomeFragment extends Fragment implements
 
         //fetch booking spot
         fetchBottomSheetSensors();
-        setBottomSheetFragmentControls(bookingSensorsArrayList);
+        setBottomSheetFragmentControls(bookingSensorsArrayListGlobal);
         //fetch parking spot
         fetchSensors();
         setListeners();
@@ -748,7 +748,8 @@ public class HomeFragment extends Fragment implements
             if (googleMap != null) {
                 bottomSheetBehavior.setPeekHeight(100);
                 googleMap.clear();
-                onLocationChanged(currentLocation);
+//                onLocationChanged(currentLocation);
+                animateCamera(currentLocation);
 //                showMarker(currentLocation);
                 LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
                 MarkerOptions markerOptions = new MarkerOptions();
@@ -758,6 +759,8 @@ public class HomeFragment extends Fragment implements
                 markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car_small));
                 googleMap.addMarker(markerOptions).setFlat(true);
                 fetchSensors();
+                fetchBottomSheetSensors();
+                setBottomSheetFragmentControls(bookingSensorsArrayListGlobal);
                 BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
                 navBar.setVisibility(View.VISIBLE);
                 layoutVisible(false, "", "", " ", null);
@@ -807,7 +810,8 @@ public class HomeFragment extends Fragment implements
             if (googleMap != null) {
                 bottomSheetBehavior.setPeekHeight(100);
                 googleMap.clear();
-                onLocationChanged(currentLocation);
+//                onLocationChanged(currentLocation);
+                animateCamera(currentLocation);
                 if (getDirectionMarkerButtonClicked == 1) {
                     btnMarkerGetDirection.setText("Get Direction");
                     btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
@@ -822,6 +826,8 @@ public class HomeFragment extends Fragment implements
                 markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car_small));
                 googleMap.addMarker(markerOptions).setFlat(true);
                 fetchSensors();
+                fetchBottomSheetSensors();
+                setBottomSheetFragmentControls(bookingSensorsArrayListGlobal);
                 BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
                 navBar.setVisibility(View.VISIBLE);
                 layoutMarkerVisible(false, "", "", "", null);
@@ -836,7 +842,12 @@ public class HomeFragment extends Fragment implements
             if (googleMap != null) {
                 bottomSheetBehavior.setPeekHeight(100);
                 googleMap.clear();
-                onLocationChanged(currentLocation);
+                autocompleteFragment.setText("");
+//                onLocationChanged(currentLocation);
+                animateCamera(currentLocation);
+                fetchSensors();
+                fetchBottomSheetSensors();
+                setBottomSheetFragmentControls(bookingSensorsArrayListGlobal);
                 if (getDirectionBottomSheetButtonClicked == 1) {
                     btnBottomSheetGetDirection.setText("Get Direction");
                     btnBottomSheetGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
@@ -850,8 +861,6 @@ public class HomeFragment extends Fragment implements
 //                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
                 markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car_small));
                 googleMap.addMarker(markerOptions).setFlat(true);
-                fetchSensors();
-                fetchBottomSheetSensors();
                 BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
                 navBar.setVisibility(View.VISIBLE);
                 layoutBottomSheetVisible(false, "", "", "", "", null);
@@ -872,7 +881,8 @@ public class HomeFragment extends Fragment implements
 //                    progressDialog.show();
 //                btnGetDirection.setVisibility(View.GONE);
 //                    onLocationChanged(mLastLocation);
-                    onLocationChanged(currentLocation);
+//                    onLocationChanged(currentLocation);
+                    animateCamera(currentLocation);
 //                    showMarker(currentLocation);
                     fetchSensors();
                     MarkerOptions markerOptions = new MarkerOptions();
@@ -903,7 +913,8 @@ public class HomeFragment extends Fragment implements
                     googleMap.clear();
                     autocompleteFragment.setText("");
 //                    onLocationChanged(mLastLocation);
-                    onLocationChanged(currentLocation);
+//                    onLocationChanged(currentLocation);
+                    animateCamera(currentLocation);
 //                    showMarker(currentLocation);
                     LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
                     MarkerOptions markerOptions = new MarkerOptions();
@@ -934,7 +945,8 @@ public class HomeFragment extends Fragment implements
                 Timber.e("1st click getDirectionSearchButtonClicked after increase-> %s", getDirectionButtonClicked);
                 if (searchPlaceLatLng != null) {
                     EventBus.getDefault().post(new GetDirectionForSearchEvent(searchPlaceLatLng));
-                    onLocationChanged(currentLocation);
+//                    onLocationChanged(currentLocation);
+                    animateCamera(currentLocation);
 //                    showMarker(currentLocation);
                     LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
                     MarkerOptions markerOptions = new MarkerOptions();
@@ -982,8 +994,9 @@ public class HomeFragment extends Fragment implements
                     fetchBottomSheetSensors();
                     setBottomSheetFragmentControls(bookingSensorsArrayListGlobal);
 //                    onLocationChanged(mLastLocation);
-                    onLocationChanged(currentLocation);
+//                    onLocationChanged(currentLocation);
 //                    showMarker(currentLocation);
+                    animateCamera(currentLocation);
                     LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
                     MarkerOptions markerOptions = new MarkerOptions();
                     markerOptions.position(latLng);
@@ -1015,7 +1028,8 @@ public class HomeFragment extends Fragment implements
 //                    progressDialog.show();
 //                btnGetDirection.setVisibility(View.GONE);
 //                    onLocationChanged(mLastLocation);
-                    onLocationChanged(currentLocation);
+//                    onLocationChanged(currentLocation);
+                    animateCamera(currentLocation);
 //                    showMarker(currentLocation);
                     fetchSensors();
                     MarkerOptions markerOptions = new MarkerOptions();
@@ -1045,7 +1059,8 @@ public class HomeFragment extends Fragment implements
                     bottomSheetBehavior.setPeekHeight(100);
                     googleMap.clear();
                     autocompleteFragment.setText("");
-                    onLocationChanged(currentLocation);
+//                    onLocationChanged(currentLocation);
+                    animateCamera(currentLocation);
                     LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
                     MarkerOptions markerOptions = new MarkerOptions();
                     markerOptions.position(latLng);
@@ -1081,7 +1096,8 @@ public class HomeFragment extends Fragment implements
 //                    progressDialog.show();
 //                btnGetDirection.setVisibility(View.GONE);
 //                    onLocationChanged(mLastLocation);
-                    onLocationChanged(currentLocation);
+//                    onLocationChanged(currentLocation);
+                    animateCamera(currentLocation);
 //                    showMarker(currentLocation);
                     fetchSensors();
                     MarkerOptions markerOptions = new MarkerOptions();
@@ -1113,7 +1129,8 @@ public class HomeFragment extends Fragment implements
                     bottomSheetBehavior.setPeekHeight(100);
                     googleMap.clear();
                     autocompleteFragment.setText("");
-                    onLocationChanged(currentLocation);
+//                    onLocationChanged(currentLocation);
+                    animateCamera(currentLocation);
                     LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
                     MarkerOptions markerOptions = new MarkerOptions();
                     markerOptions.position(latLng);
@@ -1619,7 +1636,8 @@ public class HomeFragment extends Fragment implements
                 navBar.setVisibility(View.VISIBLE);
             }
 //            onLocationChanged(mLastLocation);
-            onLocationChanged(currentLocation);
+//            onLocationChanged(currentLocation);
+            animateCamera(currentLocation);
             LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(latLng);
@@ -1648,7 +1666,8 @@ public class HomeFragment extends Fragment implements
                 googleMap.clear();
             fetchSensors();
 //            onLocationChanged(mLastLocation);
-            onLocationChanged(currentLocation);
+//            onLocationChanged(currentLocation);
+            animateCamera(currentLocation);
             fetchBottomSheetSensors();
             setBottomSheetFragmentControls(bookingSensorsArrayListGlobal);
             LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
@@ -1897,7 +1916,7 @@ public class HomeFragment extends Fragment implements
         this.searchPlaceLatLng = location;
         this.distance = distance;
         this.duration = duration;
-        bookingSensors = new BookingSensors(name, currentLocation.getLatitude(), currentLocation.getLongitude(), distance, count, duration);
+        bookingSensors = new BookingSensors(name, currentLocation.getLatitude(), currentLocation.getLongitude(), distance, count);
         Timber.e("layoutSearchVisible bookingSensors -> %s", new Gson().toJson(bookingSensors));
         SharedData.getInstance().setBookingSensors(bookingSensors);
         if (isVisible) {
@@ -2102,7 +2121,7 @@ public class HomeFragment extends Fragment implements
     }
 
     private BookingSensors bookingSensors;
-    private ArrayList<BookingSensors> bookingSensorsArrayList = new ArrayList<>();
+    private ArrayList<BookingSensors> bookingSensorsArrayList;
 
     private void geoLocate() {
         String apiKey = context.getResources().getString(R.string.google_maps_key);
@@ -2221,7 +2240,7 @@ public class HomeFragment extends Fragment implements
                         TaskParser taskParser = new TaskParser();
 
                         double searchDistance = taskParser.showDistance(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));
-                        layoutSearchVisible(true, searchPlaceName, "0", String.valueOf(searchDistance), searchPlaceLatLng);
+                        layoutSearchVisible(false, searchPlaceName, "0", String.valueOf(searchDistance), searchPlaceLatLng);
                         bottomSheetBehavior.setPeekHeight(300);
 
                         if (SharedData.getInstance().getBookingSensors() != null) {
@@ -2244,7 +2263,6 @@ public class HomeFragment extends Fragment implements
 
                                 if (distanceForNearbyLoc <= 3) {
                                     bottomSheetSearch = 1;
-                                    getDirectionSearchButtonClicked = 0;
                                     origin = new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude);
                                     getAddress(getActivity(), ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1));
                                     String nearbyAreaName = address;
@@ -2260,8 +2278,8 @@ public class HomeFragment extends Fragment implements
                                 e.printStackTrace();
                             }
                         }
+//                        bookingSensorsArrayList.add(bookingSensors);
                         bookingSensorAdapter.updateData(bookingSensorsArrayList);
-
                         Timber.e("setBottomSheetRecyclerViewAdapter(bookingSensorsArrayList) call hoiche for loop");
                         getDirectionButtonClicked = 1;
                     }
@@ -2417,7 +2435,7 @@ public class HomeFragment extends Fragment implements
         bottomSheetProgressDialog.setMessage("Fetching The Parking Sensors....");
         bottomSheetProgressDialog.show();
         ArrayList<BookingSensors> bookingSensorsList = new ArrayList<>();
-//        this.bookingSensorsArrayListGlobal = bookingSensorsList;
+        this.bookingSensorsArrayListGlobal = bookingSensorsList;
 
         StringRequest strReq = new StringRequest(Request.Method.GET, AppConfig.URL_FETCH_SENSORS, new Response.Listener<String>() {
 
@@ -2494,7 +2512,7 @@ public class HomeFragment extends Fragment implements
     private void setBottomSheetFragmentControls(ArrayList<BookingSensors> sensors) {
         this.bookingSensorsArrayListGlobal = sensors;
         bottomSheetRecyclerView.setHasFixedSize(true);
-//        bottomSheetRecyclerView.setItemViewCacheSize(20);
+        bottomSheetRecyclerView.setItemViewCacheSize(20);
         bottomSheetRecyclerView.setNestedScrollingEnabled(false);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());

@@ -3,21 +3,15 @@ package www.fiberathome.com.parkingapp.ui.booking;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
-import android.location.Address;
-import android.location.Geocoder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.lifecycle.ViewModel;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SortedList;
 
 import com.akexorcist.googledirection.DirectionCallback;
 import com.akexorcist.googledirection.GoogleDirection;
@@ -29,38 +23,26 @@ import com.akexorcist.googledirection.model.Leg;
 import com.akexorcist.googledirection.model.Route;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.gson.Gson;
 
-import org.greenrobot.eventbus.EventBus;
-
-import java.text.BreakIterator;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.eventBus.GetDirectionBottomSheetEvent;
-import www.fiberathome.com.parkingapp.eventBus.GetDirectionEvent;
 import www.fiberathome.com.parkingapp.model.BookingSensors;
-import www.fiberathome.com.parkingapp.ui.MainActivity;
 import www.fiberathome.com.parkingapp.ui.fragments.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.SharedData;
 
 public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdapter.BookingViewHolder> {
 
-    private int selectedItem = -1;
-//    private MainActivity mainActivity;
-
     private Context context;
     private HomeFragment homeFragment;
     private ArrayList<BookingSensors> bookingSensorsArrayList;
+    public BookingViewHolder viewHolder;
     private String duration;
 
     public BookingSensorAdapter(Context context, HomeFragment homeFragment, ArrayList<BookingSensors> sensors) {
@@ -83,6 +65,7 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdap
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull BookingViewHolder viewHolder, int position) {
+        this.viewHolder = viewHolder;
 
         BookingViewHolder bookingViewHolder = (BookingViewHolder) viewHolder;
 
@@ -96,12 +79,11 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdap
 //        bookingSensors.setDistance(bookingSensors.getDistance());
 //        bookingViewHolder.textViewParkingDistance.setText(new DecimalFormat("##.##").format(adapterDistance) + " km");
 //        Timber.e("adapter distance -> %s", bookingViewHolder.textViewParkingDistance.getText());
-        bookingViewHolder.textViewParkingDistance.setText(bookingSensors.getDistance());
+//        bookingViewHolder.textViewParkingDistance.setText(bookingSensors.getDistance());
         bookingViewHolder.textViewParkingTravelTime.setText(bookingSensors.getDuration());
 
         //setting value for duration
         getDestinationDurationInfo(context, new LatLng(bookingSensors.getLat(), bookingSensors.getLng()), bookingViewHolder);
-
 //        bookingViewHolder.relativeLayout.setOnClickListener(v -> {
 //
 //            homeFragment.layoutBottomSheetVisible(true, bookingSensors.getParkingArea(), bookingSensors.getCount(), distance,
@@ -112,12 +94,15 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdap
 //        });
 
         // Here I am just highlighting the background
+        int selectedItem = -1;
         bookingViewHolder.itemView.setBackgroundColor(selectedItem == position ? Color.LTGRAY : Color.TRANSPARENT);
 
         bookingViewHolder.itemView.setOnClickListener(v -> {
 //            Collections.swap(bookingSensorsArrayList, position, 0);
 //            notifyItemMoved(position, 0);
 //            notifyDataSetChanged();
+            getDestinationDurationInfoForSearchLayout(context, new LatLng(bookingSensors.getLat(), bookingSensors.getLng()),
+                    bookingViewHolder);
             homeFragment.layoutBottomSheetVisible(true, bookingSensors.getParkingArea(), bookingSensors.getCount(),
                     bookingViewHolder.textViewParkingDistance.getText().toString(),
                     bookingViewHolder.textViewParkingTravelTime.getText().toString(),
@@ -175,6 +160,69 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdap
 //                            bookingSensors.setDuration(adapterDuration);
                             bookingViewHolder.textViewParkingDistance.setText(adapterDistance);
                             bookingViewHolder.textViewParkingTravelTime.setText(adapterDuration);
+                            Timber.e("getDestinationDurationInfo duration -> %s", bookingViewHolder.textViewParkingTravelTime.getText().toString());
+                            //------------Displaying Distance and Time-----------------\\
+//                            showingDistanceTime(distance, duration); // Showing distance and time to the user in the UI \\
+                            String message = "Total Distance is " + distance + " and Estimated Time is " + duration;
+                            Timber.e("duration message -> %s", message);
+
+                        } else if (status.equals(RequestResult.NOT_FOUND)) {
+                            Toast.makeText(context, "No routes exist", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onDirectionFailure(Throwable t) {
+                        // Do something here
+                    }
+                });
+        //-------------------------------------------------------------------------------\\
+
+    }
+
+    private String fromCurrentLocationDistance;
+    private String fromCurrentLocationDuration;
+
+    public void getDestinationDurationInfoForSearchLayout(Context context, LatLng latLngDestination, BookingSensorAdapter.BookingViewHolder bookingViewHolder) {
+
+        String serverKey = context.getResources().getString(R.string.google_maps_key); // Api Key For Google Direction API \\
+//        if (homeFragment.searchPlaceLatLng != null && homeFragment.bottomSheetSearch == 1) {
+//            origin = new LatLng(homeFragment.searchPlaceLatLng.latitude, homeFragment.searchPlaceLatLng.longitude);
+//        } else if (homeFragment.searchPlaceLatLng != null && homeFragment.bottomSheetSearch == 0) {
+//            origin = new LatLng(HomeFragment.currentLocation.getLatitude(), HomeFragment.currentLocation.getLongitude());
+//        } else {
+        origin = new LatLng(HomeFragment.currentLocation.getLatitude(), HomeFragment.currentLocation.getLongitude());
+//        }
+
+        LatLng destination = latLngDestination;
+        //-------------Using AK Exorcist Google Direction Library---------------\\
+        GoogleDirection.withServerKey(serverKey)
+                .from(origin)
+                .to(destination)
+                .transportMode(TransportMode.DRIVING)
+                .execute(new DirectionCallback() {
+                    @Override
+                    public void onDirectionSuccess(Direction direction, String rawBody) {
+//                        dismissDialog();
+                        String status = direction.getStatus();
+                        if (status.equals(RequestResult.OK)) {
+                            Route route = direction.getRouteList().get(0);
+                            Leg leg = route.getLegList().get(0);
+                            Info distanceInfo = leg.getDistance();
+                            Info durationInfo = leg.getDuration();
+                            String distance = distanceInfo.getText();
+                            String duration = durationInfo.getText();
+                            fromCurrentLocationDistance = distance;
+                            fromCurrentLocationDuration = duration;
+                            Timber.e("fromCurrentLocationDistance -> %s", fromCurrentLocationDistance);
+                            Timber.e("fromCurrentLocationDuration -> %s", fromCurrentLocationDuration);
+//                            if (SharedData.getInstance().getBookingSensors() != null) {
+//                            bookingViewHolder.textViewParkingDistance.setText(fromCurrentLocationDistance);
+//                            bookingViewHolder.textViewParkingTravelTime.setText(fromCurrentLocationDuration);
+//                            }
+                            homeFragment.textViewBottomSheetParkingDistance.setText(fromCurrentLocationDistance);
+                            homeFragment.textViewBottomSheetParkingTravelTime.setText(fromCurrentLocationDuration);
+
                             Timber.e("getDestinationDurationInfo duration -> %s", bookingViewHolder.textViewParkingTravelTime.getText().toString());
                             //------------Displaying Distance and Time-----------------\\
 //                            showingDistanceTime(distance, duration); // Showing distance and time to the user in the UI \\
@@ -257,7 +305,7 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdap
             int pos = getAdapterPosition();
 
             // check if item still exists
-            if(pos != RecyclerView.NO_POSITION){
+            if (pos != RecyclerView.NO_POSITION) {
                 Timber.e("adpter position click hoiche");
                 BookingSensors clickedDataItem = bookingSensorsArrayList.get(pos);
                 Toast.makeText(v.getContext(), "You clicked " + clickedDataItem.getParkingArea(), Toast.LENGTH_SHORT).show();

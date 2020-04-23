@@ -8,6 +8,7 @@ import android.location.Geocoder;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -313,6 +314,19 @@ public class ApplicationUtils {
         {
             throw new RuntimeException("Cannot reinstantiate fragment " + fragment.getClass().getName(), e);
         }
+    }
+
+    public static void reLoadFragment(@NonNull FragmentManager fragmentManager, @NonNull Fragment fragment) {
+        Timber.e("reloading fragment");
+        Fragment currentFragment = fragment;
+        if (currentFragment instanceof HomeFragment) {
+            FragmentTransaction fragTransaction = fragmentManager.beginTransaction();
+            fragTransaction.detach(currentFragment);
+            fragTransaction.attach(currentFragment);
+            fragTransaction.commit();
+//            Log.i(LogGeneratorHelper.INFO_TAG, "reloading fragment finish");
+        } else
+            Timber.e("fragment reloading failed");
     }
 
     private static double deg2rad(double deg) {
