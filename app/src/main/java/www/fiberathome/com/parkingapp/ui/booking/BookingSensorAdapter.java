@@ -44,6 +44,7 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdap
     private ArrayList<BookingSensors> bookingSensorsArrayList;
     public BookingViewHolder viewHolder;
     private String duration;
+    private int selectedItem = -1;
 
     public BookingSensorAdapter(Context context, HomeFragment homeFragment, ArrayList<BookingSensors> sensors) {
         this.context = context;
@@ -94,7 +95,7 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdap
 //        });
 
         // Here I am just highlighting the background
-        int selectedItem = -1;
+
         bookingViewHolder.itemView.setBackgroundColor(selectedItem == position ? Color.LTGRAY : Color.TRANSPARENT);
 
         bookingViewHolder.itemView.setOnClickListener(v -> {
@@ -186,15 +187,11 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdap
     public void getDestinationDurationInfoForSearchLayout(Context context, LatLng latLngDestination, BookingSensorAdapter.BookingViewHolder bookingViewHolder) {
 
         String serverKey = context.getResources().getString(R.string.google_maps_key); // Api Key For Google Direction API \\
-//        if (homeFragment.searchPlaceLatLng != null && homeFragment.bottomSheetSearch == 1) {
-//            origin = new LatLng(homeFragment.searchPlaceLatLng.latitude, homeFragment.searchPlaceLatLng.longitude);
-//        } else if (homeFragment.searchPlaceLatLng != null && homeFragment.bottomSheetSearch == 0) {
-//            origin = new LatLng(HomeFragment.currentLocation.getLatitude(), HomeFragment.currentLocation.getLongitude());
-//        } else {
+
         origin = new LatLng(HomeFragment.currentLocation.getLatitude(), HomeFragment.currentLocation.getLongitude());
-//        }
 
         LatLng destination = latLngDestination;
+
         //-------------Using AK Exorcist Google Direction Library---------------\\
         GoogleDirection.withServerKey(serverKey)
                 .from(origin)
