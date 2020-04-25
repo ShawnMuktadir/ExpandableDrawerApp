@@ -776,7 +776,8 @@ public class HomeFragment extends Fragment implements
                 btnSearchGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
                 bottomSheetBehavior.setPeekHeight(100);
                 googleMap.clear();
-                onLocationChanged(currentLocation);
+//                onLocationChanged(currentLocation);
+                animateCamera(currentLocation);
                 if (getDirectionSearchButtonClicked == 1) {
                     btnSearchGetDirection.setText("Get Direction");
                     btnSearchGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
@@ -2665,8 +2666,9 @@ public class HomeFragment extends Fragment implements
 //                TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
 //                taskRequestDirections.execute(url);
 //                onLocationChanged(mLastLocation);
-                onLocationChanged(currentLocation);
+//                onLocationChanged(currentLocation);
 //                showMarker(currentLocation);
+                animateCamera(currentLocation);
                 bottomSheetPlaceLatLng = event.location;
                 EventBus.getDefault().post(new SetMarkerEvent(bottomSheetPlaceLatLng));
                 MarkerOptions markerOptions = new MarkerOptions();
@@ -2703,7 +2705,8 @@ public class HomeFragment extends Fragment implements
 //                    googleMap.clear();
 //                progressDialog.dismiss();
 //                onLocationChanged(mLastLocation);
-                onLocationChanged(currentLocation);
+//                onLocationChanged(currentLocation);
+                animateCamera(currentLocation);
 //                showMarker(currentLocation);
                 searchPlaceLatLng = event.location;
                 EventBus.getDefault().post(new SetMarkerEvent(searchPlaceLatLng));
@@ -2751,7 +2754,8 @@ public class HomeFragment extends Fragment implements
 //                    googleMap.clear();
 //                progressDialog.dismiss();
 //                onLocationChanged(mLastLocation);
-                onLocationChanged(currentLocation);
+//                onLocationChanged(currentLocation);
+                animateCamera(currentLocation);
 //                showMarker(currentLocation);
                 markerPlaceLatLng = event.location;
                 EventBus.getDefault().post(new SetMarkerEvent(markerPlaceLatLng));
