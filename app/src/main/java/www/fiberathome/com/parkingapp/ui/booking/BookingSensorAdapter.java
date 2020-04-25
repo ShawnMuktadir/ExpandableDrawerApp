@@ -44,12 +44,13 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdap
     private ArrayList<BookingSensors> bookingSensorsArrayList;
     public BookingViewHolder viewHolder;
     private String duration;
-    private int selectedItem = -1;
+    int selectedItem = -1;
 
     public BookingSensorAdapter(Context context, HomeFragment homeFragment, ArrayList<BookingSensors> sensors) {
         this.context = context;
         this.homeFragment = homeFragment;
         this.bookingSensorsArrayList = sensors;
+//        selectedItem = -1;
     }
 
     @NonNull
@@ -67,6 +68,7 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdap
     @Override
     public void onBindViewHolder(@NonNull BookingViewHolder viewHolder, int position) {
         this.viewHolder = viewHolder;
+//        this.selectedItem = position;
 
         BookingViewHolder bookingViewHolder = (BookingViewHolder) viewHolder;
 
@@ -102,6 +104,8 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdap
 //            Collections.swap(bookingSensorsArrayList, position, 0);
 //            notifyItemMoved(position, 0);
 //            notifyDataSetChanged();
+            selectedItem = position;
+            notifyDataSetChanged();
             getDestinationDurationInfoForSearchLayout(context, new LatLng(bookingSensors.getLat(), bookingSensors.getLng()),
                     bookingViewHolder);
             homeFragment.layoutBottomSheetVisible(true, bookingSensors.getParkingArea(), bookingSensors.getCount(),
@@ -293,20 +297,20 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdap
             if (getAdapterPosition() == RecyclerView.NO_POSITION) return;
 
             // Updating old as well as new positions
-//            notifyItemChanged(selectedItem);
-//            selectedItem = getAdapterPosition();
-//            notifyItemChanged(selectedItem);
+            notifyItemChanged(selectedItem);
+            selectedItem = getAdapterPosition();
+            notifyItemChanged(selectedItem);
 
             // Do your another stuff for your onClick
             // get position
-            int pos = getAdapterPosition();
-
-            // check if item still exists
-            if (pos != RecyclerView.NO_POSITION) {
-                Timber.e("adpter position click hoiche");
-                BookingSensors clickedDataItem = bookingSensorsArrayList.get(pos);
-                Toast.makeText(v.getContext(), "You clicked " + clickedDataItem.getParkingArea(), Toast.LENGTH_SHORT).show();
-            }
+//            int pos = getAdapterPosition();
+//
+//            // check if item still exists
+//            if (pos != RecyclerView.NO_POSITION) {
+//                Timber.e("adpter position click hoiche");
+//                BookingSensors clickedDataItem = bookingSensorsArrayList.get(pos);
+//                Toast.makeText(v.getContext(), "You clicked " + clickedDataItem.getParkingArea(), Toast.LENGTH_SHORT).show();
+//            }
         }
     }
 }
