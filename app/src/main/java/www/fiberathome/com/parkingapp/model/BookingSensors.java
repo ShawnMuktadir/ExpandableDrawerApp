@@ -34,12 +34,9 @@ public class BookingSensors {
         this.duration = duration;
     }
 
-    public static final Comparator<BookingSensors> BY_NAME_ASCENDING_ORDER = new Comparator<BookingSensors>() {
-        @Override
-        public int compare(BookingSensors bookingSensors, BookingSensors t1) {
+    public static final Comparator<BookingSensors> BY_NAME_ASCENDING_ORDER = (bookingSensors, t1) -> {
 //            return Double.compare(t1.getDistance(), bookingSensors.getDistance());
-            return bookingSensors.parkingArea.compareTo(t1.parkingArea);
-        }
+        return bookingSensors.parkingArea.compareTo(t1.parkingArea);
     };
 
     public String getParkingArea() {

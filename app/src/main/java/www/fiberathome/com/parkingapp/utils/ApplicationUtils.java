@@ -3,15 +3,26 @@ package www.fiberathome.com.parkingapp.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.IBinder;
+import android.text.Html;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
@@ -32,6 +43,7 @@ import com.akexorcist.googledirection.model.Info;
 import com.akexorcist.googledirection.model.Leg;
 import com.akexorcist.googledirection.model.Route;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -56,6 +68,92 @@ import www.fiberathome.com.parkingapp.preference.utils.ConnectivityInterceptor;
 import www.fiberathome.com.parkingapp.ui.fragments.HomeFragment;
 
 public class ApplicationUtils {
+
+    public static void setTextColor(TextView tvText, Context context, int resId) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            tvText.setTextColor(context.getColor(resId));
+        } else {
+            tvText.setTextColor(context.getResources().getColor(resId));
+        }
+    }
+
+    public static void setTextColor(TextInputEditText textInputEditText, Context context, int resId) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            textInputEditText.setTextColor(context.getColor(resId));
+        } else {
+            textInputEditText.setTextColor(context.getResources().getColor(resId));
+        }
+    }
+
+    public static void setSeparateTextColor(TextView tvText, String color, String text, String coloredText) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            tvText.setText(Html.fromHtml(text + "<font color='" + color + "'>" + coloredText + "</font>", 0));
+        } else {
+            tvText.setText(Html.fromHtml(text + "<font color='" + color + "'>" + coloredText + "</font>"));
+        }
+    }
+
+    public static void setHintTextColor(TextView tvText, Context context, int resId) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            tvText.setHintTextColor(context.getColor(resId));
+        } else {
+            tvText.setHintTextColor(context.getResources().getColor(resId));
+        }
+    }
+
+    public static void setHintTextColor(TextInputEditText tvText, Context context, int resId) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            tvText.setHintTextColor(context.getColor(resId));
+        } else {
+            tvText.setHintTextColor(context.getResources().getColor(resId));
+        }
+    }
+
+    public static void setBackground(Context context, View source, int resId) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            source.setBackground(context.getDrawable(resId));
+        } else {
+            source.setBackground(context.getResources().getDrawable(resId));
+        }
+    }
+    //set margin programmatically
+    public static void setMargins (View v, int l, int t, int r, int b) {
+        if (v.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+            ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+            p.setMargins(l, t, r, b);
+            v.requestLayout();
+        }
+    }
+
+    public static Typeface getTypeface(int style, Context context) {
+        switch (style) {
+            case Typeface.BOLD:
+                return Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Bold.ttf");
+            case Typeface.ITALIC:
+                return Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Italic.ttf");
+            case Typeface.NORMAL:
+                return Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Medium.ttf");
+            default:
+                return Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Regular.ttf");
+        }
+    }
+
+    public static Drawable resizeImage(int resId, int w, int h, Context context) {
+        // load the origial Bitmap
+        Bitmap BitmapOrg = BitmapFactory.decodeResource(context.getResources(), resId);
+        int width = BitmapOrg.getWidth();
+        int height = BitmapOrg.getHeight();
+        int newWidth = w;
+        int newHeight = h;
+        // calculate the scale
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        // create a matrix for the manipulation
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth, scaleHeight);
+        Bitmap resizedBitmap = Bitmap.createBitmap(BitmapOrg, 0, 0, width, height, matrix, true);
+        return new BitmapDrawable(resizedBitmap);
+    }
 
     public static OkHttpClient getClient(final Context context) {
 
@@ -97,7 +195,6 @@ public class ApplicationUtils {
                 activeNetwork.isConnectedOrConnecting();
         return isConnected;
     }
-
 
     public static void showMessageDialog(String message, Context context) {
         if (context != null) {
@@ -233,7 +330,6 @@ public class ApplicationUtils {
             return "88";
 
     }
-
 
     public static void showExitDialog(final Activity activity) {
         android.app.AlertDialog.Builder dialogBuilder = new android.app.AlertDialog.Builder(activity, R.style.Theme_AppCompat_NoActionBar);
@@ -383,5 +479,11 @@ public class ApplicationUtils {
 //                        Timber.e("My Current loction address -> ", e.getMessage() + "Canont get Address!");
         }
         return strAdd;
+    }
+
+    public static SpannableString getUnderlinedString(String text) {
+        SpannableString content = new SpannableString(text);
+        content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+        return content;
     }
 }

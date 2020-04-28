@@ -43,8 +43,7 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdap
     private HomeFragment homeFragment;
     private ArrayList<BookingSensors> bookingSensorsArrayList;
     public BookingViewHolder viewHolder;
-    private String duration;
-    int selectedItem = -1;
+    private int selectedItem = -1;
 
     public BookingSensorAdapter(Context context, HomeFragment homeFragment, ArrayList<BookingSensors> sensors) {
         this.context = context;
@@ -56,19 +55,18 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdap
     @NonNull
     @Override
     public BookingViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        context = parent.getContext();
         View itemView;
         itemView = LayoutInflater.
                 from(parent.getContext()).
                 inflate(R.layout.bottom_sheet_recycler_item, parent, false);
         return new BookingViewHolder(itemView);
-
     }
 
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull BookingViewHolder viewHolder, int position) {
         this.viewHolder = viewHolder;
-//        this.selectedItem = position;
 
         BookingViewHolder bookingViewHolder = (BookingViewHolder) viewHolder;
 
@@ -76,17 +74,15 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdap
 
         bookingViewHolder.textViewParkingAreaName.setText(ApplicationUtils.capitalize(bookingSensors.getParkingArea().trim()));
         bookingViewHolder.textViewParkingAreaCount.setText(bookingSensors.getCount());
-
 //        double distance = ApplicationUtils.distance(HomeFragment.currentLocation.getLatitude(), HomeFragment.currentLocation.getLongitude(),
 //                bookingSensors.getLat(), bookingSensors.getLng());
 //        bookingSensors.setDistance(bookingSensors.getDistance());
 //        bookingViewHolder.textViewParkingDistance.setText(new DecimalFormat("##.##").format(adapterDistance) + " km");
 //        Timber.e("adapter distance -> %s", bookingViewHolder.textViewParkingDistance.getText());
 //        bookingViewHolder.textViewParkingDistance.setText(bookingSensors.getDistance());
-        bookingViewHolder.textViewParkingTravelTime.setText(bookingSensors.getDuration());
+//        bookingViewHolder.textViewParkingTravelTime.setText(bookingSensors.getDuration());
 
-        //setting value for duration
-        getDestinationDurationInfo(context, new LatLng(bookingSensors.getLat(), bookingSensors.getLng()), bookingViewHolder);
+
 //        bookingViewHolder.relativeLayout.setOnClickListener(v -> {
 //
 //            homeFragment.layoutBottomSheetVisible(true, bookingSensors.getParkingArea(), bookingSensors.getCount(), distance,
@@ -96,8 +92,20 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdap
 //            notifyDataSetChanged();
 //        });
 
-        // Here I am just highlighting the background
+//        if (homeFragment.bottomSheetSearch == 0) {
+//            switch (viewHolder.getAdapterPosition()) {
+//                case 0:
+//                    Timber.e("Switch case 0 te dhukche");
+//                    getDestinationDurationInfoForSearchLayout(context, new LatLng(bookingSensors.getLat(), bookingSensors.getLng()), bookingViewHolder);
+//                    break;
+//            }
+//        }
 
+        //setting value for duration
+
+        getDestinationDurationInfo(context, new LatLng(bookingSensors.getLat(), bookingSensors.getLng()), bookingViewHolder);
+
+        // Here I am just highlighting the background
         bookingViewHolder.itemView.setBackgroundColor(selectedItem == position ? Color.LTGRAY : Color.TRANSPARENT);
 
         bookingViewHolder.itemView.setOnClickListener(v -> {
@@ -119,7 +127,6 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdap
         });
     }
 
-
     @Override
     public int getItemCount() {
         return (null != bookingSensorsArrayList ? bookingSensorsArrayList.size() : 0);
@@ -128,20 +135,29 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdap
     //    private LatLng origin;
     private String adapterDistance;
     private String adapterDuration;
-    private LatLng origin;
+    private LatLng origin = null;
 
     private void getDestinationDurationInfo(Context context, LatLng latLngDestination, BookingSensorAdapter.BookingViewHolder bookingViewHolder) {
 
         String serverKey = context.getResources().getString(R.string.google_maps_key); // Api Key For Google Direction API \\
         if (homeFragment.searchPlaceLatLng != null && homeFragment.bottomSheetSearch == 1) {
             origin = new LatLng(homeFragment.searchPlaceLatLng.latitude, homeFragment.searchPlaceLatLng.longitude);
+            Timber.e("adapter if e dhukche location, bottomSheetSearch -> %s %s", origin, homeFragment.bottomSheetSearch);
         } else if (homeFragment.searchPlaceLatLng != null && homeFragment.bottomSheetSearch == 0) {
             origin = new LatLng(HomeFragment.currentLocation.getLatitude(), HomeFragment.currentLocation.getLongitude());
+            Timber.e("adapter if else e dhukche location, bottomSheetSearch -> %s %s", origin, homeFragment.bottomSheetSearch);
         } else {
             origin = new LatLng(HomeFragment.currentLocation.getLatitude(), HomeFragment.currentLocation.getLongitude());
+            Timber.e("adapter else e dhukche location, bottomSheetSearch -> %s %s", origin, homeFragment.bottomSheetSearch);
         }
 
         LatLng destination = latLngDestination;
+//        LatLng destination;
+//        if (homeFragment.searchPlaceLatLng != null && homeFragment.bottomSheetSearch == 0) {
+//            destination = new LatLng(homeFragment.searchPlaceLatLng.latitude, homeFragment.searchPlaceLatLng.longitude);
+//        } else {
+//            destination = latLngDestination;
+//        }
         //-------------Using AK Exorcist Google Direction Library---------------\\
         GoogleDirection.withServerKey(serverKey)
                 .from(origin)
@@ -163,6 +179,7 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdap
                             adapterDuration = duration;
 //                            bookingSensors.setDistance(adapterDistance);
 //                            bookingSensors.setDuration(adapterDuration);
+                            Timber.e("BookingSensorAdapter adapterDistance adapterDuration -> %s %s", adapterDistance, adapterDuration);
                             bookingViewHolder.textViewParkingDistance.setText(adapterDistance);
                             bookingViewHolder.textViewParkingTravelTime.setText(adapterDuration);
                             Timber.e("getDestinationDurationInfo duration -> %s", bookingViewHolder.textViewParkingTravelTime.getText().toString());
@@ -217,10 +234,12 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdap
                             fromCurrentLocationDuration = duration;
                             Timber.e("fromCurrentLocationDistance -> %s", fromCurrentLocationDistance);
                             Timber.e("fromCurrentLocationDuration -> %s", fromCurrentLocationDuration);
-//                            if (SharedData.getInstance().getBookingSensors() != null) {
-//                            bookingViewHolder.textViewParkingDistance.setText(fromCurrentLocationDistance);
-//                            bookingViewHolder.textViewParkingTravelTime.setText(fromCurrentLocationDuration);
+//                            if (homeFragment.bottomSheetSearch == 0) {
+                            Timber.e("adapter homeFragment.bottomSheetSearch == 0 e dhukche");
+                            bookingViewHolder.textViewParkingDistance.setText(fromCurrentLocationDistance);
+                            bookingViewHolder.textViewParkingTravelTime.setText(fromCurrentLocationDuration);
 //                            }
+
                             homeFragment.textViewBottomSheetParkingDistance.setText(fromCurrentLocationDistance);
                             homeFragment.textViewBottomSheetParkingTravelTime.setText(fromCurrentLocationDuration);
 
@@ -245,6 +264,7 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdap
     }
 
     public void updateData(ArrayList<BookingSensors> bookingSensors) {
+        Timber.e("updateData call hoiche");
         bookingSensorsArrayList.clear();
         bookingSensorsArrayList.addAll(bookingSensors);
         notifyDataSetChanged();
