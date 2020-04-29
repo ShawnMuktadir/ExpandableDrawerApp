@@ -109,6 +109,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -145,6 +146,7 @@ import www.fiberathome.com.parkingapp.utils.SharedData;
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
+import static www.fiberathome.com.parkingapp.utils.ApplicationUtils.distance;
 
 // Add an import statement for the client library.
 
@@ -1749,7 +1751,6 @@ public class HomeFragment extends Fragment implements
 //                        textViewMarkerParkingAreaCount.setText(parkingNumberOfIndividualMarker);
 //                        Timber.e("parkingNumberOfIndividualMarker -> %s", parkingNumberOfIndividualMarker);
 //                    }
-
                     double distanceForCount = calculateDistance(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude, ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1));
                     Timber.e("DistanceForCount -> %s", distanceForCount);
                     if (distanceForCount < 0.1) {
@@ -1978,8 +1979,8 @@ public class HomeFragment extends Fragment implements
             textViewSearchParkingAreaName.setText(ApplicationUtils.capitalize(name));
 //            textViewSearchParkingDistance.setText(new DecimalFormat("##.##").format(distance) + " km");
 //            textViewSearchParkingDistance.setText(distance.substring(0, 3) + " km");
-            getDestinationInfoForDuration(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
-                    new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));
+//            getDestinationInfoForDuration(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
+//                    new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));
 //            textViewSearchParkingTravelTime.setText(duration);
         } else {
             BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
@@ -2296,7 +2297,7 @@ public class HomeFragment extends Fragment implements
                         bottomSheetBehavior.setPeekHeight(300);
 
                         bookingSensors = new BookingSensors(searchPlaceName, searchPlaceLatLng.latitude, searchPlaceLatLng.longitude,
-                                String.valueOf(searchDistance),
+                                searchDistance,
                                 "0", textViewSearchParkingTravelTime.getText().toString());
                         Timber.e("bookingSensors only Search-> %s", new Gson().toJson(bookingSensors));
                         bookingSensorsArrayList.add(bookingSensors);
@@ -2316,7 +2317,7 @@ public class HomeFragment extends Fragment implements
                                         ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1));
                                 Timber.e("DistanceForNearbyLoc -> %s", distanceForNearbyLoc);
 
-                                if (distanceForNearbyLoc <= 3) {
+                                if (distanceForNearbyLoc < 3) {
                                     bottomSheetSearch = 1;
                                     origin = new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude);
                                     getAddress(getActivity(), ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1));
@@ -2324,16 +2325,17 @@ public class HomeFragment extends Fragment implements
                                     String parkingNumberOfNearbyDistanceLoc = jsonObject.get("no_of_parking").toString();
                                     Timber.e("nearbyDistance nearByDuration -> %s -> %s", nearByDistance, nearByDuration);
                                     bookingSensors = new BookingSensors(nearbyAreaName, ApplicationUtils.convertToDouble(latitude1),
-                                            ApplicationUtils.convertToDouble(longitude1), nearByDistance + " Km", parkingNumberOfNearbyDistanceLoc);
-                                    Timber.e("bookingSensors -> %s", new Gson().toJson(bookingSensors));
+                                            ApplicationUtils.convertToDouble(longitude1), nearByDistance, parkingNumberOfNearbyDistanceLoc);
+                                    Timber.e("bookingSensors nearest search location -> %s", new Gson().toJson(bookingSensors));
                                     bookingSensorsArrayList.add(bookingSensors);
-                                    bottomSheetBehavior.setPeekHeight(320);
+                                    bottomSheetBehavior.setPeekHeight(300);
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                         }
-                        bookingSensorsArrayListGlobal.clear();
+                        Timber.e("bookingSensors latest -> %s", new Gson().toJson(bookingSensorsArrayList));
+//                        bookingSensorsArrayListGlobal.clear();
                         bookingSensorAdapter.updateData(bookingSensorsArrayList);
                         setBottomSheetRecyclerViewAdapter(bookingSensorsArrayList);
                         Timber.e("setBottomSheetRecyclerViewAdapter(bookingSensorsArrayList) call hoiche for loop");
@@ -2399,7 +2401,7 @@ public class HomeFragment extends Fragment implements
                     JSONArray jsonArray = object.getJSONArray("sensors");
                     clickEventJsonArray = object.getJSONArray("sensors");
                     searchPlaceEventJsonArray = object.getJSONArray("sensors");
-                    Timber.e(" Sensor JSONArray -> %s", jsonArray);
+                    Timber.e(" Sensor JSONArray -> %s", new Gson().toJson(jsonArray));
 
                     for (int i = 0; i < jsonArray.length(); i++) {
 
@@ -2416,7 +2418,7 @@ public class HomeFragment extends Fragment implements
                         // find distance
 //                        double tDistance = distance(Double.valueOf(latitude1), Double.valueOf(longitude1), currentLocation.getLatitude(), currentLocation.getLongitude());
 
-                        double tDistance = calculateDistance(ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1), currentLocation.getLatitude(), currentLocation.getLongitude());
+                        double tDistance = distance(Double.parseDouble(latitude1), Double.parseDouble(longitude1), currentLocation.getLatitude(), currentLocation.getLongitude());
                         Timber.e("tDistance: -> %s", tDistance);
                         if (tDistance < nDistance) {
                             nDistance = tDistance;
@@ -2511,26 +2513,44 @@ public class HomeFragment extends Fragment implements
 
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
-//                        JSONArray array = jsonArray.getJSONArray(i);
                     String areaName = jsonObject.get("parking_area").toString();
                     double latitude = ApplicationUtils.convertToDouble(jsonObject.get("latitude").toString());
                     double longitude = ApplicationUtils.convertToDouble(jsonObject.get("longitude").toString());
-                    Timber.e("api lat -> %s lat -> %s", latitude, longitude);
+                    Timber.e("api lat -> %s lon -> %s", latitude, longitude);
                     String count = jsonObject.get("no_of_parking").toString();
 
+//                        String parkingNumberOfNearbyDistanceLoc = jsonObject.get("no_of_parking").toString();
                     TaskParser taskParser = new TaskParser();
-//                    double fetchDistance = taskParser.showDistance(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
-//                            new LatLng(latitude, longitude));
+                    double fetchDistance = taskParser.showDistance(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
+                            new LatLng(latitude, longitude));
+                    if (fetchDistance < 1.2) {
+                        origin = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+                        getAddress(context, latitude, longitude);
+                        String nearestCurrentAreaName = address;
+                        Timber.e("fetchDistance -> %s", fetchDistance);
+                        bookingSensorsGlobal = new BookingSensors(nearestCurrentAreaName, latitude,
+                                longitude, fetchDistance, count);
+                        bookingSensorsArrayListGlobal.add(bookingSensorsGlobal);
+                        //fetch distance in ascending order
+                        Collections.sort(bookingSensorsArrayListGlobal, new Comparator<BookingSensors>() {
+                            @Override
+                            public int compare(BookingSensors c1, BookingSensors c2) {
+                                return Double.compare(c1.getDistance(), c2.getDistance());
+                            }
+                        });
+                        Timber.e("bookingSensorsArrayListGlobal new -> %s", new Gson().toJson(bookingSensorsArrayListGlobal));
+                        bottomSheetBehavior.setPeekHeight(300);
+                    }
 //                        BookingSensors bookingSensors = new BookingSensors(areaName, latitude, longitude, String.valueOf(fetchDistance), count, "");
-                    bookingSensorsGlobal = new BookingSensors(areaName, latitude, longitude, textViewBottomSheetParkingDistance.getText().toString(),
-                            count, textViewBottomSheetParkingTravelTime.getText().toString());
-                    Timber.e("first bookingSensors -> %s", new Gson().toJson(bookingSensorsGlobal));
+//                    bookingSensorsGlobal = new BookingSensors(areaName, latitude, longitude, textViewBottomSheetParkingDistance.getText().toString(),
+//                            count, textViewBottomSheetParkingTravelTime.getText().toString());
+//                    Timber.e("first bookingSensors -> %s", new Gson().toJson(bookingSensorsGlobal));
 //                    bookingSensorsList.add(bookingSensorsGlobal);
-                    bookingSensorsArrayListGlobal.add(bookingSensorsGlobal);
+//                    bookingSensorsArrayListGlobal.add(bookingSensorsGlobal);
                 }
                 setBottomSheetFragmentControls(bookingSensorsArrayListGlobal);
                 Timber.e("test bookingSensorsList -> %s", new Gson().toJson(bookingSensorsArrayListGlobal));
-                Collections.sort(bookingSensorsArrayListGlobal, BookingSensors.BY_NAME_ASCENDING_ORDER);
+//                Collections.sort(bookingSensorsArrayListGlobal, BookingSensors.BY_NAME_ASCENDING_ORDER);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -3029,7 +3049,7 @@ public class HomeFragment extends Fragment implements
      */
 
     private LatLng origin;
-    private String nearByDistance;
+    private double nearByDistance;
     private String nearByDuration;
     private String fetchDuration;
 
@@ -3081,7 +3101,7 @@ public class HomeFragment extends Fragment implements
                                     textViewSearchParkingTravelTime.getText().toString());
 //                            textViewBottomSheetParkingTravelTime.setText(duration);
                             nearByDuration = duration;
-                            nearByDistance = distance;
+//                            nearByDistance = distance;
                             fetchDuration = duration;
                             Timber.e("fetchDuration -> %s", fetchDuration);
                             Timber.e("inmethod nearByDuration nearByDistance -> %s %s", nearByDuration, nearByDistance);

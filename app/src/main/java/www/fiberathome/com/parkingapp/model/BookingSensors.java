@@ -7,7 +7,7 @@ public class BookingSensors {
     private String parkingArea;
     private double lat;
     private double lng;
-    private String distance;
+    private double distance;
     private String count;
     private String duration;
     private boolean isChecked;
@@ -16,7 +16,7 @@ public class BookingSensors {
     public BookingSensors() {
     }
 
-    public BookingSensors(String parkingArea, double lat, double lng, String distance, String count) {
+    public BookingSensors(String parkingArea, double lat, double lng, double distance, String count) {
         this.parkingArea = parkingArea;
         this.lat = lat;
         this.lng = lng;
@@ -25,7 +25,7 @@ public class BookingSensors {
 //        this.duration = duration;
     }
 
-    public BookingSensors(String parkingArea, double lat, double lng, String distance, String count, String duration) {
+    public BookingSensors(String parkingArea, double lat, double lng, double distance, String count, String duration) {
         this.parkingArea = parkingArea;
         this.lat = lat;
         this.lng = lng;
@@ -63,11 +63,11 @@ public class BookingSensors {
         this.lng = lng;
     }
 
-    public String getDistance() {
+    public double getDistance() {
         return distance;
     }
 
-    public void setDistance(String distance) {
+    public void setDistance(double distance) {
         this.distance = distance;
     }
 
