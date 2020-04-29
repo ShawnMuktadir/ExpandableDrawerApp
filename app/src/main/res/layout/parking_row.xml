@@ -110,7 +110,7 @@
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/_10ssp"
                     android:textStyle="normal"
-                    android:visibility="gone" />
+                    android:visibility="visible" />
             </LinearLayout>
 
             <LinearLayout

@@ -69,11 +69,15 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         parkingViewHolder.textViewParkingAreaName.setText(ApplicationUtils.capitalize(sensorArea.getParkingArea()));
         parkingViewHolder.textViewParkingAreaCount.setText(sensorArea.getCount());
 
-        distance = ApplicationUtils.distance(HomeFragment.currentLocation.getLatitude(), HomeFragment.currentLocation.getLongitude(), sensorArea.getLat(), sensorArea.getLng());
-        sensorArea.setDistance(distance);
+//        distance = ApplicationUtils.distance(HomeFragment.currentLocation.getLatitude(), HomeFragment.currentLocation.getLongitude(), sensorArea.getLat(), sensorArea.getLng());
+//        sensorArea.setDistance(distance);
+
+        sensorArea.setDistance(sensorArea.getDistance());
+
 //        String[] duration = getDestinationInfo(new LatLng(sensorArea.getLat(), sensorArea.getLng()));
 //        Timber.e("duration -> %s", duration);
-        parkingViewHolder.textViewParkingDistance.setText(new DecimalFormat("##.##").format(distance) + " km");
+//        parkingViewHolder.textViewParkingDistance.setText(new DecimalFormat("##.##").format(distance) + " km");
+        parkingViewHolder.textViewParkingDistance.setText(new DecimalFormat("##.##").format(sensorArea.getDistance()) + " km");
         Timber.e("adapter distance -> %s", parkingViewHolder.textViewParkingDistance.getText());
 
 //        ApplicationUtils.getDestinationInfo(context, new LatLng(sensorArea.getLat(), sensorArea.getLng()), parkingViewHolder.textViewParkingTravelTime);

@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -37,6 +38,8 @@ import org.json.JSONObject;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -45,10 +48,15 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.AppConfig;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionEvent;
+import www.fiberathome.com.parkingapp.model.BookingSensors;
 import www.fiberathome.com.parkingapp.model.SensorArea;
+import www.fiberathome.com.parkingapp.ui.fragments.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.OnEditTextRightDrawableTouchListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
+
+import static www.fiberathome.com.parkingapp.ui.fragments.HomeFragment.currentLocation;
+import static www.fiberathome.com.parkingapp.utils.ApplicationUtils.distance;
 
 public class ParkingFragment extends Fragment {
 
@@ -56,7 +64,7 @@ public class ParkingFragment extends Fragment {
 
     @BindView(R.id.recyclerViewParking)
     RecyclerView recyclerViewParking;
-//    @BindView(R.id.swipeRefreshLayout)
+    //    @BindView(R.id.swipeRefreshLayout)
 //    SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.textViewNoData)
     TextView textViewNoData;
@@ -118,6 +126,7 @@ public class ParkingFragment extends Fragment {
 
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void setListeners() {
 
         imageViewBack.setOnClickListener(v -> {
@@ -298,16 +307,29 @@ public class ParkingFragment extends Fragment {
                 try {
                     JSONObject object = new JSONObject(response);
                     JSONArray jsonArray = object.getJSONArray("sensors");
+
                     for (int i = 0; i < jsonArray.length(); i++) {
                         SensorArea sensorArea = new SensorArea();
                         JSONArray array = jsonArray.getJSONArray(i);
                         Timber.e("Array " + i, array.getString(1));
+                        double fetchDistance = distance(currentLocation.getLatitude(), currentLocation.getLongitude(),
+                                Double.parseDouble(array.getString(2).trim()), Double.parseDouble(array.getString(3).trim()));
                         sensorArea.setParkingArea(array.getString(1).trim());
                         sensorArea.setLat(Double.parseDouble(array.getString(2).trim()));
                         sensorArea.setLng(Double.parseDouble(array.getString(3).trim()));
                         sensorArea.setCount(array.getString(4).trim());
+                        sensorArea.setDistance(fetchDistance);
 
                         sensorAreas.add(sensorArea);
+
+//                        if (fetchDistance < 50){
+                        Collections.sort(sensorAreas, new Comparator<SensorArea>() {
+                            @Override
+                            public int compare(SensorArea c1, SensorArea c2) {
+                                return Double.compare(c1.getDistance(), c2.getDistance());
+                            }
+                        });
+//                        }
                     }
 
                     setFragmentControls(sensorAreas);
@@ -323,7 +345,7 @@ public class ParkingFragment extends Fragment {
         }) {
 
         };
-
+        strReq.setRetryPolicy(new DefaultRetryPolicy(50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         ParkingApp.getInstance().addToRequestQueue(strReq);
     }
 

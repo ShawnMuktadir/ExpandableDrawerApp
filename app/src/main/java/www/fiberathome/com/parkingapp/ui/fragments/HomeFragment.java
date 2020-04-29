@@ -2407,8 +2407,11 @@ public class HomeFragment extends Fragment implements
 
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-                        String latitude1 = jsonObject.get("latitude").toString();
-                        String longitude1 = jsonObject.get("longitude").toString();
+                        double latitude = ApplicationUtils.convertToDouble(jsonObject.get("latitude").toString());
+                        double longitude = ApplicationUtils.convertToDouble(jsonObject.get("longitude").toString());
+
+//                        String latitude1 = jsonObject.get("latitude").toString();
+//                        String longitude1 = jsonObject.get("longitude").toString();
 ////
 //                        for (int j = 0; j < jsonArray.length(); j++) {
 //                            parkingNumberOfIndividualMarker = jsonObject.get("no_of_parking").toString();
@@ -2418,19 +2421,19 @@ public class HomeFragment extends Fragment implements
                         // find distance
 //                        double tDistance = distance(Double.valueOf(latitude1), Double.valueOf(longitude1), currentLocation.getLatitude(), currentLocation.getLongitude());
 
-                        double tDistance = distance(Double.parseDouble(latitude1), Double.parseDouble(longitude1), currentLocation.getLatitude(), currentLocation.getLongitude());
+                        double tDistance = calculateDistance(latitude, longitude, currentLocation.getLatitude(), currentLocation.getLongitude());
                         Timber.e("tDistance: -> %s", tDistance);
                         if (tDistance < nDistance) {
                             nDistance = tDistance;
-                            nLatitude = Double.parseDouble(latitude1);
-                            nLongitude = Double.parseDouble(longitude1);
+                            nLatitude = latitude;
+                            nLongitude = longitude;
                         }
 
                         if (jsonObject.get("s_status").toString().equalsIgnoreCase("1")) {
                             if (jsonObject.get("reserve_status").toString().equalsIgnoreCase("1")) {
                                 sensorStatus = "Occupied";
-                                double lat = ApplicationUtils.convertToDouble(latitude1);
-                                double lon = ApplicationUtils.convertToDouble(longitude1);
+                                double lat = latitude;
+                                double lon = longitude;
                                 if (googleMap != null) {
                                     MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).title(jsonObject.get("uid").toString()).snippet("Booked And Parked").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
                                     Timber.e("Booked position -> %s", new LatLng(lat, lon));
@@ -2438,8 +2441,8 @@ public class HomeFragment extends Fragment implements
                                 }
                             } else {
                                 sensorStatus = "Empty";
-                                double lat = ApplicationUtils.convertToDouble(latitude1);
-                                double lon = ApplicationUtils.convertToDouble(longitude1);
+                                double lat = latitude;
+                                double lon = longitude;
 
                                 if (googleMap != null) {
                                     MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).title(jsonObject.get("uid").toString()).snippet("Occupied.").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
@@ -2450,8 +2453,8 @@ public class HomeFragment extends Fragment implements
                         } else {
                             if (jsonObject.get("reserve_status").toString().equalsIgnoreCase("1")) {
                                 sensorStatus = "Occupied";
-                                double lat = ApplicationUtils.convertToDouble(latitude1);
-                                double lon = ApplicationUtils.convertToDouble(longitude1);
+                                double lat = latitude;
+                                double lon = longitude;
                                 if (googleMap != null) {
                                     MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).title(jsonObject.get("uid").toString()).snippet("Booked but No Vehicle").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
                                     Timber.e("No Vehicle position -> %s", new LatLng(lat, lon));
@@ -2460,8 +2463,8 @@ public class HomeFragment extends Fragment implements
 
                             } else {
                                 sensorStatus = "Empty";
-                                double lat = ApplicationUtils.convertToDouble(latitude1);
-                                double lon = ApplicationUtils.convertToDouble(longitude1);
+                                double lat = latitude;
+                                double lon = longitude;
                                 if (googleMap != null) {
                                     MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).title(jsonObject.get("uid").toString()).snippet("Empty").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
                                     googleMap.addMarker(marker);
@@ -2562,7 +2565,6 @@ public class HomeFragment extends Fragment implements
         }) {
 
         };
-
         strReq.setRetryPolicy(new DefaultRetryPolicy(50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         ParkingApp.getInstance().addToRequestQueue(strReq);
     }

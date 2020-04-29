@@ -15,10 +15,13 @@ import www.fiberathome.com.parkingapp.utils.ConnectivityReceiver;
 public class ParkingApp extends Application {
 
     public static final String TAG = ParkingApp.class.getSimpleName();
-    private static ParkingApp mInstance;
+    private static ParkingApp mInstance = null;
     private RequestQueue mRequestQueue;
 
     public static synchronized ParkingApp getInstance() {
+        if (mInstance == null) {
+            mInstance = new ParkingApp();
+        }
         return mInstance;
     }
 
@@ -66,5 +69,4 @@ public class ParkingApp extends Application {
     public void setConnectivityListener(ConnectivityReceiver.ConnectivityReceiverListener listener) {
         ConnectivityReceiver.listener = listener;
     }
-
 }
