@@ -115,5 +115,6 @@
     <string name="time"> </string>
     <string name="menu_search">Search...</string>
     <string name="bottom_Sheet_text">Choose a spot or swipe up for more</string>
+    <string name="nearest_parking_from_your_destination">Nearest Parking from your Destination</string>
 
 </resources>

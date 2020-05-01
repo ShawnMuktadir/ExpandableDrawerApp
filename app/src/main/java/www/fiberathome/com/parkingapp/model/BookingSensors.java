@@ -12,8 +12,26 @@ public class BookingSensors {
     private String duration;
     private boolean isChecked;
     private boolean selected;
+    public int type;
+    public String text;
+    public int data;
 
-    public BookingSensors() {
+    public static final int TEXT_INFO_TYPE = 0;
+    public static final int INFO_TYPE = 1;
+
+    public BookingSensors(int textInfoType) {
+    }
+
+    public BookingSensors(String parkingArea, double lat, double lng, double distance, String count, String duration, String text, int type, int data) {
+        this.parkingArea = parkingArea;
+        this.lat = lat;
+        this.lng = lng;
+        this.distance = distance;
+        this.count = count;
+        this.duration = duration;
+        this.text = text;
+        this.type = type;
+        this.data = data;
     }
 
     public BookingSensors(String parkingArea, double lat, double lng, double distance, String count) {
@@ -38,6 +56,14 @@ public class BookingSensors {
 //            return Double.compare(t1.getDistance(), bookingSensors.getDistance());
         return bookingSensors.parkingArea.compareTo(t1.parkingArea);
     };
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
 
     public String getParkingArea() {
         return parkingArea;
