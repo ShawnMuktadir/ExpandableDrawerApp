@@ -2379,6 +2379,7 @@ public class HomeFragment extends Fragment implements
                                             "",
                                             BookingSensors.INFO_TYPE, 1));
 
+                                    bubbleSortArrayList(bookingSensorsArrayList);
                                     bottomSheetBehavior.setPeekHeight(300);
                                 }
                             } catch (JSONException e) {
@@ -2400,6 +2401,24 @@ public class HomeFragment extends Fragment implements
 //                    Toast.makeText(getActivity(), "Place selection failed: " + status.getStatusMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
+        }
+    }
+
+    //bubble sort for nearest parking spot from searched area
+    private void bubbleSortArrayList(ArrayList<BookingSensors> list) {
+        BookingSensors temp;
+        boolean sorted = false;
+
+        while (!sorted) {
+            sorted = true;
+            for (int i = 1; i < list.size()-1; i++) {
+                if (list.get(i).compareTo(list.get(i + 1)) > 0) {
+                    temp = list.get(i);
+                    list.set(i, list.get(i + 1));
+                    list.set(i + 1, temp);
+                    sorted = false;
+                }
+            }
         }
     }
 

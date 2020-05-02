@@ -52,6 +52,17 @@ public class BookingSensors {
         this.duration = duration;
     }
 
+    public int compareTo(BookingSensors element) {
+        int res = 0;
+        if (this.distance < element.getDistance()) {
+            res =- 1;
+        }
+        if (this.distance > element.getDistance()) {
+            res = 1;
+        }
+        return res;
+    }
+
     public static final Comparator<BookingSensors> BY_NAME_ASCENDING_ORDER = (bookingSensors, t1) -> {
 //            return Double.compare(t1.getDistance(), bookingSensors.getDistance());
         return bookingSensors.parkingArea.compareTo(t1.parkingArea);
