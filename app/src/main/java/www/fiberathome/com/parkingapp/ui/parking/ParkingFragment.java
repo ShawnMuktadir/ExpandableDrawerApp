@@ -3,6 +3,7 @@ package www.fiberathome.com.parkingapp.ui.parking;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -23,7 +24,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -48,10 +48,12 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.AppConfig;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionEvent;
-import www.fiberathome.com.parkingapp.model.BookingSensors;
+import www.fiberathome.com.parkingapp.gps.GPSTracker;
 import www.fiberathome.com.parkingapp.model.SensorArea;
 import www.fiberathome.com.parkingapp.ui.fragments.HomeFragment;
+import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.OnEditTextRightDrawableTouchListener;
+import www.fiberathome.com.parkingapp.utils.SharedData;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
@@ -72,8 +74,6 @@ public class ParkingFragment extends Fragment {
     LinearLayout linearLayoutBottom;
     @BindView(R.id.editTextParking)
     EditText editTextParking;
-    //    @BindView(R.id.btn_clear)
-//    Button btn_clear;
     @BindView(R.id.btnGetDirection)
     Button btnGetDirection;
     @BindView(R.id.imageViewBack)
@@ -89,7 +89,6 @@ public class ParkingFragment extends Fragment {
 
     private Context context;
     private View view;
-    private Handler handler;
     private ArrayList<SensorArea> sensorAreas;
     private ParkingAdapter parkingAdapter;
     public String name, count;
@@ -130,8 +129,8 @@ public class ParkingFragment extends Fragment {
     private void setListeners() {
 
         imageViewBack.setOnClickListener(v -> {
-            BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
-            navBar.setVisibility(View.VISIBLE);
+//            BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
+//            navBar.setVisibility(View.VISIBLE);
             layoutVisible(false, "", "", 0.0, "", null);
         });
 
@@ -189,39 +188,6 @@ public class ParkingFragment extends Fragment {
 //        });
     }
 
-    private void setFragmentControls(ArrayList<SensorArea> sensorAreas) {
-        this.sensorAreas = sensorAreas;
-        recyclerViewParking.setHasFixedSize(true);
-        recyclerViewParking.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
-        parkingAdapter = new ParkingAdapter(context, this, sensorAreas);
-        recyclerViewParking.setAdapter(parkingAdapter);
-
-//        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-//                refreshing.run();
-//            }
-//        });
-        // Configure the refreshing colors
-//        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_green_dark, android.R.color.holo_blue_dark, android.R.color.holo_orange_light, android.R.color.holo_red_light);
-    }
-
-//    private final Runnable refreshing = new Runnable() {
-//        public void run() {
-//            try {
-//                if (isRefreshing()) {
-//                    fetchAreas();
-//                    swipeRefreshStatus(false);
-//                    handler.postDelayed(this, 5000);
-//                } else {
-////                    swipeRefreshLayout.setRefreshing(false);
-//                }
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    };
-
     private void filter(String text) {
         ArrayList<SensorArea> filteredList = new ArrayList<>();
 
@@ -241,21 +207,10 @@ public class ParkingFragment extends Fragment {
         parkingAdapter.filterList(filteredList);
     }
 
-//    private boolean isRefreshing() {
-//        return swipeRefreshLayout.isRefreshing();
-//    }
-
-
     private void setNoData() {
         textViewNoData.setVisibility(View.VISIBLE);
 //        textViewNoData.setText(context.getString(R.string.no_record_found));
     }
-
-//    private void swipeRefreshStatus(boolean status) {
-//        if (swipeRefreshLayout.isRefreshing()) {
-//            swipeRefreshLayout.setRefreshing(status);
-//        }
-//    }
 
     private void hideNoData() {
         textViewNoData.setVisibility(View.GONE);
@@ -277,19 +232,21 @@ public class ParkingFragment extends Fragment {
 
         if (isVisible) {
             Timber.e("isVisible True");
-            BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
-            navBar.setVisibility(View.GONE);
+//            BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
+//            navBar.setVisibility(View.GONE);
             linearLayoutBottom.setVisibility(View.VISIBLE);
             textViewParkingAreaCount.setText(count);
             textViewParkingAreaName.setText(name);
             textViewParkingDistance.setText(new DecimalFormat("##.##").format(distance) + " km");
             textViewParkingTravelTime.setText(duration);
         } else {
-            BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
-            navBar.setVisibility(View.VISIBLE);
+//            BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
+//            navBar.setVisibility(View.VISIBLE);
             linearLayoutBottom.setVisibility(View.GONE);
         }
     }
+
+    private Location onConnectedLocation = null;
 
     private void fetchAreas() {
         //initialize the progress dialog and show it
@@ -297,6 +254,10 @@ public class ParkingFragment extends Fragment {
         progressDialog.setMessage("Fetching The Parking Slots....");
         progressDialog.show();
         ArrayList<SensorArea> sensorAreas = new ArrayList<>();
+
+        if (SharedData.getInstance().getOnConnectedLocation() != null) {
+            onConnectedLocation = SharedData.getInstance().getOnConnectedLocation();
+        }
 
         StringRequest strReq = new StringRequest(Request.Method.GET, AppConfig.URL_FETCH_SENSOR_AREA, new Response.Listener<String>() {
 
@@ -307,13 +268,15 @@ public class ParkingFragment extends Fragment {
                 try {
                     JSONObject object = new JSONObject(response);
                     JSONArray jsonArray = object.getJSONArray("sensors");
-
+                    Timber.e("jsonArray length parkingFragment-> %s",jsonArray.length());
                     for (int i = 0; i < jsonArray.length(); i++) {
                         SensorArea sensorArea = new SensorArea();
                         JSONArray array = jsonArray.getJSONArray(i);
                         Timber.e("Array " + i, array.getString(1));
-                        double fetchDistance = distance(currentLocation.getLatitude(), currentLocation.getLongitude(),
+
+                        double fetchDistance = distance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
                                 Double.parseDouble(array.getString(2).trim()), Double.parseDouble(array.getString(3).trim()));
+                        Timber.e("parkingFragment fetchDistance -> %s", fetchDistance);
                         sensorArea.setParkingArea(array.getString(1).trim());
                         sensorArea.setLat(Double.parseDouble(array.getString(2).trim()));
                         sensorArea.setLng(Double.parseDouble(array.getString(3).trim()));
@@ -321,17 +284,14 @@ public class ParkingFragment extends Fragment {
                         sensorArea.setDistance(fetchDistance);
 
                         sensorAreas.add(sensorArea);
-
-//                        if (fetchDistance < 50){
+                        //sorting distance in ascending way
                         Collections.sort(sensorAreas, new Comparator<SensorArea>() {
                             @Override
                             public int compare(SensorArea c1, SensorArea c2) {
                                 return Double.compare(c1.getDistance(), c2.getDistance());
                             }
                         });
-//                        }
                     }
-
                     setFragmentControls(sensorAreas);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -345,8 +305,15 @@ public class ParkingFragment extends Fragment {
         }) {
 
         };
-        strReq.setRetryPolicy(new DefaultRetryPolicy(50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         ParkingApp.getInstance().addToRequestQueue(strReq);
     }
 
+    private void setFragmentControls(ArrayList<SensorArea> sensorAreas) {
+        this.sensorAreas = sensorAreas;
+        recyclerViewParking.setHasFixedSize(true);
+        recyclerViewParking.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
+        parkingAdapter = new ParkingAdapter(context, this, sensorAreas, onConnectedLocation);
+        recyclerViewParking.setAdapter(parkingAdapter);
+    }
 }

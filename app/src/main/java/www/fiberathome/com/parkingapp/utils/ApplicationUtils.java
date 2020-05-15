@@ -414,15 +414,8 @@ public class ApplicationUtils {
 
     public static void reLoadFragment(@NonNull FragmentManager fragmentManager, @NonNull Fragment fragment) {
         Timber.e("reloading fragment");
-        Fragment currentFragment = fragment;
-        if (currentFragment instanceof HomeFragment) {
-            FragmentTransaction fragTransaction = fragmentManager.beginTransaction();
-            fragTransaction.detach(currentFragment);
-            fragTransaction.attach(currentFragment);
-            fragTransaction.commit();
-//            Log.i(LogGeneratorHelper.INFO_TAG, "reloading fragment finish");
-        } else
-            Timber.e("fragment reloading failed");
+        fragmentManager.beginTransaction().replace(fragment.getId(),
+                new HomeFragment()).commit();
     }
 
     private static double deg2rad(double deg) {

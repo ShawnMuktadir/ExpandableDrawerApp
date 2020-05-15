@@ -7,59 +7,95 @@
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_car_parking"
-            android:iconTint="@color/blackColor"
+            android:iconTint="@color/black"
             android:title="@string/home" />
 
         <item
             android:id="@+id/nav_parking"
             android:icon="@drawable/ic_parking"
-            android:iconTint="@color/blackColor"
-            android:title="@string/parking" />
+            android:iconTint="@color/black"
+            android:title="@string/parking_spot" />
 
-<!--        <item-->
-<!--            android:id="@+id/nav_booking"-->
-<!--            android:icon="@drawable/ic_options"-->
-<!--            android:iconTint="@color/blackColor"-->
-<!--            android:title="@string/bookings" />-->
+        <item
+            android:id="@+id/nav_booking"
+            android:icon="@drawable/ic_booking"
+            android:iconTint="@color/black"
+            android:title="@string/bookings" />
 
         <item
             android:id="@+id/nav_law"
             android:icon="@drawable/ic_law"
-            android:iconTint="@color/blackColor"
-            android:title="@string/law" />
+            android:iconTint="@color/black"
+            android:title="@string/learn_law" />
 
 
         <item
             android:id="@+id/nav_notification"
             android:icon="@drawable/ic_notification"
-            android:iconTint="@color/blackColor"
+            android:iconTint="@color/black"
             android:title="@string/notification" />
-
 
         <item
             android:id="@+id/nav_profile"
-            android:icon="@drawable/ic_settings"
-            android:iconTint="@color/blackColor"
-            android:title="@string/profile" />
+            android:icon="@drawable/ic_profile"
+            android:iconTint="@color/black"
+            android:title="@string/your_account" />
 
-<!--        <item-->
-<!--            android:id="@+id/nav_qrcode"-->
-<!--            android:icon="@drawable/ic_settings_white_24dp"-->
-<!--            android:title="@string/qr_code" />-->
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_settings"
+            android:iconTint="@color/black"
+            android:title="@string/action_settings" />
+
+        <item
+            android:id="@+id/nav_get_discount"
+            android:icon="@drawable/ic_get_discount"
+            android:iconTint="@color/black"
+            android:title="@string/get_discount" />
+
+        <item
+            android:id="@+id/nav_rating_review"
+            android:icon="@drawable/ic_get_discount"
+            android:iconTint="@color/black"
+            android:title="@string/give_review_rating" />
+
+        <item
+            android:id="@+id/nav_follow_us"
+            android:icon="@drawable/ic_follow_us"
+            android:iconTint="@color/black"
+            android:title="@string/follow_us" />
+
+        <item
+            android:id="@+id/nav_privacy_policy"
+            android:icon="@drawable/ic_privacy_policy"
+            android:iconTint="@color/black"
+            android:title="@string/privacy_policy" />
+
+        <item
+            android:id="@+id/nav_share"
+            android:icon="@drawable/ic_share"
+            android:iconTint="@color/black"
+            android:title="@string/share" />
+
+
+        <!--        <item-->
+        <!--            android:id="@+id/nav_qrcode"-->
+        <!--            android:icon="@drawable/ic_settings_white_24dp"-->
+        <!--            android:title="@string/qr_code" />-->
 
         <!--<item-->
-            <!--android:id="@+id/nav_blank_map"-->
-            <!--android:icon="@drawable/ic_settings_white_24dp"-->
-            <!--android:title="Payment (beta)" />-->
+        <!--android:id="@+id/nav_blank_map"-->
+        <!--android:icon="@drawable/ic_settings_white_24dp"-->
+        <!--android:title="Payment (beta)" />-->
 
-<!--        <item-->
-<!--            android:id="@+id/nav_change_password"-->
-<!--            android:icon="@android:drawable/ic_lock_lock"-->
-<!--            android:title="Change Password"/>-->
+        <!--        <item-->
+        <!--            android:id="@+id/nav_change_password"-->
+        <!--            android:icon="@android:drawable/ic_lock_lock"-->
+        <!--            android:title="Change Password"/>-->
 
-<!--        <item-->
-<!--            android:id="@+id/nav_logout"-->
-<!--            android:icon="@drawable/logout_white"-->
-<!--            android:title="Log Out"/>-->
+        <!--        <item-->
+        <!--            android:id="@+id/nav_logout"-->
+        <!--            android:icon="@drawable/logout_white"-->
+        <!--            android:title="Log Out"/>-->
     </group>
 </menu>

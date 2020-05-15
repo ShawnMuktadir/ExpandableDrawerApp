@@ -28,8 +28,8 @@ import java.util.Map;
 
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.User;
-import www.fiberathome.com.parkingapp.ui.MainActivity;
 import www.fiberathome.com.parkingapp.base.AppConfig;
+import www.fiberathome.com.parkingapp.ui.activity.main.MainActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
 import www.fiberathome.com.parkingapp.base.ParkingApp;

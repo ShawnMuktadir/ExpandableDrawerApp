@@ -1,5 +1,7 @@
 package www.fiberathome.com.parkingapp.utils;
 
+import android.location.Location;
+
 import com.google.gson.Gson;
 
 import timber.log.Timber;
@@ -28,7 +30,6 @@ public final class SharedData {
         instance = null;
     }
 
-
     private SensorArea sensorArea;
 
     public SensorArea getSensorArea() {
@@ -38,6 +39,16 @@ public final class SharedData {
     public void setSensorArea(SensorArea sensorArea) {
         Timber.e("Sensor Area in SharedData -> %s", new Gson().toJson(sensorArea));
         this.sensorArea = sensorArea;
+    }
+
+    public Location onConnectedLocation;
+
+    public Location getOnConnectedLocation() {
+        return onConnectedLocation;
+    }
+
+    public void setOnConnectedLocation(Location onConnectedLocation) {
+        this.onConnectedLocation = onConnectedLocation;
     }
 
     private BookingSensors bookingSensors;

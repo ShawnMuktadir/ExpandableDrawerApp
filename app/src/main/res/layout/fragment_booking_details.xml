@@ -9,7 +9,7 @@
     android:elevation="@dimen/dim3"
     android:orientation="vertical"
     card_view:cardCornerRadius="@dimen/dim5"
-    tools:context=".ui.fragments.BookingDetailsFragment">
+    tools:context=".ui.booking.BookingDetailsFragment">
 
     <LinearLayout
         android:layout_width="match_parent"

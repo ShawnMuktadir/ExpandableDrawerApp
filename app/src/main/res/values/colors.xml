@@ -137,6 +137,6 @@
 
     <color name="colorTextPrimary">#FFFFFF</color>
     <color name="colorTextDisable">#66FFFFFF</color>
-
+    <color name="mapicone">#FFFFFF</color>
 
 </resources>

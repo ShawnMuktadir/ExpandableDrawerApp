@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/whiteColor"
-    tools:context=".ui.SignUpActivity">
+    tools:context=".ui.activity.registration.SignUpActivity">
 
     <www.fiberathome.com.parkingapp.utils.MyViewPager
         android:id="@+id/viewPagerVertical"
@@ -68,6 +68,7 @@
                             android:layout_marginBottom="@dimen/margin_10"
                             android:hint="@string/full_name"
                             android:inputType="textPersonName"
+                            android:imeOptions="actionNext"
                             android:textColor="@android:color/black"
                             android:textColorHint="@android:color/black" />
                     </com.google.android.material.textfield.TextInputLayout>
@@ -87,6 +88,7 @@
                             android:layout_height="wrap_content"
                             android:maxLength="11"
                             android:inputType="phone"
+                            android:imeOptions="actionNext"
                             android:textColor="@android:color/black"
                             android:textColorHint="@android:color/darker_gray" />
 
@@ -105,6 +107,7 @@
                             android:layout_height="wrap_content"
                             android:hint="@string/reg_num"
                             android:inputType="textPhonetic"
+                            android:imeOptions="actionNext"
                             android:textColor="@android:color/black"
                             android:textColorHint="@android:color/black" />
                     </com.google.android.material.textfield.TextInputLayout>
@@ -122,6 +125,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="@string/hint_pass"
+                            android:imeOptions="actionDone"
                             android:inputType="textPassword"
                             android:textColor="@android:color/black"
                             android:textColorHint="@android:color/black" />

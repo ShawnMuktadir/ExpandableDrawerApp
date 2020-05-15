@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.activity.search.SearchActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dim5"
+        android:background="#fff"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_margin="@dimen/_5sdp">
+
+            <ImageView
+                android:id="@+id/imageViewCross"
+                android:layout_width="@dimen/dim30"
+                android:layout_height="@dimen/dim30"
+                android:layout_alignParentStart="true"
+                android:padding="@dimen/dim3"
+                app:srcCompat="@drawable/ic_clear" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Parking Spot"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:textSize="@dimen/_15ssp"
+                android:textColor="@color/black"
+                android:layout_centerHorizontal="true"/>
+        </RelativeLayout>
+
+        <EditText
+            android:id="@+id/searchEdit"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dim50"
+            android:layout_margin="@dimen/_7sdp"
+            android:background="@drawable/white_border"
+            android:elevation="@dimen/dim3"
+            android:hint="@string/search"
+            android:imeOptions="actionDone"
+            android:inputType="textPostalAddress"
+            android:padding="@dimen/dim3"
+            android:singleLine="true" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/placesRv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dim5"
+        android:background="#FFF"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+</LinearLayout>

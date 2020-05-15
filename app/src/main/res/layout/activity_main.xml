@@ -5,117 +5,98 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.MainActivity">
+    tools:context=".ui.activity.main.MainActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        app:title="@string/home"
-        app:titleTextColor="@color/whiteColor"
-        android:background="@color/blackColor"
-        android:minHeight="?attr/actionBarSize"/>
-
-    <RelativeLayout
-        android:id="@+id/container1"
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:id="@+id/drawerlayoutMain"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/toolbar">
+        android:background="@color/white"
+        android:fitsSystemWindows="true"
+        tools:openDrawer="start">
 
-        <FrameLayout
-            android:id="@+id/fragment_container"
+        <include
+            layout="@layout/content_main"
             android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <com.google.android.material.navigation.NavigationView
+            android:id="@+id/nav_view_fragment"
+            android:layout_width="@dimen/_250sdp"
             android:layout_height="match_parent"
-            android:layout_above="@+id/bottomNavigationView"
-            android:background="@color/whiteColor"
-            tools:layout_editor_absoluteX="8dp"
-            tools:layout_editor_absoluteY="8dp" />
+            android:layout_gravity="start"
+            android:background="@color/white"
+            android:fitsSystemWindows="true"
+            app:headerLayout="@layout/nav_header"
+            app:itemIconTint="@color/black"
+            app:itemTextColor="@color/black"
+            app:menu="@menu/drawer_menu" />
 
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottomNavigationView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_gravity="bottom"
-            android:animateLayoutChanges="true"
-            android:background="@color/whiteColor"
-            app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
-            android:foreground="?attr/selectableItemBackground"
-            app:itemBackground="@drawable/backgrand_nav_item"
-            app:itemIconTint="@color/bottom_nav_color"
-            app:itemTextColor="@color/bottom_nav_color"
-            app:labelVisibilityMode="labeled"
-            app:layout_anchorGravity="center"
-            app:layout_insetEdge="bottom"
-            app:menu="@menu/drawer_menu"
-            app:elevation="@dimen/margin_3" />
-    </RelativeLayout>
+    </androidx.drawerlayout.widget.DrawerLayout>
 
 </RelativeLayout>
 
 
-
     <!--<?xml version="1.0" encoding="utf-8"?>-->
-<!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
-<!--    xmlns:tools="http://schemas.android.com/tools"-->
-<!--    android:id="@+id/relativeLayout"-->
-<!--    android:layout_width="match_parent"-->
-<!--    android:layout_height="match_parent"-->
-<!--    tools:context=".ui.MainActivity">-->
+    <!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
+    <!--    xmlns:tools="http://schemas.android.com/tools"-->
+    <!--    android:id="@+id/relativeLayout"-->
+    <!--    android:layout_width="match_parent"-->
+    <!--    android:layout_height="match_parent"-->
+    <!--    tools:context=".ui.MainActivity">-->
 
-<!--    <RelativeLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent">-->
+    <!--    <RelativeLayout-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="match_parent">-->
 
-<!--        <androidx.appcompat.widget.Toolbar-->
-<!--            android:id="@+id/toolbar"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="?attr/actionBarSize"-->
-<!--            android:background="@color/blackColor"-->
-<!--            android:elevation="4dp"-->
-<!--            android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"-->
-<!--            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"-->
-<!--            app:subtitleTextColor="@color/whiteColor"-->
-<!--            app:title="@string/app_name"-->
-<!--            app:titleTextColor="@android:color/white" />-->
+    <!--        <androidx.appcompat.widget.Toolbar-->
+    <!--            android:id="@+id/toolbar"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="?attr/actionBarSize"-->
+    <!--            android:background="@color/blackColor"-->
+    <!--            android:elevation="4dp"-->
+    <!--            android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"-->
+    <!--            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"-->
+    <!--            app:subtitleTextColor="@color/whiteColor"-->
+    <!--            app:title="@string/app_name"-->
+    <!--            app:titleTextColor="@android:color/white" />-->
 
-<!--        <FrameLayout-->
-<!--            android:id="@+id/fragment_container"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:layout_below="@+id/toolbar" />-->
+    <!--        <FrameLayout-->
+    <!--            android:id="@+id/fragment_container"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="match_parent"-->
+    <!--            android:layout_below="@+id/toolbar" />-->
 
-<!--        <com.google.android.material.bottomnavigation.BottomNavigationView-->
-<!--            android:id="@+id/bottomNavigationView"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_alignParentBottom="true"-->
-<!--            android:layout_gravity="bottom"-->
-<!--            android:animateLayoutChanges="true"-->
-<!--            android:background="@android:color/white"-->
-<!--            android:foreground="?attr/selectableItemBackground"-->
-<!--            app:elevation="@dimen/margin_3"-->
-<!--            app:itemBackground="@drawable/backgrand_nav_item"-->
-<!--            app:itemIconTint="@color/bottom_nav_color"-->
-<!--            app:itemTextColor="@color/bottom_nav_color"-->
-<!--            app:labelVisibilityMode="labeled"-->
-<!--            app:layout_anchorGravity="center"-->
-<!--            app:layout_insetEdge="bottom"-->
-<!--            app:menu="@menu/drawer_menu" />-->
+    <!--        <com.google.android.material.bottomnavigation.BottomNavigationView-->
+    <!--            android:id="@+id/bottomNavigationView"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_alignParentBottom="true"-->
+    <!--            android:layout_gravity="bottom"-->
+    <!--            android:animateLayoutChanges="true"-->
+    <!--            android:background="@android:color/white"-->
+    <!--            android:foreground="?attr/selectableItemBackground"-->
+    <!--            app:elevation="@dimen/margin_3"-->
+    <!--            app:itemBackground="@drawable/backgrand_nav_item"-->
+    <!--            app:itemIconTint="@color/bottom_nav_color"-->
+    <!--            app:itemTextColor="@color/bottom_nav_color"-->
+    <!--            app:labelVisibilityMode="labeled"-->
+    <!--            app:layout_anchorGravity="center"-->
+    <!--            app:layout_insetEdge="bottom"-->
+    <!--            app:menu="@menu/drawer_menu" />-->
 
-<!--    </RelativeLayout>-->
-<!--</RelativeLayout>-->
+    <!--    </RelativeLayout>-->
+    <!--</RelativeLayout>-->
 
-<!--    &lt;!&ndash;    <android.support.design.widget.NavigationView&ndash;&gt;-->
-<!--    &lt;!&ndash;        android:id="@+id/nav_view_fragment"&ndash;&gt;-->
-<!--    &lt;!&ndash;        android:layout_width="wrap_content"&ndash;&gt;-->
-<!--    &lt;!&ndash;        android:layout_height="match_parent"&ndash;&gt;-->
-<!--    &lt;!&ndash;        android:layout_gravity="start"&ndash;&gt;-->
-<!--    &lt;!&ndash;        android:fitsSystemWindows="true"&ndash;&gt;-->
-<!--    &lt;!&ndash;        android:background="@color/LogoRed"&ndash;&gt;-->
-<!--    &lt;!&ndash;        app:itemTextColor="@color/whiteColor"&ndash;&gt;-->
-<!--    &lt;!&ndash;        app:itemIconTint="@color/whiteColor"&ndash;&gt;-->
-<!--    &lt;!&ndash;        app:headerLayout="@layout/nav_header"&ndash;&gt;-->
-<!--    &lt;!&ndash;        app:menu="@menu/drawer_menu" />&ndash;&gt;-->
+    <!--    &lt;!&ndash;    <android.support.design.widget.NavigationView&ndash;&gt;-->
+    <!--    &lt;!&ndash;        android:id="@+id/nav_view_fragment"&ndash;&gt;-->
+    <!--    &lt;!&ndash;        android:layout_width="wrap_content"&ndash;&gt;-->
+    <!--    &lt;!&ndash;        android:layout_height="match_parent"&ndash;&gt;-->
+    <!--    &lt;!&ndash;        android:layout_gravity="start"&ndash;&gt;-->
+    <!--    &lt;!&ndash;        android:fitsSystemWindows="true"&ndash;&gt;-->
+    <!--    &lt;!&ndash;        android:background="@color/LogoRed"&ndash;&gt;-->
+    <!--    &lt;!&ndash;        app:itemTextColor="@color/whiteColor"&ndash;&gt;-->
+    <!--    &lt;!&ndash;        app:itemIconTint="@color/whiteColor"&ndash;&gt;-->
+    <!--    &lt;!&ndash;        app:headerLayout="@layout/nav_header"&ndash;&gt;-->
+    <!--    &lt;!&ndash;        app:menu="@menu/drawer_menu" />&ndash;&gt;-->

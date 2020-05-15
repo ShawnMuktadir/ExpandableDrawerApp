@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/tools"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_marginTop="@dimen/dim3"
+    android:layout_marginBottom="@dimen/dim3"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:elevation="@dimen/dim3"
+    android:focusable="true"
+    android:padding="@dimen/dim3"
+    app:ignore="NamespaceTypo"
+    card_view:cardCornerRadius="@dimen/dim5">
+
+
+    <LinearLayout
+        android:id="@+id/rowFG"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dim5"
+        android:padding="@dimen/dim5"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textViewParkingSlot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/parking_slot"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:textSize="@dimen/_15ssp"/>
+
+        <TextView
+            android:id="@+id/textViewParkingSlotAddress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/address"
+            android:textSize="@dimen/_12ssp"
+            android:textStyle="normal"
+            android:textColor="@color/gray"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <TextView
+                android:id="@+id/textViewParkingTime"
+                android:layout_width="0dp"
+                android:layout_weight="1.5"
+                android:layout_height="wrap_content"
+                android:text="@string/parking_time"
+                android:textColor="@color/gray"
+                android:textStyle="normal"
+                android:textSize="@dimen/_12ssp"/>
+
+            <TextView
+                android:id="@+id/textViewParkingTotalTime"
+                android:layout_width="0dp"
+                android:layout_weight="0.5"
+                android:layout_height="wrap_content"
+                android:text="@string/total_time"
+                android:textColor="@color/gray"
+                android:layout_gravity="end"
+                android:gravity="end"
+                android:textStyle="normal"
+                android:textSize="@dimen/_12ssp"/>
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="5px"
+            android:layout_marginTop="@dimen/dim5"
+            android:layout_marginBottom="@dimen/dim5"
+            android:background="@color/quantum_grey"
+            android:padding="@dimen/dim2"
+            android:visibility="visible" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <TextView
+                    android:id="@+id/textViewParkingTotalPaymentAmount"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="@string/total_fair"
+                    android:textSize="@dimen/dimTex20"
+                    android:textStyle="normal"
+                    android:textColor="@color/black"/>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/textViewParkingRateNTip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:text="@string/rate_tip"
+                        android:textSize="@dimen/_12ssp"
+                        android:textStyle="normal"
+                        android:background="@drawable/border"
+                        android:textColor="@color/black"/>
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/dim5"
+                android:weightSum="2">
+
+                <Button
+                    android:id="@+id/btnViewReceipt"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_margin="@dimen/dim2"
+                    android:layout_height="wrap_content"
+                    android:text="@string/view_receipt"
+                    android:background="#eeeeee"
+                    android:backgroundTint="#eeeeee"
+                    android:textAllCaps="false"/>
+
+                <Button
+                    android:id="@+id/btnGetHelp"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/dim2"
+                    android:background="#eeeeee"
+                    android:backgroundTint="#eeeeee"
+                    android:text="@string/get_help"
+                    android:textAllCaps="false"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

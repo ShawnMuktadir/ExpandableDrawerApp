@@ -2,6 +2,7 @@ package www.fiberathome.com.parkingapp.ui.parking;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.location.Location;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,10 +24,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.eventBus.GetDirectionAfterButtonClickEvent;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionEvent;
 import www.fiberathome.com.parkingapp.model.SensorArea;
-import www.fiberathome.com.parkingapp.ui.MainActivity;
+import www.fiberathome.com.parkingapp.ui.activity.main.MainActivity;
 import www.fiberathome.com.parkingapp.ui.fragments.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.SharedData;
@@ -41,13 +41,13 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private double distance;
     private String duration;
     public LatLng location;
-    public LatLng origin;
-    public LatLng destination;
+    Location onConnectedLocation;
 
-    public ParkingAdapter(Context context, ParkingFragment parkingFragment, ArrayList<SensorArea> sensorAreas) {
+    public ParkingAdapter(Context context, ParkingFragment parkingFragment, ArrayList<SensorArea> sensorAreas, Location onConnectedLocation) {
         this.context = context;
         this.parkingFragment = parkingFragment;
         this.sensorAreas = sensorAreas;
+        this.onConnectedLocation = onConnectedLocation;
         selectedItem = -1;
     }
 
@@ -69,25 +69,31 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         parkingViewHolder.textViewParkingAreaName.setText(ApplicationUtils.capitalize(sensorArea.getParkingArea()));
         parkingViewHolder.textViewParkingAreaCount.setText(sensorArea.getCount());
 
-        sensorArea.setDistance(sensorArea.getDistance());
-        parkingViewHolder.textViewParkingDistance.setText(new DecimalFormat("##.##").format(sensorArea.getDistance()) + " km");
+        distance = ApplicationUtils.distance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
+                sensorArea.getLat(), sensorArea.getLng());
+        sensorArea.setDistance(distance);
+        parkingViewHolder.textViewParkingDistance.setText(new DecimalFormat("##.##").format(distance) + " km");
         Timber.e("adapter distance -> %s", parkingViewHolder.textViewParkingDistance.getText());
+
+//        ApplicationUtils.getDestinationInfo(context, new LatLng(sensorArea.getLat(), sensorArea.getLng()), parkingViewHolder.textViewParkingTravelTime);
+//        duration = parkingViewHolder.textViewParkingTravelTime.getText().toString();
+//        Timber.e("adapter duration -> %s", duration);
         sensorArea.setDuration(duration);
         parkingViewHolder.textViewParkingTravelTime.setText(sensorArea.getDuration());
 
         parkingViewHolder.card_view.setOnClickListener(v -> {
             EventBus.getDefault().post(new GetDirectionEvent(new LatLng(sensorArea.getLat(), sensorArea.getLng())));
-//            parkingFragment.layoutVisible(true, sensorArea.getParkingArea(), sensorArea.getCount(), distance, duration, new LatLng(sensorArea.getLat(), sensorArea.getLng()));
+//            parkingFragment.layoutVisible(true, sensorArea.getParkingArea(), sensorArea.getCount(), String.valueOf(distance), new LatLng(sensorArea.getLat(), sensorArea.getLng()));
 
             //data is set in SharedData, to retrieve this data in HomeFragment
             Timber.e("Sensor Area to SharedData -> %s", new Gson().toJson(sensorArea));
             SharedData.getInstance().setSensorArea(sensorArea);
             //Pop the Parking Fragment and Replace it with HomeFragment
-//            MainActivity parentActivity = (MainActivity) context;
-//            parentActivity.replaceFragment();
+            MainActivity parentActivity = (MainActivity) context;
+            parentActivity.replaceFragment();
             selectedItem = position;
             notifyDataSetChanged();
-            EventBus.getDefault().post(new GetDirectionAfterButtonClickEvent(HomeFragment.location));
+//            EventBus.getDefault().post(new GetDirectionAfterButtonClickEvent(HomeFragment.location));
         });
 
         if (position == selectedItem) {
@@ -105,6 +111,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
      * <p>
      * //     * @param latLngDestination LatLng of the destination
      */
+
 
     private double distance(double lat1, double lon1, double lat2, double lon2) {
         double theta = lon1 - lon2;

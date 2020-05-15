@@ -32,8 +32,8 @@
     <string name="title_activity_map">Map</string>
 
 
-<!--    &lt;!&ndash; Google Map API &ndash;&gt;-->
-<!--    <string name="google_maps_key">AIzaSyDMWfYh5kjSQTALbZb-C0lSNACpcH5RDU4</string>-->
+    <!--    &lt;!&ndash; Google Map API &ndash;&gt;-->
+    <!--    <string name="google_maps_key">AIzaSyDMWfYh5kjSQTALbZb-C0lSNACpcH5RDU4</string>-->
 
     <!-- otp button -->
     <string name="btn_retrive_otp">Retrive OTP</string>
@@ -81,7 +81,7 @@
     <string name="err_confirm_password">Enter valid confirm password!</string>
     <string name="no_account_yet_click_here">No account yet? Click Here</string>
     <string name="forget_password_click_here">Forget Password? Click Here</string>
-    <string name="retrive_passsword">Retrive Passsword</string>
+    <string name="retreive_password">Retrieve Password</string>
     <string name="home">Home</string>
     <string name="bookings">Bookings</string>
     <string name="profile">Profile</string>
@@ -110,11 +110,29 @@
     <string name="exit_message">Please Press here to exit!</string>
     <string name="law">Law</string>
     <string name="demo_price">Tk 100/h</string>
-    <string name="distance"> </string>
+    <string name="distance">2 km</string>
     <string name="availability">Availability</string>
-    <string name="time"> </string>
+    <string name="parking_time">Arrival 04.30pm - 12.30pm Departure </string>
     <string name="menu_search">Search...</string>
     <string name="bottom_Sheet_text">Choose a spot or swipe up for more</string>
-    <string name="nearest_parking_from_your_destination">Nearest Parking from your Destination</string>
+    <string name="nearest_parking_from_your_destination">Nearest Parking From Your Destination</string>
 
+    <string name="lorum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
+    <string name="search">Search…</string>
+    <string name="parking_spot">Parking Spot</string>
+    <string name="learn_law">Learn Laws</string>
+    <string name="your_account">Your Account</string>
+    <string name="get_discount">Get Discount</string>
+    <string name="give_review_rating">Give Rating/Review</string>
+    <string name="follow_us">Follow Us</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="share">Share</string>
+    <string name="your_booked">Your Booked</string>
+    <string name="parking_slot">Parking Slot 17</string>
+    <string name="total_time">2.30h</string>
+    <string name="total_fair">Total: BDT726.00</string>
+    <string name="rate_tip">Rate and tip</string>
+    <string name="view_receipt">View Receipt</string>
+    <string name="get_help">Get Help</string>
+    <string name="time">4.86 mins</string>
 </resources>

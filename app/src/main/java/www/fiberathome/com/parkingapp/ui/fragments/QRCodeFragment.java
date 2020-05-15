@@ -6,7 +6,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -24,7 +23,6 @@ import java.util.Objects;
 
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.User;
-import www.fiberathome.com.parkingapp.ui.MainView;
 import www.fiberathome.com.parkingapp.utils.SharedPreManager;
 
 /**

@@ -34,7 +34,7 @@
                 android:background="@drawable/white_border"
                 android:elevation="@dimen/dim3"
                 android:hint="@string/search_parking"
-                android:imeOptions="actionSearch"
+                android:imeOptions="actionDone"
                 android:padding="@dimen/dim3"
                 android:singleLine="true" />
 
@@ -178,7 +178,7 @@
                         android:gravity="end"
                         android:maxLines="1"
                         android:padding="@dimen/dim3"
-                        android:text="@string/time"
+                        android:text="@string/parking_time"
                         android:textColor="@android:color/black"
                         android:textSize="@dimen/_10ssp"
                         android:textStyle="bold"

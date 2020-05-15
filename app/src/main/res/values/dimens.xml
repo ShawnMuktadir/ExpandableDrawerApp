@@ -5,7 +5,7 @@
 
 
     <dimen name="nav_header_vertical_spacing">8dp</dimen>
-    <dimen name="nav_header_height">176dp</dimen>
+    <dimen name="nav_header_height">170dp</dimen>
 
     <!-- fab icon -->
     <dimen name="fab_margin">16dp</dimen>
@@ -49,4 +49,8 @@
     <dimen name="dim150">150dp</dimen>
     <dimen name="dim50">50dp</dimen>
     <dimen name="dim300">300dp</dimen>
+    <dimen name="dim25">25dp</dimen>
+    <dimen name="dim100">100dp</dimen>
+    <dimen name="dimTex12">12sp</dimen>
+    <dimen name="dimTex20">20sp</dimen>
 </resources>

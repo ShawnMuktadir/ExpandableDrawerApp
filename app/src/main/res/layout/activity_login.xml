@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/whiteColor"
     android:windowSoftInputMode="adjustPan"
-    tools:context=".ui.LoginActivity">
+    tools:context=".ui.activity.login.LoginActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -52,6 +52,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="phone"
+                android:imeOptions="actionNext"
                 android:maxLength="11"
                 android:textColor="@android:color/black"
                 android:textColorHint="@android:color/black" />
@@ -73,6 +74,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
+                android:imeOptions="actionDone"
                 android:textColor="@android:color/black"
                 android:textColorHint="@android:color/black" />
         </com.google.android.material.textfield.TextInputLayout>

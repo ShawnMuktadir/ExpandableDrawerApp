@@ -11,7 +11,7 @@
         android:layout_gravity="center"
         android:orientation="vertical"
         android:padding="@dimen/dim5"
-        tools:context=".ui.StartActivity">
+        tools:context=".ui.activity.start.StartActivity">
 
 <!--        <de.hdodenhof.circleimageview.CircleImageView-->
 <!--            android:id="@+id/profile_image"-->

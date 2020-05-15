@@ -18,7 +18,7 @@
 
         <View
             android:id="@+id/view"
-            android:layout_width="@dimen/dim150"
+            android:layout_width="@dimen/dim100"
             android:layout_height="@dimen/dim3"
             android:layout_gravity="center"
             android:layout_marginTop="@dimen/dim5"
@@ -33,6 +33,16 @@
             android:layout_margin="@dimen/dim10"
             android:text="@string/bottom_Sheet_text"
             android:textColor="@color/black" />
+
+        <View
+            android:id="@+id/view1"
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/dim5"
+            android:background="@color/light_gray"
+            android:padding="@dimen/dim5"
+            android:visibility="visible" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/bottomsheet_recyclerview"
