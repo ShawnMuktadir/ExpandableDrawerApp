@@ -36,14 +36,13 @@
     </style>
 
 
-
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
     <style name="TextAppearance44">
         <item name="android:textColor">@color/colorPrimaryDark</item>
     </style>
-
 
 
     <style name="TextLabel" parent="TextAppearance.AppCompat">
@@ -56,7 +55,6 @@
         <item name="colorControlNormal">@color/colorPrimary</item>
         <item name="colorControlActivated">@color/colorPrimaryDark</item>
     </style>
-
 
 
 </resources>

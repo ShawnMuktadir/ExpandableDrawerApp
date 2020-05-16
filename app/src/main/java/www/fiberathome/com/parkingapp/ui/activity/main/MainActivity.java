@@ -456,7 +456,6 @@ public class MainActivity extends AppCompatActivity implements MainView, Navigat
         ApplicationUtils.showExitDialog(this);
 
         new Handler().postDelayed(new Runnable() {
-
             @Override
             public void run() {
                 doubleBackToExitPressedOnce = false;
