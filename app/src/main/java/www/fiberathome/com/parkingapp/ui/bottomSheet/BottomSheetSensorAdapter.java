@@ -47,6 +47,7 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
     public Location location;
     private int selectedItem = -1;
     private int total_types;
+    RecyclerView.ViewHolder holder;
 
     public BottomSheetSensorAdapter(Context context, HomeFragment homeFragment, ArrayList<BookingSensors> sensors, Location onConnectedLocation) {
         this.context = context;
@@ -74,18 +75,12 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
 
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
-
+        this.holder = holder;
         BookingSensors bookingSensors = bookingSensorsArrayList.get(position);
 
         if (bookingSensors != null) {
             switch (bookingSensors.type) {
                 case BookingSensors.INFO_TYPE:
-//                    if (homeFragment.searchPlaceLatLng != null || homeFragment.markerPlaceLatLng != null) {
-//                        Timber.e("new condition info type e dhukche");
-//                        holder.itemView.setBackgroundColor(selectedItem == position ? Color.LTGRAY : Color.TRANSPARENT);
-//
-//                    }
-
                     ((BookingViewHolder) holder).textViewParkingAreaName.setText(ApplicationUtils.capitalize(bookingSensors.getParkingArea().trim()));
                     ((BookingViewHolder) holder).textViewParkingAreaCount.setText(bookingSensors.getCount());
                     ((BookingViewHolder) holder).textViewParkingDistance.setText(new DecimalFormat("##.##").format(bookingSensors.getDistance()) + " km");
@@ -99,7 +94,6 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
                         } catch (Exception e) {
                             Timber.e(e.getMessage());
                         }
-//                        homeFragment.linearLayoutSearchBottomButton.setVisibility(View.GONE);
                         if (SharedData.getInstance().getOnConnectedLocation() != null) {
                             Location homeFragmentOnConnectedLocation = SharedData.getInstance().getOnConnectedLocation();
                             if (homeFragment.mMap != null) {
@@ -218,81 +212,13 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
         return (null != bookingSensorsArrayList ? bookingSensorsArrayList.size() : 0);
     }
 
-    //    private LatLng origin;
-    private String adapterDistance;
-    private String adapterDuration;
+
     private LatLng origin = null;
-
-    private void getDestinationDurationInfo(Context context, LatLng latLngDestination, BottomSheetSensorAdapter.BookingViewHolder bookingViewHolder) {
-
-        String serverKey = context.getResources().getString(R.string.google_maps_key); // Api Key For Google Direction API \\
-        if (homeFragment.searchPlaceLatLng != null && homeFragment.bottomSheetSearch == 1) {
-            origin = new LatLng(homeFragment.searchPlaceLatLng.latitude, homeFragment.searchPlaceLatLng.longitude);
-            Timber.e("adapter if e dhukche location, bottomSheetSearch -> %s %s", origin, homeFragment.bottomSheetSearch);
-        } else if (homeFragment.searchPlaceLatLng != null && homeFragment.bottomSheetSearch == 0) {
-            origin = new LatLng(HomeFragment.currentLocation.getLatitude(), HomeFragment.currentLocation.getLongitude());
-            Timber.e("adapter if else e dhukche location, bottomSheetSearch -> %s %s", origin, homeFragment.bottomSheetSearch);
-        } else {
-            origin = new LatLng(HomeFragment.currentLocation.getLatitude(), HomeFragment.currentLocation.getLongitude());
-            Timber.e("adapter else e dhukche location, bottomSheetSearch -> %s %s", origin, homeFragment.bottomSheetSearch);
-        }
-
-        LatLng destination = latLngDestination;
-//        LatLng destination;
-//        if (homeFragment.searchPlaceLatLng != null && homeFragment.bottomSheetSearch == 0) {
-//            destination = new LatLng(homeFragment.searchPlaceLatLng.latitude, homeFragment.searchPlaceLatLng.longitude);
-//        } else {
-//            destination = latLngDestination;
-//        }
-        //-------------Using AK Exorcist Google Direction Library---------------\\
-        GoogleDirection.withServerKey(serverKey)
-                .from(origin)
-                .to(destination)
-                .transportMode(TransportMode.DRIVING)
-                .execute(new DirectionCallback() {
-                    @Override
-                    public void onDirectionSuccess(Direction direction, String rawBody) {
-//                        dismissDialog();
-                        String status = direction.getStatus();
-                        if (status.equals(RequestResult.OK)) {
-                            Route route = direction.getRouteList().get(0);
-                            Leg leg = route.getLegList().get(0);
-                            Info distanceInfo = leg.getDistance();
-                            Info durationInfo = leg.getDuration();
-                            String distance = distanceInfo.getText();
-                            String duration = durationInfo.getText();
-                            adapterDistance = distance;
-                            adapterDuration = duration;
-//                            bookingSensors.setDistance(adapterDistance);
-//                            bookingSensors.setDuration(adapterDuration);
-                            Timber.e("BookingSensorAdapter adapterDistance adapterDuration -> %s %s", adapterDistance, adapterDuration);
-                            bookingViewHolder.textViewParkingDistance.setText(adapterDistance);
-                            bookingViewHolder.textViewParkingTravelTime.setText(adapterDuration);
-                            Timber.e("getDestinationDurationInfo duration -> %s", bookingViewHolder.textViewParkingTravelTime.getText().toString());
-                            //------------Displaying Distance and Time-----------------\\
-//                            showingDistanceTime(distance, duration); // Showing distance and time to the user in the UI \\
-                            String message = "Total Distance is " + distance + " and Estimated Time is " + duration;
-                            Timber.e("duration message -> %s", message);
-
-                        } else if (status.equals(RequestResult.NOT_FOUND)) {
-                            Toast.makeText(context, "No routes exist", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onDirectionFailure(Throwable t) {
-                        // Do something here
-                    }
-                });
-        //-------------------------------------------------------------------------------\\
-
-    }
-
     private String fromCurrentLocationDistance;
     private String fromCurrentLocationDuration;
     Location onConnectedLocation;
 
-    public void getDestinationDurationInfoForSearchLayout(Context context, LatLng latLngDestination, BottomSheetSensorAdapter.BookingViewHolder bookingViewHolder) {
+    private void getDestinationDurationInfoForSearchLayout(Context context, LatLng latLngDestination, BottomSheetSensorAdapter.BookingViewHolder bookingViewHolder) {
 
         if (SharedData.getInstance().getOnConnectedLocation() != null) {
             onConnectedLocation = SharedData.getInstance().getOnConnectedLocation();
@@ -354,7 +280,7 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
 
     }
 
-    public void getDestinationDurationInfoForFirstSearchLayout(Context context, LatLng latLngDestination, BottomSheetSensorAdapter.TextBookingViewHolder textBookingViewHolder) {
+    private void getDestinationDurationInfoForFirstSearchLayout(Context context, LatLng latLngDestination, BottomSheetSensorAdapter.TextBookingViewHolder textBookingViewHolder) {
 
         String serverKey = context.getResources().getString(R.string.google_maps_key); // Api Key For Google Direction API \\
         if (SharedData.getInstance().getOnConnectedLocation() != null) {

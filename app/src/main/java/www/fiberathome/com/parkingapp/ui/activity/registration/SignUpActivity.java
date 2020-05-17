@@ -294,7 +294,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         AlertDialog.Builder pictureDialog = new AlertDialog.Builder(this);
         pictureDialog.setTitle("Select Image");
         String[] pictureDialogItems = {"Select photo from gallery",
-                 "Capture photo from camera"
+                "Capture photo from camera"
         };
 
         pictureDialog.setItems(pictureDialogItems, (dialog, which) -> {
@@ -347,10 +347,15 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
         } else if (requestCode == REQUEST_PICK_IMAGE_CAMERA && resultCode == RESULT_OK && data != null) {
             // IF CAMERA SELECTED
-            bitmap = (Bitmap) data.getExtras().get("data");
-            upload_profile_image.setImageBitmap(bitmap);
-            //saveImage(thumbnail);
-            Toast.makeText(SignUpActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
+            try {
+                bitmap = (Bitmap) data.getExtras().get("data");
+                upload_profile_image.setImageBitmap(bitmap);
+//                saveImage(thumbnail);
+                Toast.makeText(SignUpActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(SignUpActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -413,75 +418,61 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         if (bitmap != null) {
             registerUser(fullname, mobileNo, vehicleNo, password);
         } else {
-            showMessage("Try Again. Please Upload Vehicle Photo!");
+            showMessage("Try Again. Please Upload Profile Photo!");
         }
     }
 
     private void registerUser(final String fullname, final String mobileNo, final String vehicleNo, final String password) {
         progressDialog = new ProgressDialog(SignUpActivity.this);
-        progressDialog.setMessage("Loading...");
+        progressDialog.setMessage("Please wait...");
         progressDialog.setCancelable(false);
         progressDialog.setIndeterminate(false);
         progressDialog.show();
 
         HttpsTrustManager.allowAllSSL();
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_REGISTER, new Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_REGISTER, response -> {
 
-            @Override
-            public void onResponse(String response) {
+            progressDialog.dismiss();
 
-                progressDialog.dismiss();
+            try {
+                //converting response to json object
+                JSONObject jsonObject = new JSONObject(response);
+                Timber.e("jsonObject -> %s", jsonObject.toString());
 
-                try {
-                    //converting response to json object
-                    JSONObject jsonObject = new JSONObject(response);
-                    Timber.e("jsonObject -> %s",jsonObject.toString());
+                // if no error response
+                if (!jsonObject.getBoolean("error")) {
+                    showMessage(jsonObject.getString("message"));
 
-                    // if no error response
-                    if (!jsonObject.getBoolean("error")) {
-                        showMessage(jsonObject.getString("message"));
+                    // getting user object
+                    JSONObject userJson = jsonObject.getJSONObject("user");
 
-                        // getting user object
-                        JSONObject userJson = jsonObject.getJSONObject("user");
+                    //showMessage(userJson.getString("image"));
 
-                        //showMessage(userJson.getString("image"));
-
-                        // creating new User Object
-                        User user = new User();
-                        user.setFullName(userJson.getString("fullname"));
-                        user.setMobileNo(userJson.getString("mobile_no"));
-                        user.setVehicleNo(userJson.getString("vehicle_no"));
-                        user.setProfilePic(userJson.getString("image"));
+                    // creating new User Object
+                    User user = new User();
+                    user.setFullName(userJson.getString("fullname"));
+                    user.setMobileNo(userJson.getString("mobile_no"));
+                    user.setVehicleNo(userJson.getString("vehicle_no"));
+                    user.setProfilePic(userJson.getString("image"));
 
 
-                        // Store to share preference
-                        SharedPreManager.getInstance(getApplicationContext()).userLogin(user);
+                    // Store to share preference
+                    SharedPreManager.getInstance(getApplicationContext()).userLogin(user);
 
-                        // boolean flag saying device is waiting for sms
-                        SharedPreManager.getInstance(getApplicationContext()).setIsWaitingForSMS(true);
+                    // boolean flag saying device is waiting for sms
+                    SharedPreManager.getInstance(getApplicationContext()).setIsWaitingForSMS(true);
 
-                        // Moving the screen to next pager item i.e otp screen
-                        viewPager.setCurrentItem(1);
-                        startCountDown();
-//                        viewPager.postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                viewPager.setCurrentItem(1);
-//                            }
-//                        }, 100);
-                        // set edit layout with layout visibility.
-
-                    } else {
-                        showMessage(jsonObject.getString("message"));
-                    }
-
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    // Moving the screen to next pager item i.e otp screen
+                    viewPager.setCurrentItem(1);
+                    startCountDown();
+                    // set edit layout with layout visibility.
+                } else {
+                    showMessage(jsonObject.getString("message"));
                 }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
@@ -514,7 +505,8 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void startCountDown() {
-        new CountDownTimer(10000, 1000) {//CountDownTimer(edittext1.getText()+edittext2.getText()) also parse it to long
+        new CountDownTimer(10000, 1000) {
+            //CountDownTimer(edittext1.getText()+edittext2.getText()) also parse it to long
 
             public void onTick(long millisUntilFinished) {
                 countdown.setText("seconds remaining: " + millisUntilFinished / 1000);

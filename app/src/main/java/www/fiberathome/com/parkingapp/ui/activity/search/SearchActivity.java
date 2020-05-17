@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.EditText;
@@ -135,7 +136,18 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
                 setResult(RESULT_OK, resultIntent);
             }
         }
-        finish();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                finish();
+                overridePendingTransition(0, 0);
+            }
+        }, 1000);
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
         overridePendingTransition(0, 0);
     }
 }

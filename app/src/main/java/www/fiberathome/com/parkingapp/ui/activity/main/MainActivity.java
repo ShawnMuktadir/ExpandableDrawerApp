@@ -11,6 +11,7 @@ import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 
@@ -120,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements MainView, Navigat
             finish();
             return;
         }
-        colorizeToolbarOverflowButton(toolbar, context.getResources().getColor(R.color.whiteColor));
+        colorizeToolbarOverflowButton(toolbar, context.getResources().getColor(R.color.white));
     }
 
     private void setupNavigationHeader() {
@@ -134,9 +135,15 @@ public class MainActivity extends AppCompatActivity implements MainView, Navigat
         userFullName.setText(ApplicationUtils.capitalize(user.getFullName()));
         userVehicleNo.setText("Vehicle No: " + user.getVehicleNo());
 
-        String url = AppConfig.IMAGES_URL + user.getProfilePic()+ ".jpg";
-        Timber.e(url);
-        Glide.with(this).load(url).placeholder(R.drawable.blank_profile_pic).into(userProfilePic);  //Todo
+        RequestOptions options = new RequestOptions()
+                .centerCrop()
+                .placeholder(R.drawable.blank_profile_pic)
+                .error(R.drawable.ic_image_person);
+        String url = AppConfig.IMAGES_URL + user.getProfilePic() + ".jpg";
+        Timber.e("user profile photo url -> %s", url);
+        Glide.with(this).load(url).apply(options).override(200, 200).into(userProfilePic);
+//        Glide.with(this).load(url).placeholder(R.drawable.blank_profile_pic).into(userProfilePic);  //Todo
+
 //Qr Code Code
 
 //        QRCode = headerView.findViewById(R.id.header_qrcode);
@@ -369,12 +376,12 @@ public class MainActivity extends AppCompatActivity implements MainView, Navigat
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProfileFragment()).commit();
                 break;
 
-             case R.id.nav_settings:
+            case R.id.nav_settings:
                 toolbar.setTitle(context.getResources().getString(R.string.action_settings));
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SettingsFragment()).commit();
                 break;
 
-              case R.id.nav_get_discount:
+            case R.id.nav_get_discount:
                 toolbar.setTitle(context.getResources().getString(R.string.get_discount));
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new GetDiscountFragment()).commit();
                 break;

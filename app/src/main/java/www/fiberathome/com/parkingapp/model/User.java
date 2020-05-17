@@ -50,7 +50,6 @@ public class User {
         this.mobileNo = mobileNo;
         this.vehicleNo = vehicleNo;
         this.profilePic = profilePic;
-
     }
 
     public int getId() {

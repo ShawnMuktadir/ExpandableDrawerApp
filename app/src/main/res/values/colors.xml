@@ -2,7 +2,8 @@
 <resources>
 <!--    <color name="colorPrimary">#CF1F25</color>-->
     <color name="colorPrimary">#000000</color>
-    <color name="colorPrimaryDark">#7A7676</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="exColorPrimaryDark">#7A7676</color>
     <color name="colorAccent">#3A3839</color>
 
     <color name="lightBg">#F5F5F5</color>

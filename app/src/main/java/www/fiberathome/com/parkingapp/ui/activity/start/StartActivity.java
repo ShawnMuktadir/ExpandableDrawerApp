@@ -51,7 +51,6 @@ public class StartActivity extends BaseActivity implements View.OnClickListener 
         loginBtn = view.findViewById(R.id.button_login);
         signupBtn = view.findViewById(R.id.button_signup);
 
-
 //        for (SensorBasic sensorBasic :  apiClient.getSensors(sensorsRequest)) {
 //            System.out.println("Sensor = " + sensorBasic.toString());
 //        }
@@ -62,8 +61,6 @@ public class StartActivity extends BaseActivity implements View.OnClickListener 
 
 
         // splash();
-
-
     }
 
     @Override

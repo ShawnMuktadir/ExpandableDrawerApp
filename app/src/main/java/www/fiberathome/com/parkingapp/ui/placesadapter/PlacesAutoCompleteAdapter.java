@@ -212,8 +212,7 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<PlacesAutoCo
     /**
      * Holder for Places Geo Data Autocomplete API results.
      */
-    public class PlaceAutocomplete
-    {
+    public class PlaceAutocomplete {
 
         public CharSequence placeId;
         public CharSequence address, area;

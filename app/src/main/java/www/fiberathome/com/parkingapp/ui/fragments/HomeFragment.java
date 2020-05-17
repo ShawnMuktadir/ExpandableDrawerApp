@@ -281,7 +281,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     private Polyline blackPolyline, grayPolyline;
 
     private IGoogleApi mService;
-//    private Marker marker;
     private float v;
     private double lat, lng;
     private Handler handler;
@@ -367,7 +366,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
             }
         });
 
-
         if ((ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
             /*ActivityCompat.requestPermissions(getActivity(),new String[] {Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission
                     .ACCESS_COARSE_LOCATION},LOCATION_PERMISSION_REQUEST_CODE);*/
@@ -389,10 +387,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         //mMap.setMyLocationEnabled(false);//if false it remove the blue dot over icon
         mMap.setBuildingsEnabled(false);
-        mMap.setTrafficEnabled(true);
+        mMap.setTrafficEnabled(false);
         mMap.setIndoorEnabled(false);
         buildGoogleApiClient();
-
 //        mMap.setOnInfoWindowClickListener(this);
         mMap.setOnMarkerClickListener(this);
     }
@@ -880,16 +877,21 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
     public void fetchSensors(Location location) {
         this.onConnectedLocation = location;
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setMessage("Fetching The Parking Sensors....");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
 
-        Log.d(TAG, "fetchSensors: " + mMap);
+        Timber.d("fetchSensors: " + mMap);
         if (mMap != null) {
             //Toast.makeText(context, "ye huppey", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "fetchSensors: yeaaaaaaaa");
         }
 
-        StringRequest strReq = new StringRequest(Request.Method.POST, AppConfig.URL_FETCH_SENSORS, new Response.Listener<String>() {
+        StringRequest strReq = new StringRequest(Request.Method.GET, AppConfig.URL_FETCH_SENSORS, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                progressDialog.dismiss();
                 Timber.e(" Sensor Response -> %s", response);
                 try {
                     JSONObject object = new JSONObject(response);
@@ -1006,6 +1008,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         //initialize the progress dialog and show it
 //        bottomSheetProgressDialog = new ProgressDialog(context);
 //        bottomSheetProgressDialog.setMessage("Fetching The Parking Sensors....");
+//        bottomSheetProgressDialog.setCancelable(false);
 //        bottomSheetProgressDialog.show();
 
         StringRequest strReq = new StringRequest(Request.Method.GET, AppConfig.URL_FETCH_SENSORS, response -> {
@@ -1326,8 +1329,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
         if (requestCode == NEW_SEARCH_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
 //            Toast.makeText(requireActivity(), "place received", Toast.LENGTH_SHORT).show();
-
-            assert data != null;
             SelcectedPlace selcectedPlace = (SelcectedPlace) data.getSerializableExtra(NEW_PLACE_SELECTED);//This line may produce null point exception
             if (selcectedPlace != null) {
                 buttonSearch.setVisibility(View.GONE);
@@ -1354,12 +1355,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     //move map camera
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 13.5f));
                     fetchSensors(onConnectedLocation);
-//                    BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
-//                    navBar.setVisibility(View.VISIBLE);
-//                    linearLayoutSearchBottom.setVisibility(View.VISIBLE);
-//                    linearLayoutSearchBottomButton.setVisibility(View.VISIBLE);
-//                    btnSearchGetDirection.setVisibility(View.VISIBLE);
-//                    imageViewSearchBack.setVisibility(View.VISIBLE);
                     bottomSheetSearch = 0;
                     //for getting the location name
                     getAddress(getActivity(), searchPlaceLatLng.latitude, searchPlaceLatLng.longitude);
@@ -1370,7 +1365,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     double searchDistance = taskParser.showDistance(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
                             new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));
                     Timber.e("searchDistance -> %s", searchDistance);
-//                        layoutSearchVisible(true, searchPlaceName, "0", String.valueOf(searchDistance), searchPlaceLatLng);
                     layoutSearchVisible(true, searchPlaceName, "0", textViewSearchParkingDistance.getText().toString(), searchPlaceLatLng);
                     bottomSheetBehavior.setPeekHeight(300);
 
@@ -1449,6 +1443,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Timber.d("onRequestPermissionsResult");
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         Log.d(TAG, "onMapReady: on requestPermission");
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
@@ -1460,6 +1455,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                 // Showing the toast message
                 Log.d(TAG, "onRequestPermissionResult: on requestPermission if-if");
                 supportMapFragment.getMapAsync(this);
+//                Toast.makeText(context, "Permission Granted", Toast.LENGTH_SHORT).show();
 
             } else if (grantResults.length == FIRST_TIME_INSTALLED && getActivity() != null) {
                 if ((ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
@@ -1468,12 +1464,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     requestPermissions(new String[]{
                             Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
                     Log.d(TAG, "onViewCreated: in if");
+                    Toast.makeText(context, "Ok Clicked", Toast.LENGTH_SHORT).show();
                 }
 
             }
 
         }
-
 
     }
 
@@ -1633,6 +1629,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                             //Animator
                             final ValueAnimator polyLineAnimator = ValueAnimator.ofInt(0, 100);
                             polyLineAnimator.setDuration(2000);
+                            polyLineAnimator.setRepeatCount(ValueAnimator.INFINITE);
                             polyLineAnimator.setInterpolator(new LinearInterpolator());
                             polyLineAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                                 @Override
@@ -1646,6 +1643,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                                 }
                             });
                             polyLineAnimator.start();
+                            zoomRoute(mMap, polyLineList);
                             //Add car markar
 //                            marker = mMap.addMarker(new MarkerOptions().position(myLocationLatLng)
 //                                    .flat(true)
@@ -1711,6 +1709,32 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                 .tilt(30)
                 .build()));
         return url;
+    }
+
+    /**
+     * Zooms a Route (given a List of LalLng) at the greatest possible zoom level.
+     *
+     * @param googleMap:      instance of GoogleMap
+     * @param lstLatLngRoute: list of LatLng forming Route
+     */
+    private void zoomRoute(GoogleMap googleMap, List<LatLng> lstLatLngRoute) {
+
+        if (googleMap == null || lstLatLngRoute == null || lstLatLngRoute.isEmpty()) return;
+
+        LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
+        for (LatLng latLngPoint : lstLatLngRoute)
+            boundsBuilder.include(latLngPoint);
+
+        int routePadding = 100;
+        int left = 10;
+        int right = 10;
+        int top = 200;
+        int bottom = 100;
+
+        LatLngBounds latLngBounds = boundsBuilder.build();
+
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, routePadding));
+        googleMap.setPadding(left, top, right, bottom);
     }
 
     //for uber like cr bearing
@@ -2061,7 +2085,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
             bookingSensorsMarkerArrayList.clear();
             if (onConnectedLocation != null) {
                 fetchBottomSheetSensors(onConnectedLocation);
-                fetchSensors(onConnectedLocation);
+//                fetchSensors(onConnectedLocation);
             }
             buttonSearch.setText(null);
             linearLayoutBottom.setVisibility(View.GONE);

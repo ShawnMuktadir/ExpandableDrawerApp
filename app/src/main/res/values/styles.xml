@@ -10,7 +10,6 @@
         <item name="actionOverflowMenuStyle">@style/OverflowMenu</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-
     </style>
 
     <style name="AppTheme.NoActionBar" parent="@style/Theme.AppCompat.Light.NoActionBar">
