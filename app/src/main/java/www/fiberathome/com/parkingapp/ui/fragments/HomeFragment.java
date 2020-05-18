@@ -877,10 +877,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
     public void fetchSensors(Location location) {
         this.onConnectedLocation = location;
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage("Fetching The Parking Sensors....");
-        progressDialog.setCancelable(false);
-        progressDialog.show();
+//        progressDialog = new ProgressDialog(context);
+//        progressDialog.setMessage("Fetching The Parking Sensors....");
+//        progressDialog.setCancelable(false);
+//        progressDialog.show();
 
         Timber.d("fetchSensors: " + mMap);
         if (mMap != null) {
@@ -888,90 +888,87 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
             Log.d(TAG, "fetchSensors: yeaaaaaaaa");
         }
 
-        StringRequest strReq = new StringRequest(Request.Method.GET, AppConfig.URL_FETCH_SENSORS, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                progressDialog.dismiss();
-                Timber.e(" Sensor Response -> %s", response);
-                try {
-                    JSONObject object = new JSONObject(response);
-                    JSONArray jsonArray = object.getJSONArray("sensors");
-                    clickEventJsonArray = object.getJSONArray("sensors");
-                    Timber.e("clickEventJsonArray length -> %s", clickEventJsonArray.length());
-                    searchPlaceEventJsonArray = object.getJSONArray("sensors");
-                    Timber.e("searchPlaceEventJsonArray length -> %s", searchPlaceEventJsonArray.length());
-                    Timber.e(" Sensor JSONArray -> %s", new Gson().toJson(jsonArray));
+        StringRequest strReq = new StringRequest(Request.Method.GET, AppConfig.URL_FETCH_SENSORS, response -> {
+//                progressDialog.dismiss();
+            Timber.e(" Sensor Response -> %s", response);
+            try {
+                JSONObject object = new JSONObject(response);
+                JSONArray jsonArray = object.getJSONArray("sensors");
+                clickEventJsonArray = object.getJSONArray("sensors");
+                Timber.e("clickEventJsonArray length -> %s", clickEventJsonArray.length());
+                searchPlaceEventJsonArray = object.getJSONArray("sensors");
+                Timber.e("searchPlaceEventJsonArray length -> %s", searchPlaceEventJsonArray.length());
+                Timber.e(" Sensor JSONArray -> %s", new Gson().toJson(jsonArray));
 
-                    for (int i = 0; i < jsonArray.length(); i++) {
+                for (int i = 0; i < jsonArray.length(); i++) {
 
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-                        double latitude = ApplicationUtils.convertToDouble(jsonObject.get("latitude").toString());
-                        double longitude = ApplicationUtils.convertToDouble(jsonObject.get("longitude").toString());
+                    double latitude = ApplicationUtils.convertToDouble(jsonObject.get("latitude").toString());
+                    double longitude = ApplicationUtils.convertToDouble(jsonObject.get("longitude").toString());
 
 
-                        double tDistance = calculateDistance(latitude, longitude, location.getLatitude(), location.getLongitude());
-                        Timber.e("tDistance: -> %s", tDistance);
-                        if (tDistance < nDistance) {
-                            nDistance = tDistance;
-                            nLatitude = latitude;
-                            nLongitude = longitude;
-                        }
+                    double tDistance = calculateDistance(latitude, longitude, location.getLatitude(), location.getLongitude());
+                    Timber.e("tDistance: -> %s", tDistance);
+                    if (tDistance < nDistance) {
+                        nDistance = tDistance;
+                        nLatitude = latitude;
+                        nLongitude = longitude;
+                    }
 
-                        if (jsonObject.get("s_status").toString().equalsIgnoreCase("1")) {
-                            if (jsonObject.get("reserve_status").toString().equalsIgnoreCase("1")) {
-                                sensorStatus = "Occupied";
-                                double lat = latitude;
-                                double lon = longitude;
-                                if (mMap != null) {
+                    if (jsonObject.get("s_status").toString().equalsIgnoreCase("1")) {
+                        if (jsonObject.get("reserve_status").toString().equalsIgnoreCase("1")) {
+                            sensorStatus = "Occupied";
+                            double lat = latitude;
+                            double lon = longitude;
+                            if (mMap != null) {
 //                                    MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).title(jsonObject.get("uid").toString()).snippet("Booked And Parked").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
-                                    MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
-                                    Timber.e("Booked position -> %s", new LatLng(lat, lon));
-                                    mMap.addMarker(marker);
-                                }
-                            } else {
-                                sensorStatus = "Empty";
-                                double lat = latitude;
-                                double lon = longitude;
-
-                                if (mMap != null) {
-//                                    MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).title(jsonObject.get("uid").toString()).snippet("Occupied.").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
-                                    MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
-                                    Timber.e("Occupied position -> %s", new LatLng(lat, lon));
-                                    mMap.addMarker(marker);
-                                }
+                                MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
+                                Timber.e("Booked position -> %s", new LatLng(lat, lon));
+                                mMap.addMarker(marker);
                             }
                         } else {
-                            if (jsonObject.get("reserve_status").toString().equalsIgnoreCase("1")) {
-                                sensorStatus = "Occupied";
-                                double lat = latitude;
-                                double lon = longitude;
-                                if (mMap != null) {
-//                                    MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).title(jsonObject.get("uid").toString()).snippet("Booked but No Vehicle").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
-                                    MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
-                                    Timber.e("No Vehicle position -> %s", new LatLng(lat, lon));
-                                    mMap.addMarker(marker);
-                                }
+                            sensorStatus = "Empty";
+                            double lat = latitude;
+                            double lon = longitude;
 
-                            } else {
-                                sensorStatus = "Empty";
-                                double lat = latitude;
-                                double lon = longitude;
-                                if (mMap != null) {
+                            if (mMap != null) {
+//                                    MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).title(jsonObject.get("uid").toString()).snippet("Occupied.").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
+                                MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
+                                Timber.e("Occupied position -> %s", new LatLng(lat, lon));
+                                mMap.addMarker(marker);
+                            }
+                        }
+                    } else {
+                        if (jsonObject.get("reserve_status").toString().equalsIgnoreCase("1")) {
+                            sensorStatus = "Occupied";
+                            double lat = latitude;
+                            double lon = longitude;
+                            if (mMap != null) {
+//                                    MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).title(jsonObject.get("uid").toString()).snippet("Booked but No Vehicle").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
+                                MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
+                                Timber.e("No Vehicle position -> %s", new LatLng(lat, lon));
+                                mMap.addMarker(marker);
+                            }
+
+                        } else {
+                            sensorStatus = "Empty";
+                            double lat = latitude;
+                            double lon = longitude;
+                            if (mMap != null) {
 //                                    MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).title(jsonObject.get("uid").toString()).snippet("Empty").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
-                                    MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
-                                    mMap.addMarker(marker);
-                                    Timber.e("Empty position -> %s", new LatLng(lat, lon));
-                                }
+                                MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
+                                mMap.addMarker(marker);
+                                Timber.e("Empty position -> %s", new LatLng(lat, lon));
                             }
                         }
                     }
-
-                } catch (JSONException e) {
-                    // JSON error
-                    e.printStackTrace();
-                    //System.out.println(e.getMessage());
                 }
+
+            } catch (JSONException e) {
+                // JSON error
+                e.printStackTrace();
+                //System.out.println(e.getMessage());
             }
         }, new Response.ErrorListener() {
             @Override
