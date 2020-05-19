@@ -119,6 +119,7 @@ import www.fiberathome.com.parkingapp.ui.activity.search.SearchActivity;
 
 import www.fiberathome.com.parkingapp.model.SensorArea;
 
+import www.fiberathome.com.parkingapp.ui.bottomSheet.BottomSheetAdapter;
 import www.fiberathome.com.parkingapp.ui.bottomSheet.BottomSheetSensorAdapter;
 import www.fiberathome.com.parkingapp.preference.AppConstants;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
@@ -223,7 +224,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     LinearLayout linearLayoutBottomSheetGetDirection;
 
     private RecyclerView bottomSheetRecyclerView;
-    private BottomSheetSensorAdapter bottomSheetSensorAdapter;
+    //private BottomSheetSensorAdapter bottomSheetSensorAdapter;
+    private BottomSheetAdapter bottomSheetAdapter;
 
     private String TAG = getClass().getSimpleName();
     private int LOCATION_PERMISSION_REQUEST_CODE = 100;
@@ -719,7 +721,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                 }
             }
             Timber.e("bookingSensorsMarkerArrayList latest -> %s", new Gson().toJson(bookingSensorsMarkerArrayList));
-            bottomSheetSensorAdapter.updateData(bookingSensorsMarkerArrayList);
+            //bottomSheetSensorAdapter.updateData(bookingSensorsMarkerArrayList);
+            bottomSheetAdapter.updateData(bookingSensorsMarkerArrayList);
             setBottomSheetRecyclerViewAdapter(bookingSensorsMarkerArrayList);
             Timber.e("setBottomSheetRecyclerViewAdapter(bookingSensorsMarkerArrayList) call hoiche for loop");
         }
@@ -1144,8 +1147,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
             Log.d(TAG, "setBottomSheetRecyclerViewAdapter: "+sensors.text);
         }*/
         Timber.e("setBottomSheetRecyclerViewAdapter bookingSensors -> %s", new Gson().toJson(bookingSensors));
-        bottomSheetSensorAdapter = new BottomSheetSensorAdapter(context, this, bookingSensors, onConnectedLocation);
-        bottomSheetRecyclerView.setAdapter(bottomSheetSensorAdapter);
+        //bottomSheetSensorAdapter = new BottomSheetSensorAdapter(context, this, bookingSensors, onConnectedLocation);
+        bottomSheetAdapter=new BottomSheetAdapter(context,this,bookingSensors, onConnectedLocation);
+        bottomSheetRecyclerView.setAdapter(bottomSheetAdapter);
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -1427,7 +1431,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     }
                     Timber.e("bookingSensors latest -> %s", new Gson().toJson(bookingSensorsArrayList));
 //                        bookingSensorsArrayListGlobal.clear();
-                    bottomSheetSensorAdapter.updateData(bookingSensorsArrayList);
+                    //bottomSheetSensorAdapter.updateData(bookingSensorsArrayList);
+                    bottomSheetAdapter.updateData(bookingSensorsArrayList);
                     setBottomSheetRecyclerViewAdapter(bookingSensorsArrayList);
                     Timber.e("setBottomSheetRecyclerViewAdapter(bookingSensorsArrayList) call hoiche for loop");
                 }
