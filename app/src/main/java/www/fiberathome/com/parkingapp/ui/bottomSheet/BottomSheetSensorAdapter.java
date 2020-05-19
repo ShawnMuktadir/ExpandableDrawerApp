@@ -390,7 +390,7 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
 
         @Override
         public void onClick(View v) {
-// Below line is just like a safety check, because sometimes holder could be null,
+            // Below line is just like a safety check, because sometimes holder could be null,
             // in that case, getAdapterPosition() will return RecyclerView.NO_POSITION
             if (getAdapterPosition() == RecyclerView.NO_POSITION) return;
 

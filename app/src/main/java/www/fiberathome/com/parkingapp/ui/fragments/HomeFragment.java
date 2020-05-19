@@ -638,7 +638,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
             fetchSensors(onConnectedLocation);
 //            BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
 //            navBar.setVisibility(View.VISIBLE);
-            bottomSheetSearch = 0;
+//            bottomSheetSearch = 0;
             //for getting the location name
             getAddress(getActivity(), markerPlaceLatLng.latitude, markerPlaceLatLng.longitude);
             String markerPlaceName = address;
@@ -662,16 +662,16 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
             double kim = (markerDistance / 1000) + adjustValue;
             Timber.e("adjustValue first -> %s", adjustValue);
-            double searchDoubleDuration = Double.parseDouble(new DecimalFormat("##.##").format(markerDistance * 2.43));
-            String searchStringDuration = searchDoubleDuration + " mins";
+            double markerDoubleDuration = Double.parseDouble(new DecimalFormat("##.##").format(markerDistance * 2.43));
+            String markerStringDuration = markerDoubleDuration + " mins";
 
             bookingSensorsMarker = new BookingSensors(markerPlaceName, markerPlaceLatLng.latitude, markerPlaceLatLng.longitude,
                     markerDistance,
-                    parkingNumberOfIndividualMarker, searchStringDuration);
+                    parkingNumberOfIndividualMarker, markerStringDuration);
             Timber.e("bookingSensorsMarker first -> %s", new Gson().toJson(bookingSensorsMarker));
 //                        bookingSensorsArrayList.add(bookingSensors);
             bookingSensorsMarkerArrayList.add(new BookingSensors(markerPlaceName, markerPlaceLatLng.latitude, markerPlaceLatLng.longitude,
-                    markerDistance, parkingNumberOfIndividualMarker, searchStringDuration,
+                    markerDistance, parkingNumberOfIndividualMarker, markerStringDuration,
                     context.getResources().getString(R.string.nearest_parking_from_your_destination),
                     BookingSensors.TEXT_INFO_TYPE, 0));
 
@@ -687,7 +687,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     Timber.e("DistanceForNearbyLoc -> %s", distanceForNearbyLoc);
 
                     if (distanceForNearbyLoc < 3) {
-                        bottomSheetSearch = 1;
+//                        bottomSheetSearch = 1;
                         origin = new LatLng(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude);
                         getAddress(getActivity(), ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1));
                         String nearbyAreaName = address;
@@ -1258,12 +1258,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                 }
             }
             polylineOptions.addAll(points);
-            polylineOptions.width(2);
+            polylineOptions.width(5);
             if (flag == 1) {
-//                    if (googleMap != null)
-//                        googleMap.clear();
                 polylineOptions.color(Color.BLACK);
-                polylineOptions.width(2);
+                polylineOptions.width(5);
             }
 //                else if (flag == 2) {
 ////                    if (googleMap != null)
@@ -1272,7 +1270,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 //                    polylineOptions.width(5);
 //                }
             flag++;
-
 
             polylineOptions.geodesic(true);
             if (polylineOptions != null) {
@@ -1493,18 +1490,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         Timber.e(" -> %s", origin);
 
         String serverKey = context.getResources().getString(R.string.google_maps_key); // Api Key For Google Direction API \\
-//        final LatLng origin;
-//        if (searchPlaceLatLng != null && bottomSheetSearch == 1) {
-//            Timber.e("1st if condition getDestinationInfoForDuration");
-//            origin = new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude);
-//        } else if (searchPlaceLatLng != null && bottomSheetSearch == 0) {
-//            Timber.e("2nd if condition getDestinationInfoForDuration");
-//            origin = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-//        } else {
-        Timber.e("else condition getDestinationInfoForDuration");
+//        Timber.e("condition getDestinationInfoForDuration");
         origin = new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude());
-//        }
-//        final LatLng destination = latLngDestination;
         LatLng destination = latLngDestination;
 
         //-------------Using AK Exorcist Google Direction Library---------------\\
@@ -1533,7 +1520,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                             Timber.e("search distance duration-> %s %s",
                                     textViewSearchParkingDistance.getText().toString(),
                                     textViewSearchParkingTravelTime.getText().toString());
-//                            textViewBottomSheetParkingTravelTime.setText(duration);
+                            textViewBottomSheetParkingTravelTime.setText(duration);
+                            Timber.e("textViewBottomSheetParkingTravelTime duration-> %s",textViewBottomSheetParkingTravelTime.getText().toString());
                             nearByDuration = duration;
 //                            nearByDistance = distance;
                             fetchDuration = duration;
@@ -1562,7 +1550,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     private String getDirectionsUrl(LatLng origin, LatLng dest) {
         // Key
         String key = "key=AIzaSyDMWfYh5kjSQTALbZb-C0lSNACpcH5RDU4";
-//        key=
         // Origin of route
         String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
         // Destination of route
@@ -1628,16 +1615,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                             polyLineAnimator.setDuration(2000);
                             polyLineAnimator.setRepeatCount(ValueAnimator.INFINITE);
                             polyLineAnimator.setInterpolator(new LinearInterpolator());
-                            polyLineAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                                @Override
-                                public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                                    List<LatLng> points = grayPolyline.getPoints();
-                                    int percentValue = (int) valueAnimator.getAnimatedValue();
-                                    int size = points.size();
-                                    int newPoints = (int) (size * (percentValue / 100.0f));
-                                    List<LatLng> p = points.subList(0, newPoints);
-                                    blackPolyline.setPoints(p);
-                                }
+                            polyLineAnimator.addUpdateListener(valueAnimator -> {
+                                List<LatLng> points = grayPolyline.getPoints();
+                                int percentValue = (int) valueAnimator.getAnimatedValue();
+                                int size = points.size();
+                                int newPoints = (int) (size * (percentValue / 100.0f));
+                                List<LatLng> p = points.subList(0, newPoints);
+                                blackPolyline.setPoints(p);
                             });
                             polyLineAnimator.start();
                             zoomRoute(mMap, polyLineList);
@@ -1722,11 +1706,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         for (LatLng latLngPoint : lstLatLngRoute)
             boundsBuilder.include(latLngPoint);
 
-        int routePadding = 100;
-        int left = 10;
-        int right = 10;
-        int top = 200;
-        int bottom = 100;
+        int routePadding = 150;
+        int left = 50;
+        int right = 50;
+        int top = 50;
+        int bottom = 50;
 
         LatLngBounds latLngBounds = boundsBuilder.build();
 
@@ -1734,7 +1718,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         googleMap.setPadding(left, top, right, bottom);
     }
 
-    //for uber like cr bearing
+    //for uber like car bearing
     public static float getBearing(LatLng startPosition, LatLng newPos) {
 
         //Source

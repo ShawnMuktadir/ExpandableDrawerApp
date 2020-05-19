@@ -19,7 +19,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -30,6 +33,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
@@ -53,6 +57,7 @@ import www.fiberathome.com.parkingapp.model.SensorArea;
 import www.fiberathome.com.parkingapp.ui.fragments.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.OnEditTextRightDrawableTouchListener;
+import www.fiberathome.com.parkingapp.utils.RecyclerTouchListener;
 import www.fiberathome.com.parkingapp.utils.SharedData;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
@@ -311,8 +316,33 @@ public class ParkingFragment extends Fragment {
 
     private void setFragmentControls(ArrayList<SensorArea> sensorAreas) {
         this.sensorAreas = sensorAreas;
+//        recyclerViewParking.setHasFixedSize(true);
+//        recyclerViewParking.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
+//        parkingAdapter = new ParkingAdapter(context, this, sensorAreas, onConnectedLocation);
+//        recyclerViewParking.setAdapter(parkingAdapter);
+
         recyclerViewParking.setHasFixedSize(true);
-        recyclerViewParking.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
+        recyclerViewParking.setItemViewCacheSize(20);
+        recyclerViewParking.setNestedScrollingEnabled(false);
+
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        recyclerViewParking.setLayoutManager(mLayoutManager);
+        recyclerViewParking.addItemDecoration(new DividerItemDecoration(context, LinearLayoutManager.VERTICAL));
+        recyclerViewParking.setItemAnimator(new DefaultItemAnimator());
+        recyclerViewParking.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), recyclerViewParking, new RecyclerTouchListener.ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+//                Movie movie = movieList.get(position);
+//                Toast.makeText(getApplicationContext(), movie.getTitle() + " is selected!", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        }));
+        ViewCompat.setNestedScrollingEnabled(recyclerViewParking, false);
+
         parkingAdapter = new ParkingAdapter(context, this, sensorAreas, onConnectedLocation);
         recyclerViewParking.setAdapter(parkingAdapter);
     }

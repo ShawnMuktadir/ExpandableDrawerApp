@@ -2,10 +2,12 @@ package www.fiberathome.com.parkingapp.ui.parking;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.location.Location;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -37,18 +39,18 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private ArrayList<SensorArea> sensorAreas;
     private ParkingFragment parkingFragment;
     private HomeFragment homeFragment;
-    private int selectedItem;
+    private int selectedItem = -1;
     private double distance;
     private String duration;
     public LatLng location;
-    Location onConnectedLocation;
+    private Location onConnectedLocation;
 
     public ParkingAdapter(Context context, ParkingFragment parkingFragment, ArrayList<SensorArea> sensorAreas, Location onConnectedLocation) {
         this.context = context;
         this.parkingFragment = parkingFragment;
         this.sensorAreas = sensorAreas;
         this.onConnectedLocation = onConnectedLocation;
-        selectedItem = -1;
+//        selectedItem = -1;
     }
 
     @NonNull
@@ -74,35 +76,48 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         sensorArea.setDistance(distance);
         parkingViewHolder.textViewParkingDistance.setText(new DecimalFormat("##.##").format(distance) + " km");
         Timber.e("adapter distance -> %s", parkingViewHolder.textViewParkingDistance.getText());
-
-//        ApplicationUtils.getDestinationInfo(context, new LatLng(sensorArea.getLat(), sensorArea.getLng()), parkingViewHolder.textViewParkingTravelTime);
-//        duration = parkingViewHolder.textViewParkingTravelTime.getText().toString();
-//        Timber.e("adapter duration -> %s", duration);
         sensorArea.setDuration(duration);
         parkingViewHolder.textViewParkingTravelTime.setText(sensorArea.getDuration());
 
-        parkingViewHolder.card_view.setOnClickListener(v -> {
+        parkingViewHolder.itemView.setBackgroundColor(selectedItem == position ? Color.LTGRAY : Color.TRANSPARENT);
+        parkingViewHolder.itemView.setOnClickListener(v -> {
+            selectedItem = position;
+            try {
+                notifyDataSetChanged();
+            } catch (Exception e) {
+                Timber.e(e);
+            }
             EventBus.getDefault().post(new GetDirectionEvent(new LatLng(sensorArea.getLat(), sensorArea.getLng())));
-//            parkingFragment.layoutVisible(true, sensorArea.getParkingArea(), sensorArea.getCount(), String.valueOf(distance), new LatLng(sensorArea.getLat(), sensorArea.getLng()));
-
             //data is set in SharedData, to retrieve this data in HomeFragment
             Timber.e("Sensor Area to SharedData -> %s", new Gson().toJson(sensorArea));
             SharedData.getInstance().setSensorArea(sensorArea);
             //Pop the Parking Fragment and Replace it with HomeFragment
             MainActivity parentActivity = (MainActivity) context;
             parentActivity.replaceFragment();
-            selectedItem = position;
-            notifyDataSetChanged();
 //            EventBus.getDefault().post(new GetDirectionAfterButtonClickEvent(HomeFragment.location));
         });
 
-        if (position == selectedItem) {
-            //Show view visibility
-            parkingViewHolder.view.setVisibility(View.VISIBLE);
-        } else {
-            //Hide view visibility
-            parkingViewHolder.view.setVisibility(View.GONE);
-        }
+//        parkingViewHolder.relativeLayout.setOnClickListener(v -> {
+//            EventBus.getDefault().post(new GetDirectionEvent(new LatLng(sensorArea.getLat(), sensorArea.getLng())));
+////            parkingFragment.layoutVisible(true, sensorArea.getParkingArea(), sensorArea.getCount(), String.valueOf(distance), new LatLng(sensorArea.getLat(), sensorArea.getLng()));
+//
+//            //data is set in SharedData, to retrieve this data in HomeFragment
+//            Timber.e("Sensor Area to SharedData -> %s", new Gson().toJson(sensorArea));
+//            SharedData.getInstance().setSensorArea(sensorArea);
+//            //Pop the Parking Fragment and Replace it with HomeFragment
+//            MainActivity parentActivity = (MainActivity) context;
+//            parentActivity.replaceFragment();
+//            selectedItem = position;
+//            notifyDataSetChanged();
+////            EventBus.getDefault().post(new GetDirectionAfterButtonClickEvent(HomeFragment.location));
+//        });
+//        if (position == selectedItem) {
+//            //Show view visibility
+//            parkingViewHolder.view.setVisibility(View.VISIBLE);
+//        } else {
+//            //Hide view visibility
+//            parkingViewHolder.view.setVisibility(View.GONE);
+//        }
     }
 
 
@@ -111,7 +126,6 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
      * <p>
      * //     * @param latLngDestination LatLng of the destination
      */
-
 
     private double distance(double lat1, double lon1, double lat2, double lon2) {
         double theta = lon1 - lon2;
@@ -141,13 +155,13 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return sensorAreas.size();
     }
 
+    //parking fragment theke call hoiche
     public void filterList(ArrayList<SensorArea> filteredList) {
         sensorAreas = filteredList;
         notifyDataSetChanged();
     }
 
-
-    public static class ParkingViewHolder extends RecyclerView.ViewHolder {
+    public class ParkingViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         @BindView(R.id.textViewParkingAreaName)
         TextView textViewParkingAreaName;
@@ -155,8 +169,8 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         TextView textViewParkingAreaCount;
         @BindView(R.id.textViewParkingAreaAddress)
         TextView textViewParkingAreaAddress;
-        @BindView(R.id.card_view)
-        CardView card_view;
+        @BindView(R.id.relativeLayout)
+        RelativeLayout relativeLayout;
         @BindView(R.id.textViewParkingDistance)
         TextView textViewParkingDistance;
         @BindView(R.id.textViewParkingTravelTime)
@@ -167,6 +181,23 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         public ParkingViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            // Below line is just like a safety check, because sometimes holder could be null,
+            // in that case, getAdapterPosition() will return RecyclerView.NO_POSITION
+            if (getAdapterPosition() == RecyclerView.NO_POSITION) return;
+
+            // Updating old as well as new positions
+            try {
+                notifyItemChanged(selectedItem);
+                selectedItem = getAdapterPosition();
+                notifyItemChanged(selectedItem);
+            } catch (Exception e) {
+                Timber.e(e);
+            }
         }
     }
 }
