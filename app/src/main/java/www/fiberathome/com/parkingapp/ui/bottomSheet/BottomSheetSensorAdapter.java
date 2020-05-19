@@ -3,6 +3,7 @@ package www.fiberathome.com.parkingapp.ui.bottomSheet;
 import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.view.menu.MenuView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.akexorcist.googledirection.DirectionCallback;
@@ -38,15 +40,18 @@ import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.SharedData;
 
 public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private  final String TAG =getClass().getSimpleName() ;
 //public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdapter.BookingViewHolder> {
 
-    private Context context;
+    public Context context;
     private HomeFragment homeFragment;
     private ArrayList<BookingSensors> bookingSensorsArrayList;
     public BookingViewHolder viewHolder;
     public Location location;
     private int selectedItem = -1;
-    private int total_types;
+   /* private int total_types;
+    private View textViewItem;
+    private boolean textItemViewColorGray=false;*/
     RecyclerView.ViewHolder holder;
 
     public BottomSheetSensorAdapter(Context context, HomeFragment homeFragment, ArrayList<BookingSensors> sensors, Location onConnectedLocation) {
@@ -54,8 +59,11 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
         this.homeFragment = homeFragment;
         this.bookingSensorsArrayList = sensors;
         this.location = onConnectedLocation;
+
 //        selectedItem = -1;
     }
+
+
 
     @NonNull
     @Override
@@ -78,6 +86,7 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
         this.holder = holder;
         BookingSensors bookingSensors = bookingSensorsArrayList.get(position);
 
+
         if (bookingSensors != null) {
             switch (bookingSensors.type) {
                 case BookingSensors.INFO_TYPE:
@@ -86,8 +95,19 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
                     ((BookingViewHolder) holder).textViewParkingDistance.setText(new DecimalFormat("##.##").format(bookingSensors.getDistance()) + " km");
                     ((BookingViewHolder) holder).textViewParkingTravelTime.setText(bookingSensors.getDuration());
                     ((BookingViewHolder) holder).itemView.setBackgroundColor(selectedItem == position ? Color.LTGRAY : Color.TRANSPARENT);
-                    ((BookingViewHolder) holder).itemView.setOnClickListener(v -> {
+
+                    ((BookingViewHolder) holder).itemView.setOnClickListener(v ->
+                    {
+
+                        Toast.makeText(context, "clicked"+position, Toast.LENGTH_SHORT).show();
                         selectedItem = position;
+                        assert false;
+                        ((TextBookingViewHolder) holder).relativeLayoutxt.setBackgroundColor(Color.TRANSPARENT);
+
+                        //textViewItem.setBackgroundColor(Color.TRANSPARENT);
+
+
+
                         try {
                             notifyDataSetChanged();
                             homeFragment.linearLayoutSearchBottomButton.setVisibility(View.GONE);
@@ -115,8 +135,14 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
                     });
                     break;
 
+
                 case BookingSensors.TEXT_INFO_TYPE:
                     if (holder instanceof TextBookingViewHolder) {
+                        Log.d(TAG, "onBindViewHolder: print");
+                        //holder.itemView.setBackgroundColor(Color.LTGRAY);
+                        //this.textViewItem=holder.itemView;
+                        ((TextBookingViewHolder) holder).relativeLayoutxt.setBackgroundColor(Color.LTGRAY);
+                        //textItemViewColorGray=true;
                         ((TextBookingViewHolder) holder).textViewParkingAreaName.setText(ApplicationUtils.capitalize(bookingSensors.getParkingArea().trim()));
                         ((TextBookingViewHolder) holder).textViewParkingAreaCount.setText(bookingSensors.getCount());
                         ((TextBookingViewHolder) holder).textViewParkingDistance.setText(
@@ -124,10 +150,11 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
                         ((TextBookingViewHolder) holder).textViewParkingTravelTime.setText(bookingSensors.getDuration());
                         ((TextBookingViewHolder) holder).textViewStatic.setText(bookingSensors.getText());
 
-                        ((TextBookingViewHolder) holder).itemView.setBackgroundColor(selectedItem == position ? Color.LTGRAY : Color.TRANSPARENT);
+                        //((TextBookingViewHolder) holder).itemView.setBackgroundColor(selectedItem == position ? Color.LTGRAY : Color.TRANSPARENT);
 
                         ((TextBookingViewHolder) holder).itemView.setOnClickListener(v -> {
                             selectedItem = position;
+
                             try {
                                 notifyDataSetChanged();
                                 homeFragment.linearLayoutSearchBottomButton.setVisibility(View.GONE);
@@ -386,6 +413,9 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
             super(itemView);
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(this);
+
+
+
         }
 
         @Override
@@ -414,6 +444,9 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
 //                Toast.makeText(v.getContext(), "You clicked " + clickedDataItem.getParkingArea(), Toast.LENGTH_SHORT).show();
 //            }
         }
+
+
+
     }
 
     public class TextBookingViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -432,14 +465,17 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
         public TextView textViewStatic;
         @BindView(R.id.view)
         View view;
-        @BindView(R.id.relativeLayout)
-        RelativeLayout relativeLayout;
+        @BindView(R.id.relativeLayoutTxt)
+        public RelativeLayout relativeLayoutxt;
+
 
 
         public TextBookingViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(this);
+
+
         }
 
         @Override
@@ -461,5 +497,8 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
                 Timber.e(e.toString());
             }
         }
+
+
     }
+
 }
