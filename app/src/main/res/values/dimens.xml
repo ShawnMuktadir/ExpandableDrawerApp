@@ -54,4 +54,6 @@
     <dimen name="dimTex12">12sp</dimen>
     <dimen name="dimTex20">20sp</dimen>
     <dimen name="row_padding_vertical">10dp</dimen>
+    <dimen name="dim40">40dp</dimen>
+    <dimen name="dim45">45dp</dimen>
 </resources>

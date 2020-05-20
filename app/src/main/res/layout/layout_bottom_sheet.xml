@@ -18,11 +18,11 @@
 
         <View
             android:id="@+id/view"
-            android:layout_width="@dimen/dim100"
+            android:layout_width="@dimen/dim45"
             android:layout_height="@dimen/dim3"
             android:layout_gravity="center"
             android:layout_marginTop="@dimen/dim5"
-            android:background="@color/gray2"
+            android:background="@drawable/border_bottom_sheet"
             android:padding="@dimen/dim5"
             android:visibility="visible" />
 
