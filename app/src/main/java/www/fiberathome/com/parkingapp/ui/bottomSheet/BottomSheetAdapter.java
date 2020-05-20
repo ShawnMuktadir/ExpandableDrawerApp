@@ -37,9 +37,8 @@ import www.fiberathome.com.parkingapp.ui.fragments.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.SharedData;
 
-public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.TextBookingViewHolderx>
-{
-    private  final String TAG =getClass().getSimpleName() ;
+public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.TextBookingViewHolderx> {
+    private final String TAG = getClass().getSimpleName();
     public Context context;
     private HomeFragment homeFragment;
     private ArrayList<BookingSensors> bookingSensorsArrayList;
@@ -47,8 +46,9 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
     public Location location;
     private int selectedItem = -1;
     RecyclerView.ViewHolder holder;
-    private View view=null;
-    private int count=0;
+    private View view = null;
+    private int count = 0;
+
     public BottomSheetAdapter(Context context, HomeFragment homeFragment, ArrayList<BookingSensors> sensors, Location onConnectedLocation) {
         this.context = context;
         this.homeFragment = homeFragment;
@@ -58,25 +58,22 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
     @NonNull
     @Override
-    public TextBookingViewHolderx onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
-    {
-        View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.bottom_sheet_text_recycler_item,parent,false);
+    public TextBookingViewHolderx onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.bottom_sheet_text_recycler_item, parent, false);
         return new TextBookingViewHolderx(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull TextBookingViewHolderx holder, int position)
-    {
+    public void onBindViewHolder(@NonNull TextBookingViewHolderx holder, int position) {
         BookingSensors bookingSensors = bookingSensorsArrayList.get(position);
 
-        if(bookingSensors.type==BookingSensors.TEXT_INFO_TYPE)
-        {
+        if (bookingSensors.type == BookingSensors.TEXT_INFO_TYPE) {
             //view=holder.itemView;
             count++;
-            if(count<=1){
-                Log.d(TAG, "onBindViewHolder: "+count);
+            if (count <= 1) {
+                Timber.d("onBindViewHolder: " + count);
                 selectedItem = position;
-                Log.d(TAG, "onBindViewHolder: "+position);
+                Timber.d("onBindViewHolder: " + position);
                 holder.relativeLayoutxtBotoom.setVisibility(View.VISIBLE);
                 holder.textViewStatic.setText(bookingSensors.getText());
                 holder.itemView.setBackgroundColor(Color.LTGRAY);
@@ -89,9 +86,8 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
                 Timber.e(e.getMessage());
             }*/
 
-        }else {
+        } else {
             holder.relativeLayoutxtBotoom.setVisibility(View.GONE);
-
         }
 
         holder.textViewParkingAreaName.setText(ApplicationUtils.capitalize(bookingSensors.getParkingArea().trim()));
@@ -99,7 +95,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         holder.textViewParkingDistance.setText(new DecimalFormat("##.##").format(bookingSensors.getDistance()) + " km");
         holder.textViewParkingTravelTime.setText(bookingSensors.getDuration());
 
-         holder.itemView.setOnClickListener(v -> {
+        holder.itemView.setOnClickListener(v -> {
             selectedItem = position;
 
             try {
@@ -116,9 +112,9 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
                     homeFragment.fetchSensors(homeFragmentOnConnectedLocation);
                 }
             }
-             getDestinationDurationInfoForSearchLayout(context, new LatLng(bookingSensors.getLat(), bookingSensors.getLng()),holder,bookingSensors.type);
-             homeFragment.layoutBottomSheetVisible(true, bookingSensors.getParkingArea(), bookingSensors.getCount(),
-                     holder.textViewParkingDistance.getText().toString(),holder.textViewParkingTravelTime.getText().toString(),
+            getDestinationDurationInfoForSearchLayout(context, new LatLng(bookingSensors.getLat(), bookingSensors.getLng()), holder, bookingSensors.type);
+            homeFragment.layoutBottomSheetVisible(true, bookingSensors.getParkingArea(), bookingSensors.getCount(),
+                    holder.textViewParkingDistance.getText().toString(), holder.textViewParkingTravelTime.getText().toString(),
                     new LatLng(bookingSensors.getLat(), bookingSensors.getLng()));
 
             homeFragment.bottomSheetBehavior.setHideable(false);
@@ -127,21 +123,16 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
         });
 
-        if(selectedItem==position){
+        if (selectedItem == position) {
             holder.itemView.setBackgroundColor(Color.LTGRAY);
             //Toast.makeText(context, "if", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "onBindViewHolder: gray");
-        }else{
+        } else {
             holder.itemView.setBackgroundColor(Color.TRANSPARENT);
             //Toast.makeText(context, "else", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "onBindViewHolder: transparent");
         }
-       // holder.itemView.setBackgroundColor(selectedItem == position ? Color.LTGRAY : Color.TRANSPARENT);
-
-
-
-
-
+        // holder.itemView.setBackgroundColor(selectedItem == position ? Color.LTGRAY : Color.TRANSPARENT);
     }
 
     @Override
@@ -155,8 +146,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
     private String fromCurrentLocationDuration;
     Location onConnectedLocation;
 
-    private void getDestinationDurationInfoForSearchLayout(Context context, LatLng latLngDestination,TextBookingViewHolderx textBookingViewHolder,int type)
-    {
+    private void getDestinationDurationInfoForSearchLayout(Context context, LatLng latLngDestination, TextBookingViewHolderx textBookingViewHolder, int type) {
 
         if (SharedData.getInstance().getOnConnectedLocation() != null) {
             onConnectedLocation = SharedData.getInstance().getOnConnectedLocation();
@@ -197,12 +187,10 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
                             homeFragment.textViewBottomSheetParkingDistance.setText(fromCurrentLocationDistance);
                             homeFragment.textViewBottomSheetParkingTravelTime.setText(fromCurrentLocationDuration);
-                            if(type==BookingSensors.TEXT_INFO_TYPE)
-                            {
+                            if (type == BookingSensors.TEXT_INFO_TYPE) {
 
-                            }
-                            else{
-                               // Timber.e("getDestinationDurationInfo duration -> %s", bookingViewHolder.textViewParkingTravelTime.getText().toString());
+                            } else {
+                                // Timber.e("getDestinationDurationInfo duration -> %s", bookingViewHolder.textViewParkingTravelTime.getText().toString());
                             }
 
                             //------------Displaying Distance and Time-----------------\\
@@ -232,7 +220,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
     }
 
     // implements View.OnClickListener
-    public class TextBookingViewHolderx extends RecyclerView.ViewHolder{
+    public static class TextBookingViewHolderx extends RecyclerView.ViewHolder {
 
         @BindView(R.id.textViewParkingAreaName)
         public TextView textViewParkingAreaName;

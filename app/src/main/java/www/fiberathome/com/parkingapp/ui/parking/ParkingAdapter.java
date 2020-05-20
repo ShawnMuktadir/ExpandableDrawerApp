@@ -4,11 +4,13 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -44,6 +46,8 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public LatLng location;
     private Location onConnectedLocation;
 
+    private int selectedPosition = -1;
+
     public ParkingAdapter(Context context, ParkingFragment parkingFragment, ArrayList<SensorArea> sensorAreas, Location onConnectedLocation) {
         this.context = context;
         this.parkingFragment = parkingFragment;
@@ -66,6 +70,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
         ParkingViewHolder parkingViewHolder = (ParkingViewHolder) viewHolder;
         SensorArea sensorArea = sensorAreas.get(position);
+//        selectedPosition = position;
         parkingViewHolder.textViewParkingAreaName.setText(ApplicationUtils.capitalize(sensorArea.getParkingArea()));
         parkingViewHolder.textViewParkingAreaCount.setText(sensorArea.getCount());
 
@@ -77,8 +82,35 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         sensorArea.setDuration(duration);
         parkingViewHolder.textViewParkingTravelTime.setText(sensorArea.getDuration());
 
+        // Here I am just highlighting the background
+//        parkingViewHolder.itemView.setBackgroundColor(selectedPosition == position ? Color.LTGRAY : Color.TRANSPARENT);
+
+        parkingViewHolder.itemView.setOnClickListener(v -> {
+            selectedPosition = position;
+            try {
+                notifyDataSetChanged();
+            } catch (Exception e) {
+                Timber.e(e);
+            }
+        });
+
+        if (selectedPosition == position) {
+            parkingViewHolder.itemView.setBackgroundColor(Color.LTGRAY);
+//            Toast.makeText(context, "if", Toast.LENGTH_SHORT).show();
+            Timber.e("parkingAdapter if onBindViewHolder: gray");
+        } else {
+            parkingViewHolder.itemView.setBackgroundColor(Color.TRANSPARENT);
+//            Toast.makeText(context, "else", Toast.LENGTH_SHORT).show();
+            Timber.e("parkingAdapter else onBindViewHolder: transparent");
+        }
 
         parkingViewHolder.relativeLayout.setOnClickListener(v -> {
+            selectedPosition = position;
+            try{
+                notifyDataSetChanged();
+            }catch (Exception e){
+                Timber.e(e);
+            }
             EventBus.getDefault().post(new GetDirectionEvent(new LatLng(sensorArea.getLat(), sensorArea.getLng())));
 //            parkingFragment.layoutVisible(true, sensorArea.getParkingArea(), sensorArea.getCount(), String.valueOf(distance), new LatLng(sensorArea.getLat(), sensorArea.getLng()));
 
@@ -93,36 +125,6 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     }
 
-
-    /**
-     * Draw polyline on map, get distance and duration of the route
-     * <p>
-     * //     * @param latLngDestination LatLng of the destination
-     */
-
-    private double distance(double lat1, double lon1, double lat2, double lon2) {
-        double theta = lon1 - lon2;
-        double mile = Math.sin(deg2rad(lat1))
-                * Math.sin(deg2rad(lat2))
-                + Math.cos(deg2rad(lat1))
-                * Math.cos(deg2rad(lat2))
-                * Math.cos(deg2rad(theta));
-        mile = Math.acos(mile);
-        mile = rad2deg(mile);
-        mile = mile * 60 * 1.1515;
-        double km = mile / 0.62137;
-        Timber.e("distance -> %s", km);
-        return (km);
-    }
-
-    private double deg2rad(double deg) {
-        return (deg * Math.PI / 180.0);
-    }
-
-    private double rad2deg(double rad) {
-        return (rad * 180.0 / Math.PI);
-    }
-
     @Override
     public int getItemCount() {
         return sensorAreas.size();
@@ -134,7 +136,8 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         notifyDataSetChanged();
     }
 
-    public class ParkingViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    // implements View.OnClickListener
+    public class ParkingViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.textViewParkingAreaName)
         TextView textViewParkingAreaName;
@@ -154,12 +157,6 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         public ParkingViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
-            itemView.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View v) {
-
         }
     }
 }
