@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -83,32 +84,13 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         parkingViewHolder.textViewParkingTravelTime.setText(sensorArea.getDuration());
 
         // Here I am just highlighting the background
-//        parkingViewHolder.itemView.setBackgroundColor(selectedPosition == position ? Color.LTGRAY : Color.TRANSPARENT);
+        parkingViewHolder.itemView.setBackgroundColor(selectedPosition == position ? Color.LTGRAY : Color.TRANSPARENT);
 
-        parkingViewHolder.itemView.setOnClickListener(v -> {
+        parkingViewHolder.relativeLayout.setOnClickListener(v -> {
             selectedPosition = position;
             try {
                 notifyDataSetChanged();
             } catch (Exception e) {
-                Timber.e(e);
-            }
-        });
-
-        if (selectedPosition == position) {
-            parkingViewHolder.itemView.setBackgroundColor(Color.LTGRAY);
-//            Toast.makeText(context, "if", Toast.LENGTH_SHORT).show();
-            Timber.e("parkingAdapter if onBindViewHolder: gray");
-        } else {
-            parkingViewHolder.itemView.setBackgroundColor(Color.TRANSPARENT);
-//            Toast.makeText(context, "else", Toast.LENGTH_SHORT).show();
-            Timber.e("parkingAdapter else onBindViewHolder: transparent");
-        }
-
-        parkingViewHolder.relativeLayout.setOnClickListener(v -> {
-            selectedPosition = position;
-            try{
-                notifyDataSetChanged();
-            }catch (Exception e){
                 Timber.e(e);
             }
             EventBus.getDefault().post(new GetDirectionEvent(new LatLng(sensorArea.getLat(), sensorArea.getLng())));
@@ -118,8 +100,14 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             Timber.e("Sensor Area to SharedData -> %s", new Gson().toJson(sensorArea));
             SharedData.getInstance().setSensorArea(sensorArea);
             //Pop the Parking Fragment and Replace it with HomeFragment
-            MainActivity parentActivity = (MainActivity) context;
-            parentActivity.replaceFragment();
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    MainActivity parentActivity = (MainActivity) context;
+                    parentActivity.replaceFragment();
+                }
+            }, 500);
 //            EventBus.getDefault().post(new GetDirectionAfterButtonClickEvent(HomeFragment.location));
         });
 
@@ -151,8 +139,8 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         TextView textViewParkingDistance;
         @BindView(R.id.textViewParkingTravelTime)
         TextView textViewParkingTravelTime;
-        @BindView(R.id.view)
-        View view;
+//        @BindView(R.id.view)
+//        View view;
 
         public ParkingViewHolder(View itemView) {
             super(itemView);

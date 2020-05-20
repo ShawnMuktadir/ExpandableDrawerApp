@@ -59,7 +59,6 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
         this.homeFragment = homeFragment;
         this.bookingSensorsArrayList = sensors;
         this.location = onConnectedLocation;
-
 //        selectedItem = -1;
     }
 

@@ -2,35 +2,33 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/relativeLayout"
     android:layout_width="match_parent"
-    android:layout_height="70dp"
+    android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:background="?android:attr/selectableItemBackground"
     android:clickable="true"
-    android:focusable="true">
+    android:focusable="true"
+    android:padding="@dimen/dim2">
 
     <LinearLayout
         android:id="@+id/rowFG"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/white"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:weightSum="3.35">
 
-        <View
-            android:id="@+id/view"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight=".03"
-            android:background="@color/quantum_grey"
-            android:padding="@dimen/dim3"
-            android:visibility="gone" />
+<!--        <View-->
+<!--            android:id="@+id/view"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_weight=".03"-->
+<!--            android:background="@color/quantum_grey"-->
+<!--            android:visibility="gone" />-->
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="vertical"
-            android:padding="@dimen/dim3">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/textViewParkingAreaCount"
@@ -65,10 +63,8 @@
             android:layout_height="match_parent"
             android:layout_marginStart="@dimen/dim5"
             android:layout_weight="2.3"
-            android:background="@android:color/white"
             android:gravity="center"
-            android:orientation="vertical"
-            android:padding="@dimen/dim2">
+            android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/linearLayoutParkingAreaName"
@@ -130,14 +126,13 @@
                     android:gravity="end"
                     android:maxLines="1"
                     android:padding="@dimen/dim3"
-                    android:text="@string/parking_time"
+                    android:text="@string/time"
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/_10ssp"
                     android:textStyle="normal"
                     android:visibility="gone" />
 
             </LinearLayout>
-
         </LinearLayout>
     </LinearLayout>
 
