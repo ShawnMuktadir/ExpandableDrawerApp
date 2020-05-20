@@ -39,7 +39,6 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private ArrayList<SensorArea> sensorAreas;
     private ParkingFragment parkingFragment;
     private HomeFragment homeFragment;
-    private int selectedItem = -1;
     private double distance;
     private String duration;
     public LatLng location;
@@ -50,7 +49,6 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         this.parkingFragment = parkingFragment;
         this.sensorAreas = sensorAreas;
         this.onConnectedLocation = onConnectedLocation;
-//        selectedItem = -1;
     }
 
     @NonNull
@@ -79,15 +77,11 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         sensorArea.setDuration(duration);
         parkingViewHolder.textViewParkingTravelTime.setText(sensorArea.getDuration());
 
-        parkingViewHolder.itemView.setBackgroundColor(selectedItem == position ? Color.LTGRAY : Color.TRANSPARENT);
-        parkingViewHolder.itemView.setOnClickListener(v -> {
-            selectedItem = position;
-            try {
-                notifyDataSetChanged();
-            } catch (Exception e) {
-                Timber.e(e);
-            }
+
+        parkingViewHolder.relativeLayout.setOnClickListener(v -> {
             EventBus.getDefault().post(new GetDirectionEvent(new LatLng(sensorArea.getLat(), sensorArea.getLng())));
+//            parkingFragment.layoutVisible(true, sensorArea.getParkingArea(), sensorArea.getCount(), String.valueOf(distance), new LatLng(sensorArea.getLat(), sensorArea.getLng()));
+
             //data is set in SharedData, to retrieve this data in HomeFragment
             Timber.e("Sensor Area to SharedData -> %s", new Gson().toJson(sensorArea));
             SharedData.getInstance().setSensorArea(sensorArea);
@@ -97,27 +91,6 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 //            EventBus.getDefault().post(new GetDirectionAfterButtonClickEvent(HomeFragment.location));
         });
 
-//        parkingViewHolder.relativeLayout.setOnClickListener(v -> {
-//            EventBus.getDefault().post(new GetDirectionEvent(new LatLng(sensorArea.getLat(), sensorArea.getLng())));
-////            parkingFragment.layoutVisible(true, sensorArea.getParkingArea(), sensorArea.getCount(), String.valueOf(distance), new LatLng(sensorArea.getLat(), sensorArea.getLng()));
-//
-//            //data is set in SharedData, to retrieve this data in HomeFragment
-//            Timber.e("Sensor Area to SharedData -> %s", new Gson().toJson(sensorArea));
-//            SharedData.getInstance().setSensorArea(sensorArea);
-//            //Pop the Parking Fragment and Replace it with HomeFragment
-//            MainActivity parentActivity = (MainActivity) context;
-//            parentActivity.replaceFragment();
-//            selectedItem = position;
-//            notifyDataSetChanged();
-////            EventBus.getDefault().post(new GetDirectionAfterButtonClickEvent(HomeFragment.location));
-//        });
-//        if (position == selectedItem) {
-//            //Show view visibility
-//            parkingViewHolder.view.setVisibility(View.VISIBLE);
-//        } else {
-//            //Hide view visibility
-//            parkingViewHolder.view.setVisibility(View.GONE);
-//        }
     }
 
 
@@ -186,18 +159,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         @Override
         public void onClick(View v) {
-            // Below line is just like a safety check, because sometimes holder could be null,
-            // in that case, getAdapterPosition() will return RecyclerView.NO_POSITION
-            if (getAdapterPosition() == RecyclerView.NO_POSITION) return;
 
-            // Updating old as well as new positions
-            try {
-                notifyItemChanged(selectedItem);
-                selectedItem = getAdapterPosition();
-                notifyItemChanged(selectedItem);
-            } catch (Exception e) {
-                Timber.e(e);
-            }
         }
     }
 }

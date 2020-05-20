@@ -273,7 +273,7 @@ public class ParkingFragment extends Fragment {
                 try {
                     JSONObject object = new JSONObject(response);
                     JSONArray jsonArray = object.getJSONArray("sensors");
-                    Timber.e("jsonArray length parkingFragment-> %s",jsonArray.length());
+                    Timber.e("jsonArray length parkingFragment-> %s", jsonArray.length());
                     for (int i = 0; i < jsonArray.length(); i++) {
                         SensorArea sensorArea = new SensorArea();
                         JSONArray array = jsonArray.getJSONArray(i);
@@ -316,11 +316,6 @@ public class ParkingFragment extends Fragment {
 
     private void setFragmentControls(ArrayList<SensorArea> sensorAreas) {
         this.sensorAreas = sensorAreas;
-//        recyclerViewParking.setHasFixedSize(true);
-//        recyclerViewParking.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
-//        parkingAdapter = new ParkingAdapter(context, this, sensorAreas, onConnectedLocation);
-//        recyclerViewParking.setAdapter(parkingAdapter);
-
         recyclerViewParking.setHasFixedSize(true);
         recyclerViewParking.setItemViewCacheSize(20);
         recyclerViewParking.setNestedScrollingEnabled(false);
@@ -333,7 +328,7 @@ public class ParkingFragment extends Fragment {
             @Override
             public void onClick(View view, int position) {
 //                Movie movie = movieList.get(position);
-//                Toast.makeText(getApplicationContext(), movie.getTitle() + " is selected!", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, position + " is selected!", Toast.LENGTH_SHORT).show();
             }
 
             @Override

@@ -40,7 +40,7 @@ import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.SharedData;
 
 public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private  final String TAG =getClass().getSimpleName() ;
+    private final String TAG = getClass().getSimpleName();
 //public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdapter.BookingViewHolder> {
 
     public Context context;
@@ -49,9 +49,9 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
     public BookingViewHolder viewHolder;
     public Location location;
     private int selectedItem = -1;
-   /* private int total_types;
-    private View textViewItem;
-    private boolean textItemViewColorGray=false;*/
+    /* private int total_types;
+     private View textViewItem;
+     private boolean textItemViewColorGray=false;*/
     RecyclerView.ViewHolder holder;
 
     public BottomSheetSensorAdapter(Context context, HomeFragment homeFragment, ArrayList<BookingSensors> sensors, Location onConnectedLocation) {
@@ -62,7 +62,6 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
 
 //        selectedItem = -1;
     }
-
 
 
     @NonNull
@@ -86,7 +85,6 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
         this.holder = holder;
         BookingSensors bookingSensors = bookingSensorsArrayList.get(position);
 
-
         if (bookingSensors != null) {
             switch (bookingSensors.type) {
                 case BookingSensors.INFO_TYPE:
@@ -96,16 +94,14 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
                     ((BookingViewHolder) holder).textViewParkingTravelTime.setText(bookingSensors.getDuration());
                     ((BookingViewHolder) holder).itemView.setBackgroundColor(selectedItem == position ? Color.LTGRAY : Color.TRANSPARENT);
 
-                    ((BookingViewHolder) holder).itemView.setOnClickListener(v ->
-                    {
+                    ((BookingViewHolder) holder).itemView.setOnClickListener(v -> {
 
-                        Toast.makeText(context, "clicked"+position, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "clicked" + position, Toast.LENGTH_SHORT).show();
                         selectedItem = position;
                         assert false;
                         ((TextBookingViewHolder) holder).relativeLayoutxt.setBackgroundColor(Color.TRANSPARENT);
 
                         //textViewItem.setBackgroundColor(Color.TRANSPARENT);
-
 
 
                         try {
@@ -243,7 +239,7 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
     private LatLng origin = null;
     private String fromCurrentLocationDistance;
     private String fromCurrentLocationDuration;
-    Location onConnectedLocation;
+    private Location onConnectedLocation;
 
     private void getDestinationDurationInfoForSearchLayout(Context context, LatLng latLngDestination, BottomSheetSensorAdapter.BookingViewHolder bookingViewHolder) {
 
@@ -415,7 +411,6 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
             itemView.setOnClickListener(this);
 
 
-
         }
 
         @Override
@@ -446,7 +441,6 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
         }
 
 
-
     }
 
     public class TextBookingViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -467,7 +461,6 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
         View view;
         @BindView(R.id.relativeLayoutTxt)
         public RelativeLayout relativeLayoutxt;
-
 
 
         public TextBookingViewHolder(View itemView) {

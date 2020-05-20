@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="70dp"
     android:layout_gravity="center"
-    android:background="?android:attr/selectableItemBackground"
+    android:background="@drawable/selector_row"
     android:clickable="true"
     android:focusable="true"
     android:orientation="vertical">

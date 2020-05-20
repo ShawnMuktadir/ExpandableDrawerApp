@@ -1148,7 +1148,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         }*/
         Timber.e("setBottomSheetRecyclerViewAdapter bookingSensors -> %s", new Gson().toJson(bookingSensors));
         //bottomSheetSensorAdapter = new BottomSheetSensorAdapter(context, this, bookingSensors, onConnectedLocation);
-        bottomSheetAdapter=new BottomSheetAdapter(context,this,bookingSensors, onConnectedLocation);
+        bottomSheetAdapter = new BottomSheetAdapter(context, this, bookingSensors, onConnectedLocation);
         bottomSheetRecyclerView.setAdapter(bottomSheetAdapter);
     }
 
@@ -1526,7 +1526,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                                     textViewSearchParkingDistance.getText().toString(),
                                     textViewSearchParkingTravelTime.getText().toString());
                             textViewBottomSheetParkingTravelTime.setText(duration);
-                            Timber.e("textViewBottomSheetParkingTravelTime duration-> %s",textViewBottomSheetParkingTravelTime.getText().toString());
+                            Timber.e("textViewBottomSheetParkingTravelTime duration-> %s", textViewBottomSheetParkingTravelTime.getText().toString());
                             nearByDuration = duration;
 //                            nearByDistance = distance;
                             fetchDuration = duration;
