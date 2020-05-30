@@ -48,9 +48,9 @@
             android:id="@+id/bottomsheet_recyclerview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/dim5"
+
             android:clipToPadding="false"
-            android:minHeight="@dimen/_510sdp"
+            android:minHeight="@dimen/_500sdp"
             android:nestedScrollingEnabled="false"
             android:paddingBottom="@dimen/dim50"
             android:scrollbarSize="@dimen/dim3"

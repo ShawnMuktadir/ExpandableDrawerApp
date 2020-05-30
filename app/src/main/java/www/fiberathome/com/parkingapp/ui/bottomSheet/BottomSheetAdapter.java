@@ -27,6 +27,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -96,7 +97,9 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         holder.textViewParkingTravelTime.setText(bookingSensors.getDuration());
 
         holder.itemView.setOnClickListener(v -> {
-            selectedItem = position;
+            selectedItem = 0;
+            Collections.swap(bookingSensorsArrayList, position, 0);
+            notifyItemMoved(position, 0);
 
             try {
                 notifyDataSetChanged();
@@ -119,7 +122,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
             homeFragment.bottomSheetBehavior.setHideable(false);
             homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-            homeFragment.bottomSheetBehavior.setPeekHeight(300);
+            homeFragment.bottomSheetBehavior.setPeekHeight(350);
 
         });
 
@@ -144,7 +147,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
     private LatLng origin = null;
     private String fromCurrentLocationDistance;
     private String fromCurrentLocationDuration;
-    Location onConnectedLocation;
+    private Location onConnectedLocation;
 
     private void getDestinationDurationInfoForSearchLayout(Context context, LatLng latLngDestination, TextBookingViewHolderx textBookingViewHolder, int type) {
 

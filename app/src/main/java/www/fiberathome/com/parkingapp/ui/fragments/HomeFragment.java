@@ -1,6 +1,7 @@
 package www.fiberathome.com.parkingapp.ui.fragments;
 
 import android.Manifest;
+import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 
@@ -1058,12 +1059,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                                 fetchDistance, count, initialNearestDuration,
                                 BookingSensors.INFO_TYPE, 1));
                         //fetch distance in ascending order
-                        Collections.sort(bookingSensorsArrayListGlobal, new Comparator<BookingSensors>() {
-                            @Override
-                            public int compare(BookingSensors c1, BookingSensors c2) {
-                                return Double.compare(c1.getDistance(), c2.getDistance());
-                            }
-                        });
+                        Collections.sort(bookingSensorsArrayListGlobal, (c1, c2) -> Double.compare(c1.getDistance(), c2.getDistance()));
                         Timber.e("bookingSensorsArrayListGlobal new -> %s", new Gson().toJson(bookingSensorsArrayListGlobal));
                         bottomSheetBehavior.setPeekHeight(350);
                         Log.d(TAG, "fetchBottomSheetSensors: inside if" + bookingSensorsArrayListGlobal);
@@ -1142,7 +1138,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         }));
         ViewCompat.setNestedScrollingEnabled(bottomSheetRecyclerView, false);
         Timber.e("bensorSensorArrayList check -> %s", new Gson().toJson(sensors));
-
         setBottomSheetRecyclerViewAdapter(sensors);
 
 //        Timber.e("booking sensor recyclerView -> %s", bottomSheetRecyclerView.getAdapter().getItemCount());
@@ -1562,7 +1557,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     //getting the direction url
     private String getDirectionsUrl(LatLng origin, LatLng dest) {
         // Key
-        String key = "key=AIzaSyDMWfYh5kjSQTALbZb-C0lSNACpcH5RDU4";
+//        String key = "key=AIzaSyDMWfYh5kjSQTALbZb-C0lSNACpcH5RDU4";
+        String key = "key=AIzaSyCsEedODXq-mkA1JYedp-Y-QARH0x4h0kI";
         // Origin of route
         String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
         // Destination of route
@@ -1614,6 +1610,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                             blackPolylineOptions = new PolylineOptions();
                             blackPolylineOptions.color(Color.BLACK);
                             blackPolylineOptions.width(5);
+                            blackPolylineOptions.zIndex(5f);
                             blackPolylineOptions.startCap(new SquareCap());
                             blackPolylineOptions.endCap(new SquareCap());
                             blackPolylineOptions.jointType(JointType.ROUND);
@@ -1627,6 +1624,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                             final ValueAnimator polyLineAnimator = ValueAnimator.ofInt(0, 100);
                             polyLineAnimator.setDuration(2000);
                             polyLineAnimator.setRepeatCount(ValueAnimator.INFINITE);
+                            polyLineAnimator.setRepeatMode(ValueAnimator.RESTART);
                             polyLineAnimator.setInterpolator(new LinearInterpolator());
                             polyLineAnimator.addUpdateListener(valueAnimator -> {
                                 List<LatLng> points = grayPolyline.getPoints();
@@ -1636,55 +1634,36 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                                 List<LatLng> p = points.subList(0, newPoints);
                                 blackPolyline.setPoints(p);
                             });
+
+                            polyLineAnimator.addListener(new Animator.AnimatorListener() {
+                                @Override
+                                public void onAnimationStart(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+                                    List<LatLng> greyLatLng = grayPolyline.getPoints();
+                                    if (greyLatLng != null) {
+                                        greyLatLng.clear();
+
+                                    }
+                                    polyLineAnimator.start();
+
+                                }
+
+                                @Override
+                                public void onAnimationCancel(Animator animation) {
+                                    polyLineAnimator.cancel();
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animator animation) {
+
+                                }
+                            });
                             polyLineAnimator.start();
                             zoomRoute(mMap, polyLineList);
-                            //Add car markar
-//                            marker = mMap.addMarker(new MarkerOptions().position(myLocationLatLng)
-//                                    .flat(true)
-//                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_car)));
-
-                            //car moving
-//                            handler = new Handler();
-//                            index = -1;
-//                            next = 1;
-//                            handler.postDelayed(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    if (index < polyLineList.size() - 1) {
-//                                        index++;
-//                                        next = index + 1;
-//                                    }
-//                                    if (index < polyLineList.size() - 1) {
-//                                        startPosition = polyLineList.get(index);
-//                                        endPosition = polyLineList.get(next);
-//                                    }
-//
-//                                    ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, 1);
-//                                    valueAnimator.setDuration(3000);
-//                                    valueAnimator.setInterpolator(new LinearInterpolator());
-//                                    valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-//                                        @Override
-//                                        public void onAnimationUpdate(ValueAnimator valueAnimator) {
-//                                            v = valueAnimator.getAnimatedFraction();
-//                                            lng = v * endPosition.longitude + (1 - v)
-//                                                    * startPosition.longitude;
-//                                            lat = v * endPosition.latitude + (1 - v)
-//                                                    * startPosition.latitude;
-//                                            LatLng newPos = new LatLng(lat, lng);
-//                                            currentLocationMarker.setPosition(newPos);
-//                                            currentLocationMarker.setAnchor(0.5f, 0.5f);
-//                                            currentLocationMarker.setRotation(getBearing(startPosition, newPos));
-//                                            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(
-//                                                    new CameraPosition.Builder()
-//                                                            .target(newPos)
-//                                                            .zoom(13.5f)
-//                                                            .build()));
-//                                        }
-//                                    });
-//                                    valueAnimator.start();
-//                                    handler.postDelayed(this, 3000);
-//                                }
-//                            }, 3000);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -1698,7 +1677,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
         mMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
                 .target(mMap.getCameraPosition().target)
-                .zoom(12)
+                .zoom(13.5f)
                 .bearing(30)
                 .tilt(30)
                 .build()));
@@ -1719,11 +1698,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         for (LatLng latLngPoint : lstLatLngRoute)
             boundsBuilder.include(latLngPoint);
 
-        int routePadding = 150;
+        int routePadding = 200;
         int left = 50;
         int right = 50;
-        int top = 50;
-        int bottom = 50;
+        int top = 20;
+        int bottom = 100;
 
         LatLngBounds latLngBounds = boundsBuilder.build();
 
