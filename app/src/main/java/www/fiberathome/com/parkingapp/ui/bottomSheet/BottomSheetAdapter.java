@@ -107,18 +107,20 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
             } catch (Exception e) {
                 Timber.e(e);
             }
-
+            Location homeFragmentOnConnectedLocation = null;
             if (SharedData.getInstance().getOnConnectedLocation() != null) {
-                Location homeFragmentOnConnectedLocation = SharedData.getInstance().getOnConnectedLocation();
+                homeFragmentOnConnectedLocation = SharedData.getInstance().getOnConnectedLocation();
                 if (homeFragment.mMap != null) {
                     homeFragment.mMap.clear();
                     homeFragment.fetchSensors(homeFragmentOnConnectedLocation);
+//                    homeFragment.fetchBottomSheetSensors(homeFragmentOnConnectedLocation);
                 }
             }
             getDestinationDurationInfoForSearchLayout(context, new LatLng(bookingSensors.getLat(), bookingSensors.getLng()), holder, bookingSensors.type);
             homeFragment.layoutBottomSheetVisible(true, bookingSensors.getParkingArea(), bookingSensors.getCount(),
                     holder.textViewParkingDistance.getText().toString(), holder.textViewParkingTravelTime.getText().toString(),
                     new LatLng(bookingSensors.getLat(), bookingSensors.getLng()));
+
 
             homeFragment.bottomSheetBehavior.setHideable(false);
             homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
