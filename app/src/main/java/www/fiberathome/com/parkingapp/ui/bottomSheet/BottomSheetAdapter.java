@@ -102,7 +102,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
                 notifyDataSetChanged();
                 homeFragment.linearLayoutSearchBottomButton.setVisibility(View.GONE);
             } catch (Exception e) {
-                Timber.e(e.getMessage());
+                Timber.e(e);
             }
 
             if (SharedData.getInstance().getOnConnectedLocation() != null) {
