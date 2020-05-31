@@ -2198,7 +2198,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     MarkerOptions markerOptions = new MarkerOptions();
                     markerOptions.position(location);
                     markerOptions.title(name);
-//                    markerOptions.draggable(true);
                     coordList.add(new LatLng(location.latitude, location.longitude));
                     markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
                     mMap.addMarker(markerOptions).setFlat(true);
@@ -2209,32 +2208,32 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     linearLayoutSearchBottom.setVisibility(View.GONE);
                     linearLayoutMarkerBottom.setVisibility(View.GONE);
                     imageViewBack.setVisibility(View.VISIBLE);
-                    btnGetDirection.setText("Cancel Direction");
-                    btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.red));
+                    btnGetDirection.setText("Confirm Booking");
+                    btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray2));
 //                    BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
 //                    navBar.setVisibility(View.VISIBLE);
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     bottomSheetBehavior.setPeekHeight(350);
                 }
             } else if (getDirectionButtonClicked == 1) {
-                getDirectionButtonClicked--;
+                ApplicationUtils.showMessageDialog("Once reach your destination you can reserve your booking spot!!!", context);
+//                getDirectionButtonClicked--;
                 if (mMap != null) {
-                    bottomSheetBehavior.setPeekHeight(350);
-                    mMap.clear();
-                    fetchSensors(onConnectedLocation);
-                    buttonSearch.setVisibility(View.VISIBLE);
-                    bookingSensorsArrayListGlobal.clear();
-                    bookingSensorsArrayList.clear();
-                    bookingSensorsMarkerArrayList.clear();
-                    animateCamera(onConnectedLocation);
-                    fetchBottomSheetSensors(onConnectedLocation);
-                    layoutVisible(false, "", "", "", null);
-                    linearLayoutBottom.setVisibility(View.GONE);
-                    linearLayoutSearchBottom.setVisibility(View.GONE);
-                    linearLayoutMarkerBottom.setVisibility(View.GONE);
+//                    mMap.clear();
+//                    fetchSensors(onConnectedLocation);
+//                    buttonSearch.setVisibility(View.VISIBLE);
+//                    bookingSensorsArrayListGlobal.clear();
+//                    bookingSensorsArrayList.clear();
+//                    bookingSensorsMarkerArrayList.clear();
+//                    animateCamera(onConnectedLocation);
+//                    fetchBottomSheetSensors(onConnectedLocation);
+//                    layoutVisible(false, "", "", "", null);
+//                    linearLayoutBottom.setVisibility(View.GONE);
+//                    linearLayoutSearchBottom.setVisibility(View.GONE);
+//                    linearLayoutMarkerBottom.setVisibility(View.GONE);
 //                    linearLayoutNameCount.setVisibility(View.GONE);
-                    btnGetDirection.setText("Get Direction");
-                    btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
+//                    btnGetDirection.setText("Get Direction");
+//                    btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
 //                    BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
 //                    navBar.setVisibility(View.VISIBLE);
                     SharedData.getInstance().setSensorArea(null);
@@ -2267,34 +2266,35 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     linearLayoutBottom.setVisibility(View.GONE);
                     linearLayoutMarkerBottom.setVisibility(View.GONE);
                     imageViewSearchBack.setVisibility(View.VISIBLE);
-                    btnSearchGetDirection.setText("Cancel Direction");
-                    btnSearchGetDirection.setBackgroundColor(context.getResources().getColor(R.color.red));
+                    btnSearchGetDirection.setText("Confirm Booking");
+                    btnSearchGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray2));
 //                    BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
 //                    navBar.setVisibility(View.VISIBLE);
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     bottomSheetBehavior.setPeekHeight(350);
                 }
             } else if (getDirectionSearchButtonClicked == 1) {
+                ApplicationUtils.showMessageDialog("Once reach your destination you can reserve your booking spot!!!", context);
                 Timber.e("2nd click getDirectionSearchButtonClicked before decrease -> %s", getDirectionButtonClicked);
-                getDirectionSearchButtonClicked--;
+//                getDirectionSearchButtonClicked--;
                 Timber.e("2nd click getDirectionSearchButtonClicked after decrease-> %s", getDirectionButtonClicked);
                 if (mMap != null) {
-                    mMap.clear();
-                    animateCamera(onConnectedLocation);
-                    bottomSheetBehavior.setPeekHeight(350);
-                    fetchSensors(onConnectedLocation);
-                    buttonSearch.setVisibility(View.VISIBLE);
-                    fetchBottomSheetSensors(onConnectedLocation);
-                    buttonSearch.setText(null);
-                    bookingSensorsArrayList.clear();
-                    bookingSensorsArrayListGlobal.clear();
-                    bookingSensorsMarkerArrayList.clear();
-                    layoutSearchVisible(false, "", "", "", null);
-                    btnSearchGetDirection.setText("Get Direction");
-                    btnSearchGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
-                    linearLayoutBottom.setVisibility(View.GONE);
-                    linearLayoutSearchBottom.setVisibility(View.GONE);
-                    linearLayoutMarkerBottom.setVisibility(View.GONE);
+//                    mMap.clear();
+//                    animateCamera(onConnectedLocation);
+//                    bottomSheetBehavior.setPeekHeight(350);
+//                    fetchSensors(onConnectedLocation);
+//                    buttonSearch.setVisibility(View.VISIBLE);
+//                    fetchBottomSheetSensors(onConnectedLocation);
+//                    buttonSearch.setText(null);
+//                    bookingSensorsArrayList.clear();
+//                    bookingSensorsArrayListGlobal.clear();
+//                    bookingSensorsMarkerArrayList.clear();
+//                    layoutSearchVisible(false, "", "", "", null);
+//                    btnSearchGetDirection.setText("Get Direction");
+//                    btnSearchGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
+//                    linearLayoutBottom.setVisibility(View.GONE);
+//                    linearLayoutSearchBottom.setVisibility(View.GONE);
+//                    linearLayoutMarkerBottom.setVisibility(View.GONE);
 //                    linearLayoutSearchNameCount.setVisibility(View.GONE);
 //                    BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
 //                    navBar.setVisibility(View.VISIBLE);
@@ -2315,7 +2315,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     buttonSearch.setVisibility(View.GONE);
                     bookingSensorsArrayListGlobal.clear();
                     bookingSensorsArrayList.clear();
-                    fetchBottomSheetSensors(onConnectedLocation);
+//                    fetchBottomSheetSensors(onConnectedLocation);
                     MarkerOptions markerOptions = new MarkerOptions();
                     markerOptions.position(markerPlaceLatLng);
                     markerOptions.title(name);
@@ -2331,34 +2331,35 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     linearLayoutMarkerNameCount.setVisibility(View.GONE);
 //                    linearLayoutMarkerBottom.setVisibility(View.VISIBLE);
                     imageViewMarkerBack.setVisibility(View.VISIBLE);
-                    btnMarkerGetDirection.setText("Cancel Direction");
-                    btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.red));
+                    btnMarkerGetDirection.setText("Confirm Booking");
+                    btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray2));
 //                    BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
 //                    navBar.setVisibility(View.VISIBLE);
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     bottomSheetBehavior.setPeekHeight(350);
                 }
             } else if (getDirectionMarkerButtonClicked == 1) {
-                getDirectionMarkerButtonClicked--;
+                ApplicationUtils.showMessageDialog("Once reach your destination you can reserve your booking spot!!!", context);
+//                getDirectionMarkerButtonClicked--;
                 if (mMap != null) {
                     bottomSheetBehavior.setPeekHeight(350);
-                    mMap.clear();
-                    animateCamera(onConnectedLocation);
-                    fetchSensors(onConnectedLocation);
-                    buttonSearch.setVisibility(View.VISIBLE);
-                    bookingSensorsArrayListGlobal.clear();
-                    bookingSensorsArrayList.clear();
-                    bookingSensorsMarkerArrayList.clear();
-                    fetchBottomSheetSensors(onConnectedLocation);
-                    layoutMarkerVisible(false, "", "", "", null);
-                    linearLayoutBottom.setVisibility(View.GONE);
-                    linearLayoutSearchBottom.setVisibility(View.GONE);
-                    btnMarkerGetDirection.setText("Get Direction");
-                    btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
+//                    mMap.clear();
+//                    animateCamera(onConnectedLocation);
+//                    fetchSensors(onConnectedLocation);
+//                    buttonSearch.setVisibility(View.VISIBLE);
+//                    bookingSensorsArrayListGlobal.clear();
+//                    bookingSensorsArrayList.clear();
+//                    bookingSensorsMarkerArrayList.clear();
+//                    fetchBottomSheetSensors(onConnectedLocation);
+//                    layoutMarkerVisible(false, "", "", "", null);
+//                    linearLayoutBottom.setVisibility(View.GONE);
+//                    linearLayoutSearchBottom.setVisibility(View.GONE);
+//                    btnMarkerGetDirection.setText("Get Direction");
+//                    btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
 //                    BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
 //                    navBar.setVisibility(View.VISIBLE);
-                    fromMarkerRouteDrawn = 0;
-                    markerAlreadyClicked = 0;
+//                    fromMarkerRouteDrawn = 0;
+//                    markerAlreadyClicked = 0;
                     Timber.e("btnMarkerGetDirection flag ----> markerAlreadyClicked -> %s", markerAlreadyClicked);
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     bottomSheetBehavior.setPeekHeight(350);
@@ -2375,11 +2376,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     fetchSensors(onConnectedLocation);
                     bookingSensorsArrayListGlobal.clear();
                     bookingSensorsArrayList.clear();
-                    fetchBottomSheetSensors(onConnectedLocation);
+//                    fetchBottomSheetSensors(onConnectedLocation);
                     MarkerOptions markerOptions = new MarkerOptions();
                     markerOptions.position(bottomSheetPlaceLatLng);
                     markerOptions.title(name);
-//                    markerOptions.draggable(true);
                     coordList.add(new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
                     markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
                     mMap.addMarker(markerOptions).setFlat(true);
@@ -2392,48 +2392,49 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 //                    imageViewMarkerBack.setVisibility(View.GONE);
                     linearLayoutBottomSheetBottom.setVisibility(View.VISIBLE);
                     imageViewBottomSheetBack.setVisibility(View.VISIBLE);
-                    btnBottomSheetGetDirection.setText("Cancel Direction");
-                    btnBottomSheetGetDirection.setBackgroundColor(context.getResources().getColor(R.color.red));
+                    btnBottomSheetGetDirection.setText("Confirm Booking");
+                    btnBottomSheetGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray2));
 //                    BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
 //                    navBar.setVisibility(View.VISIBLE);
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     bottomSheetBehavior.setPeekHeight(350);
                 }
             } else if (getDirectionBottomSheetButtonClicked == 1) {
-                getDirectionBottomSheetButtonClicked--;
+//                getDirectionBottomSheetButtonClicked--;
+                ApplicationUtils.showMessageDialog("Once reach your destination you can reserve your booking spot!!!", context);
                 if (mMap != null) {
-                    mMap.clear();
-                    animateCamera(onConnectedLocation);
-                    buttonSearch.setText(null);
-                    buttonSearch.setVisibility(View.VISIBLE);
-                    bottomSheetBehavior.setPeekHeight(350);
-//                    if (bottomSheetPlaceLatLng != null) {
-//                        Timber.e("bottomSheetPlaceLatLng if  dhukche");
-//                        getActivity().getSupportFragmentManager().beginTransaction().replace(this.getId(),
-//                                new HomeFragment()).commit();
-//                    } else {
-//                        Timber.e("searchPlaceLatLng else  dhukche");
-//                        getActivity().getSupportFragmentManager().beginTransaction().replace(this.getId(),
-//                                new HomeFragment()).commit();
-//                    }
-//                    LatLng latLng = new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude());
-//                    MarkerOptions markerOptions = new MarkerOptions();
-//                    markerOptions.position(latLng);
-//                    markerOptions.title("Current Position");
-////                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-//                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car_small));
-//                    mMap.addMarker(markerOptions).setFlat(true);
-                    fetchSensors(onConnectedLocation);
-                    bookingSensorsArrayListGlobal.clear();
-                    bookingSensorsArrayList.clear();
-                    bookingSensorsMarkerArrayList.clear();
-                    fetchBottomSheetSensors(onConnectedLocation);
-                    layoutBottomSheetVisible(false, "", "", "", "", null);
-                    linearLayoutBottom.setVisibility(View.GONE);
-                    linearLayoutSearchBottom.setVisibility(View.GONE);
-                    linearLayoutMarkerBottom.setVisibility(View.GONE);
-                    btnBottomSheetGetDirection.setText("Get Direction");
-                    btnBottomSheetGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
+//                    mMap.clear();
+//                    animateCamera(onConnectedLocation);
+//                    buttonSearch.setText(null);
+//                    buttonSearch.setVisibility(View.VISIBLE);
+//                    bottomSheetBehavior.setPeekHeight(350);
+////                    if (bottomSheetPlaceLatLng != null) {
+////                        Timber.e("bottomSheetPlaceLatLng if  dhukche");
+////                        getActivity().getSupportFragmentManager().beginTransaction().replace(this.getId(),
+////                                new HomeFragment()).commit();
+////                    } else {
+////                        Timber.e("searchPlaceLatLng else  dhukche");
+////                        getActivity().getSupportFragmentManager().beginTransaction().replace(this.getId(),
+////                                new HomeFragment()).commit();
+////                    }
+////                    LatLng latLng = new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude());
+////                    MarkerOptions markerOptions = new MarkerOptions();
+////                    markerOptions.position(latLng);
+////                    markerOptions.title("Current Position");
+//////                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+////                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car_small));
+////                    mMap.addMarker(markerOptions).setFlat(true);
+//                    fetchSensors(onConnectedLocation);
+//                    bookingSensorsArrayListGlobal.clear();
+//                    bookingSensorsArrayList.clear();
+//                    bookingSensorsMarkerArrayList.clear();
+//                    fetchBottomSheetSensors(onConnectedLocation);
+//                    layoutBottomSheetVisible(false, "", "", "", "", null);
+//                    linearLayoutBottom.setVisibility(View.GONE);
+//                    linearLayoutSearchBottom.setVisibility(View.GONE);
+//                    linearLayoutMarkerBottom.setVisibility(View.GONE);
+//                    btnBottomSheetGetDirection.setText("Get Direction");
+//                    btnBottomSheetGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
 //                    BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
 //                    navBar.setVisibility(View.VISIBLE);
                     fromMarkerRouteDrawn = 0;
