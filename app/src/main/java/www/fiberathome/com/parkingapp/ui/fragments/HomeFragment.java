@@ -234,7 +234,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     public int bottomSheetSearch;
     public static Location currentLocation;
     private Marker currentLocationMarker;
-    private LatLng bottomSheetPlaceLatLng;
+    public LatLng bottomSheetPlaceLatLng;
     public static LatLng location;
     public LatLng markerPlaceLatLng;
     private ArrayList<LatLng> coordList = new ArrayList<LatLng>();
