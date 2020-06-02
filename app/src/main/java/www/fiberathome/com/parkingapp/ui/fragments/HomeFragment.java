@@ -1173,14 +1173,14 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
             fetchSensors(onConnectedLocation);
             //for getting the location name
             getAddress(getActivity(), bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude);
-            String searchPlaceName = address;
-            Timber.e("searchPlaceName -> %s", searchPlaceName);
+            String bottomSheetPlaceName = address;
+            Timber.e("searchPlaceName -> %s", bottomSheetPlaceName);
 
             TaskParser taskParser = new TaskParser();
             double bottomSheetDistance = taskParser.showDistance(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
                     new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
             Timber.e("bottomSheetDistance -> %s", bottomSheetDistance);
-            layoutBottomSheetVisible(true, searchPlaceName, textViewBottomSheetParkingAreaCount.getText().toString(),
+            layoutBottomSheetVisible(true, bottomSheetPlaceName, textViewBottomSheetParkingAreaCount.getText().toString(),
                     textViewBottomSheetParkingDistance.getText().toString(), textViewBottomSheetParkingTravelTime.getText().toString(),
                     bottomSheetPlaceLatLng);
             bottomSheetBehavior.setPeekHeight(350);
@@ -1191,15 +1191,15 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
             double kim = (bottomSheetDistance / 1000) + adjustValue;
             Timber.e("adjustValue first -> %s", adjustValue);
-            double searchDoubleDuration = Double.parseDouble(new DecimalFormat("##.##").format(bottomSheetDistance * 2.43));
-            String searchStringDuration = searchDoubleDuration + " mins";
+            double bottomSheetDoubleDuration = Double.parseDouble(new DecimalFormat("##.##").format(bottomSheetDistance * 2.43));
+            String bottomSheetStringDuration = bottomSheetDoubleDuration + " mins";
 
-            bookingSensorsBottomSheet = new BookingSensors(searchPlaceName, bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude,
+            bookingSensorsBottomSheet = new BookingSensors(bottomSheetPlaceName, bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude,
                     bottomSheetDistance,
-                    textViewBottomSheetParkingAreaCount.getText().toString(), searchStringDuration);
+                    textViewBottomSheetParkingAreaCount.getText().toString(), bottomSheetStringDuration);
             Timber.e("bookingSensors only Search-> %s", new Gson().toJson(bookingSensorsBottomSheet));
-            bookingSensorsArrayListBottomSheet.add(new BookingSensors(searchPlaceName, bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude,
-                    bottomSheetDistance, textViewBottomSheetParkingAreaCount.getText().toString(), searchStringDuration,
+            bookingSensorsArrayListBottomSheet.add(new BookingSensors(bottomSheetPlaceName, bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude,
+                    bottomSheetDistance, textViewBottomSheetParkingAreaCount.getText().toString(), bottomSheetStringDuration,
                     context.getResources().getString(R.string.nearest_parking_from_your_destination),
                     BookingSensors.TEXT_INFO_TYPE, 0));
 
@@ -1247,7 +1247,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
             Timber.e("bookingSensors latest -> %s", new Gson().toJson(bookingSensorsArrayListBottomSheet));
             bottomSheetAdapter.updateData(bookingSensorsArrayListBottomSheet);
             setBottomSheetRecyclerViewAdapter(bookingSensorsArrayListBottomSheet);
-            Timber.e("setBottomSheetRecyclerViewAdapter(bookingSensorsArrayList) call hoiche for loop");
+            Timber.e("setBottomSheetRecyclerViewAdapter(bookingSensorsArrayListBottomSheet) call hoiche for loop");
         }
     }
 
