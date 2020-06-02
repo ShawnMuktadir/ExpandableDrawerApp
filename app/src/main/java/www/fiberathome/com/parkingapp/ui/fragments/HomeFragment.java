@@ -1158,6 +1158,99 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         bottomSheetRecyclerView.setAdapter(bottomSheetAdapter);
     }
 
+    public void bottomSheetPlaceLatLngNearestLocations() {
+        if (bottomSheetPlaceLatLng != null) {
+            if (mMap != null)
+                mMap.clear();
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(bottomSheetPlaceLatLng);
+            markerOptions.title(name);
+            coordList.add(new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+            mMap.addMarker(markerOptions).setFlat(true);
+            //move map camera
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bottomSheetPlaceLatLng, 13.5f));
+            fetchSensors(onConnectedLocation);
+            //for getting the location name
+            getAddress(getActivity(), bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude);
+            String searchPlaceName = address;
+            Timber.e("searchPlaceName -> %s", searchPlaceName);
+
+            TaskParser taskParser = new TaskParser();
+            double bottomSheetDistance = taskParser.showDistance(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
+                    new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
+            Timber.e("bottomSheetDistance -> %s", bottomSheetDistance);
+            layoutBottomSheetVisible(true, searchPlaceName, textViewBottomSheetParkingAreaCount.getText().toString(),
+                    textViewBottomSheetParkingDistance.getText().toString(), textViewBottomSheetParkingTravelTime.getText().toString(),
+                    bottomSheetPlaceLatLng);
+            bottomSheetBehavior.setPeekHeight(350);
+
+            if (bottomSheetDistance < 3000) {
+                adjustValue = 1;
+            }
+
+            double kim = (bottomSheetDistance / 1000) + adjustValue;
+            Timber.e("adjustValue first -> %s", adjustValue);
+            double searchDoubleDuration = Double.parseDouble(new DecimalFormat("##.##").format(bottomSheetDistance * 2.43));
+            String searchStringDuration = searchDoubleDuration + " mins";
+
+            bookingSensorsBottomSheet = new BookingSensors(searchPlaceName, bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude,
+                    bottomSheetDistance,
+                    textViewBottomSheetParkingAreaCount.getText().toString(), searchStringDuration);
+            Timber.e("bookingSensors only Search-> %s", new Gson().toJson(bookingSensorsBottomSheet));
+            bookingSensorsArrayListBottomSheet.add(new BookingSensors(searchPlaceName, bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude,
+                    bottomSheetDistance, textViewBottomSheetParkingAreaCount.getText().toString(), searchStringDuration,
+                    context.getResources().getString(R.string.nearest_parking_from_your_destination),
+                    BookingSensors.TEXT_INFO_TYPE, 0));
+
+            for (int i = 0; i < bottomSheetPlaceEventJsonArray.length(); i++) {
+                JSONObject jsonObject;
+                try {
+                    jsonObject = bottomSheetPlaceEventJsonArray.getJSONObject(i);
+                    String latitude1 = jsonObject.get("latitude").toString();
+                    String longitude1 = jsonObject.get("longitude").toString();
+
+                    double distanceForNearbyLoc = calculateDistance(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude,
+                            ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1));
+                    Timber.e("DistanceForNearbyLoc -> %s", distanceForNearbyLoc);
+
+                    if (distanceForNearbyLoc < 5) {
+                        origin = new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude);
+                        getAddress(getActivity(), ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1));
+                        String nearbyAreaName = address;
+                        String parkingNumberOfNearbyDistanceLoc = jsonObject.get("no_of_parking").toString();
+                        Timber.e("nearbyDistance nearByDuration -> %s -> %s", nearByDistance, nearByDuration);
+                        bookingSensorsBottomSheet = new BookingSensors(nearbyAreaName, ApplicationUtils.convertToDouble(latitude1),
+                                ApplicationUtils.convertToDouble(longitude1), nearByDistance, parkingNumberOfNearbyDistanceLoc);
+                        Timber.e("bookingSensors nearest search location -> %s", new Gson().toJson(bookingSensorsBottomSheet));
+
+                        int adjsutNearbyValue = 2;
+                        if (distanceForNearbyLoc < 1000) {
+                            adjsutNearbyValue = 1;
+                        }
+
+                        double km = (distanceForNearbyLoc / 1000) + adjsutNearbyValue;
+                        double nearbySearchDoubleDuration = Double.parseDouble(new DecimalFormat("##.##").format(km * 2.43));
+                        String nearbySearchStringDuration = nearbySearchDoubleDuration + " mins";
+                        bookingSensorsArrayListBottomSheet.add(new BookingSensors(nearbyAreaName, ApplicationUtils.convertToDouble(latitude1),
+                                ApplicationUtils.convertToDouble(longitude1), distanceForNearbyLoc, parkingNumberOfNearbyDistanceLoc,
+                                nearbySearchStringDuration,
+                                BookingSensors.INFO_TYPE, 1));
+
+                        bubbleSortArrayList(bookingSensorsArrayListBottomSheet);
+                        bottomSheetBehavior.setPeekHeight(350);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            Timber.e("bookingSensors latest -> %s", new Gson().toJson(bookingSensorsArrayListBottomSheet));
+            bottomSheetAdapter.updateData(bookingSensorsArrayListBottomSheet);
+            setBottomSheetRecyclerViewAdapter(bookingSensorsArrayListBottomSheet);
+            Timber.e("setBottomSheetRecyclerViewAdapter(bookingSensorsArrayList) call hoiche for loop");
+        }
+    }
+
     @SuppressLint("StaticFieldLeak")
     public class TaskRequestDirections extends AsyncTask<String, Void, String> {
 

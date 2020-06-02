@@ -97,19 +97,21 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         holder.textViewParkingTravelTime.setText(bookingSensors.getDuration());
 
         holder.itemView.setOnClickListener(v -> {
+
             selectedItem = 0;
             Collections.swap(bookingSensorsArrayList, position, 0);
             notifyItemMoved(position, 0);
+
+            if (homeFragment.bottomSheetPlaceLatLng != null) {
+                Toast.makeText(context, "Clicked!!!", Toast.LENGTH_SHORT).show();
+                homeFragment.bottomSheetPlaceLatLngNearestLocations();
+            }
 
             try {
                 notifyDataSetChanged();
                 homeFragment.linearLayoutSearchBottomButton.setVisibility(View.GONE);
             } catch (Exception e) {
                 Timber.e(e);
-            }
-
-            if (homeFragment.bottomSheetPlaceLatLng != null){
-                Toast.makeText(context, "Clicked!!!", Toast.LENGTH_SHORT).show();
             }
 
             Location homeFragmentOnConnectedLocation = null;
@@ -125,12 +127,12 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
                     holder.textViewParkingDistance.getText().toString(), holder.textViewParkingTravelTime.getText().toString(),
                     new LatLng(bookingSensors.getLat(), bookingSensors.getLng()));
 
-
             homeFragment.bottomSheetBehavior.setHideable(false);
             homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             homeFragment.bottomSheetBehavior.setPeekHeight(350);
 
         });
+
 
         if (selectedItem == position) {
             holder.itemView.setBackgroundColor(Color.LTGRAY);
@@ -243,7 +245,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         public TextView textViewParkingTravelTime;
         @BindView(R.id.textViewStatic)
         public TextView textViewStatic;
-//        @BindView(R.id.view)
+        //        @BindView(R.id.view)
 //        View view;
         @BindView(R.id.relativeLayoutTxt)
         public RelativeLayout relativeLayoutxt;
