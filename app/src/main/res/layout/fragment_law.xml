@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,14 +8,44 @@
 
 
     <com.github.barteksc.pdfviewer.PDFView
-        android:visibility="gone"
         android:id="@+id/pdfView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 
-    <androidx.recyclerview.widget.RecyclerView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/recyclerview"/>
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/editTextSearchLaw"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dim50"
+            android:layout_margin="@dimen/dim5"
+            android:background="@drawable/white_border"
+            android:elevation="@dimen/dim3"
+            android:hint="@string/search_law"
+            android:imeOptions="actionDone"
+            android:padding="@dimen/dim3"
+            android:singleLine="true" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/dim5"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textViewNoData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="@string/no_record_found"
+        android:textColor="@android:color/holo_red_dark"
+        android:textSize="18sp"
+        android:visibility="gone" />
 
 </RelativeLayout>

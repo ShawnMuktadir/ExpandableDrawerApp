@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -28,6 +29,7 @@ import static www.fiberathome.com.parkingapp.preference.AppConstants.NEW_PLACE_S
 
 public class SearchActivity extends AppCompatActivity implements PlacesAutoCompleteAdapter.ClickListener {
 
+    private final String TAG =getClass().getSimpleName() ;
     private PlacesAutoCompleteAdapter mAutoCompleteAdapter;
     private PlacesClient placesClient;
 
@@ -123,6 +125,7 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
 
         if (place == null) {
             setResult(RESULT_CANCELED, resultIntent);
+            finish();
         } else {
             LatLng latLng = place.getLatLng();
             String areaName = place.getName();
@@ -134,20 +137,10 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
                 //String result=new Gson().toJson(place);
                 resultIntent.putExtra(NEW_PLACE_SELECTED, selectedplace);
                 setResult(RESULT_OK, resultIntent);
+                Log.d("ShawnClick", "click: ");
+                finish();
             }
         }
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                finish();
-                overridePendingTransition(0, 0);
-            }
-        }, 1000);
-    }
 
-    @Override
-    public void finish() {
-        super.finish();
-        overridePendingTransition(0, 0);
     }
 }

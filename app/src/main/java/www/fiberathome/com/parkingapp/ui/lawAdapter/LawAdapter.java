@@ -1,12 +1,17 @@
 package www.fiberathome.com.parkingapp.ui.lawAdapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 
 import com.thoughtbot.expandablerecyclerview.ExpandableRecyclerViewAdapter;
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import www.fiberathome.com.parkingapp.R;
@@ -30,9 +35,15 @@ import www.fiberathome.com.parkingapp.model.law.LawItem;
  *
  * Created by LEVI on 22/09/2018.
  */
-public class LawAdapter extends ExpandableRecyclerViewAdapter<TitleViewHolder, LawViewHolder> {
+public class LawAdapter extends ExpandableRecyclerViewAdapter<TitleViewHolder, LawViewHolder> implements Filterable {
+    List<LawItem> copylawItemList;
+    private String TAG = getClass().getSimpleName();
+
+    @SuppressWarnings("unchecked")
     public LawAdapter(List<? extends ExpandableGroup> groups) {
         super(groups);
+        copylawItemList = new ArrayList<LawItem>((Collection<? extends LawItem>) groups);
+        Log.d(TAG, "LawAdapter: " + copylawItemList.size());
     }
 
     @Override
@@ -58,5 +69,45 @@ public class LawAdapter extends ExpandableRecyclerViewAdapter<TitleViewHolder, L
         final LawItem lawItem = (LawItem) group;
         holder.bind(lawItem);
     }
+
+
+    @Override
+    public Filter getFilter() {
+        return queryFilter;
+    }
+
+    private Filter queryFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<LawItem> queryLawItemList = new ArrayList<>();
+            if (constraint == null || constraint.length() == 0) {
+                queryLawItemList.addAll(copylawItemList);
+            } else {
+                String filterPattern = constraint.toString().toLowerCase().trim();
+
+                for (LawItem item : copylawItemList) {
+                    if (item.getTitle().toLowerCase().contains(filterPattern)) {
+                        queryLawItemList.add(item);
+                    }
+                }
+            }
+
+            FilterResults results = new FilterResults();
+            results.values = queryLawItemList;
+
+            return results;
+
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            List groups = (ArrayList<? extends ExpandableGroup>) results.values; // has the filtered values
+            getGroups().clear();
+            getGroups().addAll(groups);
+
+            notifyDataSetChanged();
+        }
+    };
 }
 
