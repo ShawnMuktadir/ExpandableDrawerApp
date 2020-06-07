@@ -1,5 +1,6 @@
 package www.fiberathome.com.parkingapp.ui.lawAdapter;
 
+import android.text.SpannableStringBuilder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import java.util.List;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.law.Law;
 import www.fiberathome.com.parkingapp.model.law.LawItem;
+import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 
 /*
  * Copyright (C) 2018 Levi Rizki Saputra (levirs565@gmail.com).
@@ -88,6 +90,7 @@ public class LawAdapter extends ExpandableRecyclerViewAdapter<TitleViewHolder, L
                 for (LawItem item : copylawItemList) {
                     if (item.getTitle().toLowerCase().contains(filterPattern)) {
                         queryLawItemList.add(item);
+//                        ApplicationUtils.highlightSearchText(SpannableStringBuilder.valueOf(item.getTitle()), filterPattern);
                     }
                 }
             }

@@ -3,6 +3,7 @@ package www.fiberathome.com.parkingapp.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -16,7 +17,12 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.IBinder;
 import android.text.Html;
+import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.style.BackgroundColorSpan;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.TextAppearanceSpan;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -46,6 +52,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.IOException;
+import java.text.Normalizer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -53,6 +60,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -478,5 +487,60 @@ public class ApplicationUtils {
         SpannableString content = new SpannableString(text);
         content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
         return content;
+    }
+
+    public static CharSequence highlight(String search, String originalText) {
+        // ignore case and accents
+        // the same thing should have been done for the search text
+        String normalizedText = Normalizer.normalize(originalText, Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
+
+        int start = normalizedText.indexOf(search);
+        if (start < 0) {
+            // not found, nothing to to
+            return originalText;
+        } else {
+            // highlight each appearance in the original text
+            // while searching in normalized text
+            Spannable highlighted = new SpannableString(originalText);
+            while (start >= 0) {
+                int spanStart = Math.min(start, originalText.length());
+                int spanEnd = Math.min(start + search.length(), originalText.length());
+
+                highlighted.setSpan(new BackgroundColorSpan(0xFFFCFF48), spanStart, spanEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                start = normalizedText.indexOf(search, spanEnd);
+            }
+
+            return highlighted;
+        }
+    }
+
+    public static SpannableStringBuilder highlightSearchText(SpannableStringBuilder fullText, String searchText) {
+
+        if (searchText.length() == 0) return fullText;
+
+        SpannableStringBuilder wordSpan = new SpannableStringBuilder(fullText);
+        Pattern p = Pattern.compile(searchText, Pattern.CASE_INSENSITIVE);
+        Matcher m = p.matcher(fullText);
+        while (m.find()) {
+
+            int wordStart = m.start();
+            int wordEnd = m.end();
+
+            setWordSpan(wordSpan, wordStart, wordEnd);
+
+        }
+
+        return wordSpan;
+    }
+
+    private static void setWordSpan(SpannableStringBuilder wordSpan, int wordStart, int wordEnd) {
+        // Now highlight based on the word boundaries
+        ColorStateList redColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{0xffa10901});
+        TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.BOLD, -1, redColor, null);
+
+        wordSpan.setSpan(highlightSpan, wordStart, wordEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        wordSpan.setSpan(new BackgroundColorSpan(0xFFFCFF48), wordStart, wordEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        wordSpan.setSpan(new RelativeSizeSpan(1.25f), wordStart, wordEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 }
