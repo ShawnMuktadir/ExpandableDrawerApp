@@ -2305,6 +2305,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                 bookingSensorsMarkerArrayList.clear();
                 fetchBottomSheetSensors(onConnectedLocation);
                 animateCamera(onConnectedLocation);
+                buttonSearch.setText(null);
+                buttonSearch.setVisibility(View.VISIBLE);
 //                BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
 //                navBar.setVisibility(View.VISIBLE);
                 layoutMarkerVisible(false, "", "", "", null);
