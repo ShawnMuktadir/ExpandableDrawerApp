@@ -245,7 +245,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         public TextView textViewParkingTravelTime;
         @BindView(R.id.textViewStatic)
         public TextView textViewStatic;
-        //        @BindView(R.id.view)
+//        @BindView(R.id.view)
 //        View view;
         @BindView(R.id.relativeLayoutTxt)
         public RelativeLayout relativeLayoutxt;
