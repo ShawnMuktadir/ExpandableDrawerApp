@@ -102,10 +102,10 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
             Collections.swap(bookingSensorsArrayList, position, 0);
             notifyItemMoved(position, 0);
 
-//            if (homeFragment.bottomSheetPlaceLatLng != null) {
-//                Toast.makeText(context, "Clicked!!!", Toast.LENGTH_SHORT).show();
-//                homeFragment.bottomSheetPlaceLatLngNearestLocations();
-//            }
+            if (homeFragment.bottomSheetPlaceLatLng != null) {
+                Toast.makeText(context, "Clicked!!!", Toast.LENGTH_SHORT).show();
+                homeFragment.bottomSheetPlaceLatLngNearestLocations();
+            }
 
             try {
                 notifyDataSetChanged();
