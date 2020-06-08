@@ -227,7 +227,7 @@
                             android:gravity="end"
                             android:maxLines="1"
                             android:padding="@dimen/dim3"
-                            android:text="@string/parking_time"
+                            android:text="@string/time"
                             android:textColor="@android:color/black"
                             android:textSize="@dimen/_10ssp"
                             android:textStyle="normal"
@@ -400,7 +400,7 @@
                             android:gravity="end"
                             android:maxLines="1"
                             android:padding="@dimen/dim3"
-                            android:text="@string/parking_time"
+                            android:text="@string/time"
                             android:textColor="@android:color/black"
                             android:textSize="@dimen/_10ssp"
                             android:textStyle="normal" />
@@ -572,7 +572,7 @@
                             android:gravity="end"
                             android:maxLines="1"
                             android:padding="@dimen/dim3"
-                            android:text="@string/parking_time"
+                            android:text="@string/time"
                             android:textColor="@android:color/black"
                             android:textSize="@dimen/_10ssp"
                             android:textStyle="normal" />
@@ -744,7 +744,7 @@
                             android:gravity="end"
                             android:maxLines="1"
                             android:padding="@dimen/dim3"
-                            android:text="@string/parking_time"
+                            android:text="@string/time"
                             android:textColor="@android:color/black"
                             android:textSize="@dimen/_10ssp"
                             android:textStyle="normal" />
