@@ -2,7 +2,9 @@ package www.fiberathome.com.parkingapp.ui.placesadapter;
 
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Handler;
 import android.text.style.CharacterStyle;
 import android.text.style.StyleSpan;
 import android.util.Log;
@@ -40,6 +42,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 
 
@@ -53,6 +56,8 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<PlacesAutoCo
     private final PlacesClient placesClient;
     private ClickListener clickListener;
     private AutocompleteSessionToken token;
+
+    private int selectedPosition = -1;
 
     public PlacesAutoCompleteAdapter(Context context, PlacesClient placesClient) {
         mContext = context;
@@ -155,9 +160,43 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<PlacesAutoCo
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PredictionHolder mPredictionHolder, final int i) {
-        mPredictionHolder.address.setText(mResultList.get(i).address);
-        mPredictionHolder.area.setText(mResultList.get(i).area);
+    public void onBindViewHolder(@NonNull PredictionHolder mPredictionHolder, final int position) {
+        mPredictionHolder.address.setText(mResultList.get(position).address);
+        mPredictionHolder.area.setText(mResultList.get(position).area);
+
+        // Here I am just highlighting the background
+        mPredictionHolder.itemView.setBackgroundColor(selectedPosition == position ? Color.LTGRAY : Color.TRANSPARENT);
+        mPredictionHolder.itemView.setOnClickListener(v -> {
+            selectedPosition = position;
+            try {
+                notifyDataSetChanged();
+            } catch (Exception e) {
+                Timber.e(e);
+            }
+
+            PlaceAutocomplete item = mResultList.get(position);
+            if (v.getId() == R.id.item_view) {
+
+                String placeId = String.valueOf(item.placeId);
+
+                List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS);
+                FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields).setSessionToken(token).build();
+                placesClient.fetchPlace(request).addOnSuccessListener(response -> {
+                    Place place = response.getPlace();
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            clickListener.click(place);
+                        }
+                    }, 500);
+                }).addOnFailureListener(exception -> {
+                    if (exception instanceof ApiException) {
+                        Toast.makeText(mContext, exception.getMessage() + "", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
     }
 
     @Override
@@ -184,28 +223,28 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<PlacesAutoCo
 
         @Override
         public void onClick(View v) {
-            PlaceAutocomplete item = mResultList.get(getAdapterPosition());
-            if (v.getId() == R.id.item_view) {
-
-                String placeId = String.valueOf(item.placeId);
-
-                List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS);
-                FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields).setSessionToken(token).build();
-                placesClient.fetchPlace(request).addOnSuccessListener(new OnSuccessListener<FetchPlaceResponse>() {
-                    @Override
-                    public void onSuccess(FetchPlaceResponse response) {
-                        Place place = response.getPlace();
-                        clickListener.click(place);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        if (exception instanceof ApiException) {
-                            Toast.makeText(mContext, exception.getMessage() + "", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-            }
+//            PlaceAutocomplete item = mResultList.get(getAdapterPosition());
+//            if (v.getId() == R.id.item_view) {
+//
+//                String placeId = String.valueOf(item.placeId);
+//
+//                List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS);
+//                FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields).setSessionToken(token).build();
+//                placesClient.fetchPlace(request).addOnSuccessListener(new OnSuccessListener<FetchPlaceResponse>() {
+//                    @Override
+//                    public void onSuccess(FetchPlaceResponse response) {
+//                        Place place = response.getPlace();
+//                        clickListener.click(place);
+//                    }
+//                }).addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception exception) {
+//                        if (exception instanceof ApiException) {
+//                            Toast.makeText(mContext, exception.getMessage() + "", Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//                });
+//            }
         }
     }
 

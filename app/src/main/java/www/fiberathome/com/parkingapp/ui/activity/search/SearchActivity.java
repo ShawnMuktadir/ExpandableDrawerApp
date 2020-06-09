@@ -2,6 +2,9 @@
 package www.fiberathome.com.parkingapp.ui.activity.search;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.ViewCompat;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -12,6 +15,7 @@ import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -24,12 +28,13 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.SelcectedPlace;
 import www.fiberathome.com.parkingapp.ui.placesadapter.PlacesAutoCompleteAdapter;
 import www.fiberathome.com.parkingapp.utils.OnEditTextRightDrawableTouchListener;
+import www.fiberathome.com.parkingapp.utils.RecyclerTouchListener;
 
 import static www.fiberathome.com.parkingapp.preference.AppConstants.NEW_PLACE_SELECTED;
 
 public class SearchActivity extends AppCompatActivity implements PlacesAutoCompleteAdapter.ClickListener {
 
-    private final String TAG =getClass().getSimpleName() ;
+    private final String TAG = getClass().getSimpleName();
     private PlacesAutoCompleteAdapter mAutoCompleteAdapter;
     private PlacesClient placesClient;
 
@@ -50,6 +55,21 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
         searchEdit.requestFocus();
         mAutoCompleteAdapter = new PlacesAutoCompleteAdapter(this, placesClient);
         placesRv.setLayoutManager(new LinearLayoutManager(this));
+        placesRv.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        placesRv.setItemAnimator(new DefaultItemAnimator());
+        placesRv.addOnItemTouchListener(new RecyclerTouchListener(this, placesRv, new RecyclerTouchListener.ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+//                Movie movie = movieList.get(position);
+//                Toast.makeText(context, position + " is selected!", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        }));
+        ViewCompat.setNestedScrollingEnabled(placesRv, false);
         mAutoCompleteAdapter.setClickListener(this);
         placesRv.setAdapter(mAutoCompleteAdapter);
 
@@ -126,6 +146,7 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
         if (place == null) {
             setResult(RESULT_CANCELED, resultIntent);
             finish();
+            overridePendingTransition(0, 0);
         } else {
             LatLng latLng = place.getLatLng();
             String areaName = place.getName();
@@ -139,6 +160,7 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
                 setResult(RESULT_OK, resultIntent);
                 Log.d("ShawnClick", "click: ");
                 finish();
+                overridePendingTransition(0, 0);
             }
         }
 
