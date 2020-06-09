@@ -1077,7 +1077,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     }
 
     private ArrayList<BookingSensors> bookingSensorsArrayListGlobal = new ArrayList<>();
-    private ArrayList<BookingSensors> bookingSensorsArrayListBottomSheet = new ArrayList<>();
     private BookingSensors bookingSensorsGlobal;
     private double adjustValue = 2;
     private LatLng origin;
@@ -1225,6 +1224,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         bottomSheetRecyclerView.setAdapter(bottomSheetAdapter);
     }
 
+    private ArrayList<BookingSensors> bookingSensorsArrayListBottomSheet = new ArrayList<>();
     public void bottomSheetPlaceLatLngNearestLocations() {
         if (bottomSheetPlaceLatLng != null) {
             //for getting the location name
@@ -1491,7 +1491,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     markerOptions.title(name);
 //                    markerOptions.draggable(true);
                     coordList.add(new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));
-                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+//                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
                     mMap.addMarker(markerOptions).setFlat(true);
                     //move map camera
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 13.5f));
@@ -1742,6 +1743,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                             polylineOptions = new PolylineOptions();
                             polylineOptions.color(Color.GRAY);
                             polylineOptions.width(5f);
+                            polylineOptions.geodesic(true);
                             polylineOptions.startCap(new SquareCap());
                             polylineOptions.endCap(new SquareCap());
                             polylineOptions.jointType(JointType.ROUND);
@@ -1752,6 +1754,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                             blackPolylineOptions.color(Color.BLACK);
                             blackPolylineOptions.width(5f);
                             blackPolylineOptions.zIndex(5f);
+                            blackPolylineOptions.geodesic(true);
                             blackPolylineOptions.startCap(new SquareCap());
                             blackPolylineOptions.endCap(new SquareCap());
                             blackPolylineOptions.jointType(JointType.ROUND);
@@ -1928,7 +1931,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         markerOptions.title(name);
 //        markerOptions.draggable(true);
         coordList.add(new LatLng(event.location.latitude, event.location.longitude));
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+//        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
         mMap.addMarker(markerOptions);
         //move map camera
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(event.location, 13.5f));
@@ -1960,7 +1964,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                 markerOptions.title(name);
 //                markerOptions.draggable(true);
                 coordList.add(new LatLng(location.latitude, location.longitude));
-                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+//                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
                 mMap.addMarker(markerOptions);
                 //move map camera
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 13.5f));
@@ -1993,7 +1998,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                 markerOptions.title(name);
 //                markerOptions.draggable(true);
                 coordList.add(new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
-                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+//                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
                 mMap.addMarker(markerOptions);
                 //move map camera
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 13.5f));
@@ -2026,7 +2032,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                 markerOptions.title(name);
 //                markerOptions.draggable(true);
                 coordList.add(new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));
-                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+//                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
                 mMap.addMarker(markerOptions);
                 //move map camera
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 13.5f));
@@ -2060,7 +2067,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                 markerOptions.title(name);
 //                markerOptions.draggable(true);
                 coordList.add(new LatLng(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude));
-                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+//                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
                 mMap.addMarker(markerOptions);
                 //move map camera
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerPlaceLatLng, 13.5f));
@@ -2161,7 +2169,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                 markerOptions.position(bottomSheetPlaceLatLng);
                 markerOptions.title(name);
                 coordList.add(new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
-                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+//                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
                 mMap.addMarker(markerOptions).setFlat(true);
                 //move map camera
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bottomSheetPlaceLatLng, 13.5f));
@@ -2342,7 +2351,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     markerOptions.position(location);
                     markerOptions.title(name);
                     coordList.add(new LatLng(location.latitude, location.longitude));
-                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+//                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+//                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
                     mMap.addMarker(markerOptions).setFlat(true);
 //              move map camera
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 13.5f));
@@ -2402,7 +2412,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     markerDestinationPositionOptions.title(name);
 //                    markerDestinationPositionOptions.draggable(true);
                     coordList.add(new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));
-                    markerDestinationPositionOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+//                    markerDestinationPositionOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+//                    markerDestinationPositionOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
                     mMap.addMarker(markerDestinationPositionOptions).setFlat(true);
 //              move map camera
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 13.5f));
@@ -2466,7 +2477,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     markerOptions.title(name);
 //                    markerOptions.draggable(true);
                     coordList.add(new LatLng(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude));
-                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+//                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+//                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
                     mMap.addMarker(markerOptions).setFlat(true);
 //              move map camera
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerPlaceLatLng, 13.5f));
@@ -2527,7 +2539,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     markerOptions.position(bottomSheetPlaceLatLng);
                     markerOptions.title(name);
                     coordList.add(new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
-                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+//                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+//                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
                     mMap.addMarker(markerOptions).setFlat(true);
                     //move map camera
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bottomSheetPlaceLatLng, 13.5f));

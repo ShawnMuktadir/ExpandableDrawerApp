@@ -38,7 +38,7 @@ import www.fiberathome.com.parkingapp.ui.fragments.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.SharedData;
 
-public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.TextBookingViewHolderx> {
+public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.TextBookingViewHolder> {
     private final String TAG = getClass().getSimpleName();
     public Context context;
     private HomeFragment homeFragment;
@@ -59,13 +59,13 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
     @NonNull
     @Override
-    public TextBookingViewHolderx onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public TextBookingViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.bottom_sheet_text_recycler_item, parent, false);
-        return new TextBookingViewHolderx(view);
+        return new TextBookingViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull TextBookingViewHolderx holder, int position) {
+    public void onBindViewHolder(@NonNull TextBookingViewHolder holder, int position) {
         BookingSensors bookingSensors = bookingSensorsArrayList.get(position);
 
         if (bookingSensors.type == BookingSensors.TEXT_INFO_TYPE) {
@@ -157,7 +157,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
     private String fromCurrentLocationDuration;
     private Location onConnectedLocation;
 
-    private void getDestinationDurationInfoForSearchLayout(Context context, LatLng latLngDestination, TextBookingViewHolderx textBookingViewHolder, int type) {
+    private void getDestinationDurationInfoForSearchLayout(Context context, LatLng latLngDestination, TextBookingViewHolder textBookingViewHolder, int type) {
 
         if (SharedData.getInstance().getOnConnectedLocation() != null) {
             onConnectedLocation = SharedData.getInstance().getOnConnectedLocation();
@@ -231,7 +231,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
     }
 
     // implements View.OnClickListener
-    public static class TextBookingViewHolderx extends RecyclerView.ViewHolder {
+    public static class TextBookingViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.textViewParkingAreaName)
         public TextView textViewParkingAreaName;
@@ -252,7 +252,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         @BindView(R.id.textBottom)
         public RelativeLayout relativeLayoutxtBotoom;
 
-        public TextBookingViewHolderx(View itemView) {
+        public TextBookingViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
