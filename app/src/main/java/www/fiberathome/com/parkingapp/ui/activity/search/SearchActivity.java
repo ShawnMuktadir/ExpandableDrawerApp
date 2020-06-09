@@ -163,6 +163,5 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
                 overridePendingTransition(0, 0);
             }
         }
-
     }
 }
