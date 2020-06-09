@@ -543,4 +543,29 @@ public class ApplicationUtils {
         wordSpan.setSpan(new BackgroundColorSpan(0xFFFCFF48), wordStart, wordEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         wordSpan.setSpan(new RelativeSizeSpan(1.25f), wordStart, wordEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
+
+    public static Spannable highlightSearchKey(String title) {
+        Spannable highlight;
+        Pattern pattern;
+        Matcher matcher;
+        int word_index;
+        String title_str;
+        String[] words = new String[20];
+
+        word_index = words.length;
+        title_str = Html.fromHtml(title).toString();
+        highlight = (Spannable) Html.fromHtml(title);
+        for (int index = 0; index < word_index; index++) {
+            pattern = Pattern.compile("(?i)" + words[index]);
+            matcher = pattern.matcher(title_str);
+            while (matcher.find()) {
+                highlight.setSpan(
+                        new BackgroundColorSpan(0x44444444),
+                        matcher.start(),
+                        matcher.end(),
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+        }
+        return highlight;
+    }
 }
