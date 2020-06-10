@@ -32,7 +32,7 @@
             android:layout_centerHorizontal="true"
             android:src="@drawable/blank_profile"
             app:civ_circle_background_color="@android:color/transparent"
-            app:civ_border_color="@android:color/darker_gray"
+            app:civ_border_color="@android:color/black"
             app:civ_border_width="@dimen/dim2"
             android:visibility="visible" />
 
@@ -46,18 +46,18 @@
             android:layout_marginTop="@dimen/dim5"
             android:gravity="center"
             android:orientation="horizontal"
-            android:padding="@dimen/margin_20">
+            android:padding="@dimen/dim5">
 
             <TextView
                 android:id="@+id/user_fullName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/margin_20"
+                android:layout_width="0dp"
                 android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dim5"
                 android:gravity="fill_vertical"
                 android:padding="5dp"
-                android:text="Full Name"
-                android:textColor="@color/blackColor"
+                android:text="@string/full_name"
+                android:textColor="@color/black"
                 android:textSize="@dimen/font_size_18"
                 android:textStyle="bold" />
 
@@ -68,20 +68,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/linearLayoutName"
-            android:layout_marginLeft="@dimen/margin_30"
-            android:layout_marginTop="@dimen/margin_30"
-            android:layout_marginRight="@dimen/margin_30"
-            android:layout_marginBottom="@dimen/margin_20"
+            android:layout_margin="@dimen/margin_10"
             android:gravity="center"
             android:orientation="horizontal">
 
-            <Button
+            <ImageView
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:layout_marginRight="@dimen/margin_10"
+                android:layout_marginEnd="@dimen/margin_10"
                 android:layout_weight="0"
-                android:background="@drawable/ic_perm_phone_msg_white_48px"
-                android:backgroundTint="@color/blackColor" />
+                app:srcCompat="@drawable/ic_perm_phone_msg_white_48px"
+                android:tint="@color/black" />
 
             <TextView
                 android:id="@+id/user_mobile_no"
@@ -89,8 +86,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="fill_vertical"
-                android:paddingLeft="@dimen/margin_10"
-                android:text="User Phone No"
+                android:padding="@dimen/margin_10"
+                android:text="@string/user_phone_no"
                 android:textSize="@dimen/title_20" />
 
         </LinearLayout>
@@ -99,30 +96,27 @@
             android:id="@+id/linearLayoutPhoneVehicle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/margin_30"
-            android:layout_marginRight="@dimen/margin_30"
+            android:layout_margin="@dimen/margin_10"
             android:layout_below="@+id/linearLayoutPhone"
             android:gravity="center"
             android:orientation="horizontal">
 
-            <Button
+            <ImageView
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:layout_marginRight="@dimen/margin_10"
+                android:layout_marginEnd="@dimen/margin_10"
                 android:layout_weight="0"
-                android:background="@drawable/ic_directions_car_white_48px"
-                android:backgroundTint="@color/blackColor" />
+                app:srcCompat="@drawable/ic_directions_car_white_48px"
+                android:tint="@color/black" />
 
             <TextView
                 android:id="@+id/user_vehicle_no"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_20"
-                android:layout_marginBottom="@dimen/margin_20"
                 android:layout_weight="1"
                 android:gravity="fill_vertical"
-                android:paddingLeft="@dimen/margin_10"
-                android:text="Vehicle No"
+                android:padding="@dimen/margin_10"
+                android:text="@string/vehicle_no"
                 android:textSize="@dimen/title_20" />
 
         </LinearLayout>
@@ -157,7 +151,6 @@
                 android:textSize="@dimen/title_20" />
 
         </LinearLayout>
-
 
         <LinearLayout
             android:layout_width="match_parent"

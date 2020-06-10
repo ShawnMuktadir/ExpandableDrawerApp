@@ -146,7 +146,7 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
         if (place == null) {
             setResult(RESULT_CANCELED, resultIntent);
             finish();
-            overridePendingTransition(0, 0);
+//            overridePendingTransition(0, 0);
         } else {
             LatLng latLng = place.getLatLng();
             String areaName = place.getName();
@@ -160,7 +160,7 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
                 setResult(RESULT_OK, resultIntent);
                 Log.d("ShawnClick", "click: ");
                 finish();
-                overridePendingTransition(0, 0);
+//                overridePendingTransition(0, 0);
             }
         }
     }

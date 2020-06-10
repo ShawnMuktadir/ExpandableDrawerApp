@@ -36,7 +36,7 @@
     <!--    <string name="google_maps_key">AIzaSyDMWfYh5kjSQTALbZb-C0lSNACpcH5RDU4</string>-->
 
     <!-- otp button -->
-    <string name="btn_retrive_otp">Retrive OTP</string>
+    <string name="btn_retrive_otp">Retrieve OTP</string>
 
     <!-- Error Message -->
     <string name="err_msg_mobile">Enter valid mobile number!</string>
@@ -143,4 +143,6 @@
 
     <string name="home_second">Home Second</string>
     <string name="search_law">Search Law</string>
+    <string name="vehicle_no">Vehicle No</string>
+    <string name="user_phone_no">User Phone No</string>
 </resources>

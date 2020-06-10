@@ -22,14 +22,14 @@
     <dimen name="margin_3">3dp</dimen>
     <dimen name="margin_5">5dp</dimen>
     <dimen name="margin_10">10dp</dimen>
-    <dimen name="margin_20">10dp</dimen>
+    <dimen name="margin_20">20dp</dimen>
     <dimen name="margin_30">30dp</dimen>
     <dimen name="margin_50">50dp</dimen>
 
     <!-- title -->
-    <dimen name="title_18">18dp</dimen>
-    <dimen name="title_20">20dp</dimen>
-    <dimen name="title_25">25dp</dimen>
+    <dimen name="title_18">18sp</dimen>
+    <dimen name="title_20">20sp</dimen>
+    <dimen name="title_25">25sp</dimen>
 
     <!-- font size -->
     <dimen name="font_size_22">22sp</dimen>

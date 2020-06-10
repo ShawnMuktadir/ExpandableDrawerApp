@@ -36,6 +36,7 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -217,7 +218,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 String otp = inputOTP.getText().toString().trim();
                 submitOTPVerification(otp);
                 break;
-
         }
 
     }
@@ -310,7 +310,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         pictureDialog.show();
     }
 
-
     public void choosePhotoFromGallary() {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(galleryIntent, REQUEST_PICK_GALLERY);
@@ -345,7 +344,8 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             }
 
 
-        } else if (requestCode == REQUEST_PICK_IMAGE_CAMERA && resultCode == RESULT_OK && data != null) {
+        }
+        else if (requestCode == REQUEST_PICK_IMAGE_CAMERA && resultCode == RESULT_OK && data != null) {
             // IF CAMERA SELECTED
             try {
                 bitmap = (Bitmap) data.getExtras().get("data");
@@ -358,7 +358,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             }
         }
     }
-
 
     /**
      * Check Manifest Camera Permission
@@ -380,7 +379,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-
     private String imageToString(Bitmap bitmap) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
@@ -389,7 +387,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         return Base64.encodeToString(imageByte, Base64.DEFAULT);
 
     }
-
 
     private void submitRegistration() {
         // Loading Progress
@@ -492,6 +489,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 return params;
             }
         };
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         ParkingApp.getInstance().addToRequestQueue(stringRequest, TAG);
     }
 
@@ -573,7 +571,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
      * ==================================================
      */
 
-    class ViewPagerAdapter extends PagerAdapter {
+    public class ViewPagerAdapter extends PagerAdapter {
 
         @Override
         public int getCount() {
