@@ -228,15 +228,15 @@ public class ParkingFragment extends Fragment {
         this.distance = distance;
         this.duration = duration;
 
-        Timber.e("name -> %s", name);
-        Timber.e("count -> %s", count);
-        Timber.e("location -> %s", location);
-        Timber.e("distance -> %s", distance);
-        Timber.e("isVisible -> %s", isVisible);
-        Timber.e("duration -> %s", duration);
+//        Timber.e("name -> %s", name);
+//        Timber.e("count -> %s", count);
+//        Timber.e("location -> %s", location);
+//        Timber.e("distance -> %s", distance);
+//        Timber.e("isVisible -> %s", isVisible);
+//        Timber.e("duration -> %s", duration);
 
         if (isVisible) {
-            Timber.e("isVisible True");
+//            Timber.e("isVisible True");
 //            BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
 //            navBar.setVisibility(View.GONE);
             linearLayoutBottom.setVisibility(View.VISIBLE);
@@ -269,19 +269,19 @@ public class ParkingFragment extends Fragment {
             @Override
             public void onResponse(String response) {
                 progressDialog.dismiss();
-                Timber.e(ParkingFragment.class.getCanonicalName(), "" + response);
+//                Timber.e(ParkingFragment.class.getCanonicalName(), "" + response);
                 try {
                     JSONObject object = new JSONObject(response);
                     JSONArray jsonArray = object.getJSONArray("sensors");
-                    Timber.e("jsonArray length parkingFragment-> %s", jsonArray.length());
+//                    Timber.e("jsonArray length parkingFragment-> %s", jsonArray.length());
                     for (int i = 0; i < jsonArray.length(); i++) {
                         SensorArea sensorArea = new SensorArea();
                         JSONArray array = jsonArray.getJSONArray(i);
-                        Timber.e("Array " + i, array.getString(1));
+//                        Timber.e("Array " + i, array.getString(1));
 
                         double fetchDistance = distance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
                                 Double.parseDouble(array.getString(2).trim()), Double.parseDouble(array.getString(3).trim()));
-                        Timber.e("parkingFragment fetchDistance -> %s", fetchDistance);
+//                        Timber.e("parkingFragment fetchDistance -> %s", fetchDistance);
                         sensorArea.setParkingArea(array.getString(1).trim());
                         sensorArea.setLat(Double.parseDouble(array.getString(2).trim()));
                         sensorArea.setLng(Double.parseDouble(array.getString(3).trim()));

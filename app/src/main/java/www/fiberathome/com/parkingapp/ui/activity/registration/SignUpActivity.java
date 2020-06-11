@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.SpannableString;
@@ -19,6 +20,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -60,6 +62,7 @@ import www.fiberathome.com.parkingapp.ui.activity.login.LoginActivity;
 import www.fiberathome.com.parkingapp.ui.activity.main.MainActivity;
 import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
 import www.fiberathome.com.parkingapp.utils.SharedPreManager;
+import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
 public class SignUpActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -91,7 +94,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     private TextInputLayout inputLayoutMobile;
     private TextInputLayout inputLayoutVehicle;
     private TextInputLayout inputLayoutPassword;
-    private ImageView upload_profile_image;
+    private ImageView upload_profile_image, imageViewCaptureImage;
     private LinearLayout layout_otp;
 
     @Override
@@ -100,6 +103,8 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_signup);
         context = this;
 
+        // Initialize Components
+        initUI();
         // Check user is logged in
         if (SharedPreManager.getInstance(getApplicationContext()).isLoggedIn()) {
             Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
@@ -107,9 +112,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             finish();
             return;
         }
-
-        // Initialize Components
-        initializeComponent();
 
         //makes an underline on for Registration Click Here
         SpannableString spannableString = new SpannableString(context.getResources().getString(R.string.already_a_member_click_here));
@@ -147,12 +149,13 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
         // check preference is waiting for SMS
         if (SharedPreManager.getInstance(this).isWaitingForSMS()) {
-            showMessage("exists");
+            showMessage("User Exists");
+//            adapter.notifyDataSetChanged();
             viewPager.setCurrentItem(1);
         }
     }
 
-    private void initializeComponent() {
+    private void initUI() {
         signupBtn = findViewById(R.id.signup_final_btn);
         fullnameET = findViewById(R.id.input_fullname);
         mobileET = findViewById(R.id.input_mobile_number);
@@ -160,6 +163,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         passwordET = findViewById(R.id.input_password);
         link_login = findViewById(R.id.link_login);
         upload_profile_image = findViewById(R.id.upload_profile_image);
+        imageViewCaptureImage = findViewById(R.id.imageViewCaptureImage);
         btnVerifyOTP = findViewById(R.id.btn_verify_otp);
         inputOTP = findViewById(R.id.inputOtp);
         layout_otp = findViewById(R.id.layout_otp);
@@ -183,6 +187,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         signupBtn.setOnClickListener(this);
         link_login.setOnClickListener(this);
         upload_profile_image.setOnClickListener(this);
+        imageViewCaptureImage.setOnClickListener(this);
         btnVerifyOTP.setOnClickListener(this);
 
         fullnameET.addTextChangedListener(new MyTextWatcher(fullnameET));
@@ -205,7 +210,8 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 startActivity(intent);
                 break;
 
-            case R.id.upload_profile_image:
+//            case R.id.upload_profile_image:
+            case R.id.imageViewCaptureImage:
 //                showMessage("CAMERA!");
                 if (isPermissionGranted()) {
                     showPictureDialog();
@@ -344,17 +350,16 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             }
 
 
-        }
-        else if (requestCode == REQUEST_PICK_IMAGE_CAMERA && resultCode == RESULT_OK && data != null) {
+        } else if (requestCode == REQUEST_PICK_IMAGE_CAMERA && resultCode == RESULT_OK && data != null) {
             // IF CAMERA SELECTED
             try {
                 bitmap = (Bitmap) data.getExtras().get("data");
                 upload_profile_image.setImageBitmap(bitmap);
 //                saveImage(thumbnail);
-                Toast.makeText(SignUpActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(SignUpActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
                 e.printStackTrace();
-                Toast.makeText(SignUpActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SignUpActivity.this, "Image Capture Failed!", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -415,7 +420,8 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         if (bitmap != null) {
             registerUser(fullname, mobileNo, vehicleNo, password);
         } else {
-            showMessage("Try Again. Please Upload Profile Photo!");
+//            showMessage("Try Again. Please Upload Profile Photo!");
+            TastyToastUtils.showTastyWarningToast(context, "Try Again. Please Upload Profile Photo!");
         }
     }
 
@@ -439,7 +445,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
                 // if no error response
                 if (!jsonObject.getBoolean("error")) {
-                    showMessage(jsonObject.getString("message"));
+//                    showMessage(jsonObject.getString("message"));
 
                     // getting user object
                     JSONObject userJson = jsonObject.getJSONObject("user");
@@ -453,7 +459,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                     user.setVehicleNo(userJson.getString("vehicle_no"));
                     user.setProfilePic(userJson.getString("image"));
 
-
                     // Store to share preference
                     SharedPreManager.getInstance(getApplicationContext()).userLogin(user);
 
@@ -461,6 +466,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                     SharedPreManager.getInstance(getApplicationContext()).setIsWaitingForSMS(true);
 
                     // Moving the screen to next pager item i.e otp screen
+//                    adapter.notifyDataSetChanged();
                     viewPager.setCurrentItem(1);
                     startCountDown();
                     // set edit layout with layout visibility.
@@ -489,6 +495,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 return params;
             }
         };
+
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         ParkingApp.getInstance().addToRequestQueue(stringRequest, TAG);
     }

@@ -130,7 +130,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         btnOTP.setOnClickListener(this);
         forgetPasswordBtn.setOnClickListener(this);
 
-
         //mobileNumberET.addTextChangedListener(new MyTextWatcher(inputLayoutMobile));
         //passwordET.addTextChangedListener(new MyTextWatcher(inputLayoutPassword));
     }
@@ -325,11 +324,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-
     private void showMessage(String message) {
         Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
     }
-
 
     /**
      * Check user input

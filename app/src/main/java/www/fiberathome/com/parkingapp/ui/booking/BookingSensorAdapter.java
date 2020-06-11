@@ -104,7 +104,7 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<RecyclerView.View
 
                         homeFragment.bottomSheetBehavior.setHideable(false);
 //            homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
-                        homeFragment.bottomSheetBehavior.setPeekHeight(300);
+                        homeFragment.bottomSheetBehavior.setPeekHeight(400);
                     });
                     break;
 
@@ -129,7 +129,7 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<RecyclerView.View
 
                         homeFragment.bottomSheetBehavior.setHideable(false);
 //            homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
-                        homeFragment.bottomSheetBehavior.setPeekHeight(300);
+                        homeFragment.bottomSheetBehavior.setPeekHeight(400);
                     });
                     break;
             }

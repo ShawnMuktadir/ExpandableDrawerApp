@@ -32,6 +32,7 @@ import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
 
 import android.os.Handler;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -91,7 +92,6 @@ public class MainActivity extends AppCompatActivity implements MainView, Navigat
     private TextView userVehicleNo;
     private ImageView userProfilePic;
     private BottomNavigationView bottomNavigationView;
-    private boolean doubleBackToExitPressedOnce = false;
     private ActionBarDrawerToggle actionBarDrawerToggle;
 
     @Override
@@ -452,20 +452,40 @@ public class MainActivity extends AppCompatActivity implements MainView, Navigat
         Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
     }
 
+    private boolean exit = false;
+
     @Override
     public void onBackPressed() {
-//        navigationView.getMenu().getItem(0).setChecked(true);
-        if (doubleBackToExitPressedOnce) {
+        if (exit) {
             super.onBackPressed();
             return;
         }
-        this.doubleBackToExitPressedOnce = true;
-        ApplicationUtils.showExitDialog(this);
 
+        try {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            Fragment fragment = fragmentManager.findFragmentByTag(context.getResources().getString(R.string.home));
+            if (fragment != null) {
+                if (fragment.isVisible()) {
+                    this.exit = true;
+                    ApplicationUtils.showExitDialog(this);
+//                    Toast.makeText(this, "Press Back again to Exit", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                fragment = HomeFragment.class.newInstance();
+                getFragmentManager().popBackStack();
+                fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment, context.getResources().getString(R.string.home)).commit();
+                navigationView.getMenu().getItem(0).setChecked(true);
+                toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
+                if (SharedData.getInstance().getOnConnectedLocation() != null) {
+                    HomeFragment.class.newInstance().animateCamera(SharedData.getInstance().getOnConnectedLocation());
+                }
+            }
+        } catch (Exception e) {
+        }
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                doubleBackToExitPressedOnce = false;
+                exit = false;
             }
         }, 2000);
     }

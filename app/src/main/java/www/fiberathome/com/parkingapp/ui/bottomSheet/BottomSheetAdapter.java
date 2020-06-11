@@ -129,7 +129,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
             homeFragment.bottomSheetBehavior.setHideable(false);
             homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-            homeFragment.bottomSheetBehavior.setPeekHeight(370);
+            homeFragment.bottomSheetBehavior.setPeekHeight(400);
 
         });
 

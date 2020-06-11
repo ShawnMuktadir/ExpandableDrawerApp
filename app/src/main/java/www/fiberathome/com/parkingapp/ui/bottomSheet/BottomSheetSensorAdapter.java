@@ -126,7 +126,7 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
 
                         homeFragment.bottomSheetBehavior.setHideable(false);
                         homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                        homeFragment.bottomSheetBehavior.setPeekHeight(300);
+                        homeFragment.bottomSheetBehavior.setPeekHeight(400);
                     });
                     break;
 
@@ -172,7 +172,7 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
 
                             homeFragment.bottomSheetBehavior.setHideable(false);
                             homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                            homeFragment.bottomSheetBehavior.setPeekHeight(300);
+                            homeFragment.bottomSheetBehavior.setPeekHeight(400);
 
                         });
                     }

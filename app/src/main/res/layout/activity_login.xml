@@ -8,128 +8,134 @@
     android:windowSoftInputMode="adjustPan"
     tools:context=".ui.activity.login.LoginActivity">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_marginLeft="@dimen/margin_20"
-        android:layout_marginRight="@dimen/margin_20"
-        android:orientation="vertical"
-        android:windowSoftInputMode="adjustPan">
+        android:layout_height="match_parent">
 
-        <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/upload_profile_image"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/margin_20"
-            android:padding="10dp"
-            android:src="@mipmap/ic_launcher"
-            app:civ_border_color="@color/colorPrimaryDark"
-            app:civ_border_width="2dp" />
-
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/margin_30"
-            android:text="@string/signin_title"
-            android:textAlignment="center"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/title_20"
-            android:textStyle="bold" />
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/margin_20"
+            android:layout_marginRight="@dimen/margin_20"
+            android:orientation="vertical"
+            android:windowSoftInputMode="adjustPan">
 
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/upload_profile_image"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/margin_20"
+                android:padding="10dp"
+                android:src="@mipmap/ic_launcher"
+                app:civ_border_color="@color/colorPrimaryDark"
+                app:civ_border_width="2dp" />
 
-        <!-- mobile number -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/input_layout_mobile"
-            style="@style/TextLabel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/hint_phoneno">
-
-            <EditText
-                android:id="@+id/input_mobile_number"
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="phone"
-                android:imeOptions="actionNext"
-                android:maxLength="11"
+                android:layout_marginBottom="@dimen/margin_30"
+                android:text="@string/signin_title"
+                android:textAlignment="center"
                 android:textColor="@android:color/black"
-                android:textColorHint="@android:color/black" />
+                android:textSize="@dimen/title_20"
+                android:textStyle="bold" />
 
-        </com.google.android.material.textfield.TextInputLayout>
 
-
-        <!-- Password Label -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/input_layout_password"
-            style="@style/TextLabel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:passwordToggleEnabled="true"
-            android:hint="@string/hint_pass">
-
-            <EditText
-                android:id="@+id/input_password"
+            <!-- mobile number -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/input_layout_mobile"
+                style="@style/TextLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPassword"
-                android:imeOptions="actionDone"
+                android:hint="@string/hint_phoneno">
+
+                <EditText
+                    android:id="@+id/input_mobile_number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionNext"
+                    android:inputType="phone"
+                    android:maxLength="11"
+                    android:textColor="@android:color/black"
+                    android:textColorHint="@android:color/black" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <!-- Password Label -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/input_layout_password"
+                style="@style/TextLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_pass"
+                app:passwordToggleEnabled="true">
+
+                <EditText
+                    android:id="@+id/input_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionDone"
+                    android:inputType="textPassword"
+                    android:textColor="@android:color/black"
+                    android:textColorHint="@android:color/black" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Signin Button -->
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/signin_btn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="24dp"
+                android:background="@color/blackColor"
+                android:padding="12dp"
+                android:text="@string/btn_signin"
+                android:textColor="@android:color/white"
+                android:textStyle="bold" />
+
+            <!-- Signup Button -->
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_retrive_otp"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimaryDark"
+                android:padding="12dp"
+                android:text="@string/btn_retrive_otp"
                 android:textColor="@android:color/black"
-                android:textColorHint="@android:color/black" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:textStyle="bold"
+                android:visibility="gone" />
 
-        <!-- Signup Button -->
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/signin_btn"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="24dp"
-            android:background="@color/blackColor"
-            android:padding="12dp"
-            android:text="@string/btn_signin"
-            android:textColor="@android:color/white"
-            android:textStyle="bold" />
+            <Button
+                android:id="@+id/link_signup"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:gravity="center"
+                android:padding="@dimen/margin_0"
+                android:text="@string/no_account_yet_click_here"
+                android:textAllCaps="false"
+                android:textColor="@color/blackColor"
+                android:textSize="15sp"
+                android:textStyle="normal" />
 
-        <!-- Signup Button -->
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_retrive_otp"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/colorPrimaryDark"
-            android:padding="12dp"
-            android:text="@string/btn_retrive_otp"
-            android:textColor="@android:color/black"
-            android:textStyle="bold"
-            android:visibility="gone" />
+            <Button
+                android:id="@+id/link_forget_password"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin_50"
+                android:background="@android:color/transparent"
+                android:gravity="center"
+                android:padding="@dimen/margin_0"
+                android:text="@string/forget_password_click_here"
+                android:textAllCaps="false"
+                android:textColor="@color/blackColor"
+                android:textSize="15sp"
+                android:textStyle="normal" />
 
-        <Button
-            android:id="@+id/link_signup"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:gravity="center"
-            android:padding="@dimen/margin_0"
-            android:text="@string/no_account_yet_click_here"
-            android:textAllCaps="false"
-            android:textColor="@color/blackColor"
-            android:textSize="15sp"
-            android:textStyle="normal" />
+        </LinearLayout>
 
-        <Button
-            android:id="@+id/link_forget_password"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/margin_50"
-            android:background="@android:color/transparent"
-            android:gravity="center"
-            android:padding="@dimen/margin_0"
-            android:text="@string/forget_password_click_here"
-            android:textAllCaps="false"
-            android:textColor="@color/blackColor"
-            android:textSize="15sp"
-            android:textStyle="normal" />
+    </ScrollView>
 
-    </LinearLayout>
 </RelativeLayout>
