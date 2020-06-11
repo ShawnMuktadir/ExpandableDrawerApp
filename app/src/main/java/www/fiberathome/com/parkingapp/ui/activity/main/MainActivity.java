@@ -463,7 +463,7 @@ public class MainActivity extends AppCompatActivity implements MainView, Navigat
 
         try {
             FragmentManager fragmentManager = getSupportFragmentManager();
-            Fragment fragment = fragmentManager.findFragmentByTag(context.getResources().getString(R.string.home));
+            Fragment fragment = fragmentManager.findFragmentByTag(context.getResources().getString(R.string.welcome_to_locc_parking));
             if (fragment != null) {
                 if (fragment.isVisible()) {
                     this.exit = true;
@@ -473,7 +473,8 @@ public class MainActivity extends AppCompatActivity implements MainView, Navigat
             } else {
                 fragment = HomeFragment.class.newInstance();
                 getFragmentManager().popBackStack();
-                fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment, context.getResources().getString(R.string.home)).commit();
+                fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment, context.getResources().getString(R.string.welcome_to_locc_parking)).commit();
+                drawerlayoutMain.closeDrawers();
                 navigationView.getMenu().getItem(0).setChecked(true);
                 toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
                 if (SharedData.getInstance().getOnConnectedLocation() != null) {
@@ -481,6 +482,7 @@ public class MainActivity extends AppCompatActivity implements MainView, Navigat
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
         }
         new Handler().postDelayed(new Runnable() {
             @Override
