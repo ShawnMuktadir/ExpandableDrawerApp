@@ -2,9 +2,11 @@ package www.fiberathome.com.parkingapp.ui.activity.registration;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -16,6 +18,8 @@ import android.text.Spanned;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
+import android.util.AttributeSet;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -61,6 +65,7 @@ import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.ui.activity.login.LoginActivity;
 import www.fiberathome.com.parkingapp.ui.activity.main.MainActivity;
 import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
+import www.fiberathome.com.parkingapp.utils.MyViewPager;
 import www.fiberathome.com.parkingapp.utils.SharedPreManager;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
@@ -80,7 +85,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     private TextView link_login;
     // ViewPager information
     // OTP Verification Page
-    private ViewPager viewPager;
+    private MyViewPager viewPager;
     private ViewPagerAdapter adapter;
     private Button btnVerifyOTP;
     private EditText inputOTP;
@@ -102,7 +107,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
         context = this;
-
+        viewPager = new MyViewPager(context);
         // Initialize Components
         initUI();
         // Check user is logged in
@@ -125,7 +130,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         spannableString.setSpan(clickableSpan, 18, 28, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         link_login.setText(spannableString);
         link_login.setMovementMethod(LinkMovementMethod.getInstance());
-
 
         adapter = new ViewPagerAdapter();
         viewPager.setAdapter(adapter);
@@ -152,6 +156,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             showMessage("User Exists");
 //            adapter.notifyDataSetChanged();
             viewPager.setCurrentItem(1);
+//            viewPager.setCurrentItem (adapter.getItemPosition (1), true);
         }
     }
 
@@ -179,7 +184,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
     }
 
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -195,7 +199,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         vehicleET.addTextChangedListener(new MyTextWatcher(vehicleET));
         passwordET.addTextChangedListener(new MyTextWatcher(passwordET));
     }
-
 
     @Override
     public void onClick(View view) {
@@ -582,7 +585,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
         @Override
         public int getCount() {
-            return 2;
+            return viewPager.getChildCount();
         }
 
         @Override
@@ -596,10 +599,12 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             int resID = 1;
             switch (position) {
                 case 0:
+                    Timber.e("position -> %s", position);
                     resID = R.id.layout_signup;
                     break;
 
                 case 1:
+                    Timber.e("position -> %s", position);
                     resID = R.id.layout_otp;
                     break;
             }
@@ -608,8 +613,31 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         }
 
         @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
+        public void destroyItem(ViewGroup container, int position, @NonNull Object object) {
             container.removeView((View) object);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage("Are you sure you want to exit?")
+                .setNegativeButton(android.R.string.no, null)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        SignUpActivity.super.onBackPressed();
+                    }
+                }).create();
+        AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface arg0) {
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.black));
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.red));
+                //dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(getResources().getColor(R.color.black));
+            }
+        });
+        dialog.show();
     }
 }

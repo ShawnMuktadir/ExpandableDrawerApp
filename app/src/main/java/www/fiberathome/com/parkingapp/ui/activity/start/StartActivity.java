@@ -1,5 +1,7 @@
 package www.fiberathome.com.parkingapp.ui.activity.start;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -10,6 +12,8 @@ import android.widget.Toast;
 //import com.iotsens.sdk.IoTSensApiClientBuilder;
 //import com.iotsens.sdk.sensors.SensorsRequest;
 //import com.iotsens.sdk.sensors.SensorsRequestBuilder;
+
+import androidx.appcompat.app.AlertDialog;
 
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.ui.activity.login.LoginActivity;
@@ -25,11 +29,13 @@ public class StartActivity extends BaseActivity implements View.OnClickListener 
     public static final String DEFAULT_USER = "atif.hafizuddin"; // must be a proper user
     private Button loginBtn;
     private Button signupBtn;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
+        context = this;
 
 //        IoTSensApiClient apiClient = IoTSensApiClientBuilder.aIoTSensClient().withApplication(APPLICATION_ID).withSecret(SECRET).withDefaultUser(DEFAULT_USER).build();
 //
@@ -68,15 +74,15 @@ public class StartActivity extends BaseActivity implements View.OnClickListener 
         switch (view.getId()) {
             case R.id.button_login:
                 // Do something
-                Intent intent = new Intent(StartActivity.this, LoginActivity.class);
-                startActivity(intent);
+                Intent loginIntent = new Intent(StartActivity.this, LoginActivity.class);
+                startActivity(loginIntent);
                 finish();
                 break;
 
             case R.id.button_signup:
                 // Do something
-                Intent intent1 = new Intent(StartActivity.this, SignUpActivity.class);
-                startActivity(intent1);
+                Intent signUpIntent = new Intent(StartActivity.this, SignUpActivity.class);
+                startActivity(signUpIntent);
                 finish();
                 break;
         }
@@ -129,5 +135,28 @@ public class StartActivity extends BaseActivity implements View.OnClickListener 
 
     private void showMessage(String message) {
         Toast.makeText(StartActivity.this, message, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage("Are you sure you want to exit?")
+                .setNegativeButton(android.R.string.no, null)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        StartActivity.super.onBackPressed();
+                    }
+                }).create();
+        AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface arg0) {
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.black));
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.red));
+                //dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(getResources().getColor(R.color.black));
+            }
+        });
+        dialog.show();
     }
 }
