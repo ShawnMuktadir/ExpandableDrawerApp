@@ -7,7 +7,6 @@ import android.annotation.SuppressLint;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -23,7 +22,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -59,7 +57,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.internal.Constants;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
@@ -97,7 +94,6 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -126,7 +122,6 @@ import www.fiberathome.com.parkingapp.ui.activity.search.SearchActivity;
 import www.fiberathome.com.parkingapp.model.SensorArea;
 
 import www.fiberathome.com.parkingapp.ui.bottomSheet.BottomSheetAdapter;
-import www.fiberathome.com.parkingapp.ui.bottomSheet.BottomSheetSensorAdapter;
 import www.fiberathome.com.parkingapp.preference.AppConstants;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.GpsUtils;
@@ -140,7 +135,7 @@ import static www.fiberathome.com.parkingapp.utils.AppConstants.NEW_PLACE_SELECT
 import static www.fiberathome.com.parkingapp.utils.AppConstants.NEW_SEARCH_ACTIVITY_REQUEST_CODE;
 
 
-import www.fiberathome.com.parkingapp.utils.SharedData;
+import www.fiberathome.com.parkingapp.data.preference.SharedData;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -936,6 +931,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     public void onPause() {
 //        Timber.e("onPause called");
         super.onPause();
+        dismissProgressDialog();
+    }
+
+    private void dismissProgressDialog() {
+        if(progressDialog != null && progressDialog.isShowing())
+            progressDialog.dismiss();
     }
 
     @Override

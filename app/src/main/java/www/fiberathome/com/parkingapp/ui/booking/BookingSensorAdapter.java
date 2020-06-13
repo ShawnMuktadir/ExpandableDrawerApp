@@ -1,6 +1,5 @@
 package www.fiberathome.com.parkingapp.ui.booking;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
@@ -22,7 +21,6 @@ import com.akexorcist.googledirection.model.Info;
 import com.akexorcist.googledirection.model.Leg;
 import com.akexorcist.googledirection.model.Route;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -35,7 +33,6 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.BookingSensors;
 import www.fiberathome.com.parkingapp.ui.fragments.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
-import www.fiberathome.com.parkingapp.utils.SharedData;
 
 public class BookingSensorAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 //public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdapter.BookingViewHolder> {

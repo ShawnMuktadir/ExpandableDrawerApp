@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.utils;
+package www.fiberathome.com.parkingapp.data.preference;
 
 import android.content.Context;
 import android.content.SharedPreferences;

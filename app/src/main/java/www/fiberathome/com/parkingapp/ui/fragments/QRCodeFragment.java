@@ -23,7 +23,7 @@ import java.util.Objects;
 
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.User;
-import www.fiberathome.com.parkingapp.utils.SharedPreManager;
+import www.fiberathome.com.parkingapp.data.preference.SharedPreManager;
 
 /**
  * A simple {@link Fragment} subclass.

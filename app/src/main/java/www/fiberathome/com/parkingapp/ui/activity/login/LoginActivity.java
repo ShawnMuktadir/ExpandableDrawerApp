@@ -37,6 +37,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
@@ -47,18 +48,19 @@ import www.fiberathome.com.parkingapp.ui.activity.forgetPassword.ForgetPasswordA
 import www.fiberathome.com.parkingapp.ui.activity.main.MainActivity;
 import www.fiberathome.com.parkingapp.ui.activity.registration.SignUpActivity;
 import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
-import www.fiberathome.com.parkingapp.utils.SharedPreManager;
+import www.fiberathome.com.parkingapp.data.preference.SharedPreManager;
+import www.fiberathome.com.parkingapp.utils.Validator;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Context context;
     private static String TAG = LoginActivity.class.getSimpleName();
 
-    private EditText mobileNumberET;
-    private EditText passwordET;
+    private EditText editTextMobile;
+    private EditText editTextPassword;
 
-    private TextInputLayout inputLayoutMobile;
-    private TextInputLayout inputLayoutPassword;
+    private TextInputLayout textInputLayoutMobile;
+    private TextInputLayout textInputLayoutPassword;
     private TextView link_signup;
 
     private Button btnOTP;
@@ -72,7 +74,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         context = this;
-
+        initUI();
+        setListeners();
 
         // Check user is logged in
         if (SharedPreManager.getInstance(getApplicationContext()).isLoggedIn()) {
@@ -81,18 +84,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             finish();
             return;
         }
-
-
-        // initialize component
-        signinBtn = findViewById(R.id.signin_btn);
-        mobileNumberET = findViewById(R.id.input_mobile_number);
-        passwordET = findViewById(R.id.input_password);
-        link_signup = findViewById(R.id.link_signup);
-        btnOTP = findViewById(R.id.btn_retrive_otp);
-        forgetPasswordBtn = findViewById(R.id.link_forget_password);
-
-        inputLayoutMobile = findViewById(R.id.input_layout_mobile);
-        inputLayoutPassword = findViewById(R.id.input_layout_password);
 
         //makes an underline on for Registration Click Here
         SpannableString spannableString = new SpannableString(context.getResources().getString(R.string.no_account_yet_click_here));
@@ -106,7 +97,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         spannableString.setSpan(clickableSpan, 16, 26, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         link_signup.setText(spannableString);
         link_signup.setMovementMethod(LinkMovementMethod.getInstance());
-
 
         //makes an underline on Forgot Password Click Here
         SpannableString ss = new SpannableString(context.getResources().getString(R.string.forget_password_click_here));
@@ -122,6 +112,70 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         forgetPasswordBtn.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
+    private void initUI() {
+        // initialize component
+        signinBtn = findViewById(R.id.signin_btn);
+        editTextMobile = findViewById(R.id.input_mobile_number);
+        editTextPassword = findViewById(R.id.input_password);
+        link_signup = findViewById(R.id.link_signup);
+        btnOTP = findViewById(R.id.btn_retrive_otp);
+        forgetPasswordBtn = findViewById(R.id.link_forget_password);
+        textInputLayoutMobile = findViewById(R.id.input_layout_mobile);
+        textInputLayoutPassword = findViewById(R.id.input_layout_password);
+    }
+
+    private void setListeners() {
+        Objects.requireNonNull(textInputLayoutMobile.getEditText()).addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() < 1) {
+                    textInputLayoutMobile.setErrorEnabled(true);
+                    textInputLayoutMobile.setError(context.getString(R.string.err_msg_fullname));
+                }
+
+                if (s.length() > 0) {
+                    textInputLayoutMobile.setError(null);
+                    textInputLayoutMobile.setErrorEnabled(false);
+                }
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        Objects.requireNonNull(textInputLayoutPassword.getEditText()).addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() < 1) {
+                    textInputLayoutPassword.setErrorEnabled(true);
+                    textInputLayoutPassword.setError(context.getString(R.string.err_msg_mobile));
+                }
+
+                if (s.length() > 0) {
+                    textInputLayoutPassword.setError(null);
+                    textInputLayoutPassword.setErrorEnabled(false);
+                }
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
 
     @Override
     protected void onStart() {
@@ -139,6 +193,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onResume() {
         super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        dismissProgressDialog();
+
+    }
+
+    private void dismissProgressDialog() {
+        if (progressDialog != null && progressDialog.isShowing())
+            progressDialog.dismiss();
     }
 
     @Override
@@ -175,14 +241,24 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             return;
         }
 
+        if (checkFields()) {
+            String mobileNo = editTextMobile.getText().toString().trim();
+            String password = editTextPassword.getText().toString().trim();
+
+            checkLogin(mobileNo, password);
+        }
+
 //        if (!validatePassword()){
 //            return;
 //        }
+    }
 
-        String mobileNo = mobileNumberET.getText().toString().trim();
-        String password = passwordET.getText().toString().trim();
+    private boolean checkFields() {
+        boolean isPhoneValid = Validator.checkValidity(textInputLayoutMobile, editTextMobile.getText().toString(), context.getString(R.string.err_msg_mobile), "phone");
+        boolean isPasswordValid = Validator.checkValidity(textInputLayoutPassword, editTextPassword.getText().toString(), context.getString(R.string.err_msg_password), "textPassword");
 
-        checkLogin(mobileNo, password);
+        return isPhoneValid && isPasswordValid;
+
     }
 
     private void checkLogin(final String mobileNo, final String password) {
@@ -230,12 +306,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         // storing the user in sharedPreference
                         SharedPreManager.getInstance(getApplicationContext()).userLogin(user);
 
-
                         // Move to another Activity
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
                         finish();
-                        progressDialog.dismiss();
+//                        progressDialog.dismiss();
 
                     } else if (jsonObject.getBoolean("error") && jsonObject.has("authentication")) {
                         // IF ERROR OCCURS AND AUTHENTICATION IS INVALID
@@ -282,14 +357,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
      */
 
     private boolean validateMobileNumber() {
-        String mobileNumber = mobileNumberET.getText().toString().trim();
+        String mobileNumber = editTextMobile.getText().toString().trim();
 
         if (mobileNumber.isEmpty()) {
-            inputLayoutMobile.setError(getString(R.string.err_msg_mobile));
-            requestFocus(mobileNumberET);
+            textInputLayoutMobile.setError(getString(R.string.err_msg_mobile));
+            requestFocus(editTextMobile);
             return false;
         } else {
-            inputLayoutMobile.setErrorEnabled(false);
+            textInputLayoutMobile.setErrorEnabled(false);
         }
 
         return true;
@@ -300,14 +375,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
      * @desc validate Password
      */
     private boolean validatePassword() {
-        String password = passwordET.getText().toString().trim();
+        String password = editTextPassword.getText().toString().trim();
         if (password.isEmpty()) {
-            inputLayoutPassword.setError(getResources().getString(R.string.err_msg_password));
-            requestFocus(passwordET);
+            textInputLayoutPassword.setError(getResources().getString(R.string.err_msg_password));
+            requestFocus(editTextPassword);
             return false;
 
         } else {
-            inputLayoutPassword.setErrorEnabled(false);
+            textInputLayoutPassword.setErrorEnabled(false);
         }
 
         return true;

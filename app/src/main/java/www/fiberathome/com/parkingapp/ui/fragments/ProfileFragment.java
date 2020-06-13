@@ -3,7 +3,6 @@ package www.fiberathome.com.parkingapp.ui.fragments;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,7 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.User;
 import www.fiberathome.com.parkingapp.base.AppConfig;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
-import www.fiberathome.com.parkingapp.utils.SharedPreManager;
+import www.fiberathome.com.parkingapp.data.preference.SharedPreManager;
 
 /**
  * A simple {@link Fragment} subclass.

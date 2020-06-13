@@ -53,9 +53,14 @@
         <activity
             android:name=".ui.activity.main.MainActivity"
             android:screenOrientation="unspecified"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|mcc|mnc"
             android:theme="@style/AppTheme.DefaultActionBar" />
         <activity
             android:name=".ui.activity.registration.SignUpActivity"
+            android:screenOrientation="unspecified"
+            android:theme="@style/AppTheme.DefaultActionBar" />
+        <activity
+            android:name=".ui.activity.registration.VerifyPhoneActivity"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
         <activity

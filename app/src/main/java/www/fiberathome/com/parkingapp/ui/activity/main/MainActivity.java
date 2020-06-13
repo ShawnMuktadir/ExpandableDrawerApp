@@ -32,7 +32,6 @@ import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
 
 import android.os.Handler;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -76,8 +75,8 @@ import www.fiberathome.com.parkingapp.ui.ratingReview.RatingReviewFragment;
 import www.fiberathome.com.parkingapp.ui.settings.SettingsFragment;
 import www.fiberathome.com.parkingapp.ui.share.ShareFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
-import www.fiberathome.com.parkingapp.utils.SharedData;
-import www.fiberathome.com.parkingapp.utils.SharedPreManager;
+import www.fiberathome.com.parkingapp.data.preference.SharedData;
+import www.fiberathome.com.parkingapp.data.preference.SharedPreManager;
 
 public class MainActivity extends AppCompatActivity implements MainView, NavigationView.OnNavigationItemSelectedListener, DialogForm.DialogFormListener {
     // BottomNavigationView.OnNavigationItemSelectedListener

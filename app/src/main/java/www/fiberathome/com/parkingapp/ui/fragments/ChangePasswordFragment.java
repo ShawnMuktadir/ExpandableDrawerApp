@@ -3,7 +3,7 @@ package www.fiberathome.com.parkingapp.ui.fragments;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
+
 import com.google.android.material.textfield.TextInputLayout;
 import androidx.fragment.app.Fragment;
 import android.text.Editable;
@@ -25,7 +25,7 @@ import www.fiberathome.com.parkingapp.api.ApiClient;
 import www.fiberathome.com.parkingapp.api.ApiService;
 import www.fiberathome.com.parkingapp.model.User;
 import www.fiberathome.com.parkingapp.utils.MSG;
-import www.fiberathome.com.parkingapp.utils.SharedPreManager;
+import www.fiberathome.com.parkingapp.data.preference.SharedPreManager;
 
 /**
  * A simple {@link Fragment} subclass.

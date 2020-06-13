@@ -44,9 +44,12 @@
     <string name="err_msg_fullname">Enter Full Name!</string>
     <string name="err_msg_vehicle">Enter vehicle no!</string>
     <string name="err_old_password">Enter valid old password!</string>
+    <string name="err_msg_pin">Enter valid pin!</string>
     <string name="find_nearest">Find Nearest</string>
     <string name="refresh">Refresh</string>
 
+    <string name="pin_content_desc">PIN input field</string>
+    <string name="pin_label_text">PIN</string>
 
     <!--Toolbar titles when navigation menu item is selected -->
     <string-array name="nav_item_activity_title">

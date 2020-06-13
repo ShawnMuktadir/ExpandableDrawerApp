@@ -33,7 +33,7 @@ import www.fiberathome.com.parkingapp.ui.activity.main.MainActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
-import www.fiberathome.com.parkingapp.utils.SharedPreManager;
+import www.fiberathome.com.parkingapp.data.preference.SharedPreManager;
 
 import static com.android.volley.VolleyLog.TAG;
 

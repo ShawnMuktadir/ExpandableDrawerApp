@@ -20,7 +20,7 @@ import www.fiberathome.com.parkingapp.ui.activity.login.LoginActivity;
 import www.fiberathome.com.parkingapp.ui.activity.main.MainActivity;
 import www.fiberathome.com.parkingapp.ui.activity.registration.SignUpActivity;
 import www.fiberathome.com.parkingapp.utils.BaseActivity;
-import www.fiberathome.com.parkingapp.utils.SharedPreManager;
+import www.fiberathome.com.parkingapp.data.preference.SharedPreManager;
 
 public class StartActivity extends BaseActivity implements View.OnClickListener {
 

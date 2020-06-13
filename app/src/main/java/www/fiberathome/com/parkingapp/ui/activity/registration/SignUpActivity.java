@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -18,13 +17,10 @@ import android.text.Spanned;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
-import android.text.style.ForegroundColorSpan;
-import android.util.AttributeSet;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -56,6 +52,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
@@ -66,8 +63,9 @@ import www.fiberathome.com.parkingapp.ui.activity.login.LoginActivity;
 import www.fiberathome.com.parkingapp.ui.activity.main.MainActivity;
 import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
 import www.fiberathome.com.parkingapp.utils.MyViewPager;
-import www.fiberathome.com.parkingapp.utils.SharedPreManager;
+import www.fiberathome.com.parkingapp.data.preference.SharedPreManager;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+import www.fiberathome.com.parkingapp.utils.Validator;
 
 public class SignUpActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -78,27 +76,27 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     private static final int MY_CAMERA_REQUEST_CODE = 1003;
     private Context context;
     private Button signupBtn;
-    private EditText fullnameET;
-    private EditText mobileET;
-    private EditText vehicleET;
-    private EditText passwordET;
+    private EditText editTextFullName;
+    private EditText editTextMobileNumber;
+    private EditText editTextVehicleRegNumber;
+    private EditText editTextPassword;
     private TextView link_login;
     // ViewPager information
     // OTP Verification Page
-    private MyViewPager viewPager;
-    private ViewPagerAdapter adapter;
-    private Button btnVerifyOTP;
-    private EditText inputOTP;
-    private CountDownTimer countDownTimer;
-    private TextView countdown;
+//    private MyViewPager viewPager;
+//    private ViewPagerAdapter adapter;
+    //    private Button btnVerifyOTP;
+//    private EditText inputOTP;
+//    private CountDownTimer countDownTimer;
+//    private TextView countdown;
     private Button editPhoneNumber;
     private Bitmap bitmap;
 
     private ProgressDialog progressDialog;
-    private TextInputLayout inputLayoutFullName;
-    private TextInputLayout inputLayoutMobile;
-    private TextInputLayout inputLayoutVehicle;
-    private TextInputLayout inputLayoutPassword;
+    private TextInputLayout textInputLayoutFullName;
+    private TextInputLayout textInputLayoutMobile;
+    private TextInputLayout textInputLayoutVehicle;
+    private TextInputLayout textInputLayoutPassword;
     private ImageView upload_profile_image, imageViewCaptureImage;
     private LinearLayout layout_otp;
 
@@ -107,9 +105,10 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
         context = this;
-        viewPager = new MyViewPager(context);
+//        viewPager = new MyViewPager(context);
         // Initialize Components
         initUI();
+        setListeners();
         // Check user is logged in
         if (SharedPreManager.getInstance(getApplicationContext()).isLoggedIn()) {
             Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
@@ -131,57 +130,35 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         link_login.setText(spannableString);
         link_login.setMovementMethod(LinkMovementMethod.getInstance());
 
-        adapter = new ViewPagerAdapter();
-        viewPager.setAdapter(adapter);
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
+//        adapter = new ViewPagerAdapter();
+//        viewPager.setAdapter(adapter);
+//        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+//            @Override
+//            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+//
+//            }
+//
+//            @Override
+//            public void onPageSelected(int position) {
+//
+//            }
+//
+//            @Override
+//            public void onPageScrollStateChanged(int state) {
+//
+//            }
+//        });
 
 
         // check preference is waiting for SMS
         if (SharedPreManager.getInstance(this).isWaitingForSMS()) {
             showMessage("User Exists");
+            Intent intent = new Intent(SignUpActivity.this, VerifyPhoneActivity.class);
+            startActivity(intent);
 //            adapter.notifyDataSetChanged();
-            viewPager.setCurrentItem(1);
+//            viewPager.setCurrentItem(1);
 //            viewPager.setCurrentItem (adapter.getItemPosition (1), true);
         }
-    }
-
-    private void initUI() {
-        signupBtn = findViewById(R.id.signup_final_btn);
-        fullnameET = findViewById(R.id.input_fullname);
-        mobileET = findViewById(R.id.input_mobile_number);
-        vehicleET = findViewById(R.id.input_vehicle_no);
-        passwordET = findViewById(R.id.input_password);
-        link_login = findViewById(R.id.link_login);
-        upload_profile_image = findViewById(R.id.upload_profile_image);
-        imageViewCaptureImage = findViewById(R.id.imageViewCaptureImage);
-        btnVerifyOTP = findViewById(R.id.btn_verify_otp);
-        inputOTP = findViewById(R.id.inputOtp);
-        layout_otp = findViewById(R.id.layout_otp);
-
-        // init viewpager
-        viewPager = findViewById(R.id.viewPagerVertical);
-        countdown = findViewById(R.id.countdown);
-
-        inputLayoutFullName = findViewById(R.id.layout_fullname);
-        inputLayoutMobile = findViewById(R.id.layout_mobile_number);
-        inputLayoutVehicle = findViewById(R.id.layout_vehicle_no);
-        inputLayoutPassword = findViewById(R.id.layout_password);
-
     }
 
     @Override
@@ -192,12 +169,12 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         link_login.setOnClickListener(this);
         upload_profile_image.setOnClickListener(this);
         imageViewCaptureImage.setOnClickListener(this);
-        btnVerifyOTP.setOnClickListener(this);
+//        btnVerifyOTP.setOnClickListener(this);
 
-        fullnameET.addTextChangedListener(new MyTextWatcher(fullnameET));
-        mobileET.addTextChangedListener(new MyTextWatcher(mobileET));
-        vehicleET.addTextChangedListener(new MyTextWatcher(vehicleET));
-        passwordET.addTextChangedListener(new MyTextWatcher(passwordET));
+        editTextFullName.addTextChangedListener(new MyTextWatcher(editTextFullName));
+        editTextMobileNumber.addTextChangedListener(new MyTextWatcher(editTextMobileNumber));
+        editTextVehicleRegNumber.addTextChangedListener(new MyTextWatcher(editTextVehicleRegNumber));
+        editTextPassword.addTextChangedListener(new MyTextWatcher(editTextPassword));
     }
 
     @Override
@@ -206,11 +183,13 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         switch (view.getId()) {
             case R.id.signup_final_btn:
                 submitRegistration();
+//                Intent verifyIntent = new Intent(SignUpActivity.this, VerifyPhoneActivity.class);
+//                startActivity(verifyIntent);
                 break;
 
             case R.id.link_login:
-                Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
-                startActivity(intent);
+                Intent loginIntent = new Intent(SignUpActivity.this, LoginActivity.class);
+                startActivity(loginIntent);
                 break;
 
 //            case R.id.upload_profile_image:
@@ -222,13 +201,139 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 //bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.blank_profile_pic);
                 break;
 
-            case R.id.btn_verify_otp:
-                // GETTING THE OTP VALUE FROM USER.
-                String otp = inputOTP.getText().toString().trim();
-                submitOTPVerification(otp);
-                break;
+//            case R.id.btn_verify_otp:
+//                // GETTING THE OTP VALUE FROM USER.
+//                String otp = inputOTP.getText().toString().trim();
+//                submitOTPVerification(otp);
+//                break;
         }
+    }
 
+    private void initUI() {
+        signupBtn = findViewById(R.id.signup_final_btn);
+        editTextFullName = findViewById(R.id.input_fullname);
+        editTextMobileNumber = findViewById(R.id.input_mobile_number);
+        editTextVehicleRegNumber = findViewById(R.id.input_vehicle_no);
+        editTextPassword = findViewById(R.id.input_password);
+        link_login = findViewById(R.id.link_login);
+        upload_profile_image = findViewById(R.id.upload_profile_image);
+        imageViewCaptureImage = findViewById(R.id.imageViewCaptureImage);
+//        btnVerifyOTP = findViewById(R.id.btn_verify_otp);
+//        inputOTP = findViewById(R.id.inputOtp);
+//        layout_otp = findViewById(R.id.layout_otp);
+
+        // init viewpager
+//        viewPager = findViewById(R.id.viewPagerVertical);
+//        countdown = findViewById(R.id.countdown);
+
+        textInputLayoutFullName = findViewById(R.id.layout_fullname);
+        textInputLayoutMobile = findViewById(R.id.layout_mobile_number);
+        textInputLayoutVehicle = findViewById(R.id.layout_vehicle_no);
+        textInputLayoutPassword = findViewById(R.id.layout_password);
+
+    }
+
+    private void setListeners() {
+        Objects.requireNonNull(textInputLayoutFullName.getEditText()).addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() < 1) {
+                    textInputLayoutFullName.setErrorEnabled(true);
+                    textInputLayoutFullName.setError(context.getString(R.string.err_msg_fullname));
+                }
+
+                if (s.length() > 0) {
+                    textInputLayoutFullName.setError(null);
+                    textInputLayoutFullName.setErrorEnabled(false);
+                }
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        Objects.requireNonNull(textInputLayoutMobile.getEditText()).addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() < 1) {
+                    textInputLayoutMobile.setErrorEnabled(true);
+                    textInputLayoutMobile.setError(context.getString(R.string.err_msg_mobile));
+                }
+
+                if (s.length() > 0) {
+                    textInputLayoutMobile.setError(null);
+                    textInputLayoutMobile.setErrorEnabled(false);
+                }
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        Objects.requireNonNull(textInputLayoutVehicle.getEditText()).addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() < 1) {
+                    textInputLayoutVehicle.setErrorEnabled(true);
+                    textInputLayoutVehicle.setError(context.getString(R.string.err_msg_vehicle));
+                }
+
+                if (s.length() > 0) {
+                    textInputLayoutVehicle.setError(null);
+                    textInputLayoutVehicle.setErrorEnabled(false);
+                }
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        Objects.requireNonNull(textInputLayoutPassword.getEditText()).addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() < 1) {
+                    textInputLayoutPassword.setErrorEnabled(true);
+                    textInputLayoutPassword.setError(context.getString(R.string.err_msg_password));
+                }
+
+                if (s.length() > 0) {
+                    textInputLayoutPassword.setError(null);
+                    textInputLayoutPassword.setErrorEnabled(false);
+                }
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
     private void submitOTPVerification(final String otp) {
@@ -397,31 +502,16 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void submitRegistration() {
-        // Loading Progress
-        if (!validateEditText(fullnameET, inputLayoutFullName, R.string.err_msg_fullname)) {
-            return;
-        }
+        if (checkFields()) {
+            String fullname = editTextFullName.getText().toString().trim();
+            String mobileNo = editTextMobileNumber.getText().toString().trim();
+            String vehicleNo = editTextVehicleRegNumber.getText().toString().trim();
+            String password = editTextPassword.getText().toString().trim();
 
-        if (!validateEditText(mobileET, inputLayoutMobile, R.string.err_msg_mobile)) {
-            return;
-        }
-
-        if (!validateEditText(vehicleET, inputLayoutVehicle, R.string.err_msg_vehicle)) {
-            return;
-        }
-
-        if (!validateEditText(passwordET, inputLayoutPassword, R.string.err_msg_password)) {
-            return;
-        }
-
-        String fullname = fullnameET.getText().toString().trim();
-        String mobileNo = mobileET.getText().toString().trim();
-        String vehicleNo = vehicleET.getText().toString().trim();
-        String password = passwordET.getText().toString().trim();
-
-        //showMessage(mobileNo + " " + vehicleNo + " " + password);
-        if (bitmap != null) {
-            registerUser(fullname, mobileNo, vehicleNo, password);
+            //showMessage(mobileNo + " " + vehicleNo + " " + password);
+            if (bitmap != null) {
+                registerUser(fullname, mobileNo, vehicleNo, password);
+            }
         } else {
 //            showMessage("Try Again. Please Upload Profile Photo!");
             TastyToastUtils.showTastyWarningToast(context, "Try Again. Please Upload Profile Photo!");
@@ -470,21 +560,19 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
                     // Moving the screen to next pager item i.e otp screen
 //                    adapter.notifyDataSetChanged();
-                    viewPager.setCurrentItem(1);
-                    startCountDown();
-                    // set edit layout with layout visibility.
+//                    viewPager.setCurrentItem(1);
+
+//                    startCountDown();
                 } else {
                     showMessage(jsonObject.getString("message"));
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                showMessage(error.getMessage());
-            }
-        }) {
+            Intent intent = new Intent(SignUpActivity.this, VerifyPhoneActivity.class);
+            startActivity(intent);
+
+        }, error -> showMessage(error.getMessage())) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
@@ -503,6 +591,15 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         ParkingApp.getInstance().addToRequestQueue(stringRequest, TAG);
     }
 
+    private boolean checkFields() {
+        editTextFullName.requestFocus();
+        boolean isNameValid = Validator.checkValidity(textInputLayoutFullName, editTextFullName.getText().toString(), context.getString(R.string.err_msg_fullname), "text");
+        boolean isPhoneValid = Validator.checkValidity(textInputLayoutMobile, editTextMobileNumber.getText().toString(), context.getString(R.string.err_msg_mobile), "phone");
+        boolean isVehicleRegValid = Validator.checkValidity(textInputLayoutVehicle, editTextVehicleRegNumber.getText().toString(), context.getString(R.string.err_msg_vehicle), "text");
+        boolean isPasswordValid = Validator.checkValidity(textInputLayoutPassword, editTextPassword.getText().toString(), context.getString(R.string.err_msg_password), "textPassword");
+        return isNameValid && isPhoneValid && isVehicleRegValid && isPasswordValid;
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -512,22 +609,22 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         Toast.makeText(SignUpActivity.this, message, Toast.LENGTH_SHORT).show();
     }
 
-    private void startCountDown() {
-        new CountDownTimer(10000, 1000) {
-            //CountDownTimer(edittext1.getText()+edittext2.getText()) also parse it to long
-
-            public void onTick(long millisUntilFinished) {
-                countdown.setText("seconds remaining: " + millisUntilFinished / 1000);
-                //here you can have your logic to set text to edittext
-            }
-
-            public void onFinish() {
-                countdown.setText("finished!");
-                // enable the edit alert dialog
-            }
-        }.start();
-
-    }
+//    private void startCountDown() {
+//        new CountDownTimer(10000, 1000) {
+//            //CountDownTimer(edittext1.getText()+edittext2.getText()) also parse it to long
+//
+//            public void onTick(long millisUntilFinished) {
+//                countdown.setText("seconds remaining: " + millisUntilFinished / 1000);
+//                //here you can have your logic to set text to edittext
+//            }
+//
+//            public void onFinish() {
+//                countdown.setText("finished!");
+//                // enable the edit alert dialog
+//            }
+//        }.start();
+//
+//    }
 
     private boolean validateEditText(EditText editText, TextInputLayout inputLayout, int errorMessage) {
         String value = editText.getText().toString().trim();
@@ -570,10 +667,11 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         public void afterTextChanged(Editable editable) {
             switch (view.getId()) {
                 case R.id.input_mobile_number:
-                    validateEditText(fullnameET, inputLayoutFullName, R.string.err_msg_fullname);
+                    validateEditText(editTextFullName, textInputLayoutFullName, R.string.err_msg_fullname);
                     break;
             }
         }
+
     }
 
     /**
@@ -581,43 +679,42 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
      * ==================================================
      */
 
-    public class ViewPagerAdapter extends PagerAdapter {
-
-        @Override
-        public int getCount() {
-            return viewPager.getChildCount();
-        }
-
-        @Override
-        public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
-            return view == ((View) object);
-        }
-
-        @NonNull
-        @Override
-        public Object instantiateItem(@NonNull ViewGroup container, int position) {
-            int resID = 1;
-            switch (position) {
-                case 0:
-                    Timber.e("position -> %s", position);
-                    resID = R.id.layout_signup;
-                    break;
-
-                case 1:
-                    Timber.e("position -> %s", position);
-                    resID = R.id.layout_otp;
-                    break;
-            }
-
-            return findViewById(resID);
-        }
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, @NonNull Object object) {
-            container.removeView((View) object);
-        }
-    }
-
+//    public class ViewPagerAdapter extends PagerAdapter {
+//
+//        @Override
+//        public int getCount() {
+//            return viewPager.getChildCount();
+//        }
+//
+//        @Override
+//        public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
+//            return view == ((View) object);
+//        }
+//
+//        @NonNull
+//        @Override
+//        public Object instantiateItem(@NonNull ViewGroup container, int position) {
+//            int resID = 1;
+//            switch (position) {
+//                case 0:
+//                    Timber.e("position -> %s", position);
+//                    resID = R.id.layout_signup;
+//                    break;
+//
+//                case 1:
+//                    Timber.e("position -> %s", position);
+//                    resID = R.id.layout_otp;
+//                    break;
+//            }
+//
+//            return findViewById(resID);
+//        }
+//
+//        @Override
+//        public void destroyItem(ViewGroup container, int position, @NonNull Object object) {
+//            container.removeView((View) object);
+//        }
+//    }
     @Override
     public void onBackPressed() {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);

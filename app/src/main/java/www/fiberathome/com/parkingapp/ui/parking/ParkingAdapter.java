@@ -5,16 +5,13 @@ import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -34,7 +31,7 @@ import www.fiberathome.com.parkingapp.model.SensorArea;
 import www.fiberathome.com.parkingapp.ui.activity.main.MainActivity;
 import www.fiberathome.com.parkingapp.ui.fragments.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
-import www.fiberathome.com.parkingapp.utils.SharedData;
+import www.fiberathome.com.parkingapp.data.preference.SharedData;
 
 public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
