@@ -36,6 +36,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.AppConfig;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
@@ -351,6 +352,9 @@ public class VerifyPhoneActivity extends Activity implements View.OnFocusChangeL
 
     }
 
+    private JSONObject jsonObject;
+    private JSONObject userJson;
+
     private void submitOTPVerification(final String otp) {
         progressDialog = new ProgressDialog(context);
         progressDialog.setMessage("Verifying OTP...");
@@ -361,31 +365,40 @@ public class VerifyPhoneActivity extends Activity implements View.OnFocusChangeL
         HttpsTrustManager.allowAllSSL();
         if (!otp.isEmpty()) {
             StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_VERIFY_OTP, response -> {
-                Log.e("URL", AppConfig.URL_VERIFY_OTP);
+                Timber.e("URL -> %s",AppConfig.URL_VERIFY_OTP);
                 progressDialog.dismiss();
 
                 try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    Log.e("object", jsonObject.toString());
+                    jsonObject = new JSONObject(response);
+                    Timber.e("object -> %s",jsonObject.toString());
 
 
                     if (!jsonObject.getBoolean("error")) {
 
                         // FETCHING USER INFORMATION FROM DATABASE
-                        JSONObject userJson = jsonObject.getJSONObject("user");
+                        userJson = jsonObject.getJSONObject("user");
 
                         if (SharedPreManager.getInstance(getApplicationContext()).isWaitingForSMS()) {
                             SharedPreManager.getInstance(getApplicationContext()).setIsWaitingForSMS(false);
 
                             // MOVE TO ANOTHER ACTIVITY
-                            TastyToastUtils.showTastySuccessToast(context, "Dear " + userJson.getString("fullname") + ", Your Registration Completed Successfully...");
-//                            showMessage("Dear " + userJson.getString("fullname") + ", Your Registration Completed Successfully...");
-                            Intent intent = new Intent(VerifyPhoneActivity.this, LoginActivity.class);
-                            startActivity(intent);
-                            finish();
+//                            TastyToastUtils.showTastySuccessToast(context, "Dear " + userJson.getString("fullname") + ", Your Registration Completed Successfully...");
+//                            showMessage("Dear " + userJson.getString("fullname") + ", Your Registration Completed Successfully...");=
+
                         }
                     }
 
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+                try {
+                    // MOVE TO ANOTHER ACTIVITY
+                    Intent intent = new Intent(VerifyPhoneActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish();
+                    TastyToastUtils.showTastySuccessToast(context, "Dear " + userJson.getString("fullname") + ", Your Registration Completed Successfully...");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

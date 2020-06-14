@@ -519,6 +519,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void registerUser(final String fullname, final String mobileNo, final String vehicleNo, final String password) {
+
         progressDialog = new ProgressDialog(SignUpActivity.this);
         progressDialog.setMessage("Please wait...");
         progressDialog.setCancelable(false);

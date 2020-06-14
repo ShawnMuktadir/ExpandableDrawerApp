@@ -53,7 +53,8 @@ public class Validator {
                     return false;
                 }
             } else if (textType.equalsIgnoreCase("text")) {
-                if (!TextUtils.isEmpty(text)) {
+//                if (!TextUtils.isEmpty(text)) {
+                if (!TextUtils.isEmpty(text) && editText.length() == 4) {
                     editText.setError(null);
                     return true;
                 } else {
