@@ -30,6 +30,16 @@ public final class SharedData {
         instance = null;
     }
 
+    private String password;
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     private SensorArea sensorArea;
 
     public SensorArea getSensorArea() {

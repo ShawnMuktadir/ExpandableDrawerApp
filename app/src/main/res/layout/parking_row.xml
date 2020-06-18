@@ -80,7 +80,7 @@
                     android:layout_below="@+id/linearLayoutParkingAreaName"
                     android:layout_marginTop="@dimen/dim2"
                     android:layout_weight="1.5"
-                    android:maxLines="1"
+                    android:maxLines="2"
                     android:padding="@dimen/dim3"
                     android:text="@string/parking_area_name"
                     android:textColor="@android:color/black"

@@ -124,4 +124,6 @@ dependencies {
 
     //expandable RecyclerView
     implementation 'com.thoughtbot:expandablerecyclerview:1.3'
+    //calendar and time dual view
+    implementation 'com.github.florent37:singledateandtimepicker:2.2.3'
 }

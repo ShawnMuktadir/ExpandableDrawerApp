@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".view.booking.BookedFragment">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!-- TODO: Update blank fragment layout -->
+        <TextView
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/book"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_margin="1dp"
+            android:padding="2dp"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/parking"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_margin="1dp"
+            android:padding="1dp"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/address"
+            android:textSize="16sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#000" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/arrivedtimeTV"
+                android:layout_alignParentLeft="true"
+                android:padding="2dp"
+                android:layout_margin="2dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Arriving 12:30pm"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/departureTimeTV"
+                android:layout_below="@+id/arrivedtimeTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Departure-04:30pm" />
+
+            <TextView
+                android:layout_centerInParent="true"
+                android:id="@+id/timeDifferenceTV"
+                android:padding="2dp"
+                android:layout_margin="2dp"
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2:30h"
+                android:textSize="15sp" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#000" />
+
+        <ImageView
+            android:layout_margin="2dp"
+            android:padding="3dp"
+            android:layout_width="match_parent"
+            android:layout_height="340dp"
+            android:src="@color/transparent"
+            android:scaleType="fitXY" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <Button
+                android:id="@+id/moreBtn"
+                android:layout_margin="3dp"
+                android:padding="2dp"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="More Time"
+                android:textColor="@android:color/white"
+                android:background="@android:color/black" />
+
+            <Button
+                android:id="@+id/liveParkingBtn"
+                android:layout_margin="3dp"
+                android:padding="2dp"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Live Parkin"
+                android:textColor="@android:color/white"
+                android:background="@android:color/black" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="01:25"
+                android:textSize="30dp"
+                android:textColor="@android:color/black"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_gravity="bottom"
+                android:layout_margin="1dp"
+                android:padding="1dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="min"
+                android:textSize="20sp"
+                android:textColor="@android:color/black"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/black"
+            android:layout_margin="1dp" />
+
+        <TextView
+            android:layout_margin="2dp"
+            android:padding="2dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:text="@string/loream_ipsum" />
+
+        <TextView
+            android:id="@+id/textViewTermsCondition"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="2dp"
+            android:padding="3dp"
+            android:gravity="center"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:text="T&amp;C"
+            android:textSize="14sp"
+            android:background="@drawable/border_style"
+            android:layout_gravity="right"
+            android:layout_marginEnd="8dp" />
+
+        <Button
+            android:id="@+id/btnCarDeparture"
+            android:layout_margin="4dp"
+            android:padding="4dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_shape"
+            android:text="Car Departure"
+            android:textColor="@android:color/white"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

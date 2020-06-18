@@ -7,6 +7,7 @@ public class AppConfig {
     public static final String URL_REGISTER     = BASE_URL + "request_sms.php";
     public static final String URL_LOGIN        = BASE_URL + "verify_user.php";
     public static final String URL_VERIFY_OTP   = BASE_URL + "verify_otp.php";
+    public static final String URL_OTP_VERIFY= "http://163.47.157.195:5000/otp_varification";
     public static final String IMAGES_URL       = "http://163.47.157.195/parkingapp/uploads/";
 
     public static final String URL_FETCH_SENSORS = BASE_URL + "sensors.php";

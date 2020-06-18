@@ -9,10 +9,10 @@ public class ApiClient {
 
     private static Retrofit retrofit = null;
 
-    public static Retrofit getClient(){
-        if (retrofit == null){
+    public static Retrofit getRetrofitInstance(String url) {
+        if (retrofit == null) {
             retrofit = new Retrofit.Builder()
-                    .baseUrl(AppConfig.URL_CHANGE_PASSWORD)
+                    .baseUrl(url)
                     .addConverterFactory(GsonConverterFactory.create())
                     .addConverterFactory(ScalarsConverterFactory.create())
                     .build();

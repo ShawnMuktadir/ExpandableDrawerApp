@@ -140,4 +140,10 @@
     <color name="colorTextDisable">#66FFFFFF</color>
     <color name="mapicone">#FFFFFF</color>
 
+    <!--    booking -->
+    <color name="pickerColor">#14000000</color>
+    <color name="arrived">#494747</color>
+    <color name="disableColor">#37636262</color>
+    <color name="enableColor">#FFFEFE</color>
+
 </resources>

@@ -6,19 +6,19 @@ import com.sdsmdg.tastytoast.TastyToast;
 
 public class TastyToastUtils {
     public static void showTastySuccessToast(Context context, String message){
-        TastyToast.makeText(context,message, com.sdsmdg.tastytoast.TastyToast.LENGTH_LONG, com.sdsmdg.tastytoast.TastyToast.SUCCESS).show();
+        TastyToast.makeText(context,message, com.sdsmdg.tastytoast.TastyToast.LENGTH_LONG, TastyToast.SUCCESS).show();
     }
 
     public static void showTastyErrorToast(Context context, String message){
-        TastyToast.makeText(context,message, com.sdsmdg.tastytoast.TastyToast.LENGTH_LONG, com.sdsmdg.tastytoast.TastyToast.ERROR).show();
+        TastyToast.makeText(context,message, com.sdsmdg.tastytoast.TastyToast.LENGTH_LONG, TastyToast.ERROR).show();
     }
     public static void showTastyInfoToast(Context context, String message){
-        TastyToast.makeText(context,message, com.sdsmdg.tastytoast.TastyToast.LENGTH_LONG, com.sdsmdg.tastytoast.TastyToast.INFO).show();
+        TastyToast.makeText(context,message, com.sdsmdg.tastytoast.TastyToast.LENGTH_LONG, TastyToast.INFO).show();
     }
 
     public static void showTastyWarningToast(Context context, String message){
         //TastyToastUtils.makeText(context,message,TastyToastUtils.LENGTH_LONG,TastyToastUtils.WARNING).show();
-        TastyToast.makeText(context,message, com.sdsmdg.tastytoast.TastyToast.LENGTH_LONG, com.sdsmdg.tastytoast.TastyToast.WARNING).show();
+        TastyToast.makeText(context,message, com.sdsmdg.tastytoast.TastyToast.LENGTH_LONG, TastyToast.WARNING).show();
     }
 
 
