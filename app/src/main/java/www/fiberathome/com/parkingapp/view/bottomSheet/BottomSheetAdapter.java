@@ -3,6 +3,7 @@ package www.fiberathome.com.parkingapp.view.bottomSheet;
 import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +35,7 @@ import butterknife.ButterKnife;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.BookingSensors;
+import www.fiberathome.com.parkingapp.view.activity.main.MainActivity;
 import www.fiberathome.com.parkingapp.view.fragments.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.data.preference.SharedData;
@@ -49,6 +51,8 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
     RecyclerView.ViewHolder holder;
     private View view = null;
     private int count = 0;
+    private boolean isExpanded = false;
+    private boolean isItemClicked = false;
 
     public BottomSheetAdapter(Context context, HomeFragment homeFragment, ArrayList<BookingSensors> sensors, Location onConnectedLocation) {
         this.context = context;
@@ -101,6 +105,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
             selectedItem = 0;
             Collections.swap(bookingSensorsArrayList, position, 0);
             notifyItemMoved(position, 0);
+            isItemClicked = true;
 
 //            if (homeFragment.bottomSheetPlaceLatLng != null) {
 //                Toast.makeText(context, "Clicked!!!", Toast.LENGTH_SHORT).show();
@@ -131,7 +136,87 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
             homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             homeFragment.bottomSheetBehavior.setPeekHeight(400);
 
+            if (isItemClicked){
+                homeFragment.bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+                    @Override
+                    public void onStateChanged(@NonNull View view, int i) {
+                        switch (i) {
+                            case BottomSheetBehavior.STATE_HIDDEN:
+                                break;
+                            case BottomSheetBehavior.STATE_EXPANDED:
+
+                                if (homeFragment.mMap != null)
+                                    homeFragment.mMap.clear();
+//                            animateCamera(onConnectedLocation);
+                                homeFragment.fetchSensors(onConnectedLocation);
+//                            bookingSensorsArrayListGlobal.clear();
+//                            bookingSensorsArrayList.clear();
+//                            bookingSensorsMarkerArrayList.clear();
+//                            fetchBottomSheetSensors(onConnectedLocation);
+//                        }
+//                        btn.setText("Expand Sheet");
+
+                                final int interval = 100; // 1 Second
+                                Handler handler = new Handler();
+                                Runnable runnable = new Runnable(){
+                                    public void run() {
+                                        homeFragment.layoutBottomSheetVisible(false, "", "", "", "", null);
+                                    }
+                                };
+                                handler.postAtTime(runnable, System.currentTimeMillis()+interval);
+                                handler.postDelayed(runnable, interval);
+
+
+//                                homeFragment.layoutBottomSheetVisible(false, "", "", "", "", null);
+//                        btn.setText("Close Sheet");
+                            case BottomSheetBehavior.STATE_COLLAPSED:
+
+                                Timber.e("bottom sheet expanded");
+                                isExpanded = true;
+//                                homeFragment.layoutBottomSheetVisible(false, "", "", "", "", null);
+                                homeFragment.layoutBottomSheetVisible(true, holder.textViewParkingAreaName.getText().toString(), holder.textViewParkingAreaCount.getText().toString(),
+                                    holder.textViewParkingDistance.getText().toString(),
+                                    holder.textViewParkingTravelTime.getText().toString(),
+                                    new LatLng(bookingSensors.getLat(), bookingSensors.getLng()));
+                                break;
+
+                            case BottomSheetBehavior.STATE_DRAGGING:
+//                                final int interval = 1000; // 1 Second
+//                                Handler handler = new Handler();
+//                                Runnable runnable = new Runnable(){
+//                                    public void run() {
+//                                        homeFragment.layoutBottomSheetVisible(false, "", "", "", "", null);
+//                                    }
+//                                };
+//                                handler.postAtTime(runnable, System.currentTimeMillis()+interval);
+//                                handler.postDelayed(runnable, interval);
+
+                                break;
+                            case BottomSheetBehavior.STATE_SETTLING:
+
+
+                                break;
+                            case BottomSheetBehavior.STATE_HALF_EXPANDED:
+                                homeFragment.layoutBottomSheetVisible(false, "", "", "", "", null);
+                                break;
+                        }
+                    }
+
+                    @Override
+                    public void onSlide(@NonNull View view, float slideOffset) {
+
+                    }
+                });
+
+                if (isExpanded){
+                    Timber.e("isExpanded method e dhukche");
+                    homeFragment.layoutBottomSheetVisible(false, "", "", "", "", null);
+                }
+            }
+
         });
+
+
 
 
         if (selectedItem == position) {

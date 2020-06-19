@@ -36,15 +36,15 @@
                     android:orientation="vertical">
 
                     <RelativeLayout
-                        android:layout_width="@dimen/_100sdp"
-                        android:layout_height="@dimen/_100sdp"
+                        android:layout_width="@dimen/_120sdp"
+                        android:layout_height="@dimen/_120sdp"
                         android:layout_gravity="center"
                         android:layout_marginTop="@dimen/_10sdp">
 
                         <de.hdodenhof.circleimageview.CircleImageView
                             android:id="@+id/upload_profile_image"
-                            android:layout_width="@dimen/_100sdp"
-                            android:layout_height="@dimen/_100sdp"
+                            android:layout_width="@dimen/_120sdp"
+                            android:layout_height="@dimen/_120sdp"
                             android:layout_centerInParent="true"
                             android:layout_gravity="center_horizontal"
                             android:src="@drawable/ic_camera"

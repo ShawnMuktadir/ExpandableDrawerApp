@@ -127,6 +127,7 @@ import www.fiberathome.com.parkingapp.view.activity.search.SearchActivity;
 import www.fiberathome.com.parkingapp.model.SensorArea;
 
 import www.fiberathome.com.parkingapp.view.booking.ScheduleFragment;
+import www.fiberathome.com.parkingapp.view.booking.adapter.BookingSensorAdapter;
 import www.fiberathome.com.parkingapp.view.booking.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.view.bottomSheet.BottomSheetAdapter;
 import www.fiberathome.com.parkingapp.preference.AppConstants;
@@ -344,23 +345,24 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                         layoutBottomSheetVisible(false, "", "", "", "", null);
 //                        btn.setText("Close Sheet");
                     case BottomSheetBehavior.STATE_COLLAPSED:
-                        if (mMap != null) {
-                            mMap.clear();
-                            animateCamera(onConnectedLocation);
-                            fetchSensors(onConnectedLocation);
-                            bookingSensorsArrayListGlobal.clear();
-                            bookingSensorsArrayList.clear();
-                            bookingSensorsMarkerArrayList.clear();
-                            fetchBottomSheetSensors(onConnectedLocation);
-                        }
+//                        if (mMap != null) {
+//                            mMap.clear();
+//                            animateCamera(onConnectedLocation);
+//                            fetchSensors(onConnectedLocation);
+//                            bookingSensorsArrayListGlobal.clear();
+//                            bookingSensorsArrayList.clear();
+//                            bookingSensorsMarkerArrayList.clear();
+//                            fetchBottomSheetSensors(onConnectedLocation);
+//                        }
 //                        btn.setText("Expand Sheet");
                         break;
                     case BottomSheetBehavior.STATE_DRAGGING:
+                        layoutBottomSheetVisible(false, "", "", "", "", null);
                         break;
                     case BottomSheetBehavior.STATE_SETTLING:
                         break;
                     case BottomSheetBehavior.STATE_HALF_EXPANDED:
-                        layoutBottomSheetVisible(false, "", "", "", "", null);
+//                        layoutBottomSheetVisible(false, "", "", "", "", null);
                         break;
                 }
             }
@@ -1646,6 +1648,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 //                    Timber.e("setBottomSheetRecyclerViewAdapter(bookingSensorsArrayList) call hoiche for loop");
                 }
             }
+        }else {
+            if (SharedData.getInstance().getOnConnectedLocation() != null){
+                fetchSensors(SharedData.getInstance().getOnConnectedLocation());
+            }
         }
     }
 
@@ -2249,13 +2255,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
             textViewBottomSheetParkingDistance.setText(distance.substring(0, 3) + " km");
 //            textViewMarkerParkingTravelTime.setText(duration);
             getDestinationInfoForDuration(new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
+
+
         } else {
 //            BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
 //            navBar.setVisibility(View.VISIBLE);
             linearLayoutBottomSheetBottom.setVisibility(View.GONE);
         }
-
-
     }
 
     private void setListeners() {

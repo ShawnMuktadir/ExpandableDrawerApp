@@ -20,7 +20,8 @@ public class Validator {
     public static int PASSWORD_COUNT_MAX = 20;
     public static int PASSWORD_COUNT_MIN = 6;
     public static String PASSWORD_MATCH_ERROR = "পাসওয়ার্ড সঠিক হয়নি";
-    public static String PASSWORD_COUNT_ERROR = "৬-২০ অক্ষরের মধ্যে পাসওয়ার্ড লিখুন";
+//    public static String PASSWORD_COUNT_ERROR = "৬-২০ অক্ষরের মধ্যে পাসওয়ার্ড লিখুন";
+    public static String PASSWORD_COUNT_ERROR = "Please input password between 6-20 characters";
     public static String NUMBER_ERROR = "এখানে শুধু নাম্বার লিখা যাবে";
     public static String PHONE_ERROR = "১১ ডিজিটের ফোন নাম্বার লিখুন। উদা: ০১*১১******";
 

@@ -147,14 +147,18 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
 
 
     private boolean validatePassword() {
+        String userPassword;
 //        User user = SharedPreManager.getInstance(getContext()).getUser();
-        final String userPassword = SharedData.getInstance().getPassword();
-        Timber.e("userPassword -> %s", userPassword);
-        String oldPassword = editTextOldPassword.getText().toString().trim();
+        if (SharedData.getInstance().getPassword() != null) {
+            userPassword = SharedData.getInstance().getPassword();
+            Timber.e("userPassword -> %s", userPassword);
+            String oldPassword = editTextOldPassword.getText().toString().trim();
+            checkUserPasswordAndOldPasswordField(userPassword, oldPassword);
+        }
+
         String newPassword = editTextNewPassword.getText().toString().trim();
         String confirmPassword = editTextConfirmPassword.getText().toString().trim();
 
-        checkUserPasswordAndOldPasswordField(userPassword, oldPassword);
         checkPassWordAndConfirmPassword(newPassword, confirmPassword);
         return true;
     }

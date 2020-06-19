@@ -448,12 +448,6 @@ public class MainActivity extends AppCompatActivity implements MainView, Navigat
         super.onStop();
     }
 
-    private void showMessage(String message) {
-        Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
-    }
-
-    private boolean exit = false;
-
     @Override
     public void onBackPressed() {
         if (exit) {
@@ -479,6 +473,7 @@ public class MainActivity extends AppCompatActivity implements MainView, Navigat
                 toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
                 if (SharedData.getInstance().getOnConnectedLocation() != null) {
                     HomeFragment.class.newInstance().animateCamera(SharedData.getInstance().getOnConnectedLocation());
+//                    HomeFragment.class.newInstance().fetchSensors(SharedData.getInstance().getOnConnectedLocation());
                 }
             }
         } catch (Exception e) {
@@ -491,6 +486,12 @@ public class MainActivity extends AppCompatActivity implements MainView, Navigat
             }
         }, 2000);
     }
+
+    private void showMessage(String message) {
+        Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    private boolean exit = false;
 
     @Override
     public void applyTexts(String username, String password, String mobile) {

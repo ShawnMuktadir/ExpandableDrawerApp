@@ -26,7 +26,9 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
 
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.SelcectedPlace;
+import www.fiberathome.com.parkingapp.view.fragments.HomeFragment;
 import www.fiberathome.com.parkingapp.view.placesadapter.PlacesAutoCompleteAdapter;
 import www.fiberathome.com.parkingapp.utils.OnEditTextRightDrawableTouchListener;
 import www.fiberathome.com.parkingapp.utils.RecyclerTouchListener;
@@ -70,6 +72,16 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
     private void setListeners() {
         imageViewCross.setOnClickListener(v -> {
             finish();
+
+//            try {
+//                if (SharedData.getInstance().getOnConnectedLocation() != null){
+//                    HomeFragment homeFragment = new HomeFragment();
+//                    homeFragment.fetchSensors(SharedData.getInstance().getOnConnectedLocation());
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+
         });
 
         editTextSearch.addTextChangedListener(new TextWatcher() {
@@ -195,5 +207,18 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
         if (isFinishing()){
             overridePendingTransition(R.anim.animation_enter, R.anim.animation_leave);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+//        try {
+//            if (SharedData.getInstance().getOnConnectedLocation() != null){
+//                HomeFragment homeFragment = new HomeFragment();
+//                homeFragment.fetchSensors(SharedData.getInstance().getOnConnectedLocation());
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 }
