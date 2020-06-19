@@ -402,7 +402,7 @@ public class VerifyPhoneActivity extends Activity implements View.OnFocusChangeL
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-
+                    showMessage(error.getMessage());
                 }
             }) {
                 @Override

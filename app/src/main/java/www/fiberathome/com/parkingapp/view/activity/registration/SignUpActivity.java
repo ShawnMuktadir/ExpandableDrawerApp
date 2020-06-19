@@ -1,5 +1,6 @@
 package www.fiberathome.com.parkingapp.view.activity.registration;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -573,6 +574,12 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                     Timber.e("jsonObject if e dhukche");
 
                     showMessage(jsonObject.getString("message"));
+                    // boolean flag saying device is waiting for sms
+                    SharedPreManager.getInstance(getApplicationContext()).setIsWaitingForSMS(true);
+
+                    // Moving the screen to next pager item i.e otp screen
+                    Intent intent = new Intent(SignUpActivity.this, VerifyPhoneActivity.class);
+                    startActivity(intent);
 
                     // getting user object
 //                    JSONObject userJson = jsonObject.getJSONObject("user");
@@ -597,12 +604,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                     // Store to share preference
 //                    SharedPreManager.getInstance(getApplicationContext()).userLogin(user);
 
-                    // boolean flag saying device is waiting for sms
-                    SharedPreManager.getInstance(getApplicationContext()).setIsWaitingForSMS(true);
 
-                    // Moving the screen to next pager item i.e otp screen
-                    Intent intent = new Intent(SignUpActivity.this, VerifyPhoneActivity.class);
-                    startActivity(intent);
 
 //                    viewPager.setCurrentItem(1);
 
@@ -619,7 +621,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Timber.e("jsonObject onErrorResponse");
+                Timber.e("jsonObject onErrorResponse -> %s",error.getMessage());
                 SignUpActivity.this.showMessage(error.getMessage());
             }
         }) {
