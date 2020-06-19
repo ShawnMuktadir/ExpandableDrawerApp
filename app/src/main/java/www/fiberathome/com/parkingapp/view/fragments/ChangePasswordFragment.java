@@ -3,6 +3,7 @@ package www.fiberathome.com.parkingapp.view.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.textfield.TextInputLayout;
@@ -32,6 +33,8 @@ import www.fiberathome.com.parkingapp.model.User;
 import www.fiberathome.com.parkingapp.model.common.Common;
 import www.fiberathome.com.parkingapp.data.preference.SharedPreManager;
 import www.fiberathome.com.parkingapp.utils.Validator;
+import www.fiberathome.com.parkingapp.view.activity.login.LoginActivity;
+import www.fiberathome.com.parkingapp.view.activity.main.MainActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -70,6 +73,15 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
         return view;
     }
 
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.change_password_btn:
+                changePassword();
+                break;
+        }
+    }
+
     private void initUI(View view) {
         editTextOldPassword = view.findViewById(R.id.input_old_password);
         editTextNewPassword = view.findViewById(R.id.input_new_password);
@@ -85,30 +97,21 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
 
     }
 
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.change_password_btn:
-                changePassword();
-                break;
-        }
-    }
-
     private void changePassword() {
         // CHECK OLD PASSWORD
-        if (!validateEditText(editTextOldPassword, textInputLayoutOldPassword, R.string.err_old_password)) {
-            return;
-        }
-
-        // CHECK NEW PASSWORD
-        if (!validateEditText(editTextNewPassword, textInputLayoutNewPassword, R.string.err_new_password)) {
-            return;
-        }
-
-        // CHECK CONFIRM PASSWORD
-        if (!validateEditText(editTextConfirmPassword, textInputLayoutOldPassword, R.string.err_confirm_password)) {
-            return;
-        }
+//        if (!validateEditText(editTextOldPassword, textInputLayoutOldPassword, R.string.err_old_password)) {
+//            return;
+//        }
+//
+//        // CHECK NEW PASSWORD
+//        if (!validateEditText(editTextNewPassword, textInputLayoutNewPassword, R.string.err_new_password)) {
+//            return;
+//        }
+//
+//        // CHECK CONFIRM PASSWORD
+//        if (!validateEditText(editTextConfirmPassword, textInputLayoutOldPassword, R.string.err_confirm_password)) {
+//            return;
+//        }
 
 
         /**
@@ -145,9 +148,9 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
         return isOldPasswordValid && isNewPasswordValid && isConfirmPasswordValid;
     }
 
-
     private boolean validatePassword() {
         String userPassword;
+        String newPassword;
 //        User user = SharedPreManager.getInstance(getContext()).getUser();
         if (SharedData.getInstance().getPassword() != null) {
             userPassword = SharedData.getInstance().getPassword();
@@ -156,8 +159,11 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
             checkUserPasswordAndOldPasswordField(userPassword, oldPassword);
         }
 
-        String newPassword = editTextNewPassword.getText().toString().trim();
+        newPassword = editTextNewPassword.getText().toString().trim();
         String confirmPassword = editTextConfirmPassword.getText().toString().trim();
+        if (SharedData.getInstance().getPassword()!=null){
+            SharedData.getInstance().setPassword(newPassword);
+        }
 
         checkPassWordAndConfirmPassword(newPassword, confirmPassword);
         return true;
@@ -193,6 +199,12 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
                         editTextOldPassword.setText("");
                         editTextNewPassword.setText("");
                         editTextConfirmPassword.setText("");
+                        SharedPreManager.getInstance(getActivity()).logout();
+                        Intent intentLogout = new Intent(getActivity(), LoginActivity.class);
+                        startActivity(intentLogout);
+                        if (getActivity()!=null){
+                            getActivity().finish();
+                        }
                     } else {
                         showMessage(response.body().getMessage());
                     }
@@ -205,7 +217,6 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
             }
         });
     }
-
 
     private void showMessage(String message) {
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
@@ -233,15 +244,15 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
         public void afterTextChanged(Editable editable) {
             switch (view.getId()) {
                 case R.id.input_old_password:
-                    validateEditText(editTextOldPassword, textInputLayoutOldPassword, R.string.err_old_password);
+//                    validateEditText(editTextOldPassword, textInputLayoutOldPassword, R.string.err_old_password);
                     break;
 
                 case R.id.input_new_password:
-                    validateEditText(editTextNewPassword, textInputLayoutNewPassword, R.string.err_new_password);
+//                    validateEditText(editTextNewPassword, textInputLayoutNewPassword, R.string.err_new_password);
                     break;
 
                 case R.id.input_confirm_password:
-                    validateEditText(editTextConfirmPassword, textInputLayoutConfirmPassword, R.string.err_confirm_password);
+//                    validateEditText(editTextConfirmPassword, textInputLayoutConfirmPassword, R.string.err_confirm_password);
                     break;
 
             }

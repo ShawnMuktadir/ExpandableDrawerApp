@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.app.Service;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -15,6 +16,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -22,6 +24,10 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -49,7 +55,7 @@ import www.fiberathome.com.parkingapp.view.activity.login.LoginActivity;
 /**
  * This activity holds view with a custom 4-digit PIN EditText.
  */
-public class VerifyPhoneActivity extends Activity implements View.OnFocusChangeListener, View.OnKeyListener, TextWatcher {
+public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFocusChangeListener, View.OnKeyListener, TextWatcher {
 
     private static final String TAG = VerifyPhoneActivity.class.getSimpleName();
     private EditText mPinFirstDigitEditText;
@@ -64,11 +70,58 @@ public class VerifyPhoneActivity extends Activity implements View.OnFocusChangeL
     private Context context;
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(new MainLayout(this, null));
+        context = this;
+
+        initUI();
+        setPINListeners();
+
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle("Verify OTP");
+
+        btnVerifyOtp.setOnClickListener(v -> {
+            if (checkFields()) {
+                String otp = mPinHiddenEditText.getText().toString().trim();
+                submitOTPVerification(otp);
+            }
+        });
+
+        btnChangePhoneNumber.setOnClickListener(v -> {
+            startActivity(new Intent(VerifyPhoneActivity.this, SignUpActivity.class));
+            finish();
+        });
+
+        startCountDown();
+    }
+
+    @Override
     public void afterTextChanged(Editable s) {
     }
 
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // todo: goto back activity from here
+
+                Intent intent = new Intent(VerifyPhoneActivity.this, SignUpActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     /**
@@ -98,30 +151,6 @@ public class VerifyPhoneActivity extends Activity implements View.OnFocusChangeL
         btnVerifyOtp = findViewById(R.id.btn_verify_otp);
         btnChangePhoneNumber = findViewById(R.id.btn_change_phone_number);
         countdown = findViewById(R.id.countdown);
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(new MainLayout(this, null));
-        context = this;
-
-        initUI();
-        setPINListeners();
-
-        btnVerifyOtp.setOnClickListener(v -> {
-            if (checkFields()) {
-                String otp = mPinHiddenEditText.getText().toString().trim();
-                submitOTPVerification(otp);
-            }
-        });
-
-        btnChangePhoneNumber.setOnClickListener(v -> {
-            startActivity(new Intent(VerifyPhoneActivity.this, SignUpActivity.class));
-            finish();
-        });
-
-        startCountDown();
     }
 
     private boolean checkFields() {
@@ -474,6 +503,24 @@ public class VerifyPhoneActivity extends Activity implements View.OnFocusChangeL
     public void onBackPressed() {
 // super.onBackPressed();
 // Not calling **super**, disables back button in current screen.
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage("Are you sure you want to exit?")
+                .setNegativeButton(android.R.string.no, null)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        VerifyPhoneActivity.super.onBackPressed();
+                    }
+                }).create();
+        AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface arg0) {
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.black));
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.red));
+            }
+        });
+        dialog.show();
     }
 //this is also disable back button
     @Override
