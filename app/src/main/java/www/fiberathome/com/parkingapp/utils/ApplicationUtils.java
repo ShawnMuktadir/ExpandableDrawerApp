@@ -59,7 +59,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import timber.log.Timber;
-import www.fiberathome.com.parkingapp.BuildConfig;
+//import www.fiberathome.com.parkingapp.BuildConfig;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.preference.StaticData;
 import www.fiberathome.com.parkingapp.preference.utils.ConnectivityInterceptor;
@@ -167,7 +167,7 @@ public class ApplicationUtils {
                         Request request = chain.request();
                         Request.Builder requestBuilder = request.newBuilder();
                         requestBuilder.addHeader(StaticData.OS, "Android");
-                        requestBuilder.addHeader(StaticData.VERSION, BuildConfig.VERSION_NAME);
+//                        requestBuilder.addHeader(StaticData.VERSION, BuildConfig.VERSION_NAME);
                         if (ApplicationUtils.checkInternet(context)) {
                             requestBuilder.header("Cache-Control", "public, max-age=" + 60);
                         } else {
