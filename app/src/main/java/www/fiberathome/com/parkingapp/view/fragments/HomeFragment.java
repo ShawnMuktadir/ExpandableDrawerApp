@@ -342,7 +342,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     case BottomSheetBehavior.STATE_HIDDEN:
                         break;
                     case BottomSheetBehavior.STATE_EXPANDED:
-                        layoutBottomSheetVisible(false, "", "", "", "", null);
+//                        layoutBottomSheetVisible(false, "", "", "", "", null);
 //                        btn.setText("Close Sheet");
                     case BottomSheetBehavior.STATE_COLLAPSED:
 //                        if (mMap != null) {
@@ -357,7 +357,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 //                        btn.setText("Expand Sheet");
                         break;
                     case BottomSheetBehavior.STATE_DRAGGING:
-                        layoutBottomSheetVisible(false, "", "", "", "", null);
+//                        layoutBottomSheetVisible(false, "", "", "", "", null);
                         break;
                     case BottomSheetBehavior.STATE_SETTLING:
                         break;
@@ -370,6 +370,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
             @Override
             public void onSlide(@NonNull View view, float slideOffset) {
                 if (isAdded()) {
+//                    bottomSheetAdapter.isItemClicked = false;
                 }
             }
         });
@@ -1648,8 +1649,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 //                    Timber.e("setBottomSheetRecyclerViewAdapter(bookingSensorsArrayList) call hoiche for loop");
                 }
             }
-        }else {
-            if (SharedData.getInstance().getOnConnectedLocation() != null){
+        } else {
+            if (SharedData.getInstance().getOnConnectedLocation() != null) {
                 fetchSensors(SharedData.getInstance().getOnConnectedLocation());
             }
         }
@@ -2261,6 +2262,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 //            BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
 //            navBar.setVisibility(View.VISIBLE);
             linearLayoutBottomSheetBottom.setVisibility(View.GONE);
+            bottomSheetAdapter.isItemClicked = false;
         }
     }
 
@@ -2417,6 +2419,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 //                BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
 //                navBar.setVisibility(View.VISIBLE);
                 layoutBottomSheetVisible(false, "", "", "", "", null);
+//                bottomSheetAdapter.isItemClicked = false;
+                ApplicationUtils.reLoadFragment(getParentFragmentManager(), this);
                 linearLayoutBottom.setVisibility(View.GONE);
                 linearLayoutSearchBottom.setVisibility(View.GONE);
                 linearLayoutMarkerBottom.setVisibility(View.GONE);
@@ -2856,6 +2860,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(milliSeconds);
         return formatter.format(calendar.getTime());
+    }
+
+    public void replaceFragment(Fragment someFragment) {
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, someFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 }
 
