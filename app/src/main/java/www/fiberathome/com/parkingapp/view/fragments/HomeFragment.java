@@ -2271,8 +2271,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                 btnBottomSheetGetDirection.setEnabled(true);
                 btnBottomSheetGetDirection.setFocusable(true);
             }
-
-
         } else {
 //            BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
 //            navBar.setVisibility(View.VISIBLE);
