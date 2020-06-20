@@ -50,6 +50,7 @@ import www.fiberathome.com.parkingapp.view.activity.registration.SignUpActivity;
 import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
 import www.fiberathome.com.parkingapp.data.preference.SharedPreManager;
 import www.fiberathome.com.parkingapp.utils.Validator;
+import www.fiberathome.com.parkingapp.view.activity.registration.VerifyPhoneActivity;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -202,11 +203,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-    private void dismissProgressDialog() {
-        if (progressDialog != null && progressDialog.isShowing())
-            progressDialog.dismiss();
-    }
-
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -220,7 +216,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //                break;
 
             case R.id.btn_retrive_otp:
-                Intent otpIntent = new Intent(LoginActivity.this, SignUpActivity.class);
+                Intent otpIntent = new Intent(LoginActivity.this, VerifyPhoneActivity.class);
                 startActivity(otpIntent);
                 break;
 
@@ -306,20 +302,33 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         // storing the user in sharedPreference
                         SharedPreManager.getInstance(getApplicationContext()).userLogin(user);
 
-                        // Move to another Activity
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        finish();
+
 //                        progressDialog.dismiss();
+                        if (response.equals("Please verify Your Account by OTP")) {
+                            Intent verifyPhoneIntent = new Intent(LoginActivity.this, VerifyPhoneActivity.class);
+                            if (checkFields()){
+                                verifyPhoneIntent.putExtra("mobile_no", mobileNo);
+                            }
+                            startActivity(verifyPhoneIntent);
+                        }else{
+                            // Move to another Activity
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }
 
                     } else if (jsonObject.getBoolean("error") && jsonObject.has("authentication")) {
                         // IF ERROR OCCURS AND AUTHENTICATION IS INVALID
-                        if (!jsonObject.getBoolean("authentication")) {
-                            showMessage(jsonObject.getString("message"));
-                            btnOTP.setVisibility(View.VISIBLE);
+                     if (jsonObject.getString("message").equals("Please verify Your Account by OTP")) {
+                         showMessage("Please verify Your Account by OTP");
+                         btnOTP.setVisibility(View.GONE);
+                         Intent verifyPhoneIntent = new Intent(LoginActivity.this, VerifyPhoneActivity.class);
+
+                         verifyPhoneIntent.putExtra("mobile_no",mobileNo);
+                         verifyPhoneIntent.putExtra("password",password);
+                         verifyPhoneIntent.putExtra("fromLoginPage","fromLoginPage");
+                         startActivity(verifyPhoneIntent);
                         }
-
-
                     } else {
                         showMessage(jsonObject.getString("message"));
                     }
@@ -343,11 +352,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 Map<String, String> params = new HashMap<>();
                 params.put("mobile_no", mobileNo);
                 params.put("password", password);
+
                 return params;
             }
         };
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         ParkingApp.getInstance().addToRequestQueue(stringRequest, TAG);
+    }
+
+    private void dismissProgressDialog() {
+        if (progressDialog != null && progressDialog.isShowing())
+            progressDialog.dismiss();
     }
 
 

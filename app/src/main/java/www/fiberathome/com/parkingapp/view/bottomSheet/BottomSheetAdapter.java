@@ -28,6 +28,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 
 import butterknife.BindView;
@@ -92,7 +93,27 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
             }*/
 
         } else {
+            bookingSensors.type = BookingSensors.INFO_TYPE;
+            holder.itemView.setBackgroundColor(Color.TRANSPARENT);
+            if (selectedItem == position){
+
+                try{
+                    BookingSensors temp = bookingSensorsArrayList.get(position);
+                    bookingSensorsArrayList.remove(position);
+                    bookingSensorsArrayList.add(0,temp);
+                    //   notifyItemMoved(position, 0);
+                    selectedItem = 0;
+                    Timber.e("abdur list ok");
+                    notifyDataSetChanged();
+                }catch (Exception e){
+                    Timber.e(e.getMessage());
+                }
+            }
             holder.relativeLayoutxtBotoom.setVisibility(View.GONE);
+        }
+
+        if (SharedData.getInstance().getOnConnectedLocation() != null) {
+            onConnectedLocation = SharedData.getInstance().getOnConnectedLocation();
         }
 
         holder.textViewParkingAreaName.setText(ApplicationUtils.capitalize(bookingSensors.getParkingArea().trim()));
@@ -103,15 +124,27 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         holder.itemView.setOnClickListener(v -> {
 
             selectedItem = 0;
-            Collections.swap(bookingSensorsArrayList, position, 0);
-            notifyItemMoved(position, 0);
-            isItemClicked = true;
+        //    Collections.swap(bookingSensorsArrayList, position, 0);
+           if(!bookingSensorsArrayList.isEmpty()){
+//               BookingSensors temp = bookingSensorsArrayList.get(position);
+//               bookingSensorsArrayList.remove(position);
+//               bookingSensorsArrayList.add(0,temp);
+               Collections.swap(bookingSensorsArrayList, position, 0);
+               notifyItemMoved(position, 0);
+               Timber.e("abdur list ok");
+               notifyDataSetChanged();
+           }else{
+               Timber.e("abdur list empty");
+               homeFragment.fetchBottomSheetSensors(onConnectedLocation);
+//               homeFragment.fetchBottomSheetSensors(onConnectedLocation);
+           }
+
+           isItemClicked = true;
 
 //            if (homeFragment.bottomSheetPlaceLatLng != null) {
 //                Toast.makeText(context, "Clicked!!!", Toast.LENGTH_SHORT).show();
 //                homeFragment.bottomSheetPlaceLatLngNearestLocations();
 //            }
-
             try {
                 notifyDataSetChanged();
                 homeFragment.linearLayoutSearchBottomButton.setVisibility(View.GONE);
@@ -168,7 +201,6 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
                                 handler.postAtTime(runnable, System.currentTimeMillis()+interval);
                                 handler.postDelayed(runnable, interval);
 
-
 //                                homeFragment.layoutBottomSheetVisible(false, "", "", "", "", null);
 //                        btn.setText("Close Sheet");
                             case BottomSheetBehavior.STATE_COLLAPSED:
@@ -194,10 +226,17 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 //                                };
 //                                handler.postAtTime(runnable, System.currentTimeMillis()+interval);
 //                                handler.postDelayed(runnable, interval);
-
+                                final int interval1 = 100; // 1 Second
+                                Handler handler1 = new Handler();
+                                Runnable runnable1 = new Runnable(){
+                                    public void run() {
+                                        homeFragment.layoutBottomSheetVisible(false, "", "", "", "", null);
+                                    }
+                                };
+                                handler1.postAtTime(runnable1, System.currentTimeMillis()+interval1);
+                                handler1.postDelayed(runnable1, interval1);
                                 break;
                             case BottomSheetBehavior.STATE_SETTLING:
-
 
                                 break;
                             case BottomSheetBehavior.STATE_HALF_EXPANDED:
@@ -211,8 +250,6 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
                     }
                 });
-
-//                isItemClicked = false;
 
                 if (isExpanded){
                     Timber.e("isExpanded method e dhukche");
@@ -337,6 +374,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
     @Override
     public int getItemCount() {
+        Timber.e("bookingSensorsArrayList getItemCount -> %s",bookingSensorsArrayList.size());
         return bookingSensorsArrayList.size();
     }
 
@@ -413,7 +451,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
     }
 
     public void updateData(ArrayList<BookingSensors> bookingSensors) {
-        Timber.e("updateData call hoiche");
+        Timber.e("abdur update call hoiche");
         bookingSensorsArrayList.clear();
         bookingSensorsArrayList.addAll(bookingSensors);
         notifyDataSetChanged();

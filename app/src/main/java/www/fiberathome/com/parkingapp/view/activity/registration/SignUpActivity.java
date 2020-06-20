@@ -152,14 +152,14 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
 
         // check preference is waiting for SMS
-        if (SharedPreManager.getInstance(this).isWaitingForSMS()) {
-            showMessage("User Exists");
-            Intent intent = new Intent(SignUpActivity.this, VerifyPhoneActivity.class);
-            startActivity(intent);
-//            adapter.notifyDataSetChanged();
-//            viewPager.setCurrentItem(1);
-//            viewPager.setCurrentItem (adapter.getItemPosition (1), true);
-        }
+//        if (SharedPreManager.getInstance(this).isWaitingForSMS()) {
+//            showMessage("User Exists");
+//            Intent intent = new Intent(SignUpActivity.this, VerifyPhoneActivity.class);
+//            startActivity(intent);
+////            adapter.notifyDataSetChanged();
+////            viewPager.setCurrentItem(1);
+////            viewPager.setCurrentItem (adapter.getItemPosition (1), true);
+//        }
 
 //        if (ApplicationUtils.getUserCountry(context).equals("bd")) {
 //            Toast.makeText(context, "You are from Bangladesh!!!", Toast.LENGTH_SHORT).show();
@@ -575,40 +575,19 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
                     showMessage(jsonObject.getString("message"));
                     // boolean flag saying device is waiting for sms
-                    SharedPreManager.getInstance(getApplicationContext()).setIsWaitingForSMS(true);
+//                    SharedPreManager.getInstance(getApplicationContext()).setIsWaitingForSMS(true);
 
                     // Moving the screen to next pager item i.e otp screen
                     Intent intent = new Intent(SignUpActivity.this, VerifyPhoneActivity.class);
+//                    intent.putExtra("fullname",fullname);
+//                    intent.putExtra("password",password);
+//                    intent.putExtra("mobile_no",mobileNo);
+//                    intent.putExtra("vehicle_no",vehicleNo);
+//                    intent.putExtra("image", imageToString(bitmap));
+//                    intent.putExtra("image_name", mobileNo);
                     startActivity(intent);
 
-                    // getting user object
-//                    JSONObject userJson = jsonObject.getJSONObject("user");
-//                    Timber.e("jsonObject userJson e dhukche");
-//
-//                    //showMessage(userJson.getString("image"));
-//
-//                    // creating new User Object
-//                    User user = new User();
-//                    Timber.e("user -> %s",user);
-//                    user.setFullName(userJson.getString("fullname"));
-//                    Timber.e("user fullname -> %s",userJson.getString("fullname"));
-//                    user.setMobileNo(userJson.getString("mobile_no"));
-//                    Timber.e("user mobile_no -> %s",userJson.getString("mobile_no"));
-//                    user.setVehicleNo(userJson.getString("vehicle_no"));
-//                    Timber.e("user vehicle_no -> %s",userJson.getString("vehicle_no"));
-//                    user.setProfilePic(userJson.getString("image"));
-//                    Timber.e("user image -> %s",userJson.getString("image"));
-//                    user.setPassword(userJson.getString("password"));
-//                    Timber.e("user password -> %s",userJson.getString("password"));
 
-                    // Store to share preference
-//                    SharedPreManager.getInstance(getApplicationContext()).userLogin(user);
-
-
-
-//                    viewPager.setCurrentItem(1);
-
-//                    startCountDown();
                 } else {
                     showMessage(jsonObject.getString("message"));
                     Timber.e("jsonObject else e dhukche");

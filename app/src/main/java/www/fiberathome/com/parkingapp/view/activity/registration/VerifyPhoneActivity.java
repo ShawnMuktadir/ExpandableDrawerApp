@@ -47,10 +47,12 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.AppConfig;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.data.preference.SharedPreManager;
+import www.fiberathome.com.parkingapp.model.User;
 import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
 import www.fiberathome.com.parkingapp.view.activity.login.LoginActivity;
+import www.fiberathome.com.parkingapp.view.activity.main.MainActivity;
 
 /**
  * This activity holds view with a custom 4-digit PIN EditText.
@@ -64,10 +66,11 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
     private EditText mPinForthDigitEditText;
     //    private EditText mPinFifthDigitEditText;
     private EditText mPinHiddenEditText;
-    private Button btnVerifyOtp, btnChangePhoneNumber;
+    private Button btnVerifyOtp, btnChangePhoneNumber, btnResendOTP;
     private TextView countdown;
     private ProgressDialog progressDialog;
     private Context context;
+    private String mobileNumber = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -91,12 +94,96 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
             }
         });
 
+        btnResendOTP.setOnClickListener(v->{
+            String mobileNo = getIntent().getStringExtra("mobile_no");
+            String password = getIntent().getStringExtra("password");
+            checkLogin(mobileNo, password);
+        });
+
         btnChangePhoneNumber.setOnClickListener(v -> {
             startActivity(new Intent(VerifyPhoneActivity.this, SignUpActivity.class));
             finish();
         });
 
         startCountDown();
+    }
+
+    private void checkLogin(final String mobileNo, final String password) {
+
+        progressDialog = new ProgressDialog(VerifyPhoneActivity.this);
+        progressDialog.setMessage("Loading...");
+        progressDialog.setCancelable(false);
+        progressDialog.setIndeterminate(false);
+
+        // Hide the OTP Button
+//        btnOTP.setVisibility(View.GONE);
+
+        // inactive button
+        progressDialog.show();
+
+
+        HttpsTrustManager.allowAllSSL();
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_LOGIN, new Response.Listener<String>() {
+
+
+            @Override
+            public void onResponse(String response) {
+                // remove the progress bar
+                Log.e("URL", AppConfig.URL_LOGIN);
+                progressDialog.dismiss();
+
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+
+                    Log.e("Object", jsonObject.toString());
+
+                    if (!jsonObject.getBoolean("error")) {
+
+                        // getting the user from the response
+//                        JSONObject userJson = jsonObject.getJSONObject("user");
+//
+//                        // creating a new user object
+//                        User user = new User();
+//                        user.setId(userJson.getInt("id"));
+//                        user.setFullName(userJson.getString("fullname"));
+//                        user.setMobileNo(userJson.getString("mobile_no"));
+//                        user.setVehicleNo(userJson.getString("vehicle_no"));
+//                        user.setProfilePic(userJson.getString("image"));
+//
+//                        // storing the user in sharedPreference
+//                        SharedPreManager.getInstance(getApplicationContext()).userLogin(user);
+
+                    } else if (jsonObject.getBoolean("error") && jsonObject.has("authentication")) {
+                        // IF ERROR OCCURS AND AUTHENTICATION IS INVALID
+                        showMessage(jsonObject.getString("message"));
+                    } else {
+                        showMessage(jsonObject.getString("message"));
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Timber.e("Error Message -> %s ", error.getMessage());
+                if (progressDialog != null) progressDialog.dismiss();
+                showMessage(error.getMessage());
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("mobile_no", mobileNo);
+                params.put("password", password);
+                return params;
+            }
+        };
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        ParkingApp.getInstance().addToRequestQueue(stringRequest, TAG);
     }
 
     @Override
@@ -150,6 +237,7 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
 
         btnVerifyOtp = findViewById(R.id.btn_verify_otp);
         btnChangePhoneNumber = findViewById(R.id.btn_change_phone_number);
+        btnResendOTP = findViewById(R.id.btnResendOTP);
         countdown = findViewById(R.id.countdown);
     }
 
@@ -365,7 +453,7 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
     }
 
     private void startCountDown() {
-        new CountDownTimer(10000, 1000) {
+        new CountDownTimer(150000, 1000) {
             //CountDownTimer(edittext1.getText()+edittext2.getText()) also parse it to long
 
             public void onTick(long millisUntilFinished) {
@@ -375,6 +463,7 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
 
             public void onFinish() {
                 countdown.setText("Please wait...");
+                btnResendOTP.setVisibility(View.VISIBLE);
                 // enable the edit alert dialog
             }
         }.start();
@@ -407,21 +496,27 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
                         // FETCHING USER INFORMATION FROM DATABASE
                         userJson = jsonObject.getJSONObject("user");
 
-                        if (SharedPreManager.getInstance(getApplicationContext()).isWaitingForSMS()) {
-                            SharedPreManager.getInstance(getApplicationContext()).setIsWaitingForSMS(false);
+//                        if (SharedPreManager.getInstance(getApplicationContext()).isWaitingForSMS()) {
+//                            SharedPreManager.getInstance(getApplicationContext()).setIsWaitingForSMS(false);
 
                             try {
-                                // MOVE TO ANOTHER ACTIVITY
-                                Intent intent = new Intent(VerifyPhoneActivity.this, LoginActivity.class);
-                                startActivity(intent);
-                                finish();
-                                showMessage("Dear " + userJson.getString("fullname") + ", Your Registration Completed Successfully...");
-//                                TastyToastUtils.showTastySuccessToast(context, "Dear " + userJson.getString("fullname") + ", Your Registration Completed Successfully...");
+                                mobileNumber = getIntent().getStringExtra("fromLoginPage");
+                                if (mobileNumber.equals("fromLoginPage")){
+
+                                    startActivity(new Intent(context, LoginActivity.class));
+                                    finish();
+                                    showMessage("Dear " + userJson.getString("fullname") + ", Your Mobile Number is Verified...");
+                                }else{
+                                    Intent intent = new Intent(VerifyPhoneActivity.this, LoginActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                    showMessage("Dear " + userJson.getString("fullname") + ", Your Registration Completed Successfully...");
+                                }
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
 
-                        }
+//                        }
                     }
 
                 } catch (JSONException e) {
