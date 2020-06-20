@@ -623,50 +623,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         ParkingApp.getInstance().addToRequestQueue(stringRequest, TAG);
     }
 
-//    private void registerUser(final String fullName, final String password, final String mobileNo, final String vehicleNo, final String image) {
-//
-//        progressDialog = new ProgressDialog(SignUpActivity.this);
-//        progressDialog.setMessage("Please wait...");
-//        progressDialog.setCancelable(false);
-//        progressDialog.setIndeterminate(false);
-//        progressDialog.show();
-//
-//        // Registering User through UI Service.
-//        ApiService service = ApiClient.getRetrofitInstance(AppConfig.URL_REGISTER).create(ApiService.class);
-//        Call<Common> call = service.createUser(fullName, password, mobileNo, vehicleNo, imageToString(bitmap));
-//
-//        // Gathering results.
-//        call.enqueue(new Callback<Common>() {
-//            @Override
-//            public void onResponse(Call<Common> call, retrofit2.Response<Common> response) {
-//                Timber.e("response -> %s", response.message());
-//
-//                progressDialog.dismiss();
-//                if (response.body() != null) {
-//                    if (!response.body().getError()) {
-//                        showMessage(response.body().getMessage());
-//                        Intent intent = new Intent(SignUpActivity.this, VerifyPhoneActivity.class);
-//                        startActivity(intent);
-//                        // creating new User Object
-//                        User user = new User();
-//                        user.setFullName(fullName);
-//                        user.setMobileNo(mobileNo);
-//                        user.setVehicleNo(vehicleNo);
-//                        user.setProfilePic(image);
-//                        user.setPassword(password);
-//                    } else {
-//                        showMessage(response.body().getMessage());
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<Common> call, Throwable errors) {
-//                Timber.e("Throwable Errors: -> %s", errors.toString());
-//            }
-//        });
-//    }
-
     private boolean checkFields() {
         editTextFullName.requestFocus();
         boolean isNameValid = Validator.checkValidity(textInputLayoutFullName, editTextFullName.getText().toString(), context.getString(R.string.err_msg_fullname), "text");

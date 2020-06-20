@@ -23,7 +23,8 @@ public class Validator {
 //    public static String PASSWORD_COUNT_ERROR = "৬-২০ অক্ষরের মধ্যে পাসওয়ার্ড লিখুন";
     public static String PASSWORD_COUNT_ERROR = "Please input password between 6-20 characters";
     public static String NUMBER_ERROR = "এখানে শুধু নাম্বার লিখা যাবে";
-    public static String PHONE_ERROR = "১১ ডিজিটের ফোন নাম্বার লিখুন। উদা: ০১*১১******";
+//    public static String PHONE_ERROR = "১১ ডিজিটের ফোন নাম্বার লিখুন। উদা: ০১*১১******";
+    public static String PHONE_ERROR = "Please type 11 digit phone number. Ex: 01*11******";
 
     public static boolean checkValidity(EditText editText, String errorText, String textType) {
         String text = editText.getText().toString();
@@ -55,7 +56,7 @@ public class Validator {
                 }
             } else if (textType.equalsIgnoreCase("text")) {
 //                if (!TextUtils.isEmpty(text)) {
-                if (!TextUtils.isEmpty(text) && editText.length() == 4) {
+                if (!TextUtils.isEmpty(text)) {
                     editText.setError(null);
                     return true;
                 } else {
@@ -111,15 +112,15 @@ public class Validator {
                     return false;
                 }
             } else if (textType.equalsIgnoreCase("phone")) {
-//                if (input.matches(StaticData.PHONE_REGEX)) {
-                if (input.length() >= 11) {
+                if (input.matches(StaticData.PHONE_REGEX)) {
+//                if (input.length() >= 11) {
                     textInputLayout.setError(null);
                     textInputLayout.setErrorEnabled(false);
                     return true;
                 } else {
                     textInputLayout.setErrorEnabled(true);
-//                    textInputLayout.setError(PHONE_ERROR);
-                    textInputLayout.setError("Enter valid mobile number!");
+                    textInputLayout.setError(PHONE_ERROR);
+//                    textInputLayout.setError("Enter valid mobile number!");
                     return false;
                 }
             } else if (textType.equalsIgnoreCase("textPassword")) {

@@ -41,6 +41,7 @@ import java.util.Objects;
 
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.User;
 import www.fiberathome.com.parkingapp.base.AppConfig;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
@@ -306,11 +307,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //                        progressDialog.dismiss();
                         if (response.equals("Please verify Your Account by OTP")) {
                             Intent verifyPhoneIntent = new Intent(LoginActivity.this, VerifyPhoneActivity.class);
-                            if (checkFields()){
+                            if (checkFields()) {
                                 verifyPhoneIntent.putExtra("mobile_no", mobileNo);
                             }
                             startActivity(verifyPhoneIntent);
-                        }else{
+                        } else {
                             // Move to another Activity
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);
@@ -319,15 +320,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                     } else if (jsonObject.getBoolean("error") && jsonObject.has("authentication")) {
                         // IF ERROR OCCURS AND AUTHENTICATION IS INVALID
-                     if (jsonObject.getString("message").equals("Please verify Your Account by OTP")) {
-                         showMessage("Please verify Your Account by OTP");
-                         btnOTP.setVisibility(View.GONE);
-                         Intent verifyPhoneIntent = new Intent(LoginActivity.this, VerifyPhoneActivity.class);
-
-                         verifyPhoneIntent.putExtra("mobile_no",mobileNo);
-                         verifyPhoneIntent.putExtra("password",password);
-                         verifyPhoneIntent.putExtra("fromLoginPage","fromLoginPage");
-                         startActivity(verifyPhoneIntent);
+                        if (jsonObject.getString("message").equals("Please verify Your Account by OTP")) {
+                            showMessage("Please verify Your Account by OTP");
+                            btnOTP.setVisibility(View.GONE);
+                            Intent verifyPhoneIntent = new Intent(LoginActivity.this, VerifyPhoneActivity.class);
+                            verifyPhoneIntent.putExtra("mobile_no", mobileNo);
+                            verifyPhoneIntent.putExtra("password", password);
+//                            SharedData.getInstance().setLoginMobileNo(mobileNo);
+//                            SharedData.getInstance().setLoginPassword(password);
+                            verifyPhoneIntent.putExtra("fromLoginPage", "fromLoginPage");
+                            startActivity(verifyPhoneIntent);
                         }
                     } else {
                         showMessage(jsonObject.getString("message"));

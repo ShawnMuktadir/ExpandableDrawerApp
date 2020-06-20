@@ -30,6 +30,34 @@ public final class SharedData {
         instance = null;
     }
 
+    private String loginMobileNo;
+    private String loginPassword;
+    private String registrationFullName;
+
+    public String getRegistrationFullName() {
+        return registrationFullName;
+    }
+
+    public void setRegistrationFullName(String registrationFullName) {
+        this.registrationFullName = registrationFullName;
+    }
+
+    public String getLoginMobileNo() {
+        return loginMobileNo;
+    }
+
+    public void setLoginMobileNo(String loginMobileNo) {
+        this.loginMobileNo = loginMobileNo;
+    }
+
+    public String getLoginPassword() {
+        return loginPassword;
+    }
+
+    public void setLoginPassword(String loginPassword) {
+        this.loginPassword = loginPassword;
+    }
+
     private String password;
 
     public String getPassword() {

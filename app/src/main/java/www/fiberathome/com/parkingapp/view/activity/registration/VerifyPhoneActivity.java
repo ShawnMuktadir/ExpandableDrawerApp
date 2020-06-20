@@ -41,6 +41,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
@@ -94,10 +95,13 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
             }
         });
 
-        btnResendOTP.setOnClickListener(v->{
+        btnResendOTP.setOnClickListener(v -> {
             String mobileNo = getIntent().getStringExtra("mobile_no");
             String password = getIntent().getStringExtra("password");
             checkLogin(mobileNo, password);
+            btnVerifyOtp.setVisibility(View.VISIBLE);
+            btnResendOTP.setVisibility(View.INVISIBLE);
+            startCountDown();
         });
 
         btnChangePhoneNumber.setOnClickListener(v -> {
@@ -155,9 +159,11 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
 
                     } else if (jsonObject.getBoolean("error") && jsonObject.has("authentication")) {
                         // IF ERROR OCCURS AND AUTHENTICATION IS INVALID
-                        showMessage(jsonObject.getString("message"));
+//                        showMessage(jsonObject.getString("message"));
+                        Timber.e("error & authentication response -> %s", jsonObject.getString("message"));
                     } else {
                         showMessage(jsonObject.getString("message"));
+                        Timber.e("error -> %s", jsonObject.getString("message"));
                     }
 
                 } catch (JSONException e) {
@@ -457,13 +463,18 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
             //CountDownTimer(edittext1.getText()+edittext2.getText()) also parse it to long
 
             public void onTick(long millisUntilFinished) {
-                countdown.setText("seconds remaining: " + millisUntilFinished / 1000);
+//                countdown.setText("seconds remaining: " + millisUntilFinished / 1000);
+                countdown.setText("" + String.format("%d min, %d sec remaining",
+                        TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
+                        TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
+                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))));
                 //here you can have your logic to set text to edittext
             }
 
             public void onFinish() {
                 countdown.setText("Please wait...");
                 btnResendOTP.setVisibility(View.VISIBLE);
+                btnVerifyOtp.setVisibility(View.INVISIBLE);
                 // enable the edit alert dialog
             }
         }.start();
@@ -483,15 +494,15 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
         HttpsTrustManager.allowAllSSL();
         if (!otp.isEmpty()) {
             StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_VERIFY_OTP, response -> {
-                Timber.e("URL -> %s",AppConfig.URL_VERIFY_OTP);
+                Timber.e("URL -> %s", AppConfig.URL_VERIFY_OTP);
                 progressDialog.dismiss();
 
                 try {
                     jsonObject = new JSONObject(response);
-                    Timber.e("object -> %s",jsonObject.toString());
-
+                    Timber.e("object -> %s", jsonObject.toString());
 
                     if (!jsonObject.getBoolean("error")) {
+                        showMessage(jsonObject.getString("message"));
 
                         // FETCHING USER INFORMATION FROM DATABASE
                         userJson = jsonObject.getJSONObject("user");
@@ -499,22 +510,22 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
 //                        if (SharedPreManager.getInstance(getApplicationContext()).isWaitingForSMS()) {
 //                            SharedPreManager.getInstance(getApplicationContext()).setIsWaitingForSMS(false);
 
-                            try {
-                                mobileNumber = getIntent().getStringExtra("fromLoginPage");
-                                if (mobileNumber.equals("fromLoginPage")){
-
-                                    startActivity(new Intent(context, LoginActivity.class));
-                                    finish();
-                                    showMessage("Dear " + userJson.getString("fullname") + ", Your Mobile Number is Verified...");
-                                }else{
-                                    Intent intent = new Intent(VerifyPhoneActivity.this, LoginActivity.class);
-                                    startActivity(intent);
-                                    finish();
-                                    showMessage("Dear " + userJson.getString("fullname") + ", Your Registration Completed Successfully...");
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                        try {
+                            mobileNumber = getIntent().getStringExtra("fromLoginPage");
+                            Timber.e("mobileNumber -> %s", mobileNumber);
+                            if (mobileNumber.equals("fromLoginPage")) {
+                                startActivity(new Intent(context, LoginActivity.class));
+                                finish();
+                                showMessage("Dear " + userJson.getString("fullname") + ", Your Mobile Number is Verified...");
+                            } else {
+                                Intent intent = new Intent(VerifyPhoneActivity.this, LoginActivity.class);
+                                startActivity(intent);
+                                finish();
+                                showMessage("Dear " + userJson.getString("fullname") + ", Your Registration Completed Successfully...");
                             }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
 
 //                        }
                     }
@@ -616,14 +627,6 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
             }
         });
         dialog.show();
-    }
-//this is also disable back button
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
     }
 }
 
