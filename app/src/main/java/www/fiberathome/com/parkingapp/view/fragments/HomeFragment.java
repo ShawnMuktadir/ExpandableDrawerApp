@@ -1660,9 +1660,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                         e.printStackTrace();
                     }
                 }
-//                    Timber.e("bookingSensors latest -> %s", new Gson().toJson(bookingSensorsArrayList));
-//                        bookingSensorsArrayListGlobal.clear();
-                //bottomSheetSensorAdapter.updateData(bookingSensorsArrayList);
                 bottomSheetAdapter.updateData(bookingSensorsArrayList);
                 setBottomSheetRecyclerViewAdapter(bookingSensorsArrayList);
 //                    Timber.e("setBottomSheetRecyclerViewAdapter(bookingSensorsArrayList) call hoiche for loop");

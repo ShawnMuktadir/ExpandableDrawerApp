@@ -163,7 +163,7 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
 //                        showMessage(jsonObject.getString("message"));
                         Timber.e("error & authentication response -> %s", jsonObject.getString("message"));
                     } else {
-                        showMessage(jsonObject.getString("message"));
+//                        showMessage(jsonObject.getString("message"));
                         Timber.e("error -> %s", jsonObject.getString("message"));
                     }
 
