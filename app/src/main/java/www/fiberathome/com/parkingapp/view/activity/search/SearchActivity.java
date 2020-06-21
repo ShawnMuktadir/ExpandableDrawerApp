@@ -72,16 +72,6 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
     private void setListeners() {
         imageViewCross.setOnClickListener(v -> {
             finish();
-
-//            try {
-//                if (SharedData.getInstance().getOnConnectedLocation() != null){
-//                    HomeFragment homeFragment = new HomeFragment();
-//                    homeFragment.fetchSensors(SharedData.getInstance().getOnConnectedLocation());
-//                }
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-
         });
 
         editTextSearch.addTextChangedListener(new TextWatcher() {

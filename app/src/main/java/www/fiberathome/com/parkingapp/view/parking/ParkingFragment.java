@@ -51,6 +51,7 @@ import www.fiberathome.com.parkingapp.utils.OnEditTextRightDrawableTouchListener
 import www.fiberathome.com.parkingapp.utils.RecyclerTouchListener;
 import www.fiberathome.com.parkingapp.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+import www.fiberathome.com.parkingapp.view.fragments.HomeFragment;
 
 import static www.fiberathome.com.parkingapp.utils.ApplicationUtils.distance;
 
@@ -326,8 +327,8 @@ public class ParkingFragment extends Fragment {
             }
         }));
         ViewCompat.setNestedScrollingEnabled(recyclerViewParking, false);
-
-        parkingAdapter = new ParkingAdapter(context, this, sensorAreas, onConnectedLocation);
+        HomeFragment homeFragment = new HomeFragment();
+        parkingAdapter = new ParkingAdapter(context, this, homeFragment, sensorAreas, onConnectedLocation);
         recyclerViewParking.setAdapter(parkingAdapter);
     }
 }

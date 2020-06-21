@@ -168,28 +168,31 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<PlacesAutoCo
             } catch (Exception e) {
                 Timber.e(e);
             }
+            PlaceAutocomplete item;
+            if (mResultList.size() > 0) {
+                item = mResultList.get(position);
+                if (v.getId() == R.id.item_view) {
 
-            PlaceAutocomplete item = mResultList.get(position);
-            if (v.getId() == R.id.item_view) {
+                    String placeId = String.valueOf(item.placeId);
+                    Timber.e("placeId -> %s", placeId);
 
-                String placeId = String.valueOf(item.placeId);
-
-                List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS);
-                FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields).setSessionToken(token).build();
-                placesClient.fetchPlace(request).addOnSuccessListener(response -> {
-                    Place place = response.getPlace();
-                    final Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            clickListener.onClick(place);
+                    List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS);
+                    FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields).setSessionToken(token).build();
+                    placesClient.fetchPlace(request).addOnSuccessListener(response -> {
+                        Place place = response.getPlace();
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                clickListener.onClick(place);
+                            }
+                        }, 500);
+                    }).addOnFailureListener(exception -> {
+                        if (exception instanceof ApiException) {
+                            Toast.makeText(mContext, exception.getMessage() + "", Toast.LENGTH_SHORT).show();
                         }
-                    }, 500);
-                }).addOnFailureListener(exception -> {
-                    if (exception instanceof ApiException) {
-                        Toast.makeText(mContext, exception.getMessage() + "", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                    });
+                }
             }
         });
     }

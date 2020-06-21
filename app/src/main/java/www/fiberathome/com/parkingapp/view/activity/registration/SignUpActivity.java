@@ -201,7 +201,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 startActivity(loginIntent);
                 break;
 
-//            case R.id.upload_profile_image:
+            case R.id.upload_profile_image:
             case R.id.imageViewCaptureImage:
 //                showMessage("CAMERA!");
                 if (isPermissionGranted()) {

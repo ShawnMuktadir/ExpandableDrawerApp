@@ -143,6 +143,7 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
 
                     if (!jsonObject.getBoolean("error")) {
                         Timber.e("error not -> %s", jsonObject.getString("message"));
+                        showMessage(jsonObject.getString("message"));
 
                         // getting the user from the response
 //                        JSONObject userJson = jsonObject.getJSONObject("user");
@@ -177,7 +178,7 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
             public void onErrorResponse(VolleyError error) {
                 Timber.e("Error Message -> %s ", error.getMessage());
                 if (progressDialog != null) progressDialog.dismiss();
-                showMessage(error.getMessage());
+//                showMessage(error.getMessage());
             }
         }) {
 
