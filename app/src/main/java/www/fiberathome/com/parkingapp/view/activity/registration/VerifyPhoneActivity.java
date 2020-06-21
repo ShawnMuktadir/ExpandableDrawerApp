@@ -115,7 +115,7 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
     private void checkLogin(final String mobileNo, final String password) {
 
         progressDialog = new ProgressDialog(VerifyPhoneActivity.this);
-        progressDialog.setMessage("Loading...");
+        progressDialog.setMessage("Please wait...");
         progressDialog.setCancelable(false);
         progressDialog.setIndeterminate(false);
 
@@ -142,6 +142,7 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
                     Log.e("Object", jsonObject.toString());
 
                     if (!jsonObject.getBoolean("error")) {
+                        Timber.e("error not -> %s", jsonObject.getString("message"));
 
                         // getting the user from the response
 //                        JSONObject userJson = jsonObject.getJSONObject("user");
@@ -514,10 +515,14 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
                             mobileNumber = getIntent().getStringExtra("fromLoginPage");
                             Timber.e("mobileNumber -> %s", mobileNumber);
                             if (mobileNumber.equals("fromLoginPage")) {
+                                Timber.e("if e dhukche");
+                                Toast.makeText(context, "if e dhukche", Toast.LENGTH_LONG).show();
                                 startActivity(new Intent(context, LoginActivity.class));
                                 finish();
                                 showMessage("Dear " + userJson.getString("fullname") + ", Your Mobile Number is Verified...");
                             } else {
+                                Timber.e("if else e dhukche");
+                                Toast.makeText(context, "if else e dhukche", Toast.LENGTH_LONG).show();
                                 Intent intent = new Intent(VerifyPhoneActivity.this, LoginActivity.class);
                                 startActivity(intent);
                                 finish();

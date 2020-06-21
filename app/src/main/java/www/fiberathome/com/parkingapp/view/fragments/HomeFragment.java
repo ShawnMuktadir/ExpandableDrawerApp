@@ -2,6 +2,7 @@ package www.fiberathome.com.parkingapp.view.fragments;
 
 import android.Manifest;
 import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 
@@ -24,6 +25,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -236,7 +239,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     @BindView(R.id.textViewBottomSheetParkingTravelTime)
     public TextView textViewBottomSheetParkingTravelTime;
     @BindView(R.id.linearLayoutBottomSheetBottom)
-    LinearLayout linearLayoutBottomSheetBottom;
+    public LinearLayout linearLayoutBottomSheetBottom;
     @BindView(R.id.linearLayoutBottomSheetNameCount)
     LinearLayout linearLayoutBottomSheetNameCount;
     @BindView(R.id.linearLayoutBottomSheetGetDirection)
@@ -335,6 +338,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         ButterKnife.bind(this, view);
         initUI(view);
         setListeners();
+        initAnimation();
 
         bottomSheet = view.findViewById(R.id.layout_bottom_sheet);
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
@@ -786,9 +790,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
             if (mMap != null)
                 mMap.clear();
             fetchSensors(onConnectedLocation);
-//            BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
-//            navBar.setVisibility(View.VISIBLE);
-//            bottomSheetSearch = 0;
             //for getting the location name
             getAddress(getActivity(), markerPlaceLatLng.latitude, markerPlaceLatLng.longitude);
             String markerPlaceName = address;
@@ -798,8 +799,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
             double markerDistance = taskParser.showDistance(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
                     new LatLng(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude));
 //            Timber.e("searchDistance -> %s", markerDistance);
-//            layoutMarkerVisible(true, markerPlaceName, parkingNumberOfIndividualMarker,
-//                    String.valueOf(markerDistance), marker.getPosition());
 
             layoutMarkerVisible(true, "", "",
                     "", marker.getPosition());
@@ -873,6 +872,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
             bottomSheetAdapter.updateData(bookingSensorsMarkerArrayList);
             setBottomSheetRecyclerViewAdapter(bookingSensorsMarkerArrayList);
 //            Timber.e("setBottomSheetRecyclerViewAdapter(bookingSensorsMarkerArrayList) call hoiche for loop");
+        }else {
+            Timber.e("crash!!!");
         }
 
         return true;
@@ -2212,32 +2213,34 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                         case BottomSheetBehavior.STATE_HIDDEN:
                             break;
                         case BottomSheetBehavior.STATE_EXPANDED:
-                            final int interval = 10; // >1 Second
+                            final int interval = 100; // >1 Second
                             Handler handler = new Handler();
                             Runnable runnable = new Runnable() {
                                 public void run() {
                                     layoutVisible(false, "", "", "", null);
+                                    Animation animSlideDown = AnimationUtils.loadAnimation(context, R.anim.view_hide);
+                                    linearLayoutBottom.startAnimation(animSlideDown);
                                 }
+
                             };
                             handler.postAtTime(runnable, System.currentTimeMillis() + interval);
                             handler.postDelayed(runnable, interval);
 //                        btn.setText("Close Sheet");
                         case BottomSheetBehavior.STATE_COLLAPSED:
-                            if (location != null) {
-                                if (SharedData.getInstance().getSensorArea() != null) {
+                            Animation animSlideUp = AnimationUtils.loadAnimation(context,R.anim.view_show);
+                            linearLayoutBottom.startAnimation(animSlideUp);
+                            if (SharedData.getInstance().getSensorArea() != null) {
 //                                bottomSheetBehavior.setPeekHeight(400);
-                                    SensorArea sensorArea = SharedData.getInstance().getSensorArea();
-                                    //   Timber.e("Sensor Area from SharedData -> %s", new Gson().toJson(sensorArea));
-                                    textViewParkingAreaName.setText(ApplicationUtils.capitalize(sensorArea.getParkingArea()));
-                                    textViewParkingAreaCount.setText(sensorArea.getCount());
-                                    String distance = new DecimalFormat("##.##").format(sensorArea.getDistance()) + " km";
-                                    textViewParkingDistance.setText(distance);
-                                    //            textViewParkingTravelTime.setText(sensorArea.getDuration());
-                                    getDestinationInfoForDuration(new LatLng(sensorArea.getLat(), sensorArea.getLng()));
-                                    layoutVisible(true, textViewParkingAreaName.getText().toString(), textViewParkingAreaCount.getText().toString(), textViewParkingDistance.getText().toString(), new LatLng(sensorArea.getLat(), sensorArea.getLng()));
-                                }
+                                SensorArea sensorArea = SharedData.getInstance().getSensorArea();
+                                //   Timber.e("Sensor Area from SharedData -> %s", new Gson().toJson(sensorArea));
+                                textViewParkingAreaName.setText(ApplicationUtils.capitalize(sensorArea.getParkingArea()));
+                                textViewParkingAreaCount.setText(sensorArea.getCount());
+                                String distance = new DecimalFormat("##.##").format(sensorArea.getDistance()) + " km";
+                                textViewParkingDistance.setText(distance);
+                                //            textViewParkingTravelTime.setText(sensorArea.getDuration());
+                                getDestinationInfoForDuration(new LatLng(sensorArea.getLat(), sensorArea.getLng()));
+                                layoutVisible(true, textViewParkingAreaName.getText().toString(), textViewParkingAreaCount.getText().toString(), textViewParkingDistance.getText().toString(), new LatLng(sensorArea.getLat(), sensorArea.getLng()));
                             }
-//                        btn.setText("Expand Sheet");
                             break;
                         case BottomSheetBehavior.STATE_DRAGGING:
                             final int interval1 = 100; // >1 Second
@@ -2245,6 +2248,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                             Runnable runnable1 = new Runnable() {
                                 public void run() {
                                     layoutVisible(false, "", "", "", null);
+                                    Animation animSlideDown = AnimationUtils.loadAnimation(context, R.anim.view_hide);
+                                    linearLayoutBottom.startAnimation(animSlideDown);
                                 }
                             };
                             handler1.postAtTime(runnable1, System.currentTimeMillis() + interval1);
@@ -2934,6 +2939,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(milliSeconds);
         return formatter.format(calendar.getTime());
+    }
+    private Animation animShow, animHide;
+
+    private void initAnimation() {
+        animShow = AnimationUtils.loadAnimation( context, R.anim.view_show);
+        animHide = AnimationUtils.loadAnimation( context, R.anim.view_hide);
     }
 }
 

@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -182,20 +184,15 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
                                 if (homeFragment.mMap != null)
                                     homeFragment.mMap.clear();
-//                            animateCamera(onConnectedLocation);
                                 homeFragment.fetchSensors(onConnectedLocation);
-//                            bookingSensorsArrayListGlobal.clear();
-//                            bookingSensorsArrayList.clear();
-//                            bookingSensorsMarkerArrayList.clear();
-//                            fetchBottomSheetSensors(onConnectedLocation);
-//                        }
-//                        btn.setText("Expand Sheet");
 
                                 final int interval = 100; // 1 Second
                                 Handler handler = new Handler();
                                 Runnable runnable = new Runnable(){
                                     public void run() {
                                         homeFragment.layoutBottomSheetVisible(false, "", "", "", "", null);
+                                        Animation animSlideDown = AnimationUtils.loadAnimation(context, R.anim.view_hide);
+                                        homeFragment.linearLayoutBottomSheetBottom.startAnimation(animSlideDown);
                                     }
                                 };
                                 handler.postAtTime(runnable, System.currentTimeMillis()+interval);
@@ -213,24 +210,19 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
                                             holder.textViewParkingDistance.getText().toString(),
                                             holder.textViewParkingTravelTime.getText().toString(),
                                             new LatLng(bookingSensors.getLat(), bookingSensors.getLng()));
+                                    Animation animSlideUp = AnimationUtils.loadAnimation(context,R.anim.view_show);
+                                    homeFragment.linearLayoutBottomSheetBottom.startAnimation(animSlideUp);
                                 }
                                 break;
 
                             case BottomSheetBehavior.STATE_DRAGGING:
-//                                final int interval = 1000; // 1 Second
-//                                Handler handler = new Handler();
-//                                Runnable runnable = new Runnable(){
-//                                    public void run() {
-//                                        homeFragment.layoutBottomSheetVisible(false, "", "", "", "", null);
-//                                    }
-//                                };
-//                                handler.postAtTime(runnable, System.currentTimeMillis()+interval);
-//                                handler.postDelayed(runnable, interval);
                                 final int interval1 = 100; // 1 Second
                                 Handler handler1 = new Handler();
                                 Runnable runnable1 = new Runnable(){
                                     public void run() {
                                         homeFragment.layoutBottomSheetVisible(false, "", "", "", "", null);
+                                        Animation animSlideDown = AnimationUtils.loadAnimation(context, R.anim.view_hide);
+                                        homeFragment.linearLayoutBottomSheetBottom.startAnimation(animSlideDown);
                                     }
                                 };
                                 handler1.postAtTime(runnable1, System.currentTimeMillis()+interval1);

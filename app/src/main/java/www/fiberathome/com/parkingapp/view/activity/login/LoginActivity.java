@@ -326,8 +326,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             Intent verifyPhoneIntent = new Intent(LoginActivity.this, VerifyPhoneActivity.class);
                             verifyPhoneIntent.putExtra("mobile_no", mobileNo);
                             verifyPhoneIntent.putExtra("password", password);
-//                            SharedData.getInstance().setLoginMobileNo(mobileNo);
-//                            SharedData.getInstance().setLoginPassword(password);
                             verifyPhoneIntent.putExtra("fromLoginPage", "fromLoginPage");
                             startActivity(verifyPhoneIntent);
                         }

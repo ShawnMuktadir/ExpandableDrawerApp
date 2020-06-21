@@ -70,7 +70,8 @@
                     android:textAllCaps="false"
                     android:textColor="@color/black"
                     android:textSize="@dimen/dimTex15"
-                    android:textStyle="normal" />
+                    android:textStyle="normal"
+                    android:focusable="true" />
 
                 <ImageButton
                     android:id="@+id/currentLocationImageButton"
