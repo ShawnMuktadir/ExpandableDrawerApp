@@ -63,15 +63,13 @@
                     android:layout_height="@dimen/dim50"
                     android:layout_margin="@dimen/dim5"
                     android:background="@drawable/white_border"
-                    android:clickable="true"
                     android:hint="Where To?"
                     android:padding="@dimen/dim5"
                     android:textAlignment="textStart"
                     android:textAllCaps="false"
                     android:textColor="@color/black"
                     android:textSize="@dimen/dimTex15"
-                    android:textStyle="normal"
-                    android:focusable="true" />
+                    android:textStyle="normal" />
 
                 <ImageButton
                     android:id="@+id/currentLocationImageButton"
