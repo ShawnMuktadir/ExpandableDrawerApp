@@ -502,7 +502,9 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
                 try {
                     jsonObject = new JSONObject(response);
                     Timber.e("object -> %s", jsonObject.toString());
-
+                    if (jsonObject.getString("message").equals("Sorry! Failed to Verify Your Account by OYP.")){
+                        showMessage("Sorry! Failed to Verify Your Account by OTP.");
+                    }
                     if (!jsonObject.getBoolean("error")) {
                         showMessage(jsonObject.getString("message"));
 
@@ -532,7 +534,6 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
 //                        }
                     }
 
@@ -558,8 +559,8 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
         } else {
             // OTP IS EMPTY.
             progressDialog.dismiss();
-            TastyToastUtils.showTastyWarningToast(context, "Please Enter Valid OTP...");
-//            showMessage("Please Enter Valid OTP...");
+//            TastyToastUtils.showTastyWarningToast(context, "Please Enter Valid OTP...");
+            showMessage("Please Enter Valid OTP...");
         }
 
     }

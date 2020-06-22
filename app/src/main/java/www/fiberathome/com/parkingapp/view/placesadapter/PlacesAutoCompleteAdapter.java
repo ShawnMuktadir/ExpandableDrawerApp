@@ -42,7 +42,7 @@ import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 
 public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<PlacesAutoCompleteAdapter.PredictionHolder> implements Filterable {
-    private static final String TAG = "PlacesAutoAdapter";
+    private  final String TAG =getClass().getSimpleName();
     private ArrayList<PlaceAutocomplete> mResultList = new ArrayList<>();
 
     private Context mContext;
@@ -162,6 +162,7 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<PlacesAutoCo
         // Here I am just highlighting the background
         mPredictionHolder.itemView.setBackgroundColor(selectedPosition == position ? Color.LTGRAY : Color.TRANSPARENT);
         mPredictionHolder.itemView.setOnClickListener(v -> {
+
             selectedPosition = position;
             try {
                 notifyDataSetChanged();
@@ -169,31 +170,43 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<PlacesAutoCo
                 Timber.e(e);
             }
             PlaceAutocomplete item;
-            if (mResultList.size() > 0) {
-                item = mResultList.get(position);
-                if (v.getId() == R.id.item_view) {
+            Log.d(TAG, "List size :"+mResultList.size());
+            Log.d(TAG, "position :"+selectedPosition);
+//            Toast.makeText(mContext,"position:"+position,Toast.LENGTH_SHORT).show();
+//            for (PlaceAutocomplete autoComplete:mResultList) {
+//                Log.d(TAG, "onBindViewHolder: "+autoComplete);
+//            }
 
-                    String placeId = String.valueOf(item.placeId);
-                    Timber.e("placeId -> %s", placeId);
+                try {
+                    item = getItem(selectedPosition);//mResultList.get(selectedPosition);
+                    if (v.getId() == R.id.item_view) {
 
-                    List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS);
-                    FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields).setSessionToken(token).build();
-                    placesClient.fetchPlace(request).addOnSuccessListener(response -> {
-                        Place place = response.getPlace();
-                        final Handler handler = new Handler();
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                clickListener.onClick(place);
+                        String placeId = String.valueOf(item.placeId);
+                        Timber.e("placeId -> %s", placeId);
+
+                        List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS);
+                        FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields).setSessionToken(token).build();
+                        placesClient.fetchPlace(request).addOnSuccessListener(response -> {
+                            Place place = response.getPlace();
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    clickListener.onClick(place);
+                                }
+                            }, 500);
+                        }).addOnFailureListener(exception -> {
+                            if (exception instanceof ApiException) {
+                                Toast.makeText(mContext, exception.getMessage() + "", Toast.LENGTH_SHORT).show();
                             }
-                        }, 500);
-                    }).addOnFailureListener(exception -> {
-                        if (exception instanceof ApiException) {
-                            Toast.makeText(mContext, exception.getMessage() + "", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                        });
+                    }
+                }catch (IndexOutOfBoundsException e){
+                    Toast.makeText(mContext, "Please try again", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "exception: "+e);
                 }
-            }
+
+//            throw new RuntimeException("Test Crash");
         });
     }
 
@@ -264,5 +277,10 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<PlacesAutoCo
         public String toString() {
             return area.toString();
         }
+    }
+
+    public void clearList(){
+        mResultList.clear();
+        notifyDataSetChanged();
     }
 }

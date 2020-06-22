@@ -30,12 +30,12 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Parking Spot"
+                android:layout_centerHorizontal="true"
                 android:gravity="center"
-                android:textStyle="bold"
-                android:textSize="@dimen/_15ssp"
+                android:text="Parking Spot"
                 android:textColor="@color/black"
-                android:layout_centerHorizontal="true"/>
+                android:textSize="@dimen/_15ssp"
+                android:textStyle="bold" />
         </RelativeLayout>
 
         <EditText
@@ -52,13 +52,16 @@
             android:singleLine="true" />
     </LinearLayout>
 
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/placesRv"
+        android:scrollbars="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/dim5"
         android:background="#FFF"
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
 
 </LinearLayout>

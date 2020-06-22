@@ -1,6 +1,5 @@
 package www.fiberathome.com.parkingapp.view.activity.registration;
 
-import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -49,23 +48,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import retrofit2.Call;
-import retrofit2.Callback;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.api.ApiClient;
-import www.fiberathome.com.parkingapp.api.ApiService;
 import www.fiberathome.com.parkingapp.data.preference.SharedData;
-import www.fiberathome.com.parkingapp.model.User;
 import www.fiberathome.com.parkingapp.base.AppConfig;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
-import www.fiberathome.com.parkingapp.model.common.Common;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.view.activity.login.LoginActivity;
 import www.fiberathome.com.parkingapp.view.activity.main.MainActivity;
 import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
 import www.fiberathome.com.parkingapp.data.preference.SharedPreManager;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
 
 public class SignUpActivity extends AppCompatActivity implements View.OnClickListener {
@@ -446,7 +437,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         pictureDialog.setItems(pictureDialogItems, (dialog, which) -> {
             switch (which) {
                 case 0:
-                    choosePhotoFromGallary();
+                    choosePhotoFromGallery();
                     break;
                 case 1:
                     takePhotoFromCamera();
@@ -456,7 +447,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         pictureDialog.show();
     }
 
-    public void choosePhotoFromGallary() {
+    public void choosePhotoFromGallery() {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(galleryIntent, REQUEST_PICK_GALLERY);
     }
@@ -624,13 +615,25 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private boolean checkFields() {
-        editTextFullName.requestFocus();
+//        editTextFullName.requestFocus();
         boolean isNameValid = Validator.checkValidity(textInputLayoutFullName, editTextFullName.getText().toString(), context.getString(R.string.err_msg_fullname), "text");
         boolean isPhoneValid = Validator.checkValidity(textInputLayoutMobile, editTextMobileNumber.getText().toString(), context.getString(R.string.err_msg_mobile), "phone");
         boolean isVehicleRegValid = Validator.checkValidity(textInputLayoutVehicle, editTextVehicleRegNumber.getText().toString(), context.getString(R.string.err_msg_vehicle), "text");
         boolean isPasswordValid = Validator.checkValidity(textInputLayoutPassword, editTextPassword.getText().toString(), context.getString(R.string.err_msg_password), "textPassword");
+
+//        boolean hasDrawable = (uploadProfileImage.getDrawable() != null);
+//        if(hasDrawable) {
+//            // imageView has image in it
+//            Timber.e("imageView set");
+//        }
+//        else {
+//            // no image assigned to image view
+//            Toast.makeText(context, "Please Upload Profile Picture!!!", Toast.LENGTH_SHORT).show();
+//        }
         return isNameValid && isPhoneValid && isVehicleRegValid && isPasswordValid;
     }
+
+
 
     private void showMessage(String message) {
         Toast.makeText(SignUpActivity.this, message, Toast.LENGTH_SHORT).show();

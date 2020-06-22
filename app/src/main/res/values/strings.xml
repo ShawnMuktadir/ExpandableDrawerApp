@@ -158,6 +158,8 @@
     <string name="departure">Departure at the parking spot :</string>
     <string name="book">Your book</string>
     <string name="resend_otp">Resend OTP</string>
+    <string name="gps_network_not_enabled">GPS network not enabled!</string>
+    <string name="open_location_settings">Open Location Settings</string>
 
     <string-array name="CountryCodes">
         <item>93,AF</item>

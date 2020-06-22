@@ -1,6 +1,7 @@
 
 package www.fiberathome.com.parkingapp.view.activity.search;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -10,9 +11,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -25,6 +29,7 @@ import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
 
+import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.SelcectedPlace;
@@ -112,24 +117,33 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
                     public void OnDrawableClick() {
                         // The right drawable was clicked. Your action goes here.
                         editTextSearch.setText("");
+                        mAutoCompleteAdapter.clearList();
                     }
                 });
     }
 
     private TextWatcher filterTextWatcher = new TextWatcher() {
         public void afterTextChanged(Editable s) {
-            if (!s.toString().equals("")) {
-                mAutoCompleteAdapter.getFilter().filter(s.toString());
-            }
+//            if (!s.toString().equals("")) {
+//                mAutoCompleteAdapter.getFilter().filter(s.toString());
+//            }
+
+            mAutoCompleteAdapter.notifyDataSetChanged();
+
         }
 
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
         }
-
+//!s.toString().equals("")
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+            if (s.toString().length()>3) {
+                mAutoCompleteAdapter.getFilter().filter(s.toString());
+                mAutoCompleteAdapter.notifyDataSetChanged();
+            }
         }
+
+
 
     };
 
@@ -160,6 +174,7 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
 
         Intent resultIntent = new Intent();
         if (place == null) {
+            Timber.e("place null");
             setResult(RESULT_CANCELED, resultIntent);
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -169,6 +184,7 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
             }, 1000);
 //            overridePendingTransition(0, 0);
         } else {
+            Timber.e("place not null");
             LatLng latLng = place.getLatLng();
             String areaName = place.getName();
             if (latLng != null && areaName != null) {
@@ -202,13 +218,41 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-//        try {
-//            if (SharedData.getInstance().getOnConnectedLocation() != null){
-//                HomeFragment homeFragment = new HomeFragment();
-//                homeFragment.fetchSensors(SharedData.getInstance().getOnConnectedLocation());
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+    }
+
+    public static boolean isLocationEnabled(Context context) {
+        LocationManager lm = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+
+        try {
+            if (lm != null) {
+                gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            }
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+
+        try {
+            if (lm != null) {
+                network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+            }
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+
+        if(!gps_enabled && !network_enabled) {
+            // notify user
+            new AlertDialog.Builder(context)
+                    .setMessage(R.string.gps_network_not_enabled)
+                    .setPositiveButton(R.string.open_location_settings, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                            context.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                        }
+                    }).setNegativeButton(R.string.cancel,null)
+                            .show();
+        }
+        return gps_enabled && network_enabled;
     }
 }
