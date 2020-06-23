@@ -71,7 +71,7 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
     private TextView countdown;
     private ProgressDialog progressDialog;
     private Context context;
-    private String mobileNumber = "";
+    private String mobileNumber, mobileNumberLogin = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -502,10 +502,10 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
                 try {
                     jsonObject = new JSONObject(response);
                     Timber.e("object -> %s", jsonObject.toString());
-                    if (jsonObject.getString("message").equals("Sorry! Failed to Verify Your Account by OYP.")){
+                    if (jsonObject.getString("message").equals("Sorry! Failed to Verify Your Account by OYP.")) {
                         showMessage("Sorry! Failed to Verify Your Account by OTP.");
                     }
-                    if (!jsonObject.getBoolean("error")) {
+                    else if (!jsonObject.getBoolean("error")) {
                         showMessage(jsonObject.getString("message"));
 
                         // FETCHING USER INFORMATION FROM DATABASE
@@ -515,22 +515,22 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
 //                            SharedPreManager.getInstance(getApplicationContext()).setIsWaitingForSMS(false);
 
                         try {
-                            mobileNumber = getIntent().getStringExtra("fromLoginPage");
-                            Timber.e("mobileNumber -> %s", mobileNumber);
-                            if (mobileNumber.equals("fromLoginPage")) {
-                                Timber.e("if e dhukche");
-//                                Toast.makeText(context, "if e dhukche", Toast.LENGTH_LONG).show();
-                                startActivity(new Intent(context, LoginActivity.class));
-                                finish();
-                                showMessage("Dear " + userJson.getString("fullname") + ", Your Mobile Number is Verified...");
-                            } else {
-                                Timber.e("if else e dhukche");
+//                            mobileNumber = getIntent().getStringExtra("fromLoginPage");
+//////                            Timber.e("mobileNumber -> %s", mobileNumber);
+//                            if (mobileNumber.equals("fromLoginPage")) {
+//                                Timber.e("if e dhukche");
+////                                Toast.makeText(context, "if e dhukche", Toast.LENGTH_LONG).show();
+//                                context.startActivity(new Intent(context, LoginActivity.class));
+//                                finish();
+//                                showMessage("Dear " + userJson.getString("fullname") + ", Your Mobile Number is Verified...");
+//                            } else {
+//                                Timber.e("if else e dhukche");
 //                                Toast.makeText(context, "if else e dhukche", Toast.LENGTH_LONG).show();
                                 Intent intent = new Intent(VerifyPhoneActivity.this, LoginActivity.class);
                                 startActivity(intent);
                                 finish();
                                 showMessage("Dear " + userJson.getString("fullname") + ", Your Registration Completed Successfully...");
-                            }
+//                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

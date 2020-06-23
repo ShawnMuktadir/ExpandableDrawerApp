@@ -305,18 +305,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
 
 //                        progressDialog.dismiss();
-//                        if (response.equals("Please verify Your Account by OTP")) {
-//                            Intent verifyPhoneIntent = new Intent(LoginActivity.this, VerifyPhoneActivity.class);
-//                            if (checkFields()) {
-//                                verifyPhoneIntent.putExtra("mobile_no", mobileNo);
-//                            }
-//                            startActivity(verifyPhoneIntent);
-//                        } else {
+                        if (response.equals("Please verify Your Account by OTP")) {
+                            Intent verifyPhoneIntent = new Intent(LoginActivity.this, VerifyPhoneActivity.class);
+                            if (checkFields()) {
+                                verifyPhoneIntent.putExtra("mobile_no", mobileNo);
+                            }
+                            startActivity(verifyPhoneIntent);
+                        } else {
                             // Move to another Activity
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);
                             finish();
-//                        }
+                        }
 
                     } else if (jsonObject.getBoolean("error") && jsonObject.has("authentication")) {
                         // IF ERROR OCCURS AND AUTHENTICATION IS INVALID
@@ -326,7 +326,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             Intent verifyPhoneIntent = new Intent(LoginActivity.this, VerifyPhoneActivity.class);
                             verifyPhoneIntent.putExtra("mobile_no", mobileNo);
                             verifyPhoneIntent.putExtra("password", password);
-                            verifyPhoneIntent.putExtra("fromLoginPage", "fromLoginPage");
+//                            verifyPhoneIntent.putExtra("fromLoginPage", "fromLoginPage");
                             startActivity(verifyPhoneIntent);
                         }
                     } else {
