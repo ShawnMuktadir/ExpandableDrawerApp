@@ -99,7 +99,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             } catch (Exception e) {
                 Timber.e(e);
             }
-            homeFragment.updateBottomSheetForParkingAdapter();
+//            homeFragment.updateBottomSheetForParkingAdapter();
             EventBus.getDefault().post(new GetDirectionEvent(new LatLng(sensorArea.getLat(), sensorArea.getLng())));
 //            parkingFragment.layoutVisible(true, sensorArea.getParkingArea(), sensorArea.getCount(), String.valueOf(distance), new LatLng(sensorArea.getLat(), sensorArea.getLng()));
 
