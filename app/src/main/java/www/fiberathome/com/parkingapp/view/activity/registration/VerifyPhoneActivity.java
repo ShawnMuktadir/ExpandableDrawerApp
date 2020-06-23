@@ -519,13 +519,13 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
                             Timber.e("mobileNumber -> %s", mobileNumber);
                             if (mobileNumber.equals("fromLoginPage")) {
                                 Timber.e("if e dhukche");
-                                Toast.makeText(context, "if e dhukche", Toast.LENGTH_LONG).show();
+//                                Toast.makeText(context, "if e dhukche", Toast.LENGTH_LONG).show();
                                 startActivity(new Intent(context, LoginActivity.class));
                                 finish();
                                 showMessage("Dear " + userJson.getString("fullname") + ", Your Mobile Number is Verified...");
                             } else {
                                 Timber.e("if else e dhukche");
-                                Toast.makeText(context, "if else e dhukche", Toast.LENGTH_LONG).show();
+//                                Toast.makeText(context, "if else e dhukche", Toast.LENGTH_LONG).show();
                                 Intent intent = new Intent(VerifyPhoneActivity.this, LoginActivity.class);
                                 startActivity(intent);
                                 finish();
