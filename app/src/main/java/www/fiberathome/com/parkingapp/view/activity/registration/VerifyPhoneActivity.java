@@ -104,10 +104,10 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
             startCountDown();
         });
 
-        btnChangePhoneNumber.setOnClickListener(v -> {
-            startActivity(new Intent(VerifyPhoneActivity.this, SignUpActivity.class));
-            finish();
-        });
+//        btnChangePhoneNumber.setOnClickListener(v -> {
+//            startActivity(new Intent(VerifyPhoneActivity.this, SignUpActivity.class));
+//            finish();
+//        });
 
         startCountDown();
     }
@@ -244,7 +244,7 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
         mPinHiddenEditText = (EditText) findViewById(R.id.inputOtp);
 
         btnVerifyOtp = findViewById(R.id.btn_verify_otp);
-        btnChangePhoneNumber = findViewById(R.id.btn_change_phone_number);
+//        btnChangePhoneNumber = findViewById(R.id.btn_change_phone_number);
         btnResendOTP = findViewById(R.id.btnResendOTP);
         countdown = findViewById(R.id.countdown);
     }

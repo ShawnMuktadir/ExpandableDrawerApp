@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements MainView, Navigat
     private BottomNavigationView bottomNavigationView;
     private ActionBarDrawerToggle actionBarDrawerToggle;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -530,16 +531,22 @@ public class MainActivity extends AppCompatActivity implements MainView, Navigat
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(GetDirectionEvent event) {
-//        Toast.makeText(getApplicationContext(), event.message, Toast.LENGTH_SHORT).show();
-//        bottomNavigationView.setSelectedItemId(R.id.nav_home);
         navigationView.getMenu().getItem(0).setChecked(true);
+//        Toast.makeText(getApplicationContext(), "onMessageEvent", Toast.LENGTH_SHORT).show();
+//        bottomNavigationView.setSelectedItemId(R.id.nav_home);
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 // Do something after 2s = 2000ms
-//                bottomNavigationView.setVisibility(View.GONE);
                 EventBus.getDefault().post(new SetMarkerEvent(event.location));
+//                HomeFragment fragment = (HomeFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+//                if (fragment != null) {
+//                    Timber.e("MainActivity if e dhukche");
+//                    fragment.updateBottomSheetForParkingAdapter(event.location);
+//                }else {
+//                    Timber.e("MainActivity else e dhukche");
+//                }
             }
         }, 1000);
     }

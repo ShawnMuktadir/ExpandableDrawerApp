@@ -30,7 +30,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.eventBus.GetDirectionAfterButtonClickEvent;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionEvent;
+import www.fiberathome.com.parkingapp.eventBus.SetMarkerEvent;
 import www.fiberathome.com.parkingapp.model.SensorArea;
 import www.fiberathome.com.parkingapp.view.activity.main.MainActivity;
 import www.fiberathome.com.parkingapp.view.fragments.HomeFragment;
@@ -58,6 +60,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         this.homeFragment = homeFragment;
         this.sensorAreas = sensorAreas;
         this.onConnectedLocation = onConnectedLocation;
+//        EventBus.getDefault().register(this);
     }
 
     @NonNull
@@ -75,7 +78,6 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
         ParkingViewHolder parkingViewHolder = (ParkingViewHolder) viewHolder;
         SensorArea sensorArea = sensorAreas.get(position);
-//        selectedPosition = position;
         parkingViewHolder.textViewParkingAreaName.setText(ApplicationUtils.capitalize(sensorArea.getParkingArea()));
         parkingViewHolder.textViewParkingAreaCount.setText(sensorArea.getCount());
 
@@ -97,6 +99,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             } catch (Exception e) {
                 Timber.e(e);
             }
+            homeFragment.updateBottomSheetForParkingAdapter();
             EventBus.getDefault().post(new GetDirectionEvent(new LatLng(sensorArea.getLat(), sensorArea.getLng())));
 //            parkingFragment.layoutVisible(true, sensorArea.getParkingArea(), sensorArea.getCount(), String.valueOf(distance), new LatLng(sensorArea.getLat(), sensorArea.getLng()));
 
@@ -108,6 +111,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    EventBus.getDefault().post(new SetMarkerEvent(HomeFragment.location));
                     MainActivity parentActivity = (MainActivity) context;
                     parentActivity.replaceFragment();
                 }

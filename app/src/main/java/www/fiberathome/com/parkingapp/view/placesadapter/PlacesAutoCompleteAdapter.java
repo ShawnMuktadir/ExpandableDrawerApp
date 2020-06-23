@@ -194,7 +194,7 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<PlacesAutoCo
                                 public void run() {
                                     clickListener.onClick(place);
                                 }
-                            }, 500);
+                            }, 1000);
                         }).addOnFailureListener(exception -> {
                             if (exception instanceof ApiException) {
                                 Toast.makeText(mContext, exception.getMessage() + "", Toast.LENGTH_SHORT).show();
