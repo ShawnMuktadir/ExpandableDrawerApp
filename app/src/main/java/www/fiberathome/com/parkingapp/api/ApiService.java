@@ -18,6 +18,14 @@ public interface ApiService {
     );
 
     @FormUrlEncoded
+    @POST("change_password_otp.php")
+    Call<Common> forgetPassword(
+            @Field("new_password") String new_password,
+            @Field("confirm_password") String confirm_password,
+            @Field("mobile_no") String mobile_no
+    );
+
+    @FormUrlEncoded
     @POST("request_sms.php")
     Call<Common> createUser(
             @Field("fullname") String name,

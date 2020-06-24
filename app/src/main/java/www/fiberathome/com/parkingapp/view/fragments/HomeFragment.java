@@ -115,6 +115,7 @@ import www.fiberathome.com.parkingapp.data.retrofit.Common;
 import www.fiberathome.com.parkingapp.data.retrofit.IGoogleApi;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionAfterButtonClickEvent;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionBottomSheetEvent;
+import www.fiberathome.com.parkingapp.eventBus.GetDirectionEvent;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionForMarkerEvent;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionForSearchEvent;
 import www.fiberathome.com.parkingapp.eventBus.SetMarkerEvent;
@@ -158,6 +159,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 //    GoogleMap.OnInfoWindowClickListener,
 
     private final String TAG = getClass().getSimpleName();
+    public static String parkingCount;
+    public static String parkingDistance;
 
     //from parking adapter
     @BindView(R.id.btnGetDirection)
@@ -384,6 +387,15 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
         polyLineList = new ArrayList<>();
         mService = Common.getGoogleApi();
+
+//        location = SharedData.getInstance().getParkingLocation();
+//        try {
+//            if (location != null && !parkingCount.equals(""))
+//                updateBottomSheetForParkingAdapter();
+//        }catch (Exception e){
+//            e.printStackTrace();
+//            Timber.e(e.getMessage());
+//        }
 
 //        if (isParkingAdapterLayoutVisible) {
 //            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
@@ -1654,8 +1666,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     }
                     if (bookingSensorsArrayList != null) {
 //                        bottomSheetAdapter=new BottomSheetAdapter(context,this,bookingSensorsArrayList,SharedData.getInstance().getOnConnectedLocation());
-                        bottomSheetAdapter.updateData(bookingSensorsArrayList);
+//                        bottomSheetAdapter.updateData(bookingSensorsArrayList);
                         //setBottomSheetRecyclerViewAdapter(bookingSensorsArrayList);
+
+                        if (bottomSheetAdapter != null) {
+                            bottomSheetAdapter.updateData(bookingSensorsArrayList);
+//                            bottomSheetAdapter.notifyItemRangeInserted(insertIndex, bookingSensorsArrayList.size());
+                        }
                     }
                 } else {
                     Toast.makeText(context, "Location cannot be identified!!!", Toast.LENGTH_SHORT).show();
@@ -2005,13 +2022,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         return poly;
     }
 
-    private double adapterDistance = 0.0;
+    private double adapterDistance;
     private ArrayList<BookingSensors> bookingSensorsAdapterArrayList = new ArrayList<>();
 
     public void updateBottomSheetForParkingAdapter() {
-//        EventBus.getDefault().post(new SetMarkerEvent(location));
         Timber.e("updateBottomSheetForParkingAdapter e dhukche");
-        if (SharedData.getInstance().getOnConnectedLocation() != null && HomeFragment.location != null) {
+        if (SharedData.getInstance().getOnConnectedLocation() != null && location != null) {
             Timber.e("updateBottomSheetForParkingAdapter if geche te dhukche");
 
             TaskParser taskParser = new TaskParser();
@@ -2022,7 +2038,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
             getAddress(getActivity(), location.latitude, location.longitude);
             String adapterPlaceName = address;
 
-            layoutVisible(true, adapterPlaceName, textViewParkingAreaCount.getText().toString(), textViewParkingDistance.getText().toString(), location);
+            layoutVisible(true, adapterPlaceName, parkingCount, parkingDistance, location);
             bottomSheetBehavior.setPeekHeight(400);
 
             if (adapterDistance < 3000) {
@@ -2065,6 +2081,126 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                                 ApplicationUtils.convertToDouble(longitude1), nearByDistance, parkingNumberOfNearbyDistanceLoc);
 //                                Timber.e("bookingSensors nearest search location -> %s", new Gson().toJson(bookingSensors));
 
+                        int adjustNearbyValue = 2;
+                        if (distanceForNearbyLoc < 1000) {
+                            adjustNearbyValue = 1;
+                        }
+
+                        double km = (distanceForNearbyLoc / 1000) + adjustNearbyValue;
+                        double nearbySearchDoubleDuration = Double.parseDouble(new DecimalFormat("##.##").format(km * 2.43));
+                        String nearbySearchStringDuration = nearbySearchDoubleDuration + " mins";
+
+                        bookingSensorsAdapterArrayList.add(new BookingSensors(nearbyAreaName, ApplicationUtils.convertToDouble(latitude1),
+                                ApplicationUtils.convertToDouble(longitude1), distanceForNearbyLoc, parkingNumberOfNearbyDistanceLoc,
+                                nearbySearchStringDuration,
+                                BookingSensors.INFO_TYPE, 1));
+
+                        bubbleSortArrayList(bookingSensorsAdapterArrayList);
+                        bottomSheetBehavior.setPeekHeight(400);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (bookingSensorsAdapterArrayList != null) {
+                Timber.e("bookingSensorsAdapterArrayList not null");
+//                bottomSheetAdapter = new BottomSheetAdapter(context, this, bookingSensorsArrayList, SharedData.getInstance().getOnConnectedLocation());
+                bottomSheetAdapter.updateData(bookingSensorsAdapterArrayList);
+                bottomSheetAdapter.notifyDataSetChanged();
+//                setBottomSheetRecyclerViewAdapter(bookingSensorsAdapterArrayList);
+//                 else {
+//                    Timber.e("bottomSheetAdapter null");
+//                }
+                Timber.e("bookingSensorsAdapterArrayList -> %s", new Gson().toJson(bookingSensorsAdapterArrayList));
+            }
+        } else {
+            Timber.e("bookingSensorsAdapterArrayList null");
+            if (getContext() != null)
+                Toast.makeText(getContext(), "Location cannot be identified!!!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onDirectionEvent(GetDirectionEvent event) {
+        location = event.location;
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                EventBus.getDefault().post(new SetMarkerEvent(location));
+            }
+        }, 1000);
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(SetMarkerEvent event) {
+        HomeFragment.location = event.location;
+//        Toast.makeText(getActivity(), "Geche", Toast.LENGTH_SHORT).show();
+        layoutVisible(true, ApplicationUtils.capitalize(name), count, distance, event.location);
+//        Timber.e("Zoom call hoiche");
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(event.location);
+        coordList.add(new LatLng(event.location.latitude, event.location.longitude));
+        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
+        mMap.addMarker(markerOptions);
+        //move map camera
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(event.location, 13.5f));
+
+
+        if (SharedData.getInstance().getOnConnectedLocation() != null) {
+            Timber.e("updateBottomSheetForParkingAdapter if geche te dhukche");
+            TaskParser taskParser = new TaskParser();
+            adapterDistance = taskParser.showDistance(new LatLng(SharedData.getInstance().getOnConnectedLocation().getLatitude(), SharedData.getInstance().getOnConnectedLocation().getLongitude()),
+                    new LatLng(event.location.latitude, event.location.longitude));
+            Timber.e("adapterDistance -> %s", adapterDistance);
+
+            getAddress(getActivity(), event.location.latitude, event.location.longitude);
+            String adapterPlaceName = address;
+
+            layoutVisible(true, adapterPlaceName, textViewParkingAreaCount.getText().toString(), textViewParkingDistance.getText().toString(), HomeFragment.location);
+            bottomSheetBehavior.setPeekHeight(400);
+
+            if (adapterDistance < 3000) {
+                adjustValue = 1;
+            }
+
+            double kim = (adapterDistance / 1000) + adjustValue;
+//                    Timber.e("adjustValue first -> %s", adjustValue);
+            double adapterDoubleDuration = Double.parseDouble(new DecimalFormat("##.##").format(adapterDistance * 2.43));
+            String adapterStringDuration = adapterDoubleDuration + " mins";
+
+            bookingSensors = new BookingSensors(adapterPlaceName, event.location.latitude, event.location.longitude,
+                    adapterDistance,
+                    textViewParkingAreaCount.getText().toString(), adapterStringDuration);
+
+            bookingSensorsAdapterArrayList.add(new BookingSensors(adapterPlaceName, event.location.latitude, event.location.longitude,
+                    adapterDistance, textViewParkingAreaCount.getText().toString(), adapterStringDuration,
+                    context.getResources().getString(R.string.nearest_parking_from_your_destination),
+                    BookingSensors.TEXT_INFO_TYPE, 0));
+
+            for (int i = 0; i < adapterPlaceEventJsonArray.length(); i++) {
+                JSONObject jsonObject;
+                try {
+                    jsonObject = adapterPlaceEventJsonArray.getJSONObject(i);
+                    String latitude1 = jsonObject.get("latitude").toString();
+                    String longitude1 = jsonObject.get("longitude").toString();
+
+                    double distanceForNearbyLoc = calculateDistance(event.location.latitude, event.location.longitude,
+                            ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1));
+//                            Timber.e("DistanceForNearbyLoc -> %s", distanceForNearbyLoc);
+
+                    if (distanceForNearbyLoc < 5) {
+
+                        origin = new LatLng(event.location.latitude, event.location.longitude);
+                        getAddress(getActivity(), ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1));
+                        String nearbyAreaName = address;
+                        String parkingNumberOfNearbyDistanceLoc = jsonObject.get("no_of_parking").toString();
+//                                Timber.e("nearbyDistance nearByDuration -> %s -> %s", nearByDistance, nearByDuration);
+                        bookingSensors = new BookingSensors(nearbyAreaName, ApplicationUtils.convertToDouble(latitude1),
+                                ApplicationUtils.convertToDouble(longitude1), nearByDistance, parkingNumberOfNearbyDistanceLoc);
+//                                Timber.e("bookingSensors nearest search location -> %s", new Gson().toJson(bookingSensors));
+
                         int adjsutNearbyValue = 2;
                         if (distanceForNearbyLoc < 1000) {
                             adjsutNearbyValue = 1;
@@ -2094,110 +2230,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
             }
         } else {
             Timber.e("updateBottomSheetForParkingAdapter else e dhukche");
-            if (getContext() != null)
-                Toast.makeText(getContext(), "Location cannot be identified!!!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Location cannot be identified!!!", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(SetMarkerEvent event) {
-        HomeFragment.location = event.location;
-//        Toast.makeText(getActivity(), "Geche", Toast.LENGTH_SHORT).show();
-        layoutVisible(true, ApplicationUtils.capitalize(name), count, distance, event.location);
-//        Timber.e("Zoom call hoiche");
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(event.location);
-        coordList.add(new LatLng(event.location.latitude, event.location.longitude));
-        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
-        mMap.addMarker(markerOptions);
-        //move map camera
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(event.location, 13.5f));
-
-
-//        if (SharedData.getInstance().getOnConnectedLocation() != null) {
-//            Timber.e("updateBottomSheetForParkingAdapter if geche te dhukche");
-//            TaskParser taskParser = new TaskParser();
-//            adapterDistance = taskParser.showDistance(new LatLng(SharedData.getInstance().getOnConnectedLocation().getLatitude(), SharedData.getInstance().getOnConnectedLocation().getLongitude()),
-//                    new LatLng(event.location.latitude, event.location.longitude));
-//            Timber.e("adapterDistance -> %s", adapterDistance);
-//
-//            getAddress(getActivity(), event.location.latitude, event.location.longitude);
-//            String adapterPlaceName = address;
-//
-//            layoutVisible(true, adapterPlaceName, textViewParkingAreaCount.getText().toString(), textViewParkingDistance.getText().toString(), HomeFragment.location);
-//            bottomSheetBehavior.setPeekHeight(400);
-//
-//            if (adapterDistance < 3000) {
-//                adjustValue = 1;
-//            }
-//
-//            double kim = (adapterDistance / 1000) + adjustValue;
-////                    Timber.e("adjustValue first -> %s", adjustValue);
-//            double adapterDoubleDuration = Double.parseDouble(new DecimalFormat("##.##").format(adapterDistance * 2.43));
-//            String adapterStringDuration = adapterDoubleDuration + " mins";
-//
-//            bookingSensors = new BookingSensors(adapterPlaceName, event.location.latitude, event.location.longitude,
-//                    adapterDistance,
-//                    textViewParkingAreaCount.getText().toString(), adapterStringDuration);
-//
-//            bookingSensorsAdapterArrayList.add(new BookingSensors(adapterPlaceName, event.location.latitude, event.location.longitude,
-//                    adapterDistance, textViewParkingAreaCount.getText().toString(), adapterStringDuration,
-//                    context.getResources().getString(R.string.nearest_parking_from_your_destination),
-//                    BookingSensors.TEXT_INFO_TYPE, 0));
-//
-//            for (int i = 0; i < adapterPlaceEventJsonArray.length(); i++) {
-//                JSONObject jsonObject;
-//                try {
-//                    jsonObject = adapterPlaceEventJsonArray.getJSONObject(i);
-//                    String latitude1 = jsonObject.get("latitude").toString();
-//                    String longitude1 = jsonObject.get("longitude").toString();
-//
-//                    double distanceForNearbyLoc = calculateDistance(event.location.latitude, event.location.longitude,
-//                            ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1));
-////                            Timber.e("DistanceForNearbyLoc -> %s", distanceForNearbyLoc);
-//
-//                    if (distanceForNearbyLoc < 5) {
-//
-//                        origin = new LatLng(event.location.latitude, event.location.longitude);
-//                        getAddress(getActivity(), ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1));
-//                        String nearbyAreaName = address;
-//                        String parkingNumberOfNearbyDistanceLoc = jsonObject.get("no_of_parking").toString();
-////                                Timber.e("nearbyDistance nearByDuration -> %s -> %s", nearByDistance, nearByDuration);
-//                        bookingSensors = new BookingSensors(nearbyAreaName, ApplicationUtils.convertToDouble(latitude1),
-//                                ApplicationUtils.convertToDouble(longitude1), nearByDistance, parkingNumberOfNearbyDistanceLoc);
-////                                Timber.e("bookingSensors nearest search location -> %s", new Gson().toJson(bookingSensors));
-//
-//                        int adjsutNearbyValue = 2;
-//                        if (distanceForNearbyLoc < 1000) {
-//                            adjsutNearbyValue = 1;
-//                        }
-//
-//                        double km = (distanceForNearbyLoc / 1000) + adjsutNearbyValue;
-//                        double nearbySearchDoubleDuration = Double.parseDouble(new DecimalFormat("##.##").format(km * 2.43));
-//                        String nearbySearchStringDuration = nearbySearchDoubleDuration + " mins";
-//
-//                        bookingSensorsAdapterArrayList.add(new BookingSensors(nearbyAreaName, ApplicationUtils.convertToDouble(latitude1),
-//                                ApplicationUtils.convertToDouble(longitude1), distanceForNearbyLoc, parkingNumberOfNearbyDistanceLoc,
-//                                nearbySearchStringDuration,
-//                                BookingSensors.INFO_TYPE, 1));
-//
-//                        bubbleSortArrayList(bookingSensorsAdapterArrayList);
-//                        bottomSheetBehavior.setPeekHeight(400);
-//                    }
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//            if (bookingSensorsAdapterArrayList != null) {
-////                bottomSheetAdapter = new BottomSheetAdapter(context, this, bookingSensorsArrayList, SharedData.getInstance().getOnConnectedLocation());
-//                bottomSheetAdapter.updateData(bookingSensorsAdapterArrayList);
-////                setBottomSheetRecyclerViewAdapter(bookingSensorsAdapterArrayList);
-//                Timber.e("bookingSensorsAdapterArrayList -> %s", new Gson().toJson(bookingSensorsAdapterArrayList));
-//            }
-//        } else {
-//            Timber.e("updateBottomSheetForParkingAdapter else e dhukche");
-//            Toast.makeText(getActivity(), "Location cannot be identified!!!", Toast.LENGTH_SHORT).show();
-//        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -2208,7 +2242,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
             @Override
             public void run() {
                 location = event.location;
-                EventBus.getDefault().post(new SetMarkerEvent(location));
+//                EventBus.getDefault().post(new SetMarkerEvent(location));
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(location);
 
@@ -2334,17 +2368,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     public void layoutVisible(boolean isVisible, String name, String count,
                               String distance, LatLng location) {
         this.name = name;
-        this.count = count;
-        this.distance = distance;
-        this.location = location;
+        HomeFragment.parkingCount = count;
+        HomeFragment.parkingDistance = distance;
+        HomeFragment.location = location;
         this.duration = duration;
 
         if (isVisible) {
             linearLayoutBottom.setVisibility(View.VISIBLE);
-//            Location temp = new Location(LocationManager.GPS_PROVIDER);
-//            temp.setLatitude(location.latitude);
-//            temp.setLongitude(location.longitude);
-//            animateCamera(temp);
             isParkingAdapterLayoutVisible = true;
 //            textViewParkingAreaCount.setText(count);
 //            textViewParkingAreaName.setText(name);
@@ -2415,6 +2445,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     }
                 }
             });
+
         } else {
 //            BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
 //            navBar.setVisibility(View.VISIBLE);
@@ -2636,9 +2667,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                 buttonSearch.setText(null);
                 buttonSearch.setVisibility(View.VISIBLE);
                 layoutVisible(false, "", "", " ", null);
+                SharedData.getInstance().setParkingLocation(null);
                 linearLayoutBottom.setVisibility(View.GONE);
                 linearLayoutSearchBottom.setVisibility(View.GONE);
                 linearLayoutMarkerBottom.setVisibility(View.GONE);
+                linearLayoutBottomSheetBottom.setVisibility(View.GONE);
                 SharedData.getInstance().setSensorArea(null);
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 bottomSheetBehavior.setPeekHeight(400);
@@ -2679,6 +2712,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                 linearLayoutBottom.setVisibility(View.GONE);
                 linearLayoutSearchBottom.setVisibility(View.GONE);
                 linearLayoutMarkerBottom.setVisibility(View.GONE);
+                linearLayoutBottomSheetBottom.setVisibility(View.GONE);
                 SharedData.getInstance().setBookingSensors(null);
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 bottomSheetBehavior.setPeekHeight(400);
@@ -2714,6 +2748,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                 linearLayoutBottom.setVisibility(View.GONE);
                 linearLayoutSearchBottom.setVisibility(View.GONE);
                 linearLayoutMarkerBottom.setVisibility(View.GONE);
+                linearLayoutBottomSheetBottom.setVisibility(View.GONE);
                 markerAlreadyClicked = 0;
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 bottomSheetBehavior.setPeekHeight(400);
@@ -2751,6 +2786,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                 linearLayoutBottom.setVisibility(View.GONE);
                 linearLayoutSearchBottom.setVisibility(View.GONE);
                 linearLayoutMarkerBottom.setVisibility(View.GONE);
+                linearLayoutBottomSheetBottom.setVisibility(View.GONE);
                 markerAlreadyClicked = 0;
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 bottomSheetBehavior.setPeekHeight(400);
@@ -2806,7 +2842,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                 if (mMap != null) {
 
                     TaskParser taskParser = new TaskParser();
-                    double distance = taskParser.showDistance(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
+                    double distance = taskParser.showDistance(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
                             new LatLng(location.latitude, location.longitude));
                     if (distance < 0.1) {
                         btnGetDirection.setText("Confirm Booking");
@@ -2872,7 +2908,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
             } else if (getDirectionSearchButtonClicked == 1) {
                 if (mMap != null) {
                     TaskParser taskParser = new TaskParser();
-                    double distance = taskParser.showDistance(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
+                    double distance = taskParser.showDistance(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
                             new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));
                     if (distance < 0.1) {
                         btnSearchGetDirection.setText("Unavailable Parking Spot");
@@ -2960,7 +2996,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 //                    markerAlreadyClicked = 0;
 //                    Timber.e("btnMarkerGetDirection flag ----> markerAlreadyClicked -> %s", markerAlreadyClicked);
                     TaskParser taskParser = new TaskParser();
-                    double distance = taskParser.showDistance(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
+                    double distance = taskParser.showDistance(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
                             new LatLng(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude));
                     if (distance < 0.1) {
                         btnMarkerGetDirection.setText("Confirm Booking");
@@ -3046,7 +3082,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     fromMarkerRouteDrawn = 0;
                     markerAlreadyClicked = 0;
                     TaskParser taskParser = new TaskParser();
-                    double distance = taskParser.showDistance(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
+                    double distance = taskParser.showDistance(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
                             new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
                     if (distance < 0.1) {
                         btnBottomSheetGetDirection.setText("Confirm Booking");

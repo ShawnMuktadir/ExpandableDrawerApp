@@ -146,7 +146,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
                                 if (homeFragment.mMap != null)
                                     homeFragment.mMap.clear();
-                                homeFragment.fetchSensors(onConnectedLocation);
+//                                homeFragment.fetchSensors(onConnectedLocation);
 
                                 final int interval = 100; // 1 Second
                                 Handler handler = new Handler();
@@ -224,8 +224,6 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
             Log.d(TAG, "onBindViewHolder: transparent");
         }
         // holder.itemView.setBackgroundColor(selectedItem == position ? Color.LTGRAY : Color.TRANSPARENT);
-
-
     }
 
     @Override

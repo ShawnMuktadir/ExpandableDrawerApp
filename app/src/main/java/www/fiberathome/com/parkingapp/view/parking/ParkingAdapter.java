@@ -60,7 +60,6 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         this.homeFragment = homeFragment;
         this.sensorAreas = sensorAreas;
         this.onConnectedLocation = onConnectedLocation;
-//        EventBus.getDefault().register(this);
     }
 
     @NonNull
@@ -92,28 +91,40 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         // Here I am just highlighting the background
         parkingViewHolder.itemView.setBackgroundColor(selectedPosition == position ? Color.LTGRAY : Color.TRANSPARENT);
 
-        parkingViewHolder.relativeLayout.setOnClickListener(v -> {
+        parkingViewHolder.itemView.setOnClickListener(v -> {
             selectedPosition = position;
             try {
                 notifyDataSetChanged();
             } catch (Exception e) {
                 Timber.e(e);
             }
-//            homeFragment.updateBottomSheetForParkingAdapter();
+            HomeFragment.parkingCount = parkingViewHolder.textViewParkingAreaCount.getText().toString();
+            HomeFragment.parkingDistance = parkingViewHolder.textViewParkingDistance.getText().toString();
+            SharedData.getInstance().setParkingLocation(new LatLng(sensorArea.getLat(), sensorArea.getLng()));
+            homeFragment.updateBottomSheetForParkingAdapter();
             EventBus.getDefault().post(new GetDirectionEvent(new LatLng(sensorArea.getLat(), sensorArea.getLng())));
+
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    EventBus.getDefault().post(new SetMarkerEvent(new LatLng(sensorArea.getLat(), sensorArea.getLng())));
+                }
+            }, 500);
+
 //            parkingFragment.layoutVisible(true, sensorArea.getParkingArea(), sensorArea.getCount(), String.valueOf(distance), new LatLng(sensorArea.getLat(), sensorArea.getLng()));
 
             //data is set in SharedData, to retrieve this data in HomeFragment
             Timber.e("Sensor Area to SharedData -> %s", new Gson().toJson(sensorArea));
             SharedData.getInstance().setSensorArea(sensorArea);
             //Pop the Parking Fragment and Replace it with HomeFragment
-            final Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
+            final Handler handler1 = new Handler();
+            handler1.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    EventBus.getDefault().post(new SetMarkerEvent(HomeFragment.location));
-                    MainActivity parentActivity = (MainActivity) context;
-                    parentActivity.replaceFragment();
+//                    MainActivity parentActivity = (MainActivity) context;
+//                    parentActivity.replaceFragment();
+                    EventBus.getDefault().post(new GetDirectionEvent(HomeFragment.location));
                 }
             }, 500);
 //            EventBus.getDefault().post(new GetDirectionAfterButtonClickEvent(HomeFragment.location));
@@ -131,7 +142,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
                                 if (homeFragment.mMap != null)
                                     homeFragment.mMap.clear();
-                                homeFragment.fetchSensors(onConnectedLocation);
+//                                homeFragment.fetchSensors(onConnectedLocation);
 
                                 final int interval = 100; // 1 Second
                                 Handler handler = new Handler();
@@ -210,7 +221,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     // implements View.OnClickListener
-    public static class ParkingViewHolder extends RecyclerView.ViewHolder {
+    public class ParkingViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.textViewParkingAreaName)
         TextView textViewParkingAreaName;

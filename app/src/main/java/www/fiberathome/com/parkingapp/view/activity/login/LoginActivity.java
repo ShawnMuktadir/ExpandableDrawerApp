@@ -233,10 +233,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
      * @desc submit Form
      */
     private void submitLogin() {
-        // Loading Progress
-        if (!validateMobileNumber() && !validatePassword()) {
-            return;
-        }
+//        // Loading Progress
+//        if (!validateMobileNumber() && !validatePassword()) {
+//            return;
+//        }
 
         if (checkFields()) {
             String mobileNo = editTextMobile.getText().toString().trim();
@@ -244,10 +244,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             checkLogin(mobileNo, password);
         }
-
-//        if (!validatePassword()){
-//            return;
-//        }
     }
 
     private boolean checkFields() {
@@ -258,10 +254,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
+    private boolean checkMobileNumberFields() {
+        boolean isPhoneValid = Validator.checkValidity(textInputLayoutMobile, editTextMobile.getText().toString(), context.getString(R.string.err_msg_mobile), "phone");
+
+        return isPhoneValid;
+
+    }
+
     private void checkLogin(final String mobileNo, final String password) {
 
         progressDialog = new ProgressDialog(LoginActivity.this);
-        progressDialog.setMessage("Loading...");
+        progressDialog.setMessage("Please wait...");
         progressDialog.setCancelable(false);
         progressDialog.setIndeterminate(false);
 
@@ -279,15 +282,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onResponse(String response) {
                 // remove the progress bar
-                Log.e("URL", AppConfig.URL_LOGIN);
+                Timber.e("URL LOGIN -> %s", AppConfig.URL_LOGIN);
                 progressDialog.dismiss();
 
                 try {
                     JSONObject jsonObject = new JSONObject(response);
 
-                    Log.e("Object", jsonObject.toString());
+                    Timber.e("jsonObject -> %s", jsonObject.toString());
 
                     if (!jsonObject.getBoolean("error")) {
+//                        showMessage(jsonObject.getString("message"));
 
                         // getting the user from the response
                         JSONObject userJson = jsonObject.getJSONObject("user");
@@ -303,14 +307,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         // storing the user in sharedPreference
                         SharedPreManager.getInstance(getApplicationContext()).userLogin(user);
 
-
-//                        progressDialog.dismiss();
                         if (response.equals("Please verify Your Account by OTP")) {
-                            Intent verifyPhoneIntent = new Intent(LoginActivity.this, VerifyPhoneActivity.class);
                             if (checkFields()) {
+                                Intent verifyPhoneIntent = new Intent(LoginActivity.this, VerifyPhoneActivity.class);
                                 verifyPhoneIntent.putExtra("mobile_no", mobileNo);
+                                startActivity(verifyPhoneIntent);
                             }
-                            startActivity(verifyPhoneIntent);
                         } else {
                             // Move to another Activity
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
@@ -329,6 +331,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //                            verifyPhoneIntent.putExtra("fromLoginPage", "fromLoginPage");
                             startActivity(verifyPhoneIntent);
                         }
+                    } else if (jsonObject.getString("message").equals("Try Again! Invalid Mobile Number.")) {
+                        showMessage("Try Again! Invalid Mobile Number/Password.");
                     } else {
                         showMessage(jsonObject.getString("message"));
                     }

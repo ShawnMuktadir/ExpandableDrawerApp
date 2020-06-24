@@ -534,19 +534,14 @@ public class MainActivity extends AppCompatActivity implements MainView, Navigat
         navigationView.getMenu().getItem(0).setChecked(true);
 //        Toast.makeText(getApplicationContext(), "onMessageEvent", Toast.LENGTH_SHORT).show();
 //        bottomNavigationView.setSelectedItemId(R.id.nav_home);
+        toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 // Do something after 2s = 2000ms
                 EventBus.getDefault().post(new SetMarkerEvent(event.location));
-//                HomeFragment fragment = (HomeFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-//                if (fragment != null) {
-//                    Timber.e("MainActivity if e dhukche");
-//                    fragment.updateBottomSheetForParkingAdapter(event.location);
-//                }else {
-//                    Timber.e("MainActivity else e dhukche");
-//                }
             }
         }, 1000);
     }

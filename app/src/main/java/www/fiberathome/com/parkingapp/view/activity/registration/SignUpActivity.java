@@ -633,8 +633,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         return isNameValid && isPhoneValid && isVehicleRegValid && isPasswordValid;
     }
 
-
-
     private void showMessage(String message) {
         Toast.makeText(SignUpActivity.this, message, Toast.LENGTH_SHORT).show();
     }

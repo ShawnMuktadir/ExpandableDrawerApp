@@ -32,6 +32,12 @@
         android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup"
         tools:targetApi="n">
+        <activity android:name=".view.activity.forgetPassword.ChangePasswordActivity"
+            android:screenOrientation="unspecified"
+            android:theme="@style/AppTheme.DefaultActionBar"/>
+        <activity android:name=".view.activity.forgetPassword.ChangePasswordActivityForOTP"
+            android:screenOrientation="unspecified"
+            android:theme="@style/AppTheme.DefaultActionBar"/>
         <activity
             android:name=".view.activity.search.SearchActivity"
             android:noHistory="true"
@@ -52,8 +58,8 @@
         </activity>
         <activity
             android:name=".view.activity.main.MainActivity"
-            android:screenOrientation="unspecified"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|mcc|mnc"
+            android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
         <activity
             android:name=".view.activity.registration.SignUpActivity"

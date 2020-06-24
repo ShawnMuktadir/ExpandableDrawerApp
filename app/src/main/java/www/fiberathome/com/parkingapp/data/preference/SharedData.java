@@ -2,6 +2,7 @@ package www.fiberathome.com.parkingapp.data.preference;
 
 import android.location.Location;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 
 import timber.log.Timber;
@@ -33,6 +34,16 @@ public final class SharedData {
     private String loginMobileNo;
     private String loginPassword;
     private String registrationFullName;
+    private String otp;
+    private String forgetPasswordMobile;
+
+    public String getForgetPasswordMobile() {
+        return forgetPasswordMobile;
+    }
+
+    public void setForgetPasswordMobile(String forgetPasswordMobile) {
+        this.forgetPasswordMobile = forgetPasswordMobile;
+    }
 
     public String getRegistrationFullName() {
         return registrationFullName;
@@ -44,6 +55,14 @@ public final class SharedData {
 
     public String getLoginMobileNo() {
         return loginMobileNo;
+    }
+
+    public String getOtp() {
+        return otp;
+    }
+
+    public void setOtp(String otp) {
+        this.otp = otp;
     }
 
     public void setLoginMobileNo(String loginMobileNo) {
@@ -87,6 +106,16 @@ public final class SharedData {
 
     public void setOnConnectedLocation(Location onConnectedLocation) {
         this.onConnectedLocation = onConnectedLocation;
+    }
+
+    public LatLng parkingLocation;
+
+    public LatLng getParkingLocation() {
+        return parkingLocation;
+    }
+
+    public void setParkingLocation(LatLng parkingLocation) {
+        this.parkingLocation = parkingLocation;
     }
 
     private BookingSensors bookingSensors;
