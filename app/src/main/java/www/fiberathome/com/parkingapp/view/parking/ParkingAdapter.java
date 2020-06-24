@@ -91,7 +91,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         // Here I am just highlighting the background
         parkingViewHolder.itemView.setBackgroundColor(selectedPosition == position ? Color.LTGRAY : Color.TRANSPARENT);
 
-        parkingViewHolder.itemView.setOnClickListener(v -> {
+        parkingViewHolder.relativeLayout.setOnClickListener(v -> {
             selectedPosition = position;
             try {
                 notifyDataSetChanged();
@@ -101,7 +101,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             HomeFragment.parkingCount = parkingViewHolder.textViewParkingAreaCount.getText().toString();
             HomeFragment.parkingDistance = parkingViewHolder.textViewParkingDistance.getText().toString();
             SharedData.getInstance().setParkingLocation(new LatLng(sensorArea.getLat(), sensorArea.getLng()));
-            homeFragment.updateBottomSheetForParkingAdapter();
+//            homeFragment.updateBottomSheetForParkingAdapter();
             EventBus.getDefault().post(new GetDirectionEvent(new LatLng(sensorArea.getLat(), sensorArea.getLng())));
 
             final Handler handler = new Handler();
