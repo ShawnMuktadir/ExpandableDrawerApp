@@ -200,13 +200,13 @@ public class ApplicationUtils {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             builder.setMessage(message);
             builder.setCancelable(true);
-            builder.setPositiveButton(context.getString(R.string.ok), (dialog, which) -> dialog.dismiss());
+            builder.setPositiveButton(context.getResources().getString(R.string.ok), (dialog, which) -> dialog.dismiss());
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
 
-            // Let's start with animation work. We just need to create a style and use it here as follows.
-            if (alertDialog.getWindow() != null)
-                alertDialog.getWindow().getAttributes().windowAnimations = R.style.slidingDialogAnimation;
+//            // Let's start with animation work. We just need to create a style and use it here as follows.
+//            if (alertDialog.getWindow() != null)
+//                alertDialog.getWindow().getAttributes().windowAnimations = R.style.slidingDialogAnimation;
 
         }
     }
