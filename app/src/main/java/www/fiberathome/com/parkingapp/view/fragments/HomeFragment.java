@@ -3132,7 +3132,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     bottomSheetBehavior.setPeekHeight(400);
                     getDirectionBottomSheetButtonClicked = 0;
                 }
-            } else if (getDirectionBottomSheetButtonClicked == 1) {
+            }
+            else if (getDirectionBottomSheetButtonClicked == 1) {
+                getDirectionBottomSheetButtonClicked--;
                 if (mMap != null) {
                     fromMarkerRouteDrawn = 0;
                     markerAlreadyClicked = 0;
