@@ -55,6 +55,16 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
     public boolean isItemClicked = false;
     private boolean isExpanded = false;
 
+    private onBottomSheetItemClickListener clickListener;
+
+    public void setClickListener(onBottomSheetItemClickListener clickListener) {
+        this.clickListener = clickListener;
+    }
+
+    public interface onBottomSheetItemClickListener {
+        void onClick();
+    }
+
     public BottomSheetAdapter(Context context, HomeFragment homeFragment, ArrayList<BookingSensors> sensors, Location onConnectedLocation) {
         this.context = context;
         this.homeFragment = homeFragment;
@@ -97,7 +107,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
         }
 
-        if (bookingSensors!=null){
+        if (bookingSensors != null) {
             holder.textViewParkingAreaName.setText(ApplicationUtils.capitalize(bookingSensors.getParkingArea()));
             holder.textViewParkingAreaCount.setText(bookingSensors.getCount());
             holder.textViewParkingDistance.setText(new DecimalFormat("##.##").format(bookingSensors.getDistance()) + " km");
@@ -115,13 +125,14 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
             try {
                 notifyDataSetChanged();
-                if (homeFragment.bottomSheetPlaceLatLng != null) {
-                Toast.makeText(context, "Clicked!!!", Toast.LENGTH_SHORT).show();
-                homeFragment.bottomSheetPlaceLatLngNearestLocations();
-            }
+                clickListener.onClick();
+//                if (homeFragment.bottomSheetPlaceLatLng != null) {
+//                    Toast.makeText(context, "Clicked!!!", Toast.LENGTH_SHORT).show();
+//                    homeFragment.bottomSheetPlaceLatLngNearestLocations();
+//                }
                 homeFragment.linearLayoutSearchBottomButton.setVisibility(View.GONE);
             } catch (Exception e) {
-                Timber.e(e.getMessage());
+                Timber.e(e);
             }
 
             if (SharedData.getInstance().getOnConnectedLocation() != null) {

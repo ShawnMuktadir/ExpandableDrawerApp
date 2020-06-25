@@ -152,7 +152,7 @@ import www.fiberathome.com.parkingapp.view.parking.ParkingAdapter;
  */
 
 public class HomeFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener, GoogleMap.OnMarkerClickListener {
+        GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener, GoogleMap.OnMarkerClickListener, BottomSheetAdapter.onBottomSheetItemClickListener {
 
 //        GoogleMap.OnCameraIdleListener,
 //        GoogleMap.OnCameraMoveCanceledListener,
@@ -1398,6 +1398,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         }
     }
 
+    @Override
+    public void onClick() {
+        Timber.e("homeFragment onClick e geche");
+//        EventBus.getDefault().post(new GetBottomSheetEvent(bottomSheetPlaceLatLng));
+        bottomSheetPlaceLatLngNearestLocations();
+    }
+
     @SuppressLint("StaticFieldLeak")
     public class TaskRequestDirections extends AsyncTask<String, Void, String> {
 
@@ -2188,7 +2195,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         //move map camera
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(event.location, 13.5f));
 
-
         if (SharedData.getInstance().getOnConnectedLocation() != null) {
             Timber.e("updateBottomSheetForParkingAdapter if geche te dhukche");
             TaskParser taskParser = new TaskParser();
@@ -2318,6 +2324,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                 //animateCamera(currentLocation);
                 bottomSheetPlaceLatLng = event.location;
 //                EventBus.getDefault().post(new SetMarkerEvent(bottomSheetPlaceLatLng));
+//                EventBus.getDefault().post(new GetBottomSheetEvent(bottomSheetPlaceLatLng));
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(bottomSheetPlaceLatLng);
 //                markerOptions.title(name);
@@ -3123,7 +3130,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     bottomSheetBehavior.setPeekHeight(400);
-
+                    getDirectionBottomSheetButtonClicked = 0;
                 }
             } else if (getDirectionBottomSheetButtonClicked == 1) {
                 if (mMap != null) {
@@ -3150,6 +3157,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     Timber.e("btnBottomSheetGetDirection flag ----> markerAlreadyClicked -> %s", markerAlreadyClicked);
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     bottomSheetBehavior.setPeekHeight(400);
+                    getDirectionBottomSheetButtonClicked = 0;
                 }
             }
         });

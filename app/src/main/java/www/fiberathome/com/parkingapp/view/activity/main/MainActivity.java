@@ -1,7 +1,6 @@
 package www.fiberathome.com.parkingapp.view.activity.main;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -106,6 +105,8 @@ public class MainActivity extends AppCompatActivity implements MainView, Navigat
         drawerlayoutMain = findViewById(R.id.drawerlayoutMain);
         navigationView = findViewById(R.id.nav_view_fragment);
         setupNavigationDrawer();
+        //hide home menu
+        hideHomeMenuItem();
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.getMenu().getItem(0).setChecked(true);
         setupNavigationHeader();
@@ -562,5 +563,10 @@ public class MainActivity extends AppCompatActivity implements MainView, Navigat
         ft.replace(R.id.fragment_container, fragment);
         ft.addToBackStack(null);
         ft.commit();
+    }
+
+    private void hideHomeMenuItem() {
+        Menu nav_Menu = navigationView.getMenu();
+        nav_Menu.findItem(R.id.nav_home).setVisible(false);
     }
 }
