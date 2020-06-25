@@ -1,5 +1,6 @@
 package www.fiberathome.com.parkingapp.view.activity.login;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,7 +11,9 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.SpannableString;
@@ -47,6 +50,7 @@ import www.fiberathome.com.parkingapp.base.AppConfig;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.view.activity.forgetPassword.ForgetPasswordActivity;
 import www.fiberathome.com.parkingapp.view.activity.main.MainActivity;
+import www.fiberathome.com.parkingapp.view.activity.permission.PermissionActivity;
 import www.fiberathome.com.parkingapp.view.activity.registration.SignUpActivity;
 import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
 import www.fiberathome.com.parkingapp.data.preference.SharedPreManager;
@@ -63,11 +67,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private TextInputLayout textInputLayoutMobile;
     private TextInputLayout textInputLayoutPassword;
-    private TextView link_signup;
+    private TextView textViewSignUp;
 
     private Button btnOTP;
-    private Button signinBtn;
-    private Button forgetPasswordBtn;
+    private Button btnSignIn;
+    private Button btnForgetPassword;
 
     private ProgressDialog progressDialog;
 
@@ -93,12 +97,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onClick(View textView) {
                 // do some thing
-                startActivity(new Intent(context, SignUpActivity.class));
+                startActivity(new Intent(LoginActivity.this, SignUpActivity.class));
             }
         };
         spannableString.setSpan(clickableSpan, 16, 26, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        link_signup.setText(spannableString);
-        link_signup.setMovementMethod(LinkMovementMethod.getInstance());
+        textViewSignUp.setText(spannableString);
+        textViewSignUp.setMovementMethod(LinkMovementMethod.getInstance());
 
         //makes an underline on Forgot Password Click Here
         SpannableString ss = new SpannableString(context.getResources().getString(R.string.forget_password_click_here));
@@ -106,22 +110,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onClick(View textView) {
                 // do some thing
-                startActivity(new Intent(context, ForgetPasswordActivity.class));
+                startActivity(new Intent(LoginActivity.this, ForgetPasswordActivity.class));
             }
         };
         ss.setSpan(span, 17, 27, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        forgetPasswordBtn.setText(ss);
-        forgetPasswordBtn.setMovementMethod(LinkMovementMethod.getInstance());
+        btnForgetPassword.setText(ss);
+        btnForgetPassword.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     private void initUI() {
         // initialize component
-        signinBtn = findViewById(R.id.signin_btn);
+        btnSignIn = findViewById(R.id.signin_btn);
         editTextMobile = findViewById(R.id.editTextMobileNumber);
         editTextPassword = findViewById(R.id.editTextPassword);
-        link_signup = findViewById(R.id.link_signup);
+        textViewSignUp = findViewById(R.id.link_signup);
         btnOTP = findViewById(R.id.btn_retrive_otp);
-        forgetPasswordBtn = findViewById(R.id.link_forget_password);
+        btnForgetPassword = findViewById(R.id.link_forget_password);
         textInputLayoutMobile = findViewById(R.id.input_layout_mobile);
         textInputLayoutPassword = findViewById(R.id.input_layout_password);
     }
@@ -183,10 +187,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onStart() {
         super.onStart();
 
-        signinBtn.setOnClickListener(this);
-        link_signup.setOnClickListener(this);
+        btnSignIn.setOnClickListener(this);
+        textViewSignUp.setOnClickListener(this);
         btnOTP.setOnClickListener(this);
-        forgetPasswordBtn.setOnClickListener(this);
+        btnForgetPassword.setOnClickListener(this);
 
         //mobileNumberET.addTextChangedListener(new MyTextWatcher(inputLayoutMobile));
         //passwordET.addTextChangedListener(new MyTextWatcher(inputLayoutPassword));
@@ -233,10 +237,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
      * @desc submit Form
      */
     private void submitLogin() {
-//        // Loading Progress
-//        if (!validateMobileNumber() && !validatePassword()) {
-//            return;
-//        }
+        // Loading Progress
+        if (!validateMobileNumber() && !validatePassword()) {
+            return;
+        }
 
         if (checkFields()) {
             String mobileNo = editTextMobile.getText().toString().trim();
@@ -244,6 +248,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             checkLogin(mobileNo, password);
         }
+
+//        if (!validatePassword()){
+//            return;
+//        }
     }
 
     private boolean checkFields() {
@@ -254,17 +262,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-    private boolean checkMobileNumberFields() {
-        boolean isPhoneValid = Validator.checkValidity(textInputLayoutMobile, editTextMobile.getText().toString(), context.getString(R.string.err_msg_mobile), "phone");
-
-        return isPhoneValid;
-
-    }
-
     private void checkLogin(final String mobileNo, final String password) {
 
         progressDialog = new ProgressDialog(LoginActivity.this);
-        progressDialog.setMessage("Please wait...");
+        progressDialog.setMessage("Loading...");
         progressDialog.setCancelable(false);
         progressDialog.setIndeterminate(false);
 
@@ -282,16 +283,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onResponse(String response) {
                 // remove the progress bar
-                Timber.e("URL LOGIN -> %s", AppConfig.URL_LOGIN);
+                Log.e("URL", AppConfig.URL_LOGIN);
                 progressDialog.dismiss();
 
                 try {
                     JSONObject jsonObject = new JSONObject(response);
 
-                    Timber.e("jsonObject -> %s", jsonObject.toString());
+                    Log.e("Object", jsonObject.toString());
 
                     if (!jsonObject.getBoolean("error")) {
-//                        showMessage(jsonObject.getString("message"));
 
                         // getting the user from the response
                         JSONObject userJson = jsonObject.getJSONObject("user");
@@ -307,17 +307,32 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         // storing the user in sharedPreference
                         SharedPreManager.getInstance(getApplicationContext()).userLogin(user);
 
+
+//                        progressDialog.dismiss();
                         if (response.equals("Please verify Your Account by OTP")) {
+                            Intent verifyPhoneIntent = new Intent(LoginActivity.this, VerifyPhoneActivity.class);
                             if (checkFields()) {
-                                Intent verifyPhoneIntent = new Intent(LoginActivity.this, VerifyPhoneActivity.class);
                                 verifyPhoneIntent.putExtra("mobile_no", mobileNo);
-                                startActivity(verifyPhoneIntent);
                             }
+                            startActivity(verifyPhoneIntent);
                         } else {
                             // Move to another Activity
-                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                            startActivity(intent);
-                            finish();
+
+                            //Toast.makeText(context, "ami", Toast.LENGTH_SHORT).show();
+
+                            if ((ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+
+                                Intent intent = new Intent(LoginActivity.this, PermissionActivity.class);
+                                startActivity(intent);
+                                finish();
+                                //Toast.makeText(context, "nai ami", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                startActivity(intent);
+                                finish();
+
+                                //Toast.makeText(context, "asi ami", Toast.LENGTH_SHORT).show();
+                            }
                         }
 
                     } else if (jsonObject.getBoolean("error") && jsonObject.has("authentication")) {
@@ -331,8 +346,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //                            verifyPhoneIntent.putExtra("fromLoginPage", "fromLoginPage");
                             startActivity(verifyPhoneIntent);
                         }
-                    } else if (jsonObject.getString("message").equals("Try Again! Invalid Mobile Number.")) {
-                        showMessage("Try Again! Invalid Mobile Number/Password.");
                     } else {
                         showMessage(jsonObject.getString("message"));
                     }

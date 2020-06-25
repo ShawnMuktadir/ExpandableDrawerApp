@@ -129,4 +129,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics:17.4.3'
     // Add the Firebase Crashlytics SDK.
     implementation 'com.google.firebase:firebase-crashlytics:17.1.0'
+
+    //this library handle permission
+    implementation 'com.karumi:dexter:6.2.0'
 }

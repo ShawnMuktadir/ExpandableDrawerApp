@@ -87,6 +87,8 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         Timber.e("adapter distance -> %s", parkingViewHolder.textViewParkingDistance.getText());
         sensorArea.setDuration(duration);
         parkingViewHolder.textViewParkingTravelTime.setText(sensorArea.getDuration());
+        HomeFragment.parkingCount = parkingViewHolder.textViewParkingAreaCount.getText().toString();
+        HomeFragment.parkingDistance = parkingViewHolder.textViewParkingDistance.getText().toString();
 
         // Here I am just highlighting the background
         parkingViewHolder.itemView.setBackgroundColor(selectedPosition == position ? Color.LTGRAY : Color.TRANSPARENT);

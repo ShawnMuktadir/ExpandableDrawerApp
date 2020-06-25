@@ -38,6 +38,9 @@
         <activity android:name=".view.activity.forgetPassword.ChangePasswordActivityForOTP"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar"/>
+        <activity android:name=".view.activity.permission.PermissionActivity"
+            android:screenOrientation="unspecified"
+            android:theme="@style/AppTheme.DefaultActionBar"/>
         <activity
             android:name=".view.activity.search.SearchActivity"
             android:noHistory="true"
