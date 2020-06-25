@@ -544,7 +544,7 @@ public class MainActivity extends AppCompatActivity implements MainView, Navigat
                 // Do something after 2s = 2000ms
                 EventBus.getDefault().post(new SetMarkerEvent(event.location));
             }
-        }, 1000);
+        }, 2000);
     }
 
     @Override

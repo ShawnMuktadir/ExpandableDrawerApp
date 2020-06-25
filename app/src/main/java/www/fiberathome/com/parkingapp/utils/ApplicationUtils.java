@@ -201,7 +201,9 @@ public class ApplicationUtils {
             builder.setMessage(message);
             builder.setCancelable(true);
             builder.setPositiveButton(context.getResources().getString(R.string.ok), (dialog, which) -> {
-                dialog.dismiss();
+                if (context != null){
+                    dialog.dismiss();
+                }
             });
             AlertDialog alertDialog = builder.create();
             alertDialog.show();

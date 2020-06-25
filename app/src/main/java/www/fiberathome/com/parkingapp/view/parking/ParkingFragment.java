@@ -55,13 +55,14 @@ import www.fiberathome.com.parkingapp.utils.OnEditTextRightDrawableTouchListener
 import www.fiberathome.com.parkingapp.utils.RecyclerTouchListener;
 import www.fiberathome.com.parkingapp.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+import www.fiberathome.com.parkingapp.view.activity.main.MainActivity;
 import www.fiberathome.com.parkingapp.view.fragments.HomeFragment;
 
 import static www.fiberathome.com.parkingapp.utils.ApplicationUtils.distance;
 
-public class ParkingFragment extends Fragment {
+public class ParkingFragment extends Fragment implements ParkingAdapter.onItemClickListener {
 
-    private static final String TAG = "ParkingFRagment";
+    private static final String TAG = "ParkingFragment";
 
     @BindView(R.id.recyclerViewParking)
     RecyclerView recyclerViewParking;
@@ -333,6 +334,14 @@ public class ParkingFragment extends Fragment {
         ViewCompat.setNestedScrollingEnabled(recyclerViewParking, false);
         HomeFragment homeFragment = new HomeFragment();
         parkingAdapter = new ParkingAdapter(context, this, homeFragment, sensorAreas, onConnectedLocation);
+        parkingAdapter.setClickListener(this);
         recyclerViewParking.setAdapter(parkingAdapter);
+    }
+
+    @Override
+    public void onClick() {
+        EventBus.getDefault().post(new GetDirectionEvent(HomeFragment.location));
+        MainActivity parentActivity = (MainActivity) context;
+        parentActivity.replaceFragment();
     }
 }

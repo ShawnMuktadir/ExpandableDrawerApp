@@ -40,7 +40,7 @@ public class PermissionActivity extends AppCompatActivity implements PermissionI
 
 
     public void takeLocationPermission(View view) {
-        Dexter.withActivity(this).withPermission(Manifest.permission.ACCESS_FINE_LOCATION).withListener(permissionListener).check();
+        Dexter.withContext(this).withPermission(Manifest.permission.ACCESS_FINE_LOCATION).withListener(permissionListener).check();
     }
 
     @Override
@@ -72,6 +72,7 @@ public class PermissionActivity extends AppCompatActivity implements PermissionI
         new AlertDialog.Builder(this).setTitle("Permission Denied permanently,You can't use this app any more.").
                 setMessage("Please allow this permission from settings").
                 setPositiveButton("Allow", new DialogInterface.OnClickListener() {
+
                     @RequiresApi(api = Build.VERSION_CODES.Q)
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

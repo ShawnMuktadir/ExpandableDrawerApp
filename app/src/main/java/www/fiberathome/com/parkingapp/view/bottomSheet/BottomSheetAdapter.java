@@ -97,10 +97,13 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
         }
 
-        holder.textViewParkingAreaName.setText(ApplicationUtils.capitalize(bookingSensors.getParkingArea().trim()));
-        holder.textViewParkingAreaCount.setText(bookingSensors.getCount());
-        holder.textViewParkingDistance.setText(new DecimalFormat("##.##").format(bookingSensors.getDistance()) + " km");
-        holder.textViewParkingTravelTime.setText(bookingSensors.getDuration());
+        if (bookingSensors!=null){
+            holder.textViewParkingAreaName.setText(ApplicationUtils.capitalize(bookingSensors.getParkingArea()));
+            holder.textViewParkingAreaCount.setText(bookingSensors.getCount());
+            holder.textViewParkingDistance.setText(new DecimalFormat("##.##").format(bookingSensors.getDistance()) + " km");
+            holder.textViewParkingTravelTime.setText(bookingSensors.getDuration());
+        }
+
 
         holder.itemView.setOnClickListener(v -> {
 //            isItemClicked = true;
@@ -108,10 +111,14 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
             Collections.swap(bookingSensorsArrayList, position, 0);
             notifyItemMoved(position, 0);
             Timber.e("list ok");
-            notifyDataSetChanged();
+//            notifyDataSetChanged();
 
             try {
                 notifyDataSetChanged();
+                if (homeFragment.bottomSheetPlaceLatLng != null) {
+                Toast.makeText(context, "Clicked!!!", Toast.LENGTH_SHORT).show();
+                homeFragment.bottomSheetPlaceLatLngNearestLocations();
+            }
                 homeFragment.linearLayoutSearchBottomButton.setVisibility(View.GONE);
             } catch (Exception e) {
                 Timber.e(e.getMessage());
