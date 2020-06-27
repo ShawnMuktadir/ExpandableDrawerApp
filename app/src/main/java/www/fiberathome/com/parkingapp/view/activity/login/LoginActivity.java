@@ -48,6 +48,7 @@ import www.fiberathome.com.parkingapp.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.User;
 import www.fiberathome.com.parkingapp.base.AppConfig;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
+import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.view.activity.forgetPassword.ForgetPasswordActivity;
 import www.fiberathome.com.parkingapp.view.activity.main.MainActivity;
 import www.fiberathome.com.parkingapp.view.activity.permission.PermissionActivity;
@@ -58,8 +59,8 @@ import www.fiberathome.com.parkingapp.utils.Validator;
 import www.fiberathome.com.parkingapp.view.activity.registration.VerifyPhoneActivity;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
-
     private Context context;
+
     private static String TAG = LoginActivity.class.getSimpleName();
 
     private EditText editTextMobile;
@@ -84,11 +85,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setListeners();
 
         // Check user is logged in
-        if (SharedPreManager.getInstance(getApplicationContext()).isLoggedIn()) {
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        if (SharedData.getInstance().getLocationPermission()) {
+            Timber.e("location check if method e dhukche");
+            if (SharedPreManager.getInstance(getApplicationContext()).isLoggedIn()) {
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+                return;
+            }
+        } else {
+            Timber.e("location check else method e dhukche");
+            Intent intent = new Intent(LoginActivity.this, PermissionActivity.class);
             startActivity(intent);
             finish();
-            return;
         }
 
         //makes an underline on for Registration Click Here
@@ -116,6 +125,82 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         ss.setSpan(span, 17, 27, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         btnForgetPassword.setText(ss);
         btnForgetPassword.setMovementMethod(LinkMovementMethod.getInstance());
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        btnSignIn.setOnClickListener(this);
+        textViewSignUp.setOnClickListener(this);
+        btnOTP.setOnClickListener(this);
+        btnForgetPassword.setOnClickListener(this);
+
+        //mobileNumberET.addTextChangedListener(new MyTextWatcher(inputLayoutMobile));
+        //passwordET.addTextChangedListener(new MyTextWatcher(inputLayoutPassword));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        dismissProgressDialog();
+
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.signin_btn:
+                submitLogin();
+                break;
+
+//            case R.id.link_signup:
+//                Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
+//                startActivity(intent);
+//                break;
+
+            case R.id.btn_retrive_otp:
+                Intent otpIntent = new Intent(LoginActivity.this, VerifyPhoneActivity.class);
+                startActivity(otpIntent);
+                break;
+
+//            case R.id.link_forget_password:
+//                Intent forgetPasswordIntent = new Intent(LoginActivity.this, ForgetPasswordActivity.class);
+//                startActivity(forgetPasswordIntent);
+//                break;
+
+        }
+    }
+
+    /**
+     * Check user input
+     */
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage("Are you sure you want to exit?")
+                .setNegativeButton(android.R.string.no, null)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        LoginActivity.super.onBackPressed();
+                    }
+                }).create();
+        AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface arg0) {
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.black));
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.red));
+                //dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(getResources().getColor(R.color.black));
+            }
+        });
+        dialog.show();
     }
 
     private void initUI() {
@@ -183,64 +268,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         });
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        btnSignIn.setOnClickListener(this);
-        textViewSignUp.setOnClickListener(this);
-        btnOTP.setOnClickListener(this);
-        btnForgetPassword.setOnClickListener(this);
-
-        //mobileNumberET.addTextChangedListener(new MyTextWatcher(inputLayoutMobile));
-        //passwordET.addTextChangedListener(new MyTextWatcher(inputLayoutPassword));
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        dismissProgressDialog();
-
-    }
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.signin_btn:
-                submitLogin();
-                break;
-
-//            case R.id.link_signup:
-//                Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
-//                startActivity(intent);
-//                break;
-
-            case R.id.btn_retrive_otp:
-                Intent otpIntent = new Intent(LoginActivity.this, VerifyPhoneActivity.class);
-                startActivity(otpIntent);
-                break;
-
-//            case R.id.link_forget_password:
-//                Intent forgetPasswordIntent = new Intent(LoginActivity.this, ForgetPasswordActivity.class);
-//                startActivity(forgetPasswordIntent);
-//                break;
-
-        }
-    }
-
     /**
      * @desc submit Form
      */
     private void submitLogin() {
         // Loading Progress
-        if (!validateMobileNumber() && !validatePassword()) {
-            return;
-        }
+//        if (!validateMobileNumber() && !validatePassword()) {
+//            return;
+//        }
 
         if (checkFields()) {
             String mobileNo = editTextMobile.getText().toString().trim();
@@ -419,7 +454,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         return true;
     }
 
-
     /**
      * request focus
      * =============================================
@@ -436,10 +470,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
     }
 
-    /**
-     * Check user input
-     */
     private class MyTextWatcher implements TextWatcher {
+
 
         private View view;
 
@@ -467,26 +499,5 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-    @Override
-    public void onBackPressed() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setMessage("Are you sure you want to exit?")
-                .setNegativeButton(android.R.string.no, null)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        LoginActivity.super.onBackPressed();
-                    }
-                }).create();
-        AlertDialog dialog = builder.create();
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface arg0) {
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.black));
-                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.red));
-                //dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(getResources().getColor(R.color.black));
-            }
-        });
-        dialog.show();
-    }
 }

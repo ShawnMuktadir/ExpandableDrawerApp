@@ -2,6 +2,7 @@ package www.fiberathome.com.parkingapp.view.activity.permission;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -20,19 +21,24 @@ import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
 
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.listener.DexterPermissionListener;
 import www.fiberathome.com.parkingapp.listener.PermissionInterface;
+import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.view.activity.login.LoginActivity;
 import www.fiberathome.com.parkingapp.view.activity.main.MainActivity;
 
 public class PermissionActivity extends AppCompatActivity implements PermissionInterface {
 
     private DexterPermissionListener permissionListener;
     private TextView permissionTV;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_permission);
+        context = this;
 
         permissionTV = findViewById(R.id.permissionTV);
         permissionListener = new DexterPermissionListener(this);
@@ -40,7 +46,7 @@ public class PermissionActivity extends AppCompatActivity implements PermissionI
 
 
     public void takeLocationPermission(View view) {
-        Dexter.withContext(this).withPermission(Manifest.permission.ACCESS_FINE_LOCATION).withListener(permissionListener).check();
+        Dexter.withActivity(this).withPermission(Manifest.permission.ACCESS_FINE_LOCATION).withListener(permissionListener).check();
     }
 
     @Override
@@ -55,6 +61,7 @@ public class PermissionActivity extends AppCompatActivity implements PermissionI
                         finish();
                     }
                 }, 1000);
+                SharedData.getInstance().setLocationPermission(true);
                 break;
         }
     }
@@ -69,7 +76,7 @@ public class PermissionActivity extends AppCompatActivity implements PermissionI
                 break;
         }
 
-        new AlertDialog.Builder(this).setTitle("Permission Denied permanently,You can't use this app any more.").
+        new AlertDialog.Builder(this).setTitle("Permission Denied permanently,You can't use this \napp any more.").
                 setMessage("Please allow this permission from settings").
                 setPositiveButton("Allow", new DialogInterface.OnClickListener() {
 
@@ -83,7 +90,6 @@ public class PermissionActivity extends AppCompatActivity implements PermissionI
                 setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
                         dialog.dismiss();
                     }
                 }).show();
@@ -136,9 +142,31 @@ public class PermissionActivity extends AppCompatActivity implements PermissionI
     @Override
     protected void onPause() {
         super.onPause();
-        if (isFinishing()){
+        if (isFinishing()) {
             overridePendingTransition(R.anim.animation_enter, R.anim.animation_leave);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context);
+        builder.setMessage("Are you sure you want to exit without giving permission?")
+                .setNegativeButton(android.R.string.no, null)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        PermissionActivity.super.onBackPressed();
+                    }
+                }).create();
+        androidx.appcompat.app.AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface arg0) {
+                dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.black));
+                dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.red));
+                //dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(getResources().getColor(R.color.black));
+            }
+        });
+        dialog.show();
     }
 
 }

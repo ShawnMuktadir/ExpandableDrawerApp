@@ -2,6 +2,7 @@ package www.fiberathome.com.parkingapp.utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -608,5 +609,12 @@ public class ApplicationUtils {
             }
         }
         return CountryZipCode;
+    }
+
+    public static boolean checkLocationPermission(Context context) {
+        Timber.e("checkLocationPermission call hoiche");
+        String permission = "android.permission.ACCESS_FINE_LOCATION";
+        int res = context.checkCallingOrSelfPermission(permission);
+        return (res == PackageManager.PERMISSION_GRANTED);
     }
 }

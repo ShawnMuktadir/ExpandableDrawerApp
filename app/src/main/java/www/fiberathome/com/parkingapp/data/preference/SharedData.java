@@ -128,4 +128,14 @@ public final class SharedData {
         Timber.e("BookingSensor Area in SharedData -> %s", new Gson().toJson(bookingSensors));
         this.bookingSensors = bookingSensors;
     }
+
+    private boolean locationPermission = false;
+
+    public boolean getLocationPermission() {
+        return locationPermission;
+    }
+
+    public void setLocationPermission(boolean locationPermission) {
+        this.locationPermission = locationPermission;
+    }
 }

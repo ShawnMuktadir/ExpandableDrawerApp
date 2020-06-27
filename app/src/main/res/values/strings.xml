@@ -93,6 +93,7 @@
     <string name="create_account">Create Account</string>
     <string name="already_a_member_click_here">Already a member? Click here</string>
     <string name="notification">Notification</string>
+    <string name="my_account">My Account</string>
     <string name="parking">Parking</string>
     <string name="no_record_found">No Record Found</string>
     <string name="parking_area_name">Parking Area Name</string>

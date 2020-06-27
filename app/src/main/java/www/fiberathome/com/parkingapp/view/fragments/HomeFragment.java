@@ -2862,7 +2862,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     buttonSearch.setVisibility(View.GONE);
                     MarkerOptions markerOptions = new MarkerOptions();
                     markerOptions.position(location);
-//                    markerOptions.title(name);
                     coordList.add(new LatLng(location.latitude, location.longitude));
 //                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
 //                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
@@ -2876,8 +2875,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     imageViewBack.setVisibility(View.VISIBLE);
                     btnGetDirection.setText("Confirm Booking");
                     btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
-                    btnGetDirection.setEnabled(false);
-                    btnGetDirection.setFocusable(false);
+                    btnGetDirection.setEnabled(true);
+                    btnGetDirection.setFocusable(true);
 
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     bottomSheetBehavior.setPeekHeight(400);
@@ -2888,11 +2887,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                             ApplicationUtils.showMessageDialog("Once reach your destination, \nConfirm Booking Button will be enabled &" +
                                     " you can reserve your booking spot!!!", context);
                         }
-                    }, 3000);
+                    }, 1000);
+                    fetchBottomSheetSensors(onConnectedLocation);
                 }
             } else if (getDirectionButtonClicked == 1) {
-//                ApplicationUtils.showMessageDialog("Once reach your destination you can reserve your booking spot!!!", context);
-//                getDirectionButtonClicked--;
+                ApplicationUtils.showMessageDialog("Once reach your destination, \nConfirm Booking Button will be enabled &" +
+                        " you can reserve your booking spot!!!", context);
+                getDirectionButtonClicked--;
                 if (mMap != null) {
 
                     TaskParser taskParser = new TaskParser();
@@ -2922,9 +2923,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         btnSearchGetDirection.setOnClickListener(v -> {
 //            Toast.makeText(context, "search", Toast.LENGTH_SHORT).show();
             if (getDirectionSearchButtonClicked == 0) {
-//                Timber.e("1st click getDirectionSearchButtonClicked before increase-> %s", getDirectionButtonClicked);
                 getDirectionSearchButtonClicked++;
-//                Timber.e("1st click getDirectionSearchButtonClicked after increase-> %s", getDirectionButtonClicked);
                 if (searchPlaceLatLng != null) {
                     EventBus.getDefault().post(new GetDirectionForSearchEvent(searchPlaceLatLng));
                     fetchSensors(onConnectedLocation);
@@ -2946,8 +2945,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
                     btnSearchGetDirection.setText("Unavailable Parking Spot");
                     btnSearchGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
-                    btnSearchGetDirection.setEnabled(false);
-                    btnSearchGetDirection.setFocusable(false);
+                    btnSearchGetDirection.setEnabled(true);
+                    btnSearchGetDirection.setFocusable(true);
 
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     bottomSheetBehavior.setPeekHeight(400);
@@ -2957,9 +2956,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                         public void run() {
                             ApplicationUtils.showMessageDialog("You cannot reserve this spot for booking, as there is no parking slot!", context);
                         }
-                    }, 3000);
+                    }, 1000);
+                    fetchBottomSheetSensors(onConnectedLocation);
                 }
             } else if (getDirectionSearchButtonClicked == 1) {
+                ApplicationUtils.showMessageDialog("Once reach your destination, \nConfirm Booking Button will be enabled &" +
+                        " you can reserve your booking spot!!!", context);
+                getDirectionSearchButtonClicked--;
                 if (mMap != null) {
                     TaskParser taskParser = new TaskParser();
                     double distance = taskParser.showDistance(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
@@ -3014,8 +3017,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     imageViewMarkerBack.setVisibility(View.VISIBLE);
                     btnMarkerGetDirection.setText("Confirm Booking");
                     btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
-                    btnMarkerGetDirection.setEnabled(false);
-                    btnMarkerGetDirection.setFocusable(false);
+                    btnMarkerGetDirection.setEnabled(true);
+                    btnMarkerGetDirection.setFocusable(true);
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     bottomSheetBehavior.setPeekHeight(400);
                     final Handler handler = new Handler();
@@ -3025,11 +3028,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                             ApplicationUtils.showMessageDialog("Once reach your destination, \nConfirm Booking Button will be enabled &" +
                                     " you can reserve your booking spot!!!", context);
                         }
-                    }, 3000);
+                    }, 1000);
+                    fetchBottomSheetSensors(onConnectedLocation);
                 }
             } else if (getDirectionMarkerButtonClicked == 1) {
-//                ApplicationUtils.showMessageDialog("Once reach your destination you can reserve your booking spot!!!", context);
-//                getDirectionMarkerButtonClicked--;
+                ApplicationUtils.showMessageDialog("Once reach your destination, \nConfirm Booking Button will be enabled &" +
+                        " you can reserve your booking spot!!!", context);
+                getDirectionMarkerButtonClicked--;
                 if (mMap != null) {
 //                    mMap.clear();
 //                    animateCamera(onConnectedLocation);
@@ -3114,8 +3119,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                         Timber.e("count else e dhukche");
                         btnBottomSheetGetDirection.setText("Confirm Booking");
                         btnBottomSheetGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
-                        btnBottomSheetGetDirection.setEnabled(false);
-                        btnBottomSheetGetDirection.setFocusable(false);
+                        btnBottomSheetGetDirection.setEnabled(true);
+                        btnBottomSheetGetDirection.setFocusable(true);
                         final Handler handler = new Handler();
                         handler.postDelayed(new Runnable() {
                             @Override
@@ -3123,17 +3128,18 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                                 ApplicationUtils.showMessageDialog("Once reach your destination, \nConfirm Booking Button will be enabled &" +
                                         " you can reserve your booking spot!!!", context);
                             }
-                        }, 3000);
+                        }, 1000);
                         fetchBottomSheetSensors(onConnectedLocation);
                         getDirectionBottomSheetButtonClicked = 0;
                     }
-
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     bottomSheetBehavior.setPeekHeight(400);
-                    getDirectionBottomSheetButtonClicked = 0;
+//                    getDirectionBottomSheetButtonClicked = 0;
                 }
             }
             else if (getDirectionBottomSheetButtonClicked == 1) {
+                ApplicationUtils.showMessageDialog("Once reach your destination, \nConfirm Booking Button will be enabled &" +
+                        " you can reserve your booking spot!!!", context);
                 getDirectionBottomSheetButtonClicked--;
                 if (mMap != null) {
                     fromMarkerRouteDrawn = 0;
