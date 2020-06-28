@@ -107,12 +107,10 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
         }
 
-        if (bookingSensors != null) {
-            holder.textViewParkingAreaName.setText(ApplicationUtils.capitalize(bookingSensors.getParkingArea()));
-            holder.textViewParkingAreaCount.setText(bookingSensors.getCount());
-            holder.textViewParkingDistance.setText(new DecimalFormat("##.##").format(bookingSensors.getDistance()) + " km");
-            holder.textViewParkingTravelTime.setText(bookingSensors.getDuration());
-        }
+        holder.textViewParkingAreaName.setText(ApplicationUtils.capitalize(bookingSensors.getParkingArea()));
+        holder.textViewParkingAreaCount.setText(bookingSensors.getCount());
+        holder.textViewParkingDistance.setText(new DecimalFormat("##.##").format(bookingSensors.getDistance()) + " km");
+        holder.textViewParkingTravelTime.setText(bookingSensors.getDuration());
 
 
         holder.itemView.setOnClickListener(v -> {
@@ -150,88 +148,87 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
             homeFragment.bottomSheetBehavior.setHideable(false);
             homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             homeFragment.bottomSheetBehavior.setPeekHeight(400);
-
-            if (isItemClicked) {
-                Timber.e("isItemClicked -> %s", isItemClicked);
-                Timber.e("bottomSheet if");
-                homeFragment.bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-                    @Override
-                    public void onStateChanged(@NonNull View view, int i) {
-                        switch (i) {
-                            case BottomSheetBehavior.STATE_HIDDEN:
-                                break;
-                            case BottomSheetBehavior.STATE_EXPANDED:
-
-                                if (homeFragment.mMap != null)
-                                    homeFragment.mMap.clear();
-//                                homeFragment.fetchSensors(onConnectedLocation);
-
-                                final int interval = 100; // 1 Second
-                                Handler handler = new Handler();
-                                Runnable runnable = new Runnable() {
-                                    public void run() {
-                                        homeFragment.layoutBottomSheetVisible(false, "", "", "", "", null);
-                                        Animation animSlideDown = AnimationUtils.loadAnimation(context, R.anim.view_hide);
-                                        homeFragment.linearLayoutBottomSheetBottom.startAnimation(animSlideDown);
-                                        homeFragment.linearLayoutMarkerBackNGetDirection.setVisibility(View.GONE);
-                                    }
-                                };
-                                handler.postAtTime(runnable, System.currentTimeMillis() + interval);
-                                handler.postDelayed(runnable, interval);
-
-//                                homeFragment.layoutBottomSheetVisible(false, "", "", "", "", null);
-//                        btn.setText("Close Sheet");
-                            case BottomSheetBehavior.STATE_COLLAPSED:
-
-                                Timber.e("bottom sheet expanded");
-                                isExpanded = true;
-                                if (isExpanded) {
-                                    homeFragment.layoutBottomSheetVisible(true, holder.textViewParkingAreaName.getText().toString(), holder.textViewParkingAreaCount.getText().toString(),
-                                            holder.textViewParkingDistance.getText().toString(),
-                                            holder.textViewParkingTravelTime.getText().toString(),
-                                            new LatLng(bookingSensors.getLat(), bookingSensors.getLng()));
-                                    Animation animSlideUp = AnimationUtils.loadAnimation(context, R.anim.view_show);
-                                    homeFragment.linearLayoutBottomSheetBottom.startAnimation(animSlideUp);
-                                    homeFragment.linearLayoutMarkerBackNGetDirection.setVisibility(View.GONE);
-                                }
-                                break;
-
-                            case BottomSheetBehavior.STATE_DRAGGING:
-                                final int interval1 = 100; // 1 Second
-                                Handler handler1 = new Handler();
-                                Runnable runnable1 = new Runnable() {
-                                    public void run() {
-                                        homeFragment.layoutBottomSheetVisible(false, "", "", "", "", null);
-                                        Animation animSlideDown = AnimationUtils.loadAnimation(context, R.anim.view_hide);
-                                        homeFragment.linearLayoutBottomSheetBottom.startAnimation(animSlideDown);
-                                        homeFragment.linearLayoutMarkerBackNGetDirection.setVisibility(View.GONE);
-                                    }
-                                };
-                                handler1.postAtTime(runnable1, System.currentTimeMillis() + interval1);
-                                handler1.postDelayed(runnable1, interval1);
-                                break;
-                            case BottomSheetBehavior.STATE_SETTLING:
-
-                                break;
-                            case BottomSheetBehavior.STATE_HALF_EXPANDED:
-//                                homeFragment.layoutBottomSheetVisible(false, "", "", "", "", null);
-//                                Animation animSlideDown = AnimationUtils.loadAnimation(context, R.anim.view_hide);
-//                                homeFragment.linearLayoutBottomSheetBottom.startAnimation(animSlideDown);
-                                break;
-                        }
-                    }
-
-                    @Override
-                    public void onSlide(@NonNull View view, float slideOffset) {
-
-                    }
-                });
-
-                if (isExpanded) {
-                    Timber.e("isExpanded method e dhukche");
-                    homeFragment.layoutBottomSheetVisible(false, "", "", "", "", null);
-                }
-            }
+//            if (isItemClicked) {
+//                Timber.e("isItemClicked -> %s", isItemClicked);
+//                Timber.e("bottomSheet if");
+//                homeFragment.bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+//                    @Override
+//                    public void onStateChanged(@NonNull View view, int i) {
+//                        switch (i) {
+//                            case BottomSheetBehavior.STATE_HIDDEN:
+//                                break;
+//                            case BottomSheetBehavior.STATE_EXPANDED:
+//
+//                                if (homeFragment.mMap != null)
+//                                    homeFragment.mMap.clear();
+////                                homeFragment.fetchSensors(onConnectedLocation);
+//
+//                                final int interval = 100; // 1 Second
+//                                Handler handler = new Handler();
+//                                Runnable runnable = new Runnable() {
+//                                    public void run() {
+//                                        homeFragment.layoutBottomSheetVisible(false, "", "", "", "", null);
+//                                        Animation animSlideDown = AnimationUtils.loadAnimation(context, R.anim.view_hide);
+//                                        homeFragment.linearLayoutBottomSheetBottom.startAnimation(animSlideDown);
+//                                        homeFragment.linearLayoutMarkerBackNGetDirection.setVisibility(View.GONE);
+//                                    }
+//                                };
+//                                handler.postAtTime(runnable, System.currentTimeMillis() + interval);
+//                                handler.postDelayed(runnable, interval);
+//
+////                                homeFragment.layoutBottomSheetVisible(false, "", "", "", "", null);
+////                        btn.setText("Close Sheet");
+//                            case BottomSheetBehavior.STATE_COLLAPSED:
+//
+//                                Timber.e("bottom sheet expanded");
+//                                isExpanded = true;
+//                                if (isExpanded) {
+//                                    homeFragment.layoutBottomSheetVisible(true, holder.textViewParkingAreaName.getText().toString(), holder.textViewParkingAreaCount.getText().toString(),
+//                                            holder.textViewParkingDistance.getText().toString(),
+//                                            holder.textViewParkingTravelTime.getText().toString(),
+//                                            new LatLng(bookingSensors.getLat(), bookingSensors.getLng()));
+//                                    Animation animSlideUp = AnimationUtils.loadAnimation(context, R.anim.view_show);
+//                                    homeFragment.linearLayoutBottomSheetBottom.startAnimation(animSlideUp);
+//                                    homeFragment.linearLayoutMarkerBackNGetDirection.setVisibility(View.GONE);
+//                                }
+//                                break;
+//
+//                            case BottomSheetBehavior.STATE_DRAGGING:
+//                                final int interval1 = 100; // 1 Second
+//                                Handler handler1 = new Handler();
+//                                Runnable runnable1 = new Runnable() {
+//                                    public void run() {
+//                                        homeFragment.layoutBottomSheetVisible(false, "", "", "", "", null);
+//                                        Animation animSlideDown = AnimationUtils.loadAnimation(context, R.anim.view_hide);
+//                                        homeFragment.linearLayoutBottomSheetBottom.startAnimation(animSlideDown);
+//                                        homeFragment.linearLayoutMarkerBackNGetDirection.setVisibility(View.GONE);
+//                                    }
+//                                };
+//                                handler1.postAtTime(runnable1, System.currentTimeMillis() + interval1);
+//                                handler1.postDelayed(runnable1, interval1);
+//                                break;
+//                            case BottomSheetBehavior.STATE_SETTLING:
+//
+//                                break;
+//                            case BottomSheetBehavior.STATE_HALF_EXPANDED:
+////                                homeFragment.layoutBottomSheetVisible(false, "", "", "", "", null);
+////                                Animation animSlideDown = AnimationUtils.loadAnimation(context, R.anim.view_hide);
+////                                homeFragment.linearLayoutBottomSheetBottom.startAnimation(animSlideDown);
+//                                break;
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onSlide(@NonNull View view, float slideOffset) {
+//
+//                    }
+//                });
+//
+//                if (isExpanded) {
+//                    Timber.e("isExpanded method e dhukche");
+//                    homeFragment.layoutBottomSheetVisible(false, "", "", "", "", null);
+//                }
+//            }
 
         });
 
