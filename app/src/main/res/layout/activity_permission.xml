@@ -24,7 +24,7 @@
                 android:layout_height="@dimen/dim150"
                 android:padding="10dp"
                 android:layout_marginTop="@dimen/margin_20"
-                android:src="@mipmap/ic_launcher"
+                android:src="@drawable/ic_logo_original"
                 app:civ_border_width="2dp"
                 app:civ_border_color="@color/colorPrimaryDark"
                 android:layout_gravity="center"

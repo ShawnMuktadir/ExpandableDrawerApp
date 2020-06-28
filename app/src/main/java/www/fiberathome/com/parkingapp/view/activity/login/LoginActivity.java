@@ -85,16 +85,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setListeners();
 
         // Check user is logged in
-        if (SharedData.getInstance().getLocationPermission()) {
-            Timber.e("location check if method e dhukche");
-            if (SharedPreManager.getInstance(getApplicationContext()).isLoggedIn()) {
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-                return;
-            }
-        } else {
-            Timber.e("location check else method e dhukche");
+//        if (SharedData.getInstance().getLocationPermission()) {
+//            Timber.e("location check if method e dhukche");
+        if (SharedPreManager.getInstance(getApplicationContext()).isLoggedIn() && SharedPreManager.getInstance(context) != null && SharedPreManager.getInstance(context).isWaitingForLocationPermission()) {
+            Timber.e("isWaitingForLocationPermission -> %s", SharedPreManager.getInstance(context).isWaitingForLocationPermission());
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        } else if (SharedPreManager.getInstance(getApplicationContext()).isLoggedIn() && !SharedPreManager.getInstance(context).isWaitingForLocationPermission()) {
+//            Timber.e("location check else method e dhukche");
+            Timber.e("isWaitingForLocationPermission else -> %s", SharedPreManager.getInstance(context).isWaitingForLocationPermission());
             Intent intent = new Intent(LoginActivity.this, PermissionActivity.class);
             startActivity(intent);
             finish();
@@ -356,17 +357,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             //Toast.makeText(context, "ami", Toast.LENGTH_SHORT).show();
 
                             if ((ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
-
+                                Timber.e("activity login if -> %s",SharedPreManager.getInstance(context).isWaitingForLocationPermission());
                                 Intent intent = new Intent(LoginActivity.this, PermissionActivity.class);
                                 startActivity(intent);
                                 finish();
                                 //Toast.makeText(context, "nai ami", Toast.LENGTH_SHORT).show();
-                            } else {
+                            } else if (!SharedPreManager.getInstance(context).isWaitingForLocationPermission()){
+                                Timber.e("activity login else if -> %s",SharedPreManager.getInstance(context).isWaitingForLocationPermission());
+                                Intent intent = new Intent(LoginActivity.this, PermissionActivity.class);
+                                startActivity(intent);
+                                finish();
+                                //Toast.makeText(context, "asi ami", Toast.LENGTH_SHORT).show();
+                            }else {
+                                Timber.e("activity login else -> %s",SharedPreManager.getInstance(context).isWaitingForLocationPermission());
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                 startActivity(intent);
                                 finish();
-
-                                //Toast.makeText(context, "asi ami", Toast.LENGTH_SHORT).show();
                             }
                         }
 

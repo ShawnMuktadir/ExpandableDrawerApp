@@ -168,6 +168,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     //from parking adapter
     @BindView(R.id.btnGetDirection)
     Button btnGetDirection;
+    @BindView(R.id.linearLayoutParkingBackNGetDirection)
+    LinearLayout linearLayoutParkingBackNGetDirection;
     @BindView(R.id.linearLayoutParkingAdapterBackBottom)
     LinearLayout linearLayoutParkingAdapterBackBottom;
     @BindView(R.id.imageViewBack)
@@ -223,7 +225,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     @BindView(R.id.linearLayoutMarkerNameCount)
     LinearLayout linearLayoutMarkerNameCount;
     @BindView(R.id.linearLayoutMarkerBackNGetDirection)
-    LinearLayout linearLayoutMarkerBackNGetDirection;
+    public LinearLayout linearLayoutMarkerBackNGetDirection;
 
     //from bottomSheet
     @BindView(R.id.btnBottomSheetGetDirection)
@@ -695,9 +697,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         if (markerAlreadyClicked == 1) {
             if (fromMarkerRouteDrawn == 0) {
                 bottomSheetBehavior.setPeekHeight(400);
-                showMessageDialog("Please try again!!!", getContext());
+                showMessageDialog("You have already selected a parking slot! Please try again!", getContext());
 
-//                markerAlreadyClicked = 0;
+                markerAlreadyClicked = 0;
             }
             if (mMap != null)
                 mMap.clear();
@@ -2426,12 +2428,85 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
         if (isVisible) {
             linearLayoutBottom.setVisibility(View.VISIBLE);
+            linearLayoutParkingAdapterBackBottom.setVisibility(View.VISIBLE);
+            linearLayoutParkingBackNGetDirection.setVisibility(View.VISIBLE);
             linearLayoutNameCount.setVisibility(View.GONE);
             isParkingAdapterLayoutVisible = true;
 //            textViewParkingAreaCount.setText(count);
 //            textViewParkingAreaName.setText(name);
 //            textViewParkingDistance.setText(new DecimalFormat("##.##").format(distance) + " km");
 //            textViewParkingTravelTime.setText(duration);
+//            bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+//                @Override
+//                public void onStateChanged(@NonNull View view, int i) {
+//                    Timber.e("onStateChanged e dhukche");
+//                    switch (i) {
+//                        case BottomSheetBehavior.STATE_HIDDEN:
+//                            break;
+//                        case BottomSheetBehavior.STATE_EXPANDED:
+//                            final int interval = 100; // >1 Second
+//                            Handler handler = new Handler();
+//                            Runnable runnable = new Runnable() {
+//                                public void run() {
+//                                    layoutVisible(false, "", "", "", null);
+//                                    Animation animSlideDown = AnimationUtils.loadAnimation(context, R.anim.view_hide);
+//                                    linearLayoutBottom.startAnimation(animSlideDown);
+//                                    linearLayoutParkingBackNGetDirection.startAnimation(animSlideDown);
+//                                    linearLayoutParkingAdapterBackBottom.startAnimation(animSlideDown);
+//                                }
+//
+//                            };
+//                            handler.postAtTime(runnable, System.currentTimeMillis() + interval);
+//                            handler.postDelayed(runnable, interval);
+////                        btn.setText("Close Sheet");
+//                        case BottomSheetBehavior.STATE_COLLAPSED:
+//                            Animation animSlideUp = AnimationUtils.loadAnimation(context, R.anim.view_hide);
+//                            linearLayoutBottom.startAnimation(animSlideUp);
+//                            linearLayoutParkingBackNGetDirection.startAnimation(animSlideUp);
+//                            linearLayoutParkingAdapterBackBottom.startAnimation(animSlideUp);
+//                            if (SharedData.getInstance().getSensorArea() != null) {
+////                                bottomSheetBehavior.setPeekHeight(400);
+//                                SensorArea sensorArea = SharedData.getInstance().getSensorArea();
+//                                //   Timber.e("Sensor Area from SharedData -> %s", new Gson().toJson(sensorArea));
+//                                textViewParkingAreaName.setText(ApplicationUtils.capitalize(sensorArea.getParkingArea()));
+//                                textViewParkingAreaCount.setText(sensorArea.getCount());
+//                                String distance = new DecimalFormat("##.##").format(sensorArea.getDistance()) + " km";
+//                                textViewParkingDistance.setText(distance);
+//                                //            textViewParkingTravelTime.setText(sensorArea.getDuration());
+//                                getDestinationInfoForDuration(new LatLng(sensorArea.getLat(), sensorArea.getLng()));
+//                                layoutVisible(true, textViewParkingAreaName.getText().toString(), textViewParkingAreaCount.getText().toString(), textViewParkingDistance.getText().toString(), new LatLng(sensorArea.getLat(), sensorArea.getLng()));
+//                            }
+//                            break;
+//                        case BottomSheetBehavior.STATE_DRAGGING:
+//                            final int interval1 = 100; // >1 Second
+//                            Handler handler1 = new Handler();
+//                            Runnable runnable1 = new Runnable() {
+//                                public void run() {
+//                                    layoutVisible(false, "", "", "", null);
+//                                    Animation animSlideDown = AnimationUtils.loadAnimation(context, R.anim.view_hide);
+//                                    linearLayoutBottom.startAnimation(animSlideDown);
+//                                    linearLayoutParkingBackNGetDirection.startAnimation(animSlideDown);
+//                                    linearLayoutParkingAdapterBackBottom.startAnimation(animSlideDown);
+//                                }
+//                            };
+//                            handler1.postAtTime(runnable1, System.currentTimeMillis() + interval1);
+//                            handler1.postDelayed(runnable1, interval1);
+//                            break;
+//                        case BottomSheetBehavior.STATE_SETTLING:
+//                            break;
+//                        case BottomSheetBehavior.STATE_HALF_EXPANDED:
+////                        layoutBottomSheetVisible(false, "", "", "", "", null);
+//                            break;
+//                    }
+//                }
+//
+//                @Override
+//                public void onSlide(@NonNull View view, float slideOffset) {
+//                    if (isAdded()) {
+////                    bottomSheetAdapter.isItemClicked = false;
+//                    }
+//                }
+//            });
             bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
                 @Override
                 public void onStateChanged(@NonNull View view, int i) {
@@ -2445,8 +2520,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                             Runnable runnable = new Runnable() {
                                 public void run() {
                                     layoutVisible(false, "", "", "", null);
-                                    Animation animSlideDown = AnimationUtils.loadAnimation(context, R.anim.animation_leave);
-                                    linearLayoutBottom.startAnimation(animSlideDown);
+                                    Animation animSlideDown = AnimationUtils.loadAnimation(context, R.anim.view_hide);
+                                    linearLayoutParkingAdapterBackBottom.startAnimation(animSlideDown);
+                                    linearLayoutParkingBackNGetDirection.startAnimation(animSlideDown);
                                 }
 
                             };
@@ -2454,20 +2530,30 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                             handler.postDelayed(runnable, interval);
 //                        btn.setText("Close Sheet");
                         case BottomSheetBehavior.STATE_COLLAPSED:
-                            Animation animSlideUp = AnimationUtils.loadAnimation(context, R.anim.animation_enter);
-                            linearLayoutBottom.startAnimation(animSlideUp);
-                            if (SharedData.getInstance().getSensorArea() != null) {
-//                                bottomSheetBehavior.setPeekHeight(400);
-                                SensorArea sensorArea = SharedData.getInstance().getSensorArea();
-                                //   Timber.e("Sensor Area from SharedData -> %s", new Gson().toJson(sensorArea));
-                                textViewParkingAreaName.setText(ApplicationUtils.capitalize(sensorArea.getParkingArea()));
-                                textViewParkingAreaCount.setText(sensorArea.getCount());
-                                String distance = new DecimalFormat("##.##").format(sensorArea.getDistance()) + " km";
-                                textViewParkingDistance.setText(distance);
-                                //            textViewParkingTravelTime.setText(sensorArea.getDuration());
-                                getDestinationInfoForDuration(new LatLng(sensorArea.getLat(), sensorArea.getLng()));
-                                layoutVisible(true, textViewParkingAreaName.getText().toString(), textViewParkingAreaCount.getText().toString(), textViewParkingDistance.getText().toString(), new LatLng(sensorArea.getLat(), sensorArea.getLng()));
-                            }
+//                            if (SharedData.getInstance().getSensorArea() != null) {
+////                                bottomSheetBehavior.setPeekHeight(400);
+//                                SensorArea sensorArea = SharedData.getInstance().getSensorArea();
+//                                //   Timber.e("Sensor Area from SharedData -> %s", new Gson().toJson(sensorArea));
+//                                textViewBottomSheetParkingAreaName.setText(ApplicationUtils.capitalize(sensorArea.getParkingArea()));
+//                                textViewBottomSheetParkingAreaCount.setText(sensorArea.getCount());
+//                                String distance = new DecimalFormat("##.##").format(sensorArea.getDistance()) + " km";
+//                                textViewBottomSheetParkingDistance.setText(distance);
+//                                //            textViewParkingTravelTime.setText(sensorArea.getDuration());
+//                                getDestinationInfoForDuration(new LatLng(sensorArea.getLat(), sensorArea.getLng()));
+//                                layoutBottomSheetVisible(true, textViewBottomSheetParkingAreaName.getText().toString(), textViewBottomSheetParkingAreaCount.getText().toString(),
+//                                        textViewBottomSheetParkingDistance.getText().toString(),
+//                                        textViewBottomSheetParkingTravelTime.getText().toString(),
+//                                        new LatLng(sensorArea.getLat(), sensorArea.getLng()));
+//                            }
+//                            SensorArea sensorArea = SharedData.getInstance().getSensorArea();
+//                            layoutBottomSheetVisible(true, textViewBottomSheetParkingAreaName.getText().toString(), textViewBottomSheetParkingAreaCount.getText().toString(),
+//                                    textViewBottomSheetParkingDistance.getText().toString(),
+//                                    textViewBottomSheetParkingTravelTime.getText().toString(),
+//                                    new LatLng(bottomSheetPlaceLatLng.latitude,bottomSheetPlaceLatLng.longitude));
+//                            linearLayoutBottomSheetBottom.setVisibility(View.VISIBLE);
+                            Animation animSlideDown = AnimationUtils.loadAnimation(context, R.anim.view_hide);
+                            linearLayoutParkingAdapterBackBottom.startAnimation(animSlideDown);
+                            linearLayoutParkingBackNGetDirection.startAnimation(animSlideDown);
                             break;
                         case BottomSheetBehavior.STATE_DRAGGING:
                             final int interval1 = 100; // >1 Second
@@ -2475,8 +2561,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                             Runnable runnable1 = new Runnable() {
                                 public void run() {
                                     layoutVisible(false, "", "", "", null);
-                                    Animation animSlideDown = AnimationUtils.loadAnimation(context, R.anim.animation_leave);
-                                    linearLayoutBottom.startAnimation(animSlideDown);
+                                    Animation animSlideDown = AnimationUtils.loadAnimation(context, R.anim.view_hide);
+                                    linearLayoutParkingAdapterBackBottom.startAnimation(animSlideDown);
+                                    linearLayoutParkingBackNGetDirection.startAnimation(animSlideDown);
                                 }
                             };
                             handler1.postAtTime(runnable1, System.currentTimeMillis() + interval1);
@@ -2519,8 +2606,84 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 //            BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
 //            navBar.setVisibility(View.VISIBLE);
             linearLayoutSearchBottom.setVisibility(View.VISIBLE);
+            linearLayoutSearchNameCount.setVisibility(View.GONE);
             textViewSearchParkingAreaCount.setText(count);
             textViewSearchParkingAreaName.setText(ApplicationUtils.capitalize(name));
+
+            bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+                @Override
+                public void onStateChanged(@NonNull View view, int i) {
+                    Timber.e("onStateChanged e dhukche");
+                    switch (i) {
+                        case BottomSheetBehavior.STATE_HIDDEN:
+                            break;
+                        case BottomSheetBehavior.STATE_EXPANDED:
+                            final int interval = 100; // >1 Second
+                            Handler handler = new Handler();
+                            Runnable runnable = new Runnable() {
+                                public void run() {
+                                    layoutSearchVisible(false, "", "", "", null);
+                                    Animation animSlideDown = AnimationUtils.loadAnimation(context, R.anim.view_hide);
+                                    linearLayoutSearchBottomButton.startAnimation(animSlideDown);
+                                }
+
+                            };
+                            handler.postAtTime(runnable, System.currentTimeMillis() + interval);
+                            handler.postDelayed(runnable, interval);
+//                        btn.setText("Close Sheet");
+                        case BottomSheetBehavior.STATE_COLLAPSED:
+//                            if (SharedData.getInstance().getSensorArea() != null) {
+////                                bottomSheetBehavior.setPeekHeight(400);
+//                                SensorArea sensorArea = SharedData.getInstance().getSensorArea();
+//                                //   Timber.e("Sensor Area from SharedData -> %s", new Gson().toJson(sensorArea));
+//                                textViewBottomSheetParkingAreaName.setText(ApplicationUtils.capitalize(sensorArea.getParkingArea()));
+//                                textViewBottomSheetParkingAreaCount.setText(sensorArea.getCount());
+//                                String distance = new DecimalFormat("##.##").format(sensorArea.getDistance()) + " km";
+//                                textViewBottomSheetParkingDistance.setText(distance);
+//                                //            textViewParkingTravelTime.setText(sensorArea.getDuration());
+//                                getDestinationInfoForDuration(new LatLng(sensorArea.getLat(), sensorArea.getLng()));
+//                                layoutBottomSheetVisible(true, textViewBottomSheetParkingAreaName.getText().toString(), textViewBottomSheetParkingAreaCount.getText().toString(),
+//                                        textViewBottomSheetParkingDistance.getText().toString(),
+//                                        textViewBottomSheetParkingTravelTime.getText().toString(),
+//                                        new LatLng(sensorArea.getLat(), sensorArea.getLng()));
+//                            }
+//                            SensorArea sensorArea = SharedData.getInstance().getSensorArea();
+//                            layoutBottomSheetVisible(true, textViewBottomSheetParkingAreaName.getText().toString(), textViewBottomSheetParkingAreaCount.getText().toString(),
+//                                    textViewBottomSheetParkingDistance.getText().toString(),
+//                                    textViewBottomSheetParkingTravelTime.getText().toString(),
+//                                    new LatLng(bottomSheetPlaceLatLng.latitude,bottomSheetPlaceLatLng.longitude));
+//                            linearLayoutBottomSheetBottom.setVisibility(View.VISIBLE);
+                            Animation animSlideDown = AnimationUtils.loadAnimation(context, R.anim.view_hide);
+                            linearLayoutSearchBottomButton.startAnimation(animSlideDown);
+                            break;
+                        case BottomSheetBehavior.STATE_DRAGGING:
+                            final int interval1 = 100; // >1 Second
+                            Handler handler1 = new Handler();
+                            Runnable runnable1 = new Runnable() {
+                                public void run() {
+                                    layoutSearchVisible(false, "", "", "", null);
+                                    Animation animSlideDown = AnimationUtils.loadAnimation(context, R.anim.view_hide);
+                                    linearLayoutSearchBottomButton.startAnimation(animSlideDown);
+                                }
+                            };
+                            handler1.postAtTime(runnable1, System.currentTimeMillis() + interval1);
+                            handler1.postDelayed(runnable1, interval1);
+                            break;
+                        case BottomSheetBehavior.STATE_SETTLING:
+                            break;
+                        case BottomSheetBehavior.STATE_HALF_EXPANDED:
+//                        layoutBottomSheetVisible(false, "", "", "", "", null);
+                            break;
+                    }
+                }
+
+                @Override
+                public void onSlide(@NonNull View view, float slideOffset) {
+                    if (isAdded()) {
+//                    bottomSheetAdapter.isItemClicked = false;
+                    }
+                }
+            });
         } else {
 //            BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
 //            navBar.setVisibility(View.VISIBLE);
@@ -2543,6 +2706,81 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 //            navBar.setVisibility(View.VISIBLE);
             linearLayoutMarkerNameCount.setVisibility(View.GONE);
             linearLayoutMarkerBottom.setVisibility(View.VISIBLE);
+
+            bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+                @Override
+                public void onStateChanged(@NonNull View view, int i) {
+                    Timber.e("onStateChanged e dhukche");
+                    switch (i) {
+                        case BottomSheetBehavior.STATE_HIDDEN:
+                            break;
+                        case BottomSheetBehavior.STATE_EXPANDED:
+                            final int interval = 100; // >1 Second
+                            Handler handler = new Handler();
+                            Runnable runnable = new Runnable() {
+                                public void run() {
+                                    layoutMarkerVisible(false, "", "", "", null);
+                                    Animation animSlideDown = AnimationUtils.loadAnimation(context, R.anim.view_hide);
+                                    linearLayoutMarkerBackNGetDirection.startAnimation(animSlideDown);
+                                }
+
+                            };
+                            handler.postAtTime(runnable, System.currentTimeMillis() + interval);
+                            handler.postDelayed(runnable, interval);
+//                        btn.setText("Close Sheet");
+                        case BottomSheetBehavior.STATE_COLLAPSED:
+//                            if (SharedData.getInstance().getSensorArea() != null) {
+////                                bottomSheetBehavior.setPeekHeight(400);
+//                                SensorArea sensorArea = SharedData.getInstance().getSensorArea();
+//                                //   Timber.e("Sensor Area from SharedData -> %s", new Gson().toJson(sensorArea));
+//                                textViewBottomSheetParkingAreaName.setText(ApplicationUtils.capitalize(sensorArea.getParkingArea()));
+//                                textViewBottomSheetParkingAreaCount.setText(sensorArea.getCount());
+//                                String distance = new DecimalFormat("##.##").format(sensorArea.getDistance()) + " km";
+//                                textViewBottomSheetParkingDistance.setText(distance);
+//                                //            textViewParkingTravelTime.setText(sensorArea.getDuration());
+//                                getDestinationInfoForDuration(new LatLng(sensorArea.getLat(), sensorArea.getLng()));
+//                                layoutBottomSheetVisible(true, textViewBottomSheetParkingAreaName.getText().toString(), textViewBottomSheetParkingAreaCount.getText().toString(),
+//                                        textViewBottomSheetParkingDistance.getText().toString(),
+//                                        textViewBottomSheetParkingTravelTime.getText().toString(),
+//                                        new LatLng(sensorArea.getLat(), sensorArea.getLng()));
+//                            }
+//                            SensorArea sensorArea = SharedData.getInstance().getSensorArea();
+//                            layoutBottomSheetVisible(true, textViewBottomSheetParkingAreaName.getText().toString(), textViewBottomSheetParkingAreaCount.getText().toString(),
+//                                    textViewBottomSheetParkingDistance.getText().toString(),
+//                                    textViewBottomSheetParkingTravelTime.getText().toString(),
+//                                    new LatLng(bottomSheetPlaceLatLng.latitude,bottomSheetPlaceLatLng.longitude));
+//                            linearLayoutBottomSheetBottom.setVisibility(View.VISIBLE);
+                            Animation animSlideDown = AnimationUtils.loadAnimation(context, R.anim.view_hide);
+                            linearLayoutMarkerBackNGetDirection.startAnimation(animSlideDown);
+                            break;
+                        case BottomSheetBehavior.STATE_DRAGGING:
+                            final int interval1 = 100; // >1 Second
+                            Handler handler1 = new Handler();
+                            Runnable runnable1 = new Runnable() {
+                                public void run() {
+                                    layoutMarkerVisible(false, "", "", "", null);
+                                    Animation animSlideDown = AnimationUtils.loadAnimation(context, R.anim.view_hide);
+                                    linearLayoutMarkerBackNGetDirection.startAnimation(animSlideDown);
+                                }
+                            };
+                            handler1.postAtTime(runnable1, System.currentTimeMillis() + interval1);
+                            handler1.postDelayed(runnable1, interval1);
+                            break;
+                        case BottomSheetBehavior.STATE_SETTLING:
+                            break;
+                        case BottomSheetBehavior.STATE_HALF_EXPANDED:
+//                        layoutBottomSheetVisible(false, "", "", "", "", null);
+                            break;
+                    }
+                }
+
+                @Override
+                public void onSlide(@NonNull View view, float slideOffset) {
+                    if (isAdded()) {
+//                    bottomSheetAdapter.isItemClicked = false;
+                    }
+                }
+            });
 //            textViewMarkerParkingAreaCount.setText(count);
 //            textViewMarkerParkingAreaName.setText(ApplicationUtils.capitalize(name));
         } else {
@@ -3136,8 +3374,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     bottomSheetBehavior.setPeekHeight(400);
 //                    getDirectionBottomSheetButtonClicked = 0;
                 }
-            }
-            else if (getDirectionBottomSheetButtonClicked == 1) {
+            } else if (getDirectionBottomSheetButtonClicked == 1) {
                 ApplicationUtils.showMessageDialog("Once reach your destination, \nConfirm Booking Button will be enabled &" +
                         " you can reserve your booking spot!!!", context);
                 getDirectionBottomSheetButtonClicked--;

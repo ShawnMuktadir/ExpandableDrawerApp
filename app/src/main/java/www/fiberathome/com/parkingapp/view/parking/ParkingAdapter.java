@@ -154,7 +154,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                 Runnable runnable = new Runnable(){
                                     public void run() {
                                         homeFragment.layoutVisible(false, "", "", "",  null);
-                                        Animation animSlideDown = AnimationUtils.loadAnimation(context, R.anim.fade_out);
+                                        Animation animSlideDown = AnimationUtils.loadAnimation(context, R.anim.view_hide);
                                         homeFragment.linearLayoutBottom.startAnimation(animSlideDown);
                                     }
                                 };
@@ -172,7 +172,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                     homeFragment.layoutVisible(true, parkingViewHolder.textViewParkingAreaName.getText().toString(), parkingViewHolder.textViewParkingAreaCount.getText().toString(),
                                             parkingViewHolder.textViewParkingDistance.getText().toString(),
                                             new LatLng(sensorArea.getLat(), sensorArea.getLng()));
-                                    Animation animSlideUp = AnimationUtils.loadAnimation(context,R.anim.fade_in);
+                                    Animation animSlideUp = AnimationUtils.loadAnimation(context,R.anim.view_hide);
                                     homeFragment.linearLayoutBottom.startAnimation(animSlideUp);
                                 }
                                 break;
@@ -183,7 +183,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                 Runnable runnable1 = new Runnable(){
                                     public void run() {
                                         homeFragment.layoutVisible(false, "", "", "",  null);
-                                        Animation animSlideDown = AnimationUtils.loadAnimation(context, R.anim.fade_out);
+                                        Animation animSlideDown = AnimationUtils.loadAnimation(context, R.anim.view_hide);
                                         homeFragment.linearLayoutBottom.startAnimation(animSlideDown);
                                     }
                                 };

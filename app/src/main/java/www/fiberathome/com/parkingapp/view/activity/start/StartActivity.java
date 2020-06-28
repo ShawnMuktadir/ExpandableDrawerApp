@@ -15,9 +15,12 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 
+import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.view.activity.login.LoginActivity;
 import www.fiberathome.com.parkingapp.view.activity.main.MainActivity;
+import www.fiberathome.com.parkingapp.view.activity.permission.PermissionActivity;
 import www.fiberathome.com.parkingapp.view.activity.registration.SignUpActivity;
 import www.fiberathome.com.parkingapp.utils.BaseActivity;
 import www.fiberathome.com.parkingapp.data.preference.SharedPreManager;
@@ -97,8 +100,23 @@ public class StartActivity extends BaseActivity implements View.OnClickListener 
                     // sleep(1000);
 
                     // Check user is logged in
-                    if (SharedPreManager.getInstance(getApplicationContext()).isLoggedIn()) {
+                    if (SharedPreManager.getInstance(getApplicationContext()).isLoggedIn() && SharedPreManager.getInstance(context) != null && SharedPreManager.getInstance(context).isWaitingForLocationPermission()) {
+                        Timber.e("activity start if -> %s",SharedPreManager.getInstance(context).isWaitingForLocationPermission());
                         Intent intent = new Intent(StartActivity.this, MainActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        finish();
+                    }
+                    else if (SharedPreManager.getInstance(getApplicationContext()).isLoggedIn() && !SharedPreManager.getInstance(context).isWaitingForLocationPermission()) {
+                        Timber.e("activity start else if -> %s",SharedPreManager.getInstance(context).isWaitingForLocationPermission());
+                        Intent intent = new Intent(StartActivity.this, PermissionActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        finish();
+                    }
+                    else {
+                        Timber.e("activity start else -> %s",SharedPreManager.getInstance(context).isWaitingForLocationPermission());
+                        Intent intent = new Intent(StartActivity.this, LoginActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                         finish();

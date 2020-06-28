@@ -13,6 +13,7 @@ public class SharedPreManager {
     private static final String KEY_VEHICLE_NO = "vehicle_no";
     private static final String KEY_PROFILE_PIC = "profile_pic";
     private static final String KEY_ID = "id";
+    private static final String KEY_IS_LOCATION_PERMISSION = "KEY_IS_LOCATION_PERMISSION";
 
     // SMS Tags
     private static final String KEY_IS_WAITING_FOR_SMS = "isWaitingForSMS22";
@@ -51,7 +52,6 @@ public class SharedPreManager {
         editor.apply();
     }
 
-
     public void setIsWaitingForSMS(boolean isWaiting){
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -64,7 +64,17 @@ public class SharedPreManager {
         return sharedPreferences.getBoolean(KEY_IS_WAITING_FOR_SMS, false);
     }
 
+    public void setIsLocationPermissionGiven(boolean isLocationPermissionGiven){
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(KEY_IS_LOCATION_PERMISSION, isLocationPermissionGiven);
+        editor.apply();
+    }
 
+    public boolean isWaitingForLocationPermission(){
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getBoolean(KEY_IS_LOCATION_PERMISSION, false);
+    }
 
     public boolean isLoggedIn(){
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
@@ -74,7 +84,6 @@ public class SharedPreManager {
             return false;
         }
     }
-
 
     public User getUser(){
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);

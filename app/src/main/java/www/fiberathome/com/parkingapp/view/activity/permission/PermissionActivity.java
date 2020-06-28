@@ -22,6 +22,7 @@ import com.karumi.dexter.PermissionToken;
 
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.data.preference.SharedData;
+import www.fiberathome.com.parkingapp.data.preference.SharedPreManager;
 import www.fiberathome.com.parkingapp.listener.DexterPermissionListener;
 import www.fiberathome.com.parkingapp.listener.PermissionInterface;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
@@ -44,9 +45,8 @@ public class PermissionActivity extends AppCompatActivity implements PermissionI
         permissionListener = new DexterPermissionListener(this);
     }
 
-
     public void takeLocationPermission(View view) {
-        Dexter.withActivity(this).withPermission(Manifest.permission.ACCESS_FINE_LOCATION).withListener(permissionListener).check();
+        Dexter.withContext(this).withPermission(Manifest.permission.ACCESS_FINE_LOCATION).withListener(permissionListener).check();
     }
 
     @Override
@@ -54,6 +54,7 @@ public class PermissionActivity extends AppCompatActivity implements PermissionI
         switch (permissionName) {
             case Manifest.permission.ACCESS_FINE_LOCATION:
                 Intent intent = new Intent(PermissionActivity.this, MainActivity.class);
+                SharedPreManager.getInstance(context).setIsLocationPermissionGiven(true);
                 startActivity(intent);
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -61,7 +62,7 @@ public class PermissionActivity extends AppCompatActivity implements PermissionI
                         finish();
                     }
                 }, 1000);
-                SharedData.getInstance().setLocationPermission(true);
+
                 break;
         }
     }
@@ -72,6 +73,7 @@ public class PermissionActivity extends AppCompatActivity implements PermissionI
         switch (permissionName) {
             case Manifest.permission.ACCESS_FINE_LOCATION:
                 permissionTV.setText("Permission Denied permanently");
+                SharedPreManager.getInstance(context).setIsLocationPermissionGiven(false);
                 permissionTV.setTextColor(ContextCompat.getColor(this, R.color.LogoRed));
                 break;
         }
@@ -109,6 +111,7 @@ public class PermissionActivity extends AppCompatActivity implements PermissionI
         switch (permissionName) {
             case Manifest.permission.ACCESS_FINE_LOCATION:
                 permissionTV.setText("Permission Denied,You can't search nearest \n parking location for you. For further use please allow location");
+                SharedPreManager.getInstance(context).setIsLocationPermissionGiven(false);
                 permissionTV.setTextColor(ContextCompat.getColor(this, R.color.LogoRed));
                 break;
         }
@@ -155,6 +158,7 @@ public class PermissionActivity extends AppCompatActivity implements PermissionI
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
                         PermissionActivity.super.onBackPressed();
+                        SharedPreManager.getInstance(context).setIsLocationPermissionGiven(false);
                     }
                 }).create();
         androidx.appcompat.app.AlertDialog dialog = builder.create();

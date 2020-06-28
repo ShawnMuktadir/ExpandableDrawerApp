@@ -173,6 +173,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
                                         homeFragment.layoutBottomSheetVisible(false, "", "", "", "", null);
                                         Animation animSlideDown = AnimationUtils.loadAnimation(context, R.anim.view_hide);
                                         homeFragment.linearLayoutBottomSheetBottom.startAnimation(animSlideDown);
+                                        homeFragment.linearLayoutMarkerBackNGetDirection.setVisibility(View.GONE);
                                     }
                                 };
                                 handler.postAtTime(runnable, System.currentTimeMillis() + interval);
@@ -191,6 +192,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
                                             new LatLng(bookingSensors.getLat(), bookingSensors.getLng()));
                                     Animation animSlideUp = AnimationUtils.loadAnimation(context, R.anim.view_show);
                                     homeFragment.linearLayoutBottomSheetBottom.startAnimation(animSlideUp);
+                                    homeFragment.linearLayoutMarkerBackNGetDirection.setVisibility(View.GONE);
                                 }
                                 break;
 
@@ -202,6 +204,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
                                         homeFragment.layoutBottomSheetVisible(false, "", "", "", "", null);
                                         Animation animSlideDown = AnimationUtils.loadAnimation(context, R.anim.view_hide);
                                         homeFragment.linearLayoutBottomSheetBottom.startAnimation(animSlideDown);
+                                        homeFragment.linearLayoutMarkerBackNGetDirection.setVisibility(View.GONE);
                                     }
                                 };
                                 handler1.postAtTime(runnable1, System.currentTimeMillis() + interval1);
