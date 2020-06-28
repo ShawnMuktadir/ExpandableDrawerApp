@@ -256,7 +256,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
     private LatLng origin = null;
     private String fromCurrentLocationDistance;
     private String fromCurrentLocationDuration;
-    Location onConnectedLocation;
+    private Location onConnectedLocation;
 
     private void getDestinationDurationInfoForSearchLayout(Context context, LatLng latLngDestination, TextBookingViewHolderx textBookingViewHolder, int type) {
 
