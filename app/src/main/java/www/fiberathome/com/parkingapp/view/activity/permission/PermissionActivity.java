@@ -110,7 +110,7 @@ public class PermissionActivity extends AppCompatActivity implements PermissionI
     public void showPermissionDenied(String permissionName) {
         switch (permissionName) {
             case Manifest.permission.ACCESS_FINE_LOCATION:
-                permissionTV.setText("Permission Denied,You can't search nearest \n parking location for you. For further use please allow location");
+                permissionTV.setText("Permission Denied,You can't search nearest \n parking location from you. For further use please allow location");
                 SharedPreManager.getInstance(context).setIsLocationPermissionGiven(false);
                 permissionTV.setTextColor(ContextCompat.getColor(this, R.color.LogoRed));
                 break;

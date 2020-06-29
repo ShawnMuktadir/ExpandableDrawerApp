@@ -114,12 +114,10 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
 
         holder.itemView.setOnClickListener(v -> {
-//            isItemClicked = true;
             selectedItem = 0;
             Collections.swap(bookingSensorsArrayList, position, 0);
             notifyItemMoved(position, 0);
             Timber.e("list ok");
-//            notifyDataSetChanged();
 
             try {
                 notifyDataSetChanged();
