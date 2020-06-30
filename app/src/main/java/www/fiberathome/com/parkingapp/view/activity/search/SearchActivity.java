@@ -123,6 +123,7 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
     }
 
     private TextWatcher filterTextWatcher = new TextWatcher() {
+
         public void afterTextChanged(Editable s) {
 //            if (!s.toString().equals("")) {
 //                mAutoCompleteAdapter.getFilter().filter(s.toString());
@@ -135,16 +136,14 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
         }
-//!s.toString().equals("")
+
+        //!s.toString().equals("")
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if (s.toString().length()>3) {
+            if (s.toString().length() > 2) {
                 mAutoCompleteAdapter.getFilter().filter(s.toString());
                 mAutoCompleteAdapter.notifyDataSetChanged();
             }
         }
-
-
-
     };
 
     private void setPlacesRecyclerAdapter() {
@@ -176,12 +175,12 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
         if (place == null) {
             Timber.e("place null");
             setResult(RESULT_CANCELED, resultIntent);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
+//            new Handler().postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
                     finish();
-                }
-            }, 1000);
+//                }
+//            }, 500);
 //            overridePendingTransition(0, 0);
         } else {
             Timber.e("place not null");
@@ -196,12 +195,12 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
                 resultIntent.putExtra(NEW_PLACE_SELECTED, selectedplace);
                 setResult(RESULT_OK, resultIntent);
                 Log.d("ShawnClick", "click: ");
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
                         finish();
-                    }
-                }, 1000);
+//                    }
+//                }, 500);
 //                overridePendingTransition(0, 0);
             }
         }
@@ -210,7 +209,7 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
     @Override
     protected void onPause() {
         super.onPause();
-        if (isFinishing()){
+        if (isFinishing()) {
             overridePendingTransition(R.anim.animation_enter, R.anim.animation_leave);
         }
     }
@@ -218,41 +217,5 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-    }
-
-    public static boolean isLocationEnabled(Context context) {
-        LocationManager lm = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
-        boolean gps_enabled = false;
-        boolean network_enabled = false;
-
-        try {
-            if (lm != null) {
-                gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-            }
-        } catch(Exception ex) {
-            ex.printStackTrace();
-        }
-
-        try {
-            if (lm != null) {
-                network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-            }
-        } catch(Exception ex) {
-            ex.printStackTrace();
-        }
-
-        if(!gps_enabled && !network_enabled) {
-            // notify user
-            new AlertDialog.Builder(context)
-                    .setMessage(R.string.gps_network_not_enabled)
-                    .setPositiveButton(R.string.open_location_settings, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                            context.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                        }
-                    }).setNegativeButton(R.string.cancel,null)
-                            .show();
-        }
-        return gps_enabled && network_enabled;
     }
 }

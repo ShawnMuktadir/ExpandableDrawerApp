@@ -25,6 +25,7 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.android.libraries.places.api.model.AutocompletePrediction;
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
 import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse;
@@ -96,10 +97,11 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<PlacesAutoCo
             protected void publishResults(CharSequence constraint, FilterResults results) {
                 if (results != null && results.count > 0) {
                     // The API returned at least one result, update the data.
+                    mResultList = (ArrayList<PlaceAutocomplete>) results.values;
                     notifyDataSetChanged();
                 } else {
                     // The API did not return any results, invalidate the data set.
-                    //notifyDataSetInvalidated();
+//                    notifyDataSetInvalidated();
                 }
             }
         };
@@ -113,9 +115,9 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<PlacesAutoCo
         // Use the builder to create a FindAutocompletePredictionsRequest.
         FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
                 // Call either setLocationBias() OR setLocationRestriction().
-                //.setLocationBias(bounds)
-                //.setCountry("IN")
-                //.setTypeFilter(TypeFilter.ADDRESS)
+//                .setLocationBias(bounds)
+//                .setCountry("IN")
+//                .setTypeFilter(TypeFilter.ADDRESS)
                 .setSessionToken(token)
                 .setCountry("BD")
                 .setQuery(constraint.toString())
@@ -219,7 +221,7 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<PlacesAutoCo
         return mResultList.get(position);
     }
 
-    public class PredictionHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static class PredictionHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView address, area;
         private LinearLayout mRow;
 
@@ -262,7 +264,7 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<PlacesAutoCo
     /**
      * Holder for Places Geo Data Autocomplete API results.
      */
-    public class PlaceAutocomplete {
+    public static class PlaceAutocomplete {
 
         public CharSequence placeId;
         public CharSequence address, area;
@@ -273,6 +275,7 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<PlacesAutoCo
             this.address = address;
         }
 
+        @NonNull
         @Override
         public String toString() {
             return area.toString();

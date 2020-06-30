@@ -14,9 +14,10 @@
         android:ellipsize="end"
         android:padding="8dp"
         android:singleLine="true"
+        android:fontFamily="sans-serif-condensed"
         android:text="@string/lorum"
-        android:textColor="#000"
-        android:textSize="16sp" />
+        android:textColor="@color/black"
+        android:textSize="@dimen/dimTex15" />
 
     <TextView
         android:id="@+id/address"

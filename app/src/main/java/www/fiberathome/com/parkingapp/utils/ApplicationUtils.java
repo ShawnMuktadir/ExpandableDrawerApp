@@ -2,6 +2,8 @@ package www.fiberathome.com.parkingapp.utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
@@ -12,10 +14,12 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.IBinder;
+import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.Html;
 import android.text.Spannable;
@@ -616,5 +620,41 @@ public class ApplicationUtils {
         String permission = "android.permission.ACCESS_FINE_LOCATION";
         int res = context.checkCallingOrSelfPermission(permission);
         return (res == PackageManager.PERMISSION_GRANTED);
+    }
+
+    public static boolean isLocationEnabled(Context context) {
+        LocationManager lm = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+
+        try {
+            if (lm != null) {
+                gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            }
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+
+        try {
+            if (lm != null) {
+                network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+            }
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+
+        if(!gps_enabled && !network_enabled) {
+            // notify user
+            new AlertDialog.Builder(context)
+                    .setMessage(R.string.gps_network_not_enabled)
+                    .setPositiveButton(R.string.open_location_settings, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                            context.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                        }
+                    }).setNegativeButton(R.string.cancel,null)
+                    .show();
+        }
+        return gps_enabled && network_enabled;
     }
 }
