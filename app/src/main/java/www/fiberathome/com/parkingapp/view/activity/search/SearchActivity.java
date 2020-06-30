@@ -139,7 +139,7 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
 
         //!s.toString().equals("")
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if (s.toString().length() > 2) {
+            if (s.toString().length() > 3) {
                 mAutoCompleteAdapter.getFilter().filter(s.toString());
                 mAutoCompleteAdapter.notifyDataSetChanged();
             }

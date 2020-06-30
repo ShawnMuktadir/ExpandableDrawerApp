@@ -112,7 +112,6 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         holder.textViewParkingDistance.setText(new DecimalFormat("##.##").format(bookingSensors.getDistance()) + " km");
         holder.textViewParkingTravelTime.setText(bookingSensors.getDuration());
 
-
         holder.itemView.setOnClickListener(v -> {
             selectedItem = 0;
             Collections.swap(bookingSensorsArrayList, position, 0);
@@ -120,7 +119,8 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
             Timber.e("list ok");
 
             try {
-                notifyDataSetChanged();
+//                notifyDataSetChanged();
+                notifyItemChanged(position);
                 clickListener.onClick();
 //                if (homeFragment.bottomSheetPlaceLatLng != null) {
 //                    Toast.makeText(context, "Clicked!!!", Toast.LENGTH_SHORT).show();
@@ -323,6 +323,11 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         Timber.e("updateData call hoiche");
         bookingSensorsArrayList.clear();
         bookingSensorsArrayList.addAll(bookingSensors);
+        notifyDataSetChanged();
+    }
+
+    public void onRefreshAdapter(ArrayList<BookingSensors> bookingSensors) {
+        bookingSensorsArrayList = bookingSensors;
         notifyDataSetChanged();
     }
 
