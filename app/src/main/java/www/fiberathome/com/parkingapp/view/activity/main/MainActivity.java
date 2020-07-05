@@ -435,7 +435,6 @@ public class MainActivity extends AppCompatActivity implements MainView, Navigat
 //                break;
 
         }
-//        drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
 

@@ -45,24 +45,6 @@ public class BookingSensors {
         this.data = data;
     }
 
-    public BookingSensors(String parkingArea, double lat, double lng, double distance, String count) {
-        this.parkingArea = parkingArea;
-        this.lat = lat;
-        this.lng = lng;
-        this.distance = distance;
-        this.count = count;
-//        this.duration = duration;
-    }
-
-    public BookingSensors(String parkingArea, double lat, double lng, double distance, String count, String duration) {
-        this.parkingArea = parkingArea;
-        this.lat = lat;
-        this.lng = lng;
-        this.distance = distance;
-        this.count = count;
-        this.duration = duration;
-    }
-
     public int compareTo(BookingSensors element) {
         int res = 0;
         if (this.distance < element.getDistance()) {

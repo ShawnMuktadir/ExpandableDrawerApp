@@ -194,16 +194,16 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<RecyclerView.View
     private void getDestinationDurationInfo(Context context, LatLng latLngDestination, BookingSensorAdapter.BookingViewHolder bookingViewHolder) {
 
         String serverKey = context.getResources().getString(R.string.google_maps_key); // Api Key For Google Direction API \\
-        if (homeFragment.searchPlaceLatLng != null && homeFragment.bottomSheetSearch == 1) {
-            origin = new LatLng(homeFragment.searchPlaceLatLng.latitude, homeFragment.searchPlaceLatLng.longitude);
-            Timber.e("adapter if e dhukche location, bottomSheetSearch -> %s %s", origin, homeFragment.bottomSheetSearch);
-        } else if (homeFragment.searchPlaceLatLng != null && homeFragment.bottomSheetSearch == 0) {
+//        if (homeFragment.searchPlaceLatLng != null && homeFragment.bottomSheetSearch == 1) {
+//            origin = new LatLng(homeFragment.searchPlaceLatLng.latitude, homeFragment.searchPlaceLatLng.longitude);
+//            Timber.e("adapter if e dhukche location, bottomSheetSearch -> %s %s", origin, homeFragment.bottomSheetSearch);
+//        } else if (homeFragment.searchPlaceLatLng != null && homeFragment.bottomSheetSearch == 0) {
+//            origin = new LatLng(HomeFragment.currentLocation.getLatitude(), HomeFragment.currentLocation.getLongitude());
+//            Timber.e("adapter if else e dhukche location, bottomSheetSearch -> %s %s", origin, homeFragment.bottomSheetSearch);
+//        } else {
             origin = new LatLng(HomeFragment.currentLocation.getLatitude(), HomeFragment.currentLocation.getLongitude());
-            Timber.e("adapter if else e dhukche location, bottomSheetSearch -> %s %s", origin, homeFragment.bottomSheetSearch);
-        } else {
-            origin = new LatLng(HomeFragment.currentLocation.getLatitude(), HomeFragment.currentLocation.getLongitude());
-            Timber.e("adapter else e dhukche location, bottomSheetSearch -> %s %s", origin, homeFragment.bottomSheetSearch);
-        }
+//            Timber.e("adapter else e dhukche location, bottomSheetSearch -> %s %s", origin, homeFragment.bottomSheetSearch);
+//        }
 
         LatLng destination = latLngDestination;
 //        LatLng destination;

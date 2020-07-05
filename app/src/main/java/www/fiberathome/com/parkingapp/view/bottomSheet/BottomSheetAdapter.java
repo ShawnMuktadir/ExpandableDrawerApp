@@ -3,13 +3,10 @@ package www.fiberathome.com.parkingapp.view.bottomSheet;
 import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,29 +38,14 @@ import www.fiberathome.com.parkingapp.model.BookingSensors;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.view.fragments.HomeFragment;
 
-public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.TextBookingViewHolderx> {
+public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.TextBookingViewHolder> {
     private final String TAG = getClass().getSimpleName();
     public Context context;
     private HomeFragment homeFragment;
     private ArrayList<BookingSensors> bookingSensorsArrayList;
-    public BottomSheetSensorAdapter.BookingViewHolder viewHolder;
     public Location location;
     private int selectedItem = -1;
-    RecyclerView.ViewHolder holder;
-    private View view = null;
     private int count = 0;
-    public boolean isItemClicked = false;
-    private boolean isExpanded = false;
-
-    private onBottomSheetItemClickListener clickListener;
-
-    public void setClickListener(onBottomSheetItemClickListener clickListener) {
-        this.clickListener = clickListener;
-    }
-
-    public interface onBottomSheetItemClickListener {
-        void onClick();
-    }
 
     public BottomSheetAdapter(Context context, HomeFragment homeFragment, ArrayList<BookingSensors> sensors, Location onConnectedLocation) {
         this.context = context;
@@ -74,13 +56,13 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
     @NonNull
     @Override
-    public TextBookingViewHolderx onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public TextBookingViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.bottom_sheet_text_recycler_item, parent, false);
-        return new TextBookingViewHolderx(view);
+        return new TextBookingViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull TextBookingViewHolderx holder, int position) {
+    public void onBindViewHolder(@NonNull TextBookingViewHolder holder, int position) {
         BookingSensors bookingSensors = bookingSensorsArrayList.get(position);
 
         if (bookingSensors.type == BookingSensors.TEXT_INFO_TYPE) {
@@ -104,10 +86,9 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
         } else {
             holder.relativeLayoutxtBotoom.setVisibility(View.GONE);
-
         }
 
-        holder.textViewParkingAreaName.setText(ApplicationUtils.capitalize(bookingSensors.getParkingArea()));
+        holder.textViewParkingAreaName.setText(ApplicationUtils.capitalize(bookingSensors.getParkingArea().trim()));
         holder.textViewParkingAreaCount.setText(bookingSensors.getCount());
         holder.textViewParkingDistance.setText(new DecimalFormat("##.##").format(bookingSensors.getDistance()) + " km");
         holder.textViewParkingTravelTime.setText(bookingSensors.getDuration());
@@ -116,16 +97,9 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
             selectedItem = 0;
             Collections.swap(bookingSensorsArrayList, position, 0);
             notifyItemMoved(position, 0);
-            Timber.e("list ok");
 
             try {
-//                notifyDataSetChanged();
-                notifyItemChanged(position);
-                clickListener.onClick();
-//                if (homeFragment.bottomSheetPlaceLatLng != null) {
-//                    Toast.makeText(context, "Clicked!!!", Toast.LENGTH_SHORT).show();
-//                    homeFragment.bottomSheetPlaceLatLngNearestLocations();
-//                }
+                notifyDataSetChanged();
                 homeFragment.linearLayoutSearchBottomButton.setVisibility(View.GONE);
             } catch (Exception e) {
                 Timber.e(e);
@@ -146,87 +120,6 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
             homeFragment.bottomSheetBehavior.setHideable(false);
             homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             homeFragment.bottomSheetBehavior.setPeekHeight(400);
-//            if (isItemClicked) {
-//                Timber.e("isItemClicked -> %s", isItemClicked);
-//                Timber.e("bottomSheet if");
-//                homeFragment.bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-//                    @Override
-//                    public void onStateChanged(@NonNull View view, int i) {
-//                        switch (i) {
-//                            case BottomSheetBehavior.STATE_HIDDEN:
-//                                break;
-//                            case BottomSheetBehavior.STATE_EXPANDED:
-//
-//                                if (homeFragment.mMap != null)
-//                                    homeFragment.mMap.clear();
-////                                homeFragment.fetchSensors(onConnectedLocation);
-//
-//                                final int interval = 100; // 1 Second
-//                                Handler handler = new Handler();
-//                                Runnable runnable = new Runnable() {
-//                                    public void run() {
-//                                        homeFragment.layoutBottomSheetVisible(false, "", "", "", "", null);
-//                                        Animation animSlideDown = AnimationUtils.loadAnimation(context, R.anim.view_hide);
-//                                        homeFragment.linearLayoutBottomSheetBottom.startAnimation(animSlideDown);
-//                                        homeFragment.linearLayoutMarkerBackNGetDirection.setVisibility(View.GONE);
-//                                    }
-//                                };
-//                                handler.postAtTime(runnable, System.currentTimeMillis() + interval);
-//                                handler.postDelayed(runnable, interval);
-//
-////                                homeFragment.layoutBottomSheetVisible(false, "", "", "", "", null);
-////                        btn.setText("Close Sheet");
-//                            case BottomSheetBehavior.STATE_COLLAPSED:
-//
-//                                Timber.e("bottom sheet expanded");
-//                                isExpanded = true;
-//                                if (isExpanded) {
-//                                    homeFragment.layoutBottomSheetVisible(true, holder.textViewParkingAreaName.getText().toString(), holder.textViewParkingAreaCount.getText().toString(),
-//                                            holder.textViewParkingDistance.getText().toString(),
-//                                            holder.textViewParkingTravelTime.getText().toString(),
-//                                            new LatLng(bookingSensors.getLat(), bookingSensors.getLng()));
-//                                    Animation animSlideUp = AnimationUtils.loadAnimation(context, R.anim.view_show);
-//                                    homeFragment.linearLayoutBottomSheetBottom.startAnimation(animSlideUp);
-//                                    homeFragment.linearLayoutMarkerBackNGetDirection.setVisibility(View.GONE);
-//                                }
-//                                break;
-//
-//                            case BottomSheetBehavior.STATE_DRAGGING:
-//                                final int interval1 = 100; // 1 Second
-//                                Handler handler1 = new Handler();
-//                                Runnable runnable1 = new Runnable() {
-//                                    public void run() {
-//                                        homeFragment.layoutBottomSheetVisible(false, "", "", "", "", null);
-//                                        Animation animSlideDown = AnimationUtils.loadAnimation(context, R.anim.view_hide);
-//                                        homeFragment.linearLayoutBottomSheetBottom.startAnimation(animSlideDown);
-//                                        homeFragment.linearLayoutMarkerBackNGetDirection.setVisibility(View.GONE);
-//                                    }
-//                                };
-//                                handler1.postAtTime(runnable1, System.currentTimeMillis() + interval1);
-//                                handler1.postDelayed(runnable1, interval1);
-//                                break;
-//                            case BottomSheetBehavior.STATE_SETTLING:
-//
-//                                break;
-//                            case BottomSheetBehavior.STATE_HALF_EXPANDED:
-////                                homeFragment.layoutBottomSheetVisible(false, "", "", "", "", null);
-////                                Animation animSlideDown = AnimationUtils.loadAnimation(context, R.anim.view_hide);
-////                                homeFragment.linearLayoutBottomSheetBottom.startAnimation(animSlideDown);
-//                                break;
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onSlide(@NonNull View view, float slideOffset) {
-//
-//                    }
-//                });
-//
-//                if (isExpanded) {
-//                    Timber.e("isExpanded method e dhukche");
-//                    homeFragment.layoutBottomSheetVisible(false, "", "", "", "", null);
-//                }
-//            }
 
         });
 
@@ -247,13 +140,24 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         return bookingSensorsArrayList.size();
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        switch (bookingSensorsArrayList.get(position).type) {
+            case 0:
+                return BookingSensors.TEXT_INFO_TYPE;
+            case 1:
+                return BookingSensors.INFO_TYPE;
+            default:
+                return -1;
+        }
+    }
 
     private LatLng origin = null;
     private String fromCurrentLocationDistance;
     private String fromCurrentLocationDuration;
     private Location onConnectedLocation;
 
-    private void getDestinationDurationInfoForSearchLayout(Context context, LatLng latLngDestination, TextBookingViewHolderx textBookingViewHolder, int type) {
+    private void getDestinationDurationInfoForSearchLayout(Context context, LatLng latLngDestination, TextBookingViewHolder textBookingViewHolder, int type) {
 
         if (SharedData.getInstance().getOnConnectedLocation() != null) {
             onConnectedLocation = SharedData.getInstance().getOnConnectedLocation();
@@ -326,13 +230,8 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         notifyDataSetChanged();
     }
 
-    public void onRefreshAdapter(ArrayList<BookingSensors> bookingSensors) {
-        bookingSensorsArrayList = bookingSensors;
-        notifyDataSetChanged();
-    }
-
     // implements View.OnClickListener
-    public static class TextBookingViewHolderx extends RecyclerView.ViewHolder {
+    public static class TextBookingViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.textViewParkingAreaName)
         public TextView textViewParkingAreaName;
@@ -346,16 +245,16 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         public TextView textViewParkingTravelTime;
         @BindView(R.id.textViewStatic)
         public TextView textViewStatic;
-        //        @BindView(R.id.view)
-//        View view;
         @BindView(R.id.relativeLayoutTxt)
         public RelativeLayout relativeLayoutxt;
         @BindView(R.id.textBottom)
         public RelativeLayout relativeLayoutxtBotoom;
 
-        public TextBookingViewHolderx(View itemView) {
+        public TextBookingViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
     }
+
+
 }
