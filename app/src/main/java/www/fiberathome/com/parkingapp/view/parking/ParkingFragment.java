@@ -7,7 +7,6 @@ import android.location.Location;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,8 +31,6 @@ import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,7 +46,6 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.AppConfig;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionEvent;
-import www.fiberathome.com.parkingapp.eventBus.SetMarkerEvent;
 import www.fiberathome.com.parkingapp.model.SensorArea;
 import www.fiberathome.com.parkingapp.utils.OnEditTextRightDrawableTouchListener;
 import www.fiberathome.com.parkingapp.utils.RecyclerTouchListener;
@@ -62,12 +58,10 @@ import static www.fiberathome.com.parkingapp.utils.ApplicationUtils.distance;
 
 public class ParkingFragment extends Fragment implements ParkingAdapter.onItemClickListener {
 
-    private static final String TAG = "ParkingFragment";
+    private static final String TAG = ParkingFragment.class.getCanonicalName();
 
     @BindView(R.id.recyclerViewParking)
     RecyclerView recyclerViewParking;
-    //    @BindView(R.id.swipeRefreshLayout)
-//    SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.textViewNoData)
     TextView textViewNoData;
     @BindView(R.id.linearLayoutBottom)
@@ -115,22 +109,15 @@ public class ParkingFragment extends Fragment implements ParkingAdapter.onItemCl
         ButterKnife.bind(this, view);
         //set on text change listener for edittext
 //        editTextParking.addTextChangedListener(textWatcher());
-        initUI();
         setListeners();
-        fetchAreas();
+        fetchParkingSlotSensors();
         return view;
-    }
-
-    private void initUI() {
-
     }
 
     @SuppressLint("ClickableViewAccessibility")
     private void setListeners() {
 
         imageViewBack.setOnClickListener(v -> {
-//            BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
-//            navBar.setVisibility(View.VISIBLE);
             layoutVisible(false, "", "", 0.0, "", null);
         });
 
@@ -176,7 +163,7 @@ public class ParkingFragment extends Fragment implements ParkingAdapter.onItemCl
                     public void OnDrawableClick() {
                         // The right drawable was clicked. Your action goes here.
                         editTextParking.setText("");
-                        fetchAreas();
+                        fetchParkingSlotSensors();
                     }
                 });
 
@@ -248,7 +235,7 @@ public class ParkingFragment extends Fragment implements ParkingAdapter.onItemCl
 
     private Location onConnectedLocation = null;
 
-    private void fetchAreas() {
+    private void fetchParkingSlotSensors() {
         //initialize the progress dialog and show it
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage("Fetching The Parking Slots....");
@@ -340,8 +327,8 @@ public class ParkingFragment extends Fragment implements ParkingAdapter.onItemCl
 
     @Override
     public void onClick() {
-        EventBus.getDefault().post(new GetDirectionEvent(HomeFragment.location));
         MainActivity parentActivity = (MainActivity) context;
         parentActivity.replaceFragment();
+        EventBus.getDefault().post(new GetDirectionEvent(HomeFragment.location));
     }
 }

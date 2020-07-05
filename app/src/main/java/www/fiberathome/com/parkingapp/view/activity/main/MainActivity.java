@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 
@@ -533,18 +534,18 @@ public class MainActivity extends AppCompatActivity implements MainView, Navigat
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(GetDirectionEvent event) {
         navigationView.getMenu().getItem(0).setChecked(true);
-//        Toast.makeText(getApplicationContext(), "onMessageEvent", Toast.LENGTH_SHORT).show();
-//        bottomNavigationView.setSelectedItemId(R.id.nav_home);
         toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
+                Timber.e("GetDirectionEvent MainActivity called");
                 // Do something after 2s = 2000ms
                 EventBus.getDefault().post(new SetMarkerEvent(event.location));
             }
         }, 2000);
+
     }
 
     @Override

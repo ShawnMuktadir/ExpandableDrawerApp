@@ -6,6 +6,7 @@
     android:layout_gravity="center"
     android:background="?android:attr/selectableItemBackground"
     android:nestedScrollingEnabled="false"
+    android:padding="@dimen/dim3"
     android:gravity="center">
 
 

@@ -121,7 +121,7 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
                         homeFragment.layoutBottomSheetVisible(true, bookingSensors.getParkingArea(), bookingSensors.getCount(),
                                 ((BookingViewHolder) holder).textViewParkingDistance.getText().toString(),
                                 ((BookingViewHolder) holder).textViewParkingTravelTime.getText().toString(),
-                                new LatLng(bookingSensors.getLat(), bookingSensors.getLng()));
+                                new LatLng(bookingSensors.getLat(), bookingSensors.getLng()), true);
 
                         homeFragment.bottomSheetBehavior.setHideable(false);
                         homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -167,7 +167,7 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
                             homeFragment.layoutBottomSheetVisible(true, bookingSensors.getParkingArea(), bookingSensors.getCount(),
                                     ((TextBookingViewHolder) holder).textViewParkingDistance.getText().toString(),
                                     ((TextBookingViewHolder) holder).textViewParkingTravelTime.getText().toString(),
-                                    new LatLng(bookingSensors.getLat(), bookingSensors.getLng()));
+                                    new LatLng(bookingSensors.getLat(), bookingSensors.getLng()), true);
 
                             homeFragment.bottomSheetBehavior.setHideable(false);
                             homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);

@@ -13,7 +13,7 @@
         android:orientation="vertical"
         android:overScrollMode="never"
         app:behavior_hideable="true"
-        app:behavior_peekHeight="300dp"
+        app:behavior_peekHeight="400dp"
         app:layout_behavior="@string/bottom_sheet_behavior">
 
         <View

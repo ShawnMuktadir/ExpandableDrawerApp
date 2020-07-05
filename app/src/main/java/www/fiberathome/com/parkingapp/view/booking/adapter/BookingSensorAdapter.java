@@ -97,10 +97,9 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<RecyclerView.View
                         homeFragment.layoutBottomSheetVisible(true, bookingSensors.getParkingArea(), bookingSensors.getCount(),
                                 ((BookingViewHolder) holder).textViewParkingDistance.getText().toString(),
                                 ((BookingViewHolder) holder).textViewParkingTravelTime.getText().toString(),
-                                new LatLng(bookingSensors.getLat(), bookingSensors.getLng()));
+                                new LatLng(bookingSensors.getLat(), bookingSensors.getLng()), true);
 
                         homeFragment.bottomSheetBehavior.setHideable(false);
-//            homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
                         homeFragment.bottomSheetBehavior.setPeekHeight(400);
                     });
                     break;
@@ -122,7 +121,7 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<RecyclerView.View
                         homeFragment.layoutBottomSheetVisible(true, bookingSensors.getParkingArea(), bookingSensors.getCount(),
                                 ((TextBookingViewHolder) holder).textViewParkingDistance.getText().toString(),
                                 ((TextBookingViewHolder) holder).textViewParkingTravelTime.getText().toString(),
-                                new LatLng(bookingSensors.getLat(), bookingSensors.getLng()));
+                                new LatLng(bookingSensors.getLat(), bookingSensors.getLng()), true);
 
                         homeFragment.bottomSheetBehavior.setHideable(false);
 //            homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);

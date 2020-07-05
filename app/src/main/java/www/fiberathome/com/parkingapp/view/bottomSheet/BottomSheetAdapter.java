@@ -1,5 +1,6 @@
 package www.fiberathome.com.parkingapp.view.bottomSheet;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
@@ -61,6 +62,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         return new TextBookingViewHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull TextBookingViewHolder holder, int position) {
         BookingSensors bookingSensors = bookingSensorsArrayList.get(position);
@@ -97,7 +99,6 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
             selectedItem = 0;
             Collections.swap(bookingSensorsArrayList, position, 0);
             notifyItemMoved(position, 0);
-
             try {
                 notifyDataSetChanged();
                 homeFragment.linearLayoutSearchBottomButton.setVisibility(View.GONE);
@@ -115,7 +116,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
             getDestinationDurationInfoForSearchLayout(context, new LatLng(bookingSensors.getLat(), bookingSensors.getLng()), holder, bookingSensors.type);
             homeFragment.layoutBottomSheetVisible(true, bookingSensors.getParkingArea(), bookingSensors.getCount(),
                     holder.textViewParkingDistance.getText().toString(), holder.textViewParkingTravelTime.getText().toString(),
-                    new LatLng(bookingSensors.getLat(), bookingSensors.getLng()));
+                    new LatLng(bookingSensors.getLat(), bookingSensors.getLng()), true);
 
             homeFragment.bottomSheetBehavior.setHideable(false);
             homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -162,8 +163,8 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         if (SharedData.getInstance().getOnConnectedLocation() != null) {
             onConnectedLocation = SharedData.getInstance().getOnConnectedLocation();
         }
-
-        String serverKey = context.getResources().getString(R.string.google_maps_key); // Api Key For Google Direction API \\
+        // Api Key For Google Direction API \\
+        String serverKey = context.getResources().getString(R.string.google_maps_key);
 
         origin = new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude());
 
