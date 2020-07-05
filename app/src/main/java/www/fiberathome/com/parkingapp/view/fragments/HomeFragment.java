@@ -265,7 +265,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     private int LOCATION_PERMISSION_REQUEST_CODE = 100;
     public BottomSheetBehavior bottomSheetBehavior;
     public LatLng searchPlaceLatLng;
-//    public int bottomSheetSearch;
+    //    public int bottomSheetSearch;
     public static Location currentLocation;
     private Marker currentLocationMarker;
     public LatLng bottomSheetPlaceLatLng;
@@ -605,7 +605,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 //                markerAlreadyClicked++;
 //                bottomSheetAdapter.updateData(bookingSensorsMarkerArrayList);
 //                setBottomSheetRecyclerViewAdapter(bookingSensorsMarkerArrayList);
-            }else {
+            } else {
                 Timber.e("onMarkerClick if else e dhukche");
             }
 //            else if (bookingSensorsMarkerArrayList != null && markerAlreadyClicked == 1) {

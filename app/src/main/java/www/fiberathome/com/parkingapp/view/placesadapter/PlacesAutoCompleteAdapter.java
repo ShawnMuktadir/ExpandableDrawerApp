@@ -41,9 +41,10 @@ import java.util.concurrent.TimeoutException;
 
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 
 public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<PlacesAutoCompleteAdapter.PredictionHolder> implements Filterable {
-    private  final String TAG =getClass().getSimpleName();
+    private final String TAG = getClass().getSimpleName();
     private ArrayList<PlaceAutocomplete> mResultList = new ArrayList<>();
 
     private Context mContext;
@@ -172,41 +173,42 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<PlacesAutoCo
                 Timber.e(e);
             }
             PlaceAutocomplete item;
-            Log.d(TAG, "List size :"+mResultList.size());
-            Log.d(TAG, "position :"+selectedPosition);
+            Log.d(TAG, "List size :" + mResultList.size());
+            Log.d(TAG, "position :" + selectedPosition);
 //            Toast.makeText(mContext,"position:"+position,Toast.LENGTH_SHORT).show();
 //            for (PlaceAutocomplete autoComplete:mResultList) {
 //                Log.d(TAG, "onBindViewHolder: "+autoComplete);
 //            }
 
-                try {
-                    item = getItem(selectedPosition);//mResultList.get(selectedPosition);
-                    if (v.getId() == R.id.item_view) {
+            try {
+                item = getItem(selectedPosition);//mResultList.get(selectedPosition);
+                if (v.getId() == R.id.item_view) {
 
-                        String placeId = String.valueOf(item.placeId);
-                        Timber.e("placeId -> %s", placeId);
+                    String placeId = String.valueOf(item.placeId);
+                    Timber.e("placeId -> %s", placeId);
 
-                        List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS);
-                        FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields).setSessionToken(token).build();
-                        placesClient.fetchPlace(request).addOnSuccessListener(response -> {
-                            Place place = response.getPlace();
-                            final Handler handler = new Handler();
-                            handler.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    clickListener.onClick(place);
-                                }
-                            }, 1000);
-                        }).addOnFailureListener(exception -> {
-                            if (exception instanceof ApiException) {
-                                Toast.makeText(mContext, exception.getMessage() + "", Toast.LENGTH_SHORT).show();
+                    List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS);
+                    FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields).setSessionToken(token).build();
+                    placesClient.fetchPlace(request).addOnSuccessListener(response -> {
+                        Place place = response.getPlace();
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                clickListener.onClick(place);
                             }
-                        });
-                    }
-                }catch (IndexOutOfBoundsException e){
-                    Toast.makeText(mContext, "Please try again", Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "exception: "+e);
+                        }, 1000);
+                    }).addOnFailureListener(exception -> {
+                        if (exception instanceof ApiException) {
+                            Toast.makeText(mContext, exception.getMessage() + "", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
+            } catch (IndexOutOfBoundsException e) {
+//                Toast.makeText(mContext, "Please try again", Toast.LENGTH_SHORT).show();
+                ApplicationUtils.showMessageDialog("Please try again", mContext);
+                Log.d(TAG, "exception: " + e);
+            }
 
 //            throw new RuntimeException("Test Crash");
         });
@@ -282,7 +284,7 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<PlacesAutoCo
         }
     }
 
-    public void clearList(){
+    public void clearList() {
         mResultList.clear();
         notifyDataSetChanged();
     }
