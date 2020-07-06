@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/whiteColor"
+    android:background="@color/white"
+    android:layout_gravity="center"
     android:windowSoftInputMode="adjustPan"
     tools:context=".view.activity.login.LoginActivity">
 
@@ -14,9 +15,8 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/margin_20"
-            android:layout_marginRight="@dimen/margin_20"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/dim20"
             android:orientation="vertical"
             android:windowSoftInputMode="adjustPan">
 
@@ -25,16 +25,16 @@
                 android:layout_width="120dp"
                 android:layout_height="120dp"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/margin_20"
-                android:padding="10dp"
+                android:layout_marginTop="@dimen/dim20"
+                android:padding="@dimen/dim5"
                 android:src="@mipmap/ic_launcher"
                 app:civ_border_color="@color/colorPrimaryDark"
-                app:civ_border_width="2dp" />
+                app:civ_border_width="@dimen/dim2" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/margin_30"
+                android:layout_margin="@dimen/dim20"
                 android:text="@string/signin_title"
                 android:textAlignment="center"
                 android:textColor="@android:color/black"

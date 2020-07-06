@@ -324,7 +324,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     public void onCreate(@Nullable Bundle savedInstanceState) {
         Timber.e(TAG + "onCreate called");
         super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -491,14 +490,15 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public boolean onMarkerClick(Marker marker) {
-        linearLayoutMarkerBottom.setVisibility(View.VISIBLE);
-        bookingSensorsMarkerArrayList.clear();
 
-        if (mMap != null)
+        if (mMap != null) {
             mMap.clear();
+        }
+        linearLayoutMarkerBottom.setVisibility(View.VISIBLE);
+        linearLayoutMarkerBackNGetDirection.setVisibility(View.VISIBLE);
+        bookingSensorsMarkerArrayList.clear();
         fetchSensors(onConnectedLocation);
         bottomSheetBehavior.setPeekHeight(400);
-        linearLayoutMarkerBackNGetDirection.setVisibility(View.VISIBLE);
 
         //calculate Duration
         markerPlaceLatLng = new LatLng(marker.getPosition().latitude, marker.getPosition().longitude);
@@ -698,26 +698,17 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         if (currentLocationMarker != null) {
             currentLocationMarker.remove();
         }
-
-//        MarkerOptions markerOptions = new MarkerOptions();
-//        markerOptions.position(latLng);
-//        markerOptions.title("Current Position");
-//        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car_small));
-//        currentLocationMarker = mMap.addMarker(markerOptions);
-
-        // for making currentLocationMarker maintain bearing in real-time
         currentLocationMarker = mMap.addMarker(new MarkerOptions().position(latLng)
                 .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car_small))
                 .rotation(location.getBearing()).flat(true).anchor(0.5f, 0.5f)
                 .alpha((float) 0.91));
-
     }
 
     @Override
     public void onStart() {
         Timber.e(TAG + "onStart called");
         super.onStart();
-//        EventBus.getDefault().register(this);
+        EventBus.getDefault().register(this);
     }
 
     @Override

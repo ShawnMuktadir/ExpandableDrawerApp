@@ -10,7 +10,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
+        android:gravity="center"
         android:orientation="vertical">
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -29,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:fontFamily="sans-serif-condensed"
+            android:fontFamily="monospace"
             android:text="@string/permission_request"
             android:textColor="@color/black"
             android:textSize="@dimen/dimTex24"
@@ -40,10 +40,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dim35"
-            android:fontFamily="sans-serif-medium"
+            android:fontFamily="monospace"
             android:gravity="center_horizontal"
             android:text="@string/locc_smart_parking_app_needs_permission_to_access_device_location_to_provide_required_services_please_allow_the_permission"
-            android:textColor="@color/black2" />
+            android:textColor="@color/black" />
 
     </LinearLayout>
 

@@ -59,10 +59,9 @@ import www.fiberathome.com.parkingapp.utils.Validator;
 import www.fiberathome.com.parkingapp.view.activity.registration.VerifyPhoneActivity;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private static final String TAG = LoginActivity.class.getSimpleName();
     private Context context;
-
-    private static String TAG = LoginActivity.class.getSimpleName();
-
     private EditText editTextMobile;
     private EditText editTextPassword;
 

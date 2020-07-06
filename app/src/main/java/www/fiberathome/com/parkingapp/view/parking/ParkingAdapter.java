@@ -79,10 +79,10 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView;
-        itemView = LayoutInflater.
+        View itemView = LayoutInflater.
                 from(parent.getContext()).
                 inflate(R.layout.parking_row, parent, false);
+        context = parent.getContext();
         return new ParkingViewHolder(itemView);
     }
 
