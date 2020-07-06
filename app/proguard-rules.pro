@@ -19,13 +19,6 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
--keep class www.fiberathome.com.parkingapp.template.bean.** {*;}
--keep class www.fiberathome.com.parkingapp.wxapi.bean.** {*;}
--keep class de.greenrobot.event.** {*;}
--keepclassmembers,includedescriptorclasses class ** {
-     public void onEvent*(**);
-     void onEvent*(**);
-}
 
 #all the beans you post with eventbus.post
 

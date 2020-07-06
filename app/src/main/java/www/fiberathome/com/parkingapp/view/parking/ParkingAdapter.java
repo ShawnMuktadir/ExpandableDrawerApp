@@ -52,7 +52,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private boolean isItemClicked = false;
     private boolean isExpanded = false;
 
-    private onItemClickListener clickListener;
+//    private onItemClickListener clickListener;
 
     public ParkingAdapter(Context context, ParkingFragment parkingFragment, HomeFragment homeFragment, ArrayList<SensorArea> sensorAreas, Location onConnectedLocation) {
         this.context = context;
@@ -63,18 +63,18 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 //        EventBus.getDefault().register(this);
     }
 
-    public ParkingAdapter(Context context,HomeFragment homeFragment){
-        this.context= context;
-        this.homeFragment = homeFragment;
-    }
-
-    public void setClickListener(onItemClickListener clickListener) {
-        this.clickListener = clickListener;
-    }
-
-    public interface onItemClickListener {
-        void onClick();
-    }
+//    public ParkingAdapter(Context context,HomeFragment homeFragment){
+//        this.context= context;
+//        this.homeFragment = homeFragment;
+//    }
+//
+//    public void setClickListener(onItemClickListener clickListener) {
+//        this.clickListener = clickListener;
+//    }
+//
+//    public interface onItemClickListener {
+//        void onClick();
+//    }
 
     @NonNull
     @Override
@@ -112,7 +112,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 notifyDataSetChanged();
                 Timber.e("try e dhukche");
             } catch (Exception e) {
-                Timber.e("try catch e dhukche -> %s",e.getMessage());
+                Timber.e("try catch e dhukche -> %s", e.getMessage());
             }
             //data is set in SharedData, to retrieve this data in HomeFragment
             Timber.e("Sensor Area to SharedData -> %s", new Gson().toJson(sensorArea));
@@ -127,7 +127,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 //                    MainActivity parentActivity = (MainActivity) context;
 //                    parentActivity.replaceFragment();
                 }
-            }, 500);
+            }, 100);
 //            EventBus.getDefault().post(new GetDirectionAfterButtonClickEvent(HomeFragment.location));
 
 //            if (isItemClicked){

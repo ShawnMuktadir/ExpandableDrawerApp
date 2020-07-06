@@ -35,6 +35,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -206,7 +207,7 @@ public class ApplicationUtils {
             builder.setMessage(message);
             builder.setCancelable(true);
             builder.setPositiveButton(context.getResources().getString(R.string.ok), (dialog, which) -> {
-                if (context != null){
+                if (context != null) {
                     dialog.dismiss();
                 }
             });
@@ -307,6 +308,14 @@ public class ApplicationUtils {
                 });
             }
         }).start();
+    }
+
+    public static void hideKeyboard(Context context, EditText editText){
+        editText.clearFocus();
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+        }
     }
 
     public static String getCurrentDate() {
@@ -623,7 +632,7 @@ public class ApplicationUtils {
     }
 
     public static boolean isLocationEnabled(Context context) {
-        LocationManager lm = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+        LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         boolean gps_enabled = false;
         boolean network_enabled = false;
 
@@ -631,7 +640,7 @@ public class ApplicationUtils {
             if (lm != null) {
                 gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
             }
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 
@@ -639,11 +648,11 @@ public class ApplicationUtils {
             if (lm != null) {
                 network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
             }
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 
-        if(!gps_enabled && !network_enabled) {
+        if (!gps_enabled && !network_enabled) {
             // notify user
             new AlertDialog.Builder(context)
                     .setMessage(R.string.gps_network_not_enabled)
@@ -652,7 +661,7 @@ public class ApplicationUtils {
                         public void onClick(DialogInterface paramDialogInterface, int paramInt) {
                             context.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
                         }
-                    }).setNegativeButton(R.string.cancel,null)
+                    }).setNegativeButton(R.string.cancel, null)
                     .show();
         }
         return gps_enabled && network_enabled;

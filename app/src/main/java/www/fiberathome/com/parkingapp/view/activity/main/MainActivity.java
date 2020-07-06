@@ -48,6 +48,7 @@ import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.EventBusException;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -94,7 +95,6 @@ public class MainActivity extends AppCompatActivity implements MainView, Navigat
     private ImageView userProfilePic;
     private BottomNavigationView bottomNavigationView;
     private ActionBarDrawerToggle actionBarDrawerToggle;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -542,7 +542,11 @@ public class MainActivity extends AppCompatActivity implements MainView, Navigat
             public void run() {
                 Timber.e("GetDirectionEvent MainActivity called");
                 // Do something after 2s = 2000ms
-                EventBus.getDefault().post(new SetMarkerEvent(event.location));
+                try {
+                    EventBus.getDefault().post(new SetMarkerEvent(event.location));
+                } catch (EventBusException e) {
+                    e.getCause();
+                }
             }
         }, 2000);
 

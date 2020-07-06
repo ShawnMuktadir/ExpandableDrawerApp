@@ -10,6 +10,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -42,11 +43,13 @@ import java.util.Comparator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.AppConfig;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionEvent;
 import www.fiberathome.com.parkingapp.model.SensorArea;
+import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.OnEditTextRightDrawableTouchListener;
 import www.fiberathome.com.parkingapp.utils.RecyclerTouchListener;
 import www.fiberathome.com.parkingapp.data.preference.SharedData;
@@ -56,7 +59,8 @@ import www.fiberathome.com.parkingapp.view.fragments.HomeFragment;
 
 import static www.fiberathome.com.parkingapp.utils.ApplicationUtils.distance;
 
-public class ParkingFragment extends Fragment implements ParkingAdapter.onItemClickListener {
+public class ParkingFragment extends Fragment {
+//    implements ParkingAdapter.onItemClickListener
 
     private static final String TAG = ParkingFragment.class.getCanonicalName();
 
@@ -309,8 +313,8 @@ public class ParkingFragment extends Fragment implements ParkingAdapter.onItemCl
         recyclerViewParking.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), recyclerViewParking, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-//                Movie movie = movieList.get(position);
 //                Toast.makeText(context, position + " is selected!", Toast.LENGTH_SHORT).show();
+                ApplicationUtils.hideKeyboard(context, editTextParking);
             }
 
             @Override
@@ -318,17 +322,19 @@ public class ParkingFragment extends Fragment implements ParkingAdapter.onItemCl
 
             }
         }));
+
         ViewCompat.setNestedScrollingEnabled(recyclerViewParking, false);
         HomeFragment homeFragment = new HomeFragment();
         parkingAdapter = new ParkingAdapter(context, this, homeFragment, sensorAreas, onConnectedLocation);
-        parkingAdapter.setClickListener(this);
+//        parkingAdapter.setClickListener(this);
         recyclerViewParking.setAdapter(parkingAdapter);
     }
 
-    @Override
-    public void onClick() {
-        MainActivity parentActivity = (MainActivity) context;
-        parentActivity.replaceFragment();
-        EventBus.getDefault().post(new GetDirectionEvent(HomeFragment.location));
-    }
+//    @Override
+//    public void onClick() {
+//        MainActivity parentActivity = (MainActivity) context;
+//        parentActivity.replaceFragment();
+//        EventBus.getDefault().post(new GetDirectionEvent(HomeFragment.location));
+//    }
+
 }
