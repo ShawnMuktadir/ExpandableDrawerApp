@@ -1,7 +1,20 @@
 
 package www.fiberathome.com.parkingapp.view.activity.search;
 
-import androidx.appcompat.app.AlertDialog;
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -9,34 +22,19 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.location.LocationManager;
-import android.os.Bundle;
-import android.os.Handler;
-import android.provider.Settings;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.ImageView;
-
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.SelcectedPlace;
-import www.fiberathome.com.parkingapp.view.fragments.HomeFragment;
-import www.fiberathome.com.parkingapp.view.placesadapter.PlacesAutoCompleteAdapter;
-import www.fiberathome.com.parkingapp.utils.OnEditTextRightDrawableTouchListener;
+import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.RecyclerTouchListener;
+import www.fiberathome.com.parkingapp.view.placesadapter.PlacesAutoCompleteAdapter;
 
 import static www.fiberathome.com.parkingapp.preference.AppConstants.NEW_PLACE_SELECTED;
 
@@ -47,6 +45,9 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
     private PlacesClient placesClient;
     private Context context;
 
+    @BindView(R.id.ivClearSearchText)
+    ImageView ivClearSearchText;
+
     EditText editTextSearch;
     ImageView imageViewCross;
     RecyclerView placesRecyclerView;
@@ -56,6 +57,7 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         context = this;
+        ButterKnife.bind(this);
         initUI();
         setListeners();
         Places.initialize(getApplicationContext(), context.getResources().getString(R.string.google_maps_key));
@@ -68,7 +70,7 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
     }
 
     private void initUI() {
-        editTextSearch = findViewById(R.id.searchEdit);
+        editTextSearch = findViewById(R.id.editTextSearch);
         imageViewCross = findViewById(R.id.imageViewCross);
         placesRecyclerView = findViewById(R.id.placesRv);
     }
@@ -79,6 +81,14 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
             finish();
         });
 
+        ivClearSearchText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editTextSearch.setText("");
+                mAutoCompleteAdapter.clearList();
+            }
+        });
+
         editTextSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -87,11 +97,11 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
 
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-//                if (charSequence.length() > 0) {
-//                    ivClearSearchText.setVisibility(View.VISIBLE);
-//                } else {
-//                    ivClearSearchText.setVisibility(View.GONE);
-//                }
+                if (charSequence.length() > 0) {
+                    ivClearSearchText.setVisibility(View.VISIBLE);
+                } else {
+                    ivClearSearchText.setVisibility(View.GONE);
+                }
             }
 
             @Override
@@ -102,24 +112,32 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
 //                }
 
                 //drawing cross button if text appears programmatically
-                if (s.length() > 0) {
-                    editTextSearch.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_clear, 0);
-                } else {
-                    editTextSearch.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                }
+//                if (s.length() > 0) {
+//                    editTextSearch.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_clear, 0);
+//                } else {
+//                    editTextSearch.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+//                }
             }
         });
 
-        //handle drawable cross button click listener programmatically
-        editTextSearch.setOnTouchListener(
-                new OnEditTextRightDrawableTouchListener(editTextSearch) {
-                    @Override
-                    public void OnDrawableClick() {
-                        // The right drawable was clicked. Your action goes here.
-                        editTextSearch.setText("");
-                        mAutoCompleteAdapter.clearList();
-                    }
-                });
+        editTextSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    String contents = editTextSearch.getText().toString().trim();
+                    if (contents.length() > 0) {
+                        //do search
+                        mAutoCompleteAdapter.getFilter().filter(contents);
+                        mAutoCompleteAdapter.notifyDataSetChanged();
+                        ApplicationUtils.hideKeyboard(context);
+                    } else
+                        //if something to do for empty edittext
+
+                        return true;
+                }
+                return false;
+            }
+        });
     }
 
     private TextWatcher filterTextWatcher = new TextWatcher() {
@@ -139,9 +157,11 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
 
         //!s.toString().equals("")
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if (s.toString().length() > 1) {
+            if (s.toString().length() > 0) {
                 mAutoCompleteAdapter.getFilter().filter(s.toString());
                 mAutoCompleteAdapter.notifyDataSetChanged();
+            } else {
+                mAutoCompleteAdapter.clearList();
             }
         }
     };
@@ -154,7 +174,6 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
         placesRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(this, placesRecyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-//                Movie movie = movieList.get(position);
 //                Toast.makeText(context, position + " is selected!", Toast.LENGTH_SHORT).show();
             }
 
@@ -178,7 +197,7 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
 //            new Handler().postDelayed(new Runnable() {
 //                @Override
 //                public void run() {
-                    finish();
+            finish();
 //                }
 //            }, 500);
 //            overridePendingTransition(0, 0);
@@ -198,7 +217,7 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
 //                new Handler().postDelayed(new Runnable() {
 //                    @Override
 //                    public void run() {
-                        finish();
+                finish();
 //                    }
 //                }, 500);
 //                overridePendingTransition(0, 0);
@@ -210,7 +229,7 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
     protected void onPause() {
         super.onPause();
         if (isFinishing()) {
-            overridePendingTransition(R.anim.animation_enter, R.anim.animation_leave);
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         }
     }
 

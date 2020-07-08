@@ -221,6 +221,11 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         notifyDataSetChanged();
     }
 
+    public void clearList() {
+        sensorAreas.clear();
+        notifyDataSetChanged();
+    }
+
     // implements View.OnClickListener
     public static class ParkingViewHolder extends RecyclerView.ViewHolder {
 

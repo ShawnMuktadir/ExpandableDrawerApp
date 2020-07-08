@@ -7,10 +7,11 @@ import android.location.Location;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -43,18 +44,14 @@ import java.util.Comparator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.AppConfig;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
+import www.fiberathome.com.parkingapp.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionEvent;
 import www.fiberathome.com.parkingapp.model.SensorArea;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
-import www.fiberathome.com.parkingapp.utils.OnEditTextRightDrawableTouchListener;
 import www.fiberathome.com.parkingapp.utils.RecyclerTouchListener;
-import www.fiberathome.com.parkingapp.data.preference.SharedData;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
-import www.fiberathome.com.parkingapp.view.activity.main.MainActivity;
 import www.fiberathome.com.parkingapp.view.fragments.HomeFragment;
 
 import static www.fiberathome.com.parkingapp.utils.ApplicationUtils.distance;
@@ -70,8 +67,12 @@ public class ParkingFragment extends Fragment {
     TextView textViewNoData;
     @BindView(R.id.linearLayoutBottom)
     LinearLayout linearLayoutBottom;
+    @BindView(R.id.linearLayoutParkingFragment)
+    LinearLayout linearLayoutParkingFragment;
     @BindView(R.id.editTextParking)
     EditText editTextParking;
+    @BindView(R.id.ivClearSearchText)
+    ImageView ivClearSearchText;
     @BindView(R.id.btnGetDirection)
     Button btnGetDirection;
     @BindView(R.id.imageViewBack)
@@ -86,7 +87,6 @@ public class ParkingFragment extends Fragment {
     TextView textViewParkingTravelTime;
 
     private Context context;
-    private View view;
     private ArrayList<SensorArea> sensorAreas;
     private ParkingAdapter parkingAdapter;
     public String name, count;
@@ -109,10 +109,10 @@ public class ParkingFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_parking, container, false);
+        View view = inflater.inflate(R.layout.fragment_parking, container, false);
         ButterKnife.bind(this, view);
         //set on text change listener for edittext
-//        editTextParking.addTextChangedListener(textWatcher());
+        editTextParking.addTextChangedListener(filterTextWatcher);
         setListeners();
         fetchParkingSlotSensors();
         return view;
@@ -130,6 +130,15 @@ public class ParkingFragment extends Fragment {
             EventBus.getDefault().post(new GetDirectionEvent(location));
         });
 
+        ivClearSearchText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editTextParking.setText("");
+                hideNoData();
+                fetchParkingSlotSensorsWithoutProgressBar();
+            }
+        });
+
         editTextParking.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -138,46 +147,93 @@ public class ParkingFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-//                if (charSequence.length() > 0) {
-//                    ivClearSearchText.setVisibility(View.VISIBLE);
-//                } else {
-//                    ivClearSearchText.setVisibility(View.GONE);
-//                }
+                if (charSequence.length() > 0) {
+                    ivClearSearchText.setVisibility(View.VISIBLE);
+                } else {
+                    ivClearSearchText.setVisibility(View.GONE);
+                }
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (s.length() > 0) {
-                    filter(s.toString());
-                }
+//                if (s.length() >= 0) {
+////                    filter(s.toString());
+//                    mAutoCompleteAdapter.getFilter().filter(s.toString());
+//                }
 
                 //drawing cross button if text appears programmatically
-                if (s.length() > 0) {
-                    editTextParking.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_clear, 0);
-                } else {
-                    editTextParking.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                }
+//                if (s.length() > 0) {
+//                    editTextSearch.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_clear, 0);
+//                } else {
+//                    editTextSearch.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+//                }
             }
         });
-        //handle drawable cross button click listener programmatically
-        editTextParking.setOnTouchListener(
-                new OnEditTextRightDrawableTouchListener(editTextParking) {
-                    @SuppressLint("ClickableViewAccessibility")
-                    @Override
-                    public void OnDrawableClick() {
-                        // The right drawable was clicked. Your action goes here.
-                        editTextParking.setText("");
-                        fetchParkingSlotSensors();
-                    }
-                });
 
-//        btn_clear.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                editTextParking.setText("");
-//            }
-//        });
+        editTextParking.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    String contents = editTextParking.getText().toString().trim();
+                    if (contents.length() > 0) {
+                        //do search
+                        filter(contents);
+                        parkingAdapter.notifyDataSetChanged();
+                        ApplicationUtils.hideKeyboard(context, editTextParking);
+                    } else
+                        //if something to do for empty edittext
+
+                        return true;
+                }
+                return false;
+            }
+        });
+
+        editTextParking.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+                if (charSequence.length() > 0) {
+                    ivClearSearchText.setVisibility(View.VISIBLE);
+                } else {
+                    ivClearSearchText.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
     }
+
+    private TextWatcher filterTextWatcher = new TextWatcher() {
+
+        public void afterTextChanged(Editable s) {
+//            if (!s.toString().equals("")) {
+//                mAutoCompleteAdapter.getFilter().filter(s.toString());
+//            }
+
+            parkingAdapter.notifyDataSetChanged();
+
+        }
+
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        //!s.toString().equals("")
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (s.toString().length() > 0) {
+                filter(s.toString());
+            } else {
+                parkingAdapter.notifyDataSetChanged();
+            }
+        }
+    };
 
     private void filter(String text) {
         ArrayList<SensorArea> filteredList = new ArrayList<>();
@@ -191,8 +247,8 @@ public class ParkingFragment extends Fragment {
 
         if (filteredList.isEmpty()) {
 //            Toast.makeText(context, "No data", Toast.LENGTH_LONG).show();
-            TastyToastUtils.showTastyErrorToast(context, "No data");
-//            setNoData();
+//            TastyToastUtils.showTastyErrorToast(context, "No data");
+            setNoData();
         }
 
         parkingAdapter.filterList(filteredList);
@@ -255,6 +311,67 @@ public class ParkingFragment extends Fragment {
             @Override
             public void onResponse(String response) {
                 progressDialog.dismiss();
+//                Timber.e(ParkingFragment.class.getCanonicalName(), "" + response);
+                try {
+                    JSONObject object = new JSONObject(response);
+                    JSONArray jsonArray = object.getJSONArray("sensors");
+//                    Timber.e("jsonArray length parkingFragment-> %s", jsonArray.length());
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        SensorArea sensorArea = new SensorArea();
+                        JSONArray array = jsonArray.getJSONArray(i);
+//                        Timber.e("Array " + i, array.getString(1));
+
+                        double fetchDistance = distance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
+                                Double.parseDouble(array.getString(2).trim()), Double.parseDouble(array.getString(3).trim()));
+//                        Timber.e("parkingFragment fetchDistance -> %s", fetchDistance);
+                        sensorArea.setParkingArea(array.getString(1).trim());
+                        sensorArea.setLat(Double.parseDouble(array.getString(2).trim()));
+                        sensorArea.setLng(Double.parseDouble(array.getString(3).trim()));
+                        sensorArea.setCount(array.getString(4).trim());
+                        sensorArea.setDistance(fetchDistance);
+
+                        sensorAreas.add(sensorArea);
+                        //sorting distance in ascending way
+                        Collections.sort(sensorAreas, new Comparator<SensorArea>() {
+                            @Override
+                            public int compare(SensorArea c1, SensorArea c2) {
+                                return Double.compare(c1.getDistance(), c2.getDistance());
+                            }
+                        });
+                    }
+                    setFragmentControls(sensorAreas);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError e) {
+                e.printStackTrace();
+            }
+        }) {
+
+        };
+
+        ParkingApp.getInstance().addToRequestQueue(strReq);
+    }
+
+    private void fetchParkingSlotSensorsWithoutProgressBar() {
+        //initialize the progress dialog and show it
+//        progressDialog = new ProgressDialog(getActivity());
+//        progressDialog.setMessage("Fetching The Parking Slots....");
+//        progressDialog.show();
+        ArrayList<SensorArea> sensorAreas = new ArrayList<>();
+
+        if (SharedData.getInstance().getOnConnectedLocation() != null) {
+            onConnectedLocation = SharedData.getInstance().getOnConnectedLocation();
+        }
+
+        StringRequest strReq = new StringRequest(Request.Method.GET, AppConfig.URL_FETCH_SENSOR_AREA, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+//                progressDialog.dismiss();
 //                Timber.e(ParkingFragment.class.getCanonicalName(), "" + response);
                 try {
                     JSONObject object = new JSONObject(response);

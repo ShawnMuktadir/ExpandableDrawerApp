@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,10 +8,10 @@
     tools:context=".view.activity.search.SearchActivity">
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/dim5"
-        android:background="#fff"
         android:orientation="vertical">
 
         <RelativeLayout
@@ -38,30 +38,70 @@
                 android:textStyle="bold" />
         </RelativeLayout>
 
-        <EditText
-            android:id="@+id/searchEdit"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dim50"
-            android:layout_margin="@dimen/_7sdp"
-            android:background="@drawable/white_border"
-            android:elevation="@dimen/dim3"
-            android:hint="@string/search"
-            android:imeOptions="actionDone"
-            android:inputType="textPostalAddress"
-            android:padding="@dimen/dim3"
-            android:singleLine="true" />
+            android:layout_height="@dimen/_50sdp"
+            android:layout_marginTop="@dimen/dim5"
+            android:padding="@dimen/dim5">
+
+            <EditText
+                android:id="@+id/editTextSearch"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textSize="@dimen/dimTex15"
+                android:padding="@dimen/dim5"
+                android:textColor="@android:color/black"
+                android:textStyle="normal"
+                android:hint="Search..."
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:background="@drawable/white_border"
+                android:maxLines="1" />
+
+            <ImageView
+                android:id="@+id/ivClearSearchText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/dim6"
+                app:srcCompat="@drawable/ic_clear"
+                android:visibility="gone"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+
+
+        </RelativeLayout>
+
     </LinearLayout>
 
+<!--    <FrameLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_below="@+id/linearLayout">-->
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/placesRv"
-        android:scrollbars="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/dim5"
-        android:background="#FFF"
-        android:orientation="vertical"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/placesRv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/linearLayout"
+            android:layout_margin="@dimen/dim5"
+            android:orientation="vertical"
+            android:scrollbars="vertical"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/tvEmptyView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_centerInParent="true"
+            android:text="@string/no_data_available"
+            android:visibility="gone" />
+
+
+<!--    </FrameLayout>-->
+
+
+
+</RelativeLayout>

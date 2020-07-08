@@ -2,8 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="www.fiberathome.com.parkingapp">
+
     <!-- camera hardware permission -->
-    <uses-feature android:name="android.hardware.camera" /> <!-- gps hardware permission -->
+    <uses-feature android:name="android.hardware.camera" />
+    <!-- gps hardware permission -->
     <uses-feature android:name="android.hardware.location.gps" />
 
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
@@ -13,10 +15,13 @@
 
     <uses-feature
         android:glEsVersion="0x00020000"
-        android:required="true" /> <!-- camera permission -->
-    <uses-permission android:name="android.permission.CAMERA" /> <!-- storage permission -->
+        android:required="true" />
+    <!-- camera permission -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <!-- storage permission -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- gps permission -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- gps permission -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
@@ -33,6 +38,7 @@
         android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup"
         tools:targetApi="n">
+
         <activity android:name=".view.activity.forgetPassword.ChangePasswordActivity"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar"/>

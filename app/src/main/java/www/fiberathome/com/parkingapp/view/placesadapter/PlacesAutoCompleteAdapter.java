@@ -25,7 +25,6 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.android.libraries.places.api.model.AutocompletePrediction;
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
 import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse;
@@ -34,7 +33,6 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -42,11 +40,12 @@ import java.util.concurrent.TimeoutException;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.view.parking.EmptyViewHolder;
 
-public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<PlacesAutoCompleteAdapter.PredictionHolder> implements Filterable {
+public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
+
     private final String TAG = getClass().getSimpleName();
     private ArrayList<PlaceAutocomplete> mResultList = new ArrayList<>();
-
     private Context mContext;
     private CharacterStyle STYLE_BOLD;
     private CharacterStyle STYLE_NORMAL;
@@ -55,6 +54,8 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<PlacesAutoCo
     private AutocompleteSessionToken token;
 
     private int selectedPosition = -1;
+    private static final int VIEW_TYPE_PLACE = 0;
+    private static final int VIEW_TYPE_EMPTY = 1;
 
     public PlacesAutoCompleteAdapter(Context context, PlacesClient placesClient) {
         mContext = context;
@@ -151,83 +152,122 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<PlacesAutoCo
 
     @NonNull
     @Override
-    public PredictionHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        LayoutInflater layoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View convertView = Objects.requireNonNull(layoutInflater).inflate(R.layout.search_list_item_location, viewGroup, false);
-        return new PredictionHolder(convertView);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+//        LayoutInflater layoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//        View convertView = Objects.requireNonNull(layoutInflater).inflate(R.layout.search_list_item_location, parent, false);
+//        return new PredictionHolder(convertView);
+
+        View itemView;
+        if (viewType == VIEW_TYPE_PLACE) {
+            itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_list_item_location, parent, false);
+            return new PredictionViewHolder(itemView);
+        } else {
+            itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_list_empty, parent, false);
+            return new EmptyViewHolder(itemView);
+        }
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PredictionHolder mPredictionHolder, final int position) {
-        mPredictionHolder.address.setText(mResultList.get(position).address);
-        mPredictionHolder.area.setText(mResultList.get(position).area);
+    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder viewHolder, final int position) {
+        if (viewHolder instanceof PredictionViewHolder) {
+            PredictionViewHolder mPredictionViewHolder = (PredictionViewHolder) viewHolder;
+            mPredictionViewHolder.address.setText(mResultList.get(position).address);
+            mPredictionViewHolder.area.setText(mResultList.get(position).area);
 
-        // Here I am just highlighting the background
-        mPredictionHolder.itemView.setBackgroundColor(selectedPosition == position ? Color.LTGRAY : Color.TRANSPARENT);
-        mPredictionHolder.itemView.setOnClickListener(v -> {
+            // Here I am just highlighting the background
+            mPredictionViewHolder.itemView.setBackgroundColor(selectedPosition == position ? Color.LTGRAY : Color.TRANSPARENT);
+            mPredictionViewHolder.itemView.setOnClickListener(v -> {
 
-            selectedPosition = position;
-            try {
-                notifyDataSetChanged();
-            } catch (Exception e) {
-                Timber.e(e);
-            }
-            PlaceAutocomplete item;
-            Log.d(TAG, "List size :" + mResultList.size());
-            Log.d(TAG, "position :" + selectedPosition);
+                selectedPosition = position;
+                try {
+                    notifyDataSetChanged();
+                } catch (Exception e) {
+                    Timber.e(e);
+                }
+                PlaceAutocomplete item;
+                Log.d(TAG, "List size :" + mResultList.size());
+                Log.d(TAG, "position :" + selectedPosition);
 //            Toast.makeText(mContext,"position:"+position,Toast.LENGTH_SHORT).show();
 //            for (PlaceAutocomplete autoComplete:mResultList) {
 //                Log.d(TAG, "onBindViewHolder: "+autoComplete);
 //            }
 
-            try {
-                item = getItem(selectedPosition);//mResultList.get(selectedPosition);
-                if (v.getId() == R.id.item_view) {
+                try {
+                    item = getItem(selectedPosition);//mResultList.get(selectedPosition);
+                    if (v.getId() == R.id.item_view) {
 
-                    String placeId = String.valueOf(item.placeId);
-                    Timber.e("placeId -> %s", placeId);
+                        String placeId = String.valueOf(item.placeId);
+                        Timber.e("placeId -> %s", placeId);
 
-                    List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS);
-                    FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields).setSessionToken(token).build();
-                    placesClient.fetchPlace(request).addOnSuccessListener(response -> {
-                        Place place = response.getPlace();
-                        final Handler handler = new Handler();
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                clickListener.onClick(place);
+                        List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS);
+                        FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields).setSessionToken(token).build();
+                        placesClient.fetchPlace(request).addOnSuccessListener(response -> {
+                            Place place = response.getPlace();
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    clickListener.onClick(place);
+                                }
+                            }, 100);
+                        }).addOnFailureListener(exception -> {
+                            if (exception instanceof ApiException) {
+                                Toast.makeText(mContext, exception.getMessage() + "", Toast.LENGTH_SHORT).show();
                             }
-                        }, 1000);
-                    }).addOnFailureListener(exception -> {
-                        if (exception instanceof ApiException) {
-                            Toast.makeText(mContext, exception.getMessage() + "", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-            } catch (IndexOutOfBoundsException e) {
+                        });
+                    }
+                } catch (IndexOutOfBoundsException e) {
 //                Toast.makeText(mContext, "Please try again", Toast.LENGTH_SHORT).show();
-                ApplicationUtils.showMessageDialog("Please try again", mContext);
-                Log.d(TAG, "exception: " + e);
-            }
+                    ApplicationUtils.showMessageDialog("Please try again!", mContext);
+                    Log.d(TAG, "exception: " + e);
+                }
 
 //            throw new RuntimeException("Test Crash");
-        });
+
+            });
+        } else {
+            Timber.e("EmptyViewHolder -> POSITION:: %s", position);
+            EmptyViewHolder emptyViewHolder = (EmptyViewHolder) viewHolder;
+            if (mResultList.isEmpty()) {
+                emptyViewHolder.imageViewSearchPlace.setVisibility(View.VISIBLE);
+                emptyViewHolder.tvEmptyView.setVisibility(View.VISIBLE);
+            } else {
+                emptyViewHolder.imageViewSearchPlace.setVisibility(View.GONE);
+                emptyViewHolder.tvEmptyView.setVisibility(View.GONE);
+            }
+        }
+
     }
 
     @Override
     public int getItemCount() {
-        return mResultList.size();
+        if (mResultList.size() == 0) {
+            return 1;
+        } else {
+            return mResultList.size();
+        }
+//        return mResultList.size();
     }
 
-    public PlaceAutocomplete getItem(int position) {
+    @Override
+    public int getItemViewType(int position) {
+        if (mResultList.size() == 0) {
+            return VIEW_TYPE_EMPTY;
+        } else {
+            return VIEW_TYPE_PLACE;
+
+        }
+    }
+
+    private PlaceAutocomplete getItem(int position) {
         return mResultList.get(position);
     }
 
-    public static class PredictionHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static class PredictionViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView address, area;
         private LinearLayout mRow;
 
-        PredictionHolder(View itemView) {
+        PredictionViewHolder(View itemView) {
 
             super(itemView);
             area = itemView.findViewById(R.id.area);
@@ -268,8 +308,8 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<PlacesAutoCo
      */
     public static class PlaceAutocomplete {
 
-        public CharSequence placeId;
-        public CharSequence address, area;
+        private CharSequence placeId;
+        private CharSequence address, area;
 
         PlaceAutocomplete(CharSequence placeId, CharSequence area, CharSequence address) {
             this.placeId = placeId;
