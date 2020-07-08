@@ -364,8 +364,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
         if (SharedData.getInstance().getOnConnectedLocation() != null) {
             fetchBottomSheetSensorsWithoutProgressBar(SharedData.getInstance().getOnConnectedLocation());
-//            bottomSheetAdapter = new BottomSheetAdapter(context, this, bookingSensorsArrayListGlobal, SharedData.getInstance().getOnConnectedLocation());
-//            bottomSheetRecyclerView.setAdapter(bottomSheetAdapter);
         }
 
         if (getArguments() != null) {
@@ -1929,6 +1927,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 //            if (bookingSensorsAdapterArrayList != null) {
 //                bookingSensorsAdapterArrayList.clear();
 //            }
+            bottomSheetProgressDialog.show();
             Timber.e("updateBottomSheetForParkingAdapter if te dhukche");
             bottomSheetBehavior.setPeekHeight(400);
             TaskParser taskParser = new TaskParser();
@@ -1999,12 +1998,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                 } else {
                     Timber.e("bottomSheetProgressDialog else e dhukche");
                     bottomSheetProgressDialog.dismiss();
-                    if (bottomSheetProgressDialog.isShowing()) {
-                        Timber.e("bottomSheetProgressDialog else isShowing e dhukche");
-                        bottomSheetProgressDialog.dismiss();
-                    }
                 }
-
                 bookingSensorsArrayListGlobal.clear();
                 bookingSensorsArrayListGlobal.addAll(bookingSensorsAdapterArrayList);
                 bottomSheetAdapter.notifyDataSetChanged();
@@ -2446,18 +2440,18 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         imageViewBack.setOnClickListener(v -> {
             if (mMap != null) {
                 mMap.clear();
-//                animateCamera(onConnectedLocation);
-//                fetchSensors(onConnectedLocation);
-//                fetchBottomSheetSensorsWithoutProgressBar(SharedData.getInstance().getOnConnectedLocation());
-//                bookingSensorsArrayListGlobal.clear();
-//                bookingSensorsArrayList.clear();
-//                bookingSensorsMarkerArrayList.clear();
-//                bookingSensorsAdapterArrayList.clear();
+                bookingSensorsArrayListGlobal.clear();
+                bookingSensorsArrayList.clear();
+                bookingSensorsMarkerArrayList.clear();
+                bookingSensorsAdapterArrayList.clear();
+                animateCamera(SharedData.getInstance().getOnConnectedLocation());
+                fetchSensors(SharedData.getInstance().getOnConnectedLocation());
+                fetchBottomSheetSensorsWithoutProgressBar(SharedData.getInstance().getOnConnectedLocation());
                 buttonSearch.setText(null);
                 buttonSearch.setVisibility(View.VISIBLE);
                 layoutVisible(false, "", "", " ", null);
                 SharedData.getInstance().setParkingLocation(null);
-                ApplicationUtils.reLoadFragment(getParentFragmentManager(), this);
+//                ApplicationUtils.reLoadFragment(getParentFragmentManager(), this);
                 linearLayoutBottom.setVisibility(View.GONE);
                 linearLayoutSearchBottom.setVisibility(View.GONE);
                 linearLayoutMarkerBottom.setVisibility(View.GONE);
@@ -2477,21 +2471,20 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                 mMap.clear();
                 btnSearchGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
                 bottomSheetBehavior.setPeekHeight(400);
-//                animateCamera(onConnectedLocation);
                 if (getDirectionSearchButtonClicked == 1) {
                     btnSearchGetDirection.setText("Get Direction");
                     btnSearchGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
                     getDirectionSearchButtonClicked--;
                 }
-//                fetchSensors(onConnectedLocation);
-//                fetchBottomSheetSensorsWithoutProgressBar(SharedData.getInstance().getOnConnectedLocation());
                 buttonSearch.setText(null);
                 buttonSearch.setVisibility(View.VISIBLE);
-//                bookingSensorsArrayList.clear();
-//                bookingSensorsArrayListGlobal.clear();
-//                bookingSensorsMarkerArrayList.clear();
-                ApplicationUtils.reLoadFragment(getParentFragmentManager(), this);
-                LatLng latLng = new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude());
+                bookingSensorsArrayList.clear();
+                bookingSensorsArrayListGlobal.clear();
+                bookingSensorsMarkerArrayList.clear();
+                animateCamera(SharedData.getInstance().getOnConnectedLocation());
+                fetchSensors(SharedData.getInstance().getOnConnectedLocation());
+                fetchBottomSheetSensorsWithoutProgressBar(SharedData.getInstance().getOnConnectedLocation());
+//                ApplicationUtils.reLoadFragment(getParentFragmentManager(), this);
                 layoutSearchVisible(false, "", "", "", null);
                 linearLayoutBottom.setVisibility(View.GONE);
                 linearLayoutSearchBottom.setVisibility(View.GONE);
@@ -2516,15 +2509,15 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
                     getDirectionMarkerButtonClicked--;
                 }
-//                fetchSensors(onConnectedLocation);
-//                fetchBottomSheetSensorsWithoutProgressBar(SharedData.getInstance().getOnConnectedLocation());
-//                bookingSensorsArrayListGlobal.clear();
-//                bookingSensorsArrayList.clear();
-//                bookingSensorsMarkerArrayList.clear();
-//                animateCamera(onConnectedLocation);
+                bookingSensorsArrayListGlobal.clear();
+                bookingSensorsArrayList.clear();
+                bookingSensorsMarkerArrayList.clear();
+                animateCamera(SharedData.getInstance().getOnConnectedLocation());
+                fetchSensors(SharedData.getInstance().getOnConnectedLocation());
+                fetchBottomSheetSensorsWithoutProgressBar(SharedData.getInstance().getOnConnectedLocation());
                 buttonSearch.setText(null);
                 buttonSearch.setVisibility(View.VISIBLE);
-                ApplicationUtils.reLoadFragment(getParentFragmentManager(), this);
+//                ApplicationUtils.reLoadFragment(getParentFragmentManager(), this);
                 layoutMarkerVisible(false, "", "", "", null);
                 linearLayoutBottom.setVisibility(View.GONE);
                 linearLayoutSearchBottom.setVisibility(View.GONE);
@@ -2544,12 +2537,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                 mMap.clear();
                 buttonSearch.setText(null);
                 buttonSearch.setVisibility(View.VISIBLE);
-//                fetchSensors(onConnectedLocation);
-//                bookingSensorsArrayListGlobal.clear();
-//                bookingSensorsArrayList.clear();
-//                bookingSensorsMarkerArrayList.clear();
-//                fetchBottomSheetSensorsWithoutProgressBar(SharedData.getInstance().getOnConnectedLocation());
-//                animateCamera(onConnectedLocation);
+                bookingSensorsArrayListGlobal.clear();
+                bookingSensorsArrayList.clear();
+                bookingSensorsMarkerArrayList.clear();
+                fetchSensors(SharedData.getInstance().getOnConnectedLocation());
+                fetchBottomSheetSensorsWithoutProgressBar(SharedData.getInstance().getOnConnectedLocation());
+                animateCamera(SharedData.getInstance().getOnConnectedLocation());
                 if (getDirectionBottomSheetButtonClicked == 1) {
                     btnBottomSheetGetDirection.setText("Get Direction");
                     btnBottomSheetGetDirection.setEnabled(true);
@@ -2558,7 +2551,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     getDirectionBottomSheetButtonClicked--;
                 }
                 layoutBottomSheetVisible(false, "", "", "", "", null, false);
-                ApplicationUtils.reLoadFragment(getParentFragmentManager(), this);
+//                ApplicationUtils.reLoadFragment(getParentFragmentManager(), this);
                 linearLayoutBottom.setVisibility(View.GONE);
                 linearLayoutSearchBottom.setVisibility(View.GONE);
                 linearLayoutMarkerBottom.setVisibility(View.GONE);
