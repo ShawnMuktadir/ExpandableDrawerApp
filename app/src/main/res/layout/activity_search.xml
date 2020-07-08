@@ -48,7 +48,7 @@
                 android:id="@+id/editTextSearch"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:textSize="@dimen/dimTex15"
+                android:textSize="@dimen/_15ssp"
                 android:padding="@dimen/dim5"
                 android:textColor="@android:color/black"
                 android:textStyle="normal"
@@ -60,10 +60,10 @@
 
             <ImageView
                 android:id="@+id/ivClearSearchText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/_25sdp"
+                android:layout_height="@dimen/_25sdp"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="@dimen/dim6"
+                android:layout_marginRight="@dimen/_5sdp"
                 app:srcCompat="@drawable/ic_clear"
                 android:visibility="gone"
                 android:layout_alignParentRight="true"
