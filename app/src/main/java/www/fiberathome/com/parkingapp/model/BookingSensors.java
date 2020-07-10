@@ -48,7 +48,7 @@ public class BookingSensors {
     public int compareTo(BookingSensors element) {
         int res = 0;
         if (this.distance < element.getDistance()) {
-            res =- 1;
+            res = -1;
         }
         if (this.distance > element.getDistance()) {
             res = 1;
