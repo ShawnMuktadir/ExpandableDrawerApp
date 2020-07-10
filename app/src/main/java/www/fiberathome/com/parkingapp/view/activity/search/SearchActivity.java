@@ -6,6 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -120,24 +124,53 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
             }
         });
 
-        editTextSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    String contents = editTextSearch.getText().toString().trim();
-                    if (contents.length() > 0) {
-                        //do search
-                        mAutoCompleteAdapter.getFilter().filter(contents);
-                        mAutoCompleteAdapter.notifyDataSetChanged();
-                        ApplicationUtils.hideKeyboard(context);
-                    } else
-                        //if something to do for empty edittext
+        editTextSearch.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                String contents = editTextSearch.getText().toString().trim();
+                if (contents.length() > 0) {
+                    //do search
+                    mAutoCompleteAdapter.getFilter().filter(contents);
+                    mAutoCompleteAdapter.notifyDataSetChanged();
+                    ApplicationUtils.hideKeyboard(context);
+                } else
+                    //if something to do for empty edittext
 
-                        return true;
-                }
-                return false;
+                    return true;
             }
+            return false;
         });
+
+        //handle special characters
+        InputFilter filter = new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                boolean keepOriginal = true;
+                StringBuilder sb = new StringBuilder(end - start);
+                for (int i = start; i < end; i++) {
+                    char c = source.charAt(i);
+                    if (isCharAllowed(c)) // put your condition here
+                        sb.append(c);
+                    else
+                        keepOriginal = false;
+                }
+                if (keepOriginal)
+                    return null;
+                else {
+                    if (source instanceof Spanned) {
+                        SpannableString sp = new SpannableString(sb);
+                        TextUtils.copySpansFrom((Spanned) source, start, sb.length(), null, sp, 0);
+                        return sp;
+                    } else {
+                        return sb;
+                    }
+                }
+            }
+
+            private boolean isCharAllowed(char c) {
+                return Character.isLetterOrDigit(c) || Character.isSpaceChar(c);
+            }
+        };
+        editTextSearch.setFilters(new InputFilter[]{filter});
     }
 
     private TextWatcher filterTextWatcher = new TextWatcher() {

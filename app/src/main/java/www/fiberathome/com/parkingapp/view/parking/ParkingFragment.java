@@ -6,8 +6,11 @@ import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +47,7 @@ import java.util.Comparator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.AppConfig;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
@@ -130,13 +134,28 @@ public class ParkingFragment extends Fragment {
             EventBus.getDefault().post(new GetDirectionEvent(location));
         });
 
-        ivClearSearchText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                editTextParking.setText("");
-                hideNoData();
-                fetchParkingSlotSensorsWithoutProgressBar();
+        ivClearSearchText.setOnClickListener(view -> {
+            editTextParking.setText("");
+            hideNoData();
+            fetchParkingSlotSensorsWithoutProgressBar();
+        });
+
+        editTextParking.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                String contents = editTextParking.getText().toString().trim();
+                if (contents.length() > 0) {
+                    //do search
+                    filter(contents);
+                    parkingAdapter.notifyDataSetChanged();
+                    ApplicationUtils.hideKeyboard(context, editTextParking);
+                } else {
+                    //if something to do for empty edittext
+                    fetchParkingSlotSensorsWithoutProgressBar();
+                    ApplicationUtils.hideKeyboard(context, editTextParking);
+                    return true;
+                }
             }
+            return false;
         });
 
         editTextParking.addTextChangedListener(new TextWatcher() {
@@ -156,58 +175,44 @@ public class ParkingFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-//                if (s.length() >= 0) {
-////                    filter(s.toString());
-//                    mAutoCompleteAdapter.getFilter().filter(s.toString());
-//                }
-
-                //drawing cross button if text appears programmatically
-//                if (s.length() > 0) {
-//                    editTextSearch.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_clear, 0);
-//                } else {
-//                    editTextSearch.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-//                }
-            }
-        });
-
-        editTextParking.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    String contents = editTextParking.getText().toString().trim();
-                    if (contents.length() > 0) {
-                        //do search
-                        filter(contents);
-                        parkingAdapter.notifyDataSetChanged();
-                        ApplicationUtils.hideKeyboard(context, editTextParking);
-                    } else
-                        //if something to do for empty edittext
-
-                        return true;
+                if (s.length() == 0) {
+                    Timber.e("length 0 te dhukche");
+                    fetchParkingSlotSensorsWithoutProgressBar();
                 }
-                return false;
             }
         });
 
-        editTextParking.addTextChangedListener(new TextWatcher() {
+        //handle special characters
+        InputFilter filter = new InputFilter() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-                if (charSequence.length() > 0) {
-                    ivClearSearchText.setVisibility(View.VISIBLE);
-                } else {
-                    ivClearSearchText.setVisibility(View.GONE);
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                boolean keepOriginal = true;
+                StringBuilder sb = new StringBuilder(end - start);
+                for (int i = start; i < end; i++) {
+                    char c = source.charAt(i);
+                    if (isCharAllowed(c)) // put your condition here
+                        sb.append(c);
+                    else
+                        keepOriginal = false;
+                }
+                if (keepOriginal)
+                    return null;
+                else {
+                    if (source instanceof Spanned) {
+                        SpannableString sp = new SpannableString(sb);
+                        TextUtils.copySpansFrom((Spanned) source, start, sb.length(), null, sp, 0);
+                        return sp;
+                    } else {
+                        return sb;
+                    }
                 }
             }
 
-            @Override
-            public void afterTextChanged(Editable s) {
+            private boolean isCharAllowed(char c) {
+                return Character.isLetterOrDigit(c) || Character.isSpaceChar(c);
             }
-        });
+        };
+        editTextParking.setFilters(new InputFilter[]{filter});
     }
 
     private TextWatcher filterTextWatcher = new TextWatcher() {
@@ -246,8 +251,6 @@ public class ParkingFragment extends Fragment {
         }
 
         if (filteredList.isEmpty()) {
-//            Toast.makeText(context, "No data", Toast.LENGTH_LONG).show();
-//            TastyToastUtils.showTastyErrorToast(context, "No data");
             setNoData();
         }
 
@@ -299,6 +302,7 @@ public class ParkingFragment extends Fragment {
         //initialize the progress dialog and show it
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage("Fetching The Parking Slots....");
+        progressDialog.setCancelable(false);
         progressDialog.show();
         ArrayList<SensorArea> sensorAreas = new ArrayList<>();
 
@@ -446,12 +450,4 @@ public class ParkingFragment extends Fragment {
 //        parkingAdapter.setClickListener(this);
         recyclerViewParking.setAdapter(parkingAdapter);
     }
-
-//    @Override
-//    public void onClick() {
-//        MainActivity parentActivity = (MainActivity) context;
-//        parentActivity.replaceFragment();
-//        EventBus.getDefault().post(new GetDirectionEvent(HomeFragment.location));
-//    }
-
 }

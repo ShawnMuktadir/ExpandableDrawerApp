@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".view.fragments.LawFragment">
 
     <com.github.barteksc.pdfviewer.PDFView
@@ -17,24 +17,51 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/editTextSearchLaw"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dim50"
-            android:layout_margin="@dimen/dim5"
-            android:background="@drawable/white_border"
-            android:elevation="@dimen/dim3"
-            android:hint="@string/search_law"
-            android:imeOptions="actionDone"
-            android:padding="@dimen/dim3"
-            android:singleLine="true" />
+            android:layout_height="@dimen/_50sdp"
+            android:layout_marginTop="@dimen/dim5"
+            android:background="@color/gloss_white"
+            android:padding="@dimen/dim2">
+
+            <EditText
+                android:id="@+id/editTextSearchLaw"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textSize="@dimen/dimTex15"
+                android:padding="@dimen/dim5"
+                android:layout_margin="@dimen/dim5"
+                android:textColor="@android:color/black"
+                android:textStyle="normal"
+                android:hint="Search..."
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:background="@drawable/white_border"
+                android:maxLines="1" />
+
+            <ImageView
+                android:id="@+id/ivClearSearchText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/dim6"
+                app:srcCompat="@drawable/ic_clear"
+                android:visibility="gone"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+
+
+        </RelativeLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="@dimen/dim5"
-            android:paddingBottom="8dp"/>
+            android:paddingStart="@dimen/dim2"
+            android:paddingEnd="@dimen/dim2"
+            android:paddingTop="@dimen/dim2"
+            android:paddingBottom="@dimen/dim10"/>
 
     </LinearLayout>
 

@@ -1,11 +1,13 @@
 package www.fiberathome.com.parkingapp.view.lawAdapter;
 
+import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.Toast;
 
 import com.thoughtbot.expandablerecyclerview.ExpandableRecyclerViewAdapter;
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
@@ -14,9 +16,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.law.Law;
 import www.fiberathome.com.parkingapp.model.law.LawItem;
+import www.fiberathome.com.parkingapp.view.fragments.LawFragment;
 
 /*
  * Copyright (C) 2018 Levi Rizki Saputra (levirs565@gmail.com).
@@ -36,25 +40,30 @@ import www.fiberathome.com.parkingapp.model.law.LawItem;
  * Created by LEVI on 22/09/2018.
  */
 public class LawAdapter extends ExpandableRecyclerViewAdapter<TitleViewHolder, LawViewHolder> implements Filterable {
-    List<LawItem> copylawItemList;
+    private List<LawItem> copylawItemList;
+    private Context context;
+    private LawFragment lawFragment;
     private String TAG = getClass().getSimpleName();
 
     @SuppressWarnings("unchecked")
-    public LawAdapter(List<? extends ExpandableGroup> groups) {
+    public LawAdapter(List<? extends ExpandableGroup> groups, LawFragment lawFragment) {
         super(groups);
         copylawItemList = new ArrayList<LawItem>((Collection<? extends LawItem>) groups);
+        this.lawFragment = lawFragment;
         Log.d(TAG, "LawAdapter: " + copylawItemList.size());
     }
 
     @Override
     public TitleViewHolder onCreateGroupViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.expandable_recyclerview_title, parent, false);
+        context = parent.getContext();
         return new TitleViewHolder(v);
     }
 
     @Override
     public LawViewHolder onCreateChildViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.expandable_recyclerview_laws, parent, false);
+        context = parent.getContext();
         return new LawViewHolder(v);
     }
 
@@ -104,6 +113,13 @@ public class LawAdapter extends ExpandableRecyclerViewAdapter<TitleViewHolder, L
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             List groups = (ArrayList<? extends ExpandableGroup>) results.values; // has the filtered values
+            if (groups.size() == 0){
+                Timber.e("LawAdapter no data found");
+//                Toast.makeText(context, "No Record found", Toast.LENGTH_SHORT).show();
+                lawFragment.setNoData();
+            }else {
+                lawFragment.hideNoData();
+            }
             getGroups().clear();
             getGroups().addAll(groups);
 

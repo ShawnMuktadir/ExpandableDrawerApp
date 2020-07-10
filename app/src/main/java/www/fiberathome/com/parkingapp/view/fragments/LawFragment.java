@@ -3,6 +3,20 @@ package www.fiberathome.com.parkingapp.view.fragments;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.InputFilter;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -11,16 +25,6 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.barteksc.pdfviewer.PDFView;
 import com.google.gson.Gson;
@@ -36,8 +40,8 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.law.LawItem;
 import www.fiberathome.com.parkingapp.model.law.LocalJson;
 import www.fiberathome.com.parkingapp.model.law.Result;
+import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.view.lawAdapter.LawAdapter;
-import www.fiberathome.com.parkingapp.utils.OnEditTextRightDrawableTouchListener;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -49,8 +53,10 @@ public class LawFragment extends Fragment {
     PDFView pdfView;
     @BindView(R.id.editTextSearchLaw)
     EditText editTextSearchLaw;
+    @BindView(R.id.ivClearSearchText)
+    ImageView ivClearSearchText;
     @BindView(R.id.textViewNoData)
-    TextView textViewNoData;
+    public TextView textViewNoData;
 
     private RecyclerView recyclerView;
     private LawAdapter lawAdapter;
@@ -101,7 +107,7 @@ public class LawFragment extends Fragment {
             recyclerView.setLayoutManager(mLayoutManager);
             recyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
             recyclerView.setItemAnimator(new DefaultItemAnimator());
-            lawAdapter = new LawAdapter(lawItems);
+            lawAdapter = new LawAdapter(lawItems, this);
             recyclerView.setAdapter(lawAdapter);
         }
     }
@@ -131,6 +137,7 @@ public class LawFragment extends Fragment {
 
     @SuppressLint("ClickableViewAccessibility")
     private void setListeners() {
+
         editTextSearchLaw.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -139,11 +146,11 @@ public class LawFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-//                if (charSequence.length() > 0) {
-//                    ivClearSearchText.setVisibility(View.VISIBLE);
-//                } else {
-//                    ivClearSearchText.setVisibility(View.GONE);
-//                }
+                if (charSequence.length() > 0) {
+                    ivClearSearchText.setVisibility(View.VISIBLE);
+                } else {
+                    ivClearSearchText.setVisibility(View.GONE);
+                }
             }
 
             @Override
@@ -151,57 +158,76 @@ public class LawFragment extends Fragment {
                 /*if (s.length() > 0) {
                     filter(s.toString());
                 }*/
-
-                //drawing cross button if text appears programmatically
-                if (s.length() > 0) {
-                    editTextSearchLaw.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_clear, 0);
-                } else {
-                    editTextSearchLaw.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                }
-
                 lawAdapter.getFilter().filter(s.toString());
+
+                if (s.length() == 0) {
+                    fetchJSONFromAsset();
+                }
             }
         });
 
-        //handle drawable cross button click listener programmatically
-        editTextSearchLaw.setOnTouchListener(
-                new OnEditTextRightDrawableTouchListener(editTextSearchLaw) {
-                    @SuppressLint("ClickableViewAccessibility")
-                    @Override
-                    public void OnDrawableClick() {
-                        // The right drawable was clicked. Your action goes here.
-                        editTextSearchLaw.setText("");
-                        fetchJSONFromAsset();
-                    }
-                });
-    }
+        ivClearSearchText.setOnClickListener(view -> {
+            editTextSearchLaw.setText("");
+            hideNoData();
+            fetchJSONFromAsset();
+        });
 
-    private void filter(String text) {
-        ArrayList<Result> filteredList = new ArrayList<>();
-
-        for (Result item : resultArrayList) {
-
-            if (item.getTitle().toLowerCase().contains(text.toLowerCase()) || item.getLaws().contains(text.toLowerCase())) {
-                hideNoData();
-                filteredList.add(item);
+        editTextSearchLaw.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                String contents = editTextSearchLaw.getText().toString().trim();
+                if (contents.length() > 0) {
+                    //do search
+                    lawAdapter.getFilter().filter(contents);
+                    lawAdapter.notifyDataSetChanged();
+                    ApplicationUtils.hideKeyboard(context, editTextSearchLaw);
+                } else {
+                    //if something to do for empty edittext
+                    ApplicationUtils.hideKeyboard(context, editTextSearchLaw);
+                    return true;
+                }
             }
-        }
+            return false;
+        });
 
-        if (filteredList.isEmpty()) {
-            Toast.makeText(context, "No data", Toast.LENGTH_LONG).show();
-//            TastyToastUtils.showTastyErrorToast(context, "No data");
-//            setNoData();
-        }
+        //handle special characters
+        InputFilter filter = new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                boolean keepOriginal = true;
+                StringBuilder sb = new StringBuilder(end - start);
+                for (int i = start; i < end; i++) {
+                    char c = source.charAt(i);
+                    if (isCharAllowed(c)) // put your condition here
+                        sb.append(c);
+                    else
+                        keepOriginal = false;
+                }
+                if (keepOriginal)
+                    return null;
+                else {
+                    if (source instanceof Spanned) {
+                        SpannableString sp = new SpannableString(sb);
+                        TextUtils.copySpansFrom((Spanned) source, start, sb.length(), null, sp, 0);
+                        return sp;
+                    } else {
+                        return sb;
+                    }
+                }
+            }
 
-        filterList(filteredList);
+            private boolean isCharAllowed(char c) {
+                return Character.isLetterOrDigit(c) || Character.isSpaceChar(c);
+            }
+        };
+        editTextSearchLaw.setFilters(new InputFilter[]{filter});
     }
 
-    private void filterList(ArrayList<Result> filteredList) {
-        this.resultArrayList = filteredList;
-        lawAdapter.notifyDataSetChanged();
-    }
-
-    private void hideNoData() {
+    public void hideNoData() {
         textViewNoData.setVisibility(View.GONE);
+    }
+
+    public void setNoData() {
+        textViewNoData.setVisibility(View.VISIBLE);
+        textViewNoData.setText(context.getResources().getString(R.string.no_record_found));
     }
 }
