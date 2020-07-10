@@ -416,12 +416,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
             requestPermissions(new String[]{
                     Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
             Log.d(TAG, "onViewCreated: in if");
+            supportMapFragment.getMapAsync(this);
         } else {
-            try {
-                supportMapFragment.getMapAsync(this);
-            } catch (Exception e) {
-                Timber.e(e.getCause());
-            }
             Log.d(TAG, "onViewCreated: in else");
         }
 
@@ -723,15 +719,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     }
 
     protected synchronized void buildGoogleApiClient() {
-        if (getActivity() != null) {
-            googleApiClient = new GoogleApiClient.Builder(getActivity())
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(LocationServices.API)
-                    .build();
+        googleApiClient = new GoogleApiClient.Builder(getActivity())
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
 
-            googleApiClient.connect();
-        }
+        googleApiClient.connect();
 
     }
 
@@ -1246,6 +1240,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                 searchPlaceLatLng = new LatLng(selcectedPlace.getLatitude(), selcectedPlace.getLongitude());
                 Timber.e("selcectedPlace -> %s", selcectedPlace.getAreaName());
                 Timber.e("selcectedPlace LatLng -> %s", new LatLng(selcectedPlace.getLatitude(), selcectedPlace.getLongitude()));
+                String areaName = selcectedPlace.getAreaName();
+                String areaAddress = selcectedPlace.getAreaAddress();
+                String placeId = selcectedPlace.getPlaceId();
+                //TODO
+
                 buttonSearch.setVisibility(View.GONE);
                 linearLayoutSearchBottom.setVisibility(View.VISIBLE);
                 linearLayoutSearchBottomButton.setVisibility(View.VISIBLE);
@@ -1374,11 +1373,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                 // Showing the toast message
                 Log.d(TAG, "onRequestPermissionResult: on requestPermission if-if");
                 progressDialog.show();
-                try {
-                    supportMapFragment.getMapAsync(this);
-                }catch (Exception e){
-                    Timber.e(e.getCause());
-                }
+                supportMapFragment.getMapAsync(this);
 //                Toast.makeText(context, "Permission Granted", Toast.LENGTH_SHORT).show();
 
             } else if (grantResults.length == FIRST_TIME_INSTALLED && getActivity() != null) {
@@ -1388,13 +1383,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     requestPermissions(new String[]{
                             Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
                     Log.d(TAG, "onViewCreated: in if");
-                    Toast.makeText(context, "Ok Clicked", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(context, "Ok Clicked", Toast.LENGTH_SHORT).show();
                 }
-
             }
-
         }
-
     }
 
     //bubble sort for nearest parking spot from searched area

@@ -205,10 +205,12 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
             Timber.e("place not null");
             LatLng latLng = place.getLatLng();
             String areaName = place.getName();
+            String  areaAddress = place.getAddress();
+            String placeId = place.getId();
             if (latLng != null && areaName != null) {
                 double latitude = latLng.latitude;
                 double longitude = latLng.longitude;
-                SelcectedPlace selectedplace = new SelcectedPlace(areaName, latitude, longitude);
+                SelcectedPlace selectedplace = new SelcectedPlace(placeId, areaName, areaAddress, latitude, longitude);
                 // resultIntent.putExtra(NEW_PLACE_SELECTED,place);
                 //String result=new Gson().toJson(place);
                 resultIntent.putExtra(NEW_PLACE_SELECTED, selectedplace);

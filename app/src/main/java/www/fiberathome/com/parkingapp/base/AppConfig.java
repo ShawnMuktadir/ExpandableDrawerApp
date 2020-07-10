@@ -9,7 +9,6 @@ public class AppConfig {
     public static final String  URL_VERIFY_OTP   = BASE_URL + "verify_otp.php";
     public static final String URL_OTP_VERIFY= "http://163.47.157.195:5000/otp_varification";
     public static final String IMAGES_URL       = "http://163.47.157.195/parkingapp/uploads/";
-
     public static final String URL_FETCH_SENSORS = BASE_URL + "sensors.php";
 
     public static final String URL_FETCH_SENSOR_AREA = BASE_URL + "sensor_area.php";

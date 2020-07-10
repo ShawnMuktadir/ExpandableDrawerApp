@@ -37,6 +37,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
@@ -55,7 +57,8 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
 
     private int selectedPosition = -1;
     private static final int VIEW_TYPE_PLACE = 0;
-    private static final int VIEW_TYPE_EMPTY = 1;
+    private static final int VIEW_TYPE_HISTORY = 1;
+    private static final int VIEW_TYPE_EMPTY = 2;
 
     public PlacesAutoCompleteAdapter(Context context, PlacesClient placesClient) {
         mContext = context;
@@ -160,7 +163,10 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
         View itemView;
         if (viewType == VIEW_TYPE_PLACE) {
             itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_list_item_location, parent, false);
-            return new PredictionViewHolder(itemView);
+            return new SearchPredictionViewHolder(itemView);
+        }if (viewType == VIEW_TYPE_HISTORY) {
+            itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_history_list_item_location, parent, false);
+            return new SearchPredictionViewHolder(itemView);
         } else {
             itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_list_empty, parent, false);
             return new EmptyViewHolder(itemView);
@@ -169,14 +175,14 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
 
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder viewHolder, final int position) {
-        if (viewHolder instanceof PredictionViewHolder) {
-            PredictionViewHolder mPredictionViewHolder = (PredictionViewHolder) viewHolder;
-            mPredictionViewHolder.address.setText(mResultList.get(position).address);
-            mPredictionViewHolder.area.setText(mResultList.get(position).area);
+        if (viewHolder instanceof SearchPredictionViewHolder) {
+            SearchPredictionViewHolder mSearchPredictionViewHolder = (SearchPredictionViewHolder) viewHolder;
+            mSearchPredictionViewHolder.address.setText(mResultList.get(position).address);
+            mSearchPredictionViewHolder.area.setText(mResultList.get(position).area);
 
             // Here I am just highlighting the background
-            mPredictionViewHolder.itemView.setBackgroundColor(selectedPosition == position ? Color.LTGRAY : Color.TRANSPARENT);
-            mPredictionViewHolder.itemView.setOnClickListener(v -> {
+            mSearchPredictionViewHolder.itemView.setBackgroundColor(selectedPosition == position ? Color.LTGRAY : Color.TRANSPARENT);
+            mSearchPredictionViewHolder.itemView.setOnClickListener(v -> {
 
                 selectedPosition = position;
                 try {
@@ -242,7 +248,7 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
     @Override
     public int getItemCount() {
         if (mResultList.size() == 0) {
-            return 1;
+            return 2;
         } else {
             return mResultList.size();
         }
@@ -263,11 +269,11 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
         return mResultList.get(position);
     }
 
-    public static class PredictionViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static class SearchPredictionViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView address, area;
         private LinearLayout mRow;
 
-        PredictionViewHolder(View itemView) {
+        SearchPredictionViewHolder(View itemView) {
 
             super(itemView);
             area = itemView.findViewById(R.id.area);
@@ -300,6 +306,18 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
 //                    }
 //                });
 //            }
+        }
+    }
+
+    public static class SearchHistoryViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.textViewHistoryArea)
+        TextView textViewHistoryArea;
+        @BindView(R.id.textViewHistoryAddress)
+        TextView textViewHistoryAddress;
+
+        public SearchHistoryViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
         }
     }
 
