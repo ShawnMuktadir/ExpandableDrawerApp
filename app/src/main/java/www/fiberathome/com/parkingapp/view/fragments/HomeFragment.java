@@ -1270,79 +1270,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         //} else Timber.e("bookingList is empty");
     }
 
-    private ArrayList<BookingSensors> bookingSensorsArrayListBottomSheet = new ArrayList<>();
-
-    public void bottomSheetPlaceLatLngNearestLocations() {
-        if (bottomSheetPlaceLatLng != null) {
-            //for getting the location name
-            getAddress(getActivity(), bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude);
-            String bottomSheetPlaceName = address;
-//            Timber.e("searchPlaceName -> %s", bottomSheetPlaceName);
-
-            TaskParser taskParser = new TaskParser();
-            double bottomSheetDistance = taskParser.showDistance(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
-                    new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
-
-            if (bottomSheetDistance < 3000) {
-                adjustValue = 1;
-            }
-
-            double kim = (bottomSheetDistance / 1000) + adjustValue;
-//            Timber.e("adjustValue first -> %s", adjustValue);
-            double bottomSheetDoubleDuration = Double.parseDouble(new DecimalFormat("##.##").format(bottomSheetDistance * 2.43));
-            String bottomSheetStringDuration = bottomSheetDoubleDuration + " mins";
-
-            bookingSensorsArrayListBottomSheet.add(new BookingSensors(bottomSheetPlaceName, bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude,
-                    bottomSheetDistance, textViewBottomSheetParkingAreaCount.getText().toString(), bottomSheetStringDuration,
-                    context.getResources().getString(R.string.nearest_parking_from_your_destination),
-                    BookingSensors.TEXT_INFO_TYPE, 0));
-
-            for (int i = 0; i < bottomSheetPlaceEventJsonArray.length(); i++) {
-                JSONObject jsonObject;
-                try {
-                    jsonObject = bottomSheetPlaceEventJsonArray.getJSONObject(i);
-                    String latitude1 = jsonObject.get("latitude").toString();
-                    String longitude1 = jsonObject.get("longitude").toString();
-
-                    double distanceForNearbyLoc = calculateDistance(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude,
-                            ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1));
-
-                    if (distanceForNearbyLoc < 5) {
-                        origin = new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude);
-                        getAddress(getActivity(), ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1));
-                        String nearbyAreaName = address;
-                        String parkingNumberOfNearbyDistanceLoc = jsonObject.get("no_of_parking").toString();
-
-                        int adjsutNearbyValue = 2;
-                        if (distanceForNearbyLoc < 1000) {
-                            adjsutNearbyValue = 1;
-                        }
-
-                        double km = (distanceForNearbyLoc / 1000) + adjsutNearbyValue;
-                        double nearbySearchDoubleDuration = Double.parseDouble(new DecimalFormat("##.##").format(km * 2.43));
-                        String nearbySearchStringDuration = nearbySearchDoubleDuration + " mins";
-                        bookingSensorsArrayListBottomSheet.add(new BookingSensors(nearbyAreaName, ApplicationUtils.convertToDouble(latitude1),
-                                ApplicationUtils.convertToDouble(longitude1), distanceForNearbyLoc, parkingNumberOfNearbyDistanceLoc,
-                                nearbySearchStringDuration,
-                                BookingSensors.INFO_TYPE, 1));
-
-                        bubbleSortArrayList(bookingSensorsArrayListBottomSheet);
-                        bottomSheetBehavior.setPeekHeight(400);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (bookingSensorsArrayListBottomSheet != null) {
-//                bottomSheetAdapter.updateData(bookingSensorsArrayListBottomSheet);
-//                setBottomSheetRecyclerViewAdapter(bookingSensorsArrayListBottomSheet);
-                bookingSensorsArrayListGlobal.clear();
-                bookingSensorsArrayListGlobal.addAll(bookingSensorsArrayListBottomSheet);
-                bottomSheetAdapter.notifyDataSetChanged();
-            }
-        }
-    }
-
     @SuppressLint("StaticFieldLeak")
     public class TaskRequestDirections extends AsyncTask<String, Void, String> {
 
@@ -1508,6 +1435,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     private BookingSensors bookingSensors;
     private BookingSensors bookingSensorsBottomSheet;
     private ArrayList<BookingSensors> bookingSensorsArrayList = new ArrayList<>();
+    private ArrayList<BookingSensors> bookingSensorsArrayListBottomSheet = new ArrayList<>();
     //    double adjustValue = 2;
     private double searchDistance;
 
@@ -2099,7 +2027,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
             @Override
             public void run() {
                 location = event.location;
-                EventBus.getDefault().post(new SetMarkerEvent(location));
+//                EventBus.getDefault().post(new SetMarkerEvent(location));
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(location);
 
@@ -2737,8 +2665,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     }, 1000);
                 }
             } else if (getDirectionSearchButtonClicked == 1) {
-                ApplicationUtils.showMessageDialog("Once reach your destination, \nConfirm Booking Button will be enabled &" +
-                        " you can reserve your booking spot!!!", context);
+                ApplicationUtils.showMessageDialog("You cannot reserve this spot for booking, as there is no parking slot!", context);
                 getDirectionSearchButtonClicked--;
                 if (mMap != null) {
                     TaskParser taskParser = new TaskParser();
@@ -2958,25 +2885,5 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     private void initAnimation() {
         animShow = AnimationUtils.loadAnimation(context, R.anim.view_show);
         animHide = AnimationUtils.loadAnimation(context, R.anim.view_hide);
-    }
-
-    private void showMessageDialog(String message, Context context) {
-        if (context != null) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setMessage(message);
-            builder.setCancelable(true);
-            builder.setPositiveButton(context.getResources().getString(R.string.ok), (dialog, which) -> {
-                linearLayoutMarkerBackNGetDirection.setVisibility(View.GONE);
-                markerAlreadyClicked = 0;
-                dialog.dismiss();
-            });
-            AlertDialog alertDialog = builder.create();
-            alertDialog.show();
-
-//            // Let's start with animation work. We just need to create a style and use it here as follows.
-//            if (alertDialog.getWindow() != null)
-//                alertDialog.getWindow().getAttributes().windowAnimations = R.style.slidingDialogAnimation;
-
-        }
     }
 }
