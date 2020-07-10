@@ -79,7 +79,6 @@ public class LawAdapter extends ExpandableRecyclerViewAdapter<TitleViewHolder, L
         holder.bind(lawItem);
     }
 
-
     @Override
     public Filter getFilter() {
         return queryFilter;
