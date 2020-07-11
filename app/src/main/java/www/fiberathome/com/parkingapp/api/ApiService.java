@@ -4,13 +4,13 @@ import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.POST;
-import www.fiberathome.com.parkingapp.model.common.Common;
+import www.fiberathome.com.parkingapp.model.common.RetrofitCommon;
 
 public interface ApiService {
 
     @FormUrlEncoded
     @POST("change_password.php")
-    Call<Common> updatePassword(
+    Call<RetrofitCommon> updatePassword(
             @Field("old_password") String old_password,
             @Field("new_password") String new_password,
             @Field("confirm_password") String confirm_password,
@@ -19,7 +19,7 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("change_password_otp.php")
-    Call<Common> forgetPassword(
+    Call<RetrofitCommon> forgetPassword(
             @Field("new_password") String new_password,
             @Field("confirm_password") String confirm_password,
             @Field("mobile_no") String mobile_no
@@ -27,7 +27,7 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("request_sms.php")
-    Call<Common> createUser(
+    Call<RetrofitCommon> createUser(
             @Field("fullname") String name,
             @Field("password") String password,
             @Field("mobile_no") String mobileNo,
@@ -37,7 +37,7 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("visitor_place_history.php")
-    Call<Common> storeSearchHistory(
+    Call<RetrofitCommon> storeSearchHistory(
             @Field("mobile_number") String mobileNo,
             @Field("place_id") String placeId,
             @Field("end_let") String endLatitude,
@@ -50,5 +50,5 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("verify_otp.php")
-    Call<Common> verifyOtp(@Field("otp") String otp);
+    Call<RetrofitCommon> verifyOtp(@Field("otp") String otp);
 }

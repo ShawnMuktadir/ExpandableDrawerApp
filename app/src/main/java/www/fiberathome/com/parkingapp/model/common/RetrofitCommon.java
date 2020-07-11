@@ -1,15 +1,15 @@
 package www.fiberathome.com.parkingapp.model.common;
 
-public class Common {
+public class RetrofitCommon {
 
     private Boolean error;
     private String message;
 
-    public Common(){
+    public RetrofitCommon(){
 
     }
 
-    public Common(Boolean error, String message){
+    public RetrofitCommon(Boolean error, String message){
         super();
         this.error = error;
         this.message = message;

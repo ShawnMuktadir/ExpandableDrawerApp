@@ -124,6 +124,7 @@ import www.fiberathome.com.parkingapp.eventBus.SetMarkerEvent;
 import www.fiberathome.com.parkingapp.model.BookingSensors;
 import www.fiberathome.com.parkingapp.model.SelectedPlace;
 import www.fiberathome.com.parkingapp.model.SensorArea;
+import www.fiberathome.com.parkingapp.model.common.RetrofitCommon;
 import www.fiberathome.com.parkingapp.preference.AppConstants;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.GpsUtils;
@@ -1573,16 +1574,17 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
     private void storeVisitedPlace(String mobileNo, String placeId, double endLatitude, double endLongitude,
                                    double startLatitude, double startLongitude, String areaAddress) {
+
         // Store Search History through UI Service.
-        ApiService service = ApiClient.getRetrofitInstance(AppConfig.URL_SAVE_SEARCH_HISTORY).create(ApiService.class);
-        Call<www.fiberathome.com.parkingapp.model.common.Common> storeSearchHistoryCall =
+        ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+        Call<RetrofitCommon> storeSearchHistoryCall =
                 service.storeSearchHistory(mobileNo, placeId, String.valueOf(endLatitude),
                         String.valueOf(endLongitude), String.valueOf(startLatitude), String.valueOf(startLongitude), areaAddress);
 
         // Gathering results.
-        storeSearchHistoryCall.enqueue(new Callback<www.fiberathome.com.parkingapp.model.common.Common>() {
+        storeSearchHistoryCall.enqueue(new Callback<RetrofitCommon>() {
             @Override
-            public void onResponse(@NonNull Call<www.fiberathome.com.parkingapp.model.common.Common> call, @NonNull retrofit2.Response<www.fiberathome.com.parkingapp.model.common.Common> response) {
+            public void onResponse(@NonNull Call<RetrofitCommon> call, @NonNull retrofit2.Response<RetrofitCommon> response) {
                 Timber.e("response search HistoryCall-> %s", response.message());
                 Timber.e("response search HistoryCall-> %s", new Gson().toJson(response.body()));
                 progressDialog.dismiss();
@@ -1599,7 +1601,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
             }
 
             @Override
-            public void onFailure(@NonNull Call<www.fiberathome.com.parkingapp.model.common.Common> call, @NonNull Throwable errors) {
+            public void onFailure(@NonNull Call<RetrofitCommon> call, @NonNull Throwable errors) {
                 Timber.e("Throwable Errors: -> %s", errors.toString());
                 Timber.e("Throwable Errors: -> %s", errors.getCause());
                 Timber.e("Throwable Errors: -> %s", errors.getMessage());

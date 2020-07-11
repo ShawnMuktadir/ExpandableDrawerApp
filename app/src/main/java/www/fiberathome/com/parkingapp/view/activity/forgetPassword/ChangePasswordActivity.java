@@ -27,7 +27,7 @@ import www.fiberathome.com.parkingapp.base.AppConfig;
 import www.fiberathome.com.parkingapp.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.data.preference.SharedPreManager;
 import www.fiberathome.com.parkingapp.model.User;
-import www.fiberathome.com.parkingapp.model.common.Common;
+import www.fiberathome.com.parkingapp.model.common.RetrofitCommon;
 import www.fiberathome.com.parkingapp.utils.Validator;
 import www.fiberathome.com.parkingapp.view.activity.login.LoginActivity;
 
@@ -151,12 +151,12 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
 
         // Changing Password through UI Service.
         ApiService service = ApiClient.getRetrofitInstance(AppConfig.URL_CHANGE_PASSWORD_OTP).create(ApiService.class);
-        Call<www.fiberathome.com.parkingapp.model.common.Common> passwordUpgradeCall = service.forgetPassword(newPassword, confirmPassword, mobileNo);
+        Call<RetrofitCommon> passwordUpgradeCall = service.forgetPassword(newPassword, confirmPassword, mobileNo);
 
         // Gathering results.
-        passwordUpgradeCall.enqueue(new Callback<Common>() {
+        passwordUpgradeCall.enqueue(new Callback<RetrofitCommon>() {
             @Override
-            public void onResponse(Call<Common> call, Response<Common> response) {
+            public void onResponse(Call<RetrofitCommon> call, Response<RetrofitCommon> response) {
                 Timber.e("response -> %s", response.message());
 
                 progressDialog.dismiss();
@@ -178,7 +178,7 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
             }
 
             @Override
-            public void onFailure(Call<Common> call, Throwable errors) {
+            public void onFailure(Call<RetrofitCommon> call, Throwable errors) {
                 Timber.e("Throwable Errors: -> %s", errors.toString());
             }
         });
