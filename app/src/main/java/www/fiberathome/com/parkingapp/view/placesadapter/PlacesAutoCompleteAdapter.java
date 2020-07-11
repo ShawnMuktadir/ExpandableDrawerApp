@@ -199,7 +199,7 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
 //            }
 
                 try {
-                    item = getItem(selectedPosition);//mResultList.get(selectedPosition);
+                    item = getItem(selectedPosition);   //mResultList.get(selectedPosition);
                     if (v.getId() == R.id.item_view) {
 
                         String placeId = String.valueOf(item.placeId);

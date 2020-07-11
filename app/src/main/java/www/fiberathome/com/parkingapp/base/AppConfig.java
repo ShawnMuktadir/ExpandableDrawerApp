@@ -21,6 +21,8 @@ public class AppConfig {
     public static final String URL_CHANGE_PASSWORD = BASE_URL + "change_password.php/";
     public static final String URL_CHANGE_PASSWORD_OTP = BASE_URL + "change_password_otp.php/";
 
+    public static final String URL_SAVE_SEARCH_HISTORY = BASE_URL + "visitor_place_history.php/";
+
     // SMS provider identification
     // It should match with your SMS gateway origin
     // You can use MSGIND, TESTER and ALERTS as sender ID

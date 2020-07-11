@@ -4,7 +4,6 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -34,7 +33,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.view.ViewCompat;
@@ -110,42 +108,36 @@ import retrofit2.Callback;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.GoogleMapWebServiceNDistance.DirectionsParser;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.api.ApiClient;
+import www.fiberathome.com.parkingapp.api.ApiService;
 import www.fiberathome.com.parkingapp.base.AppConfig;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
+import www.fiberathome.com.parkingapp.data.preference.SharedData;
+import www.fiberathome.com.parkingapp.data.preference.SharedPreManager;
 import www.fiberathome.com.parkingapp.data.retrofit.Common;
 import www.fiberathome.com.parkingapp.data.retrofit.IGoogleApi;
-import www.fiberathome.com.parkingapp.eventBus.GetBottomSheetEvent;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionAfterButtonClickEvent;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionBottomSheetEvent;
-import www.fiberathome.com.parkingapp.eventBus.GetDirectionEvent;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionForMarkerEvent;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionForSearchEvent;
 import www.fiberathome.com.parkingapp.eventBus.SetMarkerEvent;
 import www.fiberathome.com.parkingapp.model.BookingSensors;
-
-import www.fiberathome.com.parkingapp.model.SelcectedPlace;
-import www.fiberathome.com.parkingapp.view.activity.search.SearchActivity;
-
+import www.fiberathome.com.parkingapp.model.SelectedPlace;
 import www.fiberathome.com.parkingapp.model.SensorArea;
-
-import www.fiberathome.com.parkingapp.view.booking.ScheduleFragment;
-import www.fiberathome.com.parkingapp.view.booking.listener.FragmentChangeListener;
-import www.fiberathome.com.parkingapp.view.bottomSheet.BottomSheetAdapter;
 import www.fiberathome.com.parkingapp.preference.AppConstants;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.GpsUtils;
 import www.fiberathome.com.parkingapp.utils.RecyclerTouchListener;
+import www.fiberathome.com.parkingapp.view.activity.search.SearchActivity;
+import www.fiberathome.com.parkingapp.view.booking.ScheduleFragment;
+import www.fiberathome.com.parkingapp.view.booking.listener.FragmentChangeListener;
+import www.fiberathome.com.parkingapp.view.bottomSheet.BottomSheetAdapter;
+import www.fiberathome.com.parkingapp.view.parking.ParkingAdapter;
 
 import static android.app.Activity.RESULT_OK;
-import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
-
 import static www.fiberathome.com.parkingapp.utils.AppConstants.FIRST_TIME_INSTALLED;
 import static www.fiberathome.com.parkingapp.utils.AppConstants.NEW_PLACE_SELECTED;
 import static www.fiberathome.com.parkingapp.utils.AppConstants.NEW_SEARCH_ACTIVITY_REQUEST_CODE;
-
-
-import www.fiberathome.com.parkingapp.data.preference.SharedData;
-import www.fiberathome.com.parkingapp.view.parking.ParkingAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -1454,11 +1446,19 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
             Log.d(TAG, "onActivityResult: blaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
             //progressDialog.show();
 //            Toast.makeText(requireActivity(), "place received", Toast.LENGTH_SHORT).show();
-            SelcectedPlace selcectedPlace = (SelcectedPlace) data.getSerializableExtra(NEW_PLACE_SELECTED); //This line may produce null point exception
-            if (selcectedPlace != null) {
-                searchPlaceLatLng = new LatLng(selcectedPlace.getLatitude(), selcectedPlace.getLongitude());
-                Timber.e("selcectedPlace -> %s", selcectedPlace.getAreaName());
-                Timber.e("selcectedPlace LatLng -> %s", new LatLng(selcectedPlace.getLatitude(), selcectedPlace.getLongitude()));
+            SelectedPlace selectedPlace = (SelectedPlace) data.getSerializableExtra(NEW_PLACE_SELECTED); //This line may produce null point exception
+            if (selectedPlace != null) {
+                searchPlaceLatLng = new LatLng(selectedPlace.getLatitude(), selectedPlace.getLongitude());
+                Timber.e("selcectedPlace -> %s", selectedPlace.getAreaName());
+                Timber.e("selcectedPlace LatLng -> %s", new LatLng(selectedPlace.getLatitude(), selectedPlace.getLongitude()));
+                String areaName = selectedPlace.getAreaName();
+                String areaAddress = selectedPlace.getAreaAddress();
+                String placeId = selectedPlace.getPlaceId();
+                //store visited place
+                storeVisitedPlace(SharedPreManager.getInstance(context).getUser().getMobileNo(), placeId,
+                        selectedPlace.getLatitude(), selectedPlace.getLongitude(),
+                        onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), areaAddress);
+
                 buttonSearch.setVisibility(View.GONE);
                 linearLayoutSearchBottom.setVisibility(View.VISIBLE);
                 linearLayoutSearchBottomButton.setVisibility(View.VISIBLE);
@@ -1569,6 +1569,47 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                 fetchSensors(SharedData.getInstance().getOnConnectedLocation());
             }
         }
+    }
+
+    private void storeVisitedPlace(String mobileNo, String placeId, double endLatitude, double endLongitude,
+                                   double startLatitude, double startLongitude, String areaAddress) {
+        // Store Search History through UI Service.
+        ApiService service = ApiClient.getRetrofitInstance(AppConfig.URL_SAVE_SEARCH_HISTORY).create(ApiService.class);
+        Call<www.fiberathome.com.parkingapp.model.common.Common> storeSearchHistoryCall =
+                service.storeSearchHistory(mobileNo, placeId, String.valueOf(endLatitude),
+                        String.valueOf(endLongitude), String.valueOf(startLatitude), String.valueOf(startLongitude), areaAddress);
+
+        // Gathering results.
+        storeSearchHistoryCall.enqueue(new Callback<www.fiberathome.com.parkingapp.model.common.Common>() {
+            @Override
+            public void onResponse(@NonNull Call<www.fiberathome.com.parkingapp.model.common.Common> call, @NonNull retrofit2.Response<www.fiberathome.com.parkingapp.model.common.Common> response) {
+                Timber.e("response search HistoryCall-> %s", response.message());
+                Timber.e("response search HistoryCall-> %s", new Gson().toJson(response.body()));
+                progressDialog.dismiss();
+                if (response.body() != null) {
+                    if (!response.body().getError()) {
+                        showMessage(response.body().getMessage());
+                        Timber.e("response search history if-> %s", response.body().getMessage());
+                        Timber.e("response search history if-> %s", response.body().getError());
+                    } else {
+                        showMessage(response.body().getMessage());
+                        Timber.e("response search history else-> %s", response.body().getMessage());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<www.fiberathome.com.parkingapp.model.common.Common> call, @NonNull Throwable errors) {
+                Timber.e("Throwable Errors: -> %s", errors.toString());
+                Timber.e("Throwable Errors: -> %s", errors.getCause());
+                Timber.e("Throwable Errors: -> %s", errors.getMessage());
+//                showMessage(errors.getMessage());
+            }
+        });
+    }
+
+    private void showMessage(String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     @Override

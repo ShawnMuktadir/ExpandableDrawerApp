@@ -12,12 +12,10 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
@@ -35,7 +33,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.model.SelcectedPlace;
+import www.fiberathome.com.parkingapp.model.SelectedPlace;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.RecyclerTouchListener;
 import www.fiberathome.com.parkingapp.view.placesadapter.PlacesAutoCompleteAdapter;
@@ -239,11 +237,13 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
             LatLng latLng = place.getLatLng();
             String areaName = place.getName();
             String  areaAddress = place.getAddress();
+            Timber.e("place address -> %s", areaAddress);
             String placeId = place.getId();
+            Timber.e("place id -> %s", placeId);
             if (latLng != null && areaName != null) {
                 double latitude = latLng.latitude;
                 double longitude = latLng.longitude;
-                SelcectedPlace selectedplace = new SelcectedPlace(placeId, areaName, areaAddress, latitude, longitude);
+                SelectedPlace selectedplace = new SelectedPlace(placeId, areaName, areaAddress, latitude, longitude);
                 // resultIntent.putExtra(NEW_PLACE_SELECTED,place);
                 //String result=new Gson().toJson(place);
                 resultIntent.putExtra(NEW_PLACE_SELECTED, selectedplace);

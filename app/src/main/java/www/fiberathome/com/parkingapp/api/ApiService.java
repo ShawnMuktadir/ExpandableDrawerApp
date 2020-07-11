@@ -36,6 +36,19 @@ public interface ApiService {
     );
 
     @FormUrlEncoded
+    @POST("visitor_place_history.php")
+    Call<Common> storeSearchHistory(
+            @Field("mobile_number") String mobileNo,
+            @Field("place_id") String placeId,
+            @Field("end_let") String endLatitude,
+            @Field("end_long") String endLongitude,
+            @Field("start_let") String startLatitude,
+            @Field("start_long") String startLongitude,
+//            @Field("date_visited") String dateVisited,
+            @Field("address") String areaAddress
+    );
+
+    @FormUrlEncoded
     @POST("verify_otp.php")
     Call<Common> verifyOtp(@Field("otp") String otp);
 }

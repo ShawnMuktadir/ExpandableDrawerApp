@@ -2,7 +2,7 @@ package www.fiberathome.com.parkingapp.model;
 
 import java.io.Serializable;
 
-public class SelcectedPlace implements Serializable {
+public class SelectedPlace implements Serializable {
 
     private String placeId;
     private String areaName;
@@ -10,13 +10,16 @@ public class SelcectedPlace implements Serializable {
     private double latitude;
     private double longitude;
 
-    public SelcectedPlace(String areaName, double latitude, double longitude) {
+    public SelectedPlace(String areaName, double latitude, double longitude) {
         this.areaName = areaName;
         this.latitude = latitude;
         this.longitude = longitude;
     }
 
-    public SelcectedPlace(String placeId, String areaName, String areaAddress, double latitude, double longitude) {
+    public SelectedPlace(String placeId, String areaName, String areaAddress, double latitude, double longitude) {
+        this.placeId = placeId;
+        this.areaName = areaName;
+        this.areaAddress = areaAddress;
         this.latitude = latitude;
         this.longitude = longitude;
     }

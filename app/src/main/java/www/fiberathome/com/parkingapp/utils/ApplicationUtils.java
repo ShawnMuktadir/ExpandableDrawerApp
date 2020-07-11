@@ -668,4 +668,10 @@ public class ApplicationUtils {
         }
         return gps_enabled && network_enabled;
     }
+
+    public static String getDateNow() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.US);
+        String dateNow = dateFormat.format(System.currentTimeMillis());
+        return dateNow;
+    }
 }
