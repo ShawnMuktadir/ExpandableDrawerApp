@@ -1,5 +1,6 @@
 package www.fiberathome.com.parkingapp.view.activity.forgetPassword;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
@@ -156,7 +157,7 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
         // Gathering results.
         passwordUpgradeCall.enqueue(new Callback<RetrofitCommon>() {
             @Override
-            public void onResponse(Call<RetrofitCommon> call, Response<RetrofitCommon> response) {
+            public void onResponse(@NonNull Call<RetrofitCommon> call, @NonNull Response<RetrofitCommon> response) {
                 Timber.e("response -> %s", response.message());
 
                 progressDialog.dismiss();
@@ -178,7 +179,7 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
             }
 
             @Override
-            public void onFailure(Call<RetrofitCommon> call, Throwable errors) {
+            public void onFailure(@NonNull Call<RetrofitCommon> call, @NonNull Throwable errors) {
                 Timber.e("Throwable Errors: -> %s", errors.toString());
             }
         });

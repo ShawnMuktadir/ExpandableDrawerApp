@@ -84,7 +84,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewSearchPlaces"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/linearLayout"
             android:layout_margin="@dimen/dim5"
             android:orientation="vertical"

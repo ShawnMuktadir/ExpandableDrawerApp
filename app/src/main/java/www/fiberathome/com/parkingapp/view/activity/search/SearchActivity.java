@@ -80,9 +80,12 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
         ButterKnife.bind(this);
 //        initUI();
         setListeners();
-//        fetchSearchVisitorPlace();
+
         Places.initialize(getApplicationContext(), context.getResources().getString(R.string.google_maps_key));
         placesClient = Places.createClient(this);
+
+        if (searchVisitorDataList != null)
+            fetchSearchVisitorPlace();
 
         editTextSearch.addTextChangedListener(filterTextWatcher);
         editTextSearch.requestFocus();
@@ -217,7 +220,7 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
     };
 
     private void setPlacesRecyclerAdapter() {
-        mAutoCompleteAdapter = new PlacesAutoCompleteAdapter(this, placesClient);
+        mAutoCompleteAdapter = new PlacesAutoCompleteAdapter(this, placesClient, searchVisitorDataList);
         recyclerViewSearchPlaces.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewSearchPlaces.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
         recyclerViewSearchPlaces.setItemAnimator(new DefaultItemAnimator());
@@ -294,6 +297,7 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
 
     private ArrayList<SearchVisitorData> searchVisitorDataList = new ArrayList<>();
     private List<List<String>> visitedPlaceList = null;
+    private List<List<String>> list;
     private SearchVisitedPlaceResponse searchVisitedPlaceResponse;
     private String parkingArea = null;
     private double endLat = 0.0;
@@ -303,16 +307,16 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
 
 
     private void fetchSearchVisitorPlace() {
-
         ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
         Call<SearchVisitedPlaceResponse> call = request.getVisitorData();
         call.enqueue(new Callback<SearchVisitedPlaceResponse>() {
             @Override
             public void onResponse(@NotNull Call<SearchVisitedPlaceResponse> call, @NotNull Response<SearchVisitedPlaceResponse> response) {
                 Timber.e("onResponse -> %s", new Gson().toJson(response.body()));
-//                progressDialog.dismiss();
 
                 if (response.body() != null) {
+                    list = response.body().getVisitorData();
+                    Timber.e("list -> %s", list);
 
                     searchVisitedPlaceResponse = response.body();
 
@@ -344,6 +348,7 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
                         }
                         SearchVisitorData searchVisitorData = new SearchVisitorData(parkingArea, endLat, endLng, startLat, startLng);
                         searchVisitorDataList.add(searchVisitorData);
+                        Timber.e("searchVisitorData -> %s", new Gson().toJson(searchVisitorData));
                     }
                     setFragmentControls(searchVisitorDataList);
                 }
@@ -352,7 +357,6 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
             @Override
             public void onFailure(Call<SearchVisitedPlaceResponse> call, Throwable t) {
                 Timber.e("onFailure -> %s", t.getMessage());
-//                progressDialog.dismiss();
                 ApplicationUtils.showMessageDialog("Something went wrong...Please try later!", context);
             }
         });
@@ -371,7 +375,7 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
         recyclerViewSearchPlaces.addOnItemTouchListener(new RecyclerTouchListener(context, recyclerViewSearchPlaces, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                Toast.makeText(context, position + " is selected!", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, position + " is selected!", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -380,7 +384,9 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
             }
         }));
         ViewCompat.setNestedScrollingEnabled(recyclerViewSearchPlaces, false);
-        mAutoCompleteAdapter = new PlacesAutoCompleteAdapter(context, searchVisitorDataList);
+        mAutoCompleteAdapter = null;
+        mAutoCompleteAdapter = new PlacesAutoCompleteAdapter(context, placesClient, searchVisitorDataList);
+        mAutoCompleteAdapter.setClickListener(this);
         recyclerViewSearchPlaces.setAdapter(mAutoCompleteAdapter);
     }
 }

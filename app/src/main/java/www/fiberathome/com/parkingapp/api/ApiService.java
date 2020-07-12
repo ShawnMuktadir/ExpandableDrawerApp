@@ -1,10 +1,17 @@
 package www.fiberathome.com.parkingapp.api;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import www.fiberathome.com.parkingapp.data.searchHistory.Parameters;
+import www.fiberathome.com.parkingapp.data.searchHistory.SearchHistoryCommon;
 import www.fiberathome.com.parkingapp.model.common.RetrofitCommon;
 import www.fiberathome.com.parkingapp.model.response.SearchVisitedPlaceResponse;
 
@@ -39,14 +46,13 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("visitor_place_history.php")
-    Call<RetrofitCommon> storeSearchHistory(
+    Call<List<SearchHistoryCommon>> storeSearchHistory(
             @Field("mobile_number") String mobileNo,
             @Field("place_id") String placeId,
             @Field("end_let") String endLatitude,
             @Field("end_long") String endLongitude,
             @Field("start_let") String startLatitude,
             @Field("start_long") String startLongitude,
-//            @Field("date_visited") String dateVisited,
             @Field("address") String areaAddress
     );
 
@@ -56,4 +62,8 @@ public interface ApiService {
 
     @GET("visitor_place_tracker_get.php")
     Call<SearchVisitedPlaceResponse> getVisitorData();
+
+    @FormUrlEncoded
+    @POST("visitor_place_history.php")
+    Call<SearchHistoryCommon> storeSearchHistory(@Field ("parameters") ArrayList<Parameters> parametersArrayList);
 }

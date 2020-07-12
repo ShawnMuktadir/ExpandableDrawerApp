@@ -301,7 +301,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void checkLogin(final String mobileNo, final String password) {
 
         progressDialog = new ProgressDialog(LoginActivity.this);
-        progressDialog.setMessage("Loading...");
+        progressDialog.setMessage("Please wait...");
         progressDialog.setCancelable(false);
         progressDialog.setIndeterminate(false);
 

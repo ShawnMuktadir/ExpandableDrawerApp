@@ -62,12 +62,13 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
     private static final int VIEW_TYPE_HISTORY = 1;
     private static final int VIEW_TYPE_EMPTY = 2;
 
-    public PlacesAutoCompleteAdapter(Context context, PlacesClient placesClient) {
+    public PlacesAutoCompleteAdapter(Context context, PlacesClient placesClient, ArrayList<SearchVisitorData> searchVisitorDataList) {
         mContext = context;
         STYLE_BOLD = new StyleSpan(Typeface.BOLD);
         STYLE_NORMAL = new StyleSpan(Typeface.NORMAL);
         token = AutocompleteSessionToken.newInstance();
         this.placesClient = placesClient;
+        this.searchVisitorDataList = searchVisitorDataList;
     }
 
     public PlacesAutoCompleteAdapter(Context context, ArrayList<SearchVisitorData> searchVisitorDataList) {
@@ -172,7 +173,7 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
             return new SearchPredictionViewHolder(itemView);
         } else if (viewType == VIEW_TYPE_HISTORY) {
             itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_history_list_item_location, parent, false);
-            return new SearchPredictionViewHolder(itemView);
+            return new SearchHistoryViewHolder(itemView);
         } else {
             itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_list_empty, parent, false);
             return new EmptyViewHolder(itemView);
@@ -240,6 +241,14 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
         } else if (viewHolder instanceof SearchHistoryViewHolder) {
             SearchHistoryViewHolder searchHistoryViewHolder = (SearchHistoryViewHolder) viewHolder;
             final SearchVisitorData visitorData = searchVisitorDataList.get(position);
+//            if (mResultList!=null){
+//                searchVisitorDataList.clear();
+//                try{
+//                    Timber.e("try e dhukche");
+//                } catch (Exception e) {
+//                    Timber.e("try catch e dhukche -> %s", e.getMessage());
+//                }
+//            }
             searchHistoryViewHolder.textViewHistoryArea.setText(visitorData.getVisitedArea());
 //            searchHistoryViewHolder.textViewHistoryAddress.setText();
 
@@ -259,23 +268,29 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
 
     @Override
     public int getItemCount() {
-        if (mResultList.size() == 0 && searchVisitorDataList.size() == 0) {
-            return 2;
-        } else if (!mResultList.isEmpty()) {
+        if (!mResultList.isEmpty()) {
+            Timber.e("getItemCount if");
             return mResultList.size();
-        } else
-            return 1;
-//        return mResultList.size();
+        } else if (!searchVisitorDataList.isEmpty()) {
+            Timber.e("getItemCount else if");
+            return searchVisitorDataList.size();
+        } else {
+            return 2;
+        }
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (mResultList.size() == 0 && searchVisitorDataList.size() == 0) {
+        if (searchVisitorDataList.size() == 0) {
+            Timber.e("getItemViewType if");
             return VIEW_TYPE_EMPTY;
-        } else if (!mResultList.isEmpty()){
-            return VIEW_TYPE_PLACE;
-        }else
+        } else if (mResultList.size() == 0) {
+            Timber.e("getItemViewType else if");
             return VIEW_TYPE_HISTORY;
+        } else {
+            Timber.e("getItemViewType else");
+            return VIEW_TYPE_PLACE;
+        }
     }
 
     private PlaceAutocomplete getItem(int position) {

@@ -33,7 +33,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
@@ -116,6 +115,8 @@ import www.fiberathome.com.parkingapp.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.data.preference.SharedPreManager;
 import www.fiberathome.com.parkingapp.data.retrofit.Common;
 import www.fiberathome.com.parkingapp.data.retrofit.IGoogleApi;
+import www.fiberathome.com.parkingapp.data.searchHistory.Parameters;
+import www.fiberathome.com.parkingapp.data.searchHistory.SearchHistoryCommon;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionAfterButtonClickEvent;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionBottomSheetEvent;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionForMarkerEvent;
@@ -124,7 +125,6 @@ import www.fiberathome.com.parkingapp.eventBus.SetMarkerEvent;
 import www.fiberathome.com.parkingapp.model.BookingSensors;
 import www.fiberathome.com.parkingapp.model.SelectedPlace;
 import www.fiberathome.com.parkingapp.model.SensorArea;
-import www.fiberathome.com.parkingapp.model.common.RetrofitCommon;
 import www.fiberathome.com.parkingapp.preference.AppConstants;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.GpsUtils;
@@ -133,7 +133,6 @@ import www.fiberathome.com.parkingapp.view.activity.search.SearchActivity;
 import www.fiberathome.com.parkingapp.view.booking.ScheduleFragment;
 import www.fiberathome.com.parkingapp.view.booking.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.view.bottomSheet.BottomSheetAdapter;
-import www.fiberathome.com.parkingapp.view.parking.ParkingAdapter;
 
 import static android.app.Activity.RESULT_OK;
 import static www.fiberathome.com.parkingapp.utils.AppConstants.FIRST_TIME_INSTALLED;
@@ -253,14 +252,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     private Button departureBtn;
 
     private RecyclerView bottomSheetRecyclerView;
-    //private BottomSheetSensorAdapter bottomSheetSensorAdapter;
     private BottomSheetAdapter bottomSheetAdapter;
-    private ParkingAdapter parkingAdapter;
 
     private int LOCATION_PERMISSION_REQUEST_CODE = 100;
     public BottomSheetBehavior bottomSheetBehavior;
     public LatLng searchPlaceLatLng;
-    public int bottomSheetSearch;
     public static Location currentLocation;
     private Marker currentLocationMarker;
     public LatLng bottomSheetPlaceLatLng;
@@ -272,7 +268,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     private String nearByDuration;
     private String fetchDuration;
     private SupportMapFragment supportMapFragment;
-    private double nearByDistance;
 
     private Context context;
     private String name, count = "";
@@ -282,7 +277,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     private boolean isGPS;
     public GoogleMap mMap;
     private GoogleApiClient googleApiClient;
-    //private Location mlastlocation;
     private LocationRequest locationRequest;
 
     //used in fetchSensor()
@@ -291,7 +285,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     public double nLongitude;
     private String sensorStatus = "Occupied";
 
-    private SearchView searchView;
     private Button buttonSearch;
 
     //flags
@@ -301,7 +294,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     private int getDirectionBottomSheetButtonClicked = 0;
     private ProgressDialog progressDialog;
     private ProgressDialog bottomSheetProgressDialog;
-    private int markerAlreadyClicked = 0;
     private int fromMarkerRouteDrawn = 0;
     //route flag
     private int flag = 0;
@@ -328,7 +320,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -397,33 +388,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
         polyLineList = new ArrayList<>();
         mService = Common.getGoogleApi();
-
-
-//        location = SharedData.getInstance().getParkingLocation();
-//        try {
-//            if (location != null && !parkingCount.equals(""))
-//                updateBottomSheetForParkingAdapter();
-//        }catch (Exception e){
-//            e.printStackTrace();
-//            Timber.e(e.getMessage());
-//        }
-
-//        if (isParkingAdapterLayoutVisible) {
-//            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-//                @Override
-//                public boolean onMarkerClick(Marker marker) {
-//                    return true;
-//                }
-//            });
-//            isParkingAdapterLayoutVisible = false;
-//        } else {
-//            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-//                @Override
-//                public boolean onMarkerClick(Marker marker) {
-//                    return false;
-//                }
-//            });
-//        }
 
         return view;
     }
@@ -825,7 +789,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
             LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, (com.google.android.gms.location.LocationListener) this);
             progressDialog.show();
         } else {
-            //handleNewLocation(location);
             LatLng latLng = new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude());
             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
             mMap.animateCamera(CameraUpdateFactory.zoomTo(13.5f));
@@ -887,23 +850,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
-        /*mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(13));*/
-
-        //Log.d(TAG, "onLocationChanged: "+location);
-
-
         if (currentLocationMarker != null) {
             currentLocationMarker.remove();
         }
 
-//        MarkerOptions markerOptions = new MarkerOptions();
-//        markerOptions.position(latLng);
-//        markerOptions.title("Current Position");
-//        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car_small));
-//        currentLocationMarker = mMap.addMarker(markerOptions);
-
-        // for making currentLocationMarker maintain bearing in real-time
         currentLocationMarker = mMap.addMarker(new MarkerOptions().position(latLng)
                 .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car_small))
                 .rotation(location.getBearing()).flat(true).anchor(0.5f, 0.5f)
@@ -936,6 +886,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     private void dismissProgressDialog() {
         if (progressDialog != null && progressDialog.isShowing())
             progressDialog.dismiss();
+        else if (bottomSheetProgressDialog != null && bottomSheetProgressDialog.isShowing())
+            bottomSheetProgressDialog.dismiss();
     }
 
     @Override
@@ -1057,11 +1009,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
-
             }
         }) {
-
         };
         strReq.setRetryPolicy(new DefaultRetryPolicy(50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         ParkingApp.getInstance().addToRequestQueue(strReq);
@@ -1240,7 +1189,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         bottomSheetRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), bottomSheetRecyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-//                Movie movie = movieList.get(position);
 //                Toast.makeText(getApplicationContext(), movie.getTitle() + " is selected!", Toast.LENGTH_SHORT).show();
             }
 
@@ -1250,17 +1198,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
             }
         }));
         ViewCompat.setNestedScrollingEnabled(bottomSheetRecyclerView, false);
-//        Timber.e("bensorSensorArrayList check -> %s", new Gson().toJson(sensors));
         setBottomSheetRecyclerViewAdapter(sensors);
-
-//        Timber.e("booking sensor recyclerView -> %s", bottomSheetRecyclerView.getAdapter().getItemCount());
     }
 
     private void setBottomSheetRecyclerViewAdapter(ArrayList<BookingSensors> bookingSensors) {
-        //if (!bookingSensors.isEmpty()) {
         bottomSheetAdapter = new BottomSheetAdapter(context, this, bookingSensors, onConnectedLocation);
         bottomSheetRecyclerView.setAdapter(bottomSheetAdapter);
-        //} else Timber.e("bookingList is empty");
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -1455,11 +1398,25 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                 String areaName = selectedPlace.getAreaName();
                 String areaAddress = selectedPlace.getAreaAddress();
                 String placeId = selectedPlace.getPlaceId();
+
+//                ArrayList<Parameters> parametersArrayList = new ArrayList<>();
+//                parametersArrayList.add(new Parameters(SharedPreManager.getInstance(context).getUser().getMobileNo(),
+//                        placeId, String.valueOf(selectedPlace.getLatitude()), String.valueOf(selectedPlace.getLongitude()),
+//                                String.valueOf(onConnectedLocation.getLatitude()), String.valueOf(onConnectedLocation.getLongitude()), areaAddress));
+//                storeVisitedPlace(parametersArrayList);
+
                 //store visited place
                 storeVisitedPlace(SharedPreManager.getInstance(context).getUser().getMobileNo(), placeId,
                         selectedPlace.getLatitude(), selectedPlace.getLongitude(),
                         onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), areaAddress);
 
+                Timber.e("post mobile -> %s", SharedPreManager.getInstance(context).getUser().getMobileNo());
+                Timber.e("post placeId -> %s", placeId);
+                Timber.e("post selectedPlace.getLatitude() -> %s", selectedPlace.getLatitude());
+                Timber.e("post selectedPlace.getLongitude() -> %s", selectedPlace.getLongitude());
+                Timber.e("post onConnectedLocation.getLatitude() -> %s", onConnectedLocation.getLatitude());
+                Timber.e("post onConnectedLocation.getLongitude() -> %s", onConnectedLocation.getLongitude());
+                Timber.e("post areaAddress -> %s", areaAddress);
                 buttonSearch.setVisibility(View.GONE);
                 linearLayoutSearchBottom.setVisibility(View.VISIBLE);
                 linearLayoutSearchBottomButton.setVisibility(View.VISIBLE);
@@ -1494,15 +1451,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     }
 
                     double kim = (searchDistance / 1000) + adjustValue;
-//                    Timber.e("adjustValue first -> %s", adjustValue);
                     double searchDoubleDuration = Double.parseDouble(new DecimalFormat("##.##").format(searchDistance * 2.43));
                     String searchStringDuration = searchDoubleDuration + " mins";
-
-//                    bookingSensors = new BookingSensors(searchPlaceName, searchPlaceLatLng.latitude, searchPlaceLatLng.longitude,
-//                            searchDistance,
-//                            "0", searchStringDuration);
-//                    Timber.e("bookingSensors only Search-> %s", new Gson().toJson(bookingSensors));
-//                        bookingSensorsArrayList.add(bookingSensors);
                     bookingSensorsArrayList.add(new BookingSensors(searchPlaceName, searchPlaceLatLng.latitude, searchPlaceLatLng.longitude,
                             searchDistance, "0", searchStringDuration,
                             context.getResources().getString(R.string.nearest_parking_from_your_destination),
@@ -1524,10 +1474,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                                     getAddress(getActivity(), ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1));
                                     String nearbyAreaName = address;
                                     String parkingNumberOfNearbyDistanceLoc = jsonObject.get("no_of_parking").toString();
-//                                Timber.e("nearbyDistance nearByDuration -> %s -> %s", nearByDistance, nearByDuration);
-//                                bookingSensors = new BookingSensors(nearbyAreaName, ApplicationUtils.convertToDouble(latitude1),
-//                                        ApplicationUtils.convertToDouble(longitude1), nearByDistance, parkingNumberOfNearbyDistanceLoc);
-//                                Timber.e("bookingSensors nearest search location -> %s", new Gson().toJson(bookingSensors));
 
                                     int adjsutNearbyValue = 2;
                                     if (distanceForNearbyLoc < 1000) {
@@ -1572,41 +1518,43 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         }
     }
 
+    private void storeVisitedPlace(ArrayList<Parameters> parametersArrayList) {
+        // Store Search History through UI Service.
+        ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+        Call<SearchHistoryCommon> storeSearchHistoryCall =
+                service.storeSearchHistory(parametersArrayList);
+
+        storeSearchHistoryCall.enqueue(new Callback<SearchHistoryCommon>() {
+            @Override
+            public void onResponse(@NonNull Call<SearchHistoryCommon> call, @NonNull retrofit2.Response<SearchHistoryCommon> response) {
+                Timber.e("onResponse -> %s", new Gson().toJson(response.body()));
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<SearchHistoryCommon> call, @NonNull Throwable t) {
+                Timber.e("onFailure -> %s", t.getMessage());
+            }
+        });
+    }
+
     private void storeVisitedPlace(String mobileNo, String placeId, double endLatitude, double endLongitude,
                                    double startLatitude, double startLongitude, String areaAddress) {
 
         // Store Search History through UI Service.
-        ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<RetrofitCommon> storeSearchHistoryCall =
+        ApiService service = ApiClient.getRetrofitInstance(AppConfig.URL_SAVE_SEARCH_HISTORY_POST).create(ApiService.class);
+        Call<List<SearchHistoryCommon>> storeSearchHistoryCall =
                 service.storeSearchHistory(mobileNo, placeId, String.valueOf(endLatitude),
                         String.valueOf(endLongitude), String.valueOf(startLatitude), String.valueOf(startLongitude), areaAddress);
 
-        // Gathering results.
-        storeSearchHistoryCall.enqueue(new Callback<RetrofitCommon>() {
+        storeSearchHistoryCall.enqueue(new Callback<List<SearchHistoryCommon>>() {
             @Override
-            public void onResponse(@NonNull Call<RetrofitCommon> call, @NonNull retrofit2.Response<RetrofitCommon> response) {
+            public void onResponse(@NonNull Call<List<SearchHistoryCommon>> call, @NonNull retrofit2.Response<List<SearchHistoryCommon>> response) {
                 Timber.e("onResponse -> %s", new Gson().toJson(response.body()));
-                Timber.e("response search HistoryCall-> %s", response.message());
-                Timber.e("response search HistoryCall-> %s", new Gson().toJson(response.body()));
-                progressDialog.dismiss();
-                if (response.body() != null) {
-                    if (!response.body().getError()) {
-                        showMessage(response.body().getMessage());
-                        Timber.e("response search history if-> %s", response.body().getMessage());
-                        Timber.e("response search history if-> %s", response.body().getError());
-                    } else {
-                        showMessage(response.body().getMessage());
-                        Timber.e("response search history else-> %s", response.body().getMessage());
-                    }
-                }
             }
 
             @Override
-            public void onFailure(@NonNull Call<RetrofitCommon> call, @NonNull Throwable errors) {
-                Timber.e("Throwable Errors: -> %s", errors.toString());
-                Timber.e("Throwable Errors: -> %s", errors.getCause());
-                Timber.e("Throwable Errors: -> %s", errors.getMessage());
-//                showMessage(errors.getMessage());
+            public void onFailure(@NonNull Call<List<SearchHistoryCommon>> call, @NonNull Throwable t) {
+                Timber.e("onFailure -> %s", t.getMessage());
             }
         });
     }
@@ -1750,7 +1698,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         mService.getDataFromGoogleApi(url)
                 .enqueue(new Callback<String>() {
                     @Override
-                    public void onResponse(Call<String> call, retrofit2.Response<String> response) {
+                    public void onResponse(@NonNull Call<String> call, @NonNull retrofit2.Response<String> response) {
 //                        Timber.e("retrofit onResponse call hoiche");
                         try {
                             JSONObject jsonObject =
