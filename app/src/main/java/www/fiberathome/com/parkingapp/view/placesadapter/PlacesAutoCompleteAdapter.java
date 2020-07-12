@@ -41,6 +41,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.model.SearchVisitorData;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.view.parking.EmptyViewHolder;
 
@@ -51,9 +52,10 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
     private Context mContext;
     private CharacterStyle STYLE_BOLD;
     private CharacterStyle STYLE_NORMAL;
-    private final PlacesClient placesClient;
+    private PlacesClient placesClient;
     private ClickListener clickListener;
     private AutocompleteSessionToken token;
+    private ArrayList<SearchVisitorData> searchVisitorDataList = new ArrayList<>();
 
     private int selectedPosition = -1;
     private static final int VIEW_TYPE_PLACE = 0;
@@ -66,6 +68,11 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
         STYLE_NORMAL = new StyleSpan(Typeface.NORMAL);
         token = AutocompleteSessionToken.newInstance();
         this.placesClient = placesClient;
+    }
+
+    public PlacesAutoCompleteAdapter(Context context, ArrayList<SearchVisitorData> searchVisitorDataList) {
+        this.mContext = context;
+        this.searchVisitorDataList = searchVisitorDataList;
     }
 
     public void setClickListener(ClickListener clickListener) {
@@ -111,7 +118,6 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
             }
         };
     }
-
 
     private ArrayList<PlaceAutocomplete> getPredictions(CharSequence constraint) {
 
@@ -164,7 +170,7 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
         if (viewType == VIEW_TYPE_PLACE) {
             itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_list_item_location, parent, false);
             return new SearchPredictionViewHolder(itemView);
-        }if (viewType == VIEW_TYPE_HISTORY) {
+        } else if (viewType == VIEW_TYPE_HISTORY) {
             itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_history_list_item_location, parent, false);
             return new SearchPredictionViewHolder(itemView);
         } else {
@@ -231,10 +237,16 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
 //            throw new RuntimeException("Test Crash");
 
             });
+        } else if (viewHolder instanceof SearchHistoryViewHolder) {
+            SearchHistoryViewHolder searchHistoryViewHolder = (SearchHistoryViewHolder) viewHolder;
+            final SearchVisitorData visitorData = searchVisitorDataList.get(position);
+            searchHistoryViewHolder.textViewHistoryArea.setText(visitorData.getVisitedArea());
+//            searchHistoryViewHolder.textViewHistoryAddress.setText();
+
         } else {
             Timber.e("EmptyViewHolder -> POSITION:: %s", position);
             EmptyViewHolder emptyViewHolder = (EmptyViewHolder) viewHolder;
-            if (mResultList.isEmpty()) {
+            if (mResultList.isEmpty() && searchVisitorDataList.isEmpty()) {
                 emptyViewHolder.imageViewSearchPlace.setVisibility(View.VISIBLE);
                 emptyViewHolder.tvEmptyView.setVisibility(View.VISIBLE);
             } else {
@@ -247,22 +259,23 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
 
     @Override
     public int getItemCount() {
-        if (mResultList.size() == 0) {
+        if (mResultList.size() == 0 && searchVisitorDataList.size() == 0) {
             return 2;
-        } else {
+        } else if (!mResultList.isEmpty()) {
             return mResultList.size();
-        }
+        } else
+            return 1;
 //        return mResultList.size();
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (mResultList.size() == 0) {
+        if (mResultList.size() == 0 && searchVisitorDataList.size() == 0) {
             return VIEW_TYPE_EMPTY;
-        } else {
+        } else if (!mResultList.isEmpty()){
             return VIEW_TYPE_PLACE;
-
-        }
+        }else
+            return VIEW_TYPE_HISTORY;
     }
 
     private PlaceAutocomplete getItem(int position) {

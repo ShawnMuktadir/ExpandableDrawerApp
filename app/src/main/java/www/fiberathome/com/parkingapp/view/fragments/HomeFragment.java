@@ -1585,6 +1585,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         storeSearchHistoryCall.enqueue(new Callback<RetrofitCommon>() {
             @Override
             public void onResponse(@NonNull Call<RetrofitCommon> call, @NonNull retrofit2.Response<RetrofitCommon> response) {
+                Timber.e("onResponse -> %s", new Gson().toJson(response.body()));
                 Timber.e("response search HistoryCall-> %s", response.message());
                 Timber.e("response search HistoryCall-> %s", new Gson().toJson(response.body()));
                 progressDialog.dismiss();

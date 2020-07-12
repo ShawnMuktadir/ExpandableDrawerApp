@@ -3,8 +3,10 @@ package www.fiberathome.com.parkingapp.api;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
 import www.fiberathome.com.parkingapp.model.common.RetrofitCommon;
+import www.fiberathome.com.parkingapp.model.response.SearchVisitedPlaceResponse;
 
 public interface ApiService {
 
@@ -51,4 +53,7 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("verify_otp.php")
     Call<RetrofitCommon> verifyOtp(@Field("otp") String otp);
+
+    @GET("visitor_place_tracker_get.php")
+    Call<SearchVisitedPlaceResponse> getVisitorData();
 }

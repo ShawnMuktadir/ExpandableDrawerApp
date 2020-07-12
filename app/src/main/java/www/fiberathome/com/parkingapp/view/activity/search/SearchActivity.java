@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
@@ -28,12 +29,26 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.gson.Gson;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.api.ApiClient;
+import www.fiberathome.com.parkingapp.api.ApiService;
+import www.fiberathome.com.parkingapp.base.AppConfig;
+import www.fiberathome.com.parkingapp.model.SearchVisitorData;
 import www.fiberathome.com.parkingapp.model.SelectedPlace;
+import www.fiberathome.com.parkingapp.model.response.SearchVisitedPlaceResponse;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.RecyclerTouchListener;
 import www.fiberathome.com.parkingapp.view.placesadapter.PlacesAutoCompleteAdapter;
@@ -43,16 +58,19 @@ import static www.fiberathome.com.parkingapp.preference.AppConstants.NEW_PLACE_S
 public class SearchActivity extends AppCompatActivity implements PlacesAutoCompleteAdapter.ClickListener {
 
     private final String TAG = getClass().getSimpleName();
-    private PlacesAutoCompleteAdapter mAutoCompleteAdapter;
-    private PlacesClient placesClient;
-    private Context context;
 
     @BindView(R.id.ivClearSearchText)
     ImageView ivClearSearchText;
-
+    @BindView(R.id.editTextSearch)
     EditText editTextSearch;
+    @BindView(R.id.imageViewCross)
     ImageView imageViewCross;
-    RecyclerView placesRecyclerView;
+    @BindView(R.id.recyclerViewSearchPlaces)
+    RecyclerView recyclerViewSearchPlaces;
+
+    private PlacesAutoCompleteAdapter mAutoCompleteAdapter;
+    private PlacesClient placesClient;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,8 +78,9 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
         setContentView(R.layout.activity_search);
         context = this;
         ButterKnife.bind(this);
-        initUI();
+//        initUI();
         setListeners();
+//        fetchSearchVisitorPlace();
         Places.initialize(getApplicationContext(), context.getResources().getString(R.string.google_maps_key));
         placesClient = Places.createClient(this);
 
@@ -74,7 +93,7 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
     private void initUI() {
         editTextSearch = findViewById(R.id.editTextSearch);
         imageViewCross = findViewById(R.id.imageViewCross);
-        placesRecyclerView = findViewById(R.id.placesRv);
+        recyclerViewSearchPlaces = findViewById(R.id.recyclerViewSearchPlaces);
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -199,10 +218,10 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
 
     private void setPlacesRecyclerAdapter() {
         mAutoCompleteAdapter = new PlacesAutoCompleteAdapter(this, placesClient);
-        placesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        placesRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
-        placesRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        placesRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(this, placesRecyclerView, new RecyclerTouchListener.ClickListener() {
+        recyclerViewSearchPlaces.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewSearchPlaces.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        recyclerViewSearchPlaces.setItemAnimator(new DefaultItemAnimator());
+        recyclerViewSearchPlaces.addOnItemTouchListener(new RecyclerTouchListener(this, recyclerViewSearchPlaces, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
 //                Toast.makeText(context, position + " is selected!", Toast.LENGTH_SHORT).show();
@@ -213,9 +232,9 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
 
             }
         }));
-        ViewCompat.setNestedScrollingEnabled(placesRecyclerView, false);
+        ViewCompat.setNestedScrollingEnabled(recyclerViewSearchPlaces, false);
         mAutoCompleteAdapter.setClickListener(this);
-        placesRecyclerView.setAdapter(mAutoCompleteAdapter);
+        recyclerViewSearchPlaces.setAdapter(mAutoCompleteAdapter);
     }
 
     @Override
@@ -236,7 +255,7 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
             Timber.e("place not null");
             LatLng latLng = place.getLatLng();
             String areaName = place.getName();
-            String  areaAddress = place.getAddress();
+            String areaAddress = place.getAddress();
             Timber.e("place address -> %s", areaAddress);
             String placeId = place.getId();
             Timber.e("place id -> %s", placeId);
@@ -271,5 +290,97 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+    }
+
+    private ArrayList<SearchVisitorData> searchVisitorDataList = new ArrayList<>();
+    private List<List<String>> visitedPlaceList = null;
+    private SearchVisitedPlaceResponse searchVisitedPlaceResponse;
+    private String parkingArea = null;
+    private double endLat = 0.0;
+    private double endLng = 0.0;
+    private double startLat = 0.0;
+    private double startLng = 0.0;
+
+
+    private void fetchSearchVisitorPlace() {
+
+        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+        Call<SearchVisitedPlaceResponse> call = request.getVisitorData();
+        call.enqueue(new Callback<SearchVisitedPlaceResponse>() {
+            @Override
+            public void onResponse(@NotNull Call<SearchVisitedPlaceResponse> call, @NotNull Response<SearchVisitedPlaceResponse> response) {
+                Timber.e("onResponse -> %s", new Gson().toJson(response.body()));
+//                progressDialog.dismiss();
+
+                if (response.body() != null) {
+
+                    searchVisitedPlaceResponse = response.body();
+
+                    visitedPlaceList = searchVisitedPlaceResponse.getVisitorData();
+                    for (List<String> visitedPlaceData : visitedPlaceList) {
+                        for (int i = 0; i < visitedPlaceData.size(); i++) {
+
+                            Log.d(TAG, "onResponse: i=" + i);
+
+                            if (i == 6) {
+                                parkingArea = visitedPlaceData.get(i);
+                            }
+
+                            if (i == 2) {
+                                endLat = Double.parseDouble(visitedPlaceData.get(i));
+                            }
+
+                            if (i == 3) {
+                                endLng = Double.parseDouble(visitedPlaceData.get(i));
+                            }
+
+                            if (i == 4) {
+                                startLat = Double.parseDouble(visitedPlaceData.get(i));
+                            }
+
+                            if (i == 5) {
+                                startLng = Double.parseDouble(visitedPlaceData.get(i));
+                            }
+                        }
+                        SearchVisitorData searchVisitorData = new SearchVisitorData(parkingArea, endLat, endLng, startLat, startLng);
+                        searchVisitorDataList.add(searchVisitorData);
+                    }
+                    setFragmentControls(searchVisitorDataList);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<SearchVisitedPlaceResponse> call, Throwable t) {
+                Timber.e("onFailure -> %s", t.getMessage());
+//                progressDialog.dismiss();
+                ApplicationUtils.showMessageDialog("Something went wrong...Please try later!", context);
+            }
+        });
+    }
+
+    private void setFragmentControls(ArrayList<SearchVisitorData> searchVisitorDataList) {
+        this.searchVisitorDataList = searchVisitorDataList;
+        recyclerViewSearchPlaces.setHasFixedSize(true);
+        recyclerViewSearchPlaces.setItemViewCacheSize(20);
+        recyclerViewSearchPlaces.setNestedScrollingEnabled(false);
+
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(context);
+        recyclerViewSearchPlaces.setLayoutManager(mLayoutManager);
+        recyclerViewSearchPlaces.addItemDecoration(new DividerItemDecoration(context, LinearLayoutManager.VERTICAL));
+        recyclerViewSearchPlaces.setItemAnimator(new DefaultItemAnimator());
+        recyclerViewSearchPlaces.addOnItemTouchListener(new RecyclerTouchListener(context, recyclerViewSearchPlaces, new RecyclerTouchListener.ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                Toast.makeText(context, position + " is selected!", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        }));
+        ViewCompat.setNestedScrollingEnabled(recyclerViewSearchPlaces, false);
+        mAutoCompleteAdapter = new PlacesAutoCompleteAdapter(context, searchVisitorDataList);
+        recyclerViewSearchPlaces.setAdapter(mAutoCompleteAdapter);
     }
 }

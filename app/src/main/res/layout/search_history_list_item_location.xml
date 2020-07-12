@@ -42,7 +42,7 @@
                 android:ellipsize="end"
                 android:fontFamily="sans-serif-condensed"
                 android:padding="8dp"
-                android:singleLine="true"
+                android:maxLines="2"
                 android:text="@string/lorum"
                 android:textColor="@color/black"
                 android:textSize="@dimen/dimTex15" />
