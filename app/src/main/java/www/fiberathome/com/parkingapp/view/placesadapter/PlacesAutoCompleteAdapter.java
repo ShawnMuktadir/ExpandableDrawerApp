@@ -82,6 +82,8 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
 
     public interface ClickListener {
         void onClick(Place place);
+
+        void onClick(SearchVisitorData visitorData);
     }
 
     /**
@@ -171,10 +173,12 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
         if (viewType == VIEW_TYPE_PLACE) {
             itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_list_item_location, parent, false);
             return new SearchPredictionViewHolder(itemView);
-        } else if (viewType == VIEW_TYPE_HISTORY) {
+        }
+        else if (viewType == VIEW_TYPE_HISTORY) {
             itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_history_list_item_location, parent, false);
             return new SearchHistoryViewHolder(itemView);
-        } else {
+        }
+        else {
             itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_list_empty, parent, false);
             return new EmptyViewHolder(itemView);
         }
@@ -241,16 +245,26 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
         } else if (viewHolder instanceof SearchHistoryViewHolder) {
             SearchHistoryViewHolder searchHistoryViewHolder = (SearchHistoryViewHolder) viewHolder;
             final SearchVisitorData visitorData = searchVisitorDataList.get(position);
-//            if (mResultList!=null){
-//                searchVisitorDataList.clear();
-//                try{
-//                    Timber.e("try e dhukche");
-//                } catch (Exception e) {
-//                    Timber.e("try catch e dhukche -> %s", e.getMessage());
-//                }
-//            }
             searchHistoryViewHolder.textViewHistoryArea.setText(visitorData.getVisitedArea());
-//            searchHistoryViewHolder.textViewHistoryAddress.setText();
+
+            searchHistoryViewHolder.itemView.setBackgroundColor(selectedPosition == position ? Color.LTGRAY : Color.TRANSPARENT);
+            searchHistoryViewHolder.itemView.setOnClickListener(v-> {
+                selectedPosition = position;
+                try {
+                    notifyDataSetChanged();
+                } catch (Exception e) {
+                    Timber.e(e);
+                }
+
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        clickListener.onClick(visitorData);
+                    }
+                }, 100);
+            });
+
 
         } else {
             Timber.e("EmptyViewHolder -> POSITION:: %s", position);
@@ -275,7 +289,7 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
             Timber.e("getItemCount else if");
             return searchVisitorDataList.size();
         } else {
-            return 2;
+            return mResultList.size();
         }
     }
 

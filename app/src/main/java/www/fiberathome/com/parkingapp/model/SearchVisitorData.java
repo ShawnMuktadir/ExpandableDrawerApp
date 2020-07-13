@@ -1,20 +1,33 @@
 package www.fiberathome.com.parkingapp.model;
 
-public class SearchVisitorData {
+import java.io.Serializable;
+
+public class SearchVisitorData implements Serializable {
 
     private String visitedArea;
+    private String placeId;
     private double endLat;
     private double endLng;
     private double startLat;
     private double startLng;
 
+    public SearchVisitorData() {
+    }
 
-    public SearchVisitorData(String visitedArea, double endLat, double endLng, double startLat, double startLng) {
+    public SearchVisitorData(String visitedArea, String placeId, double endLat, double endLng, double startLat, double startLng) {
         this.visitedArea = visitedArea;
+        this.placeId = placeId;
         this.endLat = endLat;
         this.endLng = endLng;
         this.startLat = startLat;
         this.startLng = startLng;
+    }
+
+    public SearchVisitorData(String visitedArea, String placeId, double endLat, double endLng) {
+        this.visitedArea = visitedArea;
+        this.placeId = placeId;
+        this.endLat = endLat;
+        this.endLng = endLng;
     }
 
     public String getVisitedArea() {
@@ -55,5 +68,13 @@ public class SearchVisitorData {
 
     public void setStartLng(double startLng) {
         this.startLng = startLng;
+    }
+
+    public String getPlaceId() {
+        return placeId;
+    }
+
+    public void setPlaceId(String placeId) {
+        this.placeId = placeId;
     }
 }

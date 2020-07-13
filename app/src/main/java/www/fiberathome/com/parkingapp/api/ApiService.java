@@ -1,19 +1,22 @@
 package www.fiberathome.com.parkingapp.api;
 
 import java.util.ArrayList;
-import java.util.List;
 
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
-import retrofit2.http.Headers;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import www.fiberathome.com.parkingapp.data.searchHistory.Parameters;
 import www.fiberathome.com.parkingapp.data.searchHistory.SearchHistoryCommon;
 import www.fiberathome.com.parkingapp.model.common.RetrofitCommon;
 import www.fiberathome.com.parkingapp.model.response.SearchVisitedPlaceResponse;
+import www.fiberathome.com.parkingapp.model.response.SearchVisitedPostResponse;
 
 public interface ApiService {
 
@@ -46,7 +49,7 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("visitor_place_history.php")
-    Call<List<SearchHistoryCommon>> storeSearchHistory(
+    Call<RetrofitCommon> storeSearchHistory(
             @Field("mobile_number") String mobileNo,
             @Field("place_id") String placeId,
             @Field("end_let") String endLatitude,
@@ -66,4 +69,15 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("visitor_place_history.php")
     Call<SearchHistoryCommon> storeSearchHistory(@Field ("parameters") ArrayList<Parameters> parametersArrayList);
+
+    @Multipart
+    @POST("recent_visit_place")
+    Call<SearchVisitedPostResponse> storeSearchHistory(@Part("token_id") RequestBody tokenId, @Part("mobile_no") RequestBody mobileNo);
+
+    @POST("recent_visit_place")
+    Call<ResponseBody> postSearchHistory(@Body RequestBody body);
+
+    @FormUrlEncoded
+    @POST("visitor_place_history.php")
+    Call<ResponseBody> getSearchHistory(@Part("mobile_number") String mobileNo);
 }
