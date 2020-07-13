@@ -74,7 +74,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
                 Log.d(TAG, "onBindViewHolder: " + count);
                 selectedItem = position;
                 Log.d(TAG, "onBindViewHolder: " + position);
-                holder.relativeLayoutxtBotoom.setVisibility(View.VISIBLE);
+                holder.relativeLayouTxtBottom.setVisibility(View.VISIBLE);
                 holder.textViewStatic.setText(bookingSensors.getText());
                 holder.itemView.setBackgroundColor(Color.LTGRAY);
             }
@@ -87,7 +87,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
             }*/
 
         } else {
-            holder.relativeLayoutxtBotoom.setVisibility(View.GONE);
+            holder.relativeLayouTxtBottom.setVisibility(View.GONE);
         }
 
         holder.textViewParkingAreaName.setText(ApplicationUtils.capitalize(bookingSensors.getParkingArea().trim()));
@@ -249,7 +249,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         @BindView(R.id.relativeLayoutTxt)
         public RelativeLayout relativeLayoutxt;
         @BindView(R.id.textBottom)
-        public RelativeLayout relativeLayoutxtBotoom;
+        public RelativeLayout relativeLayouTxtBottom;
 
         public TextBookingViewHolder(View itemView) {
             super(itemView);
