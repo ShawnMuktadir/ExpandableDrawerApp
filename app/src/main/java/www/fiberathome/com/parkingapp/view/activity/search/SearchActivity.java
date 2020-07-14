@@ -1,4 +1,3 @@
-
 package www.fiberathome.com.parkingapp.view.activity.search;
 
 import android.annotation.SuppressLint;

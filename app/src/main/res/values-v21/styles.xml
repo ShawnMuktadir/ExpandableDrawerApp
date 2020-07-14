@@ -1,6 +1,7 @@
 <resources>
 
     <style name="AppTheme.NoActionBar">
+        <item name="android:windowAnimationStyle">@null</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark</item>
