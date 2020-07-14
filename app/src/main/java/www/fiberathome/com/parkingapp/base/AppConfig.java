@@ -4,6 +4,7 @@ public class AppConfig {
 
     // ROOT URL
     public static final String BASE_URL = "http://163.47.157.195/parkingapp/";
+    public static final String BASE_URL_PYTHON = "http://163.47.157.195:5000/";
     public static final String URL_REGISTER     = BASE_URL + "request_sms.php";
     public static final String URL_LOGIN        = BASE_URL + "verify_user.php";
     public static final String  URL_VERIFY_OTP   = BASE_URL + "verify_otp.php";
@@ -21,8 +22,9 @@ public class AppConfig {
     public static final String URL_CHANGE_PASSWORD = BASE_URL + "change_password.php/";
     public static final String URL_CHANGE_PASSWORD_OTP = BASE_URL + "change_password_otp.php/";
 
-    public static final String URL_SAVE_SEARCH_HISTORY_POST = BASE_URL + "visitor_place_history.php/";
+    public static final String URL_SAVE_SEARCH_HISTORY_POST = BASE_URL + "visitor_place_history.php";
     public static final String URL_SEARCH_HISTORY_GET = BASE_URL + "visitor_place_tracker_get.php";
+//    public static final String URL_SEARCH_HISTORY_GET = BASE_URL + "test1.php";
 
     // SMS provider identification
     // It should match with your SMS gateway origin

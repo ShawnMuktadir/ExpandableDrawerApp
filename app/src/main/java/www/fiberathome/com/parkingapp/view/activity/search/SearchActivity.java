@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -25,6 +26,12 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
@@ -32,28 +39,41 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.api.ApiClient;
 import www.fiberathome.com.parkingapp.api.ApiService;
 import www.fiberathome.com.parkingapp.base.AppConfig;
+import www.fiberathome.com.parkingapp.base.ParkingApp;
+import www.fiberathome.com.parkingapp.data.preference.SharedPreManager;
 import www.fiberathome.com.parkingapp.model.SearchVisitorData;
 import www.fiberathome.com.parkingapp.model.SelectedPlace;
+import www.fiberathome.com.parkingapp.model.SensorArea;
 import www.fiberathome.com.parkingapp.model.response.SearchVisitedPlaceResponse;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
 import www.fiberathome.com.parkingapp.utils.RecyclerTouchListener;
 import www.fiberathome.com.parkingapp.view.placesadapter.PlacesAutoCompleteAdapter;
 
+import static www.fiberathome.com.parkingapp.preference.AppConstants.HISTORY_PLACE_SELECTED;
 import static www.fiberathome.com.parkingapp.preference.AppConstants.NEW_PLACE_SELECTED;
+import static www.fiberathome.com.parkingapp.utils.ApplicationUtils.distance;
 
 public class SearchActivity extends AppCompatActivity implements PlacesAutoCompleteAdapter.ClickListener {
 
@@ -84,11 +104,15 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
         Places.initialize(getApplicationContext(), context.getResources().getString(R.string.google_maps_key));
         placesClient = Places.createClient(this);
 
-        if (searchVisitorDataList != null)
-            fetchSearchVisitorPlace();
+//        if (searchVisitorDataList != null)
+        fetchSearchVisitorPlace(SharedPreManager.getInstance(context).getUser().getMobileNo());
 
+        Timber.e("searchActivity mobileNo -> %s", SharedPreManager.getInstance(context).getUser().getMobileNo());
         editTextSearch.addTextChangedListener(filterTextWatcher);
         editTextSearch.requestFocus();
+        editTextSearch.requestLayout();
+//        editTextSearch.clearAnimation();
+//        editTextSearch.clearFocus();
 
         setPlacesRecyclerAdapter();
     }
@@ -154,8 +178,8 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
                     ApplicationUtils.hideKeyboard(context);
                 } else
                     //if something to do for empty edittext
-
-                    return true;
+                    ApplicationUtils.hideKeyboard(context);
+                return true;
             }
             return false;
         });
@@ -283,6 +307,28 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
     }
 
     @Override
+    public void onClick(SearchVisitorData visitorData) {
+        Intent resultIntent = new Intent();
+        LatLng endLatLng = new LatLng(visitorData.getEndLat(), visitorData.getEndLng());
+        String areaName = visitorData.getVisitedArea();
+        String placeId = visitorData.getPlaceId();
+        if (endLatLng != null && areaName != null) {
+            double latitude = endLatLng.latitude;
+            double longitude = endLatLng.longitude;
+            SearchVisitorData searchVisitorData = new SearchVisitorData(areaName, placeId, latitude, longitude, latitude, longitude);
+            // resultIntent.putExtra(NEW_PLACE_SELECTED,place);
+            //String result=new Gson().toJson(place);
+            resultIntent.putExtra(HISTORY_PLACE_SELECTED, searchVisitorData);
+            setResult(RESULT_OK, resultIntent);
+            Log.d("ShawnClick", "click: ");
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+            finish();
+        }
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
         if (isFinishing()) {
@@ -300,69 +346,146 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
     private List<List<String>> list;
     private SearchVisitedPlaceResponse searchVisitedPlaceResponse;
     private String parkingArea = null;
+    private String placeId = null;
     private double endLat = 0.0;
     private double endLng = 0.0;
     private double startLat = 0.0;
     private double startLng = 0.0;
 
 
-    private void fetchSearchVisitorPlace() {
-        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<SearchVisitedPlaceResponse> call = request.getVisitorData();
-        call.enqueue(new Callback<SearchVisitedPlaceResponse>() {
-            @Override
-            public void onResponse(@NotNull Call<SearchVisitedPlaceResponse> call, @NotNull Response<SearchVisitedPlaceResponse> response) {
-                Timber.e("onResponse -> %s", new Gson().toJson(response.body()));
+    private void fetchSearchVisitorPlace(String mobileNo) {
+        Timber.e("fetchSearchVisitorPlace mobileNo -> %s,", mobileNo);
+        Timber.e("fetchSearchVisitorPlace() e dhukche");
 
-                if (response.body() != null) {
-                    list = response.body().getVisitorData();
-                    Timber.e("list -> %s", list);
+        HttpsTrustManager.allowAllSSL();
 
-                    searchVisitedPlaceResponse = response.body();
+        StringRequest stringRequest = new StringRequest(Request.Method.DEPRECATED_GET_OR_POST, AppConfig.URL_SEARCH_HISTORY_GET, response -> {
+            Timber.e("fetchSearchVisitorPlace() stringRequest e dhukche");
+//            try {
+                //converting response to json object
+//                JSONObject jsonObject = new JSONObject(response);
+//                Timber.e("jsonObject -> %s", jsonObject.toString());
 
-                    visitedPlaceList = searchVisitedPlaceResponse.getVisitorData();
-                    for (List<String> visitedPlaceData : visitedPlaceList) {
-                        for (int i = 0; i < visitedPlaceData.size(); i++) {
+                // if no error response
+//                if (!jsonObject.getBoolean("error")) {
+//                    Timber.e("jsonObject get post if e dhukche");
 
-                            Log.d(TAG, "onResponse: i=" + i);
+                    try {
+                        JSONObject object = new JSONObject(response);
+                        JSONArray jsonArray = object.getJSONArray("visitor_data");
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            SearchVisitorData searchVisitorData = new SearchVisitorData();
+                            JSONArray array = jsonArray.getJSONArray(i);
+                            searchVisitorData.setVisitedArea(array.getString(6).trim());
+                            searchVisitorData.setEndLat(Double.parseDouble(array.getString(2).trim()));
+                            searchVisitorData.setEndLng(Double.parseDouble(array.getString(3).trim()));
+                            searchVisitorData.setPlaceId(array.getString(1).trim());
 
-                            if (i == 6) {
-                                parkingArea = visitedPlaceData.get(i);
-                            }
+                            searchVisitorDataList.add(searchVisitorData);
 
-                            if (i == 2) {
-                                endLat = Double.parseDouble(visitedPlaceData.get(i));
-                            }
-
-                            if (i == 3) {
-                                endLng = Double.parseDouble(visitedPlaceData.get(i));
-                            }
-
-                            if (i == 4) {
-                                startLat = Double.parseDouble(visitedPlaceData.get(i));
-                            }
-
-                            if (i == 5) {
-                                startLng = Double.parseDouble(visitedPlaceData.get(i));
-                            }
                         }
-                        SearchVisitorData searchVisitorData = new SearchVisitorData(parkingArea, endLat, endLng, startLat, startLng);
-                        searchVisitorDataList.add(searchVisitorData);
-                        Timber.e("searchVisitorData -> %s", new Gson().toJson(searchVisitorData));
+                        setFragmentControls(searchVisitorDataList);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                    setFragmentControls(searchVisitorDataList);
-                }
-            }
+//                }
+//                else {
+////                    showMessage(jsonObject.getString("message"));
+//                    Timber.e("jsonObject get post else e dhukche");
+//                    Timber.e("error message get post else block-> %s", jsonObject.getString("message"));
+//                }
+//            } catch (JSONException e) {
+//                Timber.e("jsonObject get post catch -> %s", e.getMessage());
+//                e.printStackTrace();
+//            }
 
+        }, new Response.ErrorListener() {
             @Override
-            public void onFailure(Call<SearchVisitedPlaceResponse> call, Throwable t) {
-                Timber.e("onFailure -> %s", t.getMessage());
-                ApplicationUtils.showMessageDialog("Something went wrong...Please try later!", context);
+            public void onErrorResponse(VolleyError error) {
+                Timber.e("jsonObject onErrorResponse get post -> %s", error.getMessage());
+                Timber.e("jsonObject onErrorResponse get post -> %s", error.getCause());
+//                showMessage(error.getMessage());
             }
-        });
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Timber.e("map e dhukche");
+                Map<String, String> params = new HashMap<>();
+                params.put("mobile_number", mobileNo);
+                return params;
+            }
+        };
+
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        ParkingApp.getInstance().addToRequestQueue(stringRequest, TAG);
+
+//        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+//        Call<SearchVisitedPlaceResponse> call = request.getVisitorData();
+//        call.enqueue(new Callback<SearchVisitedPlaceResponse>() {
+//            @Override
+//            public void onResponse(@NotNull Call<SearchVisitedPlaceResponse> call, @NotNull Response<SearchVisitedPlaceResponse> response) {
+//                Timber.e("onResponse searchHistory-> %s", new Gson().toJson(response.body()));
+//
+//                if (response.body() != null) {
+//                    list = response.body().getVisitorData();
+//                    Timber.e("list -> %s", list);
+//
+//                    searchVisitedPlaceResponse = response.body();
+//
+//                    visitedPlaceList = searchVisitedPlaceResponse.getVisitorData();
+//                    if (visitedPlaceList!=null){
+//                        for (List<String> visitedPlaceData : visitedPlaceList) {
+//                            for (int i = 0; i < visitedPlaceData.size(); i++) {
+//
+//                                Log.d(TAG, "onResponse: i=" + i);
+//
+//                                if (i == 6) {
+//                                    parkingArea = visitedPlaceData.get(i);
+//                                }
+//
+//                                if (i == 1) {
+//                                    placeId = visitedPlaceData.get(i);
+//                                }
+//
+//                                if (i == 2) {
+//                                    endLat = Double.parseDouble(visitedPlaceData.get(i));
+//                                }
+//
+//                                if (i == 3) {
+//                                    endLng = Double.parseDouble(visitedPlaceData.get(i));
+//                                }
+//
+//                                if (i == 4) {
+//                                    startLat = Double.parseDouble(visitedPlaceData.get(i));
+//                                }
+//
+//                                if (i == 5) {
+//                                    startLng = Double.parseDouble(visitedPlaceData.get(i));
+//                                }
+//                            }
+//                            SearchVisitorData searchVisitorData = new SearchVisitorData(parkingArea, placeId, endLat, endLng, startLat, startLng);
+//                            searchVisitorDataList.add(searchVisitorData);
+//                            Timber.e("searchVisitorData -> %s", new Gson().toJson(searchVisitorData));
+//                        }
+//                        setFragmentControls(searchVisitorDataList);
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(@NonNull Call<SearchVisitedPlaceResponse> call, @NonNull Throwable t) {
+//                Timber.e("onFailure -> %s", t.getMessage());
+//                ApplicationUtils.showMessageDialog("Something went wrong...Please try later!", context);
+//            }
+//        });
+    }
+
+    private void showMessage(String message) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 
     private void setFragmentControls(ArrayList<SearchVisitorData> searchVisitorDataList) {
+        Timber.e("setFragmentControls searchActivity e dhukche");
         this.searchVisitorDataList = searchVisitorDataList;
         recyclerViewSearchPlaces.setHasFixedSize(true);
         recyclerViewSearchPlaces.setItemViewCacheSize(20);

@@ -50,6 +50,7 @@ import com.akexorcist.googledirection.model.Direction;
 import com.akexorcist.googledirection.model.Info;
 import com.akexorcist.googledirection.model.Leg;
 import com.akexorcist.googledirection.model.Route;
+import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -98,10 +99,15 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import timber.log.Timber;
@@ -123,12 +129,19 @@ import www.fiberathome.com.parkingapp.eventBus.GetDirectionForMarkerEvent;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionForSearchEvent;
 import www.fiberathome.com.parkingapp.eventBus.SetMarkerEvent;
 import www.fiberathome.com.parkingapp.model.BookingSensors;
+import www.fiberathome.com.parkingapp.model.SearchVisitorData;
 import www.fiberathome.com.parkingapp.model.SelectedPlace;
 import www.fiberathome.com.parkingapp.model.SensorArea;
+import www.fiberathome.com.parkingapp.model.common.RetrofitCommon;
+import www.fiberathome.com.parkingapp.model.response.SearchVisitedPostResponse;
 import www.fiberathome.com.parkingapp.preference.AppConstants;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.GpsUtils;
+import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
 import www.fiberathome.com.parkingapp.utils.RecyclerTouchListener;
+import www.fiberathome.com.parkingapp.view.activity.login.LoginActivity;
+import www.fiberathome.com.parkingapp.view.activity.registration.SignUpActivity;
+import www.fiberathome.com.parkingapp.view.activity.registration.VerifyPhoneActivity;
 import www.fiberathome.com.parkingapp.view.activity.search.SearchActivity;
 import www.fiberathome.com.parkingapp.view.booking.ScheduleFragment;
 import www.fiberathome.com.parkingapp.view.booking.listener.FragmentChangeListener;
@@ -136,6 +149,7 @@ import www.fiberathome.com.parkingapp.view.bottomSheet.BottomSheetAdapter;
 
 import static android.app.Activity.RESULT_OK;
 import static www.fiberathome.com.parkingapp.utils.AppConstants.FIRST_TIME_INSTALLED;
+import static www.fiberathome.com.parkingapp.utils.AppConstants.HISTORY_PLACE_SELECTED;
 import static www.fiberathome.com.parkingapp.utils.AppConstants.NEW_PLACE_SELECTED;
 import static www.fiberathome.com.parkingapp.utils.AppConstants.NEW_SEARCH_ACTIVITY_REQUEST_CODE;
 
@@ -1399,24 +1413,111 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                 String areaAddress = selectedPlace.getAreaAddress();
                 String placeId = selectedPlace.getPlaceId();
 
-//                ArrayList<Parameters> parametersArrayList = new ArrayList<>();
-//                parametersArrayList.add(new Parameters(SharedPreManager.getInstance(context).getUser().getMobileNo(),
-//                        placeId, String.valueOf(selectedPlace.getLatitude()), String.valueOf(selectedPlace.getLongitude()),
-//                                String.valueOf(onConnectedLocation.getLatitude()), String.valueOf(onConnectedLocation.getLongitude()), areaAddress));
-//                storeVisitedPlace(parametersArrayList);
-
-                //store visited place
                 storeVisitedPlace(SharedPreManager.getInstance(context).getUser().getMobileNo(), placeId,
                         selectedPlace.getLatitude(), selectedPlace.getLongitude(),
                         onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), areaAddress);
 
-                Timber.e("post mobile -> %s", SharedPreManager.getInstance(context).getUser().getMobileNo());
-                Timber.e("post placeId -> %s", placeId);
-                Timber.e("post selectedPlace.getLatitude() -> %s", selectedPlace.getLatitude());
-                Timber.e("post selectedPlace.getLongitude() -> %s", selectedPlace.getLongitude());
-                Timber.e("post onConnectedLocation.getLatitude() -> %s", onConnectedLocation.getLatitude());
-                Timber.e("post onConnectedLocation.getLongitude() -> %s", onConnectedLocation.getLongitude());
-                Timber.e("post areaAddress -> %s", areaAddress);
+                buttonSearch.setVisibility(View.GONE);
+                linearLayoutSearchBottom.setVisibility(View.VISIBLE);
+                linearLayoutSearchBottomButton.setVisibility(View.VISIBLE);
+                btnSearchGetDirection.setVisibility(View.VISIBLE);
+                btnSearchGetDirection.setEnabled(true);
+                imageViewSearchBack.setVisibility(View.VISIBLE);
+                Timber.e("selcectedPlace searchPlaceLatLng -> %s", searchPlaceLatLng);
+
+                if (mMap != null)
+                    mMap.clear();
+                MarkerOptions markerOptions = new MarkerOptions();
+                markerOptions.position(searchPlaceLatLng);
+                coordList.add(new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));
+                markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
+                mMap.addMarker(markerOptions);
+                //move map camera
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 13.5f));
+                fetchSensors(onConnectedLocation);
+                getAddress(getActivity(), searchPlaceLatLng.latitude, searchPlaceLatLng.longitude);
+                String searchPlaceName = address;
+                if (onConnectedLocation != null && searchPlaceLatLng != null) {
+                    TaskParser taskParser = new TaskParser();
+                    searchDistance = taskParser.showDistance(new LatLng(SharedData.getInstance().getOnConnectedLocation().getLatitude(), SharedData.getInstance().getOnConnectedLocation().getLongitude()),
+                            new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));
+                    Timber.e("searchDistance -> %s", searchDistance);
+
+                    layoutSearchVisible(true, searchPlaceName, "0", textViewSearchParkingDistance.getText().toString(), searchPlaceLatLng);
+                    bottomSheetBehavior.setPeekHeight(400);
+
+                    if (searchDistance < 3000) {
+                        adjustValue = 1;
+                    }
+
+                    double kim = (searchDistance / 1000) + adjustValue;
+                    double searchDoubleDuration = Double.parseDouble(new DecimalFormat("##.##").format(searchDistance * 2.43));
+                    String searchStringDuration = searchDoubleDuration + " mins";
+                    bookingSensorsArrayList.add(new BookingSensors(searchPlaceName, searchPlaceLatLng.latitude, searchPlaceLatLng.longitude,
+                            searchDistance, "0", searchStringDuration,
+                            context.getResources().getString(R.string.nearest_parking_from_your_destination),
+                            BookingSensors.TEXT_INFO_TYPE, 0));
+                    if (searchPlaceEventJsonArray != null) {
+                        for (int i = 0; i < searchPlaceEventJsonArray.length(); i++) {
+                            JSONObject jsonObject;
+                            try {
+                                jsonObject = searchPlaceEventJsonArray.getJSONObject(i);
+                                String latitude1 = jsonObject.get("latitude").toString();
+                                String longitude1 = jsonObject.get("longitude").toString();
+
+                                double distanceForNearbyLoc = calculateDistance(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude,
+                                        ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1));
+//                            Timber.e("DistanceForNearbyLoc -> %s", distanceForNearbyLoc);
+
+                                if (distanceForNearbyLoc < 5) {
+                                    origin = new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude);
+                                    getAddress(getActivity(), ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1));
+                                    String nearbyAreaName = address;
+                                    String parkingNumberOfNearbyDistanceLoc = jsonObject.get("no_of_parking").toString();
+
+                                    int adjsutNearbyValue = 2;
+                                    if (distanceForNearbyLoc < 1000) {
+                                        adjsutNearbyValue = 1;
+                                    }
+
+                                    double km = (distanceForNearbyLoc / 1000) + adjsutNearbyValue;
+                                    double nearbySearchDoubleDuration = Double.parseDouble(new DecimalFormat("##.##").format(km * 2.43));
+                                    String nearbySearchStringDuration = nearbySearchDoubleDuration + " mins";
+
+                                    bookingSensorsArrayList.add(new BookingSensors(nearbyAreaName, ApplicationUtils.convertToDouble(latitude1),
+                                            ApplicationUtils.convertToDouble(longitude1), distanceForNearbyLoc, parkingNumberOfNearbyDistanceLoc,
+                                            nearbySearchStringDuration,
+                                            BookingSensors.INFO_TYPE, 1));
+
+                                    bubbleSortArrayList(bookingSensorsArrayList);
+                                    bottomSheetBehavior.setPeekHeight(400);
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    } else {
+                        Toast.makeText(context, "Something went wrong!!! Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                    }
+
+                    if (bookingSensorsArrayList != null) {
+                        if (bottomSheetAdapter != null) {
+                            bookingSensorsArrayListGlobal.clear();
+                            bookingSensorsArrayListGlobal.addAll(bookingSensorsArrayList);
+                            bottomSheetAdapter.notifyDataSetChanged();
+                        }
+                    }
+                } else {
+                    Toast.makeText(context, "Location cannot be identified!!!", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            SearchVisitorData searchVisitorData = (SearchVisitorData)data.getSerializableExtra(HISTORY_PLACE_SELECTED);
+            if (searchVisitorData != null) {
+                searchPlaceLatLng = new LatLng(searchVisitorData.getEndLat(), searchVisitorData.getEndLng());
+                Timber.e("selcectedPlace LatLng -> %s", new LatLng(searchVisitorData.getEndLat(), searchVisitorData.getEndLng()));
+                String areaName = searchVisitorData.getVisitedArea();
+                String placeId = searchVisitorData.getPlaceId();
                 buttonSearch.setVisibility(View.GONE);
                 linearLayoutSearchBottom.setVisibility(View.VISIBLE);
                 linearLayoutSearchBottomButton.setVisibility(View.VISIBLE);
@@ -1518,45 +1619,57 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         }
     }
 
-    private void storeVisitedPlace(ArrayList<Parameters> parametersArrayList) {
-        // Store Search History through UI Service.
-        ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<SearchHistoryCommon> storeSearchHistoryCall =
-                service.storeSearchHistory(parametersArrayList);
-
-        storeSearchHistoryCall.enqueue(new Callback<SearchHistoryCommon>() {
-            @Override
-            public void onResponse(@NonNull Call<SearchHistoryCommon> call, @NonNull retrofit2.Response<SearchHistoryCommon> response) {
-                Timber.e("onResponse -> %s", new Gson().toJson(response.body()));
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<SearchHistoryCommon> call, @NonNull Throwable t) {
-                Timber.e("onFailure -> %s", t.getMessage());
-            }
-        });
-    }
-
     private void storeVisitedPlace(String mobileNo, String placeId, double endLatitude, double endLongitude,
                                    double startLatitude, double startLongitude, String areaAddress) {
+        HttpsTrustManager.allowAllSSL();
 
-        // Store Search History through UI Service.
-        ApiService service = ApiClient.getRetrofitInstance(AppConfig.URL_SAVE_SEARCH_HISTORY_POST).create(ApiService.class);
-        Call<List<SearchHistoryCommon>> storeSearchHistoryCall =
-                service.storeSearchHistory(mobileNo, placeId, String.valueOf(endLatitude),
-                        String.valueOf(endLongitude), String.valueOf(startLatitude), String.valueOf(startLongitude), areaAddress);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_SAVE_SEARCH_HISTORY_POST, response -> {
 
-        storeSearchHistoryCall.enqueue(new Callback<List<SearchHistoryCommon>>() {
-            @Override
-            public void onResponse(@NonNull Call<List<SearchHistoryCommon>> call, @NonNull retrofit2.Response<List<SearchHistoryCommon>> response) {
-                Timber.e("onResponse -> %s", new Gson().toJson(response.body()));
+            try {
+                //converting response to json object
+                JSONObject jsonObject = new JSONObject(response);
+                Timber.e("jsonObject -> %s", jsonObject.toString());
+
+                // if no error response
+                if (!jsonObject.getBoolean("error")) {
+                    Timber.e("jsonObject if e dhukche");
+//                    showMessage(jsonObject.getString("message"));
+                    Timber.e("error message if block-> %s", jsonObject.getString("message"));
+
+                } else {
+//                    showMessage(jsonObject.getString("message"));
+                    Timber.e("jsonObject else e dhukche");
+                    Timber.e("error message else block-> %s", jsonObject.getString("message"));
+                }
+            } catch (JSONException e) {
+                Timber.e("jsonObject catch -> %s", e.getMessage());
+                e.printStackTrace();
             }
 
+        }, new Response.ErrorListener() {
             @Override
-            public void onFailure(@NonNull Call<List<SearchHistoryCommon>> call, @NonNull Throwable t) {
-                Timber.e("onFailure -> %s", t.getMessage());
+            public void onErrorResponse(VolleyError error) {
+                Timber.e("jsonObject onErrorResponse -> %s", error.getMessage());
+//                showMessage(error.getMessage());
             }
-        });
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("mobile_number", mobileNo);
+                params.put("place_id", placeId);
+                params.put("end_let", String.valueOf(endLatitude));
+                params.put("end_long", String.valueOf(endLongitude));
+                params.put("start_let", String.valueOf(startLatitude));
+                params.put("start_long", String.valueOf(startLongitude));
+                params.put("address", areaAddress);
+
+                return params;
+            }
+        };
+
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        ParkingApp.getInstance().addToRequestQueue(stringRequest, TAG);
     }
 
     private void showMessage(String message) {
