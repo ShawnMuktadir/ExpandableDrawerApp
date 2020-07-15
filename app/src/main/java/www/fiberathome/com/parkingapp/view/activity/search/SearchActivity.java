@@ -46,8 +46,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -360,43 +362,37 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
 
         StringRequest stringRequest = new StringRequest(Request.Method.DEPRECATED_GET_OR_POST, AppConfig.URL_SEARCH_HISTORY_GET, response -> {
             Timber.e("fetchSearchVisitorPlace() stringRequest e dhukche");
-//            try {
-                //converting response to json object
-//                JSONObject jsonObject = new JSONObject(response);
-//                Timber.e("jsonObject -> %s", jsonObject.toString());
+                    if (response != null) {
+                        try {
+                            JSONObject object = new JSONObject(response);
+                            JSONArray jsonArray = object.getJSONArray("visitor_data");
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                SearchVisitorData searchVisitorData = new SearchVisitorData();
+                                JSONArray array = jsonArray.getJSONArray(i);
+                                searchVisitorData.setVisitedArea(array.getString(6).trim());
+                                searchVisitorData.setEndLat(Double.parseDouble(array.getString(2).trim()));
+                                searchVisitorData.setEndLng(Double.parseDouble(array.getString(3).trim()));
+                                searchVisitorData.setPlaceId(array.getString(1).trim());
 
-                // if no error response
-//                if (!jsonObject.getBoolean("error")) {
-//                    Timber.e("jsonObject get post if e dhukche");
+//                                boolean isExist = isExist(array.getString(6).trim());
+//
+//                                if (!isExist) {
+//                                    // Not exist, Add now
+//                                    searchVisitorDataList.add(searchVisitorData);
+//                                }
 
-                    try {
-                        JSONObject object = new JSONObject(response);
-                        JSONArray jsonArray = object.getJSONArray("visitor_data");
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            SearchVisitorData searchVisitorData = new SearchVisitorData();
-                            JSONArray array = jsonArray.getJSONArray(i);
-                            searchVisitorData.setVisitedArea(array.getString(6).trim());
-                            searchVisitorData.setEndLat(Double.parseDouble(array.getString(2).trim()));
-                            searchVisitorData.setEndLng(Double.parseDouble(array.getString(3).trim()));
-                            searchVisitorData.setPlaceId(array.getString(1).trim());
+                                searchVisitorDataList.add(searchVisitorData);
+                                Timber.e("searchVisitorDataList -> %s",new Gson().toJson(searchVisitorDataList));
 
-                            searchVisitorDataList.add(searchVisitorData);
-
+                            }
+                            setFragmentControls(searchVisitorDataList);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                        setFragmentControls(searchVisitorDataList);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                    }else {
+                        Timber.e("response search history is null");
                     }
-//                }
-//                else {
-////                    showMessage(jsonObject.getString("message"));
-//                    Timber.e("jsonObject get post else e dhukche");
-//                    Timber.e("error message get post else block-> %s", jsonObject.getString("message"));
-//                }
-//            } catch (JSONException e) {
-//                Timber.e("jsonObject get post catch -> %s", e.getMessage());
-//                e.printStackTrace();
-//            }
+
 
         }, new Response.ErrorListener() {
             @Override
@@ -477,6 +473,19 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
 //                ApplicationUtils.showMessageDialog("Something went wrong...Please try later!", context);
 //            }
 //        });
+    }
+
+    public boolean isExist(String strName) {
+
+        for (int i = 0; i < searchVisitorDataList.size(); i++) {
+            if (searchVisitorDataList.get(i).equals(strName)) {
+//                searchVisitorDataList.remove(i);
+//                mAutoCompleteAdapter.notifyDataSetChanged();
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void showMessage(String message) {

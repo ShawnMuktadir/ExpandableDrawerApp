@@ -97,6 +97,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -104,25 +106,17 @@ import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.GoogleMapWebServiceNDistance.DirectionsParser;
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.api.ApiClient;
-import www.fiberathome.com.parkingapp.api.ApiService;
 import www.fiberathome.com.parkingapp.base.AppConfig;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.data.preference.SharedPreManager;
 import www.fiberathome.com.parkingapp.data.retrofit.Common;
 import www.fiberathome.com.parkingapp.data.retrofit.IGoogleApi;
-import www.fiberathome.com.parkingapp.data.searchHistory.Parameters;
-import www.fiberathome.com.parkingapp.data.searchHistory.SearchHistoryCommon;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionAfterButtonClickEvent;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionBottomSheetEvent;
 import www.fiberathome.com.parkingapp.eventBus.GetDirectionForMarkerEvent;
@@ -132,16 +126,11 @@ import www.fiberathome.com.parkingapp.model.BookingSensors;
 import www.fiberathome.com.parkingapp.model.SearchVisitorData;
 import www.fiberathome.com.parkingapp.model.SelectedPlace;
 import www.fiberathome.com.parkingapp.model.SensorArea;
-import www.fiberathome.com.parkingapp.model.common.RetrofitCommon;
-import www.fiberathome.com.parkingapp.model.response.SearchVisitedPostResponse;
 import www.fiberathome.com.parkingapp.preference.AppConstants;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.GpsUtils;
 import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
 import www.fiberathome.com.parkingapp.utils.RecyclerTouchListener;
-import www.fiberathome.com.parkingapp.view.activity.login.LoginActivity;
-import www.fiberathome.com.parkingapp.view.activity.registration.SignUpActivity;
-import www.fiberathome.com.parkingapp.view.activity.registration.VerifyPhoneActivity;
 import www.fiberathome.com.parkingapp.view.activity.search.SearchActivity;
 import www.fiberathome.com.parkingapp.view.booking.ScheduleFragment;
 import www.fiberathome.com.parkingapp.view.booking.listener.FragmentChangeListener;
@@ -168,8 +157,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 //    GoogleMap.OnInfoWindowClickListener,
 
     private final String TAG = getClass().getSimpleName();
-    public static String parkingCount;
-    public static String parkingDistance;
 
     //from parking adapter
     @BindView(R.id.btnGetDirection)
@@ -255,6 +242,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     @BindView(R.id.view)
     View view;
 
+    @BindView(R.id.input_search)
+    Button buttonSearch;
+
     private LinearLayout bottomSheet;
     private FragmentChangeListener listener;
     private long arrived, departure;
@@ -299,8 +289,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     public double nLongitude;
     private String sensorStatus = "Occupied";
 
-    private Button buttonSearch;
-
     //flags
     private int getDirectionButtonClicked = 0;
     private int getDirectionSearchButtonClicked = 0;
@@ -324,8 +312,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     private LatLng startPosition, endPosition;
     private int index, next;
     private String searchPlaceCount = "0";
-    private boolean isParkingAdapterLayoutVisible = false;
-
 
     public HomeFragment() {
 
@@ -470,7 +456,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Log.d(TAG, "onMapReady: on Map Ready");
+        Timber.e("onMapReady called");
 
         if (progressDialog.isShowing()) {
             progressDialog.dismiss();
@@ -782,7 +768,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                 .build();
 
         googleApiClient.connect();
-
     }
 
     public Location onConnectedLocation;
@@ -884,7 +869,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
     @Override
     public void onResume() {
-
 //        Timber.e("onResume called");
         super.onResume();
 //        nearest.setOnClickListener(this);
@@ -1385,6 +1369,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     private BookingSensors bookingSensors;
     private BookingSensors bookingSensorsBottomSheet;
     private ArrayList<BookingSensors> bookingSensorsArrayList = new ArrayList<>();
+    private ArrayList<BookingSensors> bookingSensorsArrayListWithoutDuplicateItem = new ArrayList<>();
     private ArrayList<BookingSensors> bookingSensorsArrayListBottomSheet = new ArrayList<>();
     //    double adjustValue = 2;
     private double searchDistance;
@@ -2249,8 +2234,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     private void layoutVisible(boolean isVisible, String name, String count,
                                String distance, LatLng location) {
         this.name = name;
-        HomeFragment.parkingCount = count;
-        HomeFragment.parkingDistance = distance;
+        this.count = count;
+        this.distance = distance;
         HomeFragment.location = location;
 
         if (isVisible) {
