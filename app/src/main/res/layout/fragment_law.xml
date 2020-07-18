@@ -31,6 +31,8 @@
                 android:textSize="@dimen/dimTex15"
                 android:padding="@dimen/dim5"
                 android:layout_margin="@dimen/dim5"
+                android:drawableStart="@drawable/ic_search"
+                android:drawablePadding="@dimen/dim10"
                 android:textColor="@android:color/black"
                 android:textStyle="normal"
                 android:hint="Search..."

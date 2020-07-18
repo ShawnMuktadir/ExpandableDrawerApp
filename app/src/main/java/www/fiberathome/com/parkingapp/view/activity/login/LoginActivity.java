@@ -227,7 +227,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() < 1) {
                     textInputLayoutMobile.setErrorEnabled(true);
-                    textInputLayoutMobile.setError(context.getString(R.string.err_msg_fullname));
+                    textInputLayoutMobile.setError(context.getString(R.string.err_msg_mobile));
                 }
 
                 if (s.length() > 0) {
@@ -503,6 +503,5 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     break;
             }
         }
-
     }
 }

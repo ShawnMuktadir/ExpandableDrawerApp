@@ -160,8 +160,8 @@ public class ScheduleFragment extends Fragment implements DialogHelper.PayBtnCli
                         Dialog dialog = new Dialog(requireActivity());
                         dialog.setContentView(R.layout.voucher_dialog);
                         DialogHelper dialogHelper = new DialogHelper(dialog, requireActivity(), getDate(arrivedDate.getTime()), getDate(departerDate.getTime()),
-                                getTimeDiffrence(departerDate.getTime() - arrivedDate.getTime())
-                                , departerDate.getTime() - arrivedDate.getTime(), payBtnClickListener);
+                                getTimeDiffrence(departerDate.getTime() - arrivedDate.getTime()),
+                                departerDate.getTime() - arrivedDate.getTime(), payBtnClickListener);
                         dialogHelper.initDialog();
                         dialog.show();
                     }
@@ -176,12 +176,13 @@ public class ScheduleFragment extends Fragment implements DialogHelper.PayBtnCli
                     arrivedPicker.setEnabled(true);
                     arriveDisableLayout.setBackgroundColor(getResources().getColor(R.color.enableColor));
                     setArrivedDate = false;
+                    if (getActivity() != null)
+                        getActivity().getFragmentManager().popBackStack();
                 } else {
 
                 }
             }
         });
-
     }
 
     private String getDate(long milliSeconds) {

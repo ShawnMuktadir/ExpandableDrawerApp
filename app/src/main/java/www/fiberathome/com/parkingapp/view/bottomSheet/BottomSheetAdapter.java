@@ -90,7 +90,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
             holder.relativeLayouTxtBottom.setVisibility(View.GONE);
         }
 
-        holder.textViewParkingAreaName.setText(ApplicationUtils.capitalize(bookingSensors.getParkingArea().trim()));
+        holder.textViewParkingAreaName.setText(ApplicationUtils.capitalize(bookingSensors.getParkingArea()));
         holder.textViewParkingAreaCount.setText(bookingSensors.getCount());
         holder.textViewParkingDistance.setText(new DecimalFormat("##.##").format(bookingSensors.getDistance()) + " km");
         holder.textViewParkingTravelTime.setText(bookingSensors.getDuration());

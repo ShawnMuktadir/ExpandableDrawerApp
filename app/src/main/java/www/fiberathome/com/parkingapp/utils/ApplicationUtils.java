@@ -22,11 +22,9 @@ import android.os.IBinder;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.Html;
-import android.text.InputFilter;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.TextAppearanceSpan;
@@ -67,11 +65,14 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import timber.log.Timber;
-//import www.fiberathome.com.parkingapp.BuildConfig;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.preference.StaticData;
 import www.fiberathome.com.parkingapp.preference.utils.ConnectivityInterceptor;
 import www.fiberathome.com.parkingapp.view.fragments.HomeFragment;
+
+//import www.fiberathome.com.parkingapp.BuildConfig;
+
+//import www.fiberathome.com.parkingapp.BuildConfig;
 
 public class ApplicationUtils {
 
@@ -312,7 +313,7 @@ public class ApplicationUtils {
         }).start();
     }
 
-    public static void hideKeyboard(Context context, EditText editText){
+    public static void hideKeyboard(Context context, EditText editText) {
         editText.clearFocus();
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null) {
@@ -471,6 +472,33 @@ public class ApplicationUtils {
         }
 
         return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
+
+    public static String allTrim(String str) {
+        int j = 0;
+        int count = 0;  // Number of extra spaces
+        int lspaces = 0;// Number of left spaces
+        char ch[] = str.toCharArray();
+        int len = str.length();
+        StringBuffer bchar = new StringBuffer();
+        if (ch[0] == ' ') {
+            while (ch[j] == ' ') {
+                lspaces++;
+                j++;
+            }
+        }
+        for (int i = lspaces; i < len; i++) {
+            if (ch[i] != ' ') {
+                if (count > 1 || count == 1) {
+                    bchar.append(' ');
+                    count = 0;
+                }
+                bchar.append(ch[i]);
+            } else if (ch[i] == ' ') {
+                count++;
+            }
+        }
+        return bchar.toString();
     }
 
     public static String getCompleteAddressString(Context context, double LATITUDE, double LONGITUDE) {

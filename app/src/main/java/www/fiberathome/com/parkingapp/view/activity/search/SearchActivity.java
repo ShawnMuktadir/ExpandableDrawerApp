@@ -15,9 +15,9 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -37,35 +37,24 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.gson.Gson;
 
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.api.ApiClient;
-import www.fiberathome.com.parkingapp.api.ApiService;
 import www.fiberathome.com.parkingapp.base.AppConfig;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.data.preference.SharedPreManager;
 import www.fiberathome.com.parkingapp.model.SearchVisitorData;
 import www.fiberathome.com.parkingapp.model.SelectedPlace;
-import www.fiberathome.com.parkingapp.model.SensorArea;
 import www.fiberathome.com.parkingapp.model.response.SearchVisitedPlaceResponse;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
@@ -74,7 +63,6 @@ import www.fiberathome.com.parkingapp.view.placesadapter.PlacesAutoCompleteAdapt
 
 import static www.fiberathome.com.parkingapp.preference.AppConstants.HISTORY_PLACE_SELECTED;
 import static www.fiberathome.com.parkingapp.preference.AppConstants.NEW_PLACE_SELECTED;
-import static www.fiberathome.com.parkingapp.utils.ApplicationUtils.distance;
 
 public class SearchActivity extends AppCompatActivity implements PlacesAutoCompleteAdapter.ClickListener {
 
@@ -88,6 +76,10 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
     ImageView imageViewCross;
     @BindView(R.id.recyclerViewSearchPlaces)
     RecyclerView recyclerViewSearchPlaces;
+    @BindView(R.id.imageViewSearchPlace)
+    ImageView imageViewSearchPlace;
+    @BindView(R.id.tvEmptyView)
+    TextView tvEmptyView;
 
     private PlacesAutoCompleteAdapter mAutoCompleteAdapter;
     private PlacesClient placesClient;
@@ -116,6 +108,11 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
 //        editTextSearch.clearFocus();
 
         setPlacesRecyclerAdapter();
+//        if (mAutoCompleteAdapter.getItemCount() == 0) {
+//            setNoData();
+//        } else if (mAutoCompleteAdapter != null) {
+//            hideNoData();
+//        }
     }
 
     private void initUI() {
@@ -172,7 +169,7 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
         editTextSearch.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 String contents = editTextSearch.getText().toString().trim();
-                if (contents.length() > 0) {
+                if (contents.length() > 2) {
                     //do search
                     mAutoCompleteAdapter.getFilter().filter(contents);
                     mAutoCompleteAdapter.notifyDataSetChanged();
@@ -235,7 +232,7 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
 
         //!s.toString().equals("")
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if (s.toString().length() > 0) {
+            if (s.toString().length() > 2) {
                 mAutoCompleteAdapter.getFilter().filter(s.toString());
                 mAutoCompleteAdapter.notifyDataSetChanged();
             } else {
@@ -362,36 +359,33 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
 
         StringRequest stringRequest = new StringRequest(Request.Method.DEPRECATED_GET_OR_POST, AppConfig.URL_SEARCH_HISTORY_GET, response -> {
             Timber.e("fetchSearchVisitorPlace() stringRequest e dhukche");
-                    if (response != null) {
-                        try {
-                            JSONObject object = new JSONObject(response);
-                            JSONArray jsonArray = object.getJSONArray("visitor_data");
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                SearchVisitorData searchVisitorData = new SearchVisitorData();
-                                JSONArray array = jsonArray.getJSONArray(i);
-                                searchVisitorData.setVisitedArea(array.getString(6).trim());
-                                searchVisitorData.setEndLat(Double.parseDouble(array.getString(2).trim()));
-                                searchVisitorData.setEndLng(Double.parseDouble(array.getString(3).trim()));
-                                searchVisitorData.setPlaceId(array.getString(1).trim());
+            if (response != null) {
+                try {
+                    JSONObject object = new JSONObject(response);
+                    JSONArray jsonArray = object.getJSONArray("visitor_data");
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        SearchVisitorData searchVisitorData = new SearchVisitorData();
+                        JSONArray array = jsonArray.getJSONArray(i);
+                        if (array != null) {
+                            hideNoData();
+                            searchVisitorData.setVisitedArea(array.getString(6).trim());
+                            searchVisitorData.setEndLat(Double.parseDouble(array.getString(2).trim()));
+                            searchVisitorData.setEndLng(Double.parseDouble(array.getString(3).trim()));
+                            searchVisitorData.setPlaceId(array.getString(1).trim());
 
-//                                boolean isExist = isExist(array.getString(6).trim());
-//
-//                                if (!isExist) {
-//                                    // Not exist, Add now
-//                                    searchVisitorDataList.add(searchVisitorData);
-//                                }
-
-                                searchVisitorDataList.add(searchVisitorData);
-                                Timber.e("searchVisitorDataList -> %s",new Gson().toJson(searchVisitorDataList));
-
-                            }
-                            setFragmentControls(searchVisitorDataList);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                            searchVisitorDataList.add(searchVisitorData);
+                            Timber.e("searchVisitorDataList -> %s", new Gson().toJson(searchVisitorDataList));
+                        } else {
+                            setNoData();
                         }
-                    }else {
-                        Timber.e("response search history is null");
                     }
+                    setFragmentControls(searchVisitorDataList);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Timber.e("response search history is null");
+            }
 
 
         }, new Response.ErrorListener() {
@@ -473,6 +467,18 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
 //                ApplicationUtils.showMessageDialog("Something went wrong...Please try later!", context);
 //            }
 //        });
+    }
+
+    private void setNoData() {
+        Timber.e("setNoData te dhukche");
+        imageViewSearchPlace.setVisibility(View.VISIBLE);
+        tvEmptyView.setVisibility(View.VISIBLE);
+    }
+
+    private void hideNoData() {
+        Timber.e("hideNoData te dhukche");
+        imageViewSearchPlace.setVisibility(View.GONE);
+        tvEmptyView.setVisibility(View.GONE);
     }
 
     public boolean isExist(String strName) {

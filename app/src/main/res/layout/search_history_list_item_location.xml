@@ -63,5 +63,25 @@
         </LinearLayout>
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/imageViewSearchPlace"
+        android:layout_width="@dimen/_50sdp"
+        android:layout_height="@dimen/_50sdp"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_search_maps"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/textViewNoData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:text="@string/no_data_available"
+        android:textColor="@android:color/holo_red_dark"
+        android:textSize="18sp"
+        android:visibility="gone" />
+
 
 </LinearLayout>

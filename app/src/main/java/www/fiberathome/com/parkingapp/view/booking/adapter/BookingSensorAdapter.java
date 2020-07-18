@@ -81,7 +81,7 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<RecyclerView.View
         if (bookingSensors != null) {
             switch (bookingSensors.type) {
                 case BookingSensors.INFO_TYPE:
-                    ((BookingViewHolder) holder).textViewParkingAreaName.setText(ApplicationUtils.capitalize(bookingSensors.getParkingArea().trim()));
+                    ((BookingViewHolder) holder).textViewParkingAreaName.setText(ApplicationUtils.capitalize(bookingSensors.getParkingArea()));
                     ((BookingViewHolder) holder).textViewParkingAreaCount.setText(bookingSensors.getCount());
                     ((BookingViewHolder) holder).textViewParkingDistance.setText(
                             new DecimalFormat("##.##").format(bookingSensors.getDistance()) + " km");
@@ -105,7 +105,7 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<RecyclerView.View
                     break;
 
                 case BookingSensors.TEXT_INFO_TYPE:
-                    ((TextBookingViewHolder) holder).textViewParkingAreaName.setText(ApplicationUtils.capitalize(bookingSensors.getParkingArea().trim()));
+                    ((TextBookingViewHolder) holder).textViewParkingAreaName.setText(ApplicationUtils.capitalize(bookingSensors.getParkingArea()));
                     ((TextBookingViewHolder) holder).textViewParkingAreaCount.setText(bookingSensors.getCount());
                     ((TextBookingViewHolder) holder).textViewParkingDistance.setText(
                             new DecimalFormat("##.##").format(bookingSensors.getDistance()) + " km");
@@ -141,7 +141,7 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<RecyclerView.View
 //
 //        BookingSensors bookingSensors = bookingSensorsArrayList.get(position);
 //
-//        bookingViewHolder.textViewParkingAreaName.setText(ApplicationUtils.capitalize(bookingSensors.getParkingArea().trim()));
+//        bookingViewHolder.textViewParkingAreaName.setText(ApplicationUtils.capitalize(bookingSensors.getParkingArea()));
 //        bookingViewHolder.textViewParkingAreaCount.setText(bookingSensors.getCount());
 //
 ////        getDestinationDurationInfo(context, new LatLng(bookingSensors.getLat(), bookingSensors.getLng()), bookingViewHolder);
