@@ -27,13 +27,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.model.User;
-import www.fiberathome.com.parkingapp.view.activity.main.MainActivity;
-import www.fiberathome.com.parkingapp.base.AppConfig;
+import www.fiberathome.com.parkingapp.model.loginUser.User;
+import www.fiberathome.com.parkingapp.view.main.MainActivity;
+import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
-import www.fiberathome.com.parkingapp.data.preference.SharedPreManager;
+import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
 
 import static com.android.volley.VolleyLog.TAG;
 
@@ -115,16 +115,16 @@ public class OldBookingFragment extends Fragment {
                     //Log.e("Booking Object: ", jsonObject.toString());
                     if (!jsonObject.getBoolean("error")) {
 
-                        JSONArray Jarray = jsonObject.getJSONArray("bookings");
+                        JSONArray jsonArray = jsonObject.getJSONArray("bookings");
 
                         stringArrayList = new ArrayList<String>();
 
-                        numbRows = (Integer) Jarray.length();
+                        numbRows = (Integer) jsonArray.length();
 
                         Log.e("Number of Bookings: ", String.valueOf(numbRows));
 
-                        for (int i = 0; i < Jarray.length(); i++) {
-                            JSONObject Jasonobject = Jarray.getJSONObject(i);
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject Jasonobject = jsonArray.getJSONObject(i);
                             // Log.e("Booking Info: ", Jasonobject.toString());
                             String spotName = Jasonobject.getString("parking_area").toString();
                             String timeStart = Jasonobject.getString("time_start").toString();

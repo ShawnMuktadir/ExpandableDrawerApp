@@ -18,15 +18,14 @@
             android:gravity="center"
             android:orientation="vertical">
 
-            <de.hdodenhof.circleimageview.CircleImageView
+            <ImageView
                 android:id="@+id/circleImageView"
-                android:layout_width="@dimen/_35sdp"
-                android:layout_height="@dimen/_35sdp"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
                 android:layout_gravity="center"
-                android:padding="@dimen/dim5"
+                android:layout_margin="@dimen/dim2"
                 android:src="@drawable/ic_clock"
-                app:civ_border_color="@color/transparent"
-                app:civ_border_width="@dimen/dim2" />
+                app:tint="@color/gray" />
 
         </LinearLayout>
 

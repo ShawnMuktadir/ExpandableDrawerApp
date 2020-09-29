@@ -83,7 +83,7 @@ public class BookedFragment extends Fragment {
 
         arrivedtimeTV.setText("Arrived " + getDate(arrived));
         departuretimeTV.setText("Departure " + getDate(departure));
-        timeDifferenceTV.setText(getTimeDiffrence(difference) + " min");
+        timeDifferenceTV.setText(getTimeDifference(difference) + " min");
 
         moreBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,7 +123,7 @@ public class BookedFragment extends Fragment {
     }
 
     @SuppressLint("DefaultLocale")
-    private String getTimeDiffrence(long difference) {
+    private String getTimeDifference(long difference) {
 
         return String.format("%02d:%02d",
                 TimeUnit.MILLISECONDS.toHours(difference),

@@ -4,12 +4,11 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -17,7 +16,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
@@ -29,13 +27,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.eventBus.GetDirectionEvent;
-import www.fiberathome.com.parkingapp.eventBus.SetMarkerEvent;
-import www.fiberathome.com.parkingapp.model.SensorArea;
-import www.fiberathome.com.parkingapp.view.activity.main.MainActivity;
-import www.fiberathome.com.parkingapp.view.fragments.HomeFragment;
+import www.fiberathome.com.parkingapp.module.eventBus.GetDirectionEvent;
+import www.fiberathome.com.parkingapp.model.sensors.SensorArea;
+import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+import www.fiberathome.com.parkingapp.view.main.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
-import www.fiberathome.com.parkingapp.data.preference.SharedData;
+import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
+
+import static android.content.Context.LOCATION_SERVICE;
 
 public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -52,29 +51,20 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private boolean isItemClicked = false;
     private boolean isExpanded = false;
 
-//    private onItemClickListener clickListener;
+    private ParkingAdapterClickListener mListener;
 
-    public ParkingAdapter(Context context, ParkingFragment parkingFragment, HomeFragment homeFragment, ArrayList<SensorArea> sensorAreas, Location onConnectedLocation) {
+    public interface ParkingAdapterClickListener { // create an interface
+        void onItemClick(int position); // create callback function
+    }
+
+    public ParkingAdapter(Context context, ParkingFragment parkingFragment, HomeFragment homeFragment, ArrayList<SensorArea> sensorAreas, Location onConnectedLocation, ParkingAdapterClickListener mListener) {
         this.context = context;
         this.parkingFragment = parkingFragment;
         this.homeFragment = homeFragment;
         this.sensorAreas = sensorAreas;
         this.onConnectedLocation = onConnectedLocation;
-//        EventBus.getDefault().register(this);
+        this.mListener = mListener;
     }
-
-//    public ParkingAdapter(Context context,HomeFragment homeFragment){
-//        this.context= context;
-//        this.homeFragment = homeFragment;
-//    }
-//
-//    public void setClickListener(onItemClickListener clickListener) {
-//        this.clickListener = clickListener;
-//    }
-//
-//    public interface onItemClickListener {
-//        void onClick();
-//    }
 
     @NonNull
     @Override
@@ -104,27 +94,32 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         // Here I am just highlighting the background
         parkingViewHolder.itemView.setBackgroundColor(selectedPosition == position ? Color.LTGRAY : Color.TRANSPARENT);
-
         parkingViewHolder.itemView.setOnClickListener(v -> {
-            selectedPosition = position;
-            try {
-//                clickListener.onClick();
-                notifyDataSetChanged();
-                Timber.e("try e dhukche");
-            } catch (Exception e) {
-                Timber.e("try catch e dhukche -> %s", e.getMessage());
-            }
-            //data is set in SharedData, to retrieve this data in HomeFragment
-            Timber.e("Sensor Area to SharedData -> %s", new Gson().toJson(sensorArea));
-            SharedData.getInstance().setSensorArea(sensorArea);
-            //Pop the Parking Fragment and Replace it with HomeFragment
-            final Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    EventBus.getDefault().post(new GetDirectionEvent(new LatLng(sensorArea.getLat(), sensorArea.getLng())));
+            if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
+                selectedPosition = position;
+                mListener.onItemClick(position);
+                try {
+                    notifyDataSetChanged();
+                    Timber.e("try called");
+                    //data is set in SharedData, to retrieve this data in HomeFragment
+                    Timber.e("Sensor Area to SharedData -> %s", new Gson().toJson(sensorArea));
+                    SharedData.getInstance().setSensorArea(sensorArea);
+                } catch (Exception e) {
+                    Timber.e("try catch called -> %s", e.getMessage());
                 }
-            }, 100);
+
+                //Pop the Parking Fragment and Replace it with HomeFragment
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+//                        mListener.onItemClick(position);
+                        EventBus.getDefault().post(new GetDirectionEvent(new LatLng(sensorArea.getLat(), sensorArea.getLng())));
+                    }
+                }, 300);
+            } else {
+                TastyToastUtils.showTastyWarningToast(context, "Please enable GPS! or turn on Internet");
+            }
         });
     }
 
@@ -144,6 +139,34 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         notifyDataSetChanged();
     }
 
+    private boolean isGPSEnabled() {
+
+        LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
+
+        boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+        if (providerEnabled) {
+            return true;
+        } else {
+
+//            AlertDialog alertDialog = new AlertDialog.Builder(context)
+//                    .setTitle("GPS Permissions")
+//                    .setMessage("GPS is required for this app to work. Please enable GPS.")
+//                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
+//                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+//                        intent.putExtra("position",position);
+//                        Activity origin = (Activity)context;
+//
+//                        origin.startActivityForResult(intent, GPS_REQUEST_CODE);
+//                    }))
+//                    .setCancelable(false)
+//                    .show();
+
+        }
+
+        return false;
+    }
+
     // implements View.OnClickListener
     public static class ParkingViewHolder extends RecyclerView.ViewHolder {
 
@@ -159,12 +182,35 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         TextView textViewParkingDistance;
         @BindView(R.id.textViewParkingTravelTime)
         TextView textViewParkingTravelTime;
-//        @BindView(R.id.view)
-//        View view;
 
         public ParkingViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
     }
+//    public  void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        Log.d("MyAdapter", "onActivityResult");
+//
+//                selectedPosition = data.getIntExtra("position",0);
+//        SensorArea sensorArea = sensorAreas.get(selectedPosition);
+//        try {
+////                clickListener.onClick();
+//            notifyDataSetChanged();
+//            Timber.e("try called");
+//            //data is set in SharedData, to retrieve this data in HomeFragment
+//            Timber.e("Sensor Area to SharedData -> %s", new Gson().toJson(sensorArea));
+//            SharedData.getInstance().setSensorArea(sensorArea);
+//        } catch (Exception e) {
+//            Timber.e("try catch called -> %s", e.getMessage());
+//        }
+//
+//        //Pop the Parking Fragment and Replace it with HomeFragment
+//        final Handler handler = new Handler();
+//        handler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                EventBus.getDefault().post(new GetDirectionEvent(new LatLng(sensorArea.getLat(), sensorArea.getLng())));
+//            }
+//        }, 2000);
+//    }
 }

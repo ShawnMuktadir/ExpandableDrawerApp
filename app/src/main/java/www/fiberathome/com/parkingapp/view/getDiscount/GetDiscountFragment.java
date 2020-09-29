@@ -19,6 +19,11 @@ public class GetDiscountFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public static GetDiscountFragment newInstance() {
+        GetDiscountFragment getDiscountFragment = new GetDiscountFragment();
+        return getDiscountFragment;
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

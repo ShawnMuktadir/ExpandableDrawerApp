@@ -17,12 +17,12 @@ import android.widget.Button;
 
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.model.Reservation;
-import www.fiberathome.com.parkingapp.model.User;
-import www.fiberathome.com.parkingapp.base.AppConfig;
+import www.fiberathome.com.parkingapp.model.response.booking.Reservation;
+import www.fiberathome.com.parkingapp.model.loginUser.User;
+import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
-import www.fiberathome.com.parkingapp.data.preference.SharedPreManager;
+import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
 
 import android.widget.DatePicker;
 import android.widget.ImageView;

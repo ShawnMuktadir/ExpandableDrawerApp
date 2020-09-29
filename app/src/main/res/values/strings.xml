@@ -98,11 +98,13 @@
     <string name="no_record_found">No Record Found</string>
     <string name="parking_area_name">Parking Area Name</string>
     <string name="address">Address</string>
-    <string name="connect_to_internet">Connect to Internet</string>
+    <string name="connect_to_internet">Please Connect to Internet</string>
+    <string name="connect_to_internet_gps">Please Connect to GPS/Internet</string>
+    <string name="close_app">Close App</string>
     <string name="conn_failed">Connection Failed</string>
     <string name="ok">Ok</string>
     <string name="retry">Retry</string>
-    <string name="demo_number">0</string>
+    <string name="demo_number">70</string>
     <string name="parking_slots">Parking Slots</string>
     <string name="subject_to_availability">Subject to availability</string>
     <string name="get_direction">Get Direction</string>
@@ -112,6 +114,7 @@
     <string name="cancel">Cancel</string>
     <string name="reserve">Reserve</string>
     <string name="exit_message">Please Press here to exit!</string>
+    <string name="exit_message_main">Press OK to exit!</string>
     <string name="law">Law</string>
     <string name="demo_price">Tk 100/h</string>
     <string name="distance">2 km</string>
@@ -165,7 +168,13 @@
     <string name="permission_request">Permission Request</string>
     <string name="grant_permission">Grant Permission</string>
     <string name="no_data_available">Enter a valid place to search for on \nParking App</string>
-
+    <string name="schedule_parking">Parking Schedule</string>
+    <string name="by_using_this_app_you_agree_to_our_terms_and_conditions_amp_privacy_policy"><![CDATA[By Using this app you agree to our Terms and Conditions & Privacy Policy]]></string>
+    <string name="car_number">Car Number</string>
+    <string name="nid_number">NID Number</string>
+    <string name="occupation">Occupation (Optional)</string>
+    <string name="signOut">Sign Out</string>
+    <string name="password">Password</string>
     <string-array name="CountryCodes">
         <item>93,AF</item>
         <item>355,AL</item>
@@ -374,4 +383,30 @@
         <item>260,ZM</item>
         <item>263,ZW</item>
     </string-array>
+
+    <string name="time_ago_now">few moments ago</string>
+    <string name="time_ago_full_seconds">%1$d seconds ago</string>
+    <string name="time_ago_full_minute">%1$d minute ago</string>
+    <string name="time_ago_full_minutes">%1$d minutes ago</string>
+    <string name="time_ago_full_hour">%1$d hour ago</string>
+    <string name="time_ago_full_hours">%1$d hours ago</string>
+    <string name="time_ago_full_yesterday_at">Yesterday at %1$s</string>
+    <string name="time_ago_full_days">%1$d days ago</string>
+    <string name="time_ago_full_month">%1$d month ago</string>
+    <string name="time_ago_full_months">%1$d months ago</string>
+
+    <string name="time_ago_seconds">%1$d sec ago</string>
+    <string name="time_ago_minute">%1$d min ago</string>
+    <string name="time_ago_minutes">%1$d min ago</string>
+    <string name="time_ago_hour">%1$d h ago</string>
+    <string name="time_ago_hours">%1$d h ago</string>
+    <string name="time_ago_yesterday_at">Yesterday at %1$s</string>
+    <string name="time_ago_days">%1$d d ago</string>
+    <string name="time_ago_month">%1$d m ago</string>
+    <string name="time_ago_months">%1$d m ago</string>
+    <string name="grant_location">Enable Location</string>
+    <string name="location_request">Enable Location</string>
+    <string name="spinner_title">Vehicle reg.</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="your_books">Your Books</string>
 </resources>

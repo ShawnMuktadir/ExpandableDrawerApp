@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/dim30"
-    tools:context=".view.permission.PermissionActivity">
+    tools:context=".view.location.LocationActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:fontFamily="monospace"
-            android:text="@string/permission_request"
+            android:text="@string/location_request"
             android:textColor="@color/black"
             android:textSize="@dimen/dimTex24"
             android:textStyle="bold" />
@@ -52,8 +52,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@color/colorPrimary"
-        android:onClick="takeLocationPermission"
-        android:text="@string/grant_permission"
+        android:text="@string/grant_location"
         android:textAllCaps="false"
         android:textColor="@color/white" />
 

@@ -1,131 +1,149 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    tools:context=".fragment.ScheduleFragment"
-    >
+    android:layout_height="match_parent"
+    tools:context="view.booking.ScheduleFragment">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        >
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
 
-        <!-- android:background="#52000000"TODO: Update blank fragment layout -->
         <TextView
-            android:layout_marginTop="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/dim3"
             android:text="@string/heading"
-            android:textStyle="normal"
             android:textColor="@android:color/black"
-            android:textSize="16sp"
-            android:layout_gravity="center"
-            />
+            android:textSize="@dimen/dimTex15"
+            android:textStyle="bold" />
 
         <TextView
-            android:layout_margin="2dp"
+            android:id="@+id/textViewCurrentDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/date"
-            android:textSize="14sp"
-            android:textColor="@android:color/black"
             android:layout_gravity="center"
-            />
-        <View
-            android:background="#000"
-            android:layout_marginTop="3dp"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/arrived"
-            android:layout_margin="3dp"
-            android:padding="3dp"
-            android:textSize="16sp"
-            android:textColor="@color/arrived"/>
-        <!--android:background="#37636262"-->
-        <LinearLayout
-            android:id="@+id/arrivedLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            >
-            <com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker
-                android:id="@+id/arrivedPicker"
-                app:picker_textSize="18dp"
-                android:layout_width="wrap_content"
-                android:layout_height="190dp"
-                app:picker_selectorColor="@android:color/transparent"
-                app:picker_curved="true"
-                app:picker_cyclic="true"
-                app:picker_visibleItemCount="5"
-                />
-        </LinearLayout>
-        <View
-            android:id="@+id/view1"
-            android:background="#000"
-            android:layout_marginTop="3dp"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/departure"
-            android:layout_margin="3dp"
-            android:padding="3dp"
-            android:textSize="16sp"
-            android:textColor="@color/arrived"/>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/departureDisable"
-            >
-            <com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker
-                android:id="@+id/departurePicker"
-                app:picker_textSize="18dp"
-                android:layout_width="match_parent"
-                android:layout_height="190dp"
-                app:picker_selectorColor="@android:color/transparent"
-                app:picker_curved="true"
-                app:picker_cyclic="true"
-                app:picker_visibleItemCount="5"
-                />
-        </LinearLayout>
+            android:layout_margin="@dimen/dim3"
+            android:text="@string/date"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/dimTex14" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:weightSum="2"
+            android:padding="@dimen/dim5">
 
-            >
+            <!-- Text Label -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Vehicle No: "
+                android:textColor="@color/black"/>
+
+            <!-- Spinner Element -->
+            <Spinner
+                android:id="@+id/spinner"
+                android:layout_width="@dimen/dim150"
+                android:layout_height="@dimen/dim50"
+                android:prompt="@string/spinner_title" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="3dp"
+            android:background="#000" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/dim5"
+            android:text="@string/arrived"
+            android:textColor="@color/arrived"
+            android:textSize="@dimen/dimTex14" />
+        <!--android:background="#37636262"-->
+        <LinearLayout
+            android:id="@+id/arriveDisableLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker
+                android:id="@+id/arrivedPicker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:picker_curved="true"
+                app:picker_cyclic="true"
+                app:picker_selectorColor="@android:color/transparent"
+                app:picker_textSize="18dp"
+                app:picker_mustBeOnFuture="true"
+                app:picker_visibleItemCount="5" />
+        </LinearLayout>
+
+        <View
+            android:id="@+id/view1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="3dp"
+            android:background="#000" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/dim5"
+            android:text="@string/departure"
+            android:textColor="@color/arrived"
+            android:textSize="@dimen/dimTex14" />
+
+        <LinearLayout
+            android:id="@+id/departureDisableLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker
+                android:id="@+id/departurePicker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:picker_curved="true"
+                app:picker_cyclic="true"
+                app:picker_selectorColor="@android:color/transparent"
+                app:picker_textSize="18dp"
+                app:picker_visibleItemCount="5" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dim3"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
             <Button
                 android:id="@+id/cancelBtn"
-                android:layout_margin="3dp"
-                android:padding="3dp"
-                android:layout_weight="1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cancel"
+                android:layout_margin="@dimen/dim3"
+                android:layout_weight="1"
                 android:background="#D8D2D2"
-                android:textAllCaps="false"
+                android:text="Cancel"
+                android:textAllCaps="false" />
 
-                />
             <Button
-                android:id="@+id/saveBtn"
-                android:layout_margin="3dp"
-                android:padding="3dp"
-                android:background="@android:color/black"
-                android:layout_weight="1"
+                android:id="@+id/setBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dim3"
+                android:layout_weight="1"
+                android:background="@android:color/black"
                 android:text="Set"
-                android:textColor="@android:color/white"
-                android:textAllCaps="false"/>
+                android:textAllCaps="false"
+                android:textColor="@android:color/white" />
 
         </LinearLayout>
     </LinearLayout>
-</androidx.core.widget.NestedScrollView>
+</RelativeLayout>

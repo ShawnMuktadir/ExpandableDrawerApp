@@ -15,7 +15,7 @@ import androidx.fragment.app.Fragment;
 
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.view.booking.listener.FragmentChangeListener;
-import www.fiberathome.com.parkingapp.view.fragments.HomeFragment;
+import www.fiberathome.com.parkingapp.view.main.home.HomeFragment;
 
 
 public class PaymentFragment extends Fragment {
@@ -73,7 +73,7 @@ public class PaymentFragment extends Fragment {
                 bundle.putBoolean("s", true);
                 bundle.putLong("arrived", arrived);
                 bundle.putLong("departure", departure);
-                HomeFragment homeFragment = new HomeFragment();
+                HomeFragment homeFragment = HomeFragment.newInstance();
                 homeFragment.setArguments(bundle);
                 listener.fragmentChange(homeFragment);
             }

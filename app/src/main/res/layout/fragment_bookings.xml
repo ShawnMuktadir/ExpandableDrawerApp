@@ -1,10 +1,10 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+ <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    tools:context="www.fiberathome.com.parkingapp.view.booking.newBooking.NewBookedFragment">
+    tools:context="www.fiberathome.com.parkingapp.view.booking.newBooking.BookingFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,7 +14,6 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/dim5"
             android:orientation="horizontal">
 
             <ImageView
@@ -28,9 +27,8 @@
                 app:srcCompat="@drawable/ic_clear" />
 
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/_7sdp"
                 android:padding="@dimen/dim3"
                 android:text="@string/your_booked"
                 android:textColor="@color/blackColor"

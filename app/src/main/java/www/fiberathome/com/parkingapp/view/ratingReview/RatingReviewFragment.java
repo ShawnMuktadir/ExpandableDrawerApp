@@ -19,6 +19,11 @@ public class RatingReviewFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public static RatingReviewFragment newInstance() {
+        RatingReviewFragment ratingReviewFragment = new RatingReviewFragment();
+        return ratingReviewFragment;
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

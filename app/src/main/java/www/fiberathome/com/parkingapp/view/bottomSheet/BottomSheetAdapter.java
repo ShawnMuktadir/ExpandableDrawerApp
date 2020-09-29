@@ -1,9 +1,11 @@
 package www.fiberathome.com.parkingapp.view.bottomSheet;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
+import android.location.LocationManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,10 +36,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.data.preference.SharedData;
-import www.fiberathome.com.parkingapp.model.BookingSensors;
+import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
+import www.fiberathome.com.parkingapp.model.response.booking.BookingSensors;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
-import www.fiberathome.com.parkingapp.view.fragments.HomeFragment;
+import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+import www.fiberathome.com.parkingapp.view.main.home.HomeFragment;
+
+import static android.content.Context.LOCATION_SERVICE;
 
 public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.TextBookingViewHolder> {
     private final String TAG = getClass().getSimpleName();
@@ -48,17 +53,29 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
     private int selectedItem = -1;
     private int count = 0;
 
-    public BottomSheetAdapter(Context context, HomeFragment homeFragment, ArrayList<BookingSensors> sensors, Location onConnectedLocation) {
+    private AdapterCallback mAdapterCallback;
+
+    public BottomSheetAdapter(AdapterCallback callback) {
+        this.mAdapterCallback = callback;
+    }
+
+    public BottomSheetAdapter(Context context, HomeFragment homeFragment, ArrayList<BookingSensors> sensors, Location onConnectedLocation, AdapterCallback callback) {
         this.context = context;
         this.homeFragment = homeFragment;
         this.bookingSensorsArrayList = sensors;
         this.location = onConnectedLocation;
+        this.mAdapterCallback = callback;
+    }
+
+    public interface AdapterCallback {
+        void onMethodCallback(LatLng latLng);
     }
 
     @NonNull
     @Override
     public TextBookingViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.bottom_sheet_text_recycler_item, parent, false);
+        context = parent.getContext();
         return new TextBookingViewHolder(view);
     }
 
@@ -66,7 +83,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
     @Override
     public void onBindViewHolder(@NonNull TextBookingViewHolder holder, int position) {
         BookingSensors bookingSensors = bookingSensorsArrayList.get(position);
-
+        ApplicationUtils.setMargins(holder.relativeLayoutTxt, 0, 0, 0, 0);
         if (bookingSensors.type == BookingSensors.TEXT_INFO_TYPE) {
             //view=holder.itemView;
             count++;
@@ -76,7 +93,14 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
                 Log.d(TAG, "onBindViewHolder: " + position);
                 holder.relativeLayouTxtBottom.setVisibility(View.VISIBLE);
                 holder.textViewStatic.setText(bookingSensors.getText());
-                holder.itemView.setBackgroundColor(Color.LTGRAY);
+//                holder.itemView.setBackgroundColor(Color.LTGRAY);
+                holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.selectedColor));
+                homeFragment.bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._130sdp));
+
+//                holder.relativeLayoutTxt.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT; // LayoutParams: android.view.ViewGroup.LayoutParams
+//                holder.relativeLayoutTxt.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+//                holder.relativeLayoutTxt.requestLayout();   //It is necesary to refresh the screen
+                ApplicationUtils.setMargins(holder.relativeLayoutTxt, 0, 0, 0, 0);
             }
 
             /*try {
@@ -88,44 +112,88 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
         } else {
             holder.relativeLayouTxtBottom.setVisibility(View.GONE);
+//            holder.relativeLayoutTxt.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT; // LayoutParams: android.view.ViewGroup.LayoutParams
+//            holder.relativeLayoutTxt.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+//            holder.relativeLayoutTxt.requestLayout();   //It is necesary to refresh the screen
+            ApplicationUtils.setMargins(holder.relativeLayoutTxt, 0, 0, 0, 0);
         }
 
-        holder.textViewParkingAreaName.setText(ApplicationUtils.capitalize(bookingSensors.getParkingArea()));
+        holder.textViewParkingAreaName.setText(bookingSensors.getParkingArea());
+//        Timber.e("BottomSheetAdapter textViewParkingAreaName -> %s", bookingSensors.getParkingArea());
         holder.textViewParkingAreaCount.setText(bookingSensors.getCount());
         holder.textViewParkingDistance.setText(new DecimalFormat("##.##").format(bookingSensors.getDistance()) + " km");
         holder.textViewParkingTravelTime.setText(bookingSensors.getDuration());
 
         holder.itemView.setOnClickListener(v -> {
-            selectedItem = 0;
-            Collections.swap(bookingSensorsArrayList, position, 0);
-            notifyItemMoved(position, 0);
-            try {
-                notifyDataSetChanged();
-                homeFragment.linearLayoutSearchBottomButton.setVisibility(View.GONE);
-            } catch (Exception e) {
-                Timber.e(e);
-            }
+            if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
+                if (homeFragment.fromRouteDrawn == 0) {
+                    selectedItem = 0;
+                    if (bookingSensorsArrayList != null && !bookingSensorsArrayList.isEmpty()) {
+                        Collections.swap(bookingSensorsArrayList, position, 0);
+                        notifyItemMoved(position, 0);
+                        homeFragment.bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._130sdp));
+                    }
 
-            if (SharedData.getInstance().getOnConnectedLocation() != null) {
-                Location homeFragmentOnConnectedLocation = SharedData.getInstance().getOnConnectedLocation();
-                if (homeFragment.mMap != null) {
-                    homeFragment.mMap.clear();
-                    homeFragment.fetchSensors(homeFragmentOnConnectedLocation);
+                    try {
+                        notifyDataSetChanged();
+                        homeFragment.linearLayoutSearchBottomButton.setVisibility(View.GONE);
+                    } catch (Exception e) {
+                        Timber.e(e);
+                    }
+
+                    if (SharedData.getInstance().getOnConnectedLocation() != null) {
+                        Location homeFragmentOnConnectedLocation = SharedData.getInstance().getOnConnectedLocation();
+                        if (homeFragment.mMap != null) {
+                            homeFragment.mMap.clear();
+                        if (ApplicationUtils.checkInternet(context)) {
+                            homeFragment.fetchSensors(homeFragmentOnConnectedLocation);
+                        } else {
+//                            ApplicationUtils.showMessageDialog("Please connect to internet", context);
+                            ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
+                                Timber.e("Positive Button clicked");
+                                if (ApplicationUtils.checkInternet(context)){
+                                    homeFragment.fetchSensors(onConnectedLocation);
+//                                fetchBottomSheetSensors(onConnectedLocation);
+                                } else {
+                                    TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                                }
+                            }, (dialog, which) -> {
+                                Timber.e("Negative Button Clicked");
+                                dialog.dismiss();
+                                if (context != null) {
+                                    ((Activity) context).finish();
+                                    TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
+                                }
+                            });
+                        }
+                            mAdapterCallback.onMethodCallback(new LatLng(bookingSensors.getLat(), bookingSensors.getLng()));
+                        }
+                    }
+
+                    homeFragment.bottomSheetBehavior.setHideable(false);
+                    homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+//            homeFragment.bottomSheetBehavior.setPeekHeight(400);
+//                homeFragment.bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._90sdp));
+
+                    getDestinationDurationInfoForSearchLayout(context, new LatLng(bookingSensors.getLat(), bookingSensors.getLng()), holder, bookingSensors.type);
+                    homeFragment.layoutBottomSheetVisible(true, bookingSensors.getParkingArea(), bookingSensors.getCount(),
+                            holder.textViewParkingDistance.getText().toString(), holder.textViewParkingTravelTime.getText().toString(),
+                            new LatLng(bookingSensors.getLat(), bookingSensors.getLng()), true);
+                    homeFragment.bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._130sdp));
+                } else {
+                    homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    homeFragment.bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._130sdp));
+                    ApplicationUtils.showMessageDialog("You have to exit from current destination to change new parking spot", context);
                 }
+            } else {
+                TastyToastUtils.showTastyWarningToast(context, "Please enable GPS! or turn on Internet");
             }
-            getDestinationDurationInfoForSearchLayout(context, new LatLng(bookingSensors.getLat(), bookingSensors.getLng()), holder, bookingSensors.type);
-            homeFragment.layoutBottomSheetVisible(true, bookingSensors.getParkingArea(), bookingSensors.getCount(),
-                    holder.textViewParkingDistance.getText().toString(), holder.textViewParkingTravelTime.getText().toString(),
-                    new LatLng(bookingSensors.getLat(), bookingSensors.getLng()), true);
-
-            homeFragment.bottomSheetBehavior.setHideable(false);
-            homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-            homeFragment.bottomSheetBehavior.setPeekHeight(400);
 
         });
 
         if (selectedItem == position) {
-            holder.itemView.setBackgroundColor(Color.LTGRAY);
+//            holder.itemView.setBackgroundColor(Color.LTGRAY);
+            holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.selectedColor));
             //Toast.makeText(context, "if", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "onBindViewHolder: gray");
         } else {
@@ -138,7 +206,11 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
     @Override
     public int getItemCount() {
-        return bookingSensorsArrayList.size();
+        if (bookingSensorsArrayList.size() > 7) {
+            return 6;
+        } else {
+            return bookingSensorsArrayList.size();
+        }
     }
 
     @Override
@@ -187,12 +259,14 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
                             Info durationInfo = leg.getDuration();
                             String distance = distanceInfo.getText();
                             String duration = durationInfo.getText();
+                            textBookingViewHolder.textViewParkingDistance.setText(distance);
+                            textBookingViewHolder.textViewParkingTravelTime.setText(duration);
                             fromCurrentLocationDistance = distance;
                             fromCurrentLocationDuration = duration;
                             Timber.e("fromCurrentLocationDistance -> %s", fromCurrentLocationDistance);
                             Timber.e("fromCurrentLocationDuration -> %s", fromCurrentLocationDuration);
 //                            if (homeFragment.bottomSheetSearch == 0) {
-                            Timber.e("adapter homeFragment.bottomSheetSearch == 0 e dhukche");
+                            Timber.e("adapter homeFragment.bottomSheetSearch == 0 called");
 //                            bookingViewHolder.textViewParkingDistance.setText(fromCurrentLocationDistance);
 //                            bookingViewHolder.textViewParkingTravelTime.setText(fromCurrentLocationDuration);
 //                            }
@@ -231,6 +305,31 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         notifyDataSetChanged();
     }
 
+    private boolean isGPSEnabled() {
+
+        LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
+
+        boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+        if (providerEnabled) {
+            return true;
+        } else {
+
+//            AlertDialog alertDialog = new AlertDialog.Builder(context)
+//                    .setTitle("GPS Permissions")
+//                    .setMessage("GPS is required for this app to work. Please enable GPS.")
+//                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
+//                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+//                        startActivityForResult(intent, GPS_REQUEST_CODE);
+//                    }))
+//                    .setCancelable(false)
+//                    .show();
+
+        }
+
+        return false;
+    }
+
     // implements View.OnClickListener
     public static class TextBookingViewHolder extends RecyclerView.ViewHolder {
 
@@ -247,7 +346,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         @BindView(R.id.textViewStatic)
         public TextView textViewStatic;
         @BindView(R.id.relativeLayoutTxt)
-        public RelativeLayout relativeLayoutxt;
+        public RelativeLayout relativeLayoutTxt;
         @BindView(R.id.textBottom)
         public RelativeLayout relativeLayouTxtBottom;
 

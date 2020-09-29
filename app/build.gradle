@@ -6,7 +6,7 @@ android {
     defaultConfig {
         applicationId "www.fiberathome.com.parkingapp"
         minSdkVersion 19
-        buildToolsVersion = '28.0.3'
+        buildToolsVersion = '29.0.2'
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -42,57 +42,66 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'androidx.core:core:1.3.0'
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'androidx.core:core:1.3.1'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
+    implementation 'androidx.navigation:navigation-fragment:2.3.0'
+    implementation 'androidx.navigation:navigation-ui:2.3.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    testImplementation 'junit:junit:4.13'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    implementation files('libs/simple-xml-2.7.1.jar')
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+
     // QR code library
     implementation 'com.google.zxing:core:3.3.3'
     implementation 'com.journeyapps:zxing-android-embedded:3.2.0@aar'
+
     // Volley library
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'com.android.volley:volley:1.1.1'
+
+    // google gson
+    implementation 'com.google.code.gson:gson:2.8.6'
+
     // Glide image library
     implementation 'com.github.bumptech.glide:glide:4.11.0'
+    implementation('com.github.bumptech.glide:glide:4.11.0@aar') {
+        transitive = true
+    }
     // android circular imageView
-    implementation 'de.hdodenhof:circleimageview:2.2.0'
-    //FCM
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
 
-    implementation 'com.android.volley:volley:1.1.1'
-    // google gson
-    implementation 'com.google.code.gson:gson:2.8.5'
     // google play services
 //     implementation 'com.google.android.gms:play-services:17.0.0'
     // these two lines should be added
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
     implementation 'com.google.android.gms:play-services-places:17.0.0'
-    implementation 'com.google.android.libraries.places:places:2.2.0'
+    implementation 'com.google.android.libraries.places:places:2.4.0'
+
     //for specific city
     implementation 'com.google.maps.android:android-maps-utils:0.5+'
 
     implementation 'androidx.multidex:multidex:2.0.1'
-    //butterknife dependency
+
+    //butter knife dependency
     implementation 'com.jakewharton:butterknife:10.1.0'
     implementation 'com.jakewharton:butterknife-compiler:10.1.0'
-    implementation 'androidx.navigation:navigation-fragment:2.2.1'
-    implementation 'androidx.navigation:navigation-ui:2.2.1'
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    implementation files('libs/simple-xml-2.7.1.jar')
-    // map route
-//    implementation 'com.github.code2080:DrawRouteMaps:1.1.0'
+
     //retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-scalars:2.5.0'
-    implementation("com.squareup.okhttp3:okhttp:4.4.0")
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
+    implementation("com.squareup.okhttp3:okhttp:4.8.1")
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.8.1'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+
     //timber
     implementation 'com.jakewharton.timber:timber:4.7.1'
+
     //google map services
     implementation 'com.google.maps:google-maps-services:0.11.0'
     implementation 'org.slf4j:slf4j-nop:1.7.25'
@@ -109,27 +118,52 @@ dependencies {
     //Add live data and view model dependency
     def lifecycle_version = "1.1.1"
     implementation "android.arch.lifecycle:extensions:$lifecycle_version"
+
     //for duration takes this library
     implementation 'com.akexorcist:googledirectionlibrary:1.0.4' // Custom Google Direction API
+
     //for location
     implementation 'com.google.android.gms:play-services-location:17.0.0'
+
     //tasty-toast
     implementation 'com.sdsmdg.tastytoast:tastytoast:0.1.1'
-    //permission
-    implementation 'com.karumi:dexter:5.0.0'
+
+    //animated toast
+    implementation 'com.github.vedraj360:AnimatedToast:0.1.0'
+
     //rx java
     implementation 'io.reactivex.rxjava2:rxjava:2.2.4'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
 
     //expandable RecyclerView
     implementation 'com.thoughtbot:expandablerecyclerview:1.3'
+
     //calendar and time dual view
     implementation 'com.github.florent37:singledateandtimepicker:2.2.3'
 
-    implementation 'com.google.firebase:firebase-analytics:17.4.3'
     // Add the Firebase Crashlytics SDK.
     implementation 'com.google.firebase:firebase-crashlytics:17.1.0'
+    implementation 'com.google.firebase:firebase-analytics:17.4.3'
 
-    //this library handle permission
+    //For managing request permission
     implementation 'com.karumi:dexter:6.2.0'
+
+    //geoFence Libraries
+    implementation 'com.firebase:geofire-android:3.0.0'
+    implementation 'com.google.firebase:firebase-database:18.0.0'
+
+    // reactive
+    implementation "io.reactivex.rxjava2:rxjava:$rootProject.rxjava2Version"
+    implementation "io.reactivex.rxjava2:rxandroid:$rootProject.rxandroidVersion"
+
+    //room
+    def room_version = "1.1.1"
+    implementation "android.arch.persistence.room:runtime:$room_version"
+    annotationProcessor "android.arch.persistence.room:compiler:$room_version"
+    testImplementation "android.arch.persistence.room:testing:$room_version"
+
+    // lib for SMS verification (Phone Auth)
+    implementation 'com.google.android.gms:play-services-auth:18.1.0'
+    implementation 'com.google.android.gms:play-services-auth-api-phone:17.4.0'
+
 }

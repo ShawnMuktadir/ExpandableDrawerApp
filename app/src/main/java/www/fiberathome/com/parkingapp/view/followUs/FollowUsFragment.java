@@ -19,6 +19,11 @@ public class FollowUsFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public static FollowUsFragment newInstance() {
+        FollowUsFragment followUsFragment = new FollowUsFragment();
+        return followUsFragment;
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

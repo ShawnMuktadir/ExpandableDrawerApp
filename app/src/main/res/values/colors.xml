@@ -12,8 +12,7 @@
     <color name="whiteColor">#ffffff</color>
     <color name="blackColor">#000000</color>
     <color name="blue">#8398E8</color>
-
-    //ponno color resource
+    <color name="light_blue">#6AD2FA</color>
     <color name="exColorPrimary">#25A848</color>
     <color name="fab_color">#EDFDCC</color>
     <color name="black">#000</color>
@@ -145,5 +144,7 @@
     <color name="arrived">#494747</color>
     <color name="disableColor">#37636262</color>
     <color name="enableColor">#FFFEFE</color>
+    <color name="selectedColor">#BACDF8</color>
+    <color name="route_color">#7B87F4</color>
 
 </resources>

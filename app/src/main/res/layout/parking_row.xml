@@ -16,53 +16,49 @@
         android:orientation="horizontal"
         android:weightSum="3.35">
 
-<!--        <View-->
-<!--            android:id="@+id/view"-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:layout_weight=".03"-->
-<!--            android:background="@color/quantum_grey"-->
-<!--            android:visibility="gone" />-->
-
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_height="@dimen/_45sdp"
+            android:layout_weight=".8"
+            android:weightSum="3.2"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/textViewParkingAreaCount"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="2.5"
                 android:gravity="center"
                 android:text="@string/demo_number"
                 android:textColor="@color/blackColor"
-                android:textSize="30sp"
+                android:textSize="@dimen/_25ssp"
                 android:textStyle="bold" />
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="2px"
-                android:background="@android:color/darker_gray" />
+                android:layout_height="0dp"
+                android:layout_weight="0.1"
+                android:background="@color/gray2" />
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_12sdp"
+                android:layout_height="0dp"
+                android:layout_weight="0.6"
                 android:layout_gravity="center"
                 android:background="@drawable/parking_textview_background"
                 android:gravity="center"
                 android:text="@string/parking_slots"
-                android:textColor="@color/whiteColor"
-                android:textSize="10sp"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_5ssp"
                 android:textStyle="normal" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="@dimen/_45sdp"
             android:layout_marginStart="@dimen/dim5"
-            android:layout_weight="2.3"
+            android:layout_weight="2.5"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -78,13 +74,12 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/linearLayoutParkingAreaName"
-                    android:layout_marginTop="@dimen/dim2"
                     android:layout_weight="1.5"
+                    android:singleLine="false"
                     android:maxLines="2"
-                    android:padding="@dimen/dim3"
                     android:text="@string/parking_area_name"
                     android:textColor="@android:color/black"
-                    android:textSize="14sp"
+                    android:textSize="12sp"
                     android:textStyle="normal" />
 
                 <TextView
@@ -94,7 +89,6 @@
                     android:layout_weight="0.5"
                     android:gravity="end"
                     android:maxLines="1"
-                    android:padding="@dimen/dim3"
                     android:text="@string/distance"
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/_10ssp"

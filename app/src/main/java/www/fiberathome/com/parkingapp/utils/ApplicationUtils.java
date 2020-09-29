@@ -1,6 +1,7 @@
 package www.fiberathome.com.parkingapp.utils;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -8,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
@@ -25,6 +27,7 @@ import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.TextAppearanceSpan;
@@ -39,12 +42,19 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.ColorInt;
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.IOException;
@@ -66,9 +76,9 @@ import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.preference.StaticData;
-import www.fiberathome.com.parkingapp.preference.utils.ConnectivityInterceptor;
-import www.fiberathome.com.parkingapp.view.fragments.HomeFragment;
+import www.fiberathome.com.parkingapp.model.data.preference.StaticData;
+import www.fiberathome.com.parkingapp.utils.internetUtils.ConnectivityInterceptor;
+import www.fiberathome.com.parkingapp.view.main.home.HomeFragment;
 
 //import www.fiberathome.com.parkingapp.BuildConfig;
 
@@ -223,6 +233,26 @@ public class ApplicationUtils {
 
         }
     }
+
+    public static void showAlertDialog(String message, Context context, String positiveText, String negativeText,
+                                       DialogInterface.OnClickListener positiveCallback, DialogInterface.OnClickListener negativeCallback) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage(message);
+        builder.setCancelable(true);
+
+        builder.setPositiveButton(positiveText, positiveCallback);
+        if (!TextUtils.isEmpty(negativeText)) {
+            builder.setNegativeButton(negativeText, negativeCallback);
+        }
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.setOnShowListener(arg0 -> alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(context.getResources().getColor(R.color.red)));
+        alertDialog.setCancelable(false);
+        if (!((Activity) context).isFinishing()) {
+            alertDialog.show();
+        }
+    }
+
 
     public static double convertToDouble(String value) {
         double intValue;
@@ -440,7 +470,14 @@ public class ApplicationUtils {
     public static void reLoadFragment(@NonNull FragmentManager fragmentManager, @NonNull Fragment fragment) {
         Timber.e("reloading fragment");
         fragmentManager.beginTransaction().replace(fragment.getId(),
-                new HomeFragment()).commit();
+                HomeFragment.newInstance()).commit();
+    }
+
+    public static void detachAttachFragment(@NonNull FragmentManager fragmentManager, @NonNull Fragment fragment) {
+        fragmentManager.beginTransaction()
+                .detach(fragment)
+                .attach(fragment)
+                .commit();
     }
 
     private static double deg2rad(double deg) {
@@ -521,7 +558,7 @@ public class ApplicationUtils {
             }
         } catch (Exception e) {
             e.printStackTrace();
-//                        Timber.e("My Current loction address -> ", e.getMessage() + "Canont get Address!");
+//          Timber.e("My Current loction address -> ", e.getMessage() + "Canont get Address!");
         }
         return strAdd;
     }
@@ -701,5 +738,68 @@ public class ApplicationUtils {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.US);
         String dateNow = dateFormat.format(System.currentTimeMillis());
         return dateNow;
+    }
+
+    public static Drawable changeDrawableColor(Drawable drawable, int color) {
+        drawable = DrawableCompat.wrap(drawable);
+        DrawableCompat.setTint(drawable, color);
+        return drawable;
+    }
+
+    public static BitmapDescriptor getBitmapFromVector(@NonNull Context context,
+                                                       @DrawableRes int vectorResourceId,
+                                                       @ColorInt int tintColor) {
+
+        Drawable vectorDrawable = ResourcesCompat.getDrawable(
+                context.getResources(), vectorResourceId, null);
+        if (vectorDrawable == null) {
+//            Log.e(TAG, "Requested vector resource was not found");
+            return BitmapDescriptorFactory.defaultMarker();
+        }
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(),
+                vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        DrawableCompat.setTint(vectorDrawable, tintColor);
+        vectorDrawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
+
+    private static BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
+        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
+        vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
+
+    public static boolean getSpecialCharacter(Context context, String str) {
+        if (str == null || str.trim().isEmpty()) {
+            System.out.println("format of string is Incorrect ");
+//            Toast.makeText(context, "Format of string is Incorrect", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        Pattern pattern = Pattern.compile("[^A-Za-z0-9]");
+        Matcher matcher = pattern.matcher(str);
+
+        boolean b = matcher.find();
+        if (b == true) {
+            System.out.println("There is a special character in my string:- " + str);
+//            Toast.makeText(context, "Sorry, no places found!", Toast.LENGTH_SHORT).show();
+        } else {
+            System.out.println("There is no special character in my String :-  " + str);
+        }
+        return true;
+    }
+
+    public static ProgressDialog progressDialog(Context context, String message) {
+        ProgressDialog progressDialog = new ProgressDialog(context);
+        progressDialog.setMessage(message);
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        return progressDialog;
     }
 }

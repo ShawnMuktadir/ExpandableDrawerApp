@@ -22,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/dim5"
-        android:padding="@dimen/dim5"
+        android:padding="@dimen/dim10"
         android:orientation="vertical">
 
         <TextView
@@ -32,13 +32,14 @@
             android:text="@string/parking_slot"
             android:textColor="@color/black"
             android:textStyle="bold"
-            android:textSize="@dimen/_15ssp"/>
+            android:textSize="@dimen/dimTex15"/>
 
         <TextView
             android:id="@+id/textViewParkingSlotAddress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/address"
+            android:visibility="gone"
             android:textSize="@dimen/_12ssp"
             android:textStyle="normal"
             android:textColor="@color/gray"/>
@@ -47,6 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:layout_marginTop="@dimen/dim5"
             android:weightSum="2">
 
             <TextView
@@ -57,7 +59,7 @@
                 android:text="@string/parking_time"
                 android:textColor="@color/gray"
                 android:textStyle="normal"
-                android:textSize="@dimen/_12ssp"/>
+                android:textSize="@dimen/dimTex12"/>
 
             <TextView
                 android:id="@+id/textViewParkingTotalTime"
@@ -69,7 +71,7 @@
                 android:layout_gravity="end"
                 android:gravity="end"
                 android:textStyle="normal"
-                android:textSize="@dimen/_12ssp"/>
+                android:textSize="@dimen/dimTex12"/>
 
         </LinearLayout>
 
@@ -80,8 +82,8 @@
             android:layout_marginTop="@dimen/dim5"
             android:layout_marginBottom="@dimen/dim5"
             android:background="@color/quantum_grey"
-            android:padding="@dimen/dim2"
-            android:visibility="visible" />
+            android:visibility="gone"
+            android:padding="@dimen/dim2" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -92,6 +94,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:visibility="gone"
                 android:weightSum="2">
 
                 <TextView
@@ -131,6 +134,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginTop="@dimen/dim5"
+                android:visibility="gone"
                 android:weightSum="2">
 
                 <Button

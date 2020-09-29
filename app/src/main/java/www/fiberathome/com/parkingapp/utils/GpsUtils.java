@@ -21,7 +21,7 @@ import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-import www.fiberathome.com.parkingapp.preference.AppConstants;
+import www.fiberathome.com.parkingapp.model.data.AppConstants;
 
 import static androidx.constraintlayout.widget.Constraints.TAG;
 

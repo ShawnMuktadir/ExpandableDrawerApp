@@ -13,7 +13,7 @@
         android:orientation="vertical"
         android:overScrollMode="never"
         app:behavior_hideable="true"
-        app:behavior_peekHeight="400dp"
+        app:behavior_peekHeight="@dimen/dim80"
         app:layout_behavior="@string/bottom_sheet_behavior">
 
         <View
@@ -30,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_margin="@dimen/dim10"
+            android:layout_margin="@dimen/dim5"
             android:text="@string/bottom_Sheet_text"
             android:textColor="@color/black" />
 
@@ -49,8 +49,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clipToPadding="false"
-            android:minHeight="@dimen/_500sdp"
             android:nestedScrollingEnabled="false"
+            android:minHeight="@dimen/_500sdp"
             android:paddingBottom="@dimen/dim50"
             android:scrollbarSize="@dimen/dim3"
             android:scrollbarStyle="outsideInset"
@@ -59,11 +59,11 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
         <View
-            android:layout_width="match_parent"
             android:id="@+id/spaccer"
-            android:layout_height="28dp"
-            android:background="@android:color/transparent"
-            android:alpha="0.6"/>
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dim300"
+            android:alpha="0.6"
+            android:background="@android:color/transparent" />
     </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

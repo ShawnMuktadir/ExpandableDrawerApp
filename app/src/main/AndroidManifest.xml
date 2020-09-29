@@ -3,27 +3,32 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="www.fiberathome.com.parkingapp">
 
-    <!-- camera hardware permission -->
-    <uses-feature android:name="android.hardware.camera" />
     <!-- gps hardware permission -->
     <uses-feature android:name="android.hardware.location.gps" />
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
 
-    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <!-- internet permission -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-    <uses-feature
-        android:glEsVersion="0x00020000"
-        android:required="true" />
+    <!-- location permission -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
     <!-- camera permission -->
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera"
+        android:required="true"/>
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-feature android:name="android.hardware.camera.flash" />
+
     <!-- storage permission -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!-- gps permission -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
 
     <application
@@ -31,32 +36,48 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:networkSecurityConfig="@xml/network_security_config"
-        android:roundIcon="@drawable/launcher"
+        android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup"
-        tools:targetApi="n">
+        tools:targetApi="q">
 
-        <activity android:name=".view.activity.forgetPassword.ChangePasswordActivity"
-            android:screenOrientation="unspecified"
-            android:theme="@style/AppTheme.DefaultActionBar"/>
-        <activity android:name=".view.activity.forgetPassword.ChangePasswordActivityForOTP"
-            android:screenOrientation="unspecified"
-            android:theme="@style/AppTheme.DefaultActionBar"/>
-        <activity android:name=".view.activity.permission.PermissionActivity"
-            android:screenOrientation="unspecified"
-            android:theme="@style/AppTheme.DefaultActionBar"/>
+        <!--
+             The API key for Google Maps-based APIs is defined as a string resource.
+             (See the file "res/values/google_maps_api.xml").
+             Note that the API key is linked to the encryption key used to sign the APK.
+             You need a different API key for each encryption key, including the release key that is used to
+             sign the APK for publishing.
+             You can define the keys for the debug and release targets in src/debug/ and src/release/.
+        -->
+
+        <activity android:name=".view.location.LocationActivity" />
+
         <activity
-            android:name=".view.activity.search.SearchActivity"
+            android:name=".view.changePassword.ChangePasswordActivity"
+            android:screenOrientation="unspecified"
+            android:theme="@style/AppTheme.DefaultActionBar" />
+
+        <activity
+            android:name=".view.changePassword.ChangePasswordActivityForOTP"
+            android:screenOrientation="unspecified"
+            android:theme="@style/AppTheme.DefaultActionBar" />
+
+        <activity
+            android:name=".view.permission.PermissionActivity"
+            android:screenOrientation="unspecified"
+            android:theme="@style/AppTheme.DefaultActionBar" />
+
+        <activity
+            android:name=".view.search.SearchActivity"
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar" />
 
-        <service android:name=".gps.GPSTracker" />
-
         <activity
-            android:name=".view.activity.start.StartActivity"
+            android:name=".view.start.StartActivity"
             android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar">
@@ -66,60 +87,92 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
-            android:name=".view.activity.main.MainActivity"
+            android:name=".view.main.MainActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|mcc|mnc"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
+
         <activity
-            android:name=".view.activity.registration.SignUpActivity"
+            android:name=".view.signUp.SignUpActivity"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
+
+<!--        <activity android:name=".view.activity.registration.RegistrationActivity"-->
+<!--            android:screenOrientation="unspecified"-->
+<!--            android:theme="@style/AppTheme.DefaultActionBar" />-->
         <activity
-            android:name=".view.activity.registration.VerifyPhoneActivity"
+            android:name=".view.signUp.verifyPhone.VerifyPhoneActivity"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
+
         <activity
-            android:name=".view.activity.login.LoginActivity"
+            android:name=".view.signIn.LoginActivity"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
+
         <activity
-            android:name=".view.activity.forgetPassword.ForgetPasswordActivity"
+            android:name=".view.forgetPassword.ForgetPasswordActivity"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
+
         <activity
-            android:name=".view.activity.reserveSpot.ReserveSpotActivity"
+            android:name=".view.reserveSpot.ReserveSpotActivity"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
-        <!--
-             The API key
-              for Google Maps-based APIs is defined as a string resource.
-             (See the file "res/values/google_maps_api.xml").
-             Note that the API key is linked to the encryption key used to sign the APK.
-             You need a different API key for each encryption key, including the release key that is used to
-             sign the APK for publishing.
-             You can define the keys for the debug and release targets in src/debug/ and src/release/.
-        -->
+
+        <activity
+            android:name=".view.privacyPolicy.PrivacyPolicyActivity"
+            android:screenOrientation="unspecified"
+            android:theme="@style/AppTheme.DefaultActionBar"  />
+
+        <activity
+            android:name=".view.termsConditions.TermsConditionsActivity"
+            android:screenOrientation="unspecified"
+            android:theme="@style/AppTheme.DefaultActionBar"  />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <uses-library
-            android:name="org.apache.http.legacy"
-            android:required="false" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@mipmap/ic_launcher" />
+
+<!--        <provider-->
+<!--            android:name="androidx.core.content.FileProvider"-->
+<!--            android:authorities="www.fiberathome.com.parkingapp.fileprovider"-->
+<!--            android:exported="false"-->
+<!--            android:grantUriPermissions="true">-->
+<!--            <meta-data-->
+<!--                android:name="android.support.FILE_PROVIDER_PATHS"-->
+<!--                android:resource="@xml/file_paths" />-->
+<!--        </provider>-->
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="www.fiberathome.com.parkingapp.fileprovider"
+            android:authorities="${applicationId}.provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
+                android:resource="@xml/file_provider_paths" />
         </provider>
+
+        <receiver android:name=".module.notification.NotificationPublisher"/>
+
+        <service
+            android:name=".module.gps.GPSTracker"
+            tools:ignore="Instantiatable" />
+
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
     </application>
 
 </manifest>

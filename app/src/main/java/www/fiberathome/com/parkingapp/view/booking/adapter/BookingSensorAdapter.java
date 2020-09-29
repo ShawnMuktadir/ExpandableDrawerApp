@@ -30,8 +30,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.model.BookingSensors;
-import www.fiberathome.com.parkingapp.view.fragments.HomeFragment;
+import www.fiberathome.com.parkingapp.model.response.booking.BookingSensors;
+import www.fiberathome.com.parkingapp.view.main.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 
 public class BookingSensorAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

@@ -1,16 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.privacyPolicy.PrivacyPolicyFragment">
+    android:orientation="vertical">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <WebView
+        android:id="@+id/webView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/privacy_policy"
-        android:layout_centerInParent="true"
-        android:gravity="center"/>
+        android:visibility="gone"/>
 
-</RelativeLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewPrivacy"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/dim3"
+        android:background="?android:attr/selectableItemBackground"
+        android:clipToPadding="false"
+        android:elevation="@dimen/dim3"
+        android:overScrollMode="never"
+        android:padding="@dimen/dim3"
+        android:scrollbars="vertical" />
+
+</LinearLayout>

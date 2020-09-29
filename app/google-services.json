@@ -1,34 +1,42 @@
 {
   "project_info": {
-    "project_number": "1030029654342",
-    "firebase_url": "https://parkingappcrush.firebaseio.com",
-    "project_id": "parkingappcrush",
-    "storage_bucket": "parkingappcrush.appspot.com"
+    "project_number": "618431542534",
+    "firebase_url": "https://fahoffice-a5d4e.firebaseio.com",
+    "project_id": "fahoffice-a5d4e",
+    "storage_bucket": "fahoffice-a5d4e.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1030029654342:android:41896fd98e34045c8d0d47",
+        "mobilesdk_app_id": "1:618431542534:android:73b84aa58a33d5a1ba9a87",
         "android_client_info": {
           "package_name": "www.fiberathome.com.parkingapp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1030029654342-brtp0j8hktu040mlutmr0pppcu1iii6g.apps.googleusercontent.com",
+          "client_id": "618431542534-f6saial3ksr0uatr9o3rs4npnd1ctsgq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "www.fiberathome.com.parkingapp",
+            "certificate_hash": "06a5ec4a8b0a3564cb23e50a61d3bc60e61fce04"
+          }
+        },
+        {
+          "client_id": "618431542534-hsp6jbcv4tod1tbjvf3bm8qlhlsv5k9m.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBPX8Sxlx3oIk-o1-idgjv94t7d-rsYGoA"
+          "current_key": "AIzaSyDGUqeVvvKumtmTYbUzBHmAXwJ6uFh-fEo"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1030029654342-brtp0j8hktu040mlutmr0pppcu1iii6g.apps.googleusercontent.com",
+              "client_id": "618431542534-hsp6jbcv4tod1tbjvf3bm8qlhlsv5k9m.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

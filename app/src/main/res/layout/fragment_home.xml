@@ -159,12 +159,11 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/linearLayoutParkingBackNGetDirection"
+                    android:id="@+id/linearLayoutParkingSlot"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginStart="@dimen/dim5"
                     android:layout_weight="2.3"
-                    android:visibility="gone"
                     android:background="@android:color/white"
                     android:gravity="center"
                     android:orientation="vertical"
@@ -233,8 +232,7 @@
                             android:text="@string/time"
                             android:textColor="@android:color/black"
                             android:textSize="@dimen/_10ssp"
-                            android:textStyle="normal"
-                            android:visibility="visible" />
+                            android:textStyle="normal" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -242,8 +240,9 @@
             <LinearLayout
                 android:id="@+id/linearLayoutParkingAdapterBackBottom"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/dim40"
                 android:layout_alignParentBottom="true"
+                android:visibility="visible"
                 android:layout_gravity="center_vertical"
                 android:background="@android:color/white"
                 android:orientation="horizontal"
@@ -266,6 +265,7 @@
                     android:background="#000"
                     android:foreground="?attr/selectableItemBackground"
                     android:text="@string/get_direction"
+                    android:textAllCaps="false"
                     android:textColor="#fff" />
             </LinearLayout>
 
@@ -415,7 +415,7 @@
             <LinearLayout
                 android:id="@+id/linearLayoutSearchBottomButton"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/dim40"
                 android:layout_alignParentBottom="true"
                 android:layout_gravity="center_vertical"
                 android:background="@android:color/white"
@@ -427,7 +427,7 @@
                 <ImageView
                     android:id="@+id/imageViewSearchBack"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight=".3"
                     android:padding="@dimen/dim3"
                     app:srcCompat="@drawable/ic_back" />
@@ -438,8 +438,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1.7"
                     android:background="#000"
-                    android:foreground="?attr/selectableItemBackground"
                     android:text="@string/get_direction"
+                    android:textAllCaps="false"
                     android:textColor="#fff" />
             </LinearLayout>
 
@@ -589,7 +589,7 @@
             <LinearLayout
                 android:id="@+id/linearLayoutMarkerBackNGetDirection"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/dim40"
                 android:layout_alignParentBottom="true"
                 android:layout_gravity="center_vertical"
                 android:visibility="gone"
@@ -601,7 +601,7 @@
                 <ImageView
                     android:id="@+id/imageViewMarkerBack"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight=".3"
                     android:padding="@dimen/dim3"
                     app:srcCompat="@drawable/ic_back" />
@@ -612,8 +612,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1.7"
                     android:background="#000"
-                    android:foreground="?attr/selectableItemBackground"
                     android:text="@string/get_direction"
+                    android:textAllCaps="false"
                     android:textColor="#fff" />
             </LinearLayout>
 
@@ -636,6 +636,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:visibility="gone"
                 android:weightSum="3.35">
 
                 <View
@@ -764,7 +765,7 @@
             <LinearLayout
                 android:id="@+id/linearLayoutBottomSheetGetDirection"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/dim40"
                 android:layout_alignParentBottom="true"
                 android:layout_gravity="center_vertical"
                 android:background="@android:color/white"
@@ -775,7 +776,7 @@
                 <ImageView
                     android:id="@+id/imageViewBottomSheetBack"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight=".3"
                     android:padding="@dimen/dim3"
                     app:srcCompat="@drawable/ic_back" />
@@ -786,8 +787,9 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1.7"
                     android:background="#000"
-                    android:foreground="?attr/selectableItemBackground"
+                    android:padding="@dimen/dim3"
                     android:text="@string/get_direction"
+                    android:textAllCaps="false"
                     android:textColor="#fff" />
             </LinearLayout>
 

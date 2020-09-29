@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:layout_margin="@dimen/dim10"
+    android:windowSoftInputMode="adjustPan"
+    tools:context=".view.profile.ProfileFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/linearLayoutSignOut"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_margin="@dimen/dim10"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="@dimen/_120sdp"
+                    android:layout_height="@dimen/_120sdp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_10sdp">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/ivUserProfilePic"
+                        android:layout_width="150dp"
+                        android:layout_height="150dp"
+                        android:layout_centerHorizontal="true"
+                        android:src="@drawable/blank_profile"
+                        app:civ_circle_background_color="@android:color/transparent"
+                        app:civ_border_color="@color/black"
+                        app:civ_border_width="@dimen/dim2"
+                        android:visibility="visible" />
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/circleImageViewCaptureImage"
+                        android:layout_width="@dimen/dim50"
+                        android:layout_height="@dimen/dim50"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_gravity="center_horizontal|center_vertical"
+                        android:layout_marginBottom="@dimen/dim5"
+                        app:civ_circle_background_color="@android:color/white"
+                        app:civ_border_color="@color/gray3"
+                        app:civ_border_width="@dimen/dim2"
+                        android:visibility="visible"
+                        android:backgroundTint="@color/white"
+                        android:tintMode="src_in"
+                        android:src="@drawable/ic_camera_update"
+                        app:tint="@color/black" />
+
+                </RelativeLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textInputLayoutFullName"
+                    style="@style/TextLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/editTextFullName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/margin_10"
+                        android:hint="@string/full_name"
+                        android:imeOptions="actionNext"
+                        android:inputType="text"
+                        android:textColor="@android:color/black"
+                        android:textColorHint="@android:color/black" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textInputLayoutCarNumber"
+                    style="@style/TextLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/car_number">
+
+                    <EditText
+                        android:id="@+id/editTextCarNumber"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:imeOptions="actionNext"
+                        android:inputType="phone"
+                        android:maxLength="11"
+                        android:textColor="@android:color/black"
+                        android:textColorHint="@android:color/darker_gray" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textInputLayoutNidNumber"
+                    style="@style/TextLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/nid_number">
+
+                    <EditText
+                        android:id="@+id/editTextNidNumber"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:imeOptions="actionNext"
+                        android:inputType="text"
+                        android:textColor="@android:color/black"
+                        android:textColorHint="@android:color/black" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textInputLayoutOccupation"
+                    style="@style/TextLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/occupation">
+
+                    <EditText
+                        android:id="@+id/editTextOccupation"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:imeOptions="actionDone"
+                        android:inputType="textPassword"
+                        android:textColor="@android:color/black"
+                        android:textColorHint="@android:color/black" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <Button
+                    android:id="@+id/btnUpdateProfile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorPrimary"
+                    android:padding="@dimen/dim10"
+                    android:layout_marginTop="@dimen/dim10"
+                    android:layout_marginBottom="@dimen/dim10"
+                    android:text="@string/edit_profile"
+                    android:textAllCaps="false"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btnSignOut"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dim10"
+                    android:layout_marginBottom="@dimen/dim10"
+                    android:background="@color/colorPrimary"
+                    android:padding="@dimen/dim10"
+                    android:text="@string/signOut"
+                    android:textAllCaps="false"
+                    android:visibility="gone"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textViewTermsConditions"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/by_using_this_app_you_agree_to_our_terms_and_conditions_amp_privacy_policy"
+                    android:textColor="@color/black"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</RelativeLayout>

@@ -6,8 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/gloss_white"
     android:orientation="vertical"
-    android:padding="@dimen/dim3"
-    tools:context=".view.activity.search.SearchActivity">
+    tools:context=".view.search.SearchActivity">
 
 <!--    <ScrollView-->
 <!--        android:layout_width="match_parent"-->
@@ -17,7 +16,6 @@
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/dim5"
         android:orientation="vertical">
 
         <RelativeLayout
@@ -26,18 +24,17 @@
 
             <ImageView
                 android:id="@+id/imageViewCross"
-                android:layout_width="@dimen/dim30"
-                android:layout_height="@dimen/dim30"
+                android:layout_width="@dimen/dim35"
+                android:layout_height="@dimen/dim35"
                 android:layout_alignParentStart="true"
-                android:padding="@dimen/dim3"
                 app:srcCompat="@drawable/ic_clear" />
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
                 android:text="Parking Spot"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
                 android:textColor="@color/black"
                 android:textSize="@dimen/_15ssp"
                 android:textStyle="bold" />
@@ -89,12 +86,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/linearLayout"
-            android:layout_margin="@dimen/dim5"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
         <LinearLayout
+            android:id="@+id/linearLayoutEmptyView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_marginTop="@dimen/dim10"
             android:orientation="vertical">
 
             <ImageView

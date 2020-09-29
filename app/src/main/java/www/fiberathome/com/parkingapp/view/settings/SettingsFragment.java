@@ -19,6 +19,11 @@ public class SettingsFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public static SettingsFragment newInstance() {
+        SettingsFragment settingsFragment = new SettingsFragment();
+        return settingsFragment;
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

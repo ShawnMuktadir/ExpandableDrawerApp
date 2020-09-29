@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.fragments.HomeFragment">
+    tools:context=".view.main.home.HomeFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -65,7 +65,7 @@
 
         <!-- Password Label -->
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/input_layout_password"
+            android:id="@+id/textInputLayoutPassword"
             style="@style/TextLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

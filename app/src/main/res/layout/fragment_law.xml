@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".view.fragments.LawFragment">
+    tools:context=".view.law.LawFragment">
 
     <com.github.barteksc.pdfviewer.PDFView
         android:id="@+id/pdfView"
@@ -56,7 +56,7 @@
         </RelativeLayout>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerview"
+            android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="@dimen/dim5"
