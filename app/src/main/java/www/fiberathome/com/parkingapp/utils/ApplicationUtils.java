@@ -504,7 +504,7 @@ public class ApplicationUtils {
     }
 
     public static String capitalize(String str) {
-        if (str == null || str.isEmpty()) {
+        if (str == null || str.isEmpty() || str.equals("")) {
             return str;
         }
 

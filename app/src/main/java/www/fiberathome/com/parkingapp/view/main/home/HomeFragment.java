@@ -366,6 +366,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         Timber.e("onCreate called");
+        setHasOptionsMenu(false);
         super.onCreate(savedInstanceState);
         if (bookingSensorsArrayListGlobal.isEmpty() && !bookingSensorsArrayListGlobalRoom.isEmpty()) {
             fetchfromRoom();
@@ -1022,6 +1023,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
             //bottomSheetBehavior.setPeekHeight(400)                             ;
             SensorArea sensorArea = SharedData.getInstance().getSensorArea();
             //   Timber.e("Sensor Area from SharedData -> %s", new Gson().toJson(sensorArea));
+
             textViewParkingAreaName.setText(ApplicationUtils.capitalize(sensorArea.getParkingArea()));
             textViewParkingAreaCount.setText(sensorArea.getCount());
             String distance = new DecimalFormat("##.##").format(sensorArea.getDistance()) + " km";

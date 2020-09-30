@@ -103,7 +103,6 @@ public class ScheduleFragment extends Fragment implements DialogHelper.PayBtnCli
     private ProgressDialog progressDialog;
 
     public ScheduleFragment() {
-
         // Required empty public constructor
     }
 

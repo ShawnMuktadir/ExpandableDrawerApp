@@ -102,7 +102,8 @@ import www.fiberathome.com.parkingapp.view.ratingReview.RatingReviewFragment;
 import www.fiberathome.com.parkingapp.view.settings.SettingsFragment;
 import www.fiberathome.com.parkingapp.view.share.ShareFragment;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, DialogForm.DialogFormListener, FragmentChangeListener, PermissionInterface {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
+        DialogForm.DialogFormListener, FragmentChangeListener, PermissionInterface {
 
     @BindView(R.id.tvTimeToolbar)
     public TextView tvTimeToolbar;
@@ -135,14 +136,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         context = this;
+
         setSupportActionBar(toolbar);
+
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.getMenu().getItem(0).setChecked(true);
         setupNavigationDrawer();
         setupNavigationDrawerHeader();
         //hide menu
         hideMenuItem();
+
         changeDefaultActionBarDrawerToogleIcon();
+        colorizeToolbarOverflowButton(toolbar, context.getResources().getColor(R.color.black));
+
         //location permission check
         handleLocationPermissionCheck(context);
 
@@ -196,7 +202,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             finish();
             return;
         }
-        colorizeToolbarOverflowButton(toolbar, context.getResources().getColor(R.color.black));
 
         setListeners();
     }
@@ -204,7 +209,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-
     }
 
     @Override
@@ -406,6 +410,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             } else if (f instanceof HomeFragment) {
 //                                this.exit = true;
                                 ApplicationUtils.showExitDialog(this);
+                            } else {
+                                this.exit = true;
+                                fragment = HomeFragment.newInstance();
+                                getFragmentManager().popBackStack();
+                                fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment, context.getResources().getString(R.string.welcome_to_locc_parking)).commit();
+                                toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
+                                tvTimeToolbar.setVisibility(View.VISIBLE);
+                                linearLayoutToolbarTime.setVisibility(View.VISIBLE);
+                                drawerLayoutMain.closeDrawers();
+                                navigationView.getMenu().getItem(0).setChecked(true);
+                                navigationView.getMenu().getItem(1).setChecked(false);
+                                navigationView.getMenu().getItem(2).setChecked(false);
+                                navigationView.getMenu().getItem(3).setChecked(false);
+                                navigationView.getMenu().getItem(4).setChecked(false);
+                                navigationView.getMenu().getItem(5).setChecked(false);
+                                navigationView.getMenu().getItem(6).setChecked(false);
+                                navigationView.getMenu().getItem(7).setChecked(false);
+                                navigationView.getMenu().getItem(8).setChecked(false);
+                                navigationView.getMenu().getItem(9).setChecked(false);
+                                navigationView.getMenu().getItem(10).setChecked(false);
+//                                ApplicationUtils.showExitDialog(this);
                             }
                         }
                     }

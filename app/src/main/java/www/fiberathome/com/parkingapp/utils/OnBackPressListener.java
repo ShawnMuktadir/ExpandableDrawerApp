@@ -4,5 +4,5 @@ import androidx.fragment.app.FragmentManager;
 
 public interface OnBackPressListener {
 
-    public boolean onBackPressed();
+    boolean onBackPressed();
 }
