@@ -14,14 +14,12 @@ import www.fiberathome.com.parkingapp.model.data.preference.StaticData;
  * Created by Zahidul_Islam_George on 08-November-2016.
  */
 public class Validator {
-    public static String EMAIL_ERROR = "ইমেইল সঠিক নয়";
+    public static String EMAIL_ERROR = "Email is not valid";
     public static int PASSWORD_COUNT_MAX = 20;
     public static int PASSWORD_COUNT_MIN = 6;
-    public static String PASSWORD_MATCH_ERROR = "পাসওয়ার্ড সঠিক হয়নি";
-//    public static String PASSWORD_COUNT_ERROR = "৬-২০ অক্ষরের মধ্যে পাসওয়ার্ড লিখুন";
+    public static String PASSWORD_MATCH_ERROR = "Password is incorrect";
     public static String PASSWORD_COUNT_ERROR = "Please input password between 4-20 characters";
-    public static String NUMBER_ERROR = "এখানে শুধু নাম্বার লিখা যাবে";
-//    public static String PHONE_ERROR = "১১ ডিজিটের ফোন নাম্বার লিখুন। উদা: ০১*১১******";
+    public static String NUMBER_ERROR = "Please type only numbers";
     public static String PHONE_ERROR = "Please type 11 digit phone number. Ex: 01*11******";
 
     public static boolean checkValidity(EditText editText, String errorText, String textType) {

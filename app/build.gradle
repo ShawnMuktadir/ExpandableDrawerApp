@@ -3,6 +3,11 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 android {
     compileSdkVersion 29
+
+    configurations {
+        javadocDeps
+    }
+
     defaultConfig {
         applicationId "www.fiberathome.com.parkingapp"
         minSdkVersion 19
@@ -38,6 +43,7 @@ android {
     }
 
     useLibrary 'org.apache.http.legacy'
+    compileOptions.encoding = 'ISO-8859-1'
 }
 
 dependencies {
@@ -165,5 +171,15 @@ dependencies {
     // lib for SMS verification (Phone Auth)
     implementation 'com.google.android.gms:play-services-auth:18.1.0'
     implementation 'com.google.android.gms:play-services-auth-api-phone:17.4.0'
-
 }
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+//afterEvaluate {
+//    javadoc.classpath += files(android.libraryVariants.collect { variant ->
+//        variant.javaCompileProvider.get().classpath.files
+//    })
+//}

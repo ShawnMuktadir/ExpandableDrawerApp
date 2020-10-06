@@ -13,10 +13,6 @@ import android.os.Environment;
 
 public class PhotoUtil {
 
-    /**
-     * 一切都操作uri
-     * @return
-     */
     public static Uri createImageFile(){
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());

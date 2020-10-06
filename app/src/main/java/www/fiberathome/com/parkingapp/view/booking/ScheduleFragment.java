@@ -9,6 +9,9 @@ import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -199,49 +202,73 @@ public class ScheduleFragment extends Fragment implements DialogHelper.PayBtnCli
 
         arrivedPicker.addOnDateChangedListener((displayed, date) -> {
             arrivedDate = date;
-            Log.d(TAG, "onDateChanged: " + date);
-            Log.d(TAG, "onDateChanged: arrivedDate" + arrivedDate);
-        });
+            Timber.e( "onDateChanged: -> %s",  date);
+            Timber.e(  "onDateChanged: departureDate: -> %s" , arrivedDate);
 
-        departurePicker.addOnDateChangedListener(new SingleDateAndTimePicker.OnDateChangedListener() {
-            @Override
-            public void onDateChanged(String displayed, Date date) {
-                departedDate = date;
-                Log.d(TAG, "onDateChanged: " + date);
-                Log.d(TAG, "onDateChanged: departureDate" + departedDate);
+            Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+            final long[] pattern = {0, 10};
+            final int[] amplitudes = {50, 50};
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                VibrationEffect effect = VibrationEffect.createWaveform(pattern, amplitudes, 0);
+                assert vibrator != null;
+                vibrator.vibrate(effect);
+                (new Handler()).postDelayed(vibrator::cancel, 50);
+            } else {
+                assert vibrator != null;
+                vibrator.vibrate(10);
             }
         });
 
-        setBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: didnot entered to condition");
-                if (!setArrivedDate) {
-                    Log.d(TAG, "onClick:  entered to if");
-                    arrivedPicker.setEnabled(false);
-                    arriveDisableLayout.setBackgroundColor(getResources().getColor(R.color.disableColor));
+        departurePicker.addOnDateChangedListener((displayed, date) -> {
+            departedDate = date;
+            Timber.e( "onDateChanged: -> %s",  date);
+            Timber.e(  "onDateChanged: departureDate: -> %s" , departedDate);
 
-                    departurePicker.setEnabled(true);
-                    departureDisableLayout.setBackgroundColor(getResources().getColor(R.color.enableColor));
+            Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+            final long[] pattern = {0, 10};
+            final int[] amplitudes = {50, 50};
 
-                    setArrivedDate = true;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                VibrationEffect effect = VibrationEffect.createWaveform(pattern, amplitudes, 0);
+                assert vibrator != null;
+                vibrator.vibrate(effect);
+                (new Handler()).postDelayed(vibrator::cancel, 50);
+            } else {
+                assert vibrator != null;
+                vibrator.vibrate(10);
+            }
+        });
+
+
+        setBtn.setOnClickListener(v -> {
+            Log.d(TAG, "onClick: didnot entered to condition");
+            if (!setArrivedDate) {
+                Log.d(TAG, "onClick:  entered to if");
+                arrivedPicker.setEnabled(false);
+                arriveDisableLayout.setBackgroundColor(getResources().getColor(R.color.disableColor));
+
+                departurePicker.setEnabled(true);
+                departureDisableLayout.setBackgroundColor(getResources().getColor(R.color.enableColor));
+
+                setArrivedDate = true;
+            } else {
+                Log.d(TAG, "onClick: didnot entered to else");
+                if (departedDate.getTime() - arrivedDate.getTime() < 0) {
+                    Toast.makeText(requireActivity(), "Departure time can't less than arrived time", Toast.LENGTH_SHORT).show();
                 } else {
-                    Log.d(TAG, "onClick: didnot entered to else");
-                    if (departedDate.getTime() - arrivedDate.getTime() < 0) {
-                        Toast.makeText(requireActivity(), "Departure time can't less than arrived time", Toast.LENGTH_SHORT).show();
-                    } else {
-                        /*Bundle bundle = new Bundle();
-                        Log.d(TAG, "onClick: " + arrivedDate.getTime());
-                        Log.d(TAG, "onClick: " + departerDate.getTime());
-                        bundle.putBoolean("s", true);
-                        bundle.putLong("arrived", arrivedDate.getTime());
-                        bundle.putLong("departure", departerDate.getTime());
-                        //BookedFragment bookedFragment=new BookedFragment();
-                        //bookedFragment.setArguments(bundle);
-                        HomeFragment homeFragment = new HomeFragment();
-                        homeFragment.setArguments(bundle);
-                        listener.FragmentChange(homeFragment);*/
-                        //open DialogHelper with total amount, time difference
+                    /*Bundle bundle = new Bundle();
+                    Log.d(TAG, "onClick: " + arrivedDate.getTime());
+                    Log.d(TAG, "onClick: " + departerDate.getTime());
+                    bundle.putBoolean("s", true);
+                    bundle.putLong("arrived", arrivedDate.getTime());
+                    bundle.putLong("departure", departerDate.getTime());
+                    //BookedFragment bookedFragment=new BookedFragment();
+                    //bookedFragment.setArguments(bundle);
+                    HomeFragment homeFragment = new HomeFragment();
+                    homeFragment.setArguments(bundle);
+                    listener.FragmentChange(homeFragment);*/
+                    //open DialogHelper with total amount, time difference
 //                        Dialog dialog = new Dialog(requireActivity());
 //                        dialog.setContentView(R.layout.voucher_dialog);
 //                        DialogHelper dialogHelper = new DialogHelper(dialog, requireActivity(), getDate(arrivedDate.getTime()), getDate(departerDate.getTime()),
@@ -250,40 +277,36 @@ public class ScheduleFragment extends Fragment implements DialogHelper.PayBtnCli
 //                        dialogHelper.initDialog();
 //                        dialog.show();
 
-                        if (ApplicationUtils.checkInternet(context)) {
-                            long diff = departedDate.getTime() - arrivedDate.getTime();
-                            long seconds = diff / 1000;
-                            long minutes = seconds / 60;
-                            long hours = minutes / 60;
-                            long days = hours / 24;
-                            Timber.e("hours -> %s", hours);
-                            Timber.e("minutes -> %s", minutes);
-                            if (minutes > 120) {
-                                Toast.makeText(requireActivity(), "You can't set Booking time more than 2 hours", Toast.LENGTH_SHORT).show();
-                            } else {
-                                storeReservation(SharedPreManager.getInstance(context).getUser().getMobileNo(),
-                                        getDate(arrivedDate.getTime()), getDate(departedDate.getTime()), markerUid);
-                            }
+                    if (ApplicationUtils.checkInternet(context)) {
+                        long diff = departedDate.getTime() - arrivedDate.getTime();
+                        long seconds = diff / 1000;
+                        long minutes = seconds / 60;
+                        long hours = minutes / 60;
+                        long days = hours / 24;
+                        Timber.e("hours -> %s", hours);
+                        Timber.e("minutes -> %s", minutes);
+                        if (minutes > 120) {
+                            Toast.makeText(requireActivity(), "You can't set Booking time more than 2 hours", Toast.LENGTH_SHORT).show();
                         } else {
-                            TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                            storeReservation(SharedPreManager.getInstance(context).getUser().getMobileNo(),
+                                    getDate(arrivedDate.getTime()), getDate(departedDate.getTime()), markerUid);
                         }
+                    } else {
+                        TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
                     }
                 }
             }
         });
 
-        cancelBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (setArrivedDate) {
-                    arrivedPicker.setEnabled(true);
-                    arriveDisableLayout.setBackgroundColor(getResources().getColor(R.color.enableColor));
-                    setArrivedDate = false;
-                    if (getActivity() != null)
-                        getActivity().getFragmentManager().popBackStack();
-                } else {
+        cancelBtn.setOnClickListener(v -> {
+            if (setArrivedDate) {
+                arrivedPicker.setEnabled(true);
+                arriveDisableLayout.setBackgroundColor(getResources().getColor(R.color.enableColor));
+                setArrivedDate = false;
+                if (getActivity() != null)
+                    getActivity().getFragmentManager().popBackStack();
+            } else {
 
-                }
             }
         });
     }
