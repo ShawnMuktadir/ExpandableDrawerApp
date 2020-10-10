@@ -35,6 +35,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
@@ -420,11 +421,11 @@ public class ParkingFragment extends Fragment implements ParkingAdapter.ParkingA
             @Override
             public void onResponse(String response) {
                 progressDialog.dismiss();
-//                Timber.e(ParkingFragment.class.getCanonicalName(), "" + response);
+
                 try {
                     JSONObject object = new JSONObject(response);
                     JSONArray jsonArray = object.getJSONArray("sensors");
-//                    Timber.e("jsonArray length parkingFragment-> %s", jsonArray.length());
+                    Timber.e("parkingFragment response -> %s", new Gson().toJson(jsonArray));
                     for (int i = 0; i < jsonArray.length(); i++) {
                         SensorArea sensorArea = new SensorArea();
                         JSONArray array = jsonArray.getJSONArray(i);
