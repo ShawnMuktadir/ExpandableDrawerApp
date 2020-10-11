@@ -1205,17 +1205,15 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
         StringRequest strReq = new StringRequest(Request.Method.GET, AppConfig.URL_FETCH_SENSORS, response -> {
 //                progressDialog.dismiss();
-//            Timber.e(" Sensor Response -> %s", response);
+            Timber.e(" fetchSensors Response -> %s", response);
             try {
                 JSONObject object = new JSONObject(response);
                 JSONArray jsonArray = object.getJSONArray("sensors");
                 clickEventJsonArray = object.getJSONArray("sensors");
-//                Timber.e("clickEventJsonArray length -> %s", clickEventJsonArray.length());
                 searchPlaceEventJsonArray = object.getJSONArray("sensors");
                 adapterPlaceEventJsonArray = object.getJSONArray("sensors");
                 bottomSheetPlaceEventJsonArray = object.getJSONArray("sensors");
                 Timber.e("adapterPlaceEventJsonArray length -> %s", adapterPlaceEventJsonArray.length());
-//                Timber.e(" Sensor JSONArray -> %s", new Gson().toJson(jsonArray));
 
                 for (int i = 0; i < jsonArray.length(); i++) {
 
