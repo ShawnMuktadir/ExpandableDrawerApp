@@ -834,7 +834,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
             }
         }
 
-
 //        new Handler().postDelayed(new Runnable() {
 //            @Override
 //            public void run() {
