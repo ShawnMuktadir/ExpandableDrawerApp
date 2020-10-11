@@ -372,7 +372,7 @@ public class ParkingFragment extends Fragment implements ParkingAdapter.ParkingA
 
     private void setNoData() {
         textViewNoData.setVisibility(View.VISIBLE);
-//        textloViewNoData.setText(context.getString(R.string.no_record_found));
+//        textViewNoData.setText(context.getString(R.string.no_record_found));
     }
 
     private void hideNoData() {
