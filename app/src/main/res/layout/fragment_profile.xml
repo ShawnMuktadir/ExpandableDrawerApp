@@ -61,7 +61,7 @@
                 android:layout_height="@dimen/dim25"
                 android:layout_marginEnd="@dimen/dim10"
                 android:layout_weight="0"
-                app:srcCompat="@drawable/ic_perm_phone_msg_white_48px"
+                app:srcCompat="@drawable/ic_phone_msg_white"
                 app:tint="@color/black" />
 
             <TextView

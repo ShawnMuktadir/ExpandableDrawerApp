@@ -2,6 +2,7 @@ package www.fiberathome.com.parkingapp.module.room;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
@@ -36,6 +37,7 @@ public class BookingSensorsRoom implements Serializable {
     @ColumnInfo(name = "reserve_status")
     String reserveStatus;
 
+    @Ignore
     public BookingSensorsRoom() {
     }
 

@@ -409,4 +409,6 @@
     <string name="spinner_title">Vehicle reg.</string>
     <string name="edit_profile">Edit Profile</string>
     <string name="your_books">Your Books</string>
+    <string name="developed_by">Developed By:</string>
+    <string name="locc">LOCC</string>
 </resources>

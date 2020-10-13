@@ -21,8 +21,6 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.github.barteksc.pdfviewer.PDFView;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -43,8 +41,8 @@ import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 public class LawFragment extends Fragment {
 
     private final String TAG = getClass().getSimpleName();
-    @BindView(R.id.pdfView)
-    PDFView pdfView;
+//    @BindView(R.id.pdfView)
+//    PDFView pdfView;
     @BindView(R.id.editTextSearchLaw)
     EditText editTextSearchLaw;
     @BindView(R.id.ivClearSearchText)
@@ -237,6 +235,6 @@ public class LawFragment extends Fragment {
 
     private void loadPDF() {
 //        PDFView pdfView = (PDFView) findViewById(R.id.pdfView);
-        pdfView.fromAsset("parkingrule.pdf").load();
+//        pdfView.fromAsset("parkingrule.pdf").load();
     }
 }

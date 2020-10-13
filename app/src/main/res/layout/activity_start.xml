@@ -1,169 +1,164 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/start_activity"
+    android:id="@+id/relativeLayoutMain"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/whiteColor"
+    android:orientation="vertical"
+    android:background="@color/white"
     tools:context=".view.start.StartActivity">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/reL1"
-        android:layout_centerInParent="true"
-        android:gravity="center"
-        android:orientation="vertical">
-
-        <ImageView
-            android:layout_width="250dp"
-            android:layout_height="250dp"
-            android:layout_gravity="center_horizontal"
-            android:background="@drawable/ic_logo_original"
-            android:scaleType="center" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="@string/start_title"
-            android:textAlignment="center"
-            android:textColor="@color/colorPrimary"
-            android:textSize="@dimen/font_size_18" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/reL1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="10dp"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        tools:ignore="UselessParent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_20"
-            android:gravity="center_horizontal"
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:background="@drawable/dmp_logo" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="80dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginLeft="@dimen/margin_50"
-            android:layout_marginRight="@dimen/margin_50">
-
-            <ImageView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_margin="@dimen/margin_10"
-                android:layout_marginRight="@dimen/margin_10"
-                android:layout_weight="5"
-                android:background="@drawable/dnc"
-                android:textColor="@color/colorPrimary"
-                android:textSize="@dimen/font_size_22"/>
-
-            <ImageView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginLeft="@dimen/margin_10"
-                android:layout_weight="5"
-                android:background="@drawable/locc"
-                android:paddingTop="@dimen/margin_10"
-                android:textColor="@color/colorPrimary"
-                android:textSize="@dimen/font_size_22"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/margin_50"
-            android:layout_marginTop="@dimen/margin_10"
-            android:layout_marginRight="@dimen/margin_50">
-
-            <Button
-                android:id="@+id/button_login"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_10"
-                android:layout_weight="1"
-                android:background="@color/colorPrimary"
-                android:text="LOGIN"
-                android:textColor="@color/whiteColor"/>
-
-            <Button
-                android:id="@+id/button_signup"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_10"
-                android:layout_weight="1"
-                android:background="@color/colorPrimary"
-                android:text="SIGNUP"
-                android:textColor="@color/whiteColor"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/bottomToplayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/margin_30"
-            android:layout_marginRight="@dimen/margin_30">
+                android:layout_width="@dimen/dim250"
+                android:layout_height="@dimen/dim250"
+                android:layout_gravity="center"
+                android:background="@drawable/ic_logo_original"
+                android:scaleType="center" />
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:text="Developed By:"
-                android:textColor="@color/colorPrimary"
-                android:textSize="@dimen/font_size_18"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_weight="4"
-                android:text="LOCC"
+                android:text="@string/start_title"
                 android:textAlignment="center"
                 android:textColor="@color/colorPrimary"
-                android:textSize="@dimen/font_size_22"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/bottomLast2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/margin_30"
-            android:layout_marginTop="@dimen/margin_20"
-            android:layout_marginRight="@dimen/margin_30">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="5"
-                android:text="Powered By:"
-                android:textColor="@color/colorPrimary"
-                android:textSize="@dimen/font_size_18"/>
+                android:textSize="@dimen/dimTex20"
+                android:textStyle="bold" />
 
             <ImageView
-                android:layout_width="60dp"
-                android:layout_height="40dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dim10"
                 android:layout_gravity="center_horizontal"
-                android:layout_weight="5"
-                android:background="@drawable/fiber_logo"
-                android:textColor="@color/colorPrimary"
-                android:textSize="@dimen/font_size_22"/>
-        </LinearLayout>
-    </LinearLayout>
+                android:background="@drawable/dmp_logo" />
 
-</RelativeLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/dim80"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/dim10"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="@dimen/dim80"
+                    android:layout_height="@dimen/dim80"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="@dimen/dim10"
+                    android:layout_weight="5"
+                    android:background="@drawable/dnc" />
+
+                <ImageView
+                    android:layout_width="@dimen/dim80"
+                    android:layout_height="@dimen/dim80"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="@dimen/dim10"
+                    android:layout_weight="5"
+                    android:background="@drawable/locc" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dim30"
+                android:layout_marginTop="@dimen/dim10"
+                android:layout_marginRight="@dimen/dim30"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <Button
+                    android:id="@+id/button_login"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/dim10"
+                    android:layout_weight="1"
+                    android:background="@color/colorPrimary"
+                    android:text="@string/login"
+                    android:textColor="@color/white" />
+
+                <Button
+                    android:id="@+id/button_signup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/dim10"
+                    android:layout_weight="1"
+                    android:background="@color/colorPrimary"
+                    android:text="@string/signup"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_marginLeft="@dimen/dim30"
+                android:layout_marginRight="@dimen/dim30">
+
+                <LinearLayout
+                    android:id="@+id/bottomToplayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/dim10"
+                        android:layout_weight="3"
+                        android:text="@string/developed_by"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/font_size_18" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_margin="@dimen/dim10"
+                        android:layout_weight="4"
+                        android:gravity="center"
+                        android:text="@string/locc"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/dimTex20" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/bottomLast2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:weightSum="10">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/dim10"
+                        android:layout_weight="5"
+                        android:text="@string/powered_by"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/dimTex18" />
+
+                    <ImageView
+                        android:layout_width="@dimen/dim60"
+                        android:layout_height="@dimen/dim40"
+                        android:layout_gravity="center"
+                        android:layout_weight="5"
+                        android:background="@drawable/fiber_logo" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

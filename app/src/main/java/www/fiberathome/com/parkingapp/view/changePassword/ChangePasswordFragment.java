@@ -8,6 +8,7 @@ import android.os.Bundle;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.text.Editable;
@@ -208,18 +209,7 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
 
     private void changePassword() {
 
-        /**
-         * TODO : CHECK WHETHER PASSWORD MATCH WITH SERVER PASSWORD
-         * 1. if matched, then check the new password and confirmation password
-         * 2. if not matched, then show error the status
-         * 3. check number of times user tried to change password.
-         * ================================================================================
-         */
         if (checkFields()) {
-            // IF PASSWORD IS VALID, MOVE TO SERVER WITH user request.
-
-            // COLLECT OLD PASSWORD | NEW PASSWORD | CONFIRMATION PASSWORD
-
             User user = SharedPreManager.getInstance(getContext()).getUser();
             String oldPassword = editTextOldPassword.getText().toString().trim();
             String newPassword = editTextNewPassword.getText().toString().trim();
@@ -229,9 +219,7 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
             if (validatePassword()) {
                 updatePassword(oldPassword, newPassword, confirmPassword, mobileNo);
             }
-
         }
-
     }
 
     private boolean checkFields() {
@@ -262,12 +250,6 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
         return true;
     }
 
-    /**
-     * @param oldPassword
-     * @param newPassword
-     * @param confirmPassword
-     * @param mobileNo
-     */
     private void updatePassword(String oldPassword, String newPassword, String confirmPassword, String mobileNo) {
         ProgressDialog progressDialog = ApplicationUtils.progressDialog(getActivity(),
                 "Please wait...");
@@ -279,7 +261,7 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
         // Gathering results.
         passwordUpgradeCall.enqueue(new Callback<CommonResponse>() {
             @Override
-            public void onResponse(Call<CommonResponse> call, Response<CommonResponse> response) {
+            public void onResponse(@NonNull Call<CommonResponse> call, @NonNull Response<CommonResponse> response) {
                 Timber.e("change password response message -> %s", response.message());
                 Timber.e("change password response body-> %s", new Gson().toJson(response.body()));
 
@@ -288,9 +270,6 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
                     if (!response.body().getError()) {
                         showMessage(response.body().getMessage());
 
-//                        editTextOldPassword.setText("");
-//                        editTextNewPassword.setText("");
-//                        editTextConfirmPassword.setText("");
                         SharedPreManager.getInstance(getActivity()).logout();
                         Intent intentLogout = new Intent(getActivity(), LoginActivity.class);
                         startActivity(intentLogout);
@@ -312,63 +291,6 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
 
     private void showMessage(String message) {
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-    }
-
-    private class MyTextWatcher implements TextWatcher {
-
-        private View view;
-
-        public MyTextWatcher(View view) {
-            this.view = view;
-        }
-
-        @Override
-        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable editable) {
-            switch (view.getId()) {
-                case R.id.editTextOldPassword:
-//                    validateEditText(editTextOldPassword, textInputLayoutOldPassword, R.string.err_old_password);
-                    break;
-
-                case R.id.editTextNewPassword:
-//                    validateEditText(editTextNewPassword, textInputLayoutNewPassword, R.string.err_new_password);
-                    break;
-
-                case R.id.editTextConfirmPassword:
-//                    validateEditText(editTextConfirmPassword, textInputLayoutConfirmPassword, R.string.err_confirm_password);
-                    break;
-
-            }
-        }
-    }
-
-    private boolean validateEditText(EditText editText, TextInputLayout textInputLayout, int errorResource) {
-        String value = editText.getText().toString().trim();
-        if (value.isEmpty()) {
-            textInputLayout.setError(getResources().getString(errorResource));
-            requestFocus(editText);
-            return false;
-        } else {
-            textInputLayout.setErrorEnabled(false);
-        }
-
-        return true;
-    }
-
-    private void requestFocus(EditText view) {
-        if (view.requestFocus()) {
-            if (getActivity() != null)
-                getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-        }
     }
 
     private boolean checkPassWordAndConfirmPassword(String password, String confirmPassword) {

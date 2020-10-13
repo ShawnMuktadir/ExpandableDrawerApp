@@ -74,7 +74,7 @@ public class MapUtils {
     }
 
     public static Bitmap getCarBitmap(Context context) {
-        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_car_small);
+        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.map_car_running);
         return Bitmap.createScaledBitmap(bitmap, 50, 50, false);
     }
 
