@@ -2,7 +2,7 @@ package www.fiberathome.com.parkingapp.model.api;
 
 public class AppConfig {
 
-    // ROOT URL
+    // ROOT URLs
     public static final String BASE_URL = "http://163.47.157.198/parkingapp/";
     public static final String BASE_URL_PYTHON = "http://163.47.157.195:5000/";
     public static final String URL_REGISTER     = BASE_URL + "request_sms.php";

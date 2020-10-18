@@ -255,10 +255,10 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
                             });
                         }
                     } catch (IndexOutOfBoundsException e) {
-                    //Toast.makeText(mContext, "Please try again", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(mContext, "Please try again", Toast.LENGTH_SHORT).show();
                         ApplicationUtils.showMessageDialog("Please try again!", mContext);
                         Log.d(TAG, "exception: " + e);
-                    //throw new RuntimeException("Test Crash");
+                        //throw new RuntimeException("Test Crash");
                     }
                 } else {
                     TastyToastUtils.showTastyWarningToast(mContext, "Please enable GPS! or turn on Internet");
@@ -287,7 +287,7 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
                                 clickListener.onClick(visitorData);
                             }
                         }, 100);
-                    }else {
+                    } else {
                         TastyToastUtils.showTastyWarningToast(mContext, "Please enable GPS! or turn on Internet");
                     }
                 });
@@ -314,7 +314,11 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
             return mResultList.size();
         } else if (!searchVisitorDataList.isEmpty()) {
             Timber.e("getItemCount else if");
-            return searchVisitorDataList.size();
+            if (searchVisitorDataList.size() > 10) {
+                return 10;
+            } else {
+                return searchVisitorDataList.size();
+            }
         } else {
             Timber.e("getItemCount else ");
             return mResultList.size();
