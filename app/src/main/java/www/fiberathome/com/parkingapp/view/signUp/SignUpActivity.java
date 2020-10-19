@@ -1,5 +1,6 @@
 package www.fiberathome.com.parkingapp.view.signUp;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -493,8 +494,10 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         pictureDialog.show();
     }
 
+    @SuppressLint("IntentReset")
     public void choosePhotoFromGallery() {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        galleryIntent.setType("image/*");
         startActivityForResult(galleryIntent, REQUEST_PICK_GALLERY);
     }
 

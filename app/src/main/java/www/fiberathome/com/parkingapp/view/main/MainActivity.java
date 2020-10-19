@@ -690,23 +690,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         String url = AppConfig.IMAGES_URL + user.getProfilePic() + ".jpg";
         Timber.e("user profile photo url -> %s", url);
         Glide.with(this).load(url).apply(requestOptions).override(200, 200).into(ivUserProfile);
-//        Glide.with(this).load(url).placeholder(R.drawable.blank_profile_pic).into(userProfilePic);  //Todo
 
-//Qr Code Code
-
-//        QRCode = headerView.findViewById(R.id.header_qrcode);
-
-//        QRCode.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                // Close the Drawer first
-////                drawerLayout.closeDrawer(GravityCompat.START);
-//                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new QRCodeFragment()).commit();
-//            }
-//        });
-
-
-        //show QR on create
         String text = user.getMobileNo() + " - ";
         text = text + user.getVehicleNo();
         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
@@ -723,7 +707,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void setNavMenuItemThemeColors(int color) {
 //        Setting default colors for menu item Text and Icon
         int navDefaultTextColor = Color.parseColor("#000000");
-//        int navDefaultIconColor = Color.parseColor("#25A848");
 
         //Defining ColorStateList for menu item Text
         ColorStateList navMenuTextList = new ColorStateList(
@@ -743,26 +726,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
         );
 
-        //Defining ColorStateList for menu item Icon
-//        ColorStateList navMenuIconList = new ColorStateList(
-//                new int[][]{
-//                        new int[]{android.R.attr.state_checked},
-//                        new int[]{android.R.attr.state_enabled},
-//                        new int[]{android.R.attr.state_pressed},
-//                        new int[]{android.R.attr.state_focused},
-//                        new int[]{android.R.attr.state_pressed}
-//                },
-//                new int[]{
-//                        color,
-//                        navDefaultIconColor,
-//                        navDefaultIconColor,
-//                        navDefaultIconColor,
-//                        navDefaultIconColor
-//                }
-//        );
-
         navigationView.setItemTextColor(navMenuTextList);
-//        mainNavigationView.setItemIconTintList(navMenuIconList);
     }
 
     public void setDrawerState(boolean isEnabled) {
