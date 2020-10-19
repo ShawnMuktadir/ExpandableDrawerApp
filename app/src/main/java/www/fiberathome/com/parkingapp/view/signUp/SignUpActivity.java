@@ -74,7 +74,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
     public static final String TAG = SignUpActivity.class.getSimpleName();
     private static final int REQUEST_PICK_GALLERY = 1001;
-    private static final int REQUEST_PICK_IMAGE_CAMERA = 1002;
+    private static final int REQUEST_PICK_CAMERA = 1002;
 
     @BindView(R.id.tvLogin)
     TextView tvLogin;
@@ -499,8 +499,8 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void takePhotoFromCamera() {
-        Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, REQUEST_PICK_IMAGE_CAMERA);
+        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(cameraIntent, REQUEST_PICK_CAMERA);
     }
 
     @Override
@@ -527,7 +527,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 }
             }
 
-        } else if (requestCode == REQUEST_PICK_IMAGE_CAMERA && resultCode == RESULT_OK && data != null) {
+        } else if (requestCode == REQUEST_PICK_CAMERA && resultCode == RESULT_OK && data != null) {
             // IF CAMERA SELECTED
             try {
                 bitmap = (Bitmap) data.getExtras().get("data");
@@ -565,7 +565,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     private boolean isPermissionGranted() {
         // Check Permission for Marshmallow
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
-            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA}, REQUEST_PICK_IMAGE_CAMERA);
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA}, REQUEST_PICK_CAMERA);
             return true;
 
         } else if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
