@@ -1,10 +1,12 @@
 package www.fiberathome.com.parkingapp.view.changePassword;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -29,8 +31,10 @@ import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
 import www.fiberathome.com.parkingapp.model.loginUser.User;
 import www.fiberathome.com.parkingapp.model.response.common.CommonResponse;
+import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
 import www.fiberathome.com.parkingapp.view.signIn.LoginActivity;
+import www.fiberathome.com.parkingapp.view.start.StartActivity;
 
 public class ChangePasswordActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -64,6 +68,28 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage("Are you sure you want to exit?")
+                .setNegativeButton(android.R.string.no, null)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        ChangePasswordActivity.super.onBackPressed();
+                        TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
+                    }
+                }).create();
+        AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface arg0) {
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.black));
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.red));
+            }
+        });
+        dialog.show();
+    }
+
     private void initUI() {
         editTextOldPassword = findViewById(R.id.editTextOldPassword);
         editTextNewPassword = findViewById(R.id.editTextNewPassword);
@@ -80,7 +106,6 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
     }
 
     private void changePassword() {
-
 
         /**
          * TODO : CHECK WHETHER PASSWORD MATCH WITH SERVER PASSWORD
@@ -138,11 +163,6 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
         return true;
     }
 
-    /**
-     * @param newPassword
-     * @param confirmPassword
-     * @param mobileNo
-     */
     private void updatePassword(String newPassword, String confirmPassword, String mobileNo) {
 //        progressDialog = new ProgressDialog(context);
         progressDialog = new ProgressDialog(ChangePasswordActivity.this);

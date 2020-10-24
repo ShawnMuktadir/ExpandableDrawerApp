@@ -190,6 +190,31 @@ public class ChangePasswordActivityForOTP extends AppCompatActivity implements V
         }
     }
 
+    @Override
+    public void onBackPressed() {
+// super.onBackPressed();
+// Not calling **super**, disables back button in current screen.
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage("Are you sure you want to exit?")
+                .setNegativeButton(android.R.string.no, null)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        ChangePasswordActivityForOTP.super.onBackPressed();
+                        TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
+                    }
+                }).create();
+        AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface arg0) {
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.black));
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.red));
+            }
+        });
+        dialog.show();
+    }
+
     private void checkForgetPassword(final String mobileNo) {
 
         progressDialog = ApplicationUtils.progressDialog(context, "Please wait...");
@@ -288,27 +313,10 @@ public class ChangePasswordActivityForOTP extends AppCompatActivity implements V
     public void onFocusChange(View v, boolean hasFocus) {
         final int id = v.getId();
         switch (id) {
+
             case R.id.pin_first_edittext:
-                if (hasFocus) {
-                    setFocus(mPinHiddenEditText);
-                    showSoftKeyboard(mPinHiddenEditText);
-                }
-                break;
-
             case R.id.pin_second_edittext:
-                if (hasFocus) {
-                    setFocus(mPinHiddenEditText);
-                    showSoftKeyboard(mPinHiddenEditText);
-                }
-                break;
-
             case R.id.pin_third_edittext:
-                if (hasFocus) {
-                    setFocus(mPinHiddenEditText);
-                    showSoftKeyboard(mPinHiddenEditText);
-                }
-                break;
-
             case R.id.pin_forth_edittext:
                 if (hasFocus) {
                     setFocus(mPinHiddenEditText);
@@ -410,8 +418,9 @@ public class ChangePasswordActivityForOTP extends AppCompatActivity implements V
      *
      * @param editText edit text to change
      */
+    @SuppressLint("UseCompatLoadingForDrawables")
     private void setDefaultPinBackground(EditText editText) {
-        setViewBackground(editText, getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
+        setViewBackground(editText, context.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
     }
 
     /**
@@ -433,8 +442,9 @@ public class ChangePasswordActivityForOTP extends AppCompatActivity implements V
      *
      * @param editText edit text to change
      */
+    @SuppressLint("UseCompatLoadingForDrawables")
     private void setFocusedPinBackground(EditText editText) {
-        setViewBackground(editText, getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
+        setViewBackground(editText, context.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
     }
 
     /**
@@ -515,11 +525,8 @@ public class ChangePasswordActivityForOTP extends AppCompatActivity implements V
     private JSONObject userJson;
 
     private void submitOTPVerification(final String otp) {
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage("Verifying OTP...");
-        progressDialog.setCancelable(false);
-        progressDialog.setIndeterminate(false);
-        progressDialog.show();
+
+        progressDialog = ApplicationUtils.progressDialog(context, "Please wait...");
 
         HttpsTrustManager.allowAllSSL();
         if (!otp.isEmpty()) {
@@ -532,6 +539,11 @@ public class ChangePasswordActivityForOTP extends AppCompatActivity implements V
                     Timber.e("object -> %s", jsonObject.toString());
                     if (jsonObject.getString("message").equals("Sorry! Failed to Verify Your Account by OYP.")) {
                         showMessage("Sorry! Failed to Verify Your Account by OTP.");
+                        mPinFirstDigitEditText.setText("");
+                        mPinSecondDigitEditText.setText("");
+                        mPinThirdDigitEditText.setText("");
+                        mPinForthDigitEditText.setText("");
+                        mPinHiddenEditText.setText("");
                     } else if (!jsonObject.getBoolean("error")) {
                         showMessage(jsonObject.getString("message"));
                         Timber.e("password response -> %s", jsonObject.getString("message"));
@@ -639,30 +651,5 @@ public class ChangePasswordActivityForOTP extends AppCompatActivity implements V
     private void dismissProgressDialog() {
         if (progressDialog != null && progressDialog.isShowing())
             progressDialog.dismiss();
-    }
-
-    @Override
-    public void onBackPressed() {
-// super.onBackPressed();
-// Not calling **super**, disables back button in current screen.
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setMessage("Are you sure you want to exit?")
-                .setNegativeButton(android.R.string.no, null)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        ChangePasswordActivityForOTP.super.onBackPressed();
-                        TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
-                    }
-                }).create();
-        AlertDialog dialog = builder.create();
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface arg0) {
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.black));
-                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.red));
-            }
-        });
-        dialog.show();
     }
 }

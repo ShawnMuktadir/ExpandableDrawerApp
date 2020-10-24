@@ -155,7 +155,11 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
 
                     } else if (jsonObject.getBoolean("error") && jsonObject.has("authentication")) {
                         // IF ERROR OCCURS AND AUTHENTICATION IS INVALID
-//                        showMessage(jsonObject.getString("message"));
+                        showMessage(jsonObject.getString("message"));
+                        mPinFirstDigitEditText.setText("");
+                        mPinSecondDigitEditText.setText("");
+                        mPinThirdDigitEditText.setText("");
+                        mPinForthDigitEditText.setText("");
                         Timber.e("error & authentication response -> %s", jsonObject.getString("message"));
                     } else {
 //                        showMessage(jsonObject.getString("message"));
