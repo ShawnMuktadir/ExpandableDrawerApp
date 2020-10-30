@@ -54,8 +54,6 @@
              You can define the keys for the debug and release targets in src/debug/ and src/release/.
         -->
 
-        <activity android:name=".view.location.LocationActivity" />
-
         <activity
             android:name=".view.changePassword.ChangePasswordActivity"
             android:screenOrientation="unspecified"
@@ -68,6 +66,11 @@
 
         <activity
             android:name=".view.permission.PermissionActivity"
+            android:screenOrientation="unspecified"
+            android:theme="@style/AppTheme.DefaultActionBar" />
+
+        <activity
+            android:name=".view.location.LocationActivity"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
 

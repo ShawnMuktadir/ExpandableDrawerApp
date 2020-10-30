@@ -166,7 +166,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onClick(View view) {
-
         switch (view.getId()) {
             case R.id.btnSignup:
                 if (ApplicationUtils.checkInternet(context)) {
@@ -595,7 +594,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             String vehicleNo = editTextVehicleRegNumber.getText().toString().trim();
             String password = editTextPassword.getText().toString().trim();
 
-            //showMessage(mobileNo + " " + vehicleNo + " " + password);
             if (bitmap != null) {
                 registerUser(fullName, mobileNo, vehicleNo, password);
             } else {
@@ -686,21 +684,11 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private boolean checkFields() {
-//        editTextFullName.requestFocus();
         boolean isNameValid = Validator.checkValidity(textInputLayoutFullName, editTextFullName.getText().toString(), context.getString(R.string.err_msg_fullname), "text");
         boolean isPhoneValid = Validator.checkValidity(textInputLayoutMobile, editTextMobileNumber.getText().toString(), context.getString(R.string.err_msg_mobile), "phone");
         boolean isVehicleRegValid = Validator.checkValidity(textInputLayoutVehicle, editTextVehicleRegNumber.getText().toString(), context.getString(R.string.err_msg_vehicle), "text");
         boolean isPasswordValid = Validator.checkValidity(textInputLayoutPassword, editTextPassword.getText().toString(), context.getString(R.string.err_msg_password), "textPassword");
 
-//        boolean hasDrawable = (uploadProfileImage.getDrawable() != null);
-//        if(hasDrawable) {
-//            // imageView has image in it
-//            Timber.e("imageView set");
-//        }
-//        else {
-//            // no image assigned to image view
-//            Toast.makeText(context, "Please Upload Profile Picture!!!", Toast.LENGTH_SHORT).show();
-//        }
         return isNameValid && isPhoneValid && isVehicleRegValid && isPasswordValid;
     }
 
