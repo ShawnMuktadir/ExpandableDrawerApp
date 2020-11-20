@@ -30,11 +30,11 @@ android {
         }
 
         release {
-            lintOptions {
+            /*lintOptions {
                 disable 'MissingTranslation'
                 checkReleaseBuilds false
                 abortOnError false
-            }
+            }*/
             debuggable false
             minifyEnabled true
             shrinkResources true
@@ -90,7 +90,7 @@ dependencies {
     implementation 'com.google.zxing:core:3.3.3'
     implementation 'com.journeyapps:zxing-android-embedded:3.6.0@aar'
 
-    // Volley
+    // Volleysch
     implementation 'com.android.volley:volley:1.1.1'
     // gson
     implementation 'com.google.code.gson:gson:2.8.6'

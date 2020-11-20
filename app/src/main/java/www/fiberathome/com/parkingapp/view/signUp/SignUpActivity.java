@@ -141,7 +141,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
         textViewTermsConditions.setMovementMethod(LinkMovementMethod.getInstance());
         textViewTermsConditions.setText(addMultipleClickablePart(context.getResources().getString(R.string.by_using_this_app_you_agree_to_our_terms_and_conditions_amp_privacy_policy)));
-
     }
 
     @Override
@@ -509,24 +508,22 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         super.onActivityResult(requestCode, resultCode, data);
+
         if (resultCode == RESULT_CANCELED) {
             return;
         }
 
-        // IF GALLERY SELECTED
         if (requestCode == REQUEST_PICK_GALLERY && resultCode == RESULT_OK && data != null) {
-            if (data != null) {
-                Uri contentURI = data.getData();
-                try {
-                    bitmap = MediaStore.Images.Media.getBitmap(SignUpActivity.this.getContentResolver(), contentURI);
-                    Bitmap convertedImage = getResizedBitmap(bitmap, 500);
+            Uri contentURI = data.getData();
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(SignUpActivity.this.getContentResolver(), contentURI);
+                Bitmap convertedImage = getResizedBitmap(bitmap, 500);
 //                    Toast.makeText(SignUpActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
-                    imageViewUploadProfileImage.setImageBitmap(convertedImage);
+                imageViewUploadProfileImage.setImageBitmap(convertedImage);
 
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Toast.makeText(SignUpActivity.this, "Something went wrong! File size not exceed 3 MB", Toast.LENGTH_SHORT).show();
-                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(SignUpActivity.this, "Something went wrong! File size not exceed 3 MB", Toast.LENGTH_SHORT).show();
             }
 
         } else if (requestCode == REQUEST_PICK_CAMERA && resultCode == RESULT_OK && data != null) {

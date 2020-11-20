@@ -1,5 +1,6 @@
 package www.fiberathome.com.parkingapp.base;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,16 +15,28 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.util.Log;
+import android.view.MenuItem;
 import android.widget.Toast;
 
+import timber.log.Timber;
+import www.fiberathome.com.parkingapp.utils.LocaleManager;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+import www.fiberathome.com.parkingapp.utils.Utility;
 
+@SuppressLint("Registered")
 public class BaseActivity extends AppCompatActivity {
 
     private AlertDialog alertDialog;
     private static final int WIFI_ENABLE_REQUEST = 0x1006;
 
     private Context context;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(ParkingApp.localeManager.setLocale(base));
+        Timber.e("attachBaseContext");
+    }
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -37,13 +50,23 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         context = this;
         registerReceiver(receiver, new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
-
+        Utility.resetActivityTitle(this);
     }
 
     @Override
     protected void onDestroy() {
         unregisterReceiver(receiver);
         super.onDestroy();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
     }
 
     private void checkInternetConnection() {

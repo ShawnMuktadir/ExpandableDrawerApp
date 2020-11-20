@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <string name="app_name">Parking App</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="start_title">SMART PARKING APPLICATION</string>
+    <string name="start_sub_title">A Project of DMP and LOCC</string>
+    <string name="login">লগ ইন</string>
+    <string name="signup">সাইন আপ</string>
+    <string name="powered_by">পরিচালিত: </string>
+
+    //title
+    <string name="signup_title">সাইন আপ</string>
+    <string name="signin_title">লগ ইন</string>
+    <string name="btn_signin">লগ ইন</string>
+    <string name="btn_retrieve_password">পাসওয়ার্ড পুনরুদ্ধার</string>
+
+    //hint
+    <string name="hint_pass">পাসওয়ার্ড</string>
+    <string name="hint_phoneno">মোবাইল</string>
+    <string name="hint_old_password">পুরান পাসওয়ার্ড</string>
+    <string name="hint_new_password">নতুন পাসওয়ার্ড</string>
+    <string name="hint_confirm_password">পাসওয়ার্ড নিশ্চিত করুন</string>
+
+    //OTP
+    <string name="btn_retrive_otp">ওটিপি পুনরুদ্ধার</string>
+    <string name="pin_content_desc">পিন ইনপুট</string>
+    <string name="msg_sit_back">অপেক্ষা করুন! আপনার মোবাইল নম্বর যাচাই হচ্ছে</string>
+    <string name="msg_manual_otp">(আমরা যদি স্বয়ংক্রিয়ভাবে এসএমএস সনাক্ত করতে ব্যর্থ হই তবে নীচে ওটিপিটি প্রবেশ করুন)</string>
+    <string name="resend_otp">ওটিপি পুনরায় পাঠান</string>
+
+    //password
+    <string name="title_change_password">পাসওয়ার্ড পরিবর্তন</string>
+    <string name="title_forget_password">পাসওয়ার্ড ভুলে গিয়েছেন?</string>
+    <string name="retreive_password">পাসওয়ার্ড পুনরুদ্ধার করুন</string>
+
+    //error message
+    <string name="err_msg_mobile">সঠিক মোবাইল নম্বর দিন</string>
+    <string name="err_msg_fullname">সঠিক নাম দিন</string>
+    <string name="err_msg_vehicle">সঠিক যানবাহন নম্বর দিন</string>
+    <string name="err_old_password">সঠিক পুরান পাসওয়ার্ড দিন</string>
+    <string name="err_msg_password">সঠিক পাসওয়ার্ড দিন</string>
+    <string name="err_msg_pin">সঠিক পিন দিন</string>
+    <string name="find_nearest">নিকটবর্তী খুঁজুন</string>
+    <string name="err_new_password">সঠিক নতুন পাসওয়ার্ড দিন</string>
+    <string name="err_confirm_password">সঠিক নিশ্চিত করুন পাসওয়ার্ড দিন</string>
+    <string name="no_account_yet_click_here">অ্যাকাউন্ট নেই? ক্লিক করুন</string>
+    <string name="forget_password_click_here">পাসওয়ার্ড ভুলে গিয়েছেন? ক্লিক করুন</string>
+
+    //navigation
+    <string name="home">হোম</string>
+    <string name="bookings">বুকিং</string>
+    <string name="profile">প্রোফাইল</string>
+    <string name="logout">প্রস্থান</string>
+    <string name="law">আইন</string>
+    <string name="get_discount">ছাড় পান</string>
+    <string name="give_review_rating">রেটিং / পর্যালোচনা দিন</string>
+    <string name="follow_us">আমাদের অনুসরণ করুন</string>
+    <string name="privacy_policy">গোপনীয়তা নীতি</string>
+    <string name="share">শােয়ারe</string>
+    <string name="your_booked">আপনার বুকড</string>
+    <string name="notification">বিজ্ঞপ্তি</string>
+    <string name="my_account">আমার অ্যাকাউন্ট</string>
+    <string name="parking">পার্কিং</string>
+    <string name="parking_spot">পারকিং স্পট</string>
+    <string name="learn_law">আইন শিখুন</string>
+    <string name="openDrawer">Open</string>
+    <string name="closeDrawer">Close</string>
+
+    //registration
+    <string name="car_number">গাড়ির নম্বর</string>
+    <string name="nid_number">এনআইডি নম্বর</string>
+    <string name="occupation">পেশা (ঐচ্ছিক)</string>
+    <string name="signOut">সাইন আউট</string>
+    <string name="create_account">অ্যাকাউন্ট তৈরি করুন</string>
+    <string name="already_a_member_click_here">ইতোমধ্যে একজন সদস্য? এখানে ক্লিক করুন</string>
+    <string name="submit">জমা দিন</string>
+    <string name="full_name">সম্পূর্ণ নাম</string>
+    <string name="reg_num">যানবাহন নিবন্ধিত নম্বর</string>
+
+    //parking slot
+    <string name="parking_slots">পার্কিং স্লট</string>
+    <string name="parking_area_name">পার্কিং এলাকার নাম</string>
+    <string name="address">ঠিকানা</string>
+    <string name="no_record_found">কোন তথ্য পাওয়া যায়নি</string>
+
+    <string name="connect_to_internet">ইন্টারনেট সংযোগ করুন</string>
+    <string name="connect_to_internet_gps">ইন্টারনেট/জিপিএস সংযোগ করুন</string>
+    <string name="close_app">অ্যাপ বন্ধ করুন</string>
+    <string name="conn_failed">সংযোগ ব্যর্থ হয়েছে</string>
+    <string name="ok">ঠিক আছে</string>
+    <string name="retry">পুনরায় চেষ্টা করুন</string>
+    <string name="demo_number">70</string>
+    <string name="subject_to_availability">প্রাপ্যতা সাপেক্ষে</string>
+    <string name="get_direction">দিকনির্দেশ পান</string>
+    <string name="welcome_to_locc_parking">Welcome, LOCC Smart Parking</string>
+
+    <string name="exit_message">প্রস্থান করার জন্য দয়া করে এখানে টিপুন!</string>
+    <string name="exit_message_main">প্রস্থান করতে ওকে টিপুন!</string>
+    <string name="demo_price">Tk 100/h</string>
+    <string name="distance">2 km</string>
+    <string name="parking_time">Arrival 04.30pm - 12.30pm Departure </string>
+
+    <string name="bottom_Sheet_text">একটি স্পট চয়ন করুন বা, আরও কিছু জন্য সোয়াইপ আপ</string>
+    <string name="nearest_parking_from_your_destination">আপনার গন্তব্য থেকে নিকটতম পার্কিং</string>
+
+    <string name="lorum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
+
+    <string name="parking_slot">Parking Slot 17</string>h
+    <string name="total_time">2.30h</string>
+    <string name="total_fair">Total: BDT726.00</string>
+    <string name="rate_tip">রেট এবং টিপ</string>
+    <string name="view_receipt">প্রাপ্তি দেখুন</string>
+    <string name="get_help">সহায়তা পান</string>
+    <string name="time">4.86 mins</string>
+
+    <string name="vehicle_no">যানবাহন নম্বর</string>
+    <string name="user_phone_no">মোবাইল নম্বর</string>
+
+    <string name="loream_ipsum">is simply dummy text of the printing and typesetting industry.
+        Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s.</string>
+
+    <string name="date">wed,5 Feb</string>
+    <string name="schedule_heading">সময়সূচী</string>
+    <string name="arrived">পার্কিং স্পটে পৌঁছেছেন:</string>
+    <string name="departure">পার্কিং স্পটে প্রস্থান:</string>
+    <string name="book">পার্কিং স্পট বুক</string>
+    <string name="gps_network_not_enabled">জিপিএস নেটওয়ার্ক সক্ষম নয়!</string>
+    <string name="open_location_settings">স্থান সেটিংস খুলুন</string>
+    <string name="locc_smart_parking_app_needs_permission_to_access_device_location_to_provide_required_services_please_allow_the_permission">LOCC Smart Parking App needs permission to access device location to provide required services. Please allow the permission</string>
+    <string name="permission_request">অনুমতির অনুরোধ</string>
+    <string name="grant_permission">অনুমতি প্রদান</string>
+    <string name="no_data_available">পার্কিং অ্যাপ্লিকেশন অনুসন্ধান করার জন্য একটি \n বৈধ জায়গা সার্চ করুন</string>
+    <string name="schedule_parking">পার্কিং সূচি</string>
+    <string name="by_using_this_app_you_agree_to_our_terms_and_conditions_amp_privacy_policy"><![CDATA[এই অ্যাপ্লিকেশনটি ব্যবহার করে আপনি আমাদের শর্তাদি এবং গোপনীয়তা নীতিতে সম্মত হন]]></string>
+
+    <string-array name="CountryCodes">
+        <item>93,AF</item>
+        <item>355,AL</item>
+        <item>213,DZ</item>
+        <item>376,AD</item>
+        <item>244,AO</item>
+        <item>672,AQ</item>
+        <item>54,AR</item>
+        <item>374,AM</item>
+        <item>297,AW</item>
+        <item>61,AU</item>
+        <item>43,AT</item>
+        <item>994,AZ</item>
+        <item>973,BH</item>
+        <item>880,BD</item>
+        <item>375,BY</item>
+        <item>32,BE</item>
+        <item>501,BZ</item>
+        <item>229,BJ</item>
+        <item>975,BT</item>
+        <item>591,BO</item>
+        <item>387,BA</item>
+        <item>267,BW</item>
+        <item>55,BR</item>
+        <item>673,BN</item>
+        <item>359,BG</item>
+        <item>226,BF</item>
+        <item>95,MM</item>
+        <item>257,BI</item>
+        <item>855,KH</item>
+        <item>237,CM</item>
+        <item>1,CA</item>
+        <item>238,CV</item>
+        <item>236,CF</item>
+        <item>235,TD</item>
+        <item>56,CL</item>
+        <item>86,CN</item>
+        <item>61,CX</item>
+        <item>61,CC</item>
+        <item>57,CO</item>
+        <item>269,KM</item>
+        <item>242,CG</item>
+        <item>243,CD</item>
+        <item>682,CK</item>
+        <item>506,CR</item>
+        <item>385,HR</item>
+        <item>53,CU</item>
+        <item>357,CY</item>
+        <item>420,CZ</item>
+        <item>45,DK</item>
+        <item>253,DJ</item>
+        <item>670,TL</item>
+        <item>593,EC</item>
+        <item>20,EG</item>
+        <item>503,SV</item>
+        <item>240,GQ</item>
+        <item>291,ER</item>
+        <item>372,EE</item>
+        <item>251,ET</item>
+        <item>500,FK</item>
+        <item>298,FO</item>
+        <item>679,FJ</item>
+        <item>358,FI</item>
+        <item>33,FR</item>
+        <item>689,PF</item>
+        <item>241,GA</item>
+        <item>220,GM</item>
+        <item>995,GE</item>
+        <item>49,DE</item>
+        <item>233,GH</item>
+        <item>350,GI</item>
+        <item>30,GR</item>
+        <item>299,GL</item>
+        <item>502,GT</item>
+        <item>224,GN</item>
+        <item>245,GW</item>
+        <item>592,GY</item>
+        <item>509,HT</item>
+        <item>504,HN</item>
+        <item>852,HK</item>
+        <item>36,HU</item>
+        <item>91,IN</item>
+        <item>62,ID</item>
+        <item>98,IR</item>
+        <item>964,IQ</item>
+        <item>353,IE</item>
+        <item>44,IM</item>
+        <item>972,IL</item>
+        <item>39,IT</item>
+        <item>225,CI</item>
+        <item>81,JP</item>
+        <item>962,JO</item>
+        <item>7,KZ</item>
+        <item>254,KE</item>
+        <item>686,KI</item>
+        <item>965,KW</item>
+        <item>996,KG</item>
+        <item>856,LA</item>
+        <item>371,LV</item>
+        <item>961,LB</item>
+        <item>266,LS</item>
+        <item>231,LR</item>
+        <item>218,LY</item>
+        <item>423,LI</item>
+        <item>370,LT</item>
+        <item>352,LU</item>
+        <item>853,MO</item>
+        <item>389,MK</item>
+        <item>261,MG</item>
+        <item>265,MW</item>
+        <item>60,MY</item>
+        <item>960,MV</item>
+        <item>223,ML</item>
+        <item>356,MT</item>
+        <item>692,MH</item>
+        <item>222,MR</item>
+        <item>230,MU</item>
+        <item>262,YT</item>
+        <item>52,MX</item>
+        <item>691,FM</item>
+        <item>373,MD</item>
+        <item>377,MC</item>
+        <item>976,MN</item>
+        <item>382,ME</item>
+        <item>212,MA</item>
+        <item>258,MZ</item>
+        <item>264,NA</item>
+        <item>674,NR</item>
+        <item>977,NP</item>
+        <item>31,NL</item>
+        <item>599,AN</item>
+        <item>687,NC</item>
+        <item>64,NZ</item>
+        <item>505,NI</item>
+        <item>227,NE</item>
+        <item>234,NG</item>
+        <item>683,NU</item>
+        <item>850,KP</item>
+        <item>47,NO</item>
+        <item>968,OM</item>
+        <item>92,PK</item>
+        <item>680,PW</item>
+        <item>507,PA</item>
+        <item>675,PG</item>
+        <item>595,PY</item>
+        <item>51,PE</item>
+        <item>63,PH</item>
+        <item>870,PN</item>
+        <item>48,PL</item>
+        <item>351,PT</item>
+        <item>1,PR</item>
+        <item>974,QA</item>
+        <item>40,RO</item>
+        <item>7,RU</item>
+        <item>250,RW</item>
+        <item>590,BL</item>
+        <item>685,WS</item>
+        <item>378,SM</item>
+        <item>239,ST</item>
+        <item>966,SA</item>
+        <item>221,SN</item>
+        <item>381,RS</item>
+        <item>248,SC</item>
+        <item>232,SL</item>
+        <item>65,SG</item>
+        <item>421,SK</item>
+        <item>386,SI</item>
+        <item>677,SB</item>
+        <item>252,SO</item>
+        <item>27,ZA</item>
+        <item>82,KR</item>
+        <item>34,ES</item>
+        <item>94,LK</item>
+        <item>290,SH</item>
+        <item>508,PM</item>
+        <item>249,SD</item>
+        <item>597,SR</item>
+        <item>268,SZ</item>
+        <item>46,SE</item>
+        <item>41,CH</item>
+        <item>963,SY</item>
+        <item>886,TW</item>
+        <item>992,TJ</item>
+        <item>255,TZ</item>
+        <item>66,TH</item>
+        <item>228,TG</item>
+        <item>690,TK</item>
+        <item>676,TO</item>
+        <item>216,TN</item>
+        <item>90,TR</item>
+        <item>993,TM</item>
+        <item>688,TV</item>
+        <item>971,AE</item>
+        <item>256,UG</item>
+        <item>44,GB</item>
+        <item>380,UA</item>
+        <item>598,UY</item>
+        <item>1,US</item>
+        <item>998,UZ</item>
+        <item>678,VU</item>
+        <item>39,VA</item>
+        <item>58,VE</item>
+        <item>84,VN</item>
+        <item>681,WF</item>
+        <item>967,YE</item>
+        <item>260,ZM</item>
+        <item>263,ZW</item>
+    </string-array>
+
+    //booking
+    <string name="pay_bill">বিল পরিশোধ করুন</string>
+    <string name="cancel">বাতিল</string>
+    <string name="reserve">ধরিয়া রাখা</string>
+    <string name="time_ago_now">কয়েক মুহুর্ত আগে</string>
+    <string name="time_ago_full_seconds">%1$d সেকেন্ড আগে</string>
+    <string name="time_ago_full_minute">%1$d মিনিট আগে</string>
+    <string name="time_ago_full_minutes">%1$d মিনিট আগে</string>
+    <string name="time_ago_full_hour">%1$d ঘন্টা আগে</string>
+    <string name="time_ago_full_hours">%1$d ঘন্টা আগে</string>
+    <string name="time_ago_full_yesterday_at">গতকাল %1$s</string>
+    <string name="time_ago_full_days">%1$d দিন আগে</string>
+    <string name="time_ago_full_month">%1$d মাস আগে</string>
+    <string name="time_ago_full_months">%1$d মাস আগে</string>
+    <string name="time_ago_seconds">%1$d সেকেন্ড আগে</string>
+    <string name="time_ago_minute">%1$d মিনিট আগে</string>
+    <string name="time_ago_minutes">%1$d মিনিট আগে</string>
+    <string name="time_ago_hour">%1$d ঘন্টা আগে</string>
+    <string name="time_ago_hours">%1$d ঘন্টা আগে</string>
+    <string name="time_ago_yesterday_at">গতকাল %1$s</string>
+    <string name="time_ago_days">%1$d দিন আগে</string>
+    <string name="time_ago_month">%1$d মাস আগে</string>
+    <string name="time_ago_months">%1$d মাস আগে</string>
+    <string name="grant_location">স্থান সচল করুন</string>
+    <string name="location_request">স্থান সচল করুন</string>
+    <string name="spinner_title">যানবাহন রেজিঃ</string>
+    <string name="edit_profile">প্রোফাইল পরিবর্তন করুন</string>
+    <string name="your_books">আপনার বুক করা পার্কিং স্পট</string>
+    <string name="developed_by">নির্মাণে:</string>
+    <string name="locc">LOCC</string>
+
+    //language
+    <string name="language">ভাষা</string>
+    <string name="lang_select_bn">বাং</string>
+    <string name="lang_select_en">ইং</string>
+    <string name="change_language">ভাষা পরিবর্তন করতে চান?</string>
+    <string name="yes">হ্যাঁ</string>
+    <string name="no">না</string>
+</resources>

@@ -1,7 +1,10 @@
 package www.fiberathome.com.parkingapp.base;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.res.Configuration;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -10,6 +13,8 @@ import com.android.volley.toolbox.Volley;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.BuildConfig;
 import www.fiberathome.com.parkingapp.utils.ConnectivityReceiver;
+import www.fiberathome.com.parkingapp.utils.LocaleHelper;
+import www.fiberathome.com.parkingapp.utils.LocaleManager;
 
 
 public class ParkingApp extends Application {
@@ -17,6 +22,8 @@ public class ParkingApp extends Application {
     public static final String TAG = ParkingApp.class.getSimpleName();
     private static ParkingApp mInstance;
     private RequestQueue mRequestQueue;
+
+    public static LocaleManager localeManager;
 
     public static synchronized ParkingApp getInstance() {
         return mInstance;
@@ -67,4 +74,21 @@ public class ParkingApp extends Application {
         ConnectivityReceiver.listener = listener;
     }
 
+    @Override
+    protected void attachBaseContext(Context base) {
+        localeManager = new LocaleManager(base);
+        super.attachBaseContext(localeManager.setLocale(base));
+        Log.d(TAG, "attachBaseContext");
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        localeManager.setLocale(this);
+        Log.d(TAG, "onConfigurationChanged: " + newConfig.locale.getLanguage());
+    }
+
+    /*public void initAppLanguage(Context context) {
+        LocaleHelper.initialize(context, LocaleUtils.getSelectedLanguageId());
+    }*/
 }

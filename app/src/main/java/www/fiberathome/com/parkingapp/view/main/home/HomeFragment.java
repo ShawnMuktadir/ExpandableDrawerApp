@@ -1557,7 +1557,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                             new LatLng(latitude, longitude));
 
                     double kim = (fetchDistance / 1000) + adjustValue;
-                    double doubleDuration = Double.parseDouble(new DecimalFormat("##.##").format(kim * 2.43));
+                    //double doubleDuration = Double.parseDouble(new DecimalFormat("##.##").format(kim * 2.43));
+                    double doubleDuration = Double.parseDouble(String.format(Locale.US, "%.2f", ApplicationUtils.convertToDouble(new DecimalFormat("##.##").format(kim * 2.43))));
 
                     String initialNearestDuration = doubleDuration + " mins";
 

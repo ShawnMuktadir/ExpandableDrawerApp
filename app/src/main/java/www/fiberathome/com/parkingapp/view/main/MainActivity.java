@@ -70,6 +70,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.base.BaseActivity;
+import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
@@ -82,6 +84,7 @@ import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.LocationHelper;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.view.location.LocationActivity;
+import www.fiberathome.com.parkingapp.view.settings.SettingsActivity;
 import www.fiberathome.com.parkingapp.view.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.view.permission.PermissionActivity;
 import www.fiberathome.com.parkingapp.view.booking.ScheduleFragment;
@@ -102,7 +105,7 @@ import www.fiberathome.com.parkingapp.view.ratingReview.RatingReviewFragment;
 import www.fiberathome.com.parkingapp.view.settings.SettingsFragment;
 import www.fiberathome.com.parkingapp.view.share.ShareFragment;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
+public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener,
         DialogForm.DialogFormListener, FragmentChangeListener, PermissionInterface {
 
     @BindView(R.id.tvTimeToolbar)
@@ -133,6 +136,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         Timber.e("MainActivity onCreate called");
         super.onCreate(savedInstanceState);
+        //ParkingApp.getInstance().initAppLanguage(this);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         context = this;
@@ -301,10 +305,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.nav_settings:
-                toolbar.setTitle(context.getResources().getString(R.string.action_settings));
+                /*toolbar.setTitle(context.getResources().getString(R.string.action_settings));
                 tvTimeToolbar.setVisibility(View.GONE);
                 linearLayoutToolbarTime.setVisibility(View.GONE);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, SettingsFragment.newInstance()).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, SettingsFragment.newInstance()).commit();*/
+                startActivity(new Intent(this, SettingsActivity.class));
                 break;
 
             case R.id.nav_get_discount:
