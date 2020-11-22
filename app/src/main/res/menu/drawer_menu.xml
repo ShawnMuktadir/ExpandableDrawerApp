@@ -34,7 +34,7 @@
 <!--        android:checkableBehavior="single">-->
         <item
             android:id="@+id/nav_law"
-            android:icon="@drawable/ic_laws"
+            android:icon="@drawable/ic_laws_new"
             android:iconTint="@color/black"
             android:title="@string/learn_law" />
 <!--    </group>-->

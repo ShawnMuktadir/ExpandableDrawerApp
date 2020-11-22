@@ -390,7 +390,8 @@
     <string name="language">Language</string>
     <string name="lang_select_bn">BN</string>
     <string name="lang_select_en">EN</string>
-    <string name="change_language">Want to Change Language?</string>
+    <string name="want_change_language">Want to Change Language?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="change_language">Change Language</string>
 </resources>

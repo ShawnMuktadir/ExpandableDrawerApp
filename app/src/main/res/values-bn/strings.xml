@@ -384,7 +384,8 @@
     <string name="language">ভাষা</string>
     <string name="lang_select_bn">বাং</string>
     <string name="lang_select_en">ইং</string>
-    <string name="change_language">ভাষা পরিবর্তন করতে চান?</string>
+    <string name="want_change_language">ভাষা পরিবর্তন করতে চান?</string>
     <string name="yes">হ্যাঁ</string>
     <string name="no">না</string>
+    <string name="change_language">ভাষা পরিবর্তন</string>
 </resources>

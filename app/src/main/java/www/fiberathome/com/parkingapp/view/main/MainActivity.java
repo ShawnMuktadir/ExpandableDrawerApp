@@ -77,6 +77,7 @@ import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
 import www.fiberathome.com.parkingapp.module.eventBus.GetDirectionEvent;
 import www.fiberathome.com.parkingapp.module.eventBus.SetMarkerEvent;
+import www.fiberathome.com.parkingapp.utils.LocaleHelper;
 import www.fiberathome.com.parkingapp.view.permission.listener.DexterPermissionListener;
 import www.fiberathome.com.parkingapp.view.permission.listener.PermissionInterface;
 import www.fiberathome.com.parkingapp.model.loginUser.User;
@@ -136,7 +137,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     protected void onCreate(Bundle savedInstanceState) {
         Timber.e("MainActivity onCreate called");
         super.onCreate(savedInstanceState);
-        //ParkingApp.getInstance().initAppLanguage(this);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         context = this;
@@ -305,11 +305,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 break;
 
             case R.id.nav_settings:
-                /*toolbar.setTitle(context.getResources().getString(R.string.action_settings));
+                toolbar.setTitle(context.getResources().getString(R.string.action_settings));
                 tvTimeToolbar.setVisibility(View.GONE);
                 linearLayoutToolbarTime.setVisibility(View.GONE);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, SettingsFragment.newInstance()).commit();*/
-                startActivity(new Intent(this, SettingsActivity.class));
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, SettingsFragment.newInstance()).commit();
+                //startActivity(new Intent(this, SettingsActivity.class));
                 break;
 
             case R.id.nav_get_discount:

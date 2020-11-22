@@ -709,7 +709,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                                 }
 
                                 double kim = (markerDistance / 1000) + adjustValue;
-                                double markerDoubleDuration = Double.parseDouble(new DecimalFormat("##.##").format(markerDistance * 2.43));
+                                //double markerDoubleDuration = Double.parseDouble(new DecimalFormat("##.##").format(markerDistance * 2.43));
+                                double markerDoubleDuration = ApplicationUtils.convertToDouble(String.format(Locale.US, "%.2f", ApplicationUtils.convertToDouble(new DecimalFormat("##.##").format(markerDistance * 2.43))));
                                 String markerStringDuration = markerDoubleDuration + " mins";
 
                                 bookingSensorsMarker = new BookingSensors(markerPlaceName, markerPlaceLatLng.latitude, markerPlaceLatLng.longitude,
@@ -798,7 +799,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                             }
 
                             double km = (distanceForNearbyLoc / 1000) + adjustNearbyValue;
-                            double nearbySearchDoubleDuration = Double.parseDouble(new DecimalFormat("##.##").format(km * 2.43));
+                            //double nearbySearchDoubleDuration = Double.parseDouble(new DecimalFormat("##.##").format(km * 2.43));
+                            double nearbySearchDoubleDuration = ApplicationUtils.convertToDouble(String.format(Locale.US, "%.2f", ApplicationUtils.convertToDouble(new DecimalFormat("##.##").format(km * 2.43))));
                             String nearbySearchStringDuration = nearbySearchDoubleDuration + " mins";
 
                             bookingSensorsArrayList.add(new BookingSensors(nearbyAreaName[0], ApplicationUtils.convertToDouble(latitude1),
@@ -2760,7 +2762,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                         }
 
                         double kim = (adapterDistance / 1000) + adjustValue;
-                        double adapterDoubleDuration = Double.parseDouble(new DecimalFormat("##.##").format(adapterDistance * 2.43));
+                        //double adapterDoubleDuration = Double.parseDouble(new DecimalFormat("##.##").format(adapterDistance * 2.43));
+                        double adapterDoubleDuration = ApplicationUtils.convertToDouble(String.format(Locale.US, "%.2f", ApplicationUtils.convertToDouble(new DecimalFormat("##.##").format(adapterDistance * 2.43))));
                         String adapterStringDuration = adapterDoubleDuration + " mins";
 
                         bookingSensorsAdapterArrayList.add(new BookingSensors(adapterPlaceName, event.location.latitude, event.location.longitude,
@@ -3098,7 +3101,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                         }
 
                         double kim = (bottomSheetDistance / 1000) + adjustValue;
-                        double bottomSheetDoubleDuration = Double.parseDouble(new DecimalFormat("##.##").format(bottomSheetDistance * 2.43));
+                        //double bottomSheetDoubleDuration = Double.parseDouble(new DecimalFormat("##.##").format(bottomSheetDistance * 2.43));
+                        double bottomSheetDoubleDuration = ApplicationUtils.convertToDouble(String.format(Locale.US, "%.2f", ApplicationUtils.convertToDouble(new DecimalFormat("##.##").format(bottomSheetDistance * 2.43))));
                         String bottomSheetStringDuration = bottomSheetDoubleDuration + " mins";
 
                         bookingSensorsArrayListBottomSheet.add(new BookingSensors(bottomSheetPlaceName, bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude,
@@ -4138,7 +4142,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
         return false;
     }
-
 
     private void saveTask() {
         ArrayList<BookingSensors> bookingSensorsRooms = new ArrayList<>();
