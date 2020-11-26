@@ -9,8 +9,8 @@
 
     <string name="start_title">SMART PARKING APPLICATION</string>
     <string name="start_sub_title">A Project of DMP and LOCC</string>
-    <string name="login">LOGIN</string>
-    <string name="signup">SIGN UP</string>
+    <string name="login">Login</string>
+    <string name="signup">Sign Up</string>
     <string name="powered_by">Powered By: </string>
 
     //title
@@ -26,17 +26,6 @@
     <string name="hint_new_password">New Password</string>
     <string name="hint_confirm_password">Confrim Password</string>
 
-    //error message
-    <string name="err_msg_mobile">Enter valid mobile number!</string>
-    <string name="err_msg_password">Enter valid password!</string>
-    <string name="err_msg_fullname">Enter Full Name!</string>
-    <string name="err_msg_vehicle">Enter vehicle no!</string>
-    <string name="err_old_password">Enter valid old password!</string>
-    <string name="err_msg_pin">Enter valid pin!</string>
-    <string name="err_new_password">Enter valid new password!</string>
-    <string name="err_confirm_password">Enter valid confirm password!</string>
-    <string name="find_nearest">Find Nearest</string>
-
     //OTP
     <string name="btn_retrive_otp">Retrieve OTP</string>
     <string name="pin_content_desc">PIN input field</string>
@@ -49,25 +38,59 @@
     <string name="title_forget_password">Forget Password</string>
     <string name="retreive_password">Retrieve Password</string>
 
+    //error message
+    <string name="err_msg_mobile">Enter valid mobile number</string>
+    <string name="err_msg_fullname">Enter Full Name</string>
+    <string name="err_msg_vehicle">Enter vehicle no</string>
+    <string name="err_old_password">Enter valid old password</string>
+    <string name="err_msg_password">Enter valid password</string>
+    <string name="err_msg_pin">Enter valid pin</string>
+    <string name="find_nearest">Find Nearest</string>
+    <string name="err_new_password">Enter valid new password</string>
+    <string name="err_confirm_password">Enter valid confirm password</string>
+    <string name="no_account_yet_click_here">No account yet? Click Here</string>
+    <string name="forget_password_click_here">Forget Password? Click Here</string>
+
+    //navigation
+    <string name="home">Home</string>
+    <string name="bookings">Bookings</string>
+    <string name="profile">Profile</string>
+    <string name="logout">Logout</string>
+    <string name="law">Law</string>
+    <string name="get_discount">Get Discount</string>
+    <string name="give_review_rating">Give Rating/Review</string>
+    <string name="follow_us">Follow Us</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="share">Share</string>
+    <string name="your_booked">Your Booked</string>
+    <string name="notification">Notification</string>
+    <string name="my_account">My Account</string>
+    <string name="parking">Parking</string>
+    <string name="parking_spot">Parking Spot</string>
+    <string name="learn_law">Learn Laws</string>
+    <string name="openDrawer">Open</string>
+    <string name="closeDrawer">Close</string>
 
     //registration
-    <string name="full_name">Full Name</string>
-    <string name="reg_num">Vehicle Registration Number</string>
     <string name="car_number">Car Number</string>
     <string name="nid_number">NID Number</string>
     <string name="occupation">Occupation (Optional)</string>
     <string name="signOut">Sign Out</string>
-    <string name="password">Password</string>
     <string name="create_account">Create Account</string>
     <string name="already_a_member_click_here">Already a member? Click here</string>
-    <string name="no_account_yet_click_here">No account yet? Click Here</string>
-    <string name="forget_password_click_here">Forget Password? Click Here</string>
     <string name="submit">Submit</string>
+    <string name="full_name">Full Name</string>
+    <string name="reg_num">Vehicle Registration Number</string>
+    <string name="vehicle_no">Vehicle No</string>
+    <string name="user_phone_no">User Phone No</string>
 
-    //common
-    <string name="no_record_found">No Record Found</string>
+    //parking slot
+    <string name="parking_slots">Parking Slots</string>
     <string name="parking_area_name">Parking Area Name</string>
     <string name="address">Address</string>
+    <string name="no_record_found">No Record Found</string>
+
+    //common
     <string name="connect_to_internet">Please Connect to Internet</string>
     <string name="connect_to_internet_gps">Please Connect to GPS/Internet</string>
     <string name="close_app">Close App</string>
@@ -75,62 +98,32 @@
     <string name="ok">OK</string>
     <string name="retry">Retry</string>
     <string name="demo_number">70</string>
-
     <string name="subject_to_availability">Subject to availability</string>
     <string name="get_direction">Get Direction</string>
     <string name="welcome_to_locc_parking">Welcome, LOCC Smart Parking</string>
-    <string name="search_parking">Search Parking</string>
-    <string name="pay_bill">Pay Bill</string>
-    <string name="cancel">Cancel</string>
-    <string name="reserve">Reserve</string>
     <string name="exit_message">Please Press here to exit!</string>
     <string name="exit_message_main">Press OK to exit!</string>
-
-    <string name="demo_price">Tk 100/h</string>
     <string name="distance">2 km</string>
-    <string name="availability">Availability</string>
     <string name="parking_time">Arrival 04.30pm - 12.30pm Departure </string>
-    <string name="menu_search">Search…</string>
+    <string name="confirm_booking">Confirm Booking</string>
+    <string name="unavailable_parking_spot">Unavailable Parking Spot</string>
+    <string name="no_parking_spot_message">You cannot reserve this spot for booking, as there is no parking slot!</string>
+    <string name="confirm_booking_message">Once reach your destination, \nConfirm Booking Button will be enabled &amp; you can reserve your parking spot</string>
+
+    //bottom sheet
     <string name="bottom_Sheet_text">Choose a spot or swipe up for more</string>
     <string name="nearest_parking_from_your_destination">Nearest Parking From Your Destination</string>
 
     <string name="lorum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
-    <string name="search">Search…</string>
-
-    //navigation
-    <string name="home">Home</string>
-    <string name="bookings">Bookings</string>
-    <string name="profile">Profile</string>
-    <string name="qr_code">QR Code</string>
-    <string name="logout">Logout</string>
-    <string name="parking_slots">Parking Slots</string>
-    <string name="law">Law</string>
-    <string name="notification">Notification</string>
-    <string name="my_account">My Account</string>
-    <string name="parking">Parking</string>
-    <string name="parking_spot">Parking Spot</string>
-    <string name="learn_law">Learn Laws</string>
-    <string name="your_account">Your Account</string>
-    <string name="get_discount">Get Discount</string>
-    <string name="give_review_rating">Give Rating/Review</string>
-    <string name="follow_us">Follow Us</string>
-    <string name="privacy_policy">Privacy Policy</string>
-    <string name="share">Share</string>
-    <string name="your_booked">Your Booked</string>
-    <string name="get_help">Get Help</string>
-    <string name="rate_tip">Rate and tip</string>
-    <string name="openDrawer">Open</string>
-    <string name="closeDrawer">Close</string>
-
-    <string name="time">4.86 mins</string>
-
-    <string name="search_law">Search Law</string>
-    <string name="vehicle_no">Vehicle No</string>
-    <string name="user_phone_no">User Phone No</string>
 
     <string name="loream_ipsum">is simply dummy text of the printing and typesetting industry.
         Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s.</string>
 
+    <string name="date">wed,5 Feb</string>
+    <string name="schedule_heading">Schedule</string>
+    <string name="arrived">Arrived at the parking spot:</string>
+    <string name="departure">Departure at the parking spot:</string>
+    <string name="book">Your book</string>
     <string name="gps_network_not_enabled">GPS network not enabled!</string>
     <string name="open_location_settings">Open Location Settings</string>
     <string name="locc_smart_parking_app_needs_permission_to_access_device_location_to_provide_required_services_please_allow_the_permission">LOCC Smart Parking App needs permission to access device location to provide required services. Please allow the permission</string>
@@ -350,15 +343,9 @@
     </string-array>
 
     //booking
-    <string name="parking_slot">Parking Slot 17</string>h
-    <string name="total_time">2.30h</string>
-    <string name="total_fair">Total: BDT726.00</string>
-    <string name="view_receipt">View Receipt</string>
-    <string name="date">wed,5 Feb</string>
-    <string name="schedule_heading">Schedule Book</string>
-    <string name="arrived">Arrived at the parking spot :</string>
-    <string name="departure">Departure at the parking spot :</string>
-    <string name="book">Your book</string>
+    <string name="pay_bill">Pay Bill</string>
+    <string name="cancel">Cancel</string>
+    <string name="reserve">Reserve</string>
     <string name="time_ago_now">few moments ago</string>
     <string name="time_ago_full_seconds">%1$d seconds ago</string>
     <string name="time_ago_full_minute">%1$d minute ago</string>
@@ -375,9 +362,9 @@
     <string name="time_ago_hour">%1$d h ago</string>
     <string name="time_ago_hours">%1$d h ago</string>
     <string name="time_ago_yesterday_at">Yesterday at %1$s</string>
-    <string name="time_ago_days">%1$d d ago</string>
-    <string name="time_ago_month">%1$d m ago</string>
-    <string name="time_ago_months">%1$d m ago</string>
+    <string name="time_ago_days">%1$d days ago</string>
+    <string name="time_ago_month">%1$d month ago</string>
+    <string name="time_ago_months">%1$d month ago</string>
     <string name="grant_location">Enable Location</string>
     <string name="location_request">Enable Location</string>
     <string name="spinner_title">Vehicle reg.</string>
@@ -385,12 +372,19 @@
     <string name="your_books">Your Books</string>
     <string name="developed_by">Developed By:</string>
     <string name="locc">LOCC</string>
+    <string name="parking_slot">Parking Slot 17</string>h
+    <string name="total_time">2.30h</string>
+    <string name="total_fair">Total: BDT726.00</string>
+    <string name="rate_tip">Rate and tip</string>
+    <string name="view_receipt">View Receipt</string>
+    <string name="get_help">Get Help</string>
+    <string name="time">4.86 mins</string>
 
     //language
     <string name="language">Language</string>
-    <string name="lang_select_bn">BN</string>
-    <string name="lang_select_en">EN</string>
-    <string name="want_change_language">Want to Change Language?</string>
+    <string name="lang_select_bn">BAN</string>
+    <string name="lang_select_en">ENG</string>
+    <string name="want_change_language">Want to change language?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="change_language">Change Language</string>

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <resources>
     <string name="app_name">Parking App</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -7,7 +6,7 @@
     <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">সেটিংস্‌</string>
 
     <string name="start_title">SMART PARKING APPLICATION</string>
     <string name="start_sub_title">A Project of DMP and LOCC</string>
@@ -63,12 +62,12 @@
     <string name="give_review_rating">রেটিং / পর্যালোচনা দিন</string>
     <string name="follow_us">আমাদের অনুসরণ করুন</string>
     <string name="privacy_policy">গোপনীয়তা নীতি</string>
-    <string name="share">শােয়ারe</string>
+    <string name="share">শেয়ার</string>
     <string name="your_booked">আপনার বুকড</string>
     <string name="notification">বিজ্ঞপ্তি</string>
     <string name="my_account">আমার অ্যাকাউন্ট</string>
     <string name="parking">পার্কিং</string>
-    <string name="parking_spot">পারকিং স্পট</string>
+    <string name="parking_spot">পার্কিং স্পট</string>
     <string name="learn_law">আইন শিখুন</string>
     <string name="openDrawer">Open</string>
     <string name="closeDrawer">Close</string>
@@ -83,6 +82,8 @@
     <string name="submit">জমা দিন</string>
     <string name="full_name">সম্পূর্ণ নাম</string>
     <string name="reg_num">যানবাহন নিবন্ধিত নম্বর</string>
+    <string name="vehicle_no">যানবাহন নম্বর</string>
+    <string name="user_phone_no">মোবাইল নম্বর</string>
 
     //parking slot
     <string name="parking_slots">পার্কিং স্লট</string>
@@ -90,6 +91,7 @@
     <string name="address">ঠিকানা</string>
     <string name="no_record_found">কোন তথ্য পাওয়া যায়নি</string>
 
+    //common
     <string name="connect_to_internet">ইন্টারনেট সংযোগ করুন</string>
     <string name="connect_to_internet_gps">ইন্টারনেট/জিপিএস সংযোগ করুন</string>
     <string name="close_app">অ্যাপ বন্ধ করুন</string>
@@ -99,29 +101,21 @@
     <string name="demo_number">70</string>
     <string name="subject_to_availability">প্রাপ্যতা সাপেক্ষে</string>
     <string name="get_direction">দিকনির্দেশ পান</string>
-    <string name="welcome_to_locc_parking">Welcome, LOCC Smart Parking</string>
-
+    <string name="welcome_to_locc_parking">স্বাগতম, LOCC Smart Parking</string>
     <string name="exit_message">প্রস্থান করার জন্য দয়া করে এখানে টিপুন!</string>
     <string name="exit_message_main">প্রস্থান করতে ওকে টিপুন!</string>
-    <string name="demo_price">Tk 100/h</string>
     <string name="distance">2 km</string>
     <string name="parking_time">Arrival 04.30pm - 12.30pm Departure </string>
+    <string name="confirm_booking">নিশ্চিত বুকিং</string>
+    <string name="unavailable_parking_spot">অনুপলব্ধ পার্কিং স্পট</string>
+    <string name="no_parking_spot_message">কোনও পার্কিং স্লট না থাকায় আপনি এই স্পটটি বুকিংয়ের জন্য সংরক্ষণ করতে পারবেন না!</string>
+    <string name="confirm_booking_message">একবার আপনার গন্তব্যে পৌঁছে গেলে,\nনিশ্চিত বুকিং বোতামটি সক্ষম হবে &amp; আপনি আপনার পার্কিং স্পট সংরক্ষণ করতে পারেন</string>
 
+    //bottom sheet
     <string name="bottom_Sheet_text">একটি স্পট চয়ন করুন বা, আরও কিছু জন্য সোয়াইপ আপ</string>
     <string name="nearest_parking_from_your_destination">আপনার গন্তব্য থেকে নিকটতম পার্কিং</string>
 
     <string name="lorum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
-
-    <string name="parking_slot">Parking Slot 17</string>h
-    <string name="total_time">2.30h</string>
-    <string name="total_fair">Total: BDT726.00</string>
-    <string name="rate_tip">রেট এবং টিপ</string>
-    <string name="view_receipt">প্রাপ্তি দেখুন</string>
-    <string name="get_help">সহায়তা পান</string>
-    <string name="time">4.86 mins</string>
-
-    <string name="vehicle_no">যানবাহন নম্বর</string>
-    <string name="user_phone_no">মোবাইল নম্বর</string>
 
     <string name="loream_ipsum">is simply dummy text of the printing and typesetting industry.
         Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s.</string>
@@ -379,6 +373,13 @@
     <string name="your_books">আপনার বুক করা পার্কিং স্পট</string>
     <string name="developed_by">নির্মাণে:</string>
     <string name="locc">LOCC</string>
+    <string name="parking_slot">Parking Slot 17</string>h
+    <string name="total_time">2.30h</string>
+    <string name="total_fair">Total: BDT726.00</string>
+    <string name="rate_tip">রেট এবং টিপ</string>
+    <string name="view_receipt">প্রাপ্তি দেখুন</string>
+    <string name="get_help">সহায়তা পান</string>
+    <string name="time">4.86 mins</string>
 
     //language
     <string name="language">ভাষা</string>

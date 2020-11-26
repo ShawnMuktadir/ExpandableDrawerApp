@@ -1,11 +1,11 @@
 package www.fiberathome.com.parkingapp.view.settings;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -189,7 +189,11 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         Locale locale = new Locale(language, country);
         Locale.setDefault(locale);
         Configuration configuration = new Configuration();
-        configuration.setLocale(locale);
+        if (Build.VERSION.SDK_INT >= 17) {
+            configuration.setLocale(locale);
+        } else {
+            configuration.locale = locale;
+        }
         context.getResources().updateConfiguration(configuration, context.getResources().getDisplayMetrics());
         Timber.e("DefaultLocale -> %s Language -> %s Country -> %s", Locale.getDefault(), language, country);
         TinyDB tinyDB = new TinyDB(context);
@@ -211,9 +215,34 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                     checkedItem = 0;
                 }*/
 
-                final AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+                AlertDialog.Builder languageDialog = new AlertDialog.Builder(context);
+                languageDialog.setTitle("Select Language");
+
+                String[] languageDialogItems = {"English","Bangla"};
+
+                languageDialog.setItems(languageDialogItems, (dialog, which) -> {
+                    switch (which) {
+                        case 0:
+                            context = LocaleHelper.setLocale(context, "en");
+                            resources = context.getResources();
+                            textViewLanguage.setText(resources.getString(R.string.lang_select_en));
+                            setLocale("en", "US");
+                            setNewLocale("en", true);
+                            break;
+                        case 1:
+                            context = LocaleHelper.setLocale(context, "bn");
+                            resources = context.getResources();
+                            textViewLanguage.setText(resources.getString(R.string.lang_select_bn));
+                            setLocale("bn", "BD");
+                            setNewLocale("bn", true);
+                            break;
+                    }
+                });
+                languageDialog.show();
+
+                /*final AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
                 builder.setTitle("Select a Language...")
-                        .setSingleChoiceItems(Language, checkedItem, (dialog, i) -> {
+                        .set(Language, checkedItem, (dialog, i) -> {
                             //Toast.makeText(context, "" + which, Toast.LENGTH_SHORT).show();
                             textViewLanguage.setText(Language[i]);
                             lang_selected = Language[i].equals("ENGLISH");
@@ -223,6 +252,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                                 resources = context.getResources();
                                 textViewLanguage.setText(resources.getString(R.string.lang_select_en));
                                 setLocale("en", "US");
+                                setNewLocale("en", true);
                             }
                             //if user select prefered language as bangla then
                             if (Language[i].equals("BANGLA")) {
@@ -230,10 +260,11 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                                 resources = context.getResources();
                                 textViewLanguage.setText(resources.getString(R.string.lang_select_bn));
                                 setLocale("bn", "BD");
+                                setNewLocale("bn", true);
                             }
-                        })
-                        .setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
-                builder.create().show();
+                        });
+                        //.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
+                builder.create().show();*/
         }
     }
 }

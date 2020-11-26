@@ -19,7 +19,7 @@ android {
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         //strip other than english resources
-        resConfigs "en"
+        //resConfigs "en"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

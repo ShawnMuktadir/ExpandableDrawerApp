@@ -16,7 +16,6 @@ import www.fiberathome.com.parkingapp.utils.ConnectivityReceiver;
 import www.fiberathome.com.parkingapp.utils.LocaleHelper;
 import www.fiberathome.com.parkingapp.utils.LocaleManager;
 
-
 public class ParkingApp extends Application {
 
     public static final String TAG = ParkingApp.class.getSimpleName();

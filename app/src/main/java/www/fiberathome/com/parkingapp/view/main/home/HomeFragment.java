@@ -3150,7 +3150,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                 bookingSensorsMarkerArrayList.clear();
                 if (SharedData.getInstance().getOnConnectedLocation() != null) {
                     fetchBottomSheetSensorsWithoutProgressBar(SharedData.getInstance().getOnConnectedLocation());
-//                fetchSensors(onConnectedLocation);
+                    //fetchSensors(onConnectedLocation);
                 }
                 buttonSearch.setText(null);
                 linearLayoutBottom.setVisibility(View.GONE);
@@ -3169,7 +3169,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     mMap.clear();
                     previousMarker = null;
                     fromRouteDrawn = 0;
-//                Toast.makeText(context, "2810  previous null", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(context, "2810  previous null", Toast.LENGTH_SHORT).show();
                     bookingSensorsArrayListGlobal.clear();
                     bookingSensorsArrayList.clear();
                     bookingSensorsMarkerArrayList.clear();
@@ -3179,7 +3179,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                         fetchSensors(SharedData.getInstance().getOnConnectedLocation());
                         fetchBottomSheetSensors(SharedData.getInstance().getOnConnectedLocation());
                     } else {
-//                        ApplicationUtils.showMessageDialog("Please connect to internet", context);
                         ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
                             Timber.e("Positive Button clicked");
                             if (ApplicationUtils.checkInternet(context)) {
@@ -3202,7 +3201,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     buttonSearch.setVisibility(View.VISIBLE);
                     layoutVisible(false, "", "", " ", null);
                     SharedData.getInstance().setParkingLocation(null);
-//                    ApplicationUtils.reLoadFragment(getParentFragmentManager(), this);
+                    //ApplicationUtils.reLoadFragment(getParentFragmentManager(), this);
                     linearLayoutBottom.setVisibility(View.GONE);
                     linearLayoutSearchBottom.setVisibility(View.GONE);
                     linearLayoutMarkerBottom.setVisibility(View.GONE);
@@ -3210,13 +3209,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     SharedData.getInstance().setSensorArea(null);
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._90sdp));
-                    btnGetDirection.setText("Get Direction");
+                    btnGetDirection.setText(context.getResources().getString(R.string.get_direction));
                     btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
                     btnGetDirection.setEnabled(true);
                     btnGetDirection.setFocusable(true);
                 }
             } else {
-                TastyToastUtils.showTastyWarningToast(context, "Please enable GPS! or turn on Internet");
+                TastyToastUtils.showTastyWarningToast(context, "Please enable GPS or turn on Internet");
             }
         });
 
@@ -3226,11 +3225,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     mMap.clear();
                     fromRouteDrawn = 0;
                     previousMarker = null;
-//                Toast.makeText(context, "2843  previous null", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(context, "2843  previous null", Toast.LENGTH_SHORT).show();
                     btnSearchGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
                     bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._90sdp));
                     if (getDirectionSearchButtonClicked == 1) {
-                        btnSearchGetDirection.setText("Get Direction");
+                        btnSearchGetDirection.setText(context.getResources().getString(R.string.get_direction));
                         btnSearchGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
                         getDirectionSearchButtonClicked--;
                     }
@@ -3245,7 +3244,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                         fetchSensors(SharedData.getInstance().getOnConnectedLocation());
                         fetchBottomSheetSensors(SharedData.getInstance().getOnConnectedLocation());
                     } else {
-//                        ApplicationUtils.showMessageDialog("Please connect to internet", context);
                         ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
                             Timber.e("Positive Button clicked");
                             if (ApplicationUtils.checkInternet(context)) {
@@ -3272,13 +3270,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     linearLayoutBottomSheetBottom.setVisibility(View.GONE);
                     SharedData.getInstance().setBookingSensors(null);
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                    btnSearchGetDirection.setText("Get Direction");
+                    btnSearchGetDirection.setText(context.getResources().getString(R.string.get_direction));
                     btnSearchGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
                     btnSearchGetDirection.setEnabled(true);
                     btnSearchGetDirection.setFocusable(true);
                 }
             } else {
-                TastyToastUtils.showTastyWarningToast(context, "Please enable GPS! or turn on Internet");
+                TastyToastUtils.showTastyWarningToast(context, "Please enable GPS or turn on Internet");
             }
         });
 
@@ -3288,10 +3286,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     mMap.clear();
                     fromRouteDrawn = 0;
                     previousMarker = null;
-//                Toast.makeText(context, "2879 previous null", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(context, "2879 previous null", Toast.LENGTH_SHORT).show();
                     bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._90sdp));
                     if (getDirectionMarkerButtonClicked == 1) {
-                        btnMarkerGetDirection.setText("Get Direction");
+                        btnMarkerGetDirection.setText(context.getResources().getString(R.string.get_direction));
                         btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
                         getDirectionMarkerButtonClicked--;
                     }
@@ -3332,13 +3330,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     linearLayoutMarkerBottom.setVisibility(View.GONE);
                     linearLayoutBottomSheetBottom.setVisibility(View.GONE);
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                    btnMarkerGetDirection.setText("Get Direction");
+                    btnMarkerGetDirection.setText(context.getResources().getString(R.string.get_direction));
                     btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
                     btnMarkerGetDirection.setEnabled(true);
                     btnMarkerGetDirection.setFocusable(true);
                 }
             } else {
-                TastyToastUtils.showTastyWarningToast(context, "Please enable GPS! or turn on Internet");
+                TastyToastUtils.showTastyWarningToast(context, "Please enable GPS or turn on Internet");
             }
         });
 
@@ -3348,7 +3346,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     mMap.clear();
                     fromRouteDrawn = 0;
                     previousMarker = null;
-//                Toast.makeText(context, "2914 previous null", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(context, "2914 previous null", Toast.LENGTH_SHORT).show();
                     buttonSearch.setText(null);
                     buttonSearch.setVisibility(View.VISIBLE);
                     bookingSensorsArrayListGlobal.clear();
@@ -3380,7 +3378,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     mMap.setTrafficEnabled(true);
                     animateCamera(SharedData.getInstance().getOnConnectedLocation());
                     if (getDirectionBottomSheetButtonClicked == 1) {
-                        btnBottomSheetGetDirection.setText("Get Direction");
+                        btnBottomSheetGetDirection.setText(context.getResources().getString(R.string.get_direction));
                         btnBottomSheetGetDirection.setEnabled(true);
                         btnBottomSheetGetDirection.setFocusable(true);
                         btnBottomSheetGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
@@ -3395,14 +3393,14 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     linearLayoutBottomSheetBottom.setVisibility(View.GONE);
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._90sdp));
-                    btnBottomSheetGetDirection.setText("Get Direction");
+                    btnBottomSheetGetDirection.setText(context.getResources().getString(R.string.get_direction));
                     btnBottomSheetGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
                     btnBottomSheetGetDirection.setEnabled(true);
                     btnBottomSheetGetDirection.setFocusable(true);
                     getDirectionBottomSheetButtonClicked = 0;
                 }
             } else {
-                TastyToastUtils.showTastyWarningToast(context, "Please enable GPS! or turn on Internet");
+                TastyToastUtils.showTastyWarningToast(context, "Please enable GPS or turn on Internet");
             }
         });
 
@@ -3410,26 +3408,25 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
             if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
                 mMap.setTrafficEnabled(false);
                 fromRouteDrawn = 1;
-//            Toast.makeText(context, "adapter", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, "adapter", Toast.LENGTH_SHORT).show();
                 if (getDirectionButtonClicked == 0) {
                     getDirectionButtonClicked++;
-                    ApplicationUtils.showMessageDialog("Once reach your destination, \nConfirm Booking Button will be enabled &" +
-                            " you can reserve your booking spot!!!", context);
+                    ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
                     if (location != null) {
                         EventBus.getDefault().post(new GetDirectionAfterButtonClickEvent(location));
-                        // fetchSensors(onConnectedLocation);
+                        //fetchSensors(onConnectedLocation);
                         buttonSearch.setVisibility(View.GONE);
                         MarkerOptions markerOptions = new MarkerOptions();
                         markerOptions.position(location);
                         coordList.add(new LatLng(location.latitude, location.longitude));
                         mMap.addMarker(markerOptions);
-//              move map camera
+                        //move map camera
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 16f));
                         linearLayoutBottom.setVisibility(View.VISIBLE);
                         linearLayoutSearchBottom.setVisibility(View.GONE);
                         linearLayoutMarkerBottom.setVisibility(View.GONE);
                         imageViewBack.setVisibility(View.VISIBLE);
-                        btnGetDirection.setText("Confirm Booking");
+                        btnGetDirection.setText(context.getString(R.string.confirm_booking));
                         btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
                         btnGetDirection.setEnabled(true);
                         btnGetDirection.setFocusable(true);
@@ -3451,12 +3448,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                             btnGetDirection.setEnabled(true);
                             btnGetDirection.setFocusable(true);
                             btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
-//                        Toast.makeText(context, "Go to the Selected Parking Area", Toast.LENGTH_LONG).show();
+                            //Toast.makeText(context, "Go to the Selected Parking Area", Toast.LENGTH_LONG).show();
                         }
                     }
                 } else if (getDirectionButtonClicked == 1) {
-                    ApplicationUtils.showMessageDialog("Once reach your destination, \nConfirm Booking Button will be enabled &" +
-                            " you can reserve your parking spot!!!", context);
+                    ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
                     getDirectionButtonClicked--;
                     if (isInAreaEnabled) {
                         Bundle bundle = new Bundle();
@@ -3489,7 +3485,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 //                }
                 }
             } else {
-                TastyToastUtils.showTastyWarningToast(context, "Please enable GPS! or turn On internet ");
+                TastyToastUtils.showTastyWarningToast(context, "Please enable GPS or turn on internet ");
             }
         });
 
@@ -3497,13 +3493,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
             if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
                 mMap.setTrafficEnabled(false);
                 fromRouteDrawn = 1;
-//            Toast.makeText(context, "search", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, "search", Toast.LENGTH_SHORT).show();
                 if (getDirectionSearchButtonClicked == 0) {
-                    ApplicationUtils.showMessageDialog("You cannot reserve this spot for booking, as there is no parking slot!", context);
+                    ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.no_parking_spot_message), context);
                     getDirectionSearchButtonClicked++;
                     if (searchPlaceLatLng != null) {
                         EventBus.getDefault().post(new GetDirectionForSearchEvent(searchPlaceLatLng));
-                        //  fetchSensors(onConnectedLocation);
+                        //fetchSensors(onConnectedLocation);
                         buttonSearch.setVisibility(View.GONE);
                         MarkerOptions markerDestinationPositionOptions = new MarkerOptions();
                         markerDestinationPositionOptions.position(searchPlaceLatLng);
@@ -3515,16 +3511,14 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                         linearLayoutBottom.setVisibility(View.GONE);
                         linearLayoutMarkerBottom.setVisibility(View.GONE);
                         imageViewSearchBack.setVisibility(View.VISIBLE);
-
-                        btnSearchGetDirection.setText("Unavailable Parking Spot");
+                        btnSearchGetDirection.setText(context.getResources().getString(R.string.unavailable_parking_spot));
                         btnSearchGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
                         btnSearchGetDirection.setEnabled(true);
                         btnSearchGetDirection.setFocusable(true);
-
                         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     }
                 } else if (getDirectionSearchButtonClicked == 1) {
-                    ApplicationUtils.showMessageDialog("You cannot reserve this spot for booking, as there is no parking slot!", context);
+                    ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.no_parking_spot_message), context);
                     getDirectionSearchButtonClicked--;
                     if (mMap != null) {
                         TaskParser taskParser = new TaskParser();
@@ -3548,28 +3542,27 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     }
                 }
             } else {
-                TastyToastUtils.showTastyWarningToast(context, "Please enable GPS! or turn on Internet");
+                TastyToastUtils.showTastyWarningToast(context, "Please enable GPS or turn on Internet");
             }
         });
 
         btnMarkerGetDirection.setOnClickListener(v -> {
-//            Toast.makeText(context, "marker btn clicked", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, "marker btn clicked", Toast.LENGTH_SHORT).show();
             if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
                 if (parkingNumberOfIndividualMarker.equals("0")) {
-                    ApplicationUtils.showMessageDialog("You cannot reserve this spot for booking, as there is no parking slot!", context);
+                    ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.no_parking_spot_message), context);
                 } else {
-                    ApplicationUtils.showMessageDialog("Once reach your destination, \nConfirm Booking Button will be enabled &" +
-                            " you can reserve your parking spot!!!", context);
+                    ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
                 }
                 mMap.setTrafficEnabled(false);
                 fromRouteDrawn = 1;
-//            Toast.makeText(context, "marker", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, "marker", Toast.LENGTH_SHORT).show();
                 if (getDirectionMarkerButtonClicked == 0) {
                     getDirectionMarkerButtonClicked++;
                     if (markerPlaceLatLng != null) {
                         EventBus.getDefault().post(new GetDirectionForMarkerEvent(markerPlaceLatLng));
                         linearLayoutMarkerNameCount.setVisibility(View.GONE);
-                        //  fetchSensors(onConnectedLocation);
+                        //fetchSensors(onConnectedLocation);
                         buttonSearch.setVisibility(View.GONE);
                         bookingSensorsArrayListGlobal.clear();
                         bookingSensorsArrayList.clear();
@@ -3587,15 +3580,15 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                         imageViewMarkerBack.setVisibility(View.VISIBLE);
                         if (parkingNumberOfIndividualMarker.equals("0")) {
                             Timber.e("parkingNumberOfIndividualMarker 0 if condition called");
-                            btnMarkerGetDirection.setText("Unavailable Parking Spot");
+                            btnMarkerGetDirection.setText(context.getString(R.string.unavailable_parking_spot));
                             btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
                             btnMarkerGetDirection.setEnabled(true);
                             btnMarkerGetDirection.setFocusable(true);
-//                            parkingNumberOfIndividualMarker.equals("1");
+                            //parkingNumberOfIndividualMarker.equals("1");
                             getDirectionMarkerButtonClicked = 1;
                         } else {
                             Timber.e("parkingNumberOfIndividualMarker not 0 else condition called");
-                            btnMarkerGetDirection.setText("Confirm Booking");
+                            btnMarkerGetDirection.setText(context.getResources().getString(R.string.confirm_booking));
                             btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
                             btnMarkerGetDirection.setEnabled(true);
                             btnMarkerGetDirection.setFocusable(true);
@@ -3603,13 +3596,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
                         if (isInAreaEnabled) {
                             if (parkingNumberOfIndividualMarker.equals("0")) {
-                                btnMarkerGetDirection.setText("Unavailable Parking Spot");
+                                btnMarkerGetDirection.setText(context.getResources().getString(R.string.unavailable_parking_spot));
                                 btnMarkerGetDirection.setEnabled(true);
                                 btnMarkerGetDirection.setFocusable(true);
                                 btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
-//                                ApplicationUtils.showMessageDialog("You cannot reserve this spot for booking, as there is no parking slot!", context);
-                            } else {
-                                btnMarkerGetDirection.setText("Confirm Booking");
+                        } else {
+                                btnMarkerGetDirection.setText(context.getResources().getString(R.string.confirm_booking));
                                 btnMarkerGetDirection.setEnabled(true);
                                 btnMarkerGetDirection.setFocusable(true);
                                 btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
@@ -3619,17 +3611,15 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                             btnMarkerGetDirection.setEnabled(true);
                             btnMarkerGetDirection.setFocusable(true);
                             btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
-//                        Toast.makeText(context, "Go to the Selected Parking Area", Toast.LENGTH_LONG).show();
+                            //Toast.makeText(context, "Go to the Selected Parking Area", Toast.LENGTH_LONG).show();
                         }
-
                         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     }
                 } else if (getDirectionMarkerButtonClicked == 1) {
                     if (parkingNumberOfIndividualMarker.equals("0")) {
-                        ApplicationUtils.showMessageDialog("You cannot reserve this spot for booking, as there is no parking slot!", context);
+                        ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.no_parking_spot_message), context);
                     } else {
-                        ApplicationUtils.showMessageDialog("Once reach your destination, \nConfirm Booking Button will be enabled &" +
-                                " you can reserve your parking spot!!!", context);
+                        ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
                         if (isInAreaEnabled) {
                             Bundle bundle = new Bundle();
                             bundle.putBoolean("m", false); //m for more
@@ -3674,19 +3664,18 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
             if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
                 mMap.setTrafficEnabled(false);
                 fromRouteDrawn = 1;
-//            Toast.makeText(context, "bottom sheet", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, "bottom sheet", Toast.LENGTH_SHORT).show();
                 if (getDirectionBottomSheetButtonClicked == 0) {
                     getDirectionBottomSheetButtonClicked++;
                     if (count.equals("0")) {
-                        ApplicationUtils.showMessageDialog("You cannot reserve this spot for booking, as there is no parking slot!", context);
+                        ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.no_parking_spot_message), context);
                     } else {
-                        ApplicationUtils.showMessageDialog("Once reach your destination, \nConfirm Booking Button will be enabled &" +
-                                " you can reserve your parking spot!!!", context);
+                        ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
                     }
                     if (bottomSheetPlaceLatLng != null || location != null || markerPlaceLatLng != null || searchPlaceLatLng != null) {
                         Timber.e("all location called");
                         EventBus.getDefault().post(new GetDirectionBottomSheetEvent(bottomSheetPlaceLatLng));
-//                        fetchSensors(onConnectedLocation);
+                        //fetchSensors(onConnectedLocation);
                         MarkerOptions markerOptions = new MarkerOptions();
                         markerOptions.position(bottomSheetPlaceLatLng);
                         coordList.add(new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
@@ -3698,21 +3687,21 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                         linearLayoutSearchBottom.setVisibility(View.GONE);
                         linearLayoutMarkerBottom.setVisibility(View.GONE);
                         linearLayoutBottomSheetBottom.setVisibility(View.VISIBLE);
-                        btnBottomSheetGetDirection.setText("Confirm Booking");
+                        btnBottomSheetGetDirection.setText(context.getResources().getString(R.string.confirm_booking));
                         btnBottomSheetGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
                         btnBottomSheetGetDirection.setEnabled(true);
                         btnBottomSheetGetDirection.setFocusable(true);
 
                         if (count.equals("0")) {
                             Timber.e("count 0 if condition called");
-                            btnBottomSheetGetDirection.setText("Unavailable Parking Spot");
+                            btnBottomSheetGetDirection.setText(context.getResources().getString(R.string.unavailable_parking_spot));
                             btnBottomSheetGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
                             btnBottomSheetGetDirection.setEnabled(true);
                             btnBottomSheetGetDirection.setFocusable(true);
                             getDirectionBottomSheetButtonClicked = 1;
                         } else {
                             Timber.e("count not 0 else condition called");
-                            btnBottomSheetGetDirection.setText("Confirm Booking");
+                            btnBottomSheetGetDirection.setText(context.getResources().getString(R.string.confirm_booking));
                             btnBottomSheetGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
                             btnBottomSheetGetDirection.setEnabled(true);
                             btnBottomSheetGetDirection.setFocusable(true);
@@ -3720,13 +3709,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
                         if (isInAreaEnabled) {
                             if (count.equals("0")) {
-                                btnBottomSheetGetDirection.setText("Unavailable Parking Spot");
+                                btnBottomSheetGetDirection.setText(context.getResources().getString(R.string.unavailable_parking_spot));
                                 btnBottomSheetGetDirection.setEnabled(true);
                                 btnBottomSheetGetDirection.setFocusable(true);
                                 btnBottomSheetGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
-//                                ApplicationUtils.showMessageDialog("You cannot reserve this spot for booking, as there is no parking slot!", context);
+                                //ApplicationUtils.showMessageDialog("You cannot reserve this spot for booking, as there is no parking slot!", context);
                             } else {
-                                btnBottomSheetGetDirection.setText("Confirm Booking");
+                                btnBottomSheetGetDirection.setText(context.getResources().getString(R.string.confirm_booking));
                                 btnBottomSheetGetDirection.setEnabled(true);
                                 btnBottomSheetGetDirection.setFocusable(true);
                                 btnBottomSheetGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
@@ -3736,14 +3725,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                             btnBottomSheetGetDirection.setEnabled(true);
                             btnBottomSheetGetDirection.setFocusable(true);
                             btnBottomSheetGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
-//                        Toast.makeText(context, "Go to the Selected Parking Area", Toast.LENGTH_LONG).show();
+                            //Toast.makeText(context, "Go to the Selected Parking Area", Toast.LENGTH_LONG).show();
                         }
                         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     }
                 } else if (getDirectionBottomSheetButtonClicked == 1) {
                     getDirectionBottomSheetButtonClicked--;
-                    ApplicationUtils.showMessageDialog("Once reach your destination, \nConfirm Booking Button will be enabled &" +
-                            " you can reserve your parking spot!!!", context);
+                    ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
                     if (isInAreaEnabled) {
                         Bundle bundle = new Bundle();
                         bundle.putBoolean("m", false); //m for more
@@ -3779,7 +3767,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     }
                 }
             } else {
-                TastyToastUtils.showTastyWarningToast(context, "Please enable GPS! or turn on Internet");
+                TastyToastUtils.showTastyWarningToast(context, "Please enable GPS or turn on Internet");
             }
         });
 
