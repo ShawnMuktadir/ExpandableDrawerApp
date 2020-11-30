@@ -57,6 +57,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
@@ -72,7 +73,7 @@ import www.fiberathome.com.parkingapp.view.search.placesadapter.PlacesAutoComple
 import static www.fiberathome.com.parkingapp.model.data.AppConstants.HISTORY_PLACE_SELECTED;
 import static www.fiberathome.com.parkingapp.model.data.AppConstants.NEW_PLACE_SELECTED;
 
-public class SearchActivity extends AppCompatActivity implements PlacesAutoCompleteAdapter.ClickListener {
+public class SearchActivity extends BaseActivity implements PlacesAutoCompleteAdapter.ClickListener {
 
     private final String TAG = getClass().getSimpleName();
 
@@ -234,8 +235,7 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
 
     @Override
     public void onClick(Place place) {
-
-        if (isGPSEnabled()) {
+        if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
             Intent resultIntent = new Intent();
             if (place == null) {
                 Timber.e("place null");
@@ -263,7 +263,7 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
                     //String result=new Gson().toJson(place);
                     resultIntent.putExtra(NEW_PLACE_SELECTED, selectedplace);
                     setResult(RESULT_OK, resultIntent);
-                    Log.d("ShawnClick", "click: ");
+                    //Log.d("ShawnClick", "click: ");
 //                new Handler().postDelayed(new Runnable() {
 //                    @Override
 //                    public void run() {
@@ -274,18 +274,18 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
                 }
             }
         } else {
-            TastyToastUtils.showTastyWarningToast(context, "Please enable GPS!");
+            TastyToastUtils.showTastyWarningToast(context, "Please enable GPS or connect to Internet");
         }
     }
 
     @Override
     public void onClick(SearchVisitorData visitorData) {
-        if (isGPSEnabled()) {
+        if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
             Intent resultIntent = new Intent();
             LatLng endLatLng = new LatLng(visitorData.getEndLat(), visitorData.getEndLng());
             String areaName = visitorData.getVisitedArea();
             String placeId = visitorData.getPlaceId();
-            if (endLatLng != null && areaName != null) {
+            if (areaName != null) {
                 double latitude = endLatLng.latitude;
                 double longitude = endLatLng.longitude;
                 SearchVisitorData searchVisitorData = new SearchVisitorData(areaName, placeId, latitude, longitude, latitude, longitude);
@@ -293,14 +293,14 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
                 //String result=new Gson().toJson(place);
                 resultIntent.putExtra(HISTORY_PLACE_SELECTED, searchVisitorData);
                 setResult(RESULT_OK, resultIntent);
-                Log.d("ShawnClick", "click: ");
+                //Log.d("ShawnClick", "click: ");
 //                new Handler().postDelayed(new Runnable() {
 //                    @Override
 //                    public void run() {
                 finish();
             }
         } else {
-            TastyToastUtils.showTastyWarningToast(context, "Please enable GPS!");
+            TastyToastUtils.showTastyWarningToast(context, "Please enable GPS or connect to Internet");
         }
     }
 
@@ -342,36 +342,6 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
             }
         }
     };
-
-    public void selectData(SearchVisitorData data) {
-        if (!searchVisitorDataList.contains(searchVisitorData)) {
-            searchVisitorDataList.add(searchVisitorData);
-            mAutoCompleteAdapter.setData(searchVisitorDataList);
-        }
-    }
-
-    public boolean checkIfAlreadyExist(SearchVisitorData searchVisitorData) {
-//        return searchVisitorDataList.contains(searchVisitorData);
-        if (!searchVisitorDataList.contains(searchVisitorData)) {
-            searchVisitorDataList.add(searchVisitorData);
-            mAutoCompleteAdapter.setData(searchVisitorDataList);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public boolean isExist(String strName) {
-        for (int i = 0; i < searchVisitorDataList.size(); i++) {
-            if (searchVisitorDataList.get(i).equals(strName)) {
-                searchVisitorDataList.remove(i);
-                mAutoCompleteAdapter.notifyDataSetChanged();
-                return true;
-            }
-        }
-
-        return false;
-    }
 
     private ArrayList<SearchVisitorData> searchVisitorDataList = new ArrayList<>();
 
@@ -519,63 +489,9 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
 //        });
     }
 
-    private ArrayList<SearchVisitorData> removeDuplicates(ArrayList<SearchVisitorData> list) {
-        int count = list.size();
-
-        for (int i = 0; i < list.size(); i++) {
-            for (int j = i + 1; j < list.size(); j++) {
-                if (list.get(i).equals(list.get(j))) {
-                    list.remove(j);
-                    j--;
-                }
-            }
-        }
-        return list;
-    }
-
-    public ArrayList<SearchVisitorData> removeDuplicatesSearchVisitorData(ArrayList<SearchVisitorData> list) {
-        // Set set1 = new LinkedHashSet(list);
-        Set<SearchVisitorData> set = new TreeSet<SearchVisitorData>(new Comparator() {
-            @Override
-            public int compare(Object o1, Object o2) {
-                if (((SearchVisitorData) o1).getVisitedArea().equalsIgnoreCase(((SearchVisitorData) o2).getVisitedArea())) {
-                    return 0;
-                }
-                return 1;
-            }
-        });
-        set.addAll(list);
-        final ArrayList<SearchVisitorData> newList = new ArrayList<SearchVisitorData>(set);
-        return newList;
-    }
-
-    private ArrayList<SearchVisitorData> clearListFromDuplicateVisitedArea(ArrayList<SearchVisitorData> visitedList) {
-
-        Map<String, SearchVisitorData> cleanMap = new LinkedHashMap<String, SearchVisitorData>();
-        for (int i = 0; i < visitedList.size(); i++) {
-            cleanMap.put(visitedList.get(i).getVisitedArea(), visitedList.get(i));
-        }
-        ArrayList<SearchVisitorData> list = new ArrayList<SearchVisitorData>(cleanMap.values());
-        return list;
-    }
-
-    public ArrayList<SearchVisitorData> getUniqueList(ArrayList<SearchVisitorData> alertList) {
-        ArrayList<SearchVisitorData> uniqueAlerts = new ArrayList<SearchVisitorData>();
-        for (SearchVisitorData alert : alertList) {
-            if (!uniqueAlerts.contains(alert)) {
-                uniqueAlerts.add(alert);
-            }
-        }
-        return uniqueAlerts;
-    }
-
     private void setFragmentControls(ArrayList<SearchVisitorData> searchVisitorDataList) {
         Timber.e("setFragmentControls searchActivity called");
         this.searchVisitorDataList = searchVisitorDataList;
-
-//        Set<SearchVisitorData> set = new LinkedHashSet<>(searchVisitorDataList);
-//        searchVisitorDataList.clear();
-//        searchVisitorDataList.addAll(set);
 
         recyclerViewSearchPlaces.setHasFixedSize(true);
         recyclerViewSearchPlaces.setItemViewCacheSize(20);
@@ -653,10 +569,6 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
         linearLayoutEmptyView.setVisibility(View.GONE);
     }
 
-    private void showMessage(String message) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-    }
-
     private boolean isGPSEnabled() {
 
         LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
@@ -679,5 +591,85 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
         }
 
         return false;
+    }
+
+    public void selectData(SearchVisitorData data) {
+        if (!searchVisitorDataList.contains(searchVisitorData)) {
+            searchVisitorDataList.add(searchVisitorData);
+            mAutoCompleteAdapter.setData(searchVisitorDataList);
+        }
+    }
+
+    public boolean checkIfAlreadyExist(SearchVisitorData searchVisitorData) {
+//        return searchVisitorDataList.contains(searchVisitorData);
+        if (!searchVisitorDataList.contains(searchVisitorData)) {
+            searchVisitorDataList.add(searchVisitorData);
+            mAutoCompleteAdapter.setData(searchVisitorDataList);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean isExist(String strName) {
+        for (int i = 0; i < searchVisitorDataList.size(); i++) {
+            if (searchVisitorDataList.get(i).equals(strName)) {
+                searchVisitorDataList.remove(i);
+                mAutoCompleteAdapter.notifyDataSetChanged();
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private ArrayList<SearchVisitorData> removeDuplicates(ArrayList<SearchVisitorData> list) {
+        int count = list.size();
+
+        for (int i = 0; i < list.size(); i++) {
+            for (int j = i + 1; j < list.size(); j++) {
+                if (list.get(i).equals(list.get(j))) {
+                    list.remove(j);
+                    j--;
+                }
+            }
+        }
+        return list;
+    }
+
+    public ArrayList<SearchVisitorData> removeDuplicatesSearchVisitorData(ArrayList<SearchVisitorData> list) {
+        // Set set1 = new LinkedHashSet(list);
+        Set<SearchVisitorData> set = new TreeSet<SearchVisitorData>(new Comparator() {
+            @Override
+            public int compare(Object o1, Object o2) {
+                if (((SearchVisitorData) o1).getVisitedArea().equalsIgnoreCase(((SearchVisitorData) o2).getVisitedArea())) {
+                    return 0;
+                }
+                return 1;
+            }
+        });
+        set.addAll(list);
+        final ArrayList<SearchVisitorData> newList = new ArrayList<SearchVisitorData>(set);
+        return newList;
+    }
+
+    private ArrayList<SearchVisitorData> clearListFromDuplicateVisitedArea(ArrayList<SearchVisitorData> visitedList) {
+
+        Map<String, SearchVisitorData> cleanMap = new LinkedHashMap<String, SearchVisitorData>();
+        for (int i = 0; i < visitedList.size(); i++) {
+            cleanMap.put(visitedList.get(i).getVisitedArea(), visitedList.get(i));
+        }
+        ArrayList<SearchVisitorData> list = new ArrayList<SearchVisitorData>(cleanMap.values());
+        return list;
+    }
+
+    public ArrayList<SearchVisitorData> getUniqueList(ArrayList<SearchVisitorData> alertList) {
+        ArrayList<SearchVisitorData> uniqueAlerts = new ArrayList<SearchVisitorData>();
+        for (SearchVisitorData alert : alertList) {
+            if (!uniqueAlerts.contains(alert)) {
+                uniqueAlerts.add(alert);
+            }
+        }
+        return uniqueAlerts;
     }
 }

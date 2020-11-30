@@ -63,7 +63,7 @@
                     android:layout_height="@dimen/dim50"
                     android:layout_margin="@dimen/dim5"
                     android:background="@drawable/white_border"
-                    android:hint="Where To?"
+                    android:hint="@string/where_to"
                     android:padding="@dimen/dim5"
                     android:textAlignment="textStart"
                     android:textAllCaps="false"

@@ -1,7 +1,6 @@
 package www.fiberathome.com.parkingapp.view.settings;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -18,14 +17,12 @@ import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Locale;
-import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -270,18 +267,17 @@ public class SettingsFragment extends Fragment implements View.OnClickListener, 
         }*/
     }
 
-    private boolean setNewLocale(String language, boolean restartProcess) {
+    private void setNewLocale(String language, boolean restartProcess) {
         ParkingApp.localeManager.setNewLocale(context, language);
 
-        Intent intent = new Intent(context, MainActivity.class);
-        startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
-        requireActivity().overridePendingTransition(0, 0);
         if (restartProcess) {
-            System.exit(0);
+            Intent intent = new Intent(context, MainActivity.class);
+            startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
+            requireActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            //System.exit(0);
         } else {
             Toast.makeText(context, "Activity restarted", Toast.LENGTH_SHORT).show();
         }
-        return true;
     }
 
     private void openMainActivity() {

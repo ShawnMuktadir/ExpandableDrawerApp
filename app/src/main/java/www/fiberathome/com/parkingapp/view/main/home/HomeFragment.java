@@ -626,7 +626,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     if (parkingNumberOfIndividualMarker != null) {
                         if (parkingNumberOfIndividualMarker.equals("0") && getDirectionMarkerButtonClicked == 1) {
                             Timber.e("parkingNumberOfIndividualMarker onMarkerClick if called");
-                            btnMarkerGetDirection.setText("Get Direction");
+                            btnMarkerGetDirection.setText(context.getResources().getString(R.string.get_direction));
                             btnMarkerGetDirection.setEnabled(true);
                             btnMarkerGetDirection.setFocusable(true);
                             btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
@@ -3011,7 +3011,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 //////                    }
 //////                }, 1000);
 //            } else {
-            btnMarkerGetDirection.setText("Get Direction");
+            btnMarkerGetDirection.setText(context.getResources().getString(R.string.get_direction));
             btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
             btnMarkerGetDirection.setEnabled(true);
             btnMarkerGetDirection.setFocusable(true);

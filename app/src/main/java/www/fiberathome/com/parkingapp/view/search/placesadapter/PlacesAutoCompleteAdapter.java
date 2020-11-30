@@ -209,7 +209,6 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
                 mSearchPredictionViewHolder.address.setText(mResultList.get(position).address);
                 mSearchPredictionViewHolder.area.setText(mResultList.get(position).area);
             }
-
             // Here I am just highlighting the background
             mSearchPredictionViewHolder.itemView.setBackgroundColor(selectedPosition == position ? Color.LTGRAY : Color.TRANSPARENT);
 
@@ -363,7 +362,6 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
         if (providerEnabled) {
             return true;
         } else {
-
 //            AlertDialog alertDialog = new AlertDialog.Builder(context)
 //                    .setTitle("GPS Permissions")
 //                    .setMessage("GPS is required for this app to work. Please enable GPS.")
@@ -376,7 +374,6 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
 //                    }))
 //                    .setCancelable(false)
 //                    .show();
-
         }
 
         return false;

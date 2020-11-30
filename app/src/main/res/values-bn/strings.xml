@@ -389,4 +389,6 @@
     <string name="yes">হ্যাঁ</string>
     <string name="no">না</string>
     <string name="change_language">ভাষা পরিবর্তন</string>
+    <string name="where_to">কোথায়?</string>
+    <string name="search">খুঁজুন…</string>
 </resources>

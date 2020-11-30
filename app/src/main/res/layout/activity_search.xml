@@ -32,7 +32,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="Parking Spot"
+                android:text="@string/parking_spot"
                 android:layout_centerVertical="true"
                 android:layout_centerHorizontal="true"
                 android:textColor="@color/black"
@@ -51,7 +51,7 @@
                 android:background="@drawable/white_border"
                 android:drawableStart="@drawable/ic_search"
                 android:drawablePadding="@dimen/dim10"
-                android:hint="Search..."
+                android:hint="@string/search"
                 android:imeOptions="actionSearch"
                 android:inputType="text"
                 android:maxLines="1"
