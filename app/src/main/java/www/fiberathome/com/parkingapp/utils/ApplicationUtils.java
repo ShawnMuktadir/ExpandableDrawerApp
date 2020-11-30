@@ -20,6 +20,7 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
@@ -82,6 +83,27 @@ import www.fiberathome.com.parkingapp.utils.internetUtils.ConnectivityIntercepto
 import www.fiberathome.com.parkingapp.view.main.home.HomeFragment;
 
 public class ApplicationUtils {
+
+    public static void showToast(Context context, String message, long countDown) {
+        // Set the toast and duration
+        final Toast mToastToShow = Toast.makeText(context, message, Toast.LENGTH_LONG);
+
+        // Set the countdown to display the toast
+        CountDownTimer toastCountDown;
+        toastCountDown = new CountDownTimer(countDown, countDown /*Tick duration*/) {
+            public void onTick(long millisUntilFinished) {
+                mToastToShow.show();
+            }
+
+            public void onFinish() {
+                mToastToShow.cancel();
+            }
+        };
+
+        // Show the toast and starts the countdown
+        mToastToShow.show();
+        toastCountDown.start();
+    }
 
     public static void setTextColor(TextView tvText, Context context, int resId) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

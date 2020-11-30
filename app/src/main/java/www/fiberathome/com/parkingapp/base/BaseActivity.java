@@ -20,6 +20,8 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import timber.log.Timber;
+import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.LocaleManager;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.Utility;
@@ -69,6 +71,21 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == WIFI_ENABLE_REQUEST) {
+            // Toast.makeText(BaseActivity.this, "Connected", Toast.LENGTH_LONG).show();
+            WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+
+            if (!wifiManager.isWifiEnabled()) {
+
+            }
+
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
     private void checkInternetConnection() {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = null;
@@ -84,7 +101,26 @@ public class BaseActivity extends AppCompatActivity {
 
     private void showNoInternetDialog() {
 
-        if (alertDialog != null && alertDialog.isShowing()) {
+        if (ApplicationUtils.checkInternet(context)) {
+            return;
+        } else {
+            ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
+                Timber.e("Positive Button clicked");
+                if (ApplicationUtils.checkInternet(context)) {
+                    return;
+                } else {
+                    TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                }
+            }, (dialog, which) -> {
+                Timber.e("Negative Button Clicked");
+                dialog.dismiss();
+                if (context != null) {
+                    finishAffinity();
+                    TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
+                }
+            });
+
+        /*if (alertDialog != null && alertDialog.isShowing()) {
             return;
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -104,22 +140,7 @@ public class BaseActivity extends AppCompatActivity {
             }
         });
         alertDialog = builder.create();
-        alertDialog.show();
-    }
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == WIFI_ENABLE_REQUEST) {
-            // Toast.makeText(BaseActivity.this, "Connected", Toast.LENGTH_LONG).show();
-            WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-
-            if (!wifiManager.isWifiEnabled()) {
-
-            }
-
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
+        alertDialog.show();*/
         }
     }
 }

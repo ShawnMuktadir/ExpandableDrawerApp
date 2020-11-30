@@ -2,13 +2,17 @@ package www.fiberathome.com.parkingapp.view.booking.newBooking;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,14 +44,17 @@ import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingArea;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
+import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.view.main.MainActivity;
 import www.fiberathome.com.parkingapp.view.main.home.HomeFragment;
 
+import static android.content.Context.LOCATION_SERVICE;
 import static com.android.volley.VolleyLog.TAG;
+import static www.fiberathome.com.parkingapp.view.main.MainActivity.GPS_REQUEST_CODE;
 
 
-public class BookingFragment extends Fragment {
+public class BookingFragment extends Fragment implements IOnBackPressListener {
 
     @BindView(R.id.recyclerViewBooking)
     RecyclerView recyclerViewBooking;
@@ -150,6 +157,46 @@ public class BookingFragment extends Fragment {
         if (unbinder != null) {
             unbinder.unbind();
         }
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        if (isGPSEnabled()) {
+//            HomeFragment nextFrag = new HomeFragment();
+            if (getActivity() != null) {
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, HomeFragment.newInstance())
+                        .addToBackStack(null)
+                        .commit();
+            } else {
+                TastyToastUtils.showTastyWarningToast(context, "Please enable GPS!");
+            }
+        }
+        return false;
+    }
+
+    private boolean isGPSEnabled() {
+
+        LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
+
+        boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+        if (providerEnabled) {
+            return true;
+        } else {
+
+            AlertDialog alertDialog = new AlertDialog.Builder(context)
+                    .setTitle("GPS Permissions")
+                    .setMessage("GPS is required for this app to work. Please enable GPS.")
+                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivityForResult(intent, GPS_REQUEST_CODE);
+                    }))
+                    .setCancelable(false)
+                    .show();
+
+        }
+        return false;
     }
 
     private void fetchParkingBookingSpot(String mobileNo) {

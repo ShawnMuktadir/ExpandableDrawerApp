@@ -1,6 +1,8 @@
 package www.fiberathome.com.parkingapp.view.profile;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,8 +23,13 @@ import www.fiberathome.com.parkingapp.model.loginUser.User;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
+import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
+import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+import www.fiberathome.com.parkingapp.view.main.home.HomeFragment;
 
-public class ProfileFragment extends Fragment {
+import static android.content.Context.LOCATION_SERVICE;
+
+public class ProfileFragment extends Fragment implements IOnBackPressListener {
 
     @BindView(R.id.tvUserName)
     TextView tvUserName;
@@ -34,6 +41,7 @@ public class ProfileFragment extends Fragment {
     ImageView ivUserProfilePic;
 
     private Unbinder unbinder;
+    private Context context;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -57,7 +65,7 @@ public class ProfileFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         unbinder = ButterKnife.bind(this, view);
-
+        context = getActivity();
         User user = SharedPreManager.getInstance(getContext()).getUser();
         setData(user);
 
@@ -71,6 +79,46 @@ public class ProfileFragment extends Fragment {
         if (unbinder != null) {
             unbinder.unbind();
         }
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        if (isGPSEnabled()) {
+//            HomeFragment nextFrag = new HomeFragment();
+            if (getActivity() != null) {
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, HomeFragment.newInstance())
+                        .addToBackStack(null)
+                        .commit();
+            } else {
+                TastyToastUtils.showTastyWarningToast(context, "Please enable GPS!");
+            }
+        }
+        return false;
+    }
+
+    private boolean isGPSEnabled() {
+
+        LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
+
+        boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+        if (providerEnabled) {
+            return true;
+        } else {
+
+//            AlertDialog alertDialog = new AlertDialog.Builder(context)
+//                    .setTitle("GPS Permissions")
+//                    .setMessage("GPS is required for this app to work. Please enable GPS.")
+//                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
+//                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+//                        startActivityForResult(intent, GPS_REQUEST_CODE);
+//                    }))
+//                    .setCancelable(false)
+//                    .show();
+
+        }
+        return false;
     }
 
     private void setData(User user) {

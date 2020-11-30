@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -13,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Locale;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,13 +34,18 @@ import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.LocaleHelper;
+import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.TinyDB;
 import www.fiberathome.com.parkingapp.view.main.MainActivity;
+import www.fiberathome.com.parkingapp.view.main.home.HomeFragment;
 
+import static android.content.Context.LOCATION_SERVICE;
 import static www.fiberathome.com.parkingapp.model.data.preference.StaticData.APP_LANGUAGE;
+import static www.fiberathome.com.parkingapp.view.main.MainActivity.GPS_REQUEST_CODE;
 
-public class SettingsFragment extends Fragment implements View.OnClickListener {
+public class SettingsFragment extends Fragment implements View.OnClickListener, IOnBackPressListener {
 
     /*@BindView(R.id.textViewBan)
     TextView textViewBan;
@@ -102,102 +110,6 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         if (unbinder != null) {
             unbinder.unbind();
         }
-    }
-
-    private void initView(View view) {
-        unbinder = ButterKnife.bind(this, view);
-        llDialogLanguage.setOnClickListener(this);
-        textViewLanguage.setOnClickListener(this);
-        ivDropDown.setOnClickListener(this);
-
-        /*textViewBan.setOnClickListener(v -> {
-            Timber.e("textViewBan clicked");
-            ApplicationUtils.showAlertDialog(context.getString(R.string.change_language), context, context.getString(R.string.yes), context.getString(R.string.no), (dialog, which) -> {
-                //setNewLocale(LANGUAGE_BANGLA, false);
-                //context = LocaleHelper.setLocale(context, "en");
-                resources = context.getResources();
-                language = 0;
-                languageChanged = true;
-                switchLanguageAndRestartApp();
-            }, (dialog, which) -> {
-                dialog.dismiss();
-            });
-        });
-
-        textViewEng.setOnClickListener(v -> {
-            Timber.e("textViewEng clicked");
-            ApplicationUtils.showAlertDialog(context.getString(R.string.change_language), context, context.getString(R.string.yes), context.getString(R.string.no), (dialog, which) -> {
-                //setNewLocale(LANGUAGE_ENGLISH, false);
-                //context = LocaleHelper.setLocale(context, "en");
-                resources = context.getResources();
-                language = 1;
-                languageChanged = true;
-                switchLanguageAndRestartApp();
-            }, (dialog, which) -> {
-                dialog.dismiss();
-            });
-        });*/
-    }
-
-    private void switchLanguageAndRestartApp() {
-        /*if (language == 0) {
-            switchLangSelection(textViewEng, textViewBan);
-            context = LocaleHelper.setLocale(context, "bn");
-            resources = context.getResources();
-            setLocale("bn", "BD");
-            openMainActivity();
-        } else {
-            switchLangSelection(textViewBan, textViewEng);
-            context = LocaleHelper.setLocale(context, "en");
-            resources = context.getResources();
-            setLocale("en", "US");
-            openMainActivity();
-        }*/
-    }
-
-    private boolean setNewLocale(String language, boolean restartProcess) {
-        ParkingApp.localeManager.setNewLocale(context, language);
-
-        Intent i = new Intent(context, MainActivity.class);
-        startActivity(i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
-
-        if (restartProcess) {
-            System.exit(0);
-        } else {
-            Toast.makeText(context, "Activity restarted", Toast.LENGTH_SHORT).show();
-        }
-        return true;
-    }
-
-    private void openMainActivity() {
-        Intent i = new Intent(context, MainActivity.class);
-//        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        context.startActivity(i);
-    }
-
-    private void switchLangSelection(TextView textView1, TextView textView2) {
-        ApplicationUtils.setTextColor(textView1, context, R.color.white);
-        textView1.setOnClickListener(null);
-        ApplicationUtils.setBackground(context, textView1, R.color.colorPrimary);
-        ApplicationUtils.setTextColor(textView2, context, R.color.white);
-        ApplicationUtils.setBackground(context, textView2, R.color.dark_gray);
-    }
-
-    private void setLocale(String language, String country) {
-        Locale locale = new Locale(language, country);
-        Locale.setDefault(locale);
-        Configuration configuration = new Configuration();
-        if (Build.VERSION.SDK_INT >= 17) {
-            configuration.setLocale(locale);
-        } else {
-            configuration.locale = locale;
-        }
-        context.getResources().updateConfiguration(configuration, context.getResources().getDisplayMetrics());
-        Timber.e("DefaultLocale -> %s Language -> %s Country -> %s", Locale.getDefault(), language, country);
-        TinyDB tinyDB = new TinyDB(context);
-        tinyDB.putString(APP_LANGUAGE, language);
     }
 
     @Override
@@ -266,5 +178,140 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                         //.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
                 builder.create().show();*/
         }
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        if (isGPSEnabled()) {
+//            HomeFragment nextFrag = new HomeFragment();
+            if (getActivity() != null) {
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, HomeFragment.newInstance())
+                        .addToBackStack(null)
+                        .commit();
+            } else {
+                TastyToastUtils.showTastyWarningToast(context, "Please enable GPS");
+            }
+        }
+        return false;
+    }
+
+    private boolean isGPSEnabled() {
+
+        LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
+
+        boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+        if (providerEnabled) {
+            return true;
+        } else {
+            AlertDialog alertDialog = new AlertDialog.Builder(context)
+                    .setTitle("GPS Permissions")
+                    .setMessage("GPS is required for this app to work. Please enable GPS.")
+                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivityForResult(intent, GPS_REQUEST_CODE);
+                    }))
+                    .setCancelable(false)
+                    .show();
+
+        }
+        return false;
+    }
+
+    private void initView(View view) {
+        unbinder = ButterKnife.bind(this, view);
+        llDialogLanguage.setOnClickListener(this);
+        textViewLanguage.setOnClickListener(this);
+        ivDropDown.setOnClickListener(this);
+
+        /*textViewBan.setOnClickListener(v -> {
+            Timber.e("textViewBan clicked");
+            ApplicationUtils.showAlertDialog(context.getString(R.string.change_language), context, context.getString(R.string.yes), context.getString(R.string.no), (dialog, which) -> {
+                //setNewLocale(LANGUAGE_BANGLA, false);
+                //context = LocaleHelper.setLocale(context, "en");
+                resources = context.getResources();
+                language = 0;
+                languageChanged = true;
+                switchLanguageAndRestartApp();
+            }, (dialog, which) -> {
+                dialog.dismiss();
+            });
+        });
+
+        textViewEng.setOnClickListener(v -> {
+            Timber.e("textViewEng clicked");
+            ApplicationUtils.showAlertDialog(context.getString(R.string.change_language), context, context.getString(R.string.yes), context.getString(R.string.no), (dialog, which) -> {
+                //setNewLocale(LANGUAGE_ENGLISH, false);
+                //context = LocaleHelper.setLocale(context, "en");
+                resources = context.getResources();
+                language = 1;
+                languageChanged = true;
+                switchLanguageAndRestartApp();
+            }, (dialog, which) -> {
+                dialog.dismiss();
+            });
+        });*/
+    }
+
+    private void switchLanguageAndRestartApp() {
+        /*if (language == 0) {
+            switchLangSelection(textViewEng, textViewBan);
+            context = LocaleHelper.setLocale(context, "bn");
+            resources = context.getResources();
+            setLocale("bn", "BD");
+            openMainActivity();
+        } else {
+            switchLangSelection(textViewBan, textViewEng);
+            context = LocaleHelper.setLocale(context, "en");
+            resources = context.getResources();
+            setLocale("en", "US");
+            openMainActivity();
+        }*/
+    }
+
+    private boolean setNewLocale(String language, boolean restartProcess) {
+        ParkingApp.localeManager.setNewLocale(context, language);
+
+        Intent intent = new Intent(context, MainActivity.class);
+        startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
+        requireActivity().overridePendingTransition(0, 0);
+        if (restartProcess) {
+            System.exit(0);
+        } else {
+            Toast.makeText(context, "Activity restarted", Toast.LENGTH_SHORT).show();
+        }
+        return true;
+    }
+
+    private void openMainActivity() {
+        Intent i = new Intent(context, MainActivity.class);
+//        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        context.startActivity(i);
+    }
+
+    private void switchLangSelection(TextView textView1, TextView textView2) {
+        ApplicationUtils.setTextColor(textView1, context, R.color.white);
+        textView1.setOnClickListener(null);
+        ApplicationUtils.setBackground(context, textView1, R.color.colorPrimary);
+        ApplicationUtils.setTextColor(textView2, context, R.color.white);
+        ApplicationUtils.setBackground(context, textView2, R.color.dark_gray);
+    }
+
+    private void setLocale(String language, String country) {
+        Locale locale = new Locale(language, country);
+        Locale.setDefault(locale);
+        Configuration configuration = new Configuration();
+        if (Build.VERSION.SDK_INT >= 17) {
+            configuration.setLocale(locale);
+        } else {
+            configuration.locale = locale;
+        }
+        context.getResources().updateConfiguration(configuration, context.getResources().getDisplayMetrics());
+        Timber.e("DefaultLocale -> %s Language -> %s Country -> %s", Locale.getDefault(), language, country);
+        TinyDB tinyDB = new TinyDB(context);
+        tinyDB.putString(APP_LANGUAGE, language);
     }
 }

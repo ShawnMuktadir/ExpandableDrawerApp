@@ -158,6 +158,7 @@ import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.GpsUtils;
 import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
 import www.fiberathome.com.parkingapp.utils.LocationHelper;
+import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.RecyclerTouchListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.view.location.LocationActivity;
@@ -179,7 +180,7 @@ import static www.fiberathome.com.parkingapp.model.searchHistory.AppConstants.NE
 
 public class HomeFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener, GoogleMap.OnMarkerClickListener,
-        IOnLoadLocationListener, GeoQueryEventListener, BottomSheetAdapter.AdapterCallback {
+        IOnLoadLocationListener, GeoQueryEventListener, BottomSheetAdapter.AdapterCallback, IOnBackPressListener {
 
     private final String TAG = getClass().getSimpleName();
 
@@ -446,21 +447,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         return view;
     }
 
-    private void initUI(View view) {
-        view.findViewById(R.id.currentLocationImageButton).setOnClickListener(clickListener);
-        bottomSheetRecyclerView = view.findViewById(R.id.bottomsheet_recyclerview);
-        //for booking
-        arrivedtimeTV = view.findViewById(R.id.arrivedtimeTV);
-        departuretimeTV = view.findViewById(R.id.departureTimeTV);
-        timeDifferenceTV = view.findViewById(R.id.timeDifferenceTV);
-        countDownTV = view.findViewById(R.id.countDownTV);
-        moreBtn = view.findViewById(R.id.moreBtn);
-        btnLiveParking = view.findViewById(R.id.btnLiveParking);
-        textViewTermsCondition = view.findViewById(R.id.textViewTermsCondition);
-        bookedLayout = view.findViewById(R.id.bookedLayout);
-        departureBtn = view.findViewById(R.id.departureBtn);
-    }
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         Timber.e("onViewCreated called");
@@ -591,6 +577,21 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
         //add circle for dangerous area
 //        addCircleArea();
+    }
+
+    private void initUI(View view) {
+        view.findViewById(R.id.currentLocationImageButton).setOnClickListener(clickListener);
+        bottomSheetRecyclerView = view.findViewById(R.id.bottomsheet_recyclerview);
+        //for booking
+        arrivedtimeTV = view.findViewById(R.id.arrivedtimeTV);
+        departuretimeTV = view.findViewById(R.id.departureTimeTV);
+        timeDifferenceTV = view.findViewById(R.id.timeDifferenceTV);
+        countDownTV = view.findViewById(R.id.countDownTV);
+        moreBtn = view.findViewById(R.id.moreBtn);
+        btnLiveParking = view.findViewById(R.id.btnLiveParking);
+        textViewTermsCondition = view.findViewById(R.id.textViewTermsCondition);
+        bookedLayout = view.findViewById(R.id.bookedLayout);
+        departureBtn = view.findViewById(R.id.departureBtn);
     }
 
     private String parkingNumberOfIndividualMarker = "";
@@ -927,7 +928,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
         if (onConnectedLocation != null) {
             Timber.e("onConnected not null called");
-            //Toast.makeText(context, "olaaaaaaaaaa", Toast.LENGTH_SHORT).show();
             LatLng latLng = new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude());
             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
             mMap.animateCamera(CameraUpdateFactory.zoomTo(16f));
@@ -937,8 +937,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                 fetchSensors(onConnectedLocation);
                 fetchBottomSheetSensors(onConnectedLocation);
             } else {
-//                ApplicationUtils.showMessageDialog("Please, connect to internet", context);
-                ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
+                /*ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
                     Timber.e("Positive Button clicked");
                     if (ApplicationUtils.checkInternet(context)) {
                         fetchSensors(onConnectedLocation);
@@ -953,7 +952,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                         getActivity().finish();
                         TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
                     }
-                });
+                });*/
             }
             SharedData.getInstance().setOnConnectedLocation(onConnectedLocation);
             progressDialog.dismiss();
@@ -1344,7 +1343,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     private double adjustValue = 2;
     private LatLng origin;
 
-    int countadd = 0;
+    private int countadd = 0;
 
     private String getAddress(Context context, double LATITUDE, double LONGITUDE) {
         //Set Address
@@ -2267,6 +2266,45 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Timber.d("onRequestPermissionsResult");
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        Log.d(TAG, "onRequestPermissionsResult: on requestPermission");
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            Log.d(TAG, "onRequestPermissionsResult: First time evoked");
+
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                // Showing the toast message
+                Log.d(TAG, "onRequestPermissionResult: on requestPermission if-if");
+                progressDialog.show();
+                if (isLocationEnabled(context))
+                    supportMapFragment.getMapAsync(this);
+//                Toast.makeText(context, "Permission Granted", Toast.LENGTH_SHORT).show();
+
+            } else if (grantResults.length == FIRST_TIME_INSTALLED && getActivity() != null) {
+                if ((ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                        ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+
+                    requestPermissions(new String[]{
+                            Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+                    Log.d(TAG, "onViewCreated: in if");
+//                    Toast.makeText(context, "Ok Clicked", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._90sdp));
+        bottomSheetBehavior.setHideable(false);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        return false;
+    }
+
     private void storeVisitedPlace(String mobileNo, String placeId, double endLatitude, double endLongitude,
                                    double startLatitude, double startLongitude, String areaAddress) {
         HttpsTrustManager.allowAllSSL();
@@ -2322,40 +2360,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
     private void showMessage(String message) {
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        Timber.d("onRequestPermissionsResult");
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        Log.d(TAG, "onRequestPermissionsResult: on requestPermission");
-        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
-            Log.d(TAG, "onRequestPermissionsResult: First time evoked");
-
-            if (grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                // Showing the toast message
-                Log.d(TAG, "onRequestPermissionResult: on requestPermission if-if");
-                progressDialog.show();
-                if (isLocationEnabled(context))
-                    supportMapFragment.getMapAsync(this);
-//                Toast.makeText(context, "Permission Granted", Toast.LENGTH_SHORT).show();
-
-            } else if (grantResults.length == FIRST_TIME_INSTALLED && getActivity() != null) {
-                if ((ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                        ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
-
-                    requestPermissions(new String[]{
-                            Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
-                    Log.d(TAG, "onViewCreated: in if");
-//                    Toast.makeText(context, "Ok Clicked", Toast.LENGTH_SHORT).show();
-                }
-
-            }
-
-        }
-
     }
 
     //bubble sort for nearest parking spot from searched area

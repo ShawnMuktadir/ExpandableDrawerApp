@@ -676,7 +676,6 @@ public class SearchActivity extends AppCompatActivity implements PlacesAutoCompl
 //                    }))
 //                    .setCancelable(false)
 //                    .show();
-
         }
 
         return false;

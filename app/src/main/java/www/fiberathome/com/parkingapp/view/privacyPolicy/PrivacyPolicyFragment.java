@@ -3,6 +3,7 @@ package www.fiberathome.com.parkingapp.view.privacyPolicy;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.location.LocationManager;
 import android.os.Bundle;
 
 import androidx.core.view.ViewCompat;
@@ -41,9 +42,13 @@ import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.model.termsCondition.TermsCondition;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+import www.fiberathome.com.parkingapp.view.main.home.HomeFragment;
 
-public class PrivacyPolicyFragment extends Fragment {
+import static android.content.Context.LOCATION_SERVICE;
+
+public class PrivacyPolicyFragment extends Fragment implements IOnBackPressListener {
 
     @BindView(R.id.webView)
     WebView webView;
@@ -90,6 +95,46 @@ public class PrivacyPolicyFragment extends Fragment {
         if (unbinder != null) {
             unbinder.unbind();
         }
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        if (isGPSEnabled()) {
+//            HomeFragment nextFrag = new HomeFragment();
+            if (getActivity() != null) {
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, HomeFragment.newInstance())
+                        .addToBackStack(null)
+                        .commit();
+            } else {
+                TastyToastUtils.showTastyWarningToast(context, "Please enable GPS!");
+            }
+        }
+        return false;
+    }
+
+    private boolean isGPSEnabled() {
+
+        LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
+
+        boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+        if (providerEnabled) {
+            return true;
+        } else {
+
+//            AlertDialog alertDialog = new AlertDialog.Builder(context)
+//                    .setTitle("GPS Permissions")
+//                    .setMessage("GPS is required for this app to work. Please enable GPS.")
+//                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
+//                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+//                        startActivityForResult(intent, GPS_REQUEST_CODE);
+//                    }))
+//                    .setCancelable(false)
+//                    .show();
+
+        }
+        return false;
     }
 
     private ArrayList<TermsCondition> termsConditionsGlobal = new ArrayList<>();

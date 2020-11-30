@@ -58,6 +58,7 @@ import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.module.eventBus.GetDirectionEvent;
 import www.fiberathome.com.parkingapp.model.sensors.SensorArea;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.RecyclerTouchListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.view.main.MainActivity;
@@ -67,7 +68,7 @@ import static android.content.Context.LOCATION_SERVICE;
 import static www.fiberathome.com.parkingapp.utils.ApplicationUtils.distance;
 import static www.fiberathome.com.parkingapp.view.main.MainActivity.GPS_REQUEST_CODE;
 
-public class ParkingFragment extends Fragment implements ParkingAdapter.ParkingAdapterClickListener {
+public class ParkingFragment extends Fragment implements ParkingAdapter.ParkingAdapterClickListener, IOnBackPressListener {
 
     private static final String TAG = ParkingFragment.class.getCanonicalName();
 
@@ -199,6 +200,22 @@ public class ParkingFragment extends Fragment implements ParkingAdapter.ParkingA
         if (unbinder != null) {
             unbinder.unbind();
         }
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        if (isGPSEnabled()) {
+//            HomeFragment nextFrag = new HomeFragment();
+            if (getActivity() != null) {
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, HomeFragment.newInstance())
+                        .addToBackStack(null)
+                        .commit();
+            } else {
+                TastyToastUtils.showTastyWarningToast(context, "Please enable GPS!");
+            }
+        }
+        return false;
     }
 
     @SuppressLint("ClickableViewAccessibility")

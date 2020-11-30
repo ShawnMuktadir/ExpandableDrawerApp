@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +28,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
@@ -64,16 +66,17 @@ import www.fiberathome.com.parkingapp.model.response.booking.Reservation;
 import www.fiberathome.com.parkingapp.module.notification.NotificationPublisher;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
-import www.fiberathome.com.parkingapp.utils.OnBackPressListener;
+import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.view.booking.helper.DialogHelper;
 import www.fiberathome.com.parkingapp.view.booking.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.view.main.home.HomeFragment;
 
 import static android.content.Context.LOCATION_SERVICE;
+import static www.fiberathome.com.parkingapp.view.main.MainActivity.GPS_REQUEST_CODE;
 
 
-public class ScheduleFragment extends Fragment implements DialogHelper.PayBtnClickListener, OnBackPressListener, AdapterView.OnItemSelectedListener {
+public class ScheduleFragment extends Fragment implements DialogHelper.PayBtnClickListener, IOnBackPressListener, AdapterView.OnItemSelectedListener {
     private final String TAG = getClass().getSimpleName();
 
     @BindView(R.id.textViewCurrentDate)
@@ -350,6 +353,29 @@ public class ScheduleFragment extends Fragment implements DialogHelper.PayBtnCli
         }
     }
 
+    @Override
+    public void payBtnClick() {
+        Bundle bundle = new Bundle();
+        Log.d(TAG, "onClick: " + arrivedDate.getTime());
+        Log.d(TAG, "onClick: " + departedDate.getTime());
+        // bundle.putBoolean("s", true);
+        bundle.putLong("arrived", arrivedDate.getTime());
+        bundle.putLong("departure", departedDate.getTime());
+        PaymentFragment paymentFragment = new PaymentFragment();
+        paymentFragment.setArguments(bundle);
+        listener.fragmentChange(paymentFragment);
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+
     private void storeReservation(String mobileNo, String arrivalTime, String departureTime, String markerUid) {
         Timber.e("storeReservation post method e dhukche");
         progressDialog = ApplicationUtils.progressDialog(context, "Please wait...");
@@ -470,19 +496,6 @@ public class ScheduleFragment extends Fragment implements DialogHelper.PayBtnCli
         return min;
     }
 
-    @Override
-    public void payBtnClick() {
-        Bundle bundle = new Bundle();
-        Log.d(TAG, "onClick: " + arrivedDate.getTime());
-        Log.d(TAG, "onClick: " + departedDate.getTime());
-        // bundle.putBoolean("s", true);
-        bundle.putLong("arrived", arrivedDate.getTime());
-        bundle.putLong("departure", departedDate.getTime());
-        PaymentFragment paymentFragment = new PaymentFragment();
-        paymentFragment.setArguments(bundle);
-        listener.fragmentChange(paymentFragment);
-    }
-
     private boolean isGPSEnabled() {
 
         LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
@@ -493,17 +506,18 @@ public class ScheduleFragment extends Fragment implements DialogHelper.PayBtnCli
             return true;
         } else {
 
-//            AlertDialog alertDialog = new AlertDialog.Builder(context)
-//                    .setTitle("GPS Permissions")
-//                    .setMessage("GPS is required for this app to work. Please enable GPS.")
-//                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
-//                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-//                        startActivityForResult(intent, GPS_REQUEST_CODE);
-//                    }))
-//                    .setCancelable(false)
-//                    .show();
+            AlertDialog alertDialog = new AlertDialog.Builder(context)
+                    .setTitle("GPS Permissions")
+                    .setMessage("GPS is required for this app to work. Please enable GPS.")
+                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivityForResult(intent, GPS_REQUEST_CODE);
+                    }))
+                    .setCancelable(false)
+                    .show();
 
         }
+
         return false;
     }
 
@@ -528,15 +542,5 @@ public class ScheduleFragment extends Fragment implements DialogHelper.PayBtnCli
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(source);
         return calendar;
-    }
-
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
     }
 }

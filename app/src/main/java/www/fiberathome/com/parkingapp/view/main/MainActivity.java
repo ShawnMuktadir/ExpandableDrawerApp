@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
@@ -30,6 +31,7 @@ import android.widget.Toast;
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -51,6 +53,7 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
@@ -77,6 +80,7 @@ import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
 import www.fiberathome.com.parkingapp.module.eventBus.GetDirectionEvent;
 import www.fiberathome.com.parkingapp.module.eventBus.SetMarkerEvent;
+import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.LocaleHelper;
 import www.fiberathome.com.parkingapp.view.permission.listener.DexterPermissionListener;
 import www.fiberathome.com.parkingapp.view.permission.listener.PermissionInterface;
@@ -123,7 +127,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private Context context;
     private ActionBarDrawerToggle actionBarDrawerToggle;
 
-    private boolean exit = false;
+    private boolean exit = true;
+    private Toast exitToast;
+    private int exitCounter = 1;
 
     private DexterPermissionListener permissionListener;
 
@@ -186,7 +192,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         } else {
             //  startActivity(new Intent(MainActivity.this, LocationActivity.class));
             Intent intent = new Intent(MainActivity.this, LocationActivity.class);
-
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
             new Handler().postDelayed(new Runnable() {
@@ -249,11 +254,15 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         navigationView.setCheckedItem(item.getItemId());
         switch (item.getItemId()) {
             case R.id.nav_home:
-                toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
-                tvTimeToolbar.setVisibility(View.VISIBLE);
-                linearLayoutToolbarTime.setVisibility(View.VISIBLE);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, HomeFragment.newInstance()).commit();
-                SharedData.getInstance().setOnConnectedLocation(null);
+                if (ApplicationUtils.checkInternet(context)) {
+                    toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
+                    tvTimeToolbar.setVisibility(View.VISIBLE);
+                    linearLayoutToolbarTime.setVisibility(View.VISIBLE);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, HomeFragment.newInstance()).commit();
+                    SharedData.getInstance().setOnConnectedLocation(null);
+                } else {
+                    TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                }
                 break;
 
             case R.id.nav_parking:
@@ -345,10 +354,14 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 break;
 
             case R.id.nav_share:
-                toolbar.setTitle(context.getResources().getString(R.string.share));
-                tvTimeToolbar.setVisibility(View.GONE);
-                linearLayoutToolbarTime.setVisibility(View.GONE);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ShareFragment.newInstance()).commit();
+                if (ApplicationUtils.checkInternet(context)) {
+                    toolbar.setTitle(context.getResources().getString(R.string.share));
+                    tvTimeToolbar.setVisibility(View.GONE);
+                    linearLayoutToolbarTime.setVisibility(View.GONE);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ShareFragment.newInstance()).commit();
+                } else {
+                    TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                }
                 break;
         }
         return true;
@@ -386,91 +399,103 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     @Override
-    public void  onBackPressed() {
+    public void onBackPressed() {
         if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
+            navigationView.getMenu().getItem(0).setChecked(true);
+            drawerLayoutMain.closeDrawers();
+            //super.onBackPressed(); delete this line
+            // and start your fragment:
 
-            if (exit) {
-                super.onBackPressed();
-                return;
-            }
-            try {
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                Fragment fragment = fragmentManager.findFragmentByTag(context.getResources().getString(R.string.welcome_to_locc_parking));
-                if (fragment != null) {
-                    if (fragment.isVisible()) {
-                        if (drawerLayoutMain.isDrawerOpen(GravityCompat.START)) {
-                            drawerLayoutMain.closeDrawer(GravityCompat.START);
-                        } else {
-                            this.exit = true;
-                            ApplicationUtils.showExitDialog(this);
-//                    Toast.makeText(this, "Press Back again to Exit", Toast.LENGTH_SHORT).show();
-                        }
-                        exit = false;
-                    } else {
-                        List<Fragment> fragmentList = getSupportFragmentManager().getFragments();
-                        for (Fragment f : fragmentList) {
-                            if (f instanceof ScheduleFragment) {
-                                ((ScheduleFragment) f).onBackPressed();
-                                toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
-                            } else if (f instanceof HomeFragment) {
-//                                this.exit = true;
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag(context.getResources().getString(R.string.welcome_to_locc_parking));
+            if (fragment != null) {
+                if (fragment.isVisible()) {
+                    if (drawerLayoutMain.isDrawerOpen(GravityCompat.START)) {
+                        drawerLayoutMain.closeDrawer(GravityCompat.START);
+                    }
+                }
+            } else {
+                List<Fragment> fragmentList = getSupportFragmentManager().getFragments();
+                for (Fragment f : fragmentList) {
+                    if (f instanceof HomeFragment) {
+                        ((HomeFragment) f).onBackPressed();
+                        if (exit) {
+                            Timber.e("onBackPressed exit if");
+                            exitCounter--;
+                            if (exitCounter == 0) {
+                                Timber.e("onBackPressed exitCounter if");
+                                exitCounter = 1;
+                                drawerLayoutMain.closeDrawers();
                                 ApplicationUtils.showExitDialog(this);
                             } else {
-                                this.exit = true;
-                                fragment = HomeFragment.newInstance();
-                                getFragmentManager().popBackStack();
-                                fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment, context.getResources().getString(R.string.welcome_to_locc_parking)).commit();
-                                toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
-                                tvTimeToolbar.setVisibility(View.VISIBLE);
-                                linearLayoutToolbarTime.setVisibility(View.VISIBLE);
-                                drawerLayoutMain.closeDrawers();
-                                navigationView.getMenu().getItem(0).setChecked(true);
-                                navigationView.getMenu().getItem(1).setChecked(false);
-                                navigationView.getMenu().getItem(2).setChecked(false);
-                                navigationView.getMenu().getItem(3).setChecked(false);
-                                navigationView.getMenu().getItem(4).setChecked(false);
-                                navigationView.getMenu().getItem(5).setChecked(false);
-                                navigationView.getMenu().getItem(6).setChecked(false);
-                                navigationView.getMenu().getItem(7).setChecked(false);
-                                navigationView.getMenu().getItem(8).setChecked(false);
-                                navigationView.getMenu().getItem(9).setChecked(false);
-                                navigationView.getMenu().getItem(10).setChecked(false);
-//                                ApplicationUtils.showExitDialog(this);
+                                Timber.e("onBackPressed exitCounter else");
+                                ApplicationUtils.showToast(context, "Press Back again to exit", 200);
+                            }
+                        } else {
+                            Timber.e("onBackPressed exit else");
+                            if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+                                Timber.e("onBackPressed exit else if");
+                                if (exitToast == null || exitToast.getView() == null || exitToast.getView().getWindowToken() == null) {
+                                    exitToast = Toast.makeText(this, "Press Back Button again to exit", Toast.LENGTH_LONG);
+                                    exitToast.show();
+                                } else {
+                                    Timber.e("onBackPressed exit else else");
+                                    exitToast.cancel();
+                                    super.onBackPressed();
+                                }
+                            } else {
+                                super.onBackPressed();
                             }
                         }
-                    }
-                } else {
-                    fragment = HomeFragment.newInstance();
-                    getFragmentManager().popBackStack();
-                    fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment, context.getResources().getString(R.string.welcome_to_locc_parking)).commit();
-                    drawerLayoutMain.closeDrawers();
-                    navigationView.getMenu().getItem(0).setChecked(true);
-                    navigationView.getMenu().getItem(1).setChecked(false);
-                    navigationView.getMenu().getItem(2).setChecked(false);
-                    navigationView.getMenu().getItem(3).setChecked(false);
-                    navigationView.getMenu().getItem(4).setChecked(false);
-                    navigationView.getMenu().getItem(5).setChecked(false);
-                    navigationView.getMenu().getItem(6).setChecked(false);
-                    navigationView.getMenu().getItem(7).setChecked(false);
-                    navigationView.getMenu().getItem(8).setChecked(false);
-                    navigationView.getMenu().getItem(9).setChecked(false);
-                    navigationView.getMenu().getItem(10).setChecked(false);
-                    toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
-                    tvTimeToolbar.setVisibility(View.VISIBLE);
-                    linearLayoutToolbarTime.setVisibility(View.VISIBLE);
-                    if (SharedData.getInstance().getOnConnectedLocation() != null) {
-                        HomeFragment.newInstance().animateCamera(SharedData.getInstance().getOnConnectedLocation());
+                    } else if (f instanceof ParkingFragment) {
+                        ((ParkingFragment) f).onBackPressed();
+                        toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
+                    } else if (f instanceof BookingFragment) {
+                        ((BookingFragment) f).onBackPressed();
+                        toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
+                    } else if (f instanceof LawFragment) {
+                        ((LawFragment) f).onBackPressed();
+                        toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
+                    } else if (f instanceof ProfileFragment) {
+                        ((ProfileFragment) f).onBackPressed();
+                        toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
+                    } else if (f instanceof ScheduleFragment) {
+                        ((ScheduleFragment) f).onBackPressed();
+                        toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
+                    } else if (f instanceof SettingsFragment) {
+                        ((SettingsFragment) f).onBackPressed();
+                        toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
+                    } else if (f instanceof GetDiscountFragment) {
+                        ((GetDiscountFragment) f).onBackPressed();
+                        toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
+                    } else if (f instanceof RatingReviewFragment) {
+                        ((RatingReviewFragment) f).onBackPressed();
+                        toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
+                    } else if (f instanceof FollowUsFragment) {
+                        ((FollowUsFragment) f).onBackPressed();
+                        toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
+                    } else if (f instanceof PrivacyPolicyFragment) {
+                        ((PrivacyPolicyFragment) f).onBackPressed();
+                        toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
                     }
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+                tvTimeToolbar.setVisibility(View.VISIBLE);
+                linearLayoutToolbarTime.setVisibility(View.VISIBLE);
+                drawerLayoutMain.closeDrawers();
+                navigationView.getMenu().getItem(0).setChecked(true);
+                navigationView.getMenu().getItem(1).setChecked(false);
+                navigationView.getMenu().getItem(2).setChecked(false);
+                navigationView.getMenu().getItem(3).setChecked(false);
+                navigationView.getMenu().getItem(4).setChecked(false);
+                navigationView.getMenu().getItem(5).setChecked(false);
+                navigationView.getMenu().getItem(6).setChecked(false);
+                navigationView.getMenu().getItem(7).setChecked(false);
+                navigationView.getMenu().getItem(8).setChecked(false);
+                navigationView.getMenu().getItem(9).setChecked(false);
+                navigationView.getMenu().getItem(10).setChecked(false);
+                if (SharedData.getInstance().getOnConnectedLocation() != null) {
+                    HomeFragment.newInstance().animateCamera(SharedData.getInstance().getOnConnectedLocation());
+                }
             }
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    exit = false;
-                }
-            }, 2000);
         } else {
             TastyToastUtils.showTastyWarningToast(context, "Please enable GPS or turn on Internet to use Parking App");
             ApplicationUtils.showAlertDialog(context.getString(R.string.exit_message_main), context, context.getString(R.string.ok), context.getString(R.string.cancel), (dialog, which) -> {
@@ -600,30 +625,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 }
             }
         }, 4000);
-    }
-
-    public void onParkingAdapterItemClickBottomSheetChanged(LatLng latLng) {
-        Timber.e("onParkingAdapterItemClickBottomSheetChanged MainActivity called");
-        navigationView.getMenu().getItem(0).setChecked(true);
-        toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
-        tvTimeToolbar.setVisibility(View.VISIBLE);
-        linearLayoutToolbarTime.setVisibility(View.VISIBLE);
-        ProgressDialog progressDialog = ApplicationUtils.progressDialog(context, "Please wait...");
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Timber.e("onParkingAdapterItemClickBottomSheetChanged MainActivity called");
-                // Do something after 2s = 2000ms
-                try {
-                    EventBus.getDefault().post(new SetMarkerEvent(latLng));
-                    progressDialog.dismiss();
-                } catch (EventBusException e) {
-                    e.getCause();
-                }
-            }
-        }, 2000);
     }
 
     private void setupNavigationDrawer() {
@@ -816,12 +817,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, oldBookingDetailsFragment).commit();
     }
 
-    public void replaceFragment() {
-        toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, HomeFragment.newInstance()).commit();
-        navigationView.getMenu().getItem(0).setChecked(true);
-    }
-
     private void handleLocationPermissionCheck(Context context) {
         if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
@@ -859,24 +854,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         }
 
-        return false;
-    }
-
-    private boolean isServicesOk() {
-
-        GoogleApiAvailability googleApi = GoogleApiAvailability.getInstance();
-
-        int result = googleApi.isGooglePlayServicesAvailable(context);
-
-        if (result == ConnectionResult.SUCCESS) {
-            return true;
-        } else if (googleApi.isUserResolvableError(result)) {
-            Dialog dialog = googleApi.getErrorDialog(this, result, PLAY_SERVICES_ERROR_CODE, task ->
-                    Toast.makeText(context, "Dialog is cancelled by User", Toast.LENGTH_SHORT).show());
-            dialog.show();
-        } else {
-            Toast.makeText(context, "Play services are required by this application", Toast.LENGTH_SHORT).show();
-        }
         return false;
     }
 
