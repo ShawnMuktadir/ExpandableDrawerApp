@@ -73,6 +73,7 @@
             android:name=".view.search.SearchActivity"
             android:noHistory="true"
             android:configChanges="locale"
+            android:windowSoftInputMode="adjustResize"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".view.start.StartActivity"

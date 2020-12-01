@@ -7,14 +7,18 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.Rect;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
@@ -24,7 +28,18 @@ import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -41,6 +56,9 @@ import com.google.android.material.snackbar.Snackbar;
  * </ul>
  */
 public class BaseActivity extends AppCompatActivity implements LocationListener {
+
+    private View overlay;
+    private Snackbar snackbar;
 
     protected LocationManager mLocationManager;
     private static final int GPS_ENABLE_REQUEST = 0x1001;
@@ -67,6 +85,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this;
+        snackbar = Snackbar.make(this.findViewById(android.R.id.content), context.getResources().getString(R.string.connect_to_internet),86400000);
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -89,7 +108,6 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
             return;
         }
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-
         registerReceiver(mNetworkDetectReceiver, new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
     }
 
@@ -130,21 +148,134 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == GPS_ENABLE_REQUEST) {
+            if (mLocationManager == null) {
+                mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+            }
+
+            if (!mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                showGPSDisabledDialog();
+            }
+
+        } else if (requestCode == WIFI_ENABLE_REQUEST) {
+
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
     private boolean isConnected = false;
 
     private void checkInternetConnection() {
         ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo ni = manager.getActiveNetworkInfo();
 
-
         if (ni != null && ni.getState() == NetworkInfo.State.CONNECTED) {
             isConnected = true;
+            snackbar.dismiss();
+            //overlay.setVisibility(View.GONE);
             //showNoConnectionSnackBar("Connected", isConnected, 1500);
 
         } else {
             isConnected = false;
-            showNoConnectionSnackBar("No active Internet connection found.", isConnected, 6000);
+            //showNoConnectionSnackBar("No active Internet connection found.sea", isConnected, 6000);
+            showInternetConnectionSnackBar(context.getResources().getString(R.string.connect_to_internet), isConnected, 86400000);
+            //showInternetConnectionSnackBar(context.getResources().getString(R.string.connect_to_internet), isConnected, Snackbar.LENGTH_INDEFINITE);
+            //overlay.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void showInternetConnectionSnackBar(String message, boolean isConnected, int duration) {
+        // Inflate our custom view
+        View snackView = getLayoutInflater().inflate(R.layout.snackbar_internet, null);
+        snackbar = Snackbar.make(this.findViewById(android.R.id.content), message, duration);
+        View sbView = snackbar.getView();
+        TextView tv = (TextView) sbView.findViewById(com.google.android.material.R.id.snackbar_text);
+        tv.setTextColor(Color.TRANSPARENT);
+        //snackbar.setBackgroundTint(ContextCompat.getColor(this, R.color.transparent_white));
+        // Configure our custom view
+        overlay = (View) snackView.findViewById(R.id.overlay);
+
+        if (isConnected) {
+            snackbar.dismiss();
+            sbView.setBackgroundColor(getResources().getColor(R.color.transparent_white));
+            snackView.setVisibility(View.GONE);
+            overlay.setVisibility(View.GONE);
+            return;
+        } else {
+            sbView.setBackgroundColor(getResources().getColor(R.color.transparent_white));
+            overlay.setVisibility(View.VISIBLE);
+            snackView.setVisibility(View.VISIBLE);
+            // Create the Snackbar
+            LinearLayout.LayoutParams objLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            //Snackbar snackbar = Snackbar.make(this.findViewById(android.R.id.content), message, Snackbar.LENGTH_INDEFINITE);
+
+            // Get the Snackbar layout view
+            Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
+
+            // Set snackbar layout params
+            int navbarHeight = getNavBarHeight(this);
+            FrameLayout.LayoutParams parentParams = (FrameLayout.LayoutParams) layout.getLayoutParams();
+            parentParams.gravity = Gravity.TOP;
+            //parentParams.setMargins(0, 0, 0, 0 - navbarHeight + 50);
+            parentParams.setMargins(0, navbarHeight - 100, 0, 0);
+            layout.setLayoutParams(parentParams);
+            layout.setPadding(0, 0, 0, 0);
+            layout.setLayoutParams(parentParams);
+
+            TextView messageTextView = (TextView) snackView.findViewById(R.id.message_text_view);
+            //messageTextView.setTextColor(context.getResources().getColor(R.color.transparent_white));
+            messageTextView.setText(message);
+
+            TextView textViewOne = (TextView) snackView.findViewById(R.id.first_text_view);
+            textViewOne.setText(context.getResources().getString(R.string.retry));
+            textViewOne.setOnClickListener(v -> {
+                Log.d("Allow", "showTwoButtonSnackbar() : allow clicked");
+                //snackbar.dismiss();
+                if (ApplicationUtils.checkInternet(context)) {
+                    /*Intent intent = getIntent();
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                    finish();
+                    overridePendingTransition(0, 0);
+                    startActivity(intent);
+                    overridePendingTransition(0, 0);*/
+                    snackbar.dismiss();
+                    return;
+                } else {
+                    snackbar.show();
+                    TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                }
+            });
+
+            TextView textViewTwo = (TextView) snackView.findViewById(R.id.second_text_view);
+            textViewTwo.setText(context.getResources().getString(R.string.close_app));
+            textViewTwo.setOnClickListener(v -> {
+                Log.d("Deny", "showTwoButtonSnackbar() : deny clicked");
+                snackbar.dismiss();
+                if (context != null) {
+                    finishAffinity();
+                    TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
+                }
+            });
+
+            // Add our custom view to the Snackbar's layout
+            layout.addView(snackView, objLayoutParams);
+
+            // Show the Snackbar
+            snackbar.show();
+        }
+    }
+
+    public static int getNavBarHeight(Context context) {
+        int result = 0;
+        int resourceId = context.getResources().getIdentifier("navigation_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = context.getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
     }
 
     private void showNoConnectionSnackBar(String message, boolean isConnected, int duration) {
@@ -156,10 +287,10 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         textView.setTextColor(ContextCompat.getColor(this, android.R.color.white));
 
         if (isConnected) {
-            //sbView.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+            sbView.setBackgroundColor(getResources().getColor(R.color.transparent_gray));
             return;
         } else {
-            sbView.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+            sbView.setBackgroundColor(getResources().getColor(R.color.transparent_gray));
             snackbar.setAction(context.getString(R.string.retry), view -> {
                 /*Intent internetOptionsIntent = new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS);
                 startActivityForResult(internetOptionsIntent, WIFI_ENABLE_REQUEST);*/
@@ -239,25 +370,6 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         });
         mGPSDialog = builder.create();
         mGPSDialog.show();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if (requestCode == GPS_ENABLE_REQUEST) {
-            if (mLocationManager == null) {
-                mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-            }
-
-            if (!mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                showGPSDisabledDialog();
-            }
-
-        } else if (requestCode == WIFI_ENABLE_REQUEST) {
-
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
     }
 }
 

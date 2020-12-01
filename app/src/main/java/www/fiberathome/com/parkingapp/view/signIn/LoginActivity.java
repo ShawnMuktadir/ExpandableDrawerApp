@@ -48,6 +48,7 @@ import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.loginUser.User;
@@ -87,6 +88,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @BindView(R.id.relativeLayoutLogin)
     RelativeLayout relativeLayoutLogin;
 
+    private Unbinder unbinder;
     private Context context;
 
     private ProgressDialog progressDialog;
@@ -95,7 +97,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        ButterKnife.bind(this);
+        unbinder = ButterKnife.bind(this);
         context = this;
 
         setListeners();
@@ -224,6 +226,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         });
         dialog.show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (unbinder != null) {
+            unbinder.unbind();
+        }
+        super.onDestroy();
     }
 
     private void setListeners() {

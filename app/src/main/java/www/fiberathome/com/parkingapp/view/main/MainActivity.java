@@ -71,6 +71,7 @@ import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
@@ -124,6 +125,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @BindView(R.id.toolbar)
     public Toolbar toolbar;
 
+    private Unbinder unbinder;
     private Context context;
     private ActionBarDrawerToggle actionBarDrawerToggle;
 
@@ -144,7 +146,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         Timber.e("MainActivity onCreate called");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
+        unbinder = ButterKnife.bind(this);
         context = this;
 
         setSupportActionBar(toolbar);
@@ -394,6 +396,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     @Override
     protected void onDestroy() {
+        if (unbinder != null) {
+            unbinder.unbind();
+        }
         super.onDestroy();
         Timber.e("MainActivity onDestroy called");
     }
