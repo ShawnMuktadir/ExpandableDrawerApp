@@ -110,13 +110,13 @@ public class ForgetPasswordActivity extends AppCompatActivity {
                                 if (ApplicationUtils.checkInternet(context)) {
                                     submitLogin();
                                 } else {
-                                    TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                                 }
                             }, (dialog, which) -> {
                                 Timber.e("Negative Button Clicked");
                                 dialog.dismiss();
                                 if (context != null) {
-                                    TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
+                                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                                     finish();
                                 }
                             });
@@ -135,13 +135,13 @@ public class ForgetPasswordActivity extends AppCompatActivity {
                     if (ApplicationUtils.checkInternet(context)) {
                         submitLogin();
                     } else {
-                            TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                     }
                 }, (dialog, which) -> {
                     Timber.e("Negative Button Clicked");
                     dialog.dismiss();
                     if (context != null) {
-                        TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
+                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                         finish();
                     }
                 });
@@ -175,7 +175,7 @@ public class ForgetPasswordActivity extends AppCompatActivity {
                 Timber.e("URL -> %s", new Gson().toJson(AppConfig.URL_FORGET_PASSWORD));
                 progressDialog.dismiss();
                 if (response.equals("[]")) {
-                    TastyToastUtils.showTastyErrorToast(context, "Mobile Number doesn't exists");
+                    TastyToastUtils.showTastyErrorToast(context, context.getResources().getString(R.string.mobile_number_not_exist));
                 } else {
                     try {
                         JSONObject jsonObject = new JSONObject(response);
@@ -234,7 +234,7 @@ public class ForgetPasswordActivity extends AppCompatActivity {
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
                         ForgetPasswordActivity.super.onBackPressed();
-                        TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
+                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                     }
                 }).create();
         AlertDialog dialog = builder.create();

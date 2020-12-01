@@ -118,7 +118,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     }
                 }, 300);
             } else {
-                TastyToastUtils.showTastyWarningToast(context, "Please enable GPS! or turn on Internet");
+                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
             }
         });
     }

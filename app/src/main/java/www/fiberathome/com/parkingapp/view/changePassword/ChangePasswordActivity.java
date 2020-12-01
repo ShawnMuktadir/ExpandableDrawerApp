@@ -76,7 +76,7 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
                         ChangePasswordActivity.super.onBackPressed();
-                        TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
+                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                     }
                 }).create();
         AlertDialog dialog = builder.create();

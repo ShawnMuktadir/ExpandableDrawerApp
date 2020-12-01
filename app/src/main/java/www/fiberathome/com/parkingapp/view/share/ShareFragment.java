@@ -63,7 +63,7 @@ public class ShareFragment extends Fragment {
                     .addToBackStack(null)
                     .commit();
         } else {
-            TastyToastUtils.showTastyWarningToast(context, "Please enable GPS!");
+            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
         }
         shareApp();
         return view;

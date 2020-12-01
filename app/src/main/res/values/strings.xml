@@ -390,4 +390,11 @@
     <string name="change_language">Change Language</string>
     <string name="where_to">Where To?</string>
     <string name="search">Search…</string>
+    <string name="connect_to_internet_splash">Please connect to internet and try again</string>
+    <string name="connect_to_gps">Connect to GPS</string>
+    <string name="connect_to_parking_app">Please enable GPS or turn on Internet to use Parking App</string>
+    <string name="upload_profile_photo">Try Again. Please Upload Profile Photo</string>
+    <string name="thanks_message">Thanks for being with us</string>
+    <string name="reservation_successful">Parking Spot has Reservated Successfully</string>
+    <string name="mobile_number_not_exist">Mobile Number doesn\'t exists</string>
 </resources>

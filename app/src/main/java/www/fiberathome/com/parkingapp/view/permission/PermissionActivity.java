@@ -158,7 +158,7 @@ public class PermissionActivity extends AppCompatActivity implements PermissionI
 //                        PermissionActivity.super.onBackPressed();
                         finish();
                         SharedPreManager.getInstance(context).setIsLocationPermissionGiven(false);
-                        TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
+                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                     }
                 }).create();
         androidx.appcompat.app.AlertDialog dialog = builder.create();

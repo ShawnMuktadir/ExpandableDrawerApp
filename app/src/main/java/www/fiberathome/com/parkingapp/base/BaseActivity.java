@@ -246,7 +246,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
                     return;
                 } else {
                     snackbar.show();
-                    TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                 }
             });
 
@@ -257,7 +257,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
                 snackbar.dismiss();
                 if (context != null) {
                     finishAffinity();
-                    TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
+                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                 }
             });
 
@@ -297,7 +297,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
                 if (ApplicationUtils.checkInternet(context)) {
                     return;
                 } else {
-                    TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                 }
             });
             snackbar.setActionTextColor(getResources().getColor(R.color.white));
@@ -340,13 +340,13 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
             if (ApplicationUtils.checkInternet(context)) {
                 return;
             } else {
-                TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
             }
         }).setNegativeButton(context.getString(R.string.close_app), (dialog, which) -> {
             dialog.dismiss();
             if (context != null) {
                 finishAffinity();
-                TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
+                TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
             }
         });
         mInternetDialog = builder.create();

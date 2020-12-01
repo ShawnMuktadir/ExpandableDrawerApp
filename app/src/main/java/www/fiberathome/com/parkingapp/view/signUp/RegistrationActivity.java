@@ -213,14 +213,14 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
                                 if (ApplicationUtils.checkInternet(context)){
                                     submitRegistration();
                                 } else {
-                                    TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                                 }
                             }, (dialog, which) -> {
                                 Timber.e("Negative Button Clicked");
                                 dialog.dismiss();
                                 if (context != null) {
                                     finish();
-                                    TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
+                                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                                 }
                             });
                         }
@@ -238,14 +238,14 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
                     if (ApplicationUtils.checkInternet(context)){
                         submitRegistration();
                     } else {
-                        TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                     }
                 }, (dialog, which) -> {
                     Timber.e("Negative Button Clicked");
                     dialog.dismiss();
                     if (context != null) {
                         finish();
-                        TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
+                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                     }
                 });
             }
@@ -373,7 +373,7 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
                 registerUser(fullName, mobileNo, vehicleNo, password);
             } else {
 //                showMessage("Try Again. Please Upload Profile Photo!");
-                TastyToastUtils.showTastyWarningToast(context, "Try Again. Please Upload Profile Photo!");
+                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.upload_profile_photo));
             }
         }
     }

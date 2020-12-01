@@ -177,14 +177,14 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                         if (ApplicationUtils.checkInternet(context)) {
                             submitRegistration();
                         } else {
-                            TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                         }
                     }, (dialog, which) -> {
                         Timber.e("Negative Button Clicked");
                         dialog.dismiss();
                         if (context != null) {
                             finish();
-                            TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
+                            TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                         }
                     });
                 }
@@ -213,7 +213,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                     public void onClick(DialogInterface arg0, int arg1) {
 //                        SignUpActivity.super.onBackPressed();
                         finish();
-                        TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
+                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                     }
                 }).create();
         AlertDialog dialog = builder.create();
@@ -246,7 +246,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 if (ApplicationUtils.checkInternet(context)) {
                     context.startActivity(new Intent(SignUpActivity.this, TermsConditionsActivity.class));
                 } else {
-                    TastyToastUtils.showTastyWarningToast(context, "Please connect to internet!");
+                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                 }
             }
 
@@ -266,7 +266,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 if (ApplicationUtils.checkInternet(context)) {
                     context.startActivity(new Intent(SignUpActivity.this, PrivacyPolicyActivity.class));
                 } else {
-                    TastyToastUtils.showTastyWarningToast(context, "Please connect to internet!");
+                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                 }
             }
 
@@ -296,14 +296,14 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                                 if (ApplicationUtils.checkInternet(context)) {
                                     submitRegistration();
                                 } else {
-                                    TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                                 }
                             }, (dialog, which) -> {
                                 Timber.e("Negative Button Clicked");
                                 dialog.dismiss();
                                 if (context != null) {
                                     finish();
-                                    TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
+                                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                                 }
                             });
                         }
@@ -605,7 +605,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 registerUser(fullName, mobileNo, vehicleNo, password);
             } else {
 //                showMessage("Try Again. Please Upload Profile Photo!");
-                TastyToastUtils.showTastyWarningToast(context, "Try Again. Please Upload Profile Photo!");
+                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.upload_profile_photo));
             }
         }
     }

@@ -295,7 +295,7 @@ public class ScheduleFragment extends Fragment implements DialogHelper.PayBtnCli
                                     getDate(arrivedDate.getTime()), getDate(departedDate.getTime()), markerUid);
                         }
                     } else {
-                        TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                     }
                 }
             }
@@ -338,7 +338,7 @@ public class ScheduleFragment extends Fragment implements DialogHelper.PayBtnCli
                         .addToBackStack(null)
                         .commit();
             } else {
-                TastyToastUtils.showTastyWarningToast(context, "Please enable GPS!");
+                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
             }
         }
         return false;
@@ -391,7 +391,7 @@ public class ScheduleFragment extends Fragment implements DialogHelper.PayBtnCli
                     JSONObject jsonObject = new JSONObject(response);
                     Timber.e(jsonObject.toString());
                     if (!jsonObject.getBoolean("error")) {
-                        TastyToastUtils.showTastySuccessToast(context, "Reservation Successful!!!");
+                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.reservation_successful));
                         //check 15 minutes before departure
                         //ToDo
                         startAlarm(convertLongToCalendar(departedDate.getTime()));
@@ -422,7 +422,7 @@ public class ScheduleFragment extends Fragment implements DialogHelper.PayBtnCli
                                     .addToBackStack(null)
                                     .commit();
                         } else {
-                            TastyToastUtils.showTastyWarningToast(context, "Please enable GPS!");
+                            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
                         }
                     } else {
                         progressDialog.dismiss();

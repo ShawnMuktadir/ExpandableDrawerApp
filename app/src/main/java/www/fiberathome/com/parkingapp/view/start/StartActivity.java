@@ -106,7 +106,7 @@ public class StartActivity extends BaseActivity implements View.OnClickListener 
                 .setNegativeButton(android.R.string.no, null)
                 .setPositiveButton(android.R.string.yes, (arg0, arg1) -> {
                     StartActivity.super.onBackPressed();
-                    TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
+                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                 }).create();
         AlertDialog dialog = builder.create();
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {

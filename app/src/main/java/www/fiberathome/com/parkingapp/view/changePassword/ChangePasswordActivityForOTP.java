@@ -119,7 +119,7 @@ public class ChangePasswordActivityForOTP extends AppCompatActivity implements V
                             submitOTPVerification(otp);
                         }
                     } else {
-                        TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
 //                        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.P) {
 //
 //                        }
@@ -129,7 +129,7 @@ public class ChangePasswordActivityForOTP extends AppCompatActivity implements V
                     dialog.dismiss();
                     if (context != null) {
                         finish();
-                        TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
+                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                     }
                 });
             }
@@ -145,14 +145,14 @@ public class ChangePasswordActivityForOTP extends AppCompatActivity implements V
                     if (ApplicationUtils.checkInternet(context)) {
                         checkForgetPassword(mobileNo);
                     } else {
-                        TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                     }
                 }, (dialog, which) -> {
                     Timber.e("Negative Button Clicked");
                     dialog.dismiss();
                     if (context != null) {
                         finish();
-                        TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
+                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                     }
                 });
             }
@@ -201,7 +201,7 @@ public class ChangePasswordActivityForOTP extends AppCompatActivity implements V
 
                     public void onClick(DialogInterface arg0, int arg1) {
                         ChangePasswordActivityForOTP.super.onBackPressed();
-                        TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
+                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                     }
                 }).create();
         AlertDialog dialog = builder.create();

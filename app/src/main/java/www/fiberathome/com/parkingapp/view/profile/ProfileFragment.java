@@ -91,7 +91,7 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
                         .addToBackStack(null)
                         .commit();
             } else {
-                TastyToastUtils.showTastyWarningToast(context, "Please enable GPS!");
+                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
             }
         }
         return false;

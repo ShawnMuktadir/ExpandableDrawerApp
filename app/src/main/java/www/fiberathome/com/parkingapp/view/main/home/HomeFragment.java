@@ -758,7 +758,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                 ApplicationUtils.showMessageDialog("You have to exit from current destination to change new parking spot", context);
             }
         } else {
-            TastyToastUtils.showTastyWarningToast(context, "Please enable GPS! or turn on Internet");
+            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
         }
 
         return true;
@@ -943,14 +943,14 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                         fetchSensors(onConnectedLocation);
                         fetchBottomSheetSensors(onConnectedLocation);
                     } else {
-                        TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                     }
                 }, (dialog, which) -> {
                     Timber.e("Negative Button Clicked");
                     dialog.dismiss();
                     if (getActivity() != null) {
                         getActivity().finish();
-                        TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
+                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                     }
                 });*/
             }
@@ -988,21 +988,21 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                 fetchSensors(onConnectedLocation);
                 fetchBottomSheetSensors(onConnectedLocation);
             } else {
-//                ApplicationUtils.showMessageDialog("Please, connect to internet", context);
+//                ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.connect_to_internet), context);
                 ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
                     Timber.e("Positive Button clicked");
                     if (ApplicationUtils.checkInternet(context)) {
                         fetchSensors(onConnectedLocation);
                         fetchBottomSheetSensors(onConnectedLocation);
                     } else {
-                        TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                     }
                 }, (dialog, which) -> {
                     Timber.e("Negative Button Clicked");
                     dialog.dismiss();
                     if (getActivity() != null) {
                         getActivity().finish();
-                        TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
+                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                     }
                 });
             }
@@ -1958,7 +1958,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                 if (ApplicationUtils.checkInternet(context)) {
                     fetchSensors(onConnectedLocation);
                 } else {
-                    TastyToastUtils.showTastyWarningToast(context, "Please, connect to internet");
+                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                 }
                 //get Address from search location
                 getAddress(getActivity(), searchPlaceLatLng.latitude, searchPlaceLatLng.longitude, new AddressCallBack() {
@@ -2089,7 +2089,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                 if (ApplicationUtils.checkInternet(context)) {
                     fetchSensors(onConnectedLocation);
                 } else {
-                    TastyToastUtils.showTastyWarningToast(context, "Please, connect to internet");
+                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
 
                 }
                 //get address from search history location
@@ -2442,7 +2442,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                         }
                     });
         } else {
-            TastyToastUtils.showTastyWarningToast(context, "Please enable Internet/GPS");
+            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
         }
 
         //-------------------------------------------------------------------------------\\
@@ -2804,7 +2804,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                 Toast.makeText(getActivity(), "Something went wrong!!! Location cannot be identified!!!", Toast.LENGTH_SHORT).show();
             }
         } else {
-            TastyToastUtils.showTastyWarningToast(context, "Please connect to internet/GPS");
+            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
         }
 
 
@@ -3162,7 +3162,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                 linearLayoutMarkerBottom.setVisibility(View.GONE);
                 linearLayoutBottomSheetBottom.setVisibility(View.GONE);
             } else {
-                TastyToastUtils.showTastyWarningToast(context, "Please enable GPS! or turn on Internet");
+                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
             }
         });
 
@@ -3189,14 +3189,14 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                                 fetchSensors(onConnectedLocation);
                                 fetchBottomSheetSensors(onConnectedLocation);
                             } else {
-                                TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                             }
                         }, (dialog, which) -> {
                             Timber.e("Negative Button Clicked");
                             dialog.dismiss();
                             if (getActivity() != null) {
                                 getActivity().finish();
-                                TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
+                                TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                             }
                         });
                     }
@@ -3219,7 +3219,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     btnGetDirection.setFocusable(true);
                 }
             } else {
-                TastyToastUtils.showTastyWarningToast(context, "Please enable GPS or turn on Internet");
+                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
             }
         });
 
@@ -3254,14 +3254,14 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                                 fetchSensors(onConnectedLocation);
                                 fetchBottomSheetSensors(onConnectedLocation);
                             } else {
-                                TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                             }
                         }, (dialog, which) -> {
                             Timber.e("Negative Button Clicked");
                             dialog.dismiss();
                             if (getActivity() != null) {
                                 getActivity().finish();
-                                TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
+                                TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                             }
                         });
                     }
@@ -3280,7 +3280,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     btnSearchGetDirection.setFocusable(true);
                 }
             } else {
-                TastyToastUtils.showTastyWarningToast(context, "Please enable GPS or turn on Internet");
+                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
             }
         });
 
@@ -3306,21 +3306,21 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                         fetchSensors(SharedData.getInstance().getOnConnectedLocation());
                         fetchBottomSheetSensors(SharedData.getInstance().getOnConnectedLocation());
                     } else {
-//                        ApplicationUtils.showMessageDialog("Please connect to internet", context);
+//                        ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.connect_to_internet), context);
                         ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
                             Timber.e("Positive Button clicked");
                             if (ApplicationUtils.checkInternet(context)) {
                                 fetchSensors(onConnectedLocation);
                                 fetchBottomSheetSensors(onConnectedLocation);
                             } else {
-                                TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                             }
                         }, (dialog, which) -> {
                             Timber.e("Negative Button Clicked");
                             dialog.dismiss();
                             if (getActivity() != null) {
                                 getActivity().finish();
-                                TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
+                                TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                             }
                         });
                     }
@@ -3340,7 +3340,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     btnMarkerGetDirection.setFocusable(true);
                 }
             } else {
-                TastyToastUtils.showTastyWarningToast(context, "Please enable GPS or turn on Internet");
+                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
             }
         });
 
@@ -3361,21 +3361,21 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                         fetchSensors(SharedData.getInstance().getOnConnectedLocation());
                         fetchBottomSheetSensors(SharedData.getInstance().getOnConnectedLocation());
                     } else {
-//                        ApplicationUtils.showMessageDialog("Please connect to internet", context);
+//                        ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.connect_to_internet), context);
                         ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
                             Timber.e("Positive Button clicked");
                             if (ApplicationUtils.checkInternet(context)) {
                                 fetchSensors(onConnectedLocation);
                                 fetchBottomSheetSensors(onConnectedLocation);
                             } else {
-                                TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                             }
                         }, (dialog, which) -> {
                             Timber.e("Negative Button Clicked");
                             dialog.dismiss();
                             if (getActivity() != null) {
                                 getActivity().finish();
-                                TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
+                                TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                             }
                         });
                     }
@@ -3404,7 +3404,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     getDirectionBottomSheetButtonClicked = 0;
                 }
             } else {
-                TastyToastUtils.showTastyWarningToast(context, "Please enable GPS or turn on Internet");
+                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
             }
         });
 
@@ -3489,7 +3489,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 //                }
                 }
             } else {
-                TastyToastUtils.showTastyWarningToast(context, "Please enable GPS or turn on internet ");
+                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
             }
         });
 
@@ -3546,7 +3546,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     }
                 }
             } else {
-                TastyToastUtils.showTastyWarningToast(context, "Please enable GPS or turn on Internet");
+                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
             }
         });
 
@@ -3658,7 +3658,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 //                }
                 }
             } else {
-                TastyToastUtils.showTastyWarningToast(context, "Please enable GPS! or turn on Internet");
+                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
             }
         });
 
@@ -3771,7 +3771,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     }
                 }
             } else {
-                TastyToastUtils.showTastyWarningToast(context, "Please enable GPS or turn on Internet");
+                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
             }
         });
 

@@ -180,13 +180,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         if (ApplicationUtils.checkInternet(context)) {
                             submitLogin();
                         } else {
-                            TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                         }
                     }, (dialog, which) -> {
                         Timber.e("Negative Button Clicked");
                         dialog.dismiss();
                         if (context != null) {
-                            TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
+                            TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                             finish();
                         }
                     });
@@ -213,7 +213,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     public void onClick(DialogInterface arg0, int arg1) {
 //                        LoginActivity.super.onBackPressed();
                         finish();
-                        TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
+                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                     }
                 }).create();
         AlertDialog dialog = builder.create();
@@ -251,13 +251,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 if (ApplicationUtils.checkInternet(context)) {
                                     submitLogin();
                                 } else {
-                                    TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                                 }
                             }, (dialog, which) -> {
                                 Timber.e("Negative Button Clicked");
                                 dialog.dismiss();
                                 if (context != null) {
-                                    TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
+                                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                                     finish();
                                 }
                             });
@@ -434,7 +434,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if (progressDialog != null) progressDialog.dismiss();
                 if (Objects.requireNonNull(error.getMessage()).equals("java.net.ConnectException: failed to connect to /163.47.157.195 (port 80) after 50000ms: connect failed: ENETUNREACH (Network is unreachable)") || Objects.requireNonNull(error.getMessage()).equals("")) {
 //                    showMessage(error.getMessage());
-                    showMessage("Please Connect to Internet");
+                    showMessage(context.getResources().getString(R.string.connect_to_internet));
                 }
             }
         }) {

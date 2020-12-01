@@ -391,4 +391,11 @@
     <string name="change_language">ভাষা পরিবর্তন</string>
     <string name="where_to">কোথায়?</string>
     <string name="search">খুঁজুন…</string>
+    <string name="connect_to_internet_splash">ইন্টারনেট সংযোগ করুন এবং আবার চেষ্টা করুন</string>
+    <string name="connect_to_gps">জিপিএস-এ সংযোগ করুন</string>
+    <string name="connect_to_parking_app">পার্কিং অ্যাপ্লিকেশনটি ব্যবহার করতে দয়া করে জিপিএস সক্ষম করুন বা ইন্টারনেট চালু করুন</string>
+    <string name="upload_profile_photo">আবার চেষ্টা করুন. প্রোফাইল ছবি আপলোড করুন</string>
+    <string name="thanks_message">আমাদের সাথে থাকার জন্য ধন্যবাদ</string>
+    <string name="reservation_successful">পার্কিং স্পট সফলভাবে সংরক্ষণ করা হয়েছে</string>
+    <string name="mobile_number_not_exist">মোবাইল নম্বর বিদ্যমান নেই</string>
 </resources>

@@ -450,7 +450,7 @@ public class ApplicationUtils {
             public void onClick(View v) {
                 alertDialog.dismiss();
                 activity.finish();
-                TastyToastUtils.showTastySuccessToast(activity, "Thanks for being with us");
+                TastyToastUtils.showTastySuccessToast(activity, activity.getResources().getString(R.string.thanks_message));
             }
         });
 

@@ -260,7 +260,7 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
                         //throw new RuntimeException("Test Crash");
                     }
                 } else {
-                    TastyToastUtils.showTastyWarningToast(mContext, "Please enable GPS! or turn on Internet");
+                    TastyToastUtils.showTastyWarningToast(mContext, mContext.getResources().getString(R.string.connect_to_internet_gps));
                 }
             });
         } else if (viewHolder instanceof SearchHistoryViewHolder) {
@@ -287,7 +287,7 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
                             }
                         }, 100);
                     } else {
-                        TastyToastUtils.showTastyWarningToast(mContext, "Please enable GPS! or turn on Internet");
+                        TastyToastUtils.showTastyWarningToast(mContext, mContext.getResources().getString(R.string.connect_to_internet_gps));
                     }
                 });
             } else {

@@ -71,7 +71,7 @@ public class TermsConditionsActivity extends AppCompatActivity {
             webView.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
             webView.loadUrl("https://docs.google.com/document/d/e/2PACX-1vQ5ikmuSBW8iYYSUXutxZkPGEZ_HhFlxxWKC5m0v9MpPvezmBvyb4WLZjSuuJnXl6xs6f7gc7UwQ223/pub");
         } else {
-            TastyToastUtils.showTastyWarningToast(context, "Please Connect to internet!");
+            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
         }
 
     }

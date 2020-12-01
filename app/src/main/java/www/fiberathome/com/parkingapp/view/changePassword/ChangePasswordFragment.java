@@ -192,14 +192,14 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
                         if (ApplicationUtils.checkInternet(context)) {
                             changePassword();
                         } else {
-                            TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                         }
                     }, (dialog, which) -> {
                         Timber.e("Negative Button Clicked");
                         dialog.dismiss();
                         if (getActivity() != null) {
                             getActivity().finish();
-                            TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
+                            TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                         }
                     });
                 }

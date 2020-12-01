@@ -263,7 +263,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, HomeFragment.newInstance()).commit();
                     SharedData.getInstance().setOnConnectedLocation(null);
                 } else {
-                    TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                 }
                 break;
 
@@ -276,7 +276,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                     // Remove any previous data from SharedData's sensor Data Parking Information
                     SharedData.getInstance().setSensorArea(null);
                 } else {
-                    TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                 }
                 break;
 
@@ -287,7 +287,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                     linearLayoutToolbarTime.setVisibility(View.GONE);
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, BookingFragment.newInstance()).commit();
                 } else {
-                    TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                 }
                 break;
 
@@ -311,7 +311,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                     linearLayoutToolbarTime.setVisibility(View.GONE);
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ProfileFragment.newInstance()).commit();
                 } else {
-                    TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                 }
                 break;
 
@@ -351,7 +351,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                     linearLayoutToolbarTime.setVisibility(View.GONE);
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, PrivacyPolicyFragment.newInstance()).commit();
                 } else {
-                    TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                 }
                 break;
 
@@ -362,7 +362,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                     linearLayoutToolbarTime.setVisibility(View.GONE);
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ShareFragment.newInstance()).commit();
                 } else {
-                    TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                 }
                 break;
         }
@@ -502,13 +502,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 }
             }
         } else {
-            TastyToastUtils.showTastyWarningToast(context, "Please enable GPS or turn on Internet to use Parking App");
+            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_parking_app));
             ApplicationUtils.showAlertDialog(context.getString(R.string.exit_message_main), context, context.getString(R.string.ok), context.getString(R.string.cancel), (dialog, which) -> {
                 Timber.e("Positive Button clicked");
                 dialog.dismiss();
 //                if (context != null) {
                 finish();
-                TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
+                TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
 //                }
 //                if (isGPSEnabled() && ApplicationUtils.checkInternet(context)){
 //                    ApplicationUtils.checkInternet(context)
@@ -797,7 +797,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 toolbar.setTitle(context.getResources().getString(R.string.schedule_parking));
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ScheduleFragment()).commit();
             } else {
-                TastyToastUtils.showTastyWarningToast(context, "Please enable GPS!");
+                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
             }
         });
     }

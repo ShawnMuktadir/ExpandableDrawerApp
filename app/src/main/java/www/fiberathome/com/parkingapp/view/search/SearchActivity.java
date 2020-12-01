@@ -301,7 +301,7 @@ public class SearchActivity extends BaseActivity implements PlacesAutoCompleteAd
                 }
             }
         } else {
-            TastyToastUtils.showTastyWarningToast(context, "Please enable GPS or connect to Internet");
+            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
         }
     }
 
@@ -327,7 +327,7 @@ public class SearchActivity extends BaseActivity implements PlacesAutoCompleteAd
                 finish();
             }
         } else {
-            TastyToastUtils.showTastyWarningToast(context, "Please enable GPS or connect to Internet");
+            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
         }
     }
 

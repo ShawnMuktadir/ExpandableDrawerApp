@@ -133,7 +133,7 @@ public class ParkingFragment extends Fragment implements ParkingAdapter.ParkingA
             Timber.e("onCreateView if check e called");
             editTextParking.addTextChangedListener(filterTextWatcher);
         } else {
-            TastyToastUtils.showTastyWarningToast(context, "Please connect to internet/GPS");
+            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
         }
 
         setListeners();
@@ -147,14 +147,14 @@ public class ParkingFragment extends Fragment implements ParkingAdapter.ParkingA
                 if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
                     fetchParkingSlotSensors();
                 } else {
-                    TastyToastUtils.showTastyWarningToast(context, "Please connect to gps/internet");
+                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
                 }
             }, (dialog, which) -> {
                 Timber.e("Negative Button Clicked");
                 dialog.dismiss();
                 if (getActivity() != null) {
                     getActivity().finish();
-                    TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
+                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                 }
             });
         }
@@ -212,7 +212,7 @@ public class ParkingFragment extends Fragment implements ParkingAdapter.ParkingA
                         .addToBackStack(null)
                         .commit();
             } else {
-                TastyToastUtils.showTastyWarningToast(context, "Please enable GPS!");
+                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
             }
         }
         return false;
@@ -236,7 +236,7 @@ public class ParkingFragment extends Fragment implements ParkingAdapter.ParkingA
             if (ApplicationUtils.checkInternet(context)) {
                 fetchParkingSlotSensorsWithoutProgressBar();
             } else {
-                TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
             }
         });
 
@@ -253,7 +253,7 @@ public class ParkingFragment extends Fragment implements ParkingAdapter.ParkingA
                         parkingAdapter.notifyDataSetChanged();
                         ApplicationUtils.hideKeyboard(context, editTextParking);
                     } else {
-                        TastyToastUtils.showTastyWarningToast(context, "Please connect to internet/GPS");
+                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
                     }
                 } else {
                     //if something to do for empty edittext
@@ -261,7 +261,7 @@ public class ParkingFragment extends Fragment implements ParkingAdapter.ParkingA
                         fetchParkingSlotSensorsWithoutProgressBar();
                         ApplicationUtils.hideKeyboard(context, editTextParking);
                     } else {
-                        TastyToastUtils.showTastyWarningToast(context, "Please connect to internet/GPS");
+                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
                     }
                     return true;
                 }
@@ -382,7 +382,7 @@ public class ParkingFragment extends Fragment implements ParkingAdapter.ParkingA
             }
             parkingAdapter.filterList(filteredList);
         } else {
-            TastyToastUtils.showTastyWarningToast(context, "Please connect to internet/GPS");
+            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
         }
 
     }
@@ -612,7 +612,7 @@ public class ParkingFragment extends Fragment implements ParkingAdapter.ParkingA
 
 //            EventBus.getDefault().post(new GetDirectionEvent(new LatLng(sensorAreas.get(position).getLat(), sensorAreas.get(position).getLng())));
         } else {
-            TastyToastUtils.showTastyWarningToast(context, "Please connect to internet/GPS");
+            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
         }
     }
 }

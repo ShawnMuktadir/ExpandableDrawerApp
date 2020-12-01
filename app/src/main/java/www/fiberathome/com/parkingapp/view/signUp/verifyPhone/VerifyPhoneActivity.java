@@ -620,7 +620,7 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
                     public void onClick(DialogInterface arg0, int arg1) {
 //                        VerifyPhoneActivity.super.onBackPressed();
                         finish();
-                        TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
+                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                     }
                 }).create();
         AlertDialog dialog = builder.create();
