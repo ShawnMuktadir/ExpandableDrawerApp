@@ -1154,12 +1154,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
 
+    public void onDestroyView() {
         if (unbinder != null) {
             unbinder.unbind();
         }
+        super.onDestroyView();
     }
 
     public static Boolean isLocationEnabled(Context context) {

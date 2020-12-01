@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -13,12 +14,15 @@ import android.widget.Toast;
 //import com.iotsens.sdk.sensors.SensorsRequest;
 //import com.iotsens.sdk.sensors.SensorsRequestBuilder;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.view.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.view.main.MainActivity;
@@ -34,6 +38,7 @@ public class StartActivity extends BaseActivity implements View.OnClickListener 
     @BindView(R.id.button_signup)
     Button btnSignup;
 
+    private Unbinder unbinder;
     private Context context;
 
     public static final String APPLICATION_ID = "FIBERATHOMEAPP"; // must be proper application identifier
@@ -44,7 +49,7 @@ public class StartActivity extends BaseActivity implements View.OnClickListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
-        ButterKnife.bind(this);
+        unbinder = ButterKnife.bind(this);
         context = this;
 
         if (SharedPreManager.getInstance(getApplicationContext()).isLoggedIn()) {
@@ -60,19 +65,107 @@ public class StartActivity extends BaseActivity implements View.OnClickListener 
         switch (view.getId()) {
             case R.id.button_login:
                 // Do something
-                Intent loginIntent = new Intent(StartActivity.this, LoginActivity.class);
+                /*Intent loginIntent = new Intent(StartActivity.this, LoginActivity.class);
                 startActivity(loginIntent);
-                finish();
+                finish();*/
+                openActivity(new Intent(StartActivity.this, LoginActivity.class));
                 break;
 
             case R.id.button_signup:
                 // Do something
-                Intent signUpIntent = new Intent(StartActivity.this, SignUpActivity.class);
-//                Intent signUpIntent = new Intent(StartActivity.this, RegistrationActivity.class);
+                /*Intent signUpIntent = new Intent(StartActivity.this, SignUpActivity.class);
                 startActivity(signUpIntent);
-                finish();
+                finish();*/
+                openActivity(new Intent(StartActivity.this, SignUpActivity.class));
                 break;
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (unbinder != null) {
+            unbinder.unbind();
+        }
+        super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage("Are you sure you want to exit?")
+                .setNegativeButton(android.R.string.no, null)
+                .setPositiveButton(android.R.string.yes, (arg0, arg1) -> {
+                    StartActivity.super.onBackPressed();
+                    TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
+                }).create();
+        AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface arg0) {
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.black));
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.red));
+                //dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(getResources().getColor(R.color.black));
+            }
+        });
+        dialog.show();
+    }
+
+    private void openActivity(Intent intent) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (ApplicationUtils.checkInternet(context)) {
+                    startActivity(intent);
+                    finish();
+                } else {
+                    ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
+                        Timber.e("Positive Button clicked");
+                        /*if (userManager.isLoggedIn())
+                            openActivity(new Intent(context, MainActivity.class));
+                        else
+                            openActivity(new Intent(context, LoginActivity.class));*/
+                        if (ApplicationUtils.checkInternet(context)) {
+                            if (SharedPreManager.getInstance(getApplicationContext()).isLoggedIn() && SharedPreManager.getInstance(context) != null && SharedPreManager.getInstance(context).isWaitingForLocationPermission()) {
+                                Timber.e("activity start if -> %s", SharedPreManager.getInstance(context).isWaitingForLocationPermission());
+                                Intent intent = new Intent(StartActivity.this, MainActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                                finish();
+                            } else if (SharedPreManager.getInstance(getApplicationContext()).isLoggedIn() && !SharedPreManager.getInstance(context).isWaitingForLocationPermission()) {
+                                Timber.e("activity start else if -> %s", SharedPreManager.getInstance(context).isWaitingForLocationPermission());
+                                Intent intent = new Intent(StartActivity.this, PermissionActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                                finish();
+                            } else {
+                                Timber.e("activity start else -> %s", SharedPreManager.getInstance(context).isWaitingForLocationPermission());
+                                Intent intent = new Intent(StartActivity.this, LoginActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                                finish();
+                            }
+                        } else{
+                            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                        }
+                    }, (dialog, which) -> {
+                        Timber.e("Negative Button Clicked");
+                        dialog.dismiss();
+                        finish();
+                    });
+//            ApplicationUtils.showMessageDialog(getString(R.string.open_error), context);
+                }
+            }
+        }, 1000);
     }
 
     public void splash() {
@@ -80,7 +173,7 @@ public class StartActivity extends BaseActivity implements View.OnClickListener 
         Thread timerTread = new Thread() {
             public void run() {
                 try {
-                    // sleep(1000);
+                    //sleep(1000);
 
                     // Check user is logged in
                     if (SharedPreManager.getInstance(getApplicationContext()).isLoggedIn() && SharedPreManager.getInstance(context) != null && SharedPreManager.getInstance(context).isWaitingForLocationPermission()) {
@@ -116,45 +209,7 @@ public class StartActivity extends BaseActivity implements View.OnClickListener 
         timerTread.start();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
     private void showMessage(String message) {
         Toast.makeText(StartActivity.this, message, Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void onBackPressed() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setMessage("Are you sure you want to exit?")
-                .setNegativeButton(android.R.string.no, null)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        StartActivity.super.onBackPressed();
-                        TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
-                    }
-                }).create();
-        AlertDialog dialog = builder.create();
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface arg0) {
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.black));
-                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.red));
-                //dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(getResources().getColor(R.color.black));
-            }
-        });
-        dialog.show();
     }
 }

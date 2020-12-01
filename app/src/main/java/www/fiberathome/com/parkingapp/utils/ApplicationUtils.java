@@ -233,6 +233,18 @@ public class ApplicationUtils {
         return isConnected;
     }
 
+    public static boolean isConnected(Context context){
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo wifiInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        NetworkInfo mobileInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+
+        if ((wifiInfo != null && wifiInfo.isConnected()) || (mobileInfo != null && mobileInfo.isConnected())) {
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     public static void showMessageDialog(String message, Context context) {
         if (context != null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);

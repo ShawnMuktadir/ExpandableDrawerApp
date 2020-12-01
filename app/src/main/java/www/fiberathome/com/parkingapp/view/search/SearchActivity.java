@@ -3,14 +3,17 @@ package www.fiberathome.com.parkingapp.view.search;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -55,6 +58,7 @@ import java.util.function.Predicate;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
@@ -92,6 +96,7 @@ public class SearchActivity extends BaseActivity implements PlacesAutoCompleteAd
     @BindView(R.id.tvEmptyView)
     TextView tvEmptyView;
 
+    private Unbinder unbinder;
     private PlacesAutoCompleteAdapter mAutoCompleteAdapter;
     private PlacesClient placesClient;
     private Context context;
@@ -100,21 +105,28 @@ public class SearchActivity extends BaseActivity implements PlacesAutoCompleteAd
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+        unbinder = ButterKnife.bind(this);
         context = this;
-        ButterKnife.bind(this);
-//        initUI();
         setListeners();
+
+        //this.getSupportActionBar().hide();
 
         Places.initialize(getApplicationContext(), context.getResources().getString(R.string.google_maps_key));
         placesClient = Places.createClient(this);
 
-//        if (searchVisitorDataList != null)
-        fetchSearchVisitorPlace(SharedPreManager.getInstance(context).getUser().getMobileNo());
-
-        Timber.e("searchActivity mobileNo -> %s", SharedPreManager.getInstance(context).getUser().getMobileNo());
-        editTextSearch.addTextChangedListener(filterTextWatcher);
-        editTextSearch.requestFocus();
-        editTextSearch.requestLayout();
+        if (ApplicationUtils.checkInternet(context)) {
+            fetchSearchVisitorPlace(SharedPreManager.getInstance(context).getUser().getMobileNo());
+            Timber.e("searchActivity mobileNo -> %s", SharedPreManager.getInstance(context).getUser().getMobileNo());
+            editTextSearch.addTextChangedListener(filterTextWatcher);
+            editTextSearch.requestFocus();
+            editTextSearch.requestLayout();
+        } else {
+            /*editTextSearch.setFocusableInTouchMode(false);
+            editTextSearch.setFocusable(false);
+            editTextSearch.setFocusableInTouchMode(true);
+            editTextSearch.setFocusable(true);*/
+            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+        }
 
         setPlacesRecyclerAdapter();
 
@@ -148,14 +160,22 @@ public class SearchActivity extends BaseActivity implements PlacesAutoCompleteAd
         editTextSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+                if (!ApplicationUtils.checkInternet(context)) {
+                    ApplicationUtils.hideKeyboard(context, editTextSearch);
+                }
             }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
                 if (charSequence.length() > 0) {
                     ivClearSearchText.setVisibility(View.VISIBLE);
+                    if (!ApplicationUtils.checkInternet(context)) {
+                        ApplicationUtils.hideKeyboard(context, editTextSearch);
+                    }
                 } else {
+                    if (!ApplicationUtils.checkInternet(context)) {
+                        ApplicationUtils.hideKeyboard(context, editTextSearch);
+                    }
                     ivClearSearchText.setVisibility(View.GONE);
                 }
             }
@@ -163,11 +183,18 @@ public class SearchActivity extends BaseActivity implements PlacesAutoCompleteAd
             @Override
             public void afterTextChanged(Editable s) {
                 if (s.length() == 0) {
+                    if (!ApplicationUtils.checkInternet(context)) {
+                        ApplicationUtils.hideKeyboard(context, editTextSearch);
+                    }
                     if (searchVisitorDataList != null) {
                         hideNoData();
                         fetchSearchVisitorPlace(SharedPreManager.getInstance(context).getUser().getMobileNo());
                     } else {
                         setNoData();
+                    }
+                } else {
+                    if (!ApplicationUtils.checkInternet(context)) {
+                        ApplicationUtils.hideKeyboard(context, editTextSearch);
                     }
                 }
 //                if (s.length() >= 0) {
@@ -305,6 +332,11 @@ public class SearchActivity extends BaseActivity implements PlacesAutoCompleteAd
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
         if (isFinishing()) {
@@ -313,9 +345,45 @@ public class SearchActivity extends BaseActivity implements PlacesAutoCompleteAd
     }
 
     @Override
+    protected void onDestroy() {
+        if (unbinder != null) {
+            unbinder.unbind();
+        }
+        super.onDestroy();
+    }
+
+    @Override
     public void onBackPressed() {
         super.onBackPressed();
     }
+
+    /*@Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        int x = (int) ev.getX();
+        int y = (int) ev.getY();
+
+        if (ev.getAction() == MotionEvent.ACTION_DOWN &&
+                !getLocationOnScreen(editTextSearch).contains(x, y)) {
+            InputMethodManager input = (InputMethodManager)
+                    context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            input.hideSoftInputFromWindow(editTextSearch.getWindowToken(), 0);
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    protected Rect getLocationOnScreen(EditText mEditText) {
+        Rect mRect = new Rect();
+        int[] location = new int[2];
+
+        mEditText.getLocationOnScreen(location);
+
+        mRect.left = location[0];
+        mRect.top = location[1];
+        mRect.right = location[0] + mEditText.getWidth();
+        mRect.bottom = location[1] + mEditText.getHeight();
+
+        return mRect;
+    }*/
 
     private TextWatcher filterTextWatcher = new TextWatcher() {
 
@@ -325,11 +393,16 @@ public class SearchActivity extends BaseActivity implements PlacesAutoCompleteAd
 //            }
 
             mAutoCompleteAdapter.notifyDataSetChanged();
+            if (!ApplicationUtils.checkInternet(context)){
+                ApplicationUtils.hideKeyboard(context, editTextSearch);
+            }
 
         }
 
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+            if (!ApplicationUtils.checkInternet(context)){
+                ApplicationUtils.hideKeyboard(context, editTextSearch);
+            }
         }
 
         //!s.toString().equals("")
@@ -337,8 +410,14 @@ public class SearchActivity extends BaseActivity implements PlacesAutoCompleteAd
             if (s.toString().length() > 0) {
                 mAutoCompleteAdapter.getFilter().filter(s.toString());
                 mAutoCompleteAdapter.notifyDataSetChanged();
+                if (!ApplicationUtils.checkInternet(context)){
+                    ApplicationUtils.hideKeyboard(context, editTextSearch);
+                }
             } else {
                 mAutoCompleteAdapter.clearList();
+                if (!ApplicationUtils.checkInternet(context)){
+                    ApplicationUtils.hideKeyboard(context, editTextSearch);
+                }
             }
         }
     };

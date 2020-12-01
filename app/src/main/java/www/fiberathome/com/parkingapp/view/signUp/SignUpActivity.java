@@ -54,6 +54,7 @@ import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import de.hdodenhof.circleimageview.CircleImageView;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
@@ -104,6 +105,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     @BindView(R.id.textViewTermsConditions)
     TextView textViewTermsConditions;
 
+    private Unbinder unbinder;
     private Context context;
     private Bitmap bitmap;
 
@@ -113,7 +115,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
-        ButterKnife.bind(this);
+        unbinder = ButterKnife.bind(this);
         context = this;
         setListeners();
 
@@ -224,6 +226,14 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             }
         });
         dialog.show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (unbinder != null) {
+            unbinder.unbind();
+        }
+        super.onDestroy();
     }
 
     private SpannableStringBuilder addMultipleClickablePart(String str) {
