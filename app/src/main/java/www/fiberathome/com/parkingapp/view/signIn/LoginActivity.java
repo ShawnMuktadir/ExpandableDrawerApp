@@ -57,6 +57,7 @@ import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.view.forgetPassword.ForgetPasswordActivity;
+import www.fiberathome.com.parkingapp.view.helper.ProgressView;
 import www.fiberathome.com.parkingapp.view.main.MainActivity;
 import www.fiberathome.com.parkingapp.view.permission.PermissionActivity;
 import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
@@ -65,7 +66,7 @@ import www.fiberathome.com.parkingapp.utils.Validator;
 import www.fiberathome.com.parkingapp.view.signUp.SignUpActivity;
 import www.fiberathome.com.parkingapp.view.signUp.verifyPhone.VerifyPhoneActivity;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener, ProgressView {
 
     private static final String TAG = LoginActivity.class.getSimpleName();
 
@@ -87,6 +88,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     EditText editTextPassword;
     @BindView(R.id.relativeLayoutLogin)
     RelativeLayout relativeLayoutLogin;
+    @BindView(R.id.login_rl_invisible)
+    RelativeLayout relativeLayoutInvisible;
 
     private Unbinder unbinder;
     private Context context;
@@ -236,6 +239,26 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onDestroy();
     }
 
+    @Override
+    public void showProgress() {
+        //progressBarLogin.setVisibility(View.VISIBLE);
+        relativeLayoutInvisible.setVisibility(View.VISIBLE);
+        editTextMobile.setEnabled(false);
+        editTextPassword.setEnabled(false);
+        btnSignIn.setEnabled(false);
+        btnSignIn.setClickable(false);
+    }
+
+    @Override
+    public void hideProgress() {
+        //progressBarLogin.setVisibility(View.INVISIBLE);
+        relativeLayoutInvisible.setVisibility(View.GONE);
+        editTextMobile.setEnabled(true);
+        editTextPassword.setEnabled(true);
+        btnSignIn.setEnabled(true);
+        btnSignIn.setClickable(true);
+    }
+
     private void setListeners() {
         editTextPassword.setOnEditorActionListener(
                 (v, actionId, event) -> {
@@ -320,9 +343,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         });
     }
 
-    /**
-     * @desc submit Form
-     */
     private void submitLogin() {
         if (checkFields()) {
             String mobileNo = editTextMobile.getText().toString().trim();
@@ -343,90 +363,86 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void checkLogin(final String mobileNo, final String password) {
 
         progressDialog = ApplicationUtils.progressDialog(context, "Please wait...");
-
+        showProgress();
         btnOTP.setVisibility(View.GONE);
 
         HttpsTrustManager.allowAllSSL();
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_LOGIN, new Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_LOGIN, response -> {
+            // remove the progress bar
+            Timber.e("URL -> %s", AppConfig.URL_LOGIN);
+            progressDialog.dismiss();
+            hideProgress();
+            try {
+                JSONObject jsonObject = new JSONObject(response);
 
-            @Override
-            public void onResponse(String response) {
-                // remove the progress bar
-                Timber.e("URL -> %s", AppConfig.URL_LOGIN);
-                progressDialog.dismiss();
+                Timber.e("jsonObject login-> %s", jsonObject.toString());
 
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
+                if (!jsonObject.getBoolean("error")) {
 
-                    Timber.e("jsonObject login-> %s", jsonObject.toString());
+                    // getting the user from the response
+                    JSONObject userJson = jsonObject.getJSONObject("user");
 
-                    if (!jsonObject.getBoolean("error")) {
+                    // creating a new user object
+                    User user = new User();
+                    user.setId(userJson.getInt("id"));
+                    user.setFullName(userJson.getString("fullname"));
+                    user.setMobileNo(userJson.getString("mobile_no"));
+                    user.setVehicleNo(userJson.getString("vehicle_no"));
+                    user.setProfilePic(userJson.getString("image"));
 
-                        // getting the user from the response
-                        JSONObject userJson = jsonObject.getJSONObject("user");
+                    // storing the user in sharedPreference
+                    SharedPreManager.getInstance(getApplicationContext()).userLogin(user);
+                    Timber.e("user after login -> %s", new Gson().toJson(user));
 
-                        // creating a new user object
-                        User user = new User();
-                        user.setId(userJson.getInt("id"));
-                        user.setFullName(userJson.getString("fullname"));
-                        user.setMobileNo(userJson.getString("mobile_no"));
-                        user.setVehicleNo(userJson.getString("vehicle_no"));
-                        user.setProfilePic(userJson.getString("image"));
+                    if (response.equals("Please verify Your Account by OTP")) {
+                        Intent verifyPhoneIntent = new Intent(LoginActivity.this, VerifyPhoneActivity.class);
+                        if (checkFields()) {
+                            verifyPhoneIntent.putExtra("mobile_no", mobileNo);
+                        }
+                        startActivity(verifyPhoneIntent);
+                        finish();
+                    } else {
+                        // Move to another Activity
 
-                        // storing the user in sharedPreference
-                        SharedPreManager.getInstance(getApplicationContext()).userLogin(user);
-                        Timber.e("user after login -> %s", new Gson().toJson(user));
-
-                        if (response.equals("Please verify Your Account by OTP")) {
-                            Intent verifyPhoneIntent = new Intent(LoginActivity.this, VerifyPhoneActivity.class);
-                            if (checkFields()) {
-                                verifyPhoneIntent.putExtra("mobile_no", mobileNo);
-                            }
-                            startActivity(verifyPhoneIntent);
+                        if ((ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+                            Timber.e("activity login if -> %s", SharedPreManager.getInstance(context).isWaitingForLocationPermission());
+                            Intent intent = new Intent(LoginActivity.this, PermissionActivity.class);
+                            startActivity(intent);
+                            finish();
+                            //Toast.makeText(context, "nai ami", Toast.LENGTH_SHORT).show();
+                        } else if (!SharedPreManager.getInstance(context).isWaitingForLocationPermission()) {
+                            Timber.e("activity login else if -> %s", SharedPreManager.getInstance(context).isWaitingForLocationPermission());
+                            Intent intent = new Intent(LoginActivity.this, PermissionActivity.class);
+                            startActivity(intent);
                             finish();
                         } else {
-                            // Move to another Activity
-
-                            if ((ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
-                                Timber.e("activity login if -> %s", SharedPreManager.getInstance(context).isWaitingForLocationPermission());
-                                Intent intent = new Intent(LoginActivity.this, PermissionActivity.class);
-                                startActivity(intent);
-                                finish();
-                                //Toast.makeText(context, "nai ami", Toast.LENGTH_SHORT).show();
-                            } else if (!SharedPreManager.getInstance(context).isWaitingForLocationPermission()) {
-                                Timber.e("activity login else if -> %s", SharedPreManager.getInstance(context).isWaitingForLocationPermission());
-                                Intent intent = new Intent(LoginActivity.this, PermissionActivity.class);
-                                startActivity(intent);
-                                finish();
-                            } else {
-                                Timber.e("activity login else -> %s", SharedPreManager.getInstance(context).isWaitingForLocationPermission());
-                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                startActivity(intent);
-                                finish();
-                            }
-                        }
-
-                    } else if (jsonObject.getBoolean("error") && jsonObject.has("authentication")) {
-                        // IF ERROR OCCURS AND AUTHENTICATION IS INVALID
-                        if (jsonObject.getString("message").equals("Please verify Your Account by OTP")) {
-                            showMessage("Please verify Your Account by OTP");
-                            btnOTP.setVisibility(View.GONE);
-                            Intent verifyPhoneIntent = new Intent(LoginActivity.this, VerifyPhoneActivity.class);
-                            verifyPhoneIntent.putExtra("mobile_no", mobileNo);
-                            verifyPhoneIntent.putExtra("password", password);
-                            startActivity(verifyPhoneIntent);
+                            Timber.e("activity login else -> %s", SharedPreManager.getInstance(context).isWaitingForLocationPermission());
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            startActivity(intent);
                             finish();
                         }
-                    } else {
-                        Timber.e("LoginActivity error message -> %s", jsonObject.getString("message"));
-                        showMessage(jsonObject.getString("message"));
                     }
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                } else if (jsonObject.getBoolean("error") && jsonObject.has("authentication")) {
+                    // IF ERROR OCCURS AND AUTHENTICATION IS INVALID
+                    if (jsonObject.getString("message").equals("Please verify Your Account by OTP")) {
+                        showMessage("Please verify Your Account by OTP");
+                        btnOTP.setVisibility(View.GONE);
+                        Intent verifyPhoneIntent = new Intent(LoginActivity.this, VerifyPhoneActivity.class);
+                        verifyPhoneIntent.putExtra("mobile_no", mobileNo);
+                        verifyPhoneIntent.putExtra("password", password);
+                        startActivity(verifyPhoneIntent);
+                        finish();
+                    }
+                } else {
+                    Timber.e("LoginActivity error message -> %s", jsonObject.getString("message"));
+                    showMessage(jsonObject.getString("message"));
                 }
 
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
+
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {

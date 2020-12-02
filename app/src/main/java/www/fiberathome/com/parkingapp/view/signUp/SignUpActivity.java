@@ -26,6 +26,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -63,6 +64,7 @@ import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+import www.fiberathome.com.parkingapp.view.helper.ProgressView;
 import www.fiberathome.com.parkingapp.view.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.view.main.MainActivity;
 import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
@@ -72,7 +74,7 @@ import www.fiberathome.com.parkingapp.view.privacyPolicy.PrivacyPolicyActivity;
 import www.fiberathome.com.parkingapp.view.termsConditions.TermsConditionsActivity;
 import www.fiberathome.com.parkingapp.view.signUp.verifyPhone.VerifyPhoneActivity;
 
-public class SignUpActivity extends AppCompatActivity implements View.OnClickListener {
+public class SignUpActivity extends AppCompatActivity implements View.OnClickListener, ProgressView {
 
     public static final String TAG = SignUpActivity.class.getSimpleName();
     private static final int REQUEST_PICK_GALLERY = 1001;
@@ -104,6 +106,8 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     CircleImageView imageViewCaptureImage;
     @BindView(R.id.textViewTermsConditions)
     TextView textViewTermsConditions;
+    @BindView(R.id.login_rl_invisible)
+    RelativeLayout relativeLayoutInvisible;
 
     private Unbinder unbinder;
     private Context context;
@@ -234,6 +238,66 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             unbinder.unbind();
         }
         super.onDestroy();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_CANCELED) {
+            return;
+        }
+
+        if (requestCode == REQUEST_PICK_GALLERY && resultCode == RESULT_OK && data != null) {
+            Uri contentURI = data.getData();
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(SignUpActivity.this.getContentResolver(), contentURI);
+                Bitmap convertedImage = getResizedBitmap(bitmap, 500);
+//                    Toast.makeText(SignUpActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
+                imageViewUploadProfileImage.setImageBitmap(convertedImage);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(SignUpActivity.this, "Something went wrong! File size not exceed 3 MB", Toast.LENGTH_SHORT).show();
+            }
+
+        } else if (requestCode == REQUEST_PICK_CAMERA && resultCode == RESULT_OK && data != null) {
+            // IF CAMERA SELECTED
+            try {
+                bitmap = (Bitmap) data.getExtras().get("data");
+                imageViewUploadProfileImage.setImageBitmap(bitmap);
+//                saveImage(thumbnail);
+//                Toast.makeText(SignUpActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(SignUpActivity.this, "Image Capture Failed!", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @Override
+    public void showProgress() {
+        //progressBarLogin.setVisibility(View.VISIBLE);
+        relativeLayoutInvisible.setVisibility(View.VISIBLE);
+        editTextFullName.setEnabled(false);
+        editTextMobileNumber.setEnabled(false);
+        editTextVehicleRegNumber.setEnabled(false);
+        editTextPassword.setEnabled(false);
+        btnSignup.setEnabled(false);
+        btnSignup.setClickable(false);
+    }
+
+    @Override
+    public void hideProgress() {
+        //progressBarLogin.setVisibility(View.INVISIBLE);
+        relativeLayoutInvisible.setVisibility(View.GONE);
+        editTextFullName.setEnabled(true);
+        editTextMobileNumber.setEnabled(true);
+        editTextVehicleRegNumber.setEnabled(true);
+        editTextPassword.setEnabled(true);
+        btnSignup.setEnabled(true);
+        btnSignup.setClickable(true);
     }
 
     private SpannableStringBuilder addMultipleClickablePart(String str) {
@@ -514,42 +578,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         startActivityForResult(cameraIntent, REQUEST_PICK_CAMERA);
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (resultCode == RESULT_CANCELED) {
-            return;
-        }
-
-        if (requestCode == REQUEST_PICK_GALLERY && resultCode == RESULT_OK && data != null) {
-            Uri contentURI = data.getData();
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(SignUpActivity.this.getContentResolver(), contentURI);
-                Bitmap convertedImage = getResizedBitmap(bitmap, 500);
-//                    Toast.makeText(SignUpActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
-                imageViewUploadProfileImage.setImageBitmap(convertedImage);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                Toast.makeText(SignUpActivity.this, "Something went wrong! File size not exceed 3 MB", Toast.LENGTH_SHORT).show();
-            }
-
-        } else if (requestCode == REQUEST_PICK_CAMERA && resultCode == RESULT_OK && data != null) {
-            // IF CAMERA SELECTED
-            try {
-                bitmap = (Bitmap) data.getExtras().get("data");
-                imageViewUploadProfileImage.setImageBitmap(bitmap);
-//                saveImage(thumbnail);
-//                Toast.makeText(SignUpActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
-            } catch (Exception e) {
-                e.printStackTrace();
-                Toast.makeText(SignUpActivity.this, "Image Capture Failed!", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
     public Bitmap getResizedBitmap(Bitmap image, int maxSize) {
         int width = image.getWidth();
         int height = image.getHeight();
@@ -610,16 +638,17 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    private void registerUser(final String fullname, final String mobileNo, final String vehicleNo, final String password) {
+    private void registerUser(final String fullName, final String mobileNo, final String vehicleNo, final String password) {
 
         progressDialog = ApplicationUtils.progressDialog(context, "Please wait...");
+        showProgress();
 
         HttpsTrustManager.allowAllSSL();
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_REGISTER, response -> {
 
             progressDialog.dismiss();
-
+            hideProgress();
             try {
                 //converting response to json object
                 JSONObject jsonObject = new JSONObject(response);
@@ -674,7 +703,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
-                params.put("fullname", fullname);
+                params.put("fullname", fullName);
                 params.put("password", password);
                 SharedData.getInstance().setPassword(password);
                 params.put("mobile_no", mobileNo);
