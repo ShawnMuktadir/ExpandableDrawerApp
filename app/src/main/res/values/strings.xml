@@ -397,4 +397,6 @@
     <string name="thanks_message">Thanks for being with us</string>
     <string name="reservation_successful">Parking Spot has Reservated Successfully</string>
     <string name="mobile_number_not_exist">Mobile Number doesn\'t exists</string>
+    <string name="time_toolbar">Time</string>
+    <string name="when_user_can_book">Once reach your destination you can reserve your booking spot</string>
 </resources>

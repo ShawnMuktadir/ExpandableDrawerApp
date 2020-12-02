@@ -65,6 +65,8 @@ public class ForgetPasswordActivity extends AppCompatActivity {
         setContentView(R.layout.activity_forget_password);
         context = this;
         ButterKnife.bind(this);
+        editTextMobileNumber.requestFocus();
+        editTextMobileNumber.requestLayout();
         setListener();
     }
 

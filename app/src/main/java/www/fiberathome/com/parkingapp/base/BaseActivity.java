@@ -221,7 +221,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
             FrameLayout.LayoutParams parentParams = (FrameLayout.LayoutParams) layout.getLayoutParams();
             parentParams.gravity = Gravity.TOP;
             //parentParams.setMargins(0, 0, 0, 0 - navbarHeight + 50);
-            parentParams.setMargins(0, navbarHeight - 100, 0, 0);
+            parentParams.setMargins(0, navbarHeight - 150, 0, 0);
             layout.setLayoutParams(parentParams);
             layout.setPadding(0, 0, 0, 0);
             layout.setLayoutParams(parentParams);

@@ -982,7 +982,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
             mMap.animateCamera(CameraUpdateFactory.zoomTo(16f));
             bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._90sdp));
-            linearLayoutParkingAdapterBackBottom.setVisibility(View.INVISIBLE);
+            try {
+                linearLayoutParkingAdapterBackBottom.setVisibility(View.INVISIBLE);
+            } catch (Exception e) {
+                e.getCause();
+            }
             animateCamera(onConnectedLocation);
             if (ApplicationUtils.checkInternet(context)) {
                 fetchSensors(onConnectedLocation);
@@ -2248,7 +2252,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                         //dekhte hobee eta koi boshbe
                         if (getDirectionButtonClicked == 0) {
                             linearLayoutParkingAdapterBackBottom.setOnClickListener(v -> {
-                                ApplicationUtils.showMessageDialog("Once reach your destination you can reserve your booking spot!!!", context);
+                                ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.when_user_can_book), context);
                             });
                         } else {
                             linearLayoutParkingAdapterBackBottom.setOnClickListener(v -> {
@@ -3604,7 +3608,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                                 btnMarkerGetDirection.setEnabled(true);
                                 btnMarkerGetDirection.setFocusable(true);
                                 btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
-                        } else {
+                            } else {
                                 btnMarkerGetDirection.setText(context.getResources().getString(R.string.confirm_booking));
                                 btnMarkerGetDirection.setEnabled(true);
                                 btnMarkerGetDirection.setFocusable(true);

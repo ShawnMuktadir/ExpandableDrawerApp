@@ -9,7 +9,7 @@
     tools:context=".view.main.MainActivity">
 
     <androidx.drawerlayout.widget.DrawerLayout
-        android:id="@+id/drawerlayoutMain"
+        android:id="@+id/drawerLayoutMain"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"

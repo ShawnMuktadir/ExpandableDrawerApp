@@ -56,7 +56,7 @@
     <string name="home">হোম</string>
     <string name="bookings">বুকিং</string>
     <string name="profile">প্রোফাইল</string>
-    <string name="logout">প্রস্থান</string>
+    <string name="logout">লগ আউট</string>
     <string name="law">আইন</string>
     <string name="get_discount">ছাড় পান</string>
     <string name="give_review_rating">রেটিং / পর্যালোচনা দিন</string>
@@ -398,4 +398,6 @@
     <string name="thanks_message">আমাদের সাথে থাকার জন্য ধন্যবাদ</string>
     <string name="reservation_successful">পার্কিং স্পট সফলভাবে সংরক্ষণ করা হয়েছে</string>
     <string name="mobile_number_not_exist">মোবাইল নম্বর বিদ্যমান নেই</string>
+    <string name="time_toolbar">সময়</string>
+    <string name="when_user_can_book">একবার আপনার গন্তব্য পৌঁছে আপনি আপনার বুকিং স্পট সংরক্ষণ করতে পারেন</string>
 </resources>

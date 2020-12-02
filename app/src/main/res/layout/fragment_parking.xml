@@ -44,7 +44,7 @@
                     android:drawablePadding="@dimen/dim10"
                     android:textColor="@android:color/black"
                     android:textStyle="normal"
-                    android:hint="Search..."
+                    android:hint="@string/search"
                     android:imeOptions="actionSearch"
                     android:inputType="text"
                     android:background="@drawable/white_border"

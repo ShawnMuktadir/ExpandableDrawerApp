@@ -76,7 +76,7 @@ public class SplashFragment extends BaseFragment {
     private void openActivity(Intent intent) {
         new Handler().postDelayed(() -> {
             if (ApplicationUtils.checkInternet(context)) {
-                startActivity(intent);
+                context.startActivity(intent);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.finish();
             } else {

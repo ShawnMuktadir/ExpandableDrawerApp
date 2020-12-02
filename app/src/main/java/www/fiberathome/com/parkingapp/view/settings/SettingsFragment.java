@@ -135,14 +135,14 @@ public class SettingsFragment extends Fragment implements View.OnClickListener, 
                             context = LocaleHelper.setLocale(context, "en");
                             resources = context.getResources();
                             textViewLanguage.setText(resources.getString(R.string.lang_select_en));
-                            setLocale("en", "US");
+                            //setLocale("en", "US");
                             setNewLocale("en", true);
                             break;
                         case 1:
                             context = LocaleHelper.setLocale(context, "bn");
                             resources = context.getResources();
                             textViewLanguage.setText(resources.getString(R.string.lang_select_bn));
-                            setLocale("bn", "BD");
+                            //setLocale("bn", "BD");
                             setNewLocale("bn", true);
                             break;
                     }

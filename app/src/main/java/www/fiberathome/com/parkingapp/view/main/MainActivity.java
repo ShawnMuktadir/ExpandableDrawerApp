@@ -2,10 +2,8 @@ package www.fiberathome.com.parkingapp.view.main;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
@@ -31,8 +29,6 @@ import android.widget.Toast;
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
@@ -44,16 +40,12 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
@@ -75,14 +67,11 @@ import butterknife.Unbinder;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
-import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
 import www.fiberathome.com.parkingapp.module.eventBus.GetDirectionEvent;
 import www.fiberathome.com.parkingapp.module.eventBus.SetMarkerEvent;
-import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
-import www.fiberathome.com.parkingapp.utils.LocaleHelper;
 import www.fiberathome.com.parkingapp.view.permission.listener.DexterPermissionListener;
 import www.fiberathome.com.parkingapp.view.permission.listener.PermissionInterface;
 import www.fiberathome.com.parkingapp.model.loginUser.User;
@@ -90,7 +79,6 @@ import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.LocationHelper;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.view.location.LocationActivity;
-import www.fiberathome.com.parkingapp.view.settings.SettingsActivity;
 import www.fiberathome.com.parkingapp.view.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.view.permission.PermissionActivity;
 import www.fiberathome.com.parkingapp.view.booking.ScheduleFragment;
@@ -120,7 +108,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     public LinearLayout linearLayoutToolbarTime;
     @BindView(R.id.navigationView)
     public NavigationView navigationView;
-    @BindView(R.id.drawerlayoutMain)
+    @BindView(R.id.drawerLayoutMain)
     DrawerLayout drawerLayoutMain;
     @BindView(R.id.toolbar)
     public Toolbar toolbar;
@@ -759,15 +747,12 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private void changeDefaultActionBarDrawerToogleIcon() {
         actionBarDrawerToggle.setDrawerIndicatorEnabled(false);
         actionBarDrawerToggle.setHomeAsUpIndicator(R.drawable.ic_drawer);
-        actionBarDrawerToggle.getDrawerArrowDrawable().setColor(context.getResources().getColor(R.color.black));
-        actionBarDrawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (drawerLayoutMain.isDrawerVisible(GravityCompat.START)) {
-                    drawerLayoutMain.closeDrawer(GravityCompat.START);
-                } else {
-                    drawerLayoutMain.openDrawer(GravityCompat.START);
-                }
+        actionBarDrawerToggle.getDrawerArrowDrawable().setColor(context.getResources().getColor(R.color.transparent_black));
+        actionBarDrawerToggle.setToolbarNavigationClickListener(v -> {
+            if (drawerLayoutMain.isDrawerVisible(GravityCompat.START)) {
+                drawerLayoutMain.closeDrawer(GravityCompat.START);
+            } else {
+                drawerLayoutMain.openDrawer(GravityCompat.START);
             }
         });
     }
@@ -777,7 +762,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         final Drawable overflowIcon = toolbar.getOverflowIcon();
         if (overflowIcon == null) return false;
         toolbar.setOverflowIcon(getTintedDrawable(toolbar.getContext(), overflowIcon, color));
-        return true;
+        return true;//
     }
 
     public static Drawable getTintedDrawable(@NonNull Context context, @NonNull Drawable inputDrawable, @ColorInt int color) {
