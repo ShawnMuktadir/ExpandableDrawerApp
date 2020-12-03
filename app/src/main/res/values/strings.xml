@@ -399,4 +399,11 @@
     <string name="mobile_number_not_exist">Mobile Number doesn\'t exists</string>
     <string name="time_toolbar">Time</string>
     <string name="when_user_can_book">Once reach your destination you can reserve your booking spot</string>
+    <string name="fiber_home">Fiber@Home</string>
+    <string name="vehicle_no_d_13456">Vehicle No: D-13456</string>
+    <string name="enable_gps">Enable GPS</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="set">Set</string>
 </resources>

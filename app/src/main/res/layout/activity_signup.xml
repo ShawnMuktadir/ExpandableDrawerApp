@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     android:windowSoftInputMode="adjustPan"
-    tools:context=".view.signUp.SignUpActivity">
+    tools:context=".ui.signUp.SignUpActivity">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -95,7 +95,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:imeOptions="actionNext"
-                    android:inputType="phone"
+                    android:inputType="numberDecimal"
                     android:maxLength="11"
                     android:textColor="@android:color/black"
                     android:textColorHint="@android:color/darker_gray" />

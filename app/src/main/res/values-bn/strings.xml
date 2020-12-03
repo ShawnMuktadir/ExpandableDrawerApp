@@ -400,4 +400,8 @@
     <string name="mobile_number_not_exist">মোবাইল নম্বর বিদ্যমান নেই</string>
     <string name="time_toolbar">সময়</string>
     <string name="when_user_can_book">একবার আপনার গন্তব্য পৌঁছে আপনি আপনার বুকিং স্পট সংরক্ষণ করতে পারেন</string>
+    <string name="fiber_home">ফাইবার@হোম</string>
+    <string name="vehicle_no_d_13456">যানবাহন নম্বর: D-13456</string>
+    <string name="enable_gps">জিপিএস চালু করুন</string>
+    <string name="set">Set</string>
 </resources>

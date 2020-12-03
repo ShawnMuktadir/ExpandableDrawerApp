@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="www.fiberathome.com.parkingapp.view.parking.ParkingFragment">
+    tools:context="www.fiberathome.com.parkingapp.ui.parking.ParkingFragment">
 
 <!--    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout-->
 <!--        android:id="@+id/swipeRefreshLayout"-->

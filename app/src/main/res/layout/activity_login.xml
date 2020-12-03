@@ -8,7 +8,7 @@
     android:background="@color/white"
     android:layout_gravity="center"
     android:windowSoftInputMode="adjustPan"
-    tools:context=".view.signIn.LoginActivity">
+    tools:context=".ui.signIn.LoginActivity">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -57,7 +57,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:imeOptions="actionNext"
-                    android:inputType="number"
+                    android:inputType="numberDecimal"
                     android:maxLength="11"
                     android:textColor="@android:color/black"
                     android:textColorHint="@android:color/black" />

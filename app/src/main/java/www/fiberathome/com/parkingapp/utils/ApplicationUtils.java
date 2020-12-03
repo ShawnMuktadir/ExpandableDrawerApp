@@ -38,7 +38,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -80,7 +79,7 @@ import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.data.preference.StaticData;
 import www.fiberathome.com.parkingapp.utils.internetUtils.ConnectivityInterceptor;
-import www.fiberathome.com.parkingapp.view.main.home.HomeFragment;
+import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 
 public class ApplicationUtils {
 

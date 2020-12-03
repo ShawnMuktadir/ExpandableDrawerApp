@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context="www.fiberathome.com.parkingapp.view.splash.SplashFragment">
+    tools:context="www.fiberathome.com.parkingapp.ui.splash.SplashFragment">
 
     <ImageView
         android:id="@+id/splash_iv_logo"

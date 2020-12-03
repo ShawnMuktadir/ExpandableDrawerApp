@@ -1,6 +1,7 @@
 package www.fiberathome.com.parkingapp.base;
 
 import android.Manifest;
+import android.animation.ObjectAnimator;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -278,6 +279,42 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         return result;
     }
 
+    public void startActivityWithFinish(Class activityClass) {
+        startActivity(new Intent(getApplicationContext(), activityClass));
+        finishAffinity();
+    }
+
+    public void startActivity(Class activityClass) {
+        startActivity(new Intent(getApplicationContext(), activityClass));
+    }
+
+    public void setStatusBarColor(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            int startColor = getWindow().getStatusBarColor();
+            int endColor = ContextCompat.getColor(context, R.color.colorPrimaryDark);
+            ObjectAnimator.ofArgb(getWindow(), "statusBarColor", startColor, endColor).start();
+        }
+    }
+
+    public void showGPSDisabledDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("GPS Disabled");
+        builder.setMessage("Gps is disabled, in order to use the application properly you need to enable GPS of your device");
+        builder.setPositiveButton(context.getResources().getString(R.string.enable_gps),
+                (dialog, which) ->
+                        startActivityForResult(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS),
+                                GPS_ENABLE_REQUEST))
+                .setNegativeButton(context.getResources().getString(R.string.close_app),
+                        (dialog, which) -> {
+                            if (context != null) {
+                                finishAffinity();
+                                TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                            }
+                        });
+        mGPSDialog = builder.create();
+        mGPSDialog.show();
+    }
+
     private void showNoConnectionSnackBar(String message, boolean isConnected, int duration) {
         Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content),
                 message, duration);
@@ -352,136 +389,4 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         mInternetDialog = builder.create();
         mInternetDialog.show();
     }
-
-    public void showGPSDisabledDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("GPS Disabled");
-        builder.setMessage("Gps is disabled, in order to use the application properly you need to enable GPS of your device");
-        builder.setPositiveButton("Enable GPS", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                startActivityForResult(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS), GPS_ENABLE_REQUEST);
-            }
-        }).setNegativeButton("No, Just Exit", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-        mGPSDialog = builder.create();
-        mGPSDialog.show();
-    }
 }
-
-/*@SuppressLint("Registered")
-public class BaseActivity extends AppCompatActivity {
-
-    private AlertDialog alertDialog;
-    private static final int WIFI_ENABLE_REQUEST = 0x1006;
-
-
-
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            checkInternetConnection();
-        }
-    };
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        context = this;
-        registerReceiver(receiver, new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
-        Utility.resetActivityTitle(this);
-    }
-
-    @Override
-    protected void onDestroy() {
-        unregisterReceiver(receiver);
-        super.onDestroy();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-            return true;
-        } else {
-            return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == WIFI_ENABLE_REQUEST) {
-            // Toast.makeText(BaseActivity.this, "Connected", Toast.LENGTH_LONG).show();
-            WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-
-            if (!wifiManager.isWifiEnabled()) {
-
-            }
-
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
-    private void checkInternetConnection() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = null;
-        if (connectivityManager != null) {
-            networkInfo = connectivityManager.getActiveNetworkInfo();
-        }
-        if (networkInfo != null && networkInfo.getState() == NetworkInfo.State.CONNECTED) {
-            // Toast.makeText(BaseActivity.this, "Connected", Toast.LENGTH_LONG).show();
-        } else {
-            showNoInternetDialog();
-        }
-    }
-
-    private void showNoInternetDialog() {
-
-        if (ApplicationUtils.checkInternet(context)) {
-            return;
-        } else {
-            ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
-                Timber.e("Positive Button clicked");
-                if (ApplicationUtils.checkInternet(context)) {
-                    return;
-                } else {
-                    TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
-                }
-            }, (dialog, which) -> {
-                Timber.e("Negative Button Clicked");
-                dialog.dismiss();
-                if (context != null) {
-                    finishAffinity();
-                    TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
-                }
-            });
-
-        *//*if (alertDialog != null && alertDialog.isShowing()) {
-            return;
-        }
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Internet Disabled!");
-        builder.setMessage("No active Internet connection found.");
-        builder.setPositiveButton("Turn On", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Intent enableWifi = new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS);
-                startActivityForResult(enableWifi, WIFI_ENABLE_REQUEST);
-            }
-        }).setNegativeButton("No, Just Exit", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                finish();
-                TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
-            }
-        });
-        alertDialog = builder.create();
-        alertDialog.show();*//*
-        }
-    }
-}*/
