@@ -138,7 +138,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
                                     Timber.e("Positive Button clicked");
                                     if (ApplicationUtils.checkInternet(context)) {
                                         homeFragment.fetchSensors(onConnectedLocation);
-//                                fetchBottomSheetSensors(onConnectedLocation);
+                                        //fetchBottomSheetSensors(onConnectedLocation);
                                     } else {
                                         TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                                     }
@@ -154,7 +154,6 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
                             mAdapterCallback.onMethodCallback(new LatLng(bookingSensors.getLat(), bookingSensors.getLng()));
                         }
                     }
-
                     homeFragment.bottomSheetBehavior.setHideable(false);
                     homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
@@ -166,7 +165,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
                 } else {
                     homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     homeFragment.bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._130sdp));
-                    ApplicationUtils.showMessageDialog("You have to exit from current destination to change new parking spot", context);
+                    ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.parking_spot_selection_rules), context);
                 }
             } else {
                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));

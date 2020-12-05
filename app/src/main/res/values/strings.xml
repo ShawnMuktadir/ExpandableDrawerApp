@@ -403,7 +403,7 @@
     <string name="vehicle_no_d_13456">Vehicle No: D-13456</string>
     <string name="enable_gps">Enable GPS</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="set">Set</string>
+    <string name="you_can_book_parking_slot">You can Book your selected parking area now</string>
+    <string name="parking_spot_selection_rules">You have to exit from current destination to change new parking spot</string>
 </resources>

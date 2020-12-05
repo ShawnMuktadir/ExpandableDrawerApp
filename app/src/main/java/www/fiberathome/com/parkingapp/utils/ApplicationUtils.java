@@ -232,14 +232,14 @@ public class ApplicationUtils {
         return isConnected;
     }
 
-    public static boolean isConnected(Context context){
+    public static boolean isConnected(Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo wifiInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         NetworkInfo mobileInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 
         if ((wifiInfo != null && wifiInfo.isConnected()) || (mobileInfo != null && mobileInfo.isConnected())) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -474,8 +474,7 @@ public class ApplicationUtils {
                                        @NonNull Fragment fragment, int frameId) {
         // Reload current fragment
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-//        transaction.setCustomAnimations(android.R.anim.fade_in,
-//                android.R.anim.fade_out);
+        transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
         transaction.replace(frameId, fragment);
         transaction.detach(fragment);
         transaction.attach(fragment);
@@ -486,10 +485,8 @@ public class ApplicationUtils {
                                             @NonNull Fragment fragment) {
         try {
             Fragment.SavedState savedState = fragmentManager.saveFragmentInstanceState(fragment);
-
             Fragment newInstance = fragment.getClass().newInstance();
             newInstance.setInitialSavedState(savedState);
-
             return newInstance;
         } catch (Exception e) // InstantiationException, IllegalAccessException
         {
@@ -500,7 +497,7 @@ public class ApplicationUtils {
     public static void reLoadFragment(@NonNull FragmentManager fragmentManager, @NonNull Fragment fragment) {
         Timber.e("reloading fragment");
         fragmentManager.beginTransaction().replace(fragment.getId(),
-                HomeFragment.newInstance()).commit();
+                fragment).commit();
     }
 
     public static void detachAttachFragment(@NonNull FragmentManager fragmentManager, @NonNull Fragment fragment) {

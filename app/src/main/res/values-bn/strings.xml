@@ -404,4 +404,6 @@
     <string name="vehicle_no_d_13456">যানবাহন নম্বর: D-13456</string>
     <string name="enable_gps">জিপিএস চালু করুন</string>
     <string name="set">Set</string>
+    <string name="you_can_book_parking_slot">আপনি এখন আপনার নির্বাচিত পার্কিং এলাকা বুক করতে পারেন</string>
+    <string name="parking_spot_selection_rules">নতুন পার্কিং স্পট পরিবর্তন করতে আপনাকে বর্তমান গন্তব্য থেকে প্রস্থান করতে হবে</string>
 </resources>
