@@ -9,6 +9,7 @@ import android.content.Intent;
 import com.android.volley.DefaultRetryPolicy;
 import com.google.android.material.textfield.TextInputLayout;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -43,6 +44,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -125,29 +127,48 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         SpannableString spannableString = new SpannableString(context.getResources().getString(R.string.no_account_yet_click_here));
         ClickableSpan clickableSpan = new ClickableSpan() {
             @Override
-            public void onClick(View textView) {
+            public void onClick(@NonNull View textView) {
                 // do some thing
                 startActivity(new Intent(LoginActivity.this, SignUpActivity.class));
                 finish();
                 //startActivity(new Intent(LoginActivity.this, RegistrationActivity.class));
             }
         };
-        spannableString.setSpan(clickableSpan, 16, 26, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        textViewSignUp.setText(spannableString);
-        textViewSignUp.setMovementMethod(LinkMovementMethod.getInstance());
+
+        if (Locale.getDefault().getLanguage().equals("en")) {
+            //spannableString.setSpan(clickableSpan, 87, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spannableString.setSpan(clickableSpan, 16, 26, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            textViewSignUp.setText(spannableString);
+            textViewSignUp.setMovementMethod(LinkMovementMethod.getInstance());
+        } else if (Locale.getDefault().getLanguage().equals("bn")) {
+            //spannableString.setSpan(clickableSpan, 50, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spannableString.setSpan(clickableSpan, 16, 26, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            textViewSignUp.setText(spannableString);
+            textViewSignUp.setMovementMethod(LinkMovementMethod.getInstance());
+        }
 
         //makes an underline on Forgot Password Click Here
         SpannableString ss = new SpannableString(context.getResources().getString(R.string.forget_password_click_here));
         ClickableSpan span = new ClickableSpan() {
             @Override
-            public void onClick(View textView) {
+            public void onClick(@NonNull View textView) {
                 // do some thing
                 startActivity(new Intent(LoginActivity.this, ForgetPasswordActivity.class));
             }
         };
-        ss.setSpan(span, 17, 27, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        tvForgetPassword.setText(ss);
-        tvForgetPassword.setMovementMethod(LinkMovementMethod.getInstance());
+
+        if (Locale.getDefault().getLanguage().equals("en")) {
+            //spannableString.setSpan(clickableSpan, 87, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            ss.setSpan(span, 17, 27, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            tvForgetPassword.setText(ss);
+            tvForgetPassword.setMovementMethod(LinkMovementMethod.getInstance());
+        } else if (Locale.getDefault().getLanguage().equals("bn")) {
+            //spannableString.setSpan(clickableSpan, 50, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            ss.setSpan(span, 18, 29, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            tvForgetPassword.setText(ss);
+            tvForgetPassword.setMovementMethod(LinkMovementMethod.getInstance());
+        }
+
     }
 
     @Override

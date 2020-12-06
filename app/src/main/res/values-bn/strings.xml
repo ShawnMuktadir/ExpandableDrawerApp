@@ -50,7 +50,7 @@
     <string name="err_new_password">সঠিক নতুন পাসওয়ার্ড দিন</string>
     <string name="err_confirm_password">সঠিক নিশ্চিত করুন পাসওয়ার্ড দিন</string>
     <string name="no_account_yet_click_here">অ্যাকাউন্ট নেই? ক্লিক করুন</string>
-    <string name="forget_password_click_here">পাসওয়ার্ড ভুলে গিয়েছেন? ক্লিক করুন</string>
+    <string name="forget_password_click_here">পাসওয়ার্ড ভুলেছেন? ক্লিক করুন</string>
 
     //navigation
     <string name="home">হোম</string>
@@ -78,7 +78,7 @@
     <string name="occupation">পেশা (ঐচ্ছিক)</string>
     <string name="signOut">সাইন আউট</string>
     <string name="create_account">অ্যাকাউন্ট তৈরি করুন</string>
-    <string name="already_a_member_click_here">ইতোমধ্যে একজন সদস্য? এখানে ক্লিক করুন</string>
+    <string name="already_a_member_click_here">ইতোমধ্যে সদস্য? ক্লিক করুন</string>
     <string name="submit">জমা দিন</string>
     <string name="full_name">সম্পূর্ণ নাম</string>
     <string name="reg_num">যানবাহন নিবন্ধিত নম্বর</string>

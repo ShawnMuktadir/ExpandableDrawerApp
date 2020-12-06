@@ -30,6 +30,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -50,6 +51,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -136,15 +138,24 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         SpannableString spannableString = new SpannableString(context.getResources().getString(R.string.already_a_member_click_here));
         ClickableSpan clickableSpan = new ClickableSpan() {
             @Override
-            public void onClick(View textView) {
+            public void onClick(@NonNull View textView) {
                 // do some thing
                 startActivity(new Intent(context, LoginActivity.class));
                 finish();
             }
         };
-        spannableString.setSpan(clickableSpan, 18, 28, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        tvLogin.setText(spannableString);
-        tvLogin.setMovementMethod(LinkMovementMethod.getInstance());
+
+        if (Locale.getDefault().getLanguage().equals("en")) {
+            //spannableString.setSpan(clickableSpan, 87, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spannableString.setSpan(clickableSpan, 18, 28, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            tvLogin.setText(spannableString);
+            tvLogin.setMovementMethod(LinkMovementMethod.getInstance());
+        } else if (Locale.getDefault().getLanguage().equals("bn")) {
+            //spannableString.setSpan(clickableSpan, 50, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spannableString.setSpan(clickableSpan, 16, 26, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            tvLogin.setText(spannableString);
+            tvLogin.setMovementMethod(LinkMovementMethod.getInstance());
+        }
 
         textViewTermsConditions.setMovementMethod(LinkMovementMethod.getInstance());
         textViewTermsConditions.setText(addMultipleClickablePart(context.getResources().getString(R.string.by_using_this_app_you_agree_to_our_terms_and_conditions_amp_privacy_policy)));
