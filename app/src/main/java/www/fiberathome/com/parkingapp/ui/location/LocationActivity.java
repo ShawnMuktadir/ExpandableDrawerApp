@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.utils.LocationHelper;
 
@@ -23,7 +24,7 @@ import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CO
 
 //import static www.fiberathome.com.parkingapp.ui.MainActivity.GPS_REQUEST_CODE;
 
-public class LocationActivity extends AppCompatActivity {
+public class LocationActivity extends BaseActivity {
 
     private Context context;
     private TextView permissionTV;

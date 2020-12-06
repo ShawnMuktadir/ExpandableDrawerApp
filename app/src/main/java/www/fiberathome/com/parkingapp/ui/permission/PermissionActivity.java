@@ -21,13 +21,14 @@ import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
 
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.permission.listener.DexterPermissionListener;
 import www.fiberathome.com.parkingapp.ui.permission.listener.PermissionInterface;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
-public class PermissionActivity extends AppCompatActivity implements PermissionInterface {
+public class PermissionActivity extends BaseActivity implements PermissionInterface {
 
     private DexterPermissionListener permissionListener;
     private TextView permissionTV;
