@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -28,9 +29,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import com.android.volley.AuthFailureError;
@@ -85,6 +86,14 @@ public class ScheduleFragment extends Fragment implements DialogHelper.PayBtnCli
 
     @BindView(R.id.textViewCurrentDate)
     TextView textViewCurrentDate;
+    @BindView(R.id.ivBackArrow)
+    ImageView ivBackArrow;
+    @BindView(R.id.action_bar_title)
+    TextView textViewActionBarTitle;
+    @BindView(R.id.action_bar_sub_title)
+    TextView textViewActionBarSubTitle;
+    @BindView(R.id.tvTotalParkingTime)
+    TextView textViewTotalParkingTime;
     @BindView(R.id.spinner)
     Spinner spinner;
     @BindView(R.id.setBtn)
@@ -116,6 +125,10 @@ public class ScheduleFragment extends Fragment implements DialogHelper.PayBtnCli
         // Required empty public constructor
     }
 
+    public static ScheduleFragment newInstance() {
+        return new ScheduleFragment();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -126,10 +139,29 @@ public class ScheduleFragment extends Fragment implements DialogHelper.PayBtnCli
         context = (HomeActivity) getActivity();
         if (context != null) {
             context.changeDefaultActionBarDrawerToogleIconWithBackButton();
-            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(context.getResources().getString(R.string.schedule_parking));
+
+            /*String scheduleFragmentTitle = context.getResources().getString(R.string.schedule_fragment_title);
+            String scheduleFragmentSubTitle = context.getResources().getString(R.string.subject_to_availability);
+            context.setTitle(scheduleFragmentTitle);
+            context.setSubtitle(scheduleFragmentSubTitle);*/
+
+            /*ActionBar actionBar = context.getSupportActionBar();
+            if (actionBar != null) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                    actionBar.setDisplayShowCustomEnabled(true);
+                    actionBar.setCustomView(R.layout.action_bar_title_layout);
+                    ((TextView) view.findViewById(R.id.action_bar_title)).
+                            setText(context.getResources().getString(R.string.schedule_fragment_title));
+                    ((TextView) view.findViewById(R.id.action_bar_sub_title)).
+                            setText(context.getResources().getString(R.string.subject_to_availability));
+                }
+            }*/
+
+            /*((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(context.getResources().getString(R.string.schedule_fragment_title));
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(context.getResources().getString(R.string.subject_to_availability));*/
         }
 
-        textViewCurrentDate.setText(ApplicationUtils.getCurrentDate());
+        textViewCurrentDate.setText(ApplicationUtils.getPSTTimeZoneCurrentDate());
 
         listener = (FragmentChangeListener) getActivity();
         payBtnClickListener = this;
@@ -195,7 +227,8 @@ public class ScheduleFragment extends Fragment implements DialogHelper.PayBtnCli
             arrivedPicker.setDefaultDate(arrived);
             departurePicker.setDefaultDate(departure);
 
-        } else {
+        }
+        else {
             departurePicker.setEnabled(false);
             departureDisableLayout.setBackgroundColor(getResources().getColor(R.color.disableColor));
 
@@ -249,6 +282,14 @@ public class ScheduleFragment extends Fragment implements DialogHelper.PayBtnCli
             }
         });
 
+        setListeners();
+
+    }
+
+    private void setListeners() {
+        ivBackArrow.setOnClickListener(v -> {
+            onBackPressed();
+        });
 
         setBtn.setOnClickListener(v -> {
             Log.d(TAG, "onClick: didnot entered to condition");
@@ -278,13 +319,13 @@ public class ScheduleFragment extends Fragment implements DialogHelper.PayBtnCli
                     homeFragment.setArguments(bundle);
                     listener.FragmentChange(homeFragment);*/
                     //open DialogHelper with total amount, time difference
-//                        Dialog dialog = new Dialog(requireActivity());
-//                        dialog.setContentView(R.layout.voucher_dialog);
-//                        DialogHelper dialogHelper = new DialogHelper(dialog, requireActivity(), getDate(arrivedDate.getTime()), getDate(departerDate.getTime()),
-//                                getTimeDiffrence(departerDate.getTime() - arrivedDate.getTime()),
-//                                departerDate.getTime() - arrivedDate.getTime(), payBtnClickListener);
-//                        dialogHelper.initDialog();
-//                        dialog.show();
+                        /*Dialog dialog = new Dialog(requireActivity());
+                        dialog.setContentView(R.layout.voucher_dialog);
+                        DialogHelper dialogHelper = new DialogHelper(dialog, requireActivity(), getDate(arrivedDate.getTime()), getDate(departerDate.getTime()),
+                                getTimeDiffrence(departerDate.getTime() - arrivedDate.getTime()),
+                                departerDate.getTime() - arrivedDate.getTime(), payBtnClickListener);
+                        dialogHelper.initDialog();
+                        dialog.show();*/
 
                     if (ApplicationUtils.checkInternet(context)) {
                         long diff = departedDate.getTime() - arrivedDate.getTime();
@@ -332,6 +373,18 @@ public class ScheduleFragment extends Fragment implements DialogHelper.PayBtnCli
         }
         super.onStart();
         Timber.e("onStart called ");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((AppCompatActivity) requireActivity()).getSupportActionBar().hide();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        ((AppCompatActivity) requireActivity()).getSupportActionBar().show();
     }
 
     @Override
@@ -404,7 +457,7 @@ public class ScheduleFragment extends Fragment implements DialogHelper.PayBtnCli
                         if (getActivity() != null)
                             ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
 
-                        Timber.e("response no error e dhukche");
+                        Timber.e("response no error called");
                         Timber.e(jsonObject.getString("reservation"));
                         Timber.e(jsonObject.getString("bill"));
 
@@ -417,16 +470,16 @@ public class ScheduleFragment extends Fragment implements DialogHelper.PayBtnCli
                         Timber.e("reservationJson -> %s", new Gson().toJson(reservationJson));
 
                         reservation.setId(reservationJson.getInt("reservation"));
-//                        reservation.setMobileNo(reservationJson.getString("mobile_no"));
-//                        reservation.setTimeStart(reservationJson.getString("time_start"));
-//                        reservation.setTimeEnd(reservationJson.getString("time_end"));
-//                        reservation.setSpotId(reservationJson.getString("spot_id"));
+                        /*reservation.setMobileNo(reservationJson.getString("mobile_no"));
+                        reservation.setTimeStart(reservationJson.getString("time_start"));
+                        reservation.setTimeEnd(reservationJson.getString("time_end"));
+                        reservation.setSpotId(reservationJson.getString("spot_id"));*/
                         if (isGPSEnabled()) {
-//                            HomeFragment nextFrag = new HomeFragment();
-                            getActivity().getSupportFragmentManager().beginTransaction()
-                                    .replace(R.id.fragment_container, HomeFragment.newInstance())
+                            /*getActivity().getSupportFragmentManager().beginTransaction()
+                                    .replace(R.id.nav_host_fragment, HomeFragment.newInstance())
                                     .addToBackStack(null)
-                                    .commit();
+                                    .commit();*/
+                            ApplicationUtils.replaceFragmentWithAnimation(context.getSupportFragmentManager(), HomeFragment.newInstance());
                         } else {
                             TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
                         }
@@ -439,14 +492,10 @@ public class ScheduleFragment extends Fragment implements DialogHelper.PayBtnCli
                     progressDialog.dismiss();
                     e.printStackTrace();
                 }
-
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                progressDialog.dismiss();
-                Timber.e("Volley Error -> %s", error.getMessage());
-            }
+        }, error -> {
+            progressDialog.dismiss();
+            Timber.e("Volley Error -> %s", error.getMessage());
         }) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {

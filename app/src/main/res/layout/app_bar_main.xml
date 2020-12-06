@@ -15,9 +15,9 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            android:minHeight="100dp"
             android:background="@color/white"
             android:fitsSystemWindows="true"
-            android:minHeight="?attr/actionBarSize"
             app:title="@string/welcome_to_locc_parking"
             app:titleTextAppearance="@style/Toolbar.TitleText"
             app:titleTextColor="@color/black"
@@ -61,6 +61,7 @@
                     app:tint="@color/gray" />
 
             </LinearLayout>
+
         </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>

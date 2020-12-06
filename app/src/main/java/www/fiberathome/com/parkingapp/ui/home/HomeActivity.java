@@ -164,6 +164,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
         if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
             navigationView.getMenu().getItem(0).setChecked(true);
             drawerLayout.closeDrawers();
+            //toolbar.setSubtitle("");
             //super.onBackPressed(); delete this line
             // and start your fragment:
 
@@ -262,15 +263,15 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
             ApplicationUtils.showAlertDialog(context.getString(R.string.exit_message_main), context, context.getString(R.string.ok), context.getString(R.string.cancel), (dialog, which) -> {
                 Timber.e("Positive Button clicked");
                 dialog.dismiss();
-//                if (context != null) {
+                //if (context != null) {
                 finish();
                 TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
-//                }
-//                if (isGPSEnabled() && ApplicationUtils.checkInternet(context)){
-//                    ApplicationUtils.checkInternet(context)
-//                } else {
-//                    TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
-//                }
+                /*}
+                if (isGPSEnabled() && ApplicationUtils.checkInternet(context)){
+                    ApplicationUtils.checkInternet(context)
+                } else {
+                    TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                }*/
             }, (dialog, which) -> {
                 Timber.e("Negative Button Clicked");
                 dialog.dismiss();
@@ -335,8 +336,11 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
     private void setListeners() {
         linearLayoutToolbarTime.setOnClickListener(v -> {
             if (isGPSEnabled()) {
-                toolbar.setTitle(context.getResources().getString(R.string.schedule_parking));
-                getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, new ScheduleFragment()).commit();
+                /*toolbar.setTitle(context.getResources().getString(R.string.schedule_fragment_title));
+                toolbar.setSubtitle(context.getResources().getString(R.string.subject_to_availability));
+                getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, new ScheduleFragment()).commit();*/
+                ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
+                        ScheduleFragment.newInstance(), R.id.nav_host_fragment);
             } else {
                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
             }

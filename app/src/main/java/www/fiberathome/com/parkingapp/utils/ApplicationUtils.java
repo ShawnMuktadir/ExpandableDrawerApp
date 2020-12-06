@@ -59,6 +59,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.Normalizer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -66,6 +67,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -257,9 +259,9 @@ public class ApplicationUtils {
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
 
-//            // Let's start with animation work. We just need to create a style and use it here as follows.
-//            if (alertDialog.getWindow() != null)
-//                alertDialog.getWindow().getAttributes().windowAnimations = R.style.slidingDialogAnimation;
+            // Let's start with animation work. We just need to create a style and use it here as follows.
+            /*if (alertDialog.getWindow() != null)
+                alertDialog.getWindow().getAttributes().windowAnimations = R.style.slidingDialogAnimation;*/
 
         }
     }
@@ -390,6 +392,14 @@ public class ApplicationUtils {
         return formattedDate;
     }
 
+    public static String getPSTTimeZoneCurrentDate() {
+        //Output: ex: Wednesday, July 20, 2011
+        DateFormat df  = DateFormat.getDateInstance(DateFormat.FULL);
+        df.setTimeZone(TimeZone.getTimeZone("PST"));
+        final String dateString = df.format(new Date());
+        return dateString;
+    }
+
     public static String getTime(String dateTime) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.US);
         SimpleDateFormat expectedFormat = new SimpleDateFormat("hh:mm a", Locale.US);
@@ -431,10 +441,10 @@ public class ApplicationUtils {
         alertDialog.setCancelable(false);
         alertDialog.show();
 
-//        WindowManager.LayoutParams lp = alertDialog.getWindow().getAttributes();
-//        lp.dimAmount = 0.4f;
-//        alertDialog.getWindow().setAttributes(lp);
-//        alertDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+       /* WindowManager.LayoutParams lp = alertDialog.getWindow().getAttributes();
+        lp.dimAmount = 0.4f;
+        alertDialog.getWindow().setAttributes(lp);
+        alertDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);*/
         outside_view.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -444,13 +454,10 @@ public class ApplicationUtils {
             }
         });
 
-        tv_exit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialog.dismiss();
-                activity.finish();
-                TastyToastUtils.showTastySuccessToast(activity, activity.getResources().getString(R.string.thanks_message));
-            }
+        tv_exit.setOnClickListener(v -> {
+            alertDialog.dismiss();
+            activity.finish();
+            TastyToastUtils.showTastySuccessToast(activity, activity.getResources().getString(R.string.thanks_message));
         });
 
     }
@@ -467,6 +474,16 @@ public class ApplicationUtils {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(frameId, fragment);
         transaction.addToBackStack(title);
+        transaction.commit();
+    }
+
+    public static void replaceFragmentWithAnimation(@NonNull FragmentManager fragmentManager, @NonNull Fragment fragment){
+        //, String tag
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
+        transaction.replace(R.id.nav_host_fragment, fragment);
+        //transaction.addToBackStack(tag);
+        transaction.addToBackStack(null);
         transaction.commit();
     }
 

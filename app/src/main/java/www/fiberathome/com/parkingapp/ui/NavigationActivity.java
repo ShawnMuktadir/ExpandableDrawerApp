@@ -203,9 +203,15 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         super.onDestroy();
     }
 
-    protected void setTitle(String title) {
+    public void setTitle(String title) {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(title);
+        }
+    }
+
+    public void setSubtitle(String title) {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setSubtitle(title);
         }
     }
 

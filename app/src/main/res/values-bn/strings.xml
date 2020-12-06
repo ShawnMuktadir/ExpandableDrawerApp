@@ -131,7 +131,7 @@
     <string name="permission_request">অনুমতির অনুরোধ</string>
     <string name="grant_permission">অনুমতি প্রদান</string>
     <string name="no_data_available">পার্কিং অ্যাপ্লিকেশন অনুসন্ধান করার জন্য একটি \n বৈধ জায়গা সার্চ করুন</string>
-    <string name="schedule_parking">পার্কিং সূচি</string>
+    <string name="schedule_parking">নির্ধারিত পার্কিং সূচি</string>
     <string name="by_using_this_app_you_agree_to_our_terms_and_conditions_amp_privacy_policy"><![CDATA[এই অ্যাপ্লিকেশনটি ব্যবহার করে আপনি আমাদের শর্তাদি এবং গোপনীয়তা নীতিতে সম্মত হন]]></string>
 
     <string-array name="CountryCodes">
@@ -406,4 +406,6 @@
     <string name="set">Set</string>
     <string name="you_can_book_parking_slot">আপনি এখন আপনার নির্বাচিত পার্কিং এলাকা বুক করতে পারেন</string>
     <string name="parking_spot_selection_rules">নতুন পার্কিং স্পট পরিবর্তন করতে আপনাকে বর্তমান গন্তব্য থেকে প্রস্থান করতে হবে</string>
+    <string name="schedule_fragment_title">00:00–00:00pm</string>
+    <string name="parking_total_time">00:00min</string>
 </resources>

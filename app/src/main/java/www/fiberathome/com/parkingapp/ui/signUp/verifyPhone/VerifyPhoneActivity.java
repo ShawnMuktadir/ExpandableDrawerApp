@@ -122,55 +122,50 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
         progressDialog = ApplicationUtils.progressDialog(context, "Please wait...");
 
         HttpsTrustManager.allowAllSSL();
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_LOGIN, new Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_LOGIN, response -> {
+            Timber.e("URL -> %s", AppConfig.URL_LOGIN);
+            progressDialog.dismiss();
 
-            @Override
-            public void onResponse(String response) {
-                // remove the progress bar
-                Timber.e("URL -> %s", AppConfig.URL_LOGIN);
-                progressDialog.dismiss();
+            try {
+                JSONObject jsonObject = new JSONObject(response);
 
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
+                Timber.e("jsonObject otp -> %s", jsonObject.toString());
 
-                    Timber.e("jsonObject otp -> %s", jsonObject.toString());
+                if (!jsonObject.getBoolean("error")) {
+                    Timber.e("error not -> %s", jsonObject.getString("message"));
+                    showMessage(jsonObject.getString("message"));
 
-                    if (!jsonObject.getBoolean("error")) {
-                        Timber.e("error not -> %s", jsonObject.getString("message"));
-                        showMessage(jsonObject.getString("message"));
+                        /*//getting the user from the response
+                        JSONObject userJson = jsonObject.getJSONObject("user");
 
-                        // getting the user from the response
-//                        JSONObject userJson = jsonObject.getJSONObject("user");
-//
-//                        // creating a new user object
-//                        User user = new User();
-//                        user.setId(userJson.getInt("id"));
-//                        user.setFullName(userJson.getString("fullname"));
-//                        user.setMobileNo(userJson.getString("mobile_no"));
-//                        user.setVehicleNo(userJson.getString("vehicle_no"));
-//                        user.setProfilePic(userJson.getString("image"));
-//
-//                        // storing the user in sharedPreference
-//                        SharedPreManager.getInstance(getApplicationContext()).userLogin(user);
+                        // creating a new user object
+                        User user = new User();
+                        user.setId(userJson.getInt("id"));
+                        user.setFullName(userJson.getString("fullname"));
+                        user.setMobileNo(userJson.getString("mobile_no"));
+                        user.setVehicleNo(userJson.getString("vehicle_no"));
+                        user.setProfilePic(userJson.getString("image"));
 
-                    } else if (jsonObject.getBoolean("error") && jsonObject.has("authentication")) {
-                        // IF ERROR OCCURS AND AUTHENTICATION IS INVALID
-                        showMessage(jsonObject.getString("message"));
-                        mPinFirstDigitEditText.setText("");
-                        mPinSecondDigitEditText.setText("");
-                        mPinThirdDigitEditText.setText("");
-                        mPinForthDigitEditText.setText("");
-                        Timber.e("error & authentication response -> %s", jsonObject.getString("message"));
-                    } else {
+                        // storing the user in sharedPreference
+                        SharedPreManager.getInstance(getApplicationContext()).userLogin(user);*/
+
+                } else if (jsonObject.getBoolean("error") && jsonObject.has("authentication")) {
+                    // IF ERROR OCCURS AND AUTHENTICATION IS INVALID
+                    showMessage(jsonObject.getString("message"));
+                    mPinFirstDigitEditText.setText("");
+                    mPinSecondDigitEditText.setText("");
+                    mPinThirdDigitEditText.setText("");
+                    mPinForthDigitEditText.setText("");
+                    Timber.e("error & authentication response -> %s", jsonObject.getString("message"));
+                } else {
 //                        showMessage(jsonObject.getString("message"));
-                        Timber.e("error -> %s", jsonObject.getString("message"));
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    Timber.e("error -> %s", jsonObject.getString("message"));
                 }
 
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
+
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
@@ -419,13 +414,13 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
         mPinSecondDigitEditText.setOnFocusChangeListener(this);
         mPinThirdDigitEditText.setOnFocusChangeListener(this);
         mPinForthDigitEditText.setOnFocusChangeListener(this);
-//        mPinFifthDigitEditText.setOnFocusChangeListener(this);
+        //mPinFifthDigitEditText.setOnFocusChangeListener(this);
 
         mPinFirstDigitEditText.setOnKeyListener(this);
         mPinSecondDigitEditText.setOnKeyListener(this);
         mPinThirdDigitEditText.setOnKeyListener(this);
         mPinForthDigitEditText.setOnKeyListener(this);
-//        mPinFifthDigitEditText.setOnKeyListener(this);
+        //mPinFifthDigitEditText.setOnKeyListener(this);
         mPinHiddenEditText.setOnKeyListener(this);
     }
 

@@ -10,6 +10,31 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="drawerArrowStyle">@style/DrawerIconStyle</item>
+        <!-- Support library compatibility -->
+        <item name="actionBarStyle">@style/themeActionBar</item>
+    </style>
+
+    <!-- ActionBar styles -->
+    <style name="themeActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@color/white</item>
+        <item name="android:titleTextStyle">@style/styleActionBarTitleText</item>
+        <item name="android:subtitleTextStyle">@style/styleActionBarSubTitleText</item>
+        <!-- Support library compatibility -->
+        <item name="background">@color/white</item>
+        <item name="titleTextStyle">@style/styleActionBarTitleText</item>
+        <item name="subtitleTextStyle">@style/styleActionBarSubTitleText</item>
+    </style>
+
+    <!-- ActionBar title text -->
+    <style name="styleActionBarTitleText" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/black</item>
+        <!-- The textColor property is backward compatible with the Support Library -->
+    </style>
+
+    <!-- ActionBar title text -->
+    <style name="styleActionBarSubTitleText" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle">
+        <item name="android:textColor">@color/black</item>
+        <!-- The textColor property is backward compatible with the Support Library -->
     </style>
 
     <style name="DrawerIconStyle" parent="Widget.AppCompat.DrawerArrowToggle">
@@ -68,6 +93,8 @@
 
     <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textSize">@dimen/dimTex14</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:textColor">@color/black</item>
     </style>
 
     <style name="TextAppearance44">
