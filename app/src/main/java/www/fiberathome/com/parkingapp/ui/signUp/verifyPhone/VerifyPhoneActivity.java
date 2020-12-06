@@ -46,6 +46,7 @@ import java.util.concurrent.TimeUnit;
 
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
@@ -58,7 +59,7 @@ import www.fiberathome.com.parkingapp.ui.signUp.SignUpActivity;
 /**
  * This activity holds view with a custom 4-digit PIN EditText.
  */
-public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFocusChangeListener, View.OnKeyListener, TextWatcher {
+public class VerifyPhoneActivity extends BaseActivity implements View.OnFocusChangeListener, View.OnKeyListener, TextWatcher {
 
     private static final String TAG = VerifyPhoneActivity.class.getSimpleName();
     private EditText mPinFirstDigitEditText;
@@ -122,6 +123,7 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
         progressDialog = ApplicationUtils.progressDialog(context, "Please wait...");
 
         HttpsTrustManager.allowAllSSL();
+
         StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_LOGIN, response -> {
             Timber.e("URL -> %s", AppConfig.URL_LOGIN);
             progressDialog.dismiss();
@@ -158,7 +160,7 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
                     mPinForthDigitEditText.setText("");
                     Timber.e("error & authentication response -> %s", jsonObject.getString("message"));
                 } else {
-//                        showMessage(jsonObject.getString("message"));
+                    //showMessage(jsonObject.getString("message"));
                     Timber.e("error -> %s", jsonObject.getString("message"));
                 }
 
@@ -166,13 +168,10 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
                 e.printStackTrace();
             }
 
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Timber.e("Error Message -> %s ", error.getMessage());
-                if (progressDialog != null) progressDialog.dismiss();
-//                showMessage(error.getMessage());
-            }
+        }, error -> {
+            Timber.e("Error Message -> %s ", error.getMessage());
+            if (progressDialog != null) progressDialog.dismiss();
+            //showMessage(error.getMessage());
         }) {
 
             @Override
@@ -202,7 +201,7 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
                 // todo: goto back activity from here
 
                 Intent intent = new Intent(VerifyPhoneActivity.this, SignUpActivity.class);
-//                Intent intent = new Intent(VerifyPhoneActivity.this, RegistrationActivity.class);
+                // Intent intent = new Intent(VerifyPhoneActivity.this, RegistrationActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 finish();
@@ -234,11 +233,11 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
         mPinSecondDigitEditText = (EditText) findViewById(R.id.pin_second_edittext);
         mPinThirdDigitEditText = (EditText) findViewById(R.id.pin_third_edittext);
         mPinForthDigitEditText = (EditText) findViewById(R.id.pin_forth_edittext);
-//        mPinFifthDigitEditText = (EditText) findViewById(R.id.pin_fifth_edittext);
+        //mPinFifthDigitEditText = (EditText) findViewById(R.id.pin_fifth_edittext);
         mPinHiddenEditText = (EditText) findViewById(R.id.inputOtp);
 
         btnVerifyOtp = findViewById(R.id.btn_verify_otp);
-//        btnChangePhoneNumber = findViewById(R.id.btn_change_phone_number);
+        //btnChangePhoneNumber = findViewById(R.id.btn_change_phone_number);
         btnResendOTP = findViewById(R.id.btnResendOTP);
         countdown = findViewById(R.id.countdown);
     }
@@ -281,12 +280,12 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
                 }
                 break;
 
-//            case R.id.pin_fifth_edittext:
-//                if (hasFocus) {
-//                    setFocus(mPinHiddenEditText);
-//                    showSoftKeyboard(mPinHiddenEditText);
-//                }
-//                break;
+            /*case R.id.pin_fifth_edittext:
+                if (hasFocus) {
+                    setFocus(mPinHiddenEditText);
+                    showSoftKeyboard(mPinHiddenEditText);
+                }
+                break;*/
             default:
                 break;
         }
@@ -299,9 +298,9 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
             switch (id) {
                 case R.id.inputOtp:
                     if (keyCode == KeyEvent.KEYCODE_DEL) {
-//                        if (mPinHiddenEditText.getText().length() == 5)
-//                            mPinFifthDigitEditText.setText("");
-//                        else
+                        /*if (mPinHiddenEditText.getText().length() == 5)
+                            mPinFifthDigitEditText.setText("");
+                        else*/
                         if (mPinHiddenEditText.getText().length() == 4)
                             mPinForthDigitEditText.setText("");
                         else if (mPinHiddenEditText.getText().length() == 3)
@@ -316,14 +315,12 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
 
                         return true;
                     }
-
                     break;
 
                 default:
                     return false;
             }
         }
-
         return false;
     }
 
@@ -333,7 +330,7 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
         setDefaultPinBackground(mPinSecondDigitEditText);
         setDefaultPinBackground(mPinThirdDigitEditText);
         setDefaultPinBackground(mPinForthDigitEditText);
-//        setDefaultPinBackground(mPinFifthDigitEditText);
+        //setDefaultPinBackground(mPinFifthDigitEditText);
 
         if (s.length() == 0) {
             setFocusedPinBackground(mPinFirstDigitEditText);
@@ -344,30 +341,30 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
             mPinSecondDigitEditText.setText("");
             mPinThirdDigitEditText.setText("");
             mPinForthDigitEditText.setText("");
-//            mPinFifthDigitEditText.setText("");
+            //mPinFifthDigitEditText.setText("");
         } else if (s.length() == 2) {
             setFocusedPinBackground(mPinThirdDigitEditText);
             mPinSecondDigitEditText.setText(s.charAt(1) + "");
             mPinThirdDigitEditText.setText("");
             mPinForthDigitEditText.setText("");
-//            mPinFifthDigitEditText.setText("");
+            //mPinFifthDigitEditText.setText("");
         } else if (s.length() == 3) {
             setFocusedPinBackground(mPinForthDigitEditText);
             mPinThirdDigitEditText.setText(s.charAt(2) + "");
             mPinForthDigitEditText.setText("");
-//            mPinFifthDigitEditText.setText("");
+            //mPinFifthDigitEditText.setText("");
         } else if (s.length() == 4) {
-//            setFocusedPinBackground(mPinFifthDigitEditText);
+            //setFocusedPinBackground(mPinFifthDigitEditText);
             mPinForthDigitEditText.setText(s.charAt(3) + "");
-//            mPinFifthDigitEditText.setText("");
+            //mPinFifthDigitEditText.setText("");
             hideSoftKeyboard(mPinForthDigitEditText);
         }
-//        else if (s.length() == 5) {
-//            setDefaultPinBackground(mPinFifthDigitEditText);
-//            mPinFifthDigitEditText.setText(s.charAt(4) + "");
-//
-//            hideSoftKeyboard(mPinFifthDigitEditText);
-//        }
+       /* else if (s.length() == 5) {
+            setDefaultPinBackground(mPinFifthDigitEditText);
+            mPinFifthDigitEditText.setText(s.charAt(4) + "");
+
+            hideSoftKeyboard(mPinFifthDigitEditText);
+        }*/
     }
 
     /**
@@ -461,7 +458,7 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
             //CountDownTimer(edittext1.getText()+edittext2.getText()) also parse it to long
 
             public void onTick(long millisUntilFinished) {
-//                countdown.setText("seconds remaining: " + millisUntilFinished / 1000);
+                //countdown.setText("seconds remaining: " + millisUntilFinished / 1000);
                 countdown.setText("" + String.format("%d min, %d sec remaining",
                         TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
                         TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
@@ -502,42 +499,37 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
                         // FETCHING USER INFORMATION FROM DATABASE
                         userJson = jsonObject.getJSONObject("user");
 
-//                        if (SharedPreManager.getInstance(getApplicationContext()).isWaitingForSMS()) {
-//                            SharedPreManager.getInstance(getApplicationContext()).setIsWaitingForSMS(false);
+                        /*if (SharedPreManager.getInstance(getApplicationContext()).isWaitingForSMS()) {
+                            SharedPreManager.getInstance(getApplicationContext()).setIsWaitingForSMS(false);*/
 
                         try {
-//                            mobileNumber = getIntent().getStringExtra("fromLoginPage");
-//////                            Timber.e("mobileNumber -> %s", mobileNumber);
-//                            if (mobileNumber.equals("fromLoginPage")) {
-//                                Timber.e("if e dhukche");
-////                                Toast.makeText(context, "if e dhukche", Toast.LENGTH_LONG).show();
-//                                context.startActivity(new Intent(context, LoginActivity.class));
-//                                finish();
-//                                showMessage("Dear " + userJson.getString("fullname") + ", Your Mobile Number is Verified...");
-//                            } else {
-//                                Timber.e("if else e dhukche");
-//                                Toast.makeText(context, "if else e dhukche", Toast.LENGTH_LONG).show();
+                            /*mobileNumber = getIntent().getStringExtra("fromLoginPage");
+                            //Timber.e("mobileNumber -> %s", mobileNumber);
+                            if (mobileNumber.equals("fromLoginPage")) {
+                                Timber.e("if e dhukche");
+                                //Toast.makeText(context, "if e dhukche", Toast.LENGTH_LONG).show();
+                                context.startActivity(new Intent(context, LoginActivity.class));
+                                finish();
+                                showMessage("Dear " + userJson.getString("fullname") + ", Your Mobile Number is Verified...");
+                            } else {
+                                Timber.e("if else e dhukche");
+                                Toast.makeText(context, "if else e dhukche", Toast.LENGTH_LONG).show();*/
                             Intent intent = new Intent(VerifyPhoneActivity.this, LoginActivity.class);
                             startActivity(intent);
                             finish();
                             showMessage("Dear " + userJson.getString("fullname") + ", Your Registration Completed Successfully...");
-//                            }
+                            //}
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-//                        }
+                        //}
                     }
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    showMessage(error.getMessage());
-                }
-            }) {
+            }, error -> showMessage(error.getMessage())) {
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> params = new HashMap<>();
@@ -550,7 +542,7 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
         } else {
             // OTP IS EMPTY.
             progressDialog.dismiss();
-//            TastyToastUtils.showTastyWarningToast(context, "Please Enter Valid OTP...");
+            //TastyToastUtils.showTastyWarningToast(context, "Please Enter Valid OTP...");
             showMessage("Please Enter Valid OTP...");
         }
 
@@ -606,14 +598,14 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnFoc
     @Override
     public void onBackPressed() {
 
-// super.onBackPressed();
-// Not calling **super**, disables back button in current screen.
+        // super.onBackPressed();
+        // Not calling **super**, disables back button in current screen.
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage("Are you sure you want to exit?")
                 .setNegativeButton(android.R.string.no, null)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
-//                        VerifyPhoneActivity.super.onBackPressed();
+                        //VerifyPhoneActivity.super.onBackPressed();
                         finish();
                         TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                     }

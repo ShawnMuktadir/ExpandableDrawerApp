@@ -114,7 +114,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
             finish();
             return;
         } else if (SharedPreManager.getInstance(getApplicationContext()).isLoggedIn() && !SharedPreManager.getInstance(context).isWaitingForLocationPermission()) {
-//            Timber.e("location check else method called");
+            //Timber.e("location check else method called");
             Timber.e("isWaitingForLocationPermission else -> %s", SharedPreManager.getInstance(context).isWaitingForLocationPermission());
             Intent intent = new Intent(LoginActivity.this, PermissionActivity.class);
             startActivity(intent);
@@ -129,7 +129,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 // do some thing
                 startActivity(new Intent(LoginActivity.this, SignUpActivity.class));
                 finish();
-//                startActivity(new Intent(LoginActivity.this, RegistrationActivity.class));
+                //startActivity(new Intent(LoginActivity.this, RegistrationActivity.class));
             }
         };
         spannableString.setSpan(clickableSpan, 16, 26, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -215,7 +215,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 .setNegativeButton(android.R.string.no, null)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
-//                        LoginActivity.super.onBackPressed();
+                        //LoginActivity.super.onBackPressed();
                         finish();
                         TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                     }
@@ -364,10 +364,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     private void checkLogin(final String mobileNo, final String password) {
 
         progressDialog = ApplicationUtils.progressDialog(context, "Please wait...");
+
         showProgress();
+
         btnOTP.setVisibility(View.GONE);
 
         HttpsTrustManager.allowAllSSL();
+
         StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_LOGIN, response -> {
             // remove the progress bar
             Timber.e("URL -> %s", AppConfig.URL_LOGIN);
@@ -451,7 +454,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 Timber.e("Error Message -> %s ", error.getMessage());
                 if (progressDialog != null) progressDialog.dismiss();
                 if (Objects.requireNonNull(error.getMessage()).equals("java.net.ConnectException: failed to connect to /163.47.157.195 (port 80) after 50000ms: connect failed: ENETUNREACH (Network is unreachable)") || Objects.requireNonNull(error.getMessage()).equals("")) {
-//                    showMessage(error.getMessage());
+                    //showMessage(error.getMessage());
                     showMessage(context.getResources().getString(R.string.connect_to_internet));
                 }
             }
@@ -481,7 +484,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     }
 
     private void showMessage(String message) {
-//        Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
         final Toast toast = Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT);
         toast.show();
 

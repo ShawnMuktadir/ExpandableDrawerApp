@@ -49,6 +49,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
@@ -59,14 +60,14 @@ import www.fiberathome.com.parkingapp.utils.Validator;
 import www.fiberathome.com.parkingapp.ui.signUp.SignUpActivity;
 import www.fiberathome.com.parkingapp.ui.signUp.verifyPhone.VerifyPhoneActivity;
 
-public class ChangePasswordActivityForOTP extends AppCompatActivity implements View.OnFocusChangeListener, View.OnKeyListener, TextWatcher {
+public class ChangePasswordActivityForOTP extends BaseActivity implements View.OnFocusChangeListener, View.OnKeyListener, TextWatcher {
 
     private static final String TAG = VerifyPhoneActivity.class.getSimpleName();
     private EditText mPinFirstDigitEditText;
     private EditText mPinSecondDigitEditText;
     private EditText mPinThirdDigitEditText;
     private EditText mPinForthDigitEditText;
-    //    private EditText mPinFifthDigitEditText;
+    //private EditText mPinFifthDigitEditText;
     private EditText mPinHiddenEditText;
     private Button btnVerifyOtp, btnChangePhoneNumber, btnResendOTP;
     private TextView countdown;
@@ -120,9 +121,9 @@ public class ChangePasswordActivityForOTP extends AppCompatActivity implements V
                         }
                     } else {
                         TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
-//                        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.P) {
-//
-//                        }
+                        /*if (Build.VERSION.SDK_INT == Build.VERSION_CODES.P) {
+
+                        }*/
                     }
                 }, (dialog, which) -> {
                     Timber.e("Negative Button Clicked");
@@ -179,7 +180,7 @@ public class ChangePasswordActivityForOTP extends AppCompatActivity implements V
                 // todo: goto back activity from here
 
                 Intent intent = new Intent(ChangePasswordActivityForOTP.this, SignUpActivity.class);
-//                Intent intent = new Intent(ChangePasswordActivityForOTP.this, RegistrationActivity.class);
+                //Intent intent = new Intent(ChangePasswordActivityForOTP.this, RegistrationActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 finish();
@@ -192,8 +193,8 @@ public class ChangePasswordActivityForOTP extends AppCompatActivity implements V
 
     @Override
     public void onBackPressed() {
-// super.onBackPressed();
-// Not calling **super**, disables back button in current screen.
+        // super.onBackPressed();
+        // Not calling **super**, disables back button in current screen.
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage("Are you sure you want to exit?")
                 .setNegativeButton(android.R.string.no, null)
@@ -213,6 +214,18 @@ public class ChangePasswordActivityForOTP extends AppCompatActivity implements V
             }
         });
         dialog.show();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        dismissProgressDialog();
+
+    }
+
+    private void dismissProgressDialog() {
+        if (progressDialog != null && progressDialog.isShowing())
+            progressDialog.dismiss();
     }
 
     private void checkForgetPassword(final String mobileNo) {
@@ -238,11 +251,10 @@ public class ChangePasswordActivityForOTP extends AppCompatActivity implements V
                         progressDialog.dismiss();
                         showMessage(jsonObject.getString("message"));
 
-//                        Intent intent = new Intent(ChangePasswordActivityForOTP.this, ChangePasswordActivityForOTP.class);
-//                        intent.putExtra("mobile_no", mobileNo);
-//                        startActivity(intent);
-//                        finish();
-
+                        /*Intent intent = new Intent(ChangePasswordActivityForOTP.this, ChangePasswordActivityForOTP.class);
+                        intent.putExtra("mobile_no", mobileNo);
+                        startActivity(intent);
+                        finish();*/
                     } else {
                         showMessage(jsonObject.getString("message"));
                     }
@@ -250,7 +262,6 @@ public class ChangePasswordActivityForOTP extends AppCompatActivity implements V
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
             }
         }, new Response.ErrorListener() {
             @Override
@@ -260,7 +271,6 @@ public class ChangePasswordActivityForOTP extends AppCompatActivity implements V
                 showMessage(error.getMessage());
             }
         }) {
-
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
@@ -294,11 +304,11 @@ public class ChangePasswordActivityForOTP extends AppCompatActivity implements V
         mPinSecondDigitEditText = (EditText) findViewById(R.id.pin_second_edittext);
         mPinThirdDigitEditText = (EditText) findViewById(R.id.pin_third_edittext);
         mPinForthDigitEditText = (EditText) findViewById(R.id.pin_forth_edittext);
-//        mPinFifthDigitEditText = (EditText) findViewById(R.id.pin_fifth_edittext);
+        //mPinFifthDigitEditText = (EditText) findViewById(R.id.pin_fifth_edittext);
         mPinHiddenEditText = (EditText) findViewById(R.id.inputOtp);
 
         btnVerifyOtp = findViewById(R.id.btn_verify_otp);
-//        btnChangePhoneNumber = findViewById(R.id.btn_change_phone_number);
+        //btnChangePhoneNumber = findViewById(R.id.btn_change_phone_number);
         btnResendOTP = findViewById(R.id.btnResendOTP);
         countdown = findViewById(R.id.countdown);
     }
@@ -323,13 +333,12 @@ public class ChangePasswordActivityForOTP extends AppCompatActivity implements V
                     showSoftKeyboard(mPinHiddenEditText);
                 }
                 break;
-
-//            case R.id.pin_fifth_edittext:
-//                if (hasFocus) {
-//                    setFocus(mPinHiddenEditText);
-//                    showSoftKeyboard(mPinHiddenEditText);
-//                }
-//                break;
+            /*case R.id.pin_fifth_edittext:
+                if (hasFocus) {
+                    setFocus(mPinHiddenEditText);
+                    showSoftKeyboard(mPinHiddenEditText);
+                }
+                break;*/
             default:
                 break;
         }
@@ -342,9 +351,9 @@ public class ChangePasswordActivityForOTP extends AppCompatActivity implements V
             switch (id) {
                 case R.id.inputOtp:
                     if (keyCode == KeyEvent.KEYCODE_DEL) {
-//                        if (mPinHiddenEditText.getText().length() == 5)
-//                            mPinFifthDigitEditText.setText("");
-//                        else
+                       /* if (mPinHiddenEditText.getText().length() == 5)
+                            mPinFifthDigitEditText.setText("");
+                        else*/
                         if (mPinHiddenEditText.getText().length() == 4)
                             mPinForthDigitEditText.setText("");
                         else if (mPinHiddenEditText.getText().length() == 3)
@@ -376,7 +385,7 @@ public class ChangePasswordActivityForOTP extends AppCompatActivity implements V
         setDefaultPinBackground(mPinSecondDigitEditText);
         setDefaultPinBackground(mPinThirdDigitEditText);
         setDefaultPinBackground(mPinForthDigitEditText);
-//        setDefaultPinBackground(mPinFifthDigitEditText);
+        //setDefaultPinBackground(mPinFifthDigitEditText);
 
         if (s.length() == 0) {
             setFocusedPinBackground(mPinFirstDigitEditText);
@@ -387,30 +396,30 @@ public class ChangePasswordActivityForOTP extends AppCompatActivity implements V
             mPinSecondDigitEditText.setText("");
             mPinThirdDigitEditText.setText("");
             mPinForthDigitEditText.setText("");
-//            mPinFifthDigitEditText.setText("");
+            //mPinFifthDigitEditText.setText("");
         } else if (s.length() == 2) {
             setFocusedPinBackground(mPinThirdDigitEditText);
             mPinSecondDigitEditText.setText(s.charAt(1) + "");
             mPinThirdDigitEditText.setText("");
             mPinForthDigitEditText.setText("");
-//            mPinFifthDigitEditText.setText("");
+            //mPinFifthDigitEditText.setText("");
         } else if (s.length() == 3) {
             setFocusedPinBackground(mPinForthDigitEditText);
             mPinThirdDigitEditText.setText(s.charAt(2) + "");
             mPinForthDigitEditText.setText("");
-//            mPinFifthDigitEditText.setText("");
+            //mPinFifthDigitEditText.setText("");
         } else if (s.length() == 4) {
-//            setFocusedPinBackground(mPinFifthDigitEditText);
+            //setFocusedPinBackground(mPinFifthDigitEditText);
             mPinForthDigitEditText.setText(s.charAt(3) + "");
-//            mPinFifthDigitEditText.setText("");
+            //mPinFifthDigitEditText.setText("");
             hideSoftKeyboard(mPinForthDigitEditText);
         }
-//        else if (s.length() == 5) {
-//            setDefaultPinBackground(mPinFifthDigitEditText);
-//            mPinFifthDigitEditText.setText(s.charAt(4) + "");
-//
-//            hideSoftKeyboard(mPinFifthDigitEditText);
-//        }
+        /*else if (s.length() == 5) {
+            setDefaultPinBackground(mPinFifthDigitEditText);
+            mPinFifthDigitEditText.setText(s.charAt(4) + "");
+
+            hideSoftKeyboard(mPinFifthDigitEditText);
+        }*/
     }
 
     /**
@@ -456,13 +465,13 @@ public class ChangePasswordActivityForOTP extends AppCompatActivity implements V
         mPinSecondDigitEditText.setOnFocusChangeListener(this);
         mPinThirdDigitEditText.setOnFocusChangeListener(this);
         mPinForthDigitEditText.setOnFocusChangeListener(this);
-//        mPinFifthDigitEditText.setOnFocusChangeListener(this);
+        //mPinFifthDigitEditText.setOnFocusChangeListener(this);
 
         mPinFirstDigitEditText.setOnKeyListener(this);
         mPinSecondDigitEditText.setOnKeyListener(this);
         mPinThirdDigitEditText.setOnKeyListener(this);
         mPinForthDigitEditText.setOnKeyListener(this);
-//        mPinFifthDigitEditText.setOnKeyListener(this);
+        //mPinFifthDigitEditText.setOnKeyListener(this);
         mPinHiddenEditText.setOnKeyListener(this);
     }
 
@@ -503,7 +512,7 @@ public class ChangePasswordActivityForOTP extends AppCompatActivity implements V
             //CountDownTimer(edittext1.getText()+edittext2.getText()) also parse it to long
 
             public void onTick(long millisUntilFinished) {
-//                countdown.setText("seconds remaining: " + millisUntilFinished / 1000);
+                //countdown.setText("seconds remaining: " + millisUntilFinished / 1000);
                 countdown.setText("" + String.format("%d min, %d sec remaining",
                         TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
                         TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
@@ -552,42 +561,36 @@ public class ChangePasswordActivityForOTP extends AppCompatActivity implements V
                         // FETCHING USER INFORMATION FROM DATABASE
                         userJson = jsonObject.getJSONObject("user");
 
-//                        if (SharedPreManager.getInstance(getApplicationContext()).isWaitingForSMS()) {
-//                            SharedPreManager.getInstance(getApplicationContext()).setIsWaitingForSMS(false);
+                        /*if (SharedPreManager.getInstance(getApplicationContext()).isWaitingForSMS()) {
+                            SharedPreManager.getInstance(getApplicationContext()).setIsWaitingForSMS(false);*/
 
                         try {
-//                            mobileNumber = getIntent().getStringExtra("fromLoginPage");
-//////                            Timber.e("mobileNumber -> %s", mobileNumber);
-//                            if (mobileNumber.equals("fromLoginPage")) {
-//                                Timber.e("if e dhukche");
-////                                Toast.makeText(context, "if e dhukche", Toast.LENGTH_LONG).show();
-//                                context.startActivity(new Intent(context, LoginActivity.class));
-//                                finish();
-//                                showMessage("Dear " + userJson.getString("fullname") + ", Your Mobile Number is Verified...");
-//                            } else {
-//                                Timber.e("if else e dhukche");
-//                                Toast.makeText(context, "if else e dhukche", Toast.LENGTH_LONG).show();
+                            /*mobileNumber = getIntent().getStringExtra("fromLoginPage");
+                            //Timber.e("mobileNumber -> %s", mobileNumber);
+                            if (mobileNumber.equals("fromLoginPage")) {
+                                Timber.e("if e dhukche");
+                                //Toast.makeText(context, "if e dhukche", Toast.LENGTH_LONG).show();
+                                context.startActivity(new Intent(context, LoginActivity.class));
+                                finish();
+                                showMessage("Dear " + userJson.getString("fullname") + ", Your Mobile Number is Verified...");
+                            } else {
+                                Timber.e("if else e dhukche");
+                                Toast.makeText(context, "if else e dhukche", Toast.LENGTH_LONG).show();*/
                             Intent intent = new Intent(ChangePasswordActivityForOTP.this, ChangePasswordActivity.class);
                             startActivity(intent);
                             finish();
-
-//                            }
+                            //}
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-//                        }
+                        //}
                     }
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    showMessage(error.getMessage());
-                }
-            }) {
+            }, error -> showMessage(error.getMessage())) {
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> params = new HashMap<>();
@@ -600,7 +603,7 @@ public class ChangePasswordActivityForOTP extends AppCompatActivity implements V
         } else {
             // OTP IS EMPTY.
             progressDialog.dismiss();
-//            TastyToastUtils.showTastyWarningToast(context, "Please Enter Valid OTP...");
+            //TastyToastUtils.showTastyWarningToast(context, "Please Enter Valid OTP...");
             showMessage("Please Enter Valid OTP...");
         }
 
@@ -639,17 +642,5 @@ public class ChangePasswordActivityForOTP extends AppCompatActivity implements V
 
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        dismissProgressDialog();
-
-    }
-
-    private void dismissProgressDialog() {
-        if (progressDialog != null && progressDialog.isShowing())
-            progressDialog.dismiss();
     }
 }

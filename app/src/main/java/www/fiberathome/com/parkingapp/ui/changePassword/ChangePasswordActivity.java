@@ -24,6 +24,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
@@ -31,11 +32,13 @@ import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
 import www.fiberathome.com.parkingapp.model.loginUser.User;
 import www.fiberathome.com.parkingapp.model.response.common.CommonResponse;
+import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 
-public class ChangePasswordActivity extends AppCompatActivity implements View.OnClickListener {
+public class ChangePasswordActivity extends BaseActivity implements View.OnClickListener {
 
     private static final String TAG = ChangePasswordActivity.class.getSimpleName();
     private TextInputLayout textInputLayoutOldPassword;
@@ -122,7 +125,7 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
             String oldPassword = SharedData.getInstance().getOtp().trim();
             String newPassword = editTextNewPassword.getText().toString().trim();
             String confirmPassword = editTextConfirmPassword.getText().toString().trim();
-//            String mobileNo = user.getMobileNo().trim();
+            //String mobileNo = user.getMobileNo().trim();
             String mobileNo = SharedData.getInstance().getForgetPasswordMobile();
 
             if (validatePassword()) {
@@ -134,8 +137,8 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
     }
 
     private boolean checkFields() {
-//        editTextOldPassword.requestFocus();
-//        boolean isOldPasswordValid = Validator.checkValidity(textInputLayoutOldPassword, editTextOldPassword.getText().toString(), context.getString(R.string.err_old_password), "textPassword");
+        /*editTextOldPassword.requestFocus();
+        boolean isOldPasswordValid = Validator.checkValidity(textInputLayoutOldPassword, editTextOldPassword.getText().toString(), context.getString(R.string.err_old_password), "textPassword");*/
         boolean isNewPasswordValid = Validator.checkValidity(textInputLayoutNewPassword, editTextNewPassword.getText().toString(), context.getString(R.string.err_new_password), "textPassword");
         boolean isConfirmPasswordValid = Validator.checkValidity(textInputLayoutConfirmPassword, editTextConfirmPassword.getText().toString(), context.getString(R.string.err_confirm_password), "textPassword");
         return isNewPasswordValid && isConfirmPasswordValid;
@@ -144,13 +147,13 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
     private boolean validatePassword() {
         String userPassword;
         String newPassword;
-//        User user = SharedPreManager.getInstance(getContext()).getUser();
-//        if (SharedData.getInstance().getPassword() != null) {
-//            userPassword = SharedData.getInstance().getPassword();
-//            Timber.e("userPassword -> %s", userPassword);
-//            String oldPassword = editTextOldPassword.getText().toString().trim();
-//            checkUserPasswordAndOldPasswordField(userPassword, oldPassword);
-//        }
+        /*User user = SharedPreManager.getInstance(getContext()).getUser();
+        if (SharedData.getInstance().getPassword() != null) {
+            userPassword = SharedData.getInstance().getPassword();
+            Timber.e("userPassword -> %s", userPassword);
+            String oldPassword = editTextOldPassword.getText().toString().trim();
+            checkUserPasswordAndOldPasswordField(userPassword, oldPassword);
+        }*/
 
         newPassword = editTextNewPassword.getText().toString().trim();
         String confirmPassword = editTextConfirmPassword.getText().toString().trim();
@@ -163,12 +166,10 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
     }
 
     private void updatePassword(String newPassword, String confirmPassword, String mobileNo) {
-//        progressDialog = new ProgressDialog(context);
-        progressDialog = new ProgressDialog(ChangePasswordActivity.this);
-        progressDialog.setMessage("Please wait...");
-        progressDialog.setCancelable(false);
-        progressDialog.setIndeterminate(false);
-        progressDialog.show();
+
+        progressDialog = ApplicationUtils.progressDialog(context, "Please wait...");
+
+        HttpsTrustManager.allowAllSSL();
 
         // Changing Password through UI Service.
         ApiService service = ApiClient.getRetrofitInstance(AppConfig.URL_CHANGE_PASSWORD_OTP).create(ApiService.class);
@@ -185,7 +186,7 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
                     if (!response.body().getError()) {
                         showMessage(response.body().getMessage());
                         Timber.e("response -> %s",response.body().getMessage());
-//                        editTextOldPassword.setText("");
+                        //editTextOldPassword.setText("");
                         editTextNewPassword.setText("");
                         editTextConfirmPassword.setText("");
                         SharedPreManager.getInstance(context).logout();
@@ -231,15 +232,15 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
         public void afterTextChanged(Editable editable) {
             switch (view.getId()) {
                 case R.id.editTextOldPassword:
-//                    validateEditText(editTextOldPassword, textInputLayoutOldPassword, R.string.err_old_password);
+                    //validateEditText(editTextOldPassword, textInputLayoutOldPassword, R.string.err_old_password);
                     break;
 
                 case R.id.editTextNewPassword:
-//                    validateEditText(editTextNewPassword, textInputLayoutNewPassword, R.string.err_new_password);
+                    //validateEditText(editTextNewPassword, textInputLayoutNewPassword, R.string.err_new_password);
                     break;
 
                 case R.id.editTextConfirmPassword:
-//                    validateEditText(editTextConfirmPassword, textInputLayoutConfirmPassword, R.string.err_confirm_password);
+                    //validateEditText(editTextConfirmPassword, textInputLayoutConfirmPassword, R.string.err_confirm_password);
                     break;
 
             }

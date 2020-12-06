@@ -59,6 +59,7 @@ import butterknife.Unbinder;
 import de.hdodenhof.circleimageview.CircleImageView;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
@@ -74,7 +75,7 @@ import www.fiberathome.com.parkingapp.ui.privacyPolicy.PrivacyPolicyActivity;
 import www.fiberathome.com.parkingapp.ui.termsConditions.TermsConditionsActivity;
 import www.fiberathome.com.parkingapp.ui.signUp.verifyPhone.VerifyPhoneActivity;
 
-public class SignUpActivity extends AppCompatActivity implements View.OnClickListener, ProgressView {
+public class SignUpActivity extends BaseActivity implements View.OnClickListener, ProgressView {
 
     public static final String TAG = SignUpActivity.class.getSimpleName();
     private static final int REQUEST_PICK_GALLERY = 1001;
@@ -194,10 +195,10 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 }
                 break;
 
-//            case R.id.tvLogin:
-//                Intent loginIntent = new Intent(SignUpActivity.this, LoginActivity.class);
-//                startActivity(loginIntent);
-//                break;
+            /*case R.id.tvLogin:
+                Intent loginIntent = new Intent(SignUpActivity.this, LoginActivity.class);
+                startActivity(loginIntent);
+                break;*/
 
             case R.id.imageViewUploadProfileImage:
             case R.id.imageViewCaptureImage:
@@ -215,7 +216,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 .setNegativeButton(android.R.string.no, null)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
-//                        SignUpActivity.super.onBackPressed();
+                        //SignUpActivity.super.onBackPressed();
                         finish();
                         TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                     }
@@ -254,7 +255,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(SignUpActivity.this.getContentResolver(), contentURI);
                 Bitmap convertedImage = getResizedBitmap(bitmap, 500);
-//                    Toast.makeText(SignUpActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(SignUpActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
                 imageViewUploadProfileImage.setImageBitmap(convertedImage);
 
             } catch (IOException e) {
@@ -267,8 +268,8 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             try {
                 bitmap = (Bitmap) data.getExtras().get("data");
                 imageViewUploadProfileImage.setImageBitmap(bitmap);
-//                saveImage(thumbnail);
-//                Toast.makeText(SignUpActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
+                    /*saveImage(thumbnail);
+                    Toast.makeText(SignUpActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();*/
             } catch (Exception e) {
                 e.printStackTrace();
                 Toast.makeText(SignUpActivity.this, "Image Capture Failed!", Toast.LENGTH_SHORT).show();
@@ -548,9 +549,9 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     private void showPictureDialog() {
         AlertDialog.Builder pictureDialog = new AlertDialog.Builder(this);
         pictureDialog.setTitle("Select Image");
-//        String[] pictureDialogItems = {"Select photo from gallery",
-//                "Capture photo from camera"
-//        };
+        /*String[] pictureDialogItems = {"Select photo from gallery",
+                "Capture photo from camera"
+        };*/
         String[] pictureDialogItems = {"Capture photo from camera"};
 
         pictureDialog.setItems(pictureDialogItems, (dialog, which) -> {
@@ -632,7 +633,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             if (bitmap != null) {
                 registerUser(fullName, mobileNo, vehicleNo, password);
             } else {
-//                showMessage("Try Again. Please Upload Profile Photo!");
+                //showMessage("Try Again. Please Upload Profile Photo!");
                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.upload_profile_photo));
             }
         }
@@ -659,28 +660,28 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                     Timber.e("jsonObject if called");
 
                     showMessage(jsonObject.getString("message"));
-//                    showMessage("Mobile Number/Vehicle Registration Number already exists or Image Size is too large");
-//                    if (jsonObject.getString("message").equals("Sorry! mobile number is not valid or missing mate")){
-//                        showMessage("Mobile Number/Vehicle Registration Number already exists or Image Size is too large");
-//                    }
-                    // boolean flag saying device is waiting for sms
-//                    SharedPreManager.getInstance(getApplicationContext()).setIsWaitingForSMS(true);
+                    /*showMessage("Mobile Number/Vehicle Registration Number already exists or Image Size is too large");
+                    if (jsonObject.getString("message").equals("Sorry! mobile number is not valid or missing mate")){
+                        showMessage("Mobile Number/Vehicle Registration Number already exists or Image Size is too large");
+                    }
+                     boolean flag saying device is waiting for sms
+                    SharedPreManager.getInstance(getApplicationContext()).setIsWaitingForSMS(true);*/
 
                     // Moving the screen to next pager item i.e otp screen
                     Intent intent = new Intent(SignUpActivity.this, VerifyPhoneActivity.class);
-//                    intent.putExtra("fullname",fullname);
-//                    intent.putExtra("password",passw
-//                    ord);
-//                    intent.putExtra("mobile_no",mobileNo);
-//                    intent.putExtra("vehicle_no",vehicleNo);
-//                    intent.putExtra("image", imageToString(bitmap));
-//                    intent.putExtra("image_name", mobileNo);
+                    /*intent.putExtra("fullname",fullname);
+                    intent.putExtra("password",passw
+                    ord);
+                    intent.putExtra("mobile_no",mobileNo);
+                    intent.putExtra("vehicle_no",vehicleNo);
+                    intent.putExtra("image", imageToString(bitmap));
+                    intent.putExtra("image_name", mobileNo);*/
                     startActivity(intent);
 
 
                 } else {
-//                    showMessage(jsonObject.getString("message"));
-//                    showMessage("Mobile Number/Vehicle Registration Number already exists or Image Size is too large");
+                    /*showMessage(jsonObject.getString("message"));
+                    showMessage("Mobile Number/Vehicle Registration Number already exists or Image Size is too large");*/
                     Timber.e("jsonObject else called");
                     if (jsonObject.getString("message").equals("Sorry! mobile number is not valid or missing mate")) {
                         showMessage("Mobile Number/Vehicle Registration Number already exists or Image Size is too large");
@@ -693,12 +694,9 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 e.printStackTrace();
             }
 
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Timber.e("jsonObject onErrorResponse -> %s", error.getMessage());
-                SignUpActivity.this.showMessage(error.getMessage());
-            }
+        }, error -> {
+            Timber.e("jsonObject onErrorResponse -> %s", error.getMessage());
+            SignUpActivity.this.showMessage(error.getMessage());
         }) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
