@@ -32,7 +32,7 @@
                 android:text="@string/start_title"
                 android:padding="@dimen/dim10"
                 android:textAlignment="center"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/black"
                 android:textSize="@dimen/dimTex20"
                 android:textStyle="bold" />
 
@@ -83,7 +83,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/dim10"
                     android:layout_weight="1"
-                    android:background="@color/colorPrimary"
+                    android:background="@color/black"
                     android:text="@string/login"
                     android:textColor="@color/white" />
 
@@ -93,7 +93,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/dim10"
                     android:layout_weight="1"
-                    android:background="@color/colorPrimary"
+                    android:background="@color/black"
                     android:text="@string/signup"
                     android:textColor="@color/white" />
             </LinearLayout>
@@ -118,7 +118,7 @@
                         android:layout_weight="3"
                         android:text="@string/developed_by"
                         android:textStyle="bold"
-                        android:textColor="@color/colorPrimary"
+                        android:textColor="@color/black"
                         android:textSize="@dimen/font_size_18" />
 
                     <TextView
@@ -130,7 +130,7 @@
                         android:gravity="center"
                         android:text="@string/locc"
                         android:textAlignment="center"
-                        android:textColor="@color/colorPrimary"
+                        android:textColor="@color/black"
                         android:textSize="@dimen/dimTex20" />
                 </LinearLayout>
 
@@ -147,7 +147,7 @@
                         android:layout_weight="5"
                         android:text="@string/powered_by"
                         android:textStyle="bold"
-                        android:textColor="@color/colorPrimary"
+                        android:textColor="@color/black"
                         android:textSize="@dimen/dimTex18" />
 
                     <ImageView

@@ -94,22 +94,22 @@
     //common
     <string name="connect_to_internet">ইন্টারনেট সংযোগ করুন</string>
     <string name="connect_to_internet_gps">ইন্টারনেট/জিপিএস সংযোগ করুন</string>
-    <string name="close_app">অ্যাপ বন্ধ করুন</string>
+    <string name="close_app">অ্যাপ বন্ধ \nকরুন</string>
     <string name="conn_failed">সংযোগ ব্যর্থ হয়েছে</string>
     <string name="ok">ঠিক আছে</string>
-    <string name="retry">পুনরায় চেষ্টা করুন</string>
+    <string name="retry">পুনরায় চেষ্টা \nকরুন</string>
     <string name="demo_number">70</string>
     <string name="subject_to_availability">প্রাপ্যতা সাপেক্ষে</string>
     <string name="get_direction">দিকনির্দেশ পান</string>
     <string name="welcome_to_locc_parking">স্বাগতম, LOCC Smart Parking</string>
     <string name="exit_message">প্রস্থান করার জন্য দয়া করে এখানে টিপুন!</string>
     <string name="exit_message_main">প্রস্থান করতে ওকে টিপুন!</string>
-    <string name="distance">2 km</string>
+    <string name="distance">%1$s</string>
     <string name="parking_time">Arrival 04.30pm - 12.30pm Departure </string>
     <string name="confirm_booking">নিশ্চিত বুকিং</string>
     <string name="unavailable_parking_spot">অনুপলব্ধ পার্কিং স্পট</string>
     <string name="no_parking_spot_message">কোনও পার্কিং স্লট না থাকায় আপনি এই স্পটটি বুকিংয়ের জন্য সংরক্ষণ করতে পারবেন না!</string>
-    <string name="confirm_booking_message">একবার আপনার গন্তব্যে পৌঁছে গেলে,\nনিশ্চিত বুকিং বোতামটি সক্ষম হবে &amp; আপনি আপনার পার্কিং স্পট সংরক্ষণ করতে পারেন</string>
+    <string name="confirm_booking_message">একবার আপনার গন্তব্যে পৌঁছে গেলে,\nনিশ্চিত বুকিং বোতামটি চালু হবে &amp; আপনি আপনার পার্কিং স্পট সংরক্ষণ করতে পারেন</string>
 
     //bottom sheet
     <string name="bottom_Sheet_text">একটি স্পট চয়ন করুন বা, আরও কিছু জন্য সোয়াইপ আপ</string>
@@ -125,9 +125,10 @@
     <string name="arrived">পার্কিং স্পটে পৌঁছেছেন:</string>
     <string name="departure">পার্কিং স্পটে প্রস্থান:</string>
     <string name="book">পার্কিং স্পট বুক</string>
-    <string name="gps_network_not_enabled">জিপিএস নেটওয়ার্ক সক্ষম নয়!</string>
+    <string name="gps_network_not_enabled">জিপিএস নেটওয়ার্ক চালু নয়!</string>
     <string name="open_location_settings">স্থান সেটিংস খুলুন</string>
-    <string name="locc_smart_parking_app_needs_permission_to_access_device_location_to_provide_required_services_please_allow_the_permission">LOCC Smart Parking App needs permission to access device location to provide required services. Please allow the permission</string>
+    <string name="locc_smart_parking_app_needs_permission_to_access_device_location_to_provide_required_services_please_allow_the_permission">
+        LOCC স্মার্ট পার্কিং অ্যাপ্লিকেশনটিকে প্রয়োজনীয় পরিষেবাগুলি সরবরাহ করতে ডিভাইসের অবস্থান অ্যাক্সেসের অনুমতি প্রয়োজন, অনুমতি দিন</string>
     <string name="permission_request">অনুমতির অনুরোধ</string>
     <string name="grant_permission">অনুমতি প্রদান</string>
     <string name="no_data_available">পার্কিং অ্যাপ্লিকেশন অনুসন্ধান করার জন্য একটি \n বৈধ জায়গা সার্চ করুন</string>
@@ -393,7 +394,7 @@
     <string name="search">খুঁজুন…</string>
     <string name="connect_to_internet_splash">ইন্টারনেট সংযোগ করুন এবং আবার চেষ্টা করুন</string>
     <string name="connect_to_gps">জিপিএস-এ সংযোগ করুন</string>
-    <string name="connect_to_parking_app">পার্কিং অ্যাপ্লিকেশনটি ব্যবহার করতে দয়া করে জিপিএস সক্ষম করুন বা ইন্টারনেট চালু করুন</string>
+    <string name="connect_to_parking_app">পার্কিং অ্যাপ্লিকেশনটি ব্যবহার করতে দয়া করে জিপিএস এবং ইন্টারনেট চালু করুন</string>
     <string name="upload_profile_photo">আবার চেষ্টা করুন. প্রোফাইল ছবি আপলোড করুন</string>
     <string name="thanks_message">আমাদের সাথে থাকার জন্য ধন্যবাদ</string>
     <string name="reservation_successful">পার্কিং স্পট সফলভাবে সংরক্ষণ করা হয়েছে</string>

@@ -174,7 +174,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         });
 
         if (selectedItem == position) {
-//            holder.itemView.setBackgroundColor(Color.LTGRAY);
+            //holder.itemView.setBackgroundColor(Color.LTGRAY);
             holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.selectedColor));
             //Toast.makeText(context, "if", Toast.LENGTH_SHORT).show();
             //Log.d(TAG, "onBindViewHolder: gray");
@@ -231,7 +231,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
                 .execute(new DirectionCallback() {
                     @Override
                     public void onDirectionSuccess(Direction direction, String rawBody) {
-//                        dismissDialog();
+                        //dismissDialog();
                         String status = direction.getStatus();
                         if (status.equals(RequestResult.OK)) {
                             Route route = direction.getRouteList().get(0);
@@ -257,7 +257,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
                             }
 
                             //------------Displaying Distance and Time-----------------\\
-//                            showingDistanceTime(distance, duration); // Showing distance and time to the user in the UI \\
+                            //showingDistanceTime(distance, duration); // Showing distance and time to the user in the UI \\
                             String message = "Total Distance is " + distance + " and Estimated Time is " + duration;
                             Timber.e("duration message -> %s", message);
 
@@ -291,16 +291,15 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         if (providerEnabled) {
             return true;
         } else {
-
-//            AlertDialog alertDialog = new AlertDialog.Builder(context)
-//                    .setTitle("GPS Permissions")
-//                    .setMessage("GPS is required for this app to work. Please enable GPS.")
-//                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
-//                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-//                        startActivityForResult(intent, GPS_REQUEST_CODE);
-//                    }))
-//                    .setCancelable(false)
-//                    .show();
+            /*AlertDialog alertDialog = new AlertDialog.Builder(context)
+                    .setTitle("GPS Permissions")
+                    .setMessage("GPS is required for this app to work. Please enable GPS.")
+                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivityForResult(intent, GPS_REQUEST_CODE);
+                    }))
+                    .setCancelable(false)
+                    .show();*/
 
         }
 

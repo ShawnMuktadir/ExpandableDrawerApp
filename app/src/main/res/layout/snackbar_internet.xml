@@ -25,8 +25,9 @@
             <LinearLayout
                 android:id="@+id/my_snackbar_layout"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/dim100"
-                android:background="@color/colorPrimary"
+                android:layout_height="@dimen/dim150"
+                android:background="@color/black"
+                android:weightSum="1.4"
                 android:orientation="horizontal"
                 android:padding="@dimen/dim5">
                 <!--android:layout_alignParentBottom="true"-->
@@ -45,8 +46,9 @@
                     android:id="@+id/first_text_view"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".2"
-                    android:gravity="bottom"
+                    android:layout_weight=".4"
+                    android:gravity="center"
+                    android:layout_marginEnd="@dimen/dim2"
                     android:layout_gravity="bottom"
                     android:text="@string/retry"
                     android:textColor="@color/white" />
@@ -55,8 +57,8 @@
                     android:id="@+id/second_text_view"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".2"
-                    android:gravity="bottom"
+                    android:layout_weight=".4"
+                    android:gravity="center"
                     android:layout_gravity="bottom"
                     android:text="@string/close_app"
                     android:textColor="@color/white" />

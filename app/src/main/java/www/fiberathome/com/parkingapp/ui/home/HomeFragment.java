@@ -155,6 +155,7 @@ import www.fiberathome.com.parkingapp.model.sensors.SensorArea;
 import www.fiberathome.com.parkingapp.model.data.AppConstants;
 import www.fiberathome.com.parkingapp.module.room.BookingSensorsRoom;
 import www.fiberathome.com.parkingapp.module.room.DatabaseClient;
+import www.fiberathome.com.parkingapp.ui.search.SearchActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.GpsUtils;
 import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
@@ -163,7 +164,6 @@ import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.RecyclerTouchListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.ui.location.LocationActivity;
-import www.fiberathome.com.parkingapp.ui.search.SearchActivity;
 import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
 import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.ui.bottomSheet.BottomSheetAdapter;
@@ -504,8 +504,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
                 if ((ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
             */
+
         /*ActivityCompat.requestPermissions(getActivity(),new String[] {Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission
                     .ACCESS_COARSE_LOCATION},LOCATION_PERMISSION_REQUEST_CODE);*/
+
         /*
                     requestPermissions(new String[]{
                             Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
@@ -1036,14 +1038,15 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
         //value getting from parking adapter
         if (SharedData.getInstance().getSensorArea() != null) {
-            //bottomSheetBehavior.setPeekHeight(400)                             ;
             SensorArea sensorArea = SharedData.getInstance().getSensorArea();
             //Timber.e("Sensor Area from SharedData -> %s", new Gson().toJson(sensorArea));
 
             textViewParkingAreaName.setText(ApplicationUtils.capitalize(sensorArea.getParkingArea()));
             textViewParkingAreaCount.setText(sensorArea.getCount());
             String distance = new DecimalFormat("##.##").format(sensorArea.getDistance()) + " km";
-            textViewParkingDistance.setText(distance);
+            //textViewParkingDistance.setText(distance);
+            textViewParkingDistance.setText(context.getResources().getString(R.string.distance, distance));
+            //textViewParkingDistance.setText(NumberFormat.getInstance().format(distance));
             //textViewParkingTravelTime.setText(sensorArea.getDuration());
             getDestinationInfoForDuration(new LatLng(sensorArea.getLat(), sensorArea.getLng()));
         } else {

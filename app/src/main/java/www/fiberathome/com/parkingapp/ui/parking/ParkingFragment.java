@@ -598,13 +598,13 @@ public class ParkingFragment extends Fragment implements ParkingAdapter.ParkingA
     @Override
     public void onItemClick(int position) {
         Timber.e("parkingFragment onItemClick called");
-//        homeFragment = HomeFragment.newInstance();
-//        homeFragment.onParkingAdapterItemClickBottomSheetChanged(new LatLng(sensorAreas.get(position).getLat(),sensorAreas.get(position).getLng()));
+        /*homeFragment = HomeFragment.newInstance();
+        homeFragment.onParkingAdapterItemClickBottomSheetChanged(new LatLng(sensorAreas.get(position).getLat(),sensorAreas.get(position).getLng()));*/
         if (ApplicationUtils.checkInternet(context) && isGPSEnabled()) {
             Timber.e("parkingFragment onItemClick if called");
-//            ((MainActivity) context).onParkingAdapterItemClickBottomSheetChanged(new LatLng(sensorAreas.get(position).getLat(), sensorAreas.get(position).getLng()));
+            //((MainActivity) context).onParkingAdapterItemClickBottomSheetChanged(new LatLng(sensorAreas.get(position).getLat(), sensorAreas.get(position).getLng()));
 
-//            EventBus.getDefault().post(new GetDirectionEvent(new LatLng(sensorAreas.get(position).getLat(), sensorAreas.get(position).getLng())));
+            //EventBus.getDefault().post(new GetDirectionEvent(new LatLng(sensorAreas.get(position).getLat(), sensorAreas.get(position).getLng())));
         } else {
             TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
         }

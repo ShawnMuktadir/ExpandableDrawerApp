@@ -7,7 +7,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <TextView
@@ -24,21 +24,20 @@
             android:scaleX="0.8"
             android:scaleY="0.8"
             android:calendarViewShown="true"
-            android:headerBackground="@color/colorPrimary"
-            android:numbersSelectorColor="@color/colorPrimary"
+            android:headerBackground="@color/black"
+            android:numbersSelectorColor="@color/black"
             android:spinnersShown="false"
-            android:yearListSelectorColor="@color/colorPrimary" />
+            android:yearListSelectorColor="@color/black" />
 
         <TimePicker
             android:id="@+id/parking_req_start_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
-            android:layout_marginTop="@dimen/margin_20"
+            android:layout_marginTop="@dimen/dim20"
             android:scaleX="0.8"
             android:scaleY="0.8"
-            android:headerBackground="@color/colorPrimary"
-            android:numbersSelectorColor="@color/colorPrimary"
+            android:headerBackground="@color/black"
+            android:numbersSelectorColor="@color/black"
             android:tag="Select Start Time" />
 
         <DatePicker
@@ -49,9 +48,9 @@
             android:scaleX="0.8"
             android:scaleY="0.8"
             android:calendarViewShown="true"
-            android:headerBackground="@color/colorPrimary"
+            android:headerBackground="@color/black"
             android:spinnersShown="false"
-            android:yearListSelectorColor="@color/colorPrimary" />
+            android:yearListSelectorColor="@color/black" />
 
         <TimePicker
             android:id="@+id/parking_req_end_time"
@@ -59,8 +58,8 @@
             android:layout_height="wrap_content"
             android:scaleX="0.8"
             android:scaleY="0.8"
-            android:headerBackground="@color/colorPrimary"
-            android:numbersSelectorColor="@color/colorPrimary"
+            android:headerBackground="@color/black"
+            android:numbersSelectorColor="@color/black"
             android:tag="Select End Time" />
 
         <!-- Password Label -->
@@ -83,7 +82,7 @@
                 android:id="@+id/parking_req_bill_amount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_20"
+                android:layout_marginTop="@dimen/dim20"
                 android:tag="Bill Amount"
                 android:textAlignment="center"
                 android:textSize="20sp" />
@@ -93,8 +92,8 @@
             android:id="@+id/reserve_final"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_20"
-            android:background="@color/colorPrimary"
+            android:layout_marginTop="@dimen/dim20"
+            android:background="@color/black"
             android:text="@string/reserve"
             android:textColor="@color/whiteColor" />
 
@@ -105,13 +104,12 @@
             android:visibility="gone"
             android:background="@drawable/bkash_payment" />
 
-
         <Button
             android:id="@+id/reserve_payment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dim5"
-            android:background="@color/colorPrimary"
+            android:background="@color/black"
             android:text="@string/pay_bill"
             android:textColor="@color/whiteColor" />
 
@@ -120,11 +118,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dim5"
-            android:background="@color/colorPrimary"
+            android:background="@color/black"
             android:text="@string/cancel"
             android:textColor="@color/whiteColor" />
-
-
     </LinearLayout>
-
 </ScrollView>

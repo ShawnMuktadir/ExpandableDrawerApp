@@ -112,7 +112,7 @@
                 android:background="@android:color/transparent"
                 android:dropDownVerticalOffset="35dp"
                 android:gravity="center"
-                android:popupBackground="@color/colorPrimary"
+                android:popupBackground="@color/black"
                 android:text="@string/change_language"
                 android:textColor="@color/white" />
 

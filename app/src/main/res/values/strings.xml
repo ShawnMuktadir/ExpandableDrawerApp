@@ -103,7 +103,7 @@
     <string name="welcome_to_locc_parking">Welcome, LOCC Smart Parking</string>
     <string name="exit_message">Please Press here to exit!</string>
     <string name="exit_message_main">Press OK to exit!</string>
-    <string name="distance">2 km</string>
+    <string name="distance">%1$s</string>
     <string name="parking_time">Arrival 04.30pm - 12.30pm Departure </string>
     <string name="confirm_booking">Confirm Booking</string>
     <string name="unavailable_parking_spot">Unavailable Parking Spot</string>
@@ -392,7 +392,7 @@
     <string name="search">Search…</string>
     <string name="connect_to_internet_splash">Please connect to internet and try again</string>
     <string name="connect_to_gps">Connect to GPS</string>
-    <string name="connect_to_parking_app">Please enable GPS or turn on Internet to use Parking App</string>
+    <string name="connect_to_parking_app">Please enable GPS and turn on Internet to use Parking App</string>
     <string name="upload_profile_photo">Try Again. Please Upload Profile Photo</string>
     <string name="thanks_message">Thanks for being with us</string>
     <string name="reservation_successful">Parking Spot has Reservated Successfully</string>

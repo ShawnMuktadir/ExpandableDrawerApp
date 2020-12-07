@@ -83,6 +83,8 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
         context = this;
         setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
 
+        //setStatusBarColor(context);
+
         //location permission check
         handleLocationPermissionCheck(context);
 

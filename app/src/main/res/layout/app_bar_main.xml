@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:layout_marginEnd="@dimen/dim5"
-                android:padding="@dimen/dim5"
+                android:padding="@dimen/dim3"
                 android:visibility="gone"
                 android:background="@drawable/border"
                 android:orientation="horizontal">

@@ -75,6 +75,6 @@ public class ParkingActivity extends NavigationActivity {
             } catch (EventBusException e) {
                 e.getCause();
             }
-        }, 2000);
+        }, 2100);
     }
 }

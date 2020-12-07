@@ -66,7 +66,7 @@ public class BookingFragment extends Fragment implements IOnBackPressListener {
     private BookingAdapter bookingAdapter;
     private ArrayList<BookingArea> bookingAreas = new ArrayList<>();
 
-    private Context context;
+    private BookingActivity context;
     private ProgressDialog progressDialog;
 
     public BookingFragment() {
@@ -89,7 +89,7 @@ public class BookingFragment extends Fragment implements IOnBackPressListener {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_bookings, container, false);
         unbinder = ButterKnife.bind(this, view);
-        context = getActivity();
+        context = (BookingActivity) getActivity();
 
         setListeners();
 
@@ -160,7 +160,6 @@ public class BookingFragment extends Fragment implements IOnBackPressListener {
     @Override
     public boolean onBackPressed() {
         if (isGPSEnabled()) {
-//            HomeFragment nextFrag = new HomeFragment();
             if (getActivity() != null) {
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, HomeFragment.newInstance())
@@ -198,9 +197,11 @@ public class BookingFragment extends Fragment implements IOnBackPressListener {
     }
 
     private void fetchParkingBookingSpot(String mobileNo) {
+
+        progressDialog = ApplicationUtils.progressDialog(context, "Please wait...");
+
         HttpsTrustManager.allowAllSSL();
-        progressDialog = ApplicationUtils.progressDialog(getActivity(),
-                "Please wait...");
+
         StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_FETCH_BOOKINGS, new Response.Listener<String>() {
 
             @Override
@@ -214,11 +215,11 @@ public class BookingFragment extends Fragment implements IOnBackPressListener {
 
                         JSONArray jsonArray = jsonObject.getJSONArray("bookings");
 
-//                        stringArrayList = new ArrayList<String>();
-//
-//                        numbRows = (Integer) jsonArray.length();
-//
-//                        Log.e("Number of Bookings: ", String.valueOf(numbRows));
+                        /*stringArrayList = new ArrayList<String>();
+
+                        numbRows = (Integer) jsonArray.length();
+
+                        Log.e("Number of Bookings: ", String.valueOf(numbRows));*/
 
                         BookingArea bookingArea = null;
                         for (int i = 0; i < jsonArray.length(); i++) {
@@ -233,14 +234,14 @@ public class BookingFragment extends Fragment implements IOnBackPressListener {
                             bookingArea = new BookingArea(spotName, timeStart, timeEnd);
                             bookingAreas.add(bookingArea);
 
-                            // Log.e("Spot Info: ", spotName.toString());
-//                            stringArrayList.add(spotName.toString() + "|" + timeStart.toString() + "|" + timeEnd.toString() + "|" + currentBill.toString() + "|" + previousDue.toString());
+                            //Log.e("Spot Info: ", spotName.toString());
+                            //stringArrayList.add(spotName.toString() + "|" + timeStart.toString() + "|" + timeEnd.toString() + "|" + currentBill.toString() + "|" + previousDue.toString());
                         }
                         setFragmentControls(bookingAreas);
                     } else {
-//                        stringArrayList = new ArrayList<String>();
-//                        stringArrayList.add(" \n No Booking Found! ");
-//                        bookingList(stringArrayList);
+                        /*stringArrayList = new ArrayList<String>();
+                        stringArrayList.add(" \n No Booking Found! ");
+                        bookingList(stringArrayList);*/
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -281,7 +282,7 @@ public class BookingFragment extends Fragment implements IOnBackPressListener {
                 ((HomeActivity) getActivity()).navigationView.getMenu().getItem(2).setChecked(false);
             }
             if (getFragmentManager() != null) {
-                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                FragmentTransaction fragmentTransaction = context.getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.fragment_container, HomeFragment.newInstance());
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();

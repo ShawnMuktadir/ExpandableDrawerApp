@@ -57,7 +57,8 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         void onItemClick(int position);
     }
 
-    public ParkingAdapter(Context context, ParkingFragment parkingFragment, HomeFragment homeFragment, ArrayList<SensorArea> sensorAreas, Location onConnectedLocation, ParkingAdapterClickListener mListener) {
+    public ParkingAdapter(Context context, ParkingFragment parkingFragment, HomeFragment homeFragment,
+                          ArrayList<SensorArea> sensorAreas, Location onConnectedLocation, ParkingAdapterClickListener mListener) {
         this.context = context;
         this.parkingFragment = parkingFragment;
         this.homeFragment = homeFragment;
@@ -80,7 +81,9 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
         ParkingViewHolder parkingViewHolder = (ParkingViewHolder) viewHolder;
+
         SensorArea sensorArea = sensorAreas.get(position);
+
         parkingViewHolder.textViewParkingAreaName.setText(ApplicationUtils.capitalize(sensorArea.getParkingArea()));
         parkingViewHolder.textViewParkingAreaCount.setText(sensorArea.getCount());
 
@@ -92,7 +95,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         sensorArea.setDuration(duration);
         parkingViewHolder.textViewParkingTravelTime.setText(sensorArea.getDuration());
 
-        // Here I am just highlighting the background
+        //Here I am just highlighting the background
         parkingViewHolder.itemView.setBackgroundColor(selectedPosition == position ?
                 context.getResources().getColor(R.color.selectedColor) : Color.TRANSPARENT);
         //parkingViewHolder.itemView.setBackgroundColor(context.getResources().getColor(R.color.selectedColor));
@@ -149,18 +152,18 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (providerEnabled) {
             return true;
         } else {
-//            AlertDialog alertDialog = new AlertDialog.Builder(context)
-//                    .setTitle("GPS Permissions")
-//                    .setMessage("GPS is required for this app to work. Please enable GPS.")
-//                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
-//                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-//                        intent.putExtra("position",position);
-//                        Activity origin = (Activity)context;
-//
-//                        origin.startActivityForResult(intent, GPS_REQUEST_CODE);
-//                    }))
-//                    .setCancelable(false)
-//                    .show();
+            /*AlertDialog alertDialog = new AlertDialog.Builder(context)
+                    .setTitle("GPS Permissions")
+                    .setMessage("GPS is required for this app to work. Please enable GPS.")
+                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        intent.putExtra("position",position);
+                        Activity origin = (Activity)context;
+
+                        origin.startActivityForResult(intent, GPS_REQUEST_CODE);
+                    }))
+                    .setCancelable(false)
+                    .show();*/
         }
 
         return false;

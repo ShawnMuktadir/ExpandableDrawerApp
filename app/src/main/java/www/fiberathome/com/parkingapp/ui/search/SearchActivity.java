@@ -3,7 +3,9 @@ package www.fiberathome.com.parkingapp.ui.search;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -58,6 +60,7 @@ import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
 import www.fiberathome.com.parkingapp.model.response.search.SearchVisitorData;
 import www.fiberathome.com.parkingapp.model.response.search.SelectedPlace;
 import www.fiberathome.com.parkingapp.model.response.search.SearchVisitedPlaceResponse;
+import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
 import www.fiberathome.com.parkingapp.utils.RecyclerTouchListener;
@@ -94,6 +97,10 @@ public class SearchActivity extends BaseActivity implements PlacesAutoCompleteAd
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            getWindow().setStatusBarColor(Color.WHITE);
+        }
         setContentView(R.layout.activity_search);
         unbinder = ButterKnife.bind(this);
         context = this;
@@ -130,20 +137,19 @@ public class SearchActivity extends BaseActivity implements PlacesAutoCompleteAd
     @SuppressLint("ClickableViewAccessibility")
     private void setListeners() {
         imageViewCross.setOnClickListener(v -> {
+            startActivity(new Intent(context, HomeActivity.class));
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             finish();
         });
 
-        ivClearSearchText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                editTextSearch.setText("");
-                mAutoCompleteAdapter.clearList();
-                if (searchVisitorDataList != null) {
-                    hideNoData();
-                    fetchSearchVisitorPlace(SharedPreManager.getInstance(context).getUser().getMobileNo());
-                } else {
-                    setNoData();
-                }
+        ivClearSearchText.setOnClickListener(view -> {
+            editTextSearch.setText("");
+            mAutoCompleteAdapter.clearList();
+            if (searchVisitorDataList != null) {
+                hideNoData();
+                fetchSearchVisitorPlace(SharedPreManager.getInstance(context).getUser().getMobileNo());
+            } else {
+                setNoData();
             }
         });
 
@@ -187,17 +193,17 @@ public class SearchActivity extends BaseActivity implements PlacesAutoCompleteAd
                         ApplicationUtils.hideKeyboard(context, editTextSearch);
                     }
                 }
-//                if (s.length() >= 0) {
-////                    filter(s.toString());
-//                    mAutoCompleteAdapter.getFilter().filter(s.toString());
-//                }
+                /*if (s.length() >= 0) {
+                    //filter(s.toString());
+                    mAutoCompleteAdapter.getFilter().filter(s.toString());
+                }
 
-                //drawing cross button if text appears programmatically
-//                if (s.length() > 0) {
-//                    editTextSearch.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_clear, 0);
-//                } else {
-//                    editTextSearch.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-//                }
+                drawing cross button if text appears programmatically
+                if (s.length() > 0) {
+                    editTextSearch.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_clear, 0);
+                } else {
+                    editTextSearch.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                }*/
             }
         });
 
@@ -218,36 +224,36 @@ public class SearchActivity extends BaseActivity implements PlacesAutoCompleteAd
         });
 
         //handle special characters
-//        InputFilter filter = new InputFilter() {
-//            @Override
-//            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-//                boolean keepOriginal = true;
-//                StringBuilder sb = new StringBuilder(end - start);
-//                for (int i = start; i < end; i++) {
-//                    char c = source.charAt(i);
-//                    if (isCharAllowed(c)) // put your condition here
-//                        sb.append(c);
-//                    else
-//                        keepOriginal = false;
-//                }
-//                if (keepOriginal)
-//                    return null;
-//                else {
-//                    if (source instanceof Spanned) {
-//                        SpannableString sp = new SpannableString(sb);
-//                        TextUtils.copySpansFrom((Spanned) source, start, sb.length(), null, sp, 0);
-//                        return sp;
-//                    } else {
-//                        return sb;
-//                    }
-//                }
-//            }
-//
-//            private boolean isCharAllowed(char c) {
-//                return Character.isLetterOrDigit(c) || Character.isSpaceChar(c);
-//            }
-//        };
-//        editTextSearch.setFilters(new InputFilter[]{filter});
+        /*InputFilter filter = new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                boolean keepOriginal = true;
+                StringBuilder sb = new StringBuilder(end - start);
+                for (int i = start; i < end; i++) {
+                    char c = source.charAt(i);
+                    if (isCharAllowed(c)) // put your condition here
+                        sb.append(c);
+                    else
+                        keepOriginal = false;
+                }
+                if (keepOriginal)
+                    return null;
+                else {
+                    if (source instanceof Spanned) {
+                        SpannableString sp = new SpannableString(sb);
+                        TextUtils.copySpansFrom((Spanned) source, start, sb.length(), null, sp, 0);
+                        return sp;
+                    } else {
+                        return sb;
+                    }
+                }
+            }
+
+            private boolean isCharAllowed(char c) {
+                return Character.isLetterOrDigit(c) || Character.isSpaceChar(c);
+            }
+        };
+        editTextSearch.setFilters(new InputFilter[]{filter});*/
     }
 
     @Override
@@ -257,13 +263,13 @@ public class SearchActivity extends BaseActivity implements PlacesAutoCompleteAd
             if (place == null) {
                 Timber.e("place null");
                 setResult(RESULT_CANCELED, resultIntent);
-//            new Handler().postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
+                /*new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {*/
                 finish();
-//                }
-//            }, 500);
-//            overridePendingTransition(0, 0);
+               /* }
+                }, 500);
+                overridePendingTransition(0, 0);*/
             } else {
                 Timber.e("place not null");
                 LatLng latLng = place.getLatLng();
@@ -280,14 +286,14 @@ public class SearchActivity extends BaseActivity implements PlacesAutoCompleteAd
                     //String result=new Gson().toJson(place);
                     resultIntent.putExtra(NEW_PLACE_SELECTED, selectedplace);
                     setResult(RESULT_OK, resultIntent);
-                    //Log.d("ShawnClick", "click: ");
-//                new Handler().postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
+                    /*Log.d("ShawnClick", "click: ");
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {*/
                     finish();
-//                    }
-//                }, 500);
-//                overridePendingTransition(0, 0);
+                    /*}
+                }, 500);
+                overridePendingTransition(0, 0);*/
                 }
             }
         } else {
@@ -311,9 +317,9 @@ public class SearchActivity extends BaseActivity implements PlacesAutoCompleteAd
                 resultIntent.putExtra(HISTORY_PLACE_SELECTED, searchVisitorData);
                 setResult(RESULT_OK, resultIntent);
                 //Log.d("ShawnClick", "click: ");
-//                new Handler().postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
+                /*new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {*/
                 finish();
             }
         } else {
@@ -378,19 +384,19 @@ public class SearchActivity extends BaseActivity implements PlacesAutoCompleteAd
     private TextWatcher filterTextWatcher = new TextWatcher() {
 
         public void afterTextChanged(Editable s) {
-//            if (!s.toString().equals("")) {
-//                mAutoCompleteAdapter.getFilter().filter(s.toString());
-//            }
+            /*if (!s.toString().equals("")) {
+                mAutoCompleteAdapter.getFilter().filter(s.toString());
+            }*/
 
             mAutoCompleteAdapter.notifyDataSetChanged();
-            if (!ApplicationUtils.checkInternet(context)){
+            if (!ApplicationUtils.checkInternet(context)) {
                 ApplicationUtils.hideKeyboard(context, editTextSearch);
             }
 
         }
 
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            if (!ApplicationUtils.checkInternet(context)){
+            if (!ApplicationUtils.checkInternet(context)) {
                 ApplicationUtils.hideKeyboard(context, editTextSearch);
             }
         }
@@ -400,12 +406,12 @@ public class SearchActivity extends BaseActivity implements PlacesAutoCompleteAd
             if (s.toString().length() > 0) {
                 mAutoCompleteAdapter.getFilter().filter(s.toString());
                 mAutoCompleteAdapter.notifyDataSetChanged();
-                if (!ApplicationUtils.checkInternet(context)){
+                if (!ApplicationUtils.checkInternet(context)) {
                     ApplicationUtils.hideKeyboard(context, editTextSearch);
                 }
             } else {
                 mAutoCompleteAdapter.clearList();
-                if (!ApplicationUtils.checkInternet(context)){
+                if (!ApplicationUtils.checkInternet(context)) {
                     ApplicationUtils.hideKeyboard(context, editTextSearch);
                 }
             }
@@ -451,11 +457,11 @@ public class SearchActivity extends BaseActivity implements PlacesAutoCompleteAd
                             searchVisitorDataList.add(searchVisitorData);
 
                             //Removing Duplicates;
-//                            Set<SearchVisitorData> s = new LinkedHashSet<SearchVisitorData>();
-//                            s.addAll(searchVisitorDataList);
-////                            searchVisitorDataList = new ArrayList<SearchVisitorData>();
-//                            searchVisitorDataList.clear();
-//                            searchVisitorDataList.addAll(s);
+                            /*Set<SearchVisitorData> s = new LinkedHashSet<SearchVisitorData>();
+                            s.addAll(searchVisitorDataList);
+                            //searchVisitorDataList = new ArrayList<SearchVisitorData>();
+                            searchVisitorDataList.clear();
+                            searchVisitorDataList.addAll(s);*/
 
                             Timber.e("searchVisitorDataList -> %s", new Gson().toJson(searchVisitorDataList));
                         } else {
@@ -463,10 +469,10 @@ public class SearchActivity extends BaseActivity implements PlacesAutoCompleteAd
                         }
                     }
 
-//                    setFragmentControls(removeDuplicatesSearchVisitorData(searchVisitorDataList));
-//                    setFragmentControls(getUniqueList(searchVisitorDataList));
-//                    setFragmentControls(clearListFromDuplicateVisitedArea(searchVisitorDataList));
-//                    setFragmentControls(noRepeat);
+                    /*setFragmentControls(removeDuplicatesSearchVisitorData(searchVisitorDataList));
+                    setFragmentControls(getUniqueList(searchVisitorDataList));
+                    setFragmentControls(clearListFromDuplicateVisitedArea(searchVisitorDataList));
+                    setFragmentControls(noRepeat);*/
                     setFragmentControls(searchVisitorDataList);
 
                 } catch (JSONException e) {
@@ -482,7 +488,7 @@ public class SearchActivity extends BaseActivity implements PlacesAutoCompleteAd
             public void onErrorResponse(VolleyError error) {
                 Timber.e("jsonObject onErrorResponse get post -> %s", error.getMessage());
                 Timber.e("jsonObject onError Cause get post -> %s", error.getCause());
-//                showMessage(error.getMessage());
+                //showMessage(error.getMessage());
             }
         }) {
             @Override
@@ -497,65 +503,67 @@ public class SearchActivity extends BaseActivity implements PlacesAutoCompleteAd
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         ParkingApp.getInstance().addToRequestQueue(stringRequest, TAG);
 
-//        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-//        Call<SearchVisitedPlaceResponse> call = request.getVisitorData();
-//        call.enqueue(new Callback<SearchVisitedPlaceResponse>() {
-//            @Override
-//            public void onResponse(@NotNull Call<SearchVisitedPlaceResponse> call, @NotNull Response<SearchVisitedPlaceResponse> response) {
-//                Timber.e("onResponse searchHistory-> %s", new Gson().toJson(response.body()));
-//
-//                if (response.body() != null) {
-//                    list = response.body().getVisitorData();
-//                    Timber.e("list -> %s", list);
-//
-//                    searchVisitedPlaceResponse = response.body();
-//
-//                    visitedPlaceList = searchVisitedPlaceResponse.getVisitorData();
-//                    if (visitedPlaceList!=null){
-//                        for (List<String> visitedPlaceData : visitedPlaceList) {
-//                            for (int i = 0; i < visitedPlaceData.size(); i++) {
-//
-//                                Log.d(TAG, "onResponse: i=" + i);
-//
-//                                if (i == 6) {
-//                                    parkingArea = visitedPlaceData.get(i);
-//                                }
-//
-//                                if (i == 1) {
-//                                    placeId = visitedPlaceData.get(i);
-//                                }
-//
-//                                if (i == 2) {
-//                                    endLat = Double.parseDouble(visitedPlaceData.get(i));
-//                                }
-//
-//                                if (i == 3) {
-//                                    endLng = Double.parseDouble(visitedPlaceData.get(i));
-//                                }
-//
-//                                if (i == 4) {
-//                                    startLat = Double.parseDouble(visitedPlaceData.get(i));
-//                                }
-//
-//                                if (i == 5) {
-//                                    startLng = Double.parseDouble(visitedPlaceData.get(i));
-//                                }
-//                            }
-//                            SearchVisitorData searchVisitorData = new SearchVisitorData(parkingArea, placeId, endLat, endLng, startLat, startLng);
-//                            searchVisitorDataList.add(searchVisitorData);
-//                            Timber.e("searchVisitorData -> %s", new Gson().toJson(searchVisitorData));
-//                        }
-//                        setFragmentControls(searchVisitorDataList);
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(@NonNull Call<SearchVisitedPlaceResponse> call, @NonNull Throwable t) {
-//                Timber.e("onFailure -> %s", t.getMessage());
-//                ApplicationUtils.showMessageDialog("Something went wrong...Please try later!", context);
-//            }
-//        });
+        //fetch data by retrofit
+
+        /*ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+        Call<SearchVisitedPlaceResponse> call = request.getVisitorData();
+        call.enqueue(new Callback<SearchVisitedPlaceResponse>() {
+            @Override
+            public void onResponse(@NotNull Call<SearchVisitedPlaceResponse> call, @NotNull Response<SearchVisitedPlaceResponse> response) {
+                Timber.e("onResponse searchHistory-> %s", new Gson().toJson(response.body()));
+
+                if (response.body() != null) {
+                    list = response.body().getVisitorData();
+                    Timber.e("list -> %s", list);
+
+                    searchVisitedPlaceResponse = response.body();
+
+                    visitedPlaceList = searchVisitedPlaceResponse.getVisitorData();
+                    if (visitedPlaceList!=null){
+                        for (List<String> visitedPlaceData : visitedPlaceList) {
+                            for (int i = 0; i < visitedPlaceData.size(); i++) {
+
+                                Log.d(TAG, "onResponse: i=" + i);
+
+                                if (i == 6) {
+                                    parkingArea = visitedPlaceData.get(i);
+                                }
+
+                                if (i == 1) {
+                                    placeId = visitedPlaceData.get(i);
+                                }
+
+                                if (i == 2) {
+                                    endLat = Double.parseDouble(visitedPlaceData.get(i));
+                                }
+
+                                if (i == 3) {
+                                    endLng = Double.parseDouble(visitedPlaceData.get(i));
+                                }
+
+                                if (i == 4) {
+                                    startLat = Double.parseDouble(visitedPlaceData.get(i));
+                                }
+
+                                if (i == 5) {
+                                    startLng = Double.parseDouble(visitedPlaceData.get(i));
+                                }
+                            }
+                            SearchVisitorData searchVisitorData = new SearchVisitorData(parkingArea, placeId, endLat, endLng, startLat, startLng);
+                            searchVisitorDataList.add(searchVisitorData);
+                            Timber.e("searchVisitorData -> %s", new Gson().toJson(searchVisitorData));
+                        }
+                        setFragmentControls(searchVisitorDataList);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<SearchVisitedPlaceResponse> call, @NonNull Throwable t) {
+                Timber.e("onFailure -> %s", t.getMessage());
+                ApplicationUtils.showMessageDialog("Something went wrong...Please try later!", context);
+            }
+        });*/
     }
 
     private void setFragmentControls(ArrayList<SearchVisitorData> searchVisitorDataList) {
@@ -597,7 +605,7 @@ public class SearchActivity extends BaseActivity implements PlacesAutoCompleteAd
         recyclerViewSearchPlaces.addOnItemTouchListener(new RecyclerTouchListener(this, recyclerViewSearchPlaces, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-//                Toast.makeText(context, position + " is selected!", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, position + " is selected!", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -616,7 +624,7 @@ public class SearchActivity extends BaseActivity implements PlacesAutoCompleteAd
             @Override
             public void onChildViewDetachedFromWindow(@NonNull View view) {
                 Timber.e("onChildViewDetachedFromWindow tcalled");
-//                setNoData();
+                //setNoData();
             }
         });
         ViewCompat.setNestedScrollingEnabled(recyclerViewSearchPlaces, false);
@@ -648,15 +656,15 @@ public class SearchActivity extends BaseActivity implements PlacesAutoCompleteAd
             return true;
         } else {
 
-//            AlertDialog alertDialog = new AlertDialog.Builder(context)
-//                    .setTitle("GPS Permissions")
-//                    .setMessage("GPS is required for this app to work. Please enable GPS.")
-//                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
-//                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-//                        startActivityForResult(intent, GPS_REQUEST_CODE);
-//                    }))
-//                    .setCancelable(false)
-//                    .show();
+            /*AlertDialog alertDialog = new AlertDialog.Builder(context)
+                    .setTitle("GPS Permissions")
+                    .setMessage("GPS is required for this app to work. Please enable GPS.")
+                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivityForResult(intent, GPS_REQUEST_CODE);
+                    }))
+                    .setCancelable(false)
+                    .show();*/
         }
 
         return false;
@@ -670,7 +678,7 @@ public class SearchActivity extends BaseActivity implements PlacesAutoCompleteAd
     }
 
     public boolean checkIfAlreadyExist(SearchVisitorData searchVisitorData) {
-//        return searchVisitorDataList.contains(searchVisitorData);
+        //return searchVisitorDataList.contains(searchVisitorData);
         if (!searchVisitorDataList.contains(searchVisitorData)) {
             searchVisitorDataList.add(searchVisitorData);
             mAutoCompleteAdapter.setData(searchVisitorDataList);

@@ -75,16 +75,16 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             long difference = date1.getTime() - date2.getTime();
 
-//            String result = substractDates(date1, date2, new SimpleDateFormat("HH:mm:ss"));
+            //String result = substractDates(date1, date2, new SimpleDateFormat("HH:mm:ss"));
             bookingViewHolder.textViewParkingTotalTime.setText(getTimeDifference(difference));
         } catch (ParseException e) {
             e.printStackTrace();
         }
-//        bookingViewHolder.textViewParkingTotalPaymentAmount.setText(context.getResources().getString(R.string.total_fair));
+        /*bookingViewHolder.textViewParkingTotalPaymentAmount.setText(context.getResources().getString(R.string.total_fair));
 
-//        bookingViewHolder.card_view.setOnClickListener(v -> {
-//            Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show();
-//        });
+        bookingViewHolder.card_view.setOnClickListener(v -> {
+            Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show();
+        });*/
 
         bookingViewHolder.textViewParkingRateNTip.setOnClickListener(v -> {
             Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show();

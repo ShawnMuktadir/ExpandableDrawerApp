@@ -285,7 +285,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener, 
     private void switchLangSelection(TextView textView1, TextView textView2) {
         ApplicationUtils.setTextColor(textView1, context, R.color.white);
         textView1.setOnClickListener(null);
-        ApplicationUtils.setBackground(context, textView1, R.color.colorPrimary);
+        ApplicationUtils.setBackground(context, textView1, R.color.black);
         ApplicationUtils.setTextColor(textView2, context, R.color.white);
         ApplicationUtils.setBackground(context, textView2, R.color.dark_gray);
     }
