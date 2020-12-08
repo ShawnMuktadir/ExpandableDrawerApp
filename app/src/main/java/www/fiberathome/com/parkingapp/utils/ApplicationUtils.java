@@ -491,7 +491,8 @@ public class ApplicationUtils {
                                        @NonNull Fragment fragment, int frameId) {
         // Reload current fragment
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+        //transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+        transaction.setCustomAnimations(0, 0);
         transaction.replace(frameId, fragment);
         transaction.detach(fragment);
         transaction.attach(fragment);

@@ -18,6 +18,7 @@ import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
+import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.LocationHelper;
 
 import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
@@ -36,8 +37,11 @@ public class LocationActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location);
+
         context = this;
+
         permissionTV = findViewById(R.id.permissionTV);
+
         btn_grant = findViewById(R.id.btn_grant);
 
         setListeners();
@@ -47,7 +51,7 @@ public class LocationActivity extends BaseActivity {
         btn_grant.setOnClickListener(view -> startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)));
     }
 
-   /* private void setListeners() {
+    /* private void setListeners() {
         btn_grant.setOnClickListener(v -> {
             if (isGPSEnabled()) {
                 progressDialog = new ProgressDialog(this);
@@ -70,6 +74,7 @@ public class LocationActivity extends BaseActivity {
         });
     }
 */
+
     private boolean isGPSEnabled() {
 
         LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
@@ -108,10 +113,7 @@ public class LocationActivity extends BaseActivity {
             boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
             if (providerEnabled) {
-
-                progressDialog = new ProgressDialog(this);
-                progressDialog.setMessage("Enabling GPS ....");
-                progressDialog.show();
+                progressDialog = ApplicationUtils.progressDialog(context, "Enabling GPS ....");
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -155,69 +157,15 @@ public class LocationActivity extends BaseActivity {
         }
     }
 
-    //    private void checkWhetherLocationSettingsAreSatisfied() {
-//
-//        LocationRequest mLocationRequest = LocationRequest.create()
-//                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-//                .setInterval(1000)
-//                .setNumUpdates(2);
-//
-//        final LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(mLocationRequest);
-//        builder.setAlwaysShow(true);
-//        builder.setNeedBle(true);
-//        SettingsClient client = LocationServices.getSettingsClient(this);
-//        Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build());
-//        task.addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
-//            @Override
-//            public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-//                Log.d(TAG, "onSuccess() called with: locationSettingsResponse = [" + locationSettingsResponse + "]");
-//                hasLocationPermission();
-//
-//            }
-//        });
-//        task.addOnFailureListener(this, new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception e) {
-//                Log.d(TAG, "onSuccess --> onFailure() called with: e = [" + e + "]");
-//                if (e instanceof ResolvableApiException) {
-//                    // Location settings are not satisfied, but this can be fixed
-//                    // by showing the user a dialog.
-//                    try {
-//                        // Show the dialog by calling startResolutionForResult(),
-//                        // and check the result in onActivityResult().
-//                        ResolvableApiException resolvable = (ResolvableApiException) e;
-//                        resolvable.startResolutionForResult(LocationActivity.this,
-//                                AppConstants.REQUEST_CHECK_SETTINGS);
-//                    } catch (IntentSender.SendIntentException e1) {
-//
-//                        e1.printStackTrace();
-//                    }
-//                }
-//
-//            }
-//        });
-//    }
-//
-//    private void hasLocationPermission() {
-//
-//    }
-//
-//
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        if (requestCode == AppConstants.REQUEST_CHECK_SETTINGS) {
-//
-//            // Make sure the request was successful
-//            if (resultCode == RESULT_OK) {
-//
-//                hasLocationPermission();
-//
-//            } else {
-//                //User clicks No
-//            }
-//        }
-//
-//    }
+    @Override
+    protected void onDestroy() {
+        dismissDialog();
+        super.onDestroy();
+    }
+
+    private void dismissDialog() {
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+        }
+    }
 }

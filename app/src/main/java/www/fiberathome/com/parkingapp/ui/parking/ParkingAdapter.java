@@ -21,7 +21,9 @@ import com.google.gson.Gson;
 import org.greenrobot.eventbus.EventBus;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,6 +54,10 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private boolean isExpanded = false;
 
     private ParkingAdapterClickListener mListener;
+
+    private long mLastClickTime = System.currentTimeMillis();
+
+    private static final long CLICK_TIME_INTERVAL = 300;
 
     public interface ParkingAdapterClickListener {
         void onItemClick(int position);
@@ -90,7 +96,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         distance = ApplicationUtils.distance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
                 sensorArea.getLat(), sensorArea.getLng());
         sensorArea.setDistance(distance);
-        parkingViewHolder.textViewParkingDistance.setText(new DecimalFormat("##.##").format(distance) + " km");
+        parkingViewHolder.textViewParkingDistance.setText(new DecimalFormat("##.##", new DecimalFormatSymbols(Locale.US)).format(distance) + " km");
         Timber.e("adapter distance -> %s", parkingViewHolder.textViewParkingDistance.getText());
         sensorArea.setDuration(duration);
         parkingViewHolder.textViewParkingTravelTime.setText(sensorArea.getDuration());
@@ -100,6 +106,11 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 context.getResources().getColor(R.color.selectedColor) : Color.TRANSPARENT);
         //parkingViewHolder.itemView.setBackgroundColor(context.getResources().getColor(R.color.selectedColor));
         parkingViewHolder.itemView.setOnClickListener(v -> {
+            long now = System.currentTimeMillis();
+            if (now - mLastClickTime < CLICK_TIME_INTERVAL) {
+                return;
+            }
+            mLastClickTime = now;
             if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
                 selectedPosition = position;
                 mListener.onItemClick(position);
@@ -114,12 +125,9 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 }
                 //Pop the Parking Fragment and Replace it with HomeFragment
                 final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        //mListener.onItemClick(position);
-                        EventBus.getDefault().post(new GetDirectionEvent(new LatLng(sensorArea.getLat(), sensorArea.getLng())));
-                    }
+                handler.postDelayed(() -> {
+                    //mListener.onItemClick(position);
+                    EventBus.getDefault().post(new GetDirectionEvent(new LatLng(sensorArea.getLat(), sensorArea.getLng())));
                 }, 300);
             } else {
                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));

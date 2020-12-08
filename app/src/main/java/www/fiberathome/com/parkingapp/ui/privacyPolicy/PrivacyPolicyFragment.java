@@ -103,7 +103,7 @@ public class PrivacyPolicyFragment extends Fragment implements IOnBackPressListe
 //            HomeFragment nextFrag = new HomeFragment();
             if (getActivity() != null) {
                 getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, HomeFragment.newInstance())
+                        .replace(R.id.nav_host_fragment, HomeFragment.newInstance())
                         .addToBackStack(null)
                         .commit();
             } else {

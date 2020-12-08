@@ -69,6 +69,7 @@ import static android.content.Context.LOCATION_SERVICE;
 import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
 import static www.fiberathome.com.parkingapp.utils.ApplicationUtils.distance;
 
+@SuppressWarnings("ALL")
 public class ParkingFragment extends Fragment implements ParkingAdapter.ParkingAdapterClickListener, IOnBackPressListener {
 
     private static final String TAG = ParkingFragment.class.getCanonicalName();
@@ -216,6 +217,21 @@ public class ParkingFragment extends Fragment implements ParkingAdapter.ParkingA
             }
         }
         return false;
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        Timber.e("parkingFragment onItemClick called");
+        /*homeFragment = HomeFragment.newInstance();
+        homeFragment.onParkingAdapterItemClickBottomSheetChanged(new LatLng(sensorAreas.get(position).getLat(),sensorAreas.get(position).getLng()));*/
+        if (ApplicationUtils.checkInternet(context) && isGPSEnabled()) {
+            Timber.e("parkingFragment onItemClick if called");
+            //((MainActivity) context).onParkingAdapterItemClickBottomSheetChanged(new LatLng(sensorAreas.get(position).getLat(), sensorAreas.get(position).getLng()));
+
+            //EventBus.getDefault().post(new GetDirectionEvent(new LatLng(sensorAreas.get(position).getLat(), sensorAreas.get(position).getLng())));
+        } else {
+            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -476,7 +492,6 @@ public class ParkingFragment extends Fragment implements ParkingAdapter.ParkingA
         }) {
 
         };
-
         ParkingApp.getInstance().addToRequestQueue(strReq);
     }
 
@@ -538,6 +553,7 @@ public class ParkingFragment extends Fragment implements ParkingAdapter.ParkingA
         recyclerViewParking.setHasFixedSize(true);
         recyclerViewParking.setItemViewCacheSize(20);
         recyclerViewParking.setNestedScrollingEnabled(false);
+        recyclerViewParking.setMotionEventSplittingEnabled(false);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerViewParking.setLayoutManager(mLayoutManager);
@@ -593,20 +609,5 @@ public class ParkingFragment extends Fragment implements ParkingAdapter.ParkingA
     private void dismissProgressDialog() {
         if (progressDialog != null && progressDialog.isShowing())
             progressDialog.dismiss();
-    }
-
-    @Override
-    public void onItemClick(int position) {
-        Timber.e("parkingFragment onItemClick called");
-        /*homeFragment = HomeFragment.newInstance();
-        homeFragment.onParkingAdapterItemClickBottomSheetChanged(new LatLng(sensorAreas.get(position).getLat(),sensorAreas.get(position).getLng()));*/
-        if (ApplicationUtils.checkInternet(context) && isGPSEnabled()) {
-            Timber.e("parkingFragment onItemClick if called");
-            //((MainActivity) context).onParkingAdapterItemClickBottomSheetChanged(new LatLng(sensorAreas.get(position).getLat(), sensorAreas.get(position).getLng()));
-
-            //EventBus.getDefault().post(new GetDirectionEvent(new LatLng(sensorAreas.get(position).getLat(), sensorAreas.get(position).getLng())));
-        } else {
-            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
-        }
     }
 }

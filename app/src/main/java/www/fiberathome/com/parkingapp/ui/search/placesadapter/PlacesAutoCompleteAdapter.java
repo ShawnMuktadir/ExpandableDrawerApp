@@ -69,6 +69,10 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
     private static final int VIEW_TYPE_EMPTY = 2;
     private boolean isShownEmpty = false;
 
+    private long mLastClickTime = System.currentTimeMillis();
+
+    private static final long CLICK_TIME_INTERVAL = 300;
+
     public PlacesAutoCompleteAdapter(Context context, PlacesClient placesClient, ArrayList<SearchVisitorData> searchVisitorDataList) {
         mContext = context;
         STYLE_BOLD = new StyleSpan(Typeface.BOLD);
@@ -118,12 +122,12 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
                     notifyDataSetChanged();
                 } else {
                     // The API did not return any results, invalidate the data set.
-//                    notifyDataSetInvalidated();
+                    //notifyDataSetInvalidated();
                     searchVisitorDataList.clear();
                     notifyDataSetChanged();
                     isShownEmpty = true;
-//                    Toast.makeText(mContext, "No Places found!", Toast.LENGTH_SHORT).show();
-//                    final Toast toast = Toast.makeText(mContext, "No Places found!", Toast.LENGTH_SHORT);
+                    /*Toast.makeText(mContext, "No Places found!", Toast.LENGTH_SHORT).show();
+                    final Toast toast = Toast.makeText(mContext, "No Places found!", Toast.LENGTH_SHORT);*/
                     Toast toast = TastyToast.makeText(mContext, "No Places found!", TastyToast.LENGTH_SHORT, TastyToast.WARNING);
                     toast.show();
                     Handler handler = new Handler();
@@ -133,7 +137,7 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
                             toast.cancel();
                         }
                     }, 700);
-//                    TastyToastUtils.showTastyErrorToast(mContext, "No Places found!");
+                    //TastyToastUtils.showTastyErrorToast(mContext, "No Places found!");
                 }
             }
         };
@@ -146,9 +150,9 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
         // Use the builder to create a FindAutocompletePredictionsRequest.
         FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
                 // Call either setLocationBias() OR setLocationRestriction().
-//                .setLocationBias(bounds)
-//                .setCountry("IN")
-//                .setTypeFilter(TypeFilter.REGIONS)
+                /*.setLocationBias(bounds)
+                .setCountry("IN")
+                .setTypeFilter(TypeFilter.REGIONS)*/
                 .setSessionToken(token)
                 .setCountry("BD")
                 .setQuery(constraint.toString())
@@ -181,9 +185,9 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-//        LayoutInflater layoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//        View convertView = Objects.requireNonNull(layoutInflater).inflate(R.layout.search_list_item_location, parent, false);
-//        return new PredictionHolder(convertView);
+        /*LayoutInflater layoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View convertView = Objects.requireNonNull(layoutInflater).inflate(R.layout.search_list_item_location, parent, false);
+        return new PredictionHolder(convertView);*/
 
         View itemView;
         if (viewType == VIEW_TYPE_PLACE) {
@@ -201,6 +205,7 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder viewHolder, final int position) {
         if (viewHolder instanceof SearchPredictionViewHolder) {
+
             SearchPredictionViewHolder mSearchPredictionViewHolder = (SearchPredictionViewHolder) viewHolder;
             if (charSequence != null) {
                 mSearchPredictionViewHolder.address.setText(mResultList.get(position).address);
@@ -211,8 +216,12 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
                     mContext.getResources().getColor(R.color.selectedColor) : Color.TRANSPARENT);
 
             mSearchPredictionViewHolder.itemView.setOnClickListener(v -> {
-
                 if (isGPSEnabled(position) && ApplicationUtils.checkInternet(mContext)) {
+                    long now = System.currentTimeMillis();
+                    if (now - mLastClickTime < CLICK_TIME_INTERVAL) {
+                        return;
+                    }
+                    mLastClickTime = now;
                     selectedPosition = position;
                     try {
                         notifyDataSetChanged();
@@ -222,10 +231,11 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
                     PlaceAutocomplete item;
                     Log.d(TAG, "List size :" + mResultList.size());
                     Log.d(TAG, "position :" + selectedPosition);
-//            Toast.makeText(mContext,"position:"+position,Toast.LENGTH_SHORT).show();
-//            for (PlaceAutocomplete autoComplete:mResultList) {
-//                Log.d(TAG, "onBindViewHolder: "+autoComplete);
-//            }
+
+                   /* Toast.makeText(mContext,"position:"+position,Toast.LENGTH_SHORT).show();
+                    for (PlaceAutocomplete autoComplete:mResultList) {
+                        Log.d(TAG, "onBindViewHolder: "+autoComplete);
+                    }*/
 
                     try {
                         item = getItem(selectedPosition);   //mResultList.get(selectedPosition);
@@ -271,6 +281,11 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
                         mContext.getResources().getColor(R.color.selectedColor) : Color.TRANSPARENT);
                 searchHistoryViewHolder.itemView.setOnClickListener(v -> {
                     if (isGPSEnabled(position) && ApplicationUtils.checkInternet(mContext)) {
+                        long now = System.currentTimeMillis();
+                        if (now - mLastClickTime < CLICK_TIME_INTERVAL) {
+                            return;
+                        }
+                        mLastClickTime = now;
                         selectedPosition = position;
                         try {
                             notifyDataSetChanged();
@@ -361,18 +376,18 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
         if (providerEnabled) {
             return true;
         } else {
-//            AlertDialog alertDialog = new AlertDialog.Builder(context)
-//                    .setTitle("GPS Permissions")
-//                    .setMessage("GPS is required for this app to work. Please enable GPS.")
-//                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
-//                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-//                        intent.putExtra("position",position);
-//                        Activity origin = (Activity)context;
-//
-//                        origin.startActivityForResult(intent, GPS_REQUEST_CODE);
-//                    }))
-//                    .setCancelable(false)
-//                    .show();
+            /*AlertDialog alertDialog = new AlertDialog.Builder(context)
+                    .setTitle("GPS Permissions")
+                    .setMessage("GPS is required for this app to work. Please enable GPS.")
+                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        intent.putExtra("position",position);
+                        Activity origin = (Activity)context;
+
+                        origin.startActivityForResult(intent, GPS_REQUEST_CODE);
+                    }))
+                    .setCancelable(false)
+                    .show();*/
         }
 
         return false;
@@ -437,28 +452,28 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
 
         @Override
         public void onClick(View v) {
-//            PlaceAutocomplete item = mResultList.get(getAdapterPosition());
-//            if (v.getId() == R.id.item_view) {
-//
-//                String placeId = String.valueOf(item.placeId);
-//
-//                List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS);
-//                FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields).setSessionToken(token).build();
-//                placesClient.fetchPlace(request).addOnSuccessListener(new OnSuccessListener<FetchPlaceResponse>() {
-//                    @Override
-//                    public void onSuccess(FetchPlaceResponse response) {
-//                        Place place = response.getPlace();
-//                        clickListener.click(place);
-//                    }
-//                }).addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception exception) {
-//                        if (exception instanceof ApiException) {
-//                            Toast.makeText(mContext, exception.getMessage() + "", Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//                });
-//            }
+            /*PlaceAutocomplete item = mResultList.get(getAdapterPosition());
+            if (v.getId() == R.id.item_view) {
+
+                String placeId = String.valueOf(item.placeId);
+
+                List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS);
+                FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields).setSessionToken(token).build();
+                placesClient.fetchPlace(request).addOnSuccessListener(new OnSuccessListener<FetchPlaceResponse>() {
+                    @Override
+                    public void onSuccess(FetchPlaceResponse response) {
+                        Place place = response.getPlace();
+                        clickListener.click(place);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        if (exception instanceof ApiException) {
+                            Toast.makeText(mContext, exception.getMessage() + "", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }*/
         }
     }
 

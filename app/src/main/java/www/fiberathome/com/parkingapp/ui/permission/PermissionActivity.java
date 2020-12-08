@@ -174,5 +174,4 @@ public class PermissionActivity extends BaseActivity implements PermissionInterf
         });
         dialog.show();
     }
-
 }

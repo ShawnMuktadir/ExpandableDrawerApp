@@ -26,7 +26,7 @@
                 android:id="@+id/my_snackbar_layout"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dim150"
-                android:background="@color/smoke_white"
+                android:background="@color/gray_update"
                 android:weightSum="1.4"
                 android:orientation="horizontal"
                 android:padding="@dimen/dim5">

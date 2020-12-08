@@ -69,8 +69,7 @@ public class LawFragment extends Fragment implements IOnBackPressListener {
     }
 
     public static LawFragment newInstance() {
-        LawFragment lawFragment = new LawFragment();
-        return lawFragment;
+        return new LawFragment();
     }
 
     @Override
@@ -112,6 +111,7 @@ public class LawFragment extends Fragment implements IOnBackPressListener {
             recyclerView.setLayoutManager(mLayoutManager);
             recyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
             recyclerView.setItemAnimator(new DefaultItemAnimator());
+            recyclerView.setMotionEventSplittingEnabled(false);
             lawAdapter = new LawAdapter(lawItems, this);
             recyclerView.setAdapter(lawAdapter);
         }
@@ -129,10 +129,9 @@ public class LawFragment extends Fragment implements IOnBackPressListener {
     @Override
     public boolean onBackPressed() {
         if (isGPSEnabled()) {
-//            HomeFragment nextFrag = new HomeFragment();
             if (getActivity() != null) {
                 getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, HomeFragment.newInstance())
+                        .replace(R.id.nav_host_fragment, HomeFragment.newInstance())
                         .addToBackStack(null)
                         .commit();
             } else {

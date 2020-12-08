@@ -31,6 +31,7 @@
                 android:layout_height="@dimen/_50sdp"
                 android:layout_marginTop="@dimen/dim5"
                 android:background="@color/gloss_white"
+                android:focusableInTouchMode="true"
                 android:padding="@dimen/dim2">
 
                 <EditText
@@ -60,8 +61,6 @@
                     android:visibility="gone"
                     android:layout_alignParentRight="true"
                     android:layout_alignParentEnd="true" />
-
-
             </RelativeLayout>
 
             <androidx.recyclerview.widget.RecyclerView

@@ -101,7 +101,7 @@
     <string name="demo_number">70</string>
     <string name="subject_to_availability">প্রাপ্যতা সাপেক্ষে</string>
     <string name="get_direction">দিকনির্দেশ পান</string>
-    <string name="welcome_to_locc_parking">স্বাগতম, LOCC Smart Parking</string>
+    <string name="welcome_to_locc_parking">স্বাগতম, LOCC স্মার্ট পার্কিং</string>
     <string name="exit_message">প্রস্থান করার জন্য দয়া করে এখানে টিপুন!</string>
     <string name="exit_message_main">প্রস্থান করতে ওকে টিপুন!</string>
     <string name="distance">%1$s</string>
