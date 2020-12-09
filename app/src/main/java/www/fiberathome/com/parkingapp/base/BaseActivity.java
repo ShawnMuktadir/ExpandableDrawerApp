@@ -25,6 +25,7 @@ import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+import www.fiberathome.com.parkingapp.utils.internet.Connectivity;
 
 import android.location.Location;
 import android.location.LocationListener;
@@ -66,6 +67,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
     private static final int WIFI_ENABLE_REQUEST = 0x1006;
 
     private Context context;
+    private boolean isFastConnection;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -86,6 +88,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this;
+        isFastConnection = Connectivity.isConnectedFast(context);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             getWindow().setStatusBarColor(context.getResources().getColor(R.color.lightBg));
@@ -184,7 +187,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo ni = manager.getActiveNetworkInfo();
 
-        if (ni != null && ni.getState() == NetworkInfo.State.CONNECTED) {
+        if (ni != null && ni.getState() == NetworkInfo.State.CONNECTED && isFastConnection) {
             isConnected = true;
             snackbar.dismiss();
             //overlay.setVisibility(View.GONE);

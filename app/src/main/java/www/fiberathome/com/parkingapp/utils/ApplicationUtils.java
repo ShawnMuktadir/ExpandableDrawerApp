@@ -80,8 +80,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.data.preference.StaticData;
-import www.fiberathome.com.parkingapp.utils.internetUtils.ConnectivityInterceptor;
-import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
+import www.fiberathome.com.parkingapp.utils.internet.ConnectivityInterceptor;
 
 public class ApplicationUtils {
 

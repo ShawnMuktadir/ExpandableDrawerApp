@@ -12,8 +12,7 @@ import com.android.volley.toolbox.Volley;
 
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.BuildConfig;
-import www.fiberathome.com.parkingapp.utils.ConnectivityReceiver;
-import www.fiberathome.com.parkingapp.utils.LocaleHelper;
+import www.fiberathome.com.parkingapp.utils.internet.ConnectivityReceiver;
 import www.fiberathome.com.parkingapp.utils.LocaleManager;
 
 public class ParkingApp extends Application {

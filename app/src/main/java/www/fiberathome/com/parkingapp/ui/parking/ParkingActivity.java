@@ -2,6 +2,7 @@ package www.fiberathome.com.parkingapp.ui.parking;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -88,6 +89,6 @@ public class ParkingActivity extends NavigationActivity {
             } catch (EventBusException e) {
                 e.getCause();
             }
-        }, 4000);
+        }, 3000);
     }
 }
