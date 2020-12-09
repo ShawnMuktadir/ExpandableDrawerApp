@@ -79,6 +79,7 @@
             android:screenOrientation="unspecified"
             android:windowSoftInputMode="stateAlwaysHidden"
             android:theme="@style/AppTheme.DefaultActionBar"/>
+        <!--android:launchMode="singleInstance"-->
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -92,6 +93,7 @@
             android:configChanges="locale"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
+        <!--android:launchMode="singleInstance"-->
         <activity
             android:name=".ui.changePassword.ChangePasswordActivity"
             android:configChanges="locale"
@@ -175,6 +177,7 @@
             android:theme="@style/AppTheme.DefaultActionBar" />
         <activity
             android:name=".ui.privacyPolicy.PrivacyPolicyActivity"
+            android:launchMode="singleInstance"
             android:configChanges="locale"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />

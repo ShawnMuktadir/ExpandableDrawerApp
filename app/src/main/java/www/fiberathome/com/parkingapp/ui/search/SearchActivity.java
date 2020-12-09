@@ -30,7 +30,7 @@ public class SearchActivity extends NavigationActivity {
 
         setTitle(context.getResources().getString(R.string.parking_spot));
 
-        centerTitleAndSubtitle(toolbar);
+        //centerTitleAndSubtitle(toolbar);
 
         // Initialize Search fragment
         ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),

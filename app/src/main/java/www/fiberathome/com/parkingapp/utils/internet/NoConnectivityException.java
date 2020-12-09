@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.utils.internetUtils;
+package www.fiberathome.com.parkingapp.utils.internet;
 
 import java.io.IOException;
 
