@@ -178,6 +178,7 @@
             android:theme="@style/AppTheme.DefaultActionBar" />
         <activity
             android:name=".ui.privacyPolicy.PrivacyPolicyActivity"
+            android:launchMode="singleInstance"
             android:configChanges="locale"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
