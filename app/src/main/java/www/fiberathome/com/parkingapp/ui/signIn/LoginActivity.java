@@ -154,6 +154,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
             public void onClick(@NonNull View textView) {
                 // do some thing
                 startActivity(new Intent(LoginActivity.this, ForgetPasswordActivity.class));
+                //finish();
             }
         };
 
@@ -168,7 +169,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
             tvForgetPassword.setText(ss);
             tvForgetPassword.setMovementMethod(LinkMovementMethod.getInstance());
         }
-
     }
 
     @Override
@@ -237,7 +237,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
                         //LoginActivity.super.onBackPressed();
-                        finish();
+                        finishAffinity();
                         TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                     }
                 }).create();

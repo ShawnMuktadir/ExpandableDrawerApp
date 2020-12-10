@@ -1,6 +1,7 @@
 package www.fiberathome.com.parkingapp.ui;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.ColorInt;
@@ -87,6 +89,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
 
         unbinder = ButterKnife.bind(this);
         context = this;
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             getWindow().setStatusBarColor(context.getResources().getColor(R.color.gray_update));
@@ -199,6 +202,11 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         actionBarDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 
     @Override

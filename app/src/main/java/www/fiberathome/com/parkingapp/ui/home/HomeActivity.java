@@ -356,7 +356,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
             Intent intent = new Intent(context, PermissionActivity.class);
             startActivity(intent);
             SharedPreManager.getInstance(context).setIsLocationPermissionGiven(false);
-//            return;
+            //return;
         } else {
             // Write you code here if permission already given.
             SharedPreManager.getInstance(context).setIsLocationPermissionGiven(true);
@@ -374,15 +374,15 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
             return true;
         } else {
 
-//            AlertDialog alertDialog = new AlertDialog.Builder(context)
-//                    .setTitle("GPS Permissions")
-//                    .setMessage("GPS is required for this app to work. Please enable GPS.")
-//                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
-//                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-//                        startActivityForResult(intent, GPS_REQUEST_CODE);
-//                    }))
-//                    .setCancelable(false)
-//                    .show();
+            /*AlertDialog alertDialog = new AlertDialog.Builder(context)
+                    .setTitle("GPS Permissions")
+                    .setMessage("GPS is required for this app to work. Please enable GPS.")
+                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivityForResult(intent, GPS_REQUEST_CODE);
+                    }))
+                    .setCancelable(false)
+                    .show();*/
 
         }
 
@@ -394,11 +394,11 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(final LocationResult locationResult) {
-//                if (mMap != null) {
+                //if (mMap != null) {
                 lastLocation = locationResult.getLastLocation();
                 SharedData.getInstance().setLastLocation(lastLocation);
-//                    addUserMarker();
-//                }
+                //addUserMarker();
+                //}
             }
         };
     }
