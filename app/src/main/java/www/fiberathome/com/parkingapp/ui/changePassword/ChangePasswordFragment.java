@@ -38,6 +38,7 @@ import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.loginUser.User;
 import www.fiberathome.com.parkingapp.model.response.common.CommonResponse;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
+import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
@@ -85,7 +86,7 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         unbinder = ButterKnife.bind(this, view);
-        context = getActivity();
+        context =  getActivity();
         if (getActivity() != null)
             getActivity().setTitle(R.string.title_change_password);
 
@@ -233,7 +234,7 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
     private boolean validatePassword() {
         String userPassword;
         String newPassword;
-//        User user = SharedPreManager.getInstance(getContext()).getUser();
+        //User user = SharedPreManager.getInstance(getContext()).getUser();
         if (SharedData.getInstance().getPassword() != null) {
             userPassword = SharedData.getInstance().getPassword();
             Timber.e("userPassword -> %s", userPassword);
@@ -252,7 +253,7 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
     }
 
     private void updatePassword(String oldPassword, String newPassword, String confirmPassword, String mobileNo) {
-        ProgressDialog progressDialog = ApplicationUtils.progressDialog(getActivity(),
+        ProgressDialog progressDialog = ApplicationUtils.progressDialog(context,
                 "Please wait...");
 
         // Changing Password through UI Service.
@@ -271,11 +272,11 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
                     if (!response.body().getError()) {
                         showMessage(response.body().getMessage());
 
-                        SharedPreManager.getInstance(getActivity()).logout();
-                        Intent intentLogout = new Intent(getActivity(), LoginActivity.class);
+                        SharedPreManager.getInstance(context).logout();
+                        Intent intentLogout = new Intent(context, LoginActivity.class);
                         startActivity(intentLogout);
-                        if (getActivity() != null) {
-                            getActivity().finish();
+                        if (getActivity()!= null) {
+                            getActivity().finishAffinity();
                         }
                     } else {
                         showMessage(response.body().getMessage());
@@ -300,7 +301,7 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
             if (password.equals(confirmPassword)) {
                 passStatus = true;
             } else {
-                Toast.makeText(getActivity(), context.getString(R.string.err_confirm_password), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, context.getString(R.string.err_confirm_password), Toast.LENGTH_SHORT).show();
             }
         }
         return passStatus;
@@ -313,7 +314,7 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
             if (password.equals(oldPassword)) {
                 passStatus = true;
             } else {
-                Toast.makeText(getActivity(), context.getString(R.string.err_old_password), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, context.getString(R.string.err_old_password), Toast.LENGTH_SHORT).show();
             }
         }
         return passStatus;

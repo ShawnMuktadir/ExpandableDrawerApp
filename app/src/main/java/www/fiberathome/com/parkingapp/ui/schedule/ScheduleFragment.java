@@ -109,7 +109,7 @@ public class ScheduleFragment extends Fragment implements DialogHelper.PayBtnCli
     @BindView(R.id.departurePicker)
     SingleDateAndTimePicker departurePicker;
 
-    private HomeActivity context;
+    private Context context;
     private Date arrivedDate, departedDate;
     private boolean setArrivedDate = false;
     private boolean more = false;
@@ -136,9 +136,10 @@ public class ScheduleFragment extends Fragment implements DialogHelper.PayBtnCli
         View view = inflater.inflate(R.layout.fragment_schedule, container, false);
         unbinder = ButterKnife.bind(this, view);
 
-        context = (HomeActivity) getActivity();
-        if (context != null) {
-            context.changeDefaultActionBarDrawerToogleIconWithBackButton();
+        context = getActivity();
+
+            /*if (context != null) {
+            context.changeDefaultActionBarDrawerToogleIconWithBackButton();*/
 
             /*String scheduleFragmentTitle = context.getResources().getString(R.string.schedule_fragment_title);
             String scheduleFragmentSubTitle = context.getResources().getString(R.string.subject_to_availability);
@@ -158,8 +159,8 @@ public class ScheduleFragment extends Fragment implements DialogHelper.PayBtnCli
             }*/
 
             /*((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(context.getResources().getString(R.string.schedule_fragment_title));
-            ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(context.getResources().getString(R.string.subject_to_availability));*/
-        }
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(context.getResources().getString(R.string.subject_to_availability));
+        }*/
 
         textViewCurrentDate.setText(ApplicationUtils.getPSTTimeZoneCurrentDate());
 
@@ -479,7 +480,7 @@ public class ScheduleFragment extends Fragment implements DialogHelper.PayBtnCli
                                     .replace(R.id.nav_host_fragment, HomeFragment.newInstance())
                                     .addToBackStack(null)
                                     .commit();*/
-                            ApplicationUtils.replaceFragmentWithAnimation(context.getSupportFragmentManager(), HomeFragment.newInstance());
+                            ApplicationUtils.replaceFragmentWithAnimation(getParentFragmentManager(), HomeFragment.newInstance());
                         } else {
                             TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
                         }

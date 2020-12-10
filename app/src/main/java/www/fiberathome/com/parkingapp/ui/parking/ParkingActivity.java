@@ -3,6 +3,7 @@ package www.fiberathome.com.parkingapp.ui.parking;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -79,16 +80,35 @@ public class ParkingActivity extends NavigationActivity {
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         finishAffinity();
         //getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, HomeFragment.newInstance()).commit();
-        final Handler handler = new Handler();
-        handler.postDelayed(() -> {
-            Timber.e("GetDirectionEvent called");
-            // Do something after 2s = 2000ms
-            try {
-                EventBus.getDefault().post(new SetMarkerEvent(event.location));
-                progressDialog.dismiss();
-            } catch (EventBusException e) {
-                e.getCause();
-            }
-        }, 3000);
+        if (Build.VERSION.SDK_INT <= 23) {
+            Timber.e("marshmallow below");
+            // fetch bottom sheet parking sensors response data is slow
+            final Handler handler = new Handler();
+            handler.postDelayed(() -> {
+                Timber.e("GetDirectionEvent called");
+
+                // Do something after 2s = 2000ms
+                try {
+                    EventBus.getDefault().post(new SetMarkerEvent(event.location));
+                    progressDialog.dismiss();
+                } catch (EventBusException e) {
+                    e.getCause();
+                }
+            }, 4500);
+        } else {
+            Timber.e("marshmallow above");
+            // fetch bottom sheet parking sensors response data is not slow than marshmallow
+            final Handler handler = new Handler();
+            handler.postDelayed(() -> {
+                Timber.e("GetDirectionEvent called");
+                // Do something after 2s = 2000ms
+                try {
+                    EventBus.getDefault().post(new SetMarkerEvent(event.location));
+                    progressDialog.dismiss();
+                } catch (EventBusException e) {
+                    e.getCause();
+                }
+            }, 4000);
+        }
     }
 }

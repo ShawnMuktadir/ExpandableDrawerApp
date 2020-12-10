@@ -92,6 +92,7 @@
             android:name=".ui.home.HomeActivity"
             android:configChanges="locale"
             android:screenOrientation="unspecified"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme.DefaultActionBar" />
         <!--android:launchMode="singleInstance"-->
         <activity
@@ -177,7 +178,6 @@
             android:theme="@style/AppTheme.DefaultActionBar" />
         <activity
             android:name=".ui.privacyPolicy.PrivacyPolicyActivity"
-            android:launchMode="singleInstance"
             android:configChanges="locale"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />

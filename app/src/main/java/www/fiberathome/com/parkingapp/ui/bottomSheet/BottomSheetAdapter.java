@@ -291,6 +291,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
         if (providerEnabled) {
+
             return true;
         } else {
             /*AlertDialog alertDialog = new AlertDialog.Builder(context)
