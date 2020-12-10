@@ -134,6 +134,7 @@ import butterknife.Unbinder;
 import retrofit2.Call;
 import retrofit2.Callback;
 import timber.log.Timber;
+import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.module.GoogleMapWebServiceNDistance.DirectionsParser;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
@@ -176,7 +177,7 @@ import static www.fiberathome.com.parkingapp.model.searchHistory.AppConstants.HI
 import static www.fiberathome.com.parkingapp.model.searchHistory.AppConstants.NEW_PLACE_SELECTED;
 import static www.fiberathome.com.parkingapp.model.searchHistory.AppConstants.NEW_SEARCH_ACTIVITY_REQUEST_CODE;
 
-public class HomeFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
+public class HomeFragment extends BaseFragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener, GoogleMap.OnMarkerClickListener,
         IOnLoadLocationListener, GeoQueryEventListener, BottomSheetAdapter.AdapterCallback, IOnBackPressListener {
 
@@ -1978,10 +1979,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
             bookingSensorsArrayListGlobal.clear();
         }
         //initialize the progress dialog and show it
-        bottomSheetProgressDialog = ApplicationUtils.progressDialog(context, "Please wait...");
+        showLoading(context);
         startShimmer();
         StringRequest strReq = new StringRequest(Request.Method.GET, AppConfig.URL_FETCH_SENSORS, response -> {
-            bottomSheetProgressDialog.dismiss();
+            hideLoading();
             stopShimmer();
             try {
                 JSONObject object = new JSONObject(response);

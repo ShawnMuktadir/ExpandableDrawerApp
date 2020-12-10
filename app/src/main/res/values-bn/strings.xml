@@ -409,4 +409,5 @@
     <string name="parking_spot_selection_rules">নতুন পার্কিং স্পট পরিবর্তন করতে আপনাকে বর্তমান গন্তব্য থেকে প্রস্থান করতে হবে</string>
     <string name="schedule_fragment_title">00:00–00:00pm</string>
     <string name="parking_total_time">00:00min</string>
+    <string name="please_wait">অনুগ্রহপূর্বক অপেক্ষা করুন…</string>
 </resources>

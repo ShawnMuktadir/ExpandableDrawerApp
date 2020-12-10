@@ -408,4 +408,5 @@
     <string name="parking_spot_selection_rules">You have to exit from current destination to change new parking spot</string>
     <string name="schedule_fragment_title">00:00–00:00pm</string>
     <string name="parking_total_time">00:00min</string>
+    <string name="please_wait">Please wait…</string>
 </resources>
