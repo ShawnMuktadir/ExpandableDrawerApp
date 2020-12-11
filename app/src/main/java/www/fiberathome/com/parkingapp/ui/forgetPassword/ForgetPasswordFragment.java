@@ -43,6 +43,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
@@ -52,7 +53,7 @@ import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
 
-public class ForgetPasswordFragment extends Fragment {
+public class ForgetPasswordFragment extends BaseFragment {
 
     private static String TAG = ForgetPasswordActivity.class.getSimpleName();
 
@@ -202,50 +203,44 @@ public class ForgetPasswordFragment extends Fragment {
 
     private void checkForgetPassword(final String mobileNo) {
 
-        progressDialog = ApplicationUtils.progressDialog(context, "Please wait...");
-
+        //progressDialog = ApplicationUtils.progressDialog(context, "Please wait...");
+        showLoading(context);
         HttpsTrustManager.allowAllSSL();
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_FORGET_PASSWORD, new Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_FORGET_PASSWORD, response -> {
+            // remove the progress bar
+            Timber.e("URL -> %s", new Gson().toJson(AppConfig.URL_FORGET_PASSWORD));
+            //progressDialog.dismiss();
+            hideLoading();
+            if (response.equals("[]")) {
+                TastyToastUtils.showTastyErrorToast(context, context.getResources().getString(R.string.mobile_number_not_exist));
+            } else {
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
 
-            @Override
-            public void onResponse(String response) {
-                // remove the progress bar
-                Timber.e("URL -> %s", new Gson().toJson(AppConfig.URL_FORGET_PASSWORD));
-                progressDialog.dismiss();
-                if (response.equals("[]")) {
-                    TastyToastUtils.showTastyErrorToast(context, context.getResources().getString(R.string.mobile_number_not_exist));
-                } else {
-                    try {
-                        JSONObject jsonObject = new JSONObject(response);
+                    Timber.e("jsonObject -> %s", jsonObject.toString());
 
-                        Timber.e("jsonObject -> %s", jsonObject.toString());
+                    if (jsonObject.getBoolean("error")) {
 
-                        if (jsonObject.getBoolean("error")) {
+                        //progressDialog.dismiss();
+                        showMessage(jsonObject.getString("message"));
 
-                            progressDialog.dismiss();
-                            showMessage(jsonObject.getString("message"));
-
-                            Intent intent = new Intent(context, ChangePasswordActivityForOTP.class);
-                            intent.putExtra("mobile_no", mobileNo);
-                            startActivity(intent);
-                            context.finish();
-                        } else {
-                            showMessage(jsonObject.getString("message"));
-                        }
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                        Intent intent = new Intent(context, ChangePasswordActivityForOTP.class);
+                        intent.putExtra("mobile_no", mobileNo);
+                        startActivity(intent);
+                        context.finish();
+                    } else {
+                        showMessage(jsonObject.getString("message"));
                     }
-                }
 
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Timber.e("Error Message -> %s ", error.getMessage());
-                if (progressDialog != null) progressDialog.dismiss();
-                showMessage(error.getMessage());
-            }
+
+        }, error -> {
+            Timber.e("Error Message -> %s ", error.getMessage());
+            //if (progressDialog != null) progressDialog.dismiss();
+            showMessage(error.getMessage());
         }) {
 
             @Override

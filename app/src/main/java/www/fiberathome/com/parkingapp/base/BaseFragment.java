@@ -14,7 +14,11 @@ public class BaseFragment extends Fragment {
     private ProgressDialog progressDialog;
 
     protected void showLoading(Context context) {
-        progressDialog = DialogUtils.getInstance().progressDialog(context, getString(R.string.please_wait));
+        progressDialog = DialogUtils.getInstance().progressDialog(context, context.getResources().getString(R.string.please_wait));
+    }
+
+    protected void showLoading(Context context, String message) {
+        progressDialog = DialogUtils.getInstance().progressDialog(context, message);
     }
 
     protected void hideLoading() {

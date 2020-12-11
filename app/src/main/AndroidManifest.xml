@@ -157,7 +157,8 @@
         <!-- android:screenOrientation="unspecified" -->
         <!-- android:theme="@style/AppTheme.DefaultActionBar" /> -->
         <activity
-            android:name=".ui.signUp.verifyPhone.VerifyPhoneActivity"
+            android:name=".ui.verifyPhone.VerifyPhoneActivity"
+            android:parentActivityName=".ui.signIn.LoginActivity"
             android:configChanges="locale"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
@@ -178,7 +179,7 @@
             android:theme="@style/AppTheme.DefaultActionBar" />
         <activity
             android:name=".ui.privacyPolicy.PrivacyPolicyActivity"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTop"
             android:configChanges="locale"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />

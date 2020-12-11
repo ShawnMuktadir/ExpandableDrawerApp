@@ -410,4 +410,5 @@
     <string name="schedule_fragment_title">00:00–00:00pm</string>
     <string name="parking_total_time">00:00min</string>
     <string name="please_wait">অনুগ্রহপূর্বক অপেক্ষা করুন…</string>
+    <string name="are_you_sure">আপনি প্রস্থান করতে চান?</string>
 </resources>

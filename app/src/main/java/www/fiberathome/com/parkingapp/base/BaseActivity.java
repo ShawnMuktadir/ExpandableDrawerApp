@@ -326,6 +326,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
                         });
         mGPSDialog = builder.create();
         mGPSDialog.show();
+        mGPSDialog.setCanceledOnTouchOutside(false);
     }
 
     private void showNoConnectionSnackBar(String message, boolean isConnected, int duration) {

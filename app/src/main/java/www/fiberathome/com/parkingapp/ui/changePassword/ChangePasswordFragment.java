@@ -31,6 +31,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
@@ -44,7 +45,7 @@ import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 
-public class ChangePasswordFragment extends Fragment implements View.OnClickListener {
+public class ChangePasswordFragment extends BaseFragment implements View.OnClickListener {
 
     private static final String TAG = ChangePasswordFragment.class.getSimpleName();
 
@@ -253,8 +254,9 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
     }
 
     private void updatePassword(String oldPassword, String newPassword, String confirmPassword, String mobileNo) {
-        ProgressDialog progressDialog = ApplicationUtils.progressDialog(context,
-                "Please wait...");
+        /*ProgressDialog progressDialog = ApplicationUtils.progressDialog(context,
+                "Please wait...");*/
+        showLoading(context);
 
         // Changing Password through UI Service.
         ApiService service = ApiClient.getRetrofitInstance(AppConfig.URL_CHANGE_PASSWORD).create(ApiService.class);
@@ -267,7 +269,8 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
                 Timber.e("change password response message -> %s", response.message());
                 Timber.e("change password response body-> %s", new Gson().toJson(response.body()));
 
-                progressDialog.dismiss();
+                //progressDialog.dismiss();
+                hideLoading();
                 if (response.body() != null) {
                     if (!response.body().getError()) {
                         showMessage(response.body().getMessage());

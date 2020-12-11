@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -38,6 +40,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
@@ -53,7 +56,7 @@ import static android.content.Context.LOCATION_SERVICE;
 import static com.android.volley.VolleyLog.TAG;
 import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
 
-public class BookingFragment extends Fragment implements IOnBackPressListener {
+public class BookingFragment extends BaseFragment implements IOnBackPressListener {
 
     @BindView(R.id.recyclerViewBooking)
     RecyclerView recyclerViewBooking;
@@ -87,7 +90,13 @@ public class BookingFragment extends Fragment implements IOnBackPressListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_bookings, container, false);
+        return inflater.inflate(R.layout.fragment_bookings, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         unbinder = ButterKnife.bind(this, view);
         context = (BookingActivity) getActivity();
 
@@ -107,13 +116,12 @@ public class BookingFragment extends Fragment implements IOnBackPressListener {
             }, (dialog, which) -> {
                 Timber.e("Negative Button Clicked");
                 dialog.dismiss();
-                if (getActivity() != null) {
-                    getActivity().finish();
+                if (context != null) {
+                    context.finish();
                     TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                 }
             });
         }
-        return view;
     }
 
     @Override
@@ -132,7 +140,7 @@ public class BookingFragment extends Fragment implements IOnBackPressListener {
     public void onPause() {
         Timber.e("onPause called");
         super.onPause();
-        dismissProgressDialog();
+        //dismissProgressDialog();
     }
 
     @Override
@@ -145,7 +153,7 @@ public class BookingFragment extends Fragment implements IOnBackPressListener {
     public void onDestroy() {
         Timber.e("onDestroy called");
         super.onDestroy();
-        dismissProgressDialog();
+        //dismissProgressDialog();
     }
 
     @Override
@@ -198,7 +206,8 @@ public class BookingFragment extends Fragment implements IOnBackPressListener {
 
     private void fetchParkingBookingSpot(String mobileNo) {
 
-        progressDialog = ApplicationUtils.progressDialog(context, "Please wait...");
+        //progressDialog = ApplicationUtils.progressDialog(context, "Please wait...");
+        showLoading(context);
 
         HttpsTrustManager.allowAllSSL();
 
@@ -206,7 +215,8 @@ public class BookingFragment extends Fragment implements IOnBackPressListener {
 
             @Override
             public void onResponse(String response) {
-                progressDialog.dismiss();
+                //progressDialog.dismiss();
+                hideLoading();
                 Timber.e("booking list response -> %s",response);
                 try {
                     JSONObject jsonObject = new JSONObject(response);
@@ -247,12 +257,9 @@ public class BookingFragment extends Fragment implements IOnBackPressListener {
                     e.printStackTrace();
                 }
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                //Log.e("Volley Error", error.getMessage());
-                ApplicationUtils.showMessageDialog(error.getMessage(), getActivity());
-            }
+        }, error -> {
+            //Log.e("Volley Error", error.getMessage());
+            ApplicationUtils.showMessageDialog(error.getMessage(), getActivity());
         }) {
 
             @Override
@@ -283,7 +290,7 @@ public class BookingFragment extends Fragment implements IOnBackPressListener {
             }
             if (getFragmentManager() != null) {
                 FragmentTransaction fragmentTransaction = context.getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_container, HomeFragment.newInstance());
+                fragmentTransaction.replace(R.id.nav_host_fragment, HomeFragment.newInstance());
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
             }
@@ -303,6 +310,4 @@ public class BookingFragment extends Fragment implements IOnBackPressListener {
     private void hideNoData() {
         textViewNoData.setVisibility(View.GONE);
     }
-
-
 }

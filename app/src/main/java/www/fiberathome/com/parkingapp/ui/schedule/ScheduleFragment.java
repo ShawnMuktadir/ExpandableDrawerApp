@@ -61,6 +61,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
@@ -79,7 +80,7 @@ import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import static android.content.Context.LOCATION_SERVICE;
 import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
 
-public class ScheduleFragment extends Fragment implements DialogHelper.PayBtnClickListener,
+public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBtnClickListener,
         IOnBackPressListener, AdapterView.OnItemSelectedListener {
 
     private final String TAG = getClass().getSimpleName();
@@ -438,14 +439,16 @@ public class ScheduleFragment extends Fragment implements DialogHelper.PayBtnCli
 
     private void storeReservation(String mobileNo, String arrivalTime, String departureTime, String markerUid) {
         Timber.e("storeReservation post method e dhukche");
-        progressDialog = ApplicationUtils.progressDialog(context, "Please wait...");
+        //progressDialog = ApplicationUtils.progressDialog(context, "Please wait...");
+        showLoading(context);
         HttpsTrustManager.allowAllSSL();
         StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_STORE_RESERVATION, new Response.Listener<String>() {
 
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onResponse(String response) {
-                progressDialog.dismiss();
+                //progressDialog.dismiss();
+                hideLoading();
                 Timber.e("response -> %s", new Gson().toJson(response));
                 try {
                     JSONObject jsonObject = new JSONObject(response);
@@ -485,17 +488,20 @@ public class ScheduleFragment extends Fragment implements DialogHelper.PayBtnCli
                             TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
                         }
                     } else {
-                        progressDialog.dismiss();
+                        //progressDialog.dismiss();
+                        hideLoading();
                         Toast.makeText(getContext(), "Reservation Failed! Please Try Again. ", Toast.LENGTH_SHORT).show();
                     }
 
                 } catch (JSONException e) {
-                    progressDialog.dismiss();
+                    //progressDialog.dismiss();
+                    hideLoading();
                     e.printStackTrace();
                 }
             }
         }, error -> {
-            progressDialog.dismiss();
+            //progressDialog.dismiss();
+            hideLoading();
             Timber.e("Volley Error -> %s", error.getMessage());
         }) {
             @Override

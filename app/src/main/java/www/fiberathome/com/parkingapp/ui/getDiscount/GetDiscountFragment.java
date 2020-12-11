@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
@@ -20,7 +21,7 @@ import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import static android.content.Context.LOCATION_SERVICE;
 
 
-public class GetDiscountFragment extends Fragment implements IOnBackPressListener {
+public class GetDiscountFragment extends BaseFragment implements IOnBackPressListener {
 
     private Context context;
 
@@ -49,7 +50,6 @@ public class GetDiscountFragment extends Fragment implements IOnBackPressListene
     @Override
     public boolean onBackPressed() {
         if (isGPSEnabled()) {
-//            HomeFragment nextFrag = new HomeFragment();
             if (getActivity() != null) {
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.nav_host_fragment, HomeFragment.newInstance())

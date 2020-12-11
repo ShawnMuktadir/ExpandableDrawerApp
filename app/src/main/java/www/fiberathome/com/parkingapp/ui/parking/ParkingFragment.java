@@ -2,7 +2,6 @@ package www.fiberathome.com.parkingapp.ui.parking;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
@@ -24,7 +23,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.ViewCompat;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -46,31 +44,30 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.model.api.AppConfig;
+import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
+import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
-import www.fiberathome.com.parkingapp.module.eventBus.GetDirectionEvent;
 import www.fiberathome.com.parkingapp.model.sensors.SensorArea;
-import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
+import www.fiberathome.com.parkingapp.module.eventBus.GetDirectionEvent;
+import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.RecyclerTouchListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
-import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
 import static www.fiberathome.com.parkingapp.utils.ApplicationUtils.distance;
 
 @SuppressWarnings("ALL")
-public class ParkingFragment extends Fragment implements ParkingAdapter.ParkingAdapterClickListener, IOnBackPressListener {
+public class ParkingFragment extends BaseFragment implements ParkingAdapter.ParkingAdapterClickListener, IOnBackPressListener {
 
     private static final String TAG = ParkingFragment.class.getCanonicalName();
 
@@ -179,7 +176,7 @@ public class ParkingFragment extends Fragment implements ParkingAdapter.ParkingA
     public void onPause() {
         Timber.e("onPause called");
         super.onPause();
-        dismissProgressDialog();
+        //dismissProgressDialog();
     }
 
     @Override
@@ -192,7 +189,7 @@ public class ParkingFragment extends Fragment implements ParkingAdapter.ParkingA
     public void onDestroy() {
         Timber.e("onDestroy called");
         super.onDestroy();
-        dismissProgressDialog();
+        //dismissProgressDialog();
     }
 
     @Override
@@ -206,7 +203,6 @@ public class ParkingFragment extends Fragment implements ParkingAdapter.ParkingA
     @Override
     public boolean onBackPressed() {
         if (isGPSEnabled()) {
-            //HomeFragment nextFrag = new HomeFragment();
             if (getActivity() != null) {
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.nav_host_fragment, HomeFragment.newInstance())
@@ -433,8 +429,9 @@ public class ParkingFragment extends Fragment implements ParkingAdapter.ParkingA
     private void fetchParkingSlotSensors() {
         Timber.e("fetchParkingSlotSensors called");
 
-        progressDialog = ApplicationUtils.progressDialog(getActivity(),
-                "Please wait...");
+        /*progressDialog = ApplicationUtils.progressDialog(getActivity(),
+                "Please wait...");*/
+        showLoading(context);
 
         ArrayList<SensorArea> sensorAreas = new ArrayList<>();
 
@@ -446,8 +443,8 @@ public class ParkingFragment extends Fragment implements ParkingAdapter.ParkingA
 
             @Override
             public void onResponse(String response) {
-                progressDialog.dismiss();
-
+                //progressDialog.dismiss();
+                hideLoading();
                 try {
                     JSONObject object = new JSONObject(response);
                     JSONArray jsonArray = object.getJSONArray("sensors");

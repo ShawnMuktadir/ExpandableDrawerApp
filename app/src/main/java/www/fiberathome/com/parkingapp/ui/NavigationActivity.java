@@ -1,7 +1,6 @@
 package www.fiberathome.com.parkingapp.ui;
 
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -18,7 +17,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.ColorInt;
@@ -61,7 +59,6 @@ import www.fiberathome.com.parkingapp.ui.privacyPolicy.PrivacyPolicyActivity;
 import www.fiberathome.com.parkingapp.ui.profile.ProfileActivity;
 import www.fiberathome.com.parkingapp.ui.ratingReview.RatingReviewActivity;
 import www.fiberathome.com.parkingapp.ui.settings.SettingsActivity;
-import www.fiberathome.com.parkingapp.ui.share.ShareActivity;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 
@@ -112,6 +109,8 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         changeDefaultActionBarDrawerToogleIcon();
 
         colorizeToolbarOverflowButton(toolbar, context.getResources().getColor(R.color.black));
+
+        setNavMenuItemThemeColors(context.getResources().getColor(R.color.black));
 
         hideMenuItem(R.id.nav_home);
         hideMenuItem(R.id.nav_notification);
@@ -210,6 +209,12 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        setNavDrawerItem(R.id.nav_home);
+    }
+
+    @Override
     protected void onDestroy() {
         if (unbinder != null) {
             unbinder.unbind();
@@ -295,7 +300,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
     }
 
     public void setNavMenuItemThemeColors(int color) {
-//        Setting default colors for menu item Text and Icon
+        //Setting default colors for menu item Text and Icon
         int navDefaultTextColor = Color.parseColor("#000000");
 
         //Defining ColorStateList for menu item Text
@@ -359,7 +364,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
             BitMatrix bitMatrix = multiFormatWriter.encode(text, BarcodeFormat.QR_CODE, 200, 200);
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
             Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
-//            QRCode.setImageBitmap(bitmap);
+            //QRCode.setImageBitmap(bitmap);
         } catch (WriterException e) {
             e.printStackTrace();
         }
@@ -398,7 +403,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         final Drawable overflowIcon = toolbar.getOverflowIcon();
         if (overflowIcon == null) return false;
         toolbar.setOverflowIcon(getTintedDrawable(toolbar.getContext(), overflowIcon, color));
-        return true;//
+        return true;
     }
 
     public static Drawable getTintedDrawable(@NonNull Context context, @NonNull Drawable inputDrawable, @ColorInt int color) {

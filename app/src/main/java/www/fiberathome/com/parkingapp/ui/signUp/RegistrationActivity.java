@@ -78,7 +78,7 @@ import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
-import www.fiberathome.com.parkingapp.ui.signUp.verifyPhone.VerifyPhoneActivity;
+import www.fiberathome.com.parkingapp.ui.verifyPhone.VerifyPhoneActivity;
 
 public class RegistrationActivity extends AppCompatActivity implements View.OnClickListener {
 

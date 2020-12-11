@@ -1,7 +1,6 @@
 package www.fiberathome.com.parkingapp.ui.changePassword;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.annotation.SuppressLint;
@@ -58,7 +57,7 @@ import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
 import www.fiberathome.com.parkingapp.ui.signUp.SignUpActivity;
-import www.fiberathome.com.parkingapp.ui.signUp.verifyPhone.VerifyPhoneActivity;
+import www.fiberathome.com.parkingapp.ui.verifyPhone.VerifyPhoneActivity;
 
 public class ChangePasswordActivityForOTP extends BaseActivity implements View.OnFocusChangeListener, View.OnKeyListener, TextWatcher {
 
@@ -230,7 +229,7 @@ public class ChangePasswordActivityForOTP extends BaseActivity implements View.O
 
     private void checkForgetPassword(final String mobileNo) {
 
-        progressDialog = ApplicationUtils.progressDialog(context, "Please wait...");
+        progressDialog = ApplicationUtils.progressDialog(context, context.getResources().getString(R.string.please_wait));
 
         HttpsTrustManager.allowAllSSL();
         StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_FORGET_PASSWORD, new Response.Listener<String>() {
@@ -535,7 +534,7 @@ public class ChangePasswordActivityForOTP extends BaseActivity implements View.O
 
     private void submitOTPVerification(final String otp) {
 
-        progressDialog = ApplicationUtils.progressDialog(context, "Please wait...");
+        progressDialog = ApplicationUtils.progressDialog(context, context.getResources().getString(R.string.please_wait));
 
         HttpsTrustManager.allowAllSSL();
         if (!otp.isEmpty()) {

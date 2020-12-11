@@ -610,7 +610,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
         tvTimeToolbar.setVisibility(View.VISIBLE);
         linearLayoutToolbarTime.setVisibility(View.VISIBLE);
-        ProgressDialog progressDialog = ApplicationUtils.progressDialog(context, "Please wait...");
+        ProgressDialog progressDialog = ApplicationUtils.progressDialog(context, context.getResources().getString(R.string.please_wait));
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, HomeFragment.newInstance()).commit();
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {

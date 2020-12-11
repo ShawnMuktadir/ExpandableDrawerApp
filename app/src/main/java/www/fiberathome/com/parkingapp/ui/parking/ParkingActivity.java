@@ -75,7 +75,7 @@ public class ParkingActivity extends NavigationActivity {
         //toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
         tvTimeToolbar.setVisibility(View.VISIBLE);
         linearLayoutToolbarTime.setVisibility(View.VISIBLE);
-        progressDialog = ApplicationUtils.progressDialog(context, "Please wait...");
+        progressDialog = ApplicationUtils.progressDialog(context, context.getResources().getString(R.string.please_wait));
         startActivity(HomeActivity.class);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         finishAffinity();

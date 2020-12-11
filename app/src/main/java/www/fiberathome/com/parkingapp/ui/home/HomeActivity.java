@@ -109,14 +109,21 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
             fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
         }
 
-        if (savedInstanceState == null && SharedPreManager.getInstance(context).isWaitingForLocationPermission()
+        //initialize home fragment
+        ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
+                HomeFragment.newInstance(), R.id.nav_host_fragment);
+        linearLayoutToolbarTime.setVisibility(View.VISIBLE);
+        navigationView.getMenu().getItem(0).setChecked(true);
+
+        /*if (savedInstanceState == null && SharedPreManager.getInstance(context).isWaitingForLocationPermission()
                 && new LocationHelper(this).isLocationEnabled()) {
             // Initialize Home fragment
             ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
                     HomeFragment.newInstance(), R.id.nav_host_fragment);
             linearLayoutToolbarTime.setVisibility(View.VISIBLE);
             navigationView.getMenu().getItem(0).setChecked(true);
-        } else {
+        }
+        else {
             //startActivity(new Intent(context, LocationActivity.class));
             Intent intent = new Intent(context, LocationActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -130,7 +137,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
 
             return;
             //TastyToastUtils.showTastyInfoToast(context,"Sorry! You can't use Parking App. For use, please enable your GPS!");
-        }
+        }*/
 
         if (!SharedPreManager.getInstance(this).isLoggedIn()) {
             startActivityWithFinish(LoginActivity.class);
@@ -145,6 +152,11 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
         Timber.e("onStart called");
         super.onStart();
         setNavDrawerItem(R.id.nav_home);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override

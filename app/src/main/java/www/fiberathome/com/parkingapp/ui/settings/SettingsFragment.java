@@ -29,6 +29,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
@@ -42,7 +43,7 @@ import static android.content.Context.LOCATION_SERVICE;
 import static www.fiberathome.com.parkingapp.model.data.preference.StaticData.APP_LANGUAGE;
 import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
 
-public class SettingsFragment extends Fragment implements View.OnClickListener, IOnBackPressListener {
+public class SettingsFragment extends BaseFragment implements View.OnClickListener, IOnBackPressListener {
 
     /*@BindView(R.id.textViewBan)
     TextView textViewBan;

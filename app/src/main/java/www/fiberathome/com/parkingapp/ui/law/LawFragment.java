@@ -34,6 +34,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.model.law.LawItem;
 import www.fiberathome.com.parkingapp.model.law.LocalJson;
 import www.fiberathome.com.parkingapp.model.law.Result;
@@ -44,12 +45,11 @@ import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 
 import static android.content.Context.LOCATION_SERVICE;
 
-public class LawFragment extends Fragment implements IOnBackPressListener {
-
+public class LawFragment extends BaseFragment implements IOnBackPressListener {
 
     private final String TAG = getClass().getSimpleName();
-//    @BindView(R.id.pdfView)
-//    PDFView pdfView;
+    //@BindView(R.id.pdfView)
+    //PDFView pdfView;
     @BindView(R.id.editTextSearchLaw)
     EditText editTextSearchLaw;
     @BindView(R.id.ivClearSearchText)

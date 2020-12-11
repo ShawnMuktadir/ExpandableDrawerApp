@@ -40,7 +40,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.view.ViewCompat;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -134,15 +133,20 @@ import butterknife.Unbinder;
 import retrofit2.Call;
 import retrofit2.Callback;
 import timber.log.Timber;
-import www.fiberathome.com.parkingapp.base.BaseFragment;
-import www.fiberathome.com.parkingapp.module.GoogleMapWebServiceNDistance.DirectionsParser;
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.model.api.AppConfig;
+import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
-import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
-import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
+import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.api.Common;
 import www.fiberathome.com.parkingapp.model.api.IGoogleApi;
+import www.fiberathome.com.parkingapp.model.data.AppConstants;
+import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
+import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
+import www.fiberathome.com.parkingapp.model.response.booking.BookingSensors;
+import www.fiberathome.com.parkingapp.model.response.search.SearchVisitorData;
+import www.fiberathome.com.parkingapp.model.response.search.SelectedPlace;
+import www.fiberathome.com.parkingapp.model.sensors.SensorArea;
+import www.fiberathome.com.parkingapp.module.GoogleMapWebServiceNDistance.DirectionsParser;
 import www.fiberathome.com.parkingapp.module.eventBus.GetDirectionAfterButtonClickEvent;
 import www.fiberathome.com.parkingapp.module.eventBus.GetDirectionBottomSheetEvent;
 import www.fiberathome.com.parkingapp.module.eventBus.GetDirectionForMarkerEvent;
@@ -150,25 +154,20 @@ import www.fiberathome.com.parkingapp.module.eventBus.GetDirectionForSearchEvent
 import www.fiberathome.com.parkingapp.module.eventBus.SetMarkerEvent;
 import www.fiberathome.com.parkingapp.module.geoFenceInterface.IOnLoadLocationListener;
 import www.fiberathome.com.parkingapp.module.geoFenceInterface.MyLatLng;
-import www.fiberathome.com.parkingapp.model.response.booking.BookingSensors;
-import www.fiberathome.com.parkingapp.model.response.search.SearchVisitorData;
-import www.fiberathome.com.parkingapp.model.response.search.SelectedPlace;
-import www.fiberathome.com.parkingapp.model.sensors.SensorArea;
-import www.fiberathome.com.parkingapp.model.data.AppConstants;
 import www.fiberathome.com.parkingapp.module.room.BookingSensorsRoom;
 import www.fiberathome.com.parkingapp.module.room.DatabaseClient;
+import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener;
+import www.fiberathome.com.parkingapp.ui.bottomSheet.BottomSheetAdapter;
+import www.fiberathome.com.parkingapp.ui.location.LocationActivity;
+import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
 import www.fiberathome.com.parkingapp.ui.search.SearchActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.GpsUtils;
 import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
-import www.fiberathome.com.parkingapp.utils.LocationHelper;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
+import www.fiberathome.com.parkingapp.utils.LocationHelper;
 import www.fiberathome.com.parkingapp.utils.RecyclerTouchListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
-import www.fiberathome.com.parkingapp.ui.location.LocationActivity;
-import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
-import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener;
-import www.fiberathome.com.parkingapp.ui.bottomSheet.BottomSheetAdapter;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.LOCATION_SERVICE;
@@ -876,7 +875,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         void setBottomSheet();
     }
 
-    protected synchronized void buildGoogleApiClient() {
+    private synchronized void buildGoogleApiClient() {
         googleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -886,7 +885,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         googleApiClient.connect();
     }
 
-    public Location onConnectedLocation;
+    private Location onConnectedLocation;
     private FusedLocationProviderClient fusedLocationClient;
 
     @Override
@@ -1137,11 +1136,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     public void onResume() {
         Timber.e("onResume called");
         super.onResume();
-
-        if (!new LocationHelper(requireActivity()).isLocationEnabled()) {
+        /*if (!new LocationHelper(requireActivity()).isLocationEnabled()) {
             Intent intent = new Intent(requireActivity(), LocationActivity.class);
             startActivity(intent);
-        }
+        }*/
         /*nearest.setOnClickListener(this);
         if (isServicesOk()) {
             if (isGPSEnabled()) {
@@ -1154,7 +1152,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     public void onPause() {
         Timber.e("onPause called");
         super.onPause();
-        dismissProgressDialog();
+        //dismissProgressDialog();
+        hideLoading();
     }
 
     @Override
@@ -1170,7 +1169,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     public void onDestroy() {
         Timber.e("onDestroy called");
         super.onDestroy();
-        dismissProgressDialog();
+        //dismissProgressDialog();
+        hideLoading();
     }
 
     @Override
@@ -1608,7 +1608,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         return false;
     }
 
-    public static Boolean isLocationEnabled(Context context) {
+    private static Boolean isLocationEnabled(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             // This is new method provided in API 28
             LocationManager lm = (LocationManager) context.getSystemService(LOCATION_SERVICE);
@@ -1970,17 +1970,18 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private BookingSensorsRoom bookingSensorsRoom;
 
     //fetch bottom sheet sensors
-    public void fetchBottomSheetSensors(Location location) {
+    private void fetchBottomSheetSensors(Location location) {
         Timber.e("fetchBottomSheetSensors called");
         if (bookingSensorsArrayListGlobal != null) {
             bookingSensorsArrayListGlobal.clear();
         }
         //initialize the progress dialog and show it
         showLoading(context);
-        startShimmer();
+        if (mShimmerViewContainer != null)
+            startShimmer();
         StringRequest strReq = new StringRequest(Request.Method.GET, AppConfig.URL_FETCH_SENSORS, response -> {
             hideLoading();
-            bottomSheetProgressDialog.dismiss();
+            //bottomSheetProgressDialog.dismiss();
             if (mShimmerViewContainer != null)
                 stopShimmer();
             try {
@@ -2055,7 +2056,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     private void fetchBottomSheetSensorsWithoutProgressBar(Location location) {
         Timber.e("fetchBottomSheetSensorsWithoutProgressBar called");
-        startShimmer();
+        if (mShimmerViewContainer != null)
+            startShimmer();
         if (bookingSensorsArrayListGlobal != null) {
             bookingSensorsArrayListGlobal.clear();
         }
@@ -2449,25 +2451,24 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                 String distance = distanceInfo.getText();
                                 String duration = durationInfo.getText();
                                 textViewParkingTravelTime.setText(duration);
-                            /*if (bottomSheetSearch == 0)
-                            textViewMarkerParkingTravelTime.setText(duration);*/
+                                /*if (bottomSheetSearch == 0)
+                                textViewMarkerParkingTravelTime.setText(duration);*/
                                 textViewSearchParkingDistance.setText(distance);
                                 textViewSearchParkingTravelTime.setText(duration);
-                            /*Timber.e("search distance duration-> %s %s",
-                                    textViewSearchParkingDistance.getText().toString(),
-                                    textViewSearchParkingTravelTime.getText().toString());*/
+                                /*Timber.e("search distance duration-> %s %s",
+                                        textViewSearchParkingDistance.getText().toString(),
+                                        textViewSearchParkingTravelTime.getText().toString());*/
                                 textViewBottomSheetParkingTravelTime.setText(duration);
-//                            Timber.e("textViewBottomSheetParkingTravelTime duration-> %s", textViewBottomSheetParkingTravelTime.getText().toString());
+                                //Timber.e("textViewBottomSheetParkingTravelTime duration-> %s", textViewBottomSheetParkingTravelTime.getText().toString());
                                 nearByDuration = duration;
-//                            nearByDistance = distance;
+                                //nearByDistance = distance;
                                 fetchDuration = duration;
-                            /*Timber.e("fetchDuration -> %s", fetchDuration);
-                            Timber.e("inmethod nearByDuration nearByDistance -> %s %s", nearByDuration, nearByDistance);*/
+                                /*Timber.e("fetchDuration -> %s", fetchDuration);
+                                Timber.e("inmethod nearByDuration nearByDistance -> %s %s", nearByDuration, nearByDistance);*/
                                 //------------Displaying Distance and Time-----------------\\
                                 //showingDistanceTime(distance, duration); // Showing distance and time to the user in the UI \\
                                 String message = "Total Distance is " + distance + " and Estimated Time is " + duration;
                                 //Timber.e("duration message -> %s", message);
-
                             } else if (status.equals(RequestResult.NOT_FOUND)) {
                                 Toast.makeText(context, "No routes exist", Toast.LENGTH_SHORT).show();
                             }
@@ -2725,7 +2726,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         //Toast.makeText(context, "2287  previous null", Toast.LENGTH_SHORT).show();
         location = event.location;
         //Toast.makeText(getActivity(), "Geche", Toast.LENGTH_SHORT).show();
-        if (bottomSheetProgressDialog.isShowing()) bottomSheetProgressDialog.dismiss();
+        //if (bottomSheetProgressDialog.isShowing()) bottomSheetProgressDialog.dismiss();
+        hideLoading();
         layoutVisible(true, ApplicationUtils.capitalize(name), count, distance, event.location);
         /*if (bookingSensorsAdapterArrayList != null) {
             bookingSensorsAdapterArrayList.clear();
@@ -2815,13 +2817,14 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             @Override
                             public void setBottomSheet() {
                                 if (bookingSensorsAdapterArrayList != null && bottomSheetAdapter != null) {
-                                    if (bottomSheetProgressDialog.isShowing()) {
+                                    /*if (bottomSheetProgressDialog.isShowing()) {
                                         bottomSheetProgressDialog.dismiss();
                                         Timber.e("bottomSheetProgressDialog if called");
                                     } else {
                                         Timber.e("bottomSheetProgressDialog else called");
                                         bottomSheetProgressDialog.dismiss();
-                                    }
+                                    }*/
+                                    hideLoading();
                                     Timber.e("onMarkerClick if called");
                                     bookingSensorsArrayListGlobal.clear();
                                     bookingSensorsArrayListGlobal.addAll(bookingSensorsAdapterArrayList);
@@ -3202,7 +3205,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 if (mMap != null) {
                     mMap.clear();
                     mMap.setTrafficEnabled(true);
-                    startShimmer();
+                    if (mShimmerViewContainer != null)
+                        startShimmer();
                     previousMarker = null;
                     fromRouteDrawn = 0;
                     bookingSensorsArrayListGlobal.clear();
@@ -4220,14 +4224,14 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         thread.start();
     }
 
-    public void startShimmer() {
+    private void startShimmer() {
         Timber.e("startShimmer");
         mShimmerViewContainer.setVisibility(View.VISIBLE);
         mShimmerViewContainer.startShimmer();
         bottomSheetRecyclerView.setVisibility(View.INVISIBLE);
     }
 
-    public void stopShimmer() {
+    private void stopShimmer() {
         Timber.e("stopShimmer");
         mShimmerViewContainer.setVisibility(View.GONE);
         mShimmerViewContainer.stopShimmer();

@@ -167,7 +167,7 @@ public class ChangePasswordActivity extends BaseActivity implements View.OnClick
 
     private void updatePassword(String newPassword, String confirmPassword, String mobileNo) {
 
-        progressDialog = ApplicationUtils.progressDialog(context, "Please wait...");
+        progressDialog = ApplicationUtils.progressDialog(context, context.getResources().getString(R.string.please_wait));
 
         HttpsTrustManager.allowAllSSL();
 

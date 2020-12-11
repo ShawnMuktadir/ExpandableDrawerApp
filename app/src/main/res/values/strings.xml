@@ -409,4 +409,5 @@
     <string name="schedule_fragment_title">00:00–00:00pm</string>
     <string name="parking_total_time">00:00min</string>
     <string name="please_wait">Please wait…</string>
+    <string name="are_you_sure">Are you sure you want to exit?</string>
 </resources>
