@@ -15,4 +15,27 @@
         android:src="@drawable/ic_logo_original"
         tools:ignore="ContentDescription" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_alignParentBottom="true">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginEnd="@dimen/app_radius"
+            android:background="@drawable/ic_dmp_logo" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginStart="@dimen/app_radius"
+            android:background="@drawable/ic_locc_logo" />
+    </LinearLayout>
+
+
 </RelativeLayout>

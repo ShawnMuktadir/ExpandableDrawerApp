@@ -235,9 +235,9 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
             departureDisableLayout.setBackgroundColor(getResources().getColor(R.color.disableColor));
 
             arrivedDate = arrivedPicker.getDate();
-            Log.d(TAG, "arrived date before scrolling " + arrivedDate);
+            Timber.d("arrived date before scrolling -> %s", arrivedDate);
             departedDate = departurePicker.getDate();
-            Log.d(TAG, "departure date before scrolling " + departedDate);
+            Timber.d("departure date before scrolling -> %s", departedDate);
             arrived = arrivedDate.getTime();
             departure = departedDate.getTime();
             difference = arrived - departure;
@@ -294,9 +294,9 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
         });
 
         setBtn.setOnClickListener(v -> {
-            Log.d(TAG, "onClick: didnot entered to condition");
+            Timber.d("onClick: didnot entered to condition");
             if (!setArrivedDate) {
-                Log.d(TAG, "onClick:  entered to if");
+                Timber.d("onClick:  entered to if");
                 arrivedPicker.setEnabled(false);
                 arriveDisableLayout.setBackgroundColor(getResources().getColor(R.color.disableColor));
 
@@ -305,7 +305,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
 
                 setArrivedDate = true;
             } else {
-                Log.d(TAG, "onClick: didnot entered to else");
+                Timber.d("onClick: didnot entered to else");
                 if (departedDate.getTime() - arrivedDate.getTime() < 0) {
                     Toast.makeText(requireActivity(), "Departure time can't less than arrived time", Toast.LENGTH_SHORT).show();
                 } else {
@@ -321,7 +321,8 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                     homeFragment.setArguments(bundle);
                     listener.FragmentChange(homeFragment);*/
                     //open DialogHelper with total amount, time difference
-                        /*Dialog dialog = new Dialog(requireActivity());
+
+                    /*Dialog dialog = new Dialog(requireActivity());
                         dialog.setContentView(R.layout.voucher_dialog);
                         DialogHelper dialogHelper = new DialogHelper(dialog, requireActivity(), getDate(arrivedDate.getTime()), getDate(departerDate.getTime()),
                                 getTimeDiffrence(departerDate.getTime() - arrivedDate.getTime()),
@@ -417,9 +418,9 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
     @Override
     public void payBtnClick() {
         Bundle bundle = new Bundle();
-        Log.d(TAG, "onClick: " + arrivedDate.getTime());
-        Log.d(TAG, "onClick: " + departedDate.getTime());
-        // bundle.putBoolean("s", true);
+        Timber.d("onClick: -> %s", arrivedDate.getTime());
+        Timber.d("onClick: -> %s", departedDate.getTime());
+        //bundle.putBoolean("s", true);
         bundle.putLong("arrived", arrivedDate.getTime());
         bundle.putLong("departure", departedDate.getTime());
         PaymentFragment paymentFragment = new PaymentFragment();

@@ -66,7 +66,6 @@ import static android.content.Context.LOCATION_SERVICE;
 import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
 import static www.fiberathome.com.parkingapp.utils.ApplicationUtils.distance;
 
-@SuppressWarnings("ALL")
 public class ParkingFragment extends BaseFragment implements ParkingAdapter.ParkingAdapterClickListener, IOnBackPressListener {
 
     private static final String TAG = ParkingFragment.class.getCanonicalName();
@@ -431,7 +430,8 @@ public class ParkingFragment extends BaseFragment implements ParkingAdapter.Park
 
         /*progressDialog = ApplicationUtils.progressDialog(getActivity(),
                 "Please wait...");*/
-        showLoading(context);
+        if (!context.isFinishing())
+            showLoading(context);
 
         ArrayList<SensorArea> sensorAreas = new ArrayList<>();
 

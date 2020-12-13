@@ -103,12 +103,12 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
         setListeners();
 
         String mobileNo = SharedPreManager.getInstance(context).getUser().getMobileNo();
-        if (ApplicationUtils.checkInternet(context)){
+        if (ApplicationUtils.checkInternet(context)) {
             fetchParkingBookingSpot(mobileNo);
-        }else {
+        } else {
             ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
                 Timber.e("Positive Button clicked");
-                if (ApplicationUtils.checkInternet(context)){
+                if (ApplicationUtils.checkInternet(context)) {
                     fetchParkingBookingSpot(mobileNo);
                 } else {
                     TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
@@ -207,7 +207,8 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
     private void fetchParkingBookingSpot(String mobileNo) {
 
         //progressDialog = ApplicationUtils.progressDialog(context, "Please wait...");
-        showLoading(context);
+        if (!context.isFinishing())
+            showLoading(context);
 
         HttpsTrustManager.allowAllSSL();
 
@@ -217,7 +218,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
             public void onResponse(String response) {
                 //progressDialog.dismiss();
                 hideLoading();
-                Timber.e("booking list response -> %s",response);
+                Timber.e("booking list response -> %s", response);
                 try {
                     JSONObject jsonObject = new JSONObject(response);
                     //Log.e("Booking Object: ", jsonObject.toString());

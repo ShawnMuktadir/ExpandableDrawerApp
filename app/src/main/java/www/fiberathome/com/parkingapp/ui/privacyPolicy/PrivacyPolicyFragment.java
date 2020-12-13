@@ -150,7 +150,8 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
         Timber.e("fetchPrivacyPolicy called");
        /* progressDialog = ApplicationUtils.progressDialog(getActivity(),
                 "Please wait...");*/
-        showLoading(context);
+        if (!context.isFinishing())
+            showLoading(context);
 
         StringRequest strReq = new StringRequest(Request.Method.GET, AppConfig.URL_PRIVACY_POLICY, new Response.Listener<String>() {
 
