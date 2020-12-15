@@ -263,7 +263,7 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
                         }
                     } catch (IndexOutOfBoundsException e) {
                         //Toast.makeText(mContext, "Please try again", Toast.LENGTH_SHORT).show();
-                        ApplicationUtils.showMessageDialog("Please try again!", mContext);
+                        ApplicationUtils.showOnlyMessageDialog(mContext.getResources().getString(R.string.please_try_again), mContext);
                         Log.d(TAG, "exception: " + e);
                         //throw new RuntimeException("Test Crash");
                     }

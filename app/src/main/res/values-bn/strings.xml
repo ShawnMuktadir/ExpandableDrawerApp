@@ -411,4 +411,9 @@
     <string name="parking_total_time">00:00min</string>
     <string name="please_wait">অনুগ্রহপূর্বক অপেক্ষা করুন…</string>
     <string name="are_you_sure">আপনি প্রস্থান করতে চান?</string>
+    <string name="get_support">সাপোর্ট</string>
+    <string name="number">01924262749</string>
+    <string name="call">কল করুন</string>
+    <string name="you_have_to_exit_from_current_destination">নতুন পার্কিং স্পট পরিবর্তন করতে আপনাকে বর্তমান গন্তব্য থেকে প্রস্থান করতে হবে</string>
+    <string name="please_try_again">অনুগ্রহপূর্বক আবার চেষ্টা করুন</string>
 </resources>

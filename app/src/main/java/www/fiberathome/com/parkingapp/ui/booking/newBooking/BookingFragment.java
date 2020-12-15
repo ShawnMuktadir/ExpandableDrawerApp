@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -260,7 +261,8 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
             }
         }, error -> {
             //Log.e("Volley Error", error.getMessage());
-            ApplicationUtils.showMessageDialog(error.getMessage(), getActivity());
+            //ApplicationUtils.showMessageDialog(error.getMessage(), getActivity());
+            Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
         }) {
 
             @Override

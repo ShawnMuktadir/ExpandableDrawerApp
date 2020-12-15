@@ -23,7 +23,6 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -158,14 +157,12 @@ import www.fiberathome.com.parkingapp.module.room.BookingSensorsRoom;
 import www.fiberathome.com.parkingapp.module.room.DatabaseClient;
 import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.ui.bottomSheet.BottomSheetAdapter;
-import www.fiberathome.com.parkingapp.ui.location.LocationActivity;
 import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
 import www.fiberathome.com.parkingapp.ui.search.SearchActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.GpsUtils;
 import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
-import www.fiberathome.com.parkingapp.utils.LocationHelper;
 import www.fiberathome.com.parkingapp.utils.RecyclerTouchListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
@@ -180,8 +177,36 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         GoogleApiClient.OnConnectionFailedListener, LocationListener, GoogleMap.OnMarkerClickListener,
         IOnLoadLocationListener, GeoQueryEventListener, BottomSheetAdapter.AdapterCallback, IOnBackPressListener {
 
+    public static final int GPS_REQUEST_CODE = 9003;
+    private static final int PLAY_SERVICES_ERROR_CODE = 9002;
+    public static Location currentLocation;
+    public static LatLng location;
     private final String TAG = getClass().getSimpleName();
-
+    @BindView(R.id.linearLayoutBottom)
+    public LinearLayout linearLayoutBottom;
+    @BindView(R.id.linearLayoutSearchBottom)
+    public LinearLayout linearLayoutSearchBottom;
+    @BindView(R.id.linearLayoutSearchBottomButton)
+    public LinearLayout linearLayoutSearchBottomButton;
+    @BindView(R.id.linearLayoutMarkerBackNGetDirection)
+    public LinearLayout linearLayoutMarkerBackNGetDirection;
+    @BindView(R.id.textViewBottomSheetParkingDistance)
+    public TextView textViewBottomSheetParkingDistance;
+    @BindView(R.id.textViewBottomSheetParkingTravelTime)
+    public TextView textViewBottomSheetParkingTravelTime;
+    @BindView(R.id.linearLayoutBottomSheetBottom)
+    public LinearLayout linearLayoutBottomSheetBottom;
+    public BottomSheetBehavior bottomSheetBehavior;
+    public LatLng searchPlaceLatLng;
+    public LatLng bottomSheetPlaceLatLng;
+    public LatLng markerPlaceLatLng;
+    public String address, city, state, country, subAdminArea, test, knownName, postalCode = "";
+    public GoogleMap mMap;
+    //used in fetchSensor()
+    public double nDistance = 132116456;
+    public double nLatitude;
+    public double nLongitude;
+    public int fromRouteDrawn = 0;
     //from parking adapter
     @BindView(R.id.btnGetDirection)
     Button btnGetDirection;
@@ -199,11 +224,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     TextView textViewParkingDistance;
     @BindView(R.id.textViewParkingTravelTime)
     TextView textViewParkingTravelTime;
-    @BindView(R.id.linearLayoutBottom)
-    public LinearLayout linearLayoutBottom;
     @BindView(R.id.linearLayoutNameCount)
     LinearLayout linearLayoutNameCount;
-
     //from search
     @BindView(R.id.btnSearchGetDirection)
     Button btnSearchGetDirection;
@@ -217,13 +239,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     TextView textViewSearchParkingDistance;
     @BindView(R.id.textViewSearchParkingTravelTime)
     TextView textViewSearchParkingTravelTime;
-    @BindView(R.id.linearLayoutSearchBottom)
-    public LinearLayout linearLayoutSearchBottom;
-    @BindView(R.id.linearLayoutSearchBottomButton)
-    public LinearLayout linearLayoutSearchBottomButton;
     @BindView(R.id.linearLayoutSearchNameCount)
     LinearLayout linearLayoutSearchNameCount;
-
     //from marker
     @BindView(R.id.btnMarkerGetDirection)
     Button btnMarkerGetDirection;
@@ -241,9 +258,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     LinearLayout linearLayoutMarkerBottom;
     @BindView(R.id.linearLayoutMarkerNameCount)
     LinearLayout linearLayoutMarkerNameCount;
-    @BindView(R.id.linearLayoutMarkerBackNGetDirection)
-    public LinearLayout linearLayoutMarkerBackNGetDirection;
-
     //from bottomSheet
     @BindView(R.id.shimmer_view_container)
     ShimmerFrameLayout mShimmerViewContainer;
@@ -257,12 +271,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     TextView textViewBottomSheetParkingAreaCount;
     @BindView(R.id.textViewBottomSheetParkingAreaName)
     TextView textViewBottomSheetParkingAreaName;
-    @BindView(R.id.textViewBottomSheetParkingDistance)
-    public TextView textViewBottomSheetParkingDistance;
-    @BindView(R.id.textViewBottomSheetParkingTravelTime)
-    public TextView textViewBottomSheetParkingTravelTime;
-    @BindView(R.id.linearLayoutBottomSheetBottom)
-    public LinearLayout linearLayoutBottomSheetBottom;
     @BindView(R.id.linearLayoutBottomSheetNameCount)
     LinearLayout linearLayoutBottomSheetNameCount;
     @BindView(R.id.linearLayoutBottomSheetGetDirection)
@@ -271,9 +279,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     View view;
     @BindView(R.id.input_search)
     Button buttonSearch;
-
     private Unbinder unbinder;
-
     private LinearLayout bottomSheet;
     private FragmentChangeListener listener;
     private long arrived, departure;
@@ -282,39 +288,21 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private Button moreBtn, btnLiveParking;
     private LinearLayout bookedLayout;
     private Button departureBtn;
-
     private RecyclerView bottomSheetRecyclerView;
     private BottomSheetAdapter bottomSheetAdapter;
-
     private int LOCATION_PERMISSION_REQUEST_CODE = 100;
-    public BottomSheetBehavior bottomSheetBehavior;
-    public LatLng searchPlaceLatLng;
-    public static Location currentLocation;
     private Marker currentLocationMarker;
-    public LatLng bottomSheetPlaceLatLng;
-    public static LatLng location;
-    public LatLng markerPlaceLatLng;
     private ArrayList<LatLng> coordList = new ArrayList<LatLng>();
-
     private String nearByDuration;
     private String fetchDuration;
     private SupportMapFragment supportMapFragment;
-
     private HomeActivity context;
     private String name, count = "";
     private String distance;
     private String duration;
-    public String address, city, state, country, subAdminArea, test, knownName, postalCode = "";
     private boolean isGPS;
-    public GoogleMap mMap;
     private GoogleApiClient googleApiClient;
-
-    //used in fetchSensor()
-    public double nDistance = 132116456;
-    public double nLatitude;
-    public double nLongitude;
     private String sensorStatus = "Occupied";
-
     //flags
     private int getDirectionButtonClicked = 0;
     private int getDirectionSearchButtonClicked = 0;
@@ -325,12 +313,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private int fromMarkerRouteDrawn = 0;
     //route flag
     private int flag = 0;
-
     //polyline animate
     private List<LatLng> polyLineList;
     private PolylineOptions polylineOptions, blackPolylineOptions;
     private Polyline blackPolyline, grayPolyline;
-
     private IGoogleApi mService;
     private float v;
     private double lat, lng;
@@ -338,7 +324,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private LatLng startPosition, endPosition;
     private int index, next;
     private String searchPlaceCount = "0";
-
     //geoFence
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
@@ -352,11 +337,38 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private Location lastLocation;
     private GeoQuery geoQuery;
     private boolean isInAreaEnabled = false;
-    public int fromRouteDrawn = 0;
-
-    public static final int GPS_REQUEST_CODE = 9003;
-
-    private static final int PLAY_SERVICES_ERROR_CODE = 9002;
+    private String parkingNumberOfIndividualMarker = "";
+    private BookingSensors bookingSensorsMarker;
+    private ArrayList<BookingSensors> bookingSensorsMarkerArrayList = new ArrayList<>();
+    private Marker previousMarker = null;
+    private Location onConnectedLocation;
+    private final View.OnClickListener clickListener = view -> {
+        if (view.getId() == R.id.currentLocationImageButton && mMap != null && onConnectedLocation != null)
+            animateCamera(onConnectedLocation);
+    };
+    private FusedLocationProviderClient fusedLocationClient;
+    private BookingSensors bookingSensors;
+    private BookingSensors bookingSensorsBottomSheet;
+    private ArrayList<BookingSensors> bookingSensorsArrayList = new ArrayList<>();
+    private ArrayList<BookingSensors> bookingSensorsBottomSheetArrayList = new ArrayList<>();
+    private double searchDistance;
+    private JSONArray clickEventJsonArray;
+    private JSONArray searchPlaceEventJsonArray;
+    private JSONArray bottomSheetPlaceEventJsonArray;
+    private JSONArray adapterPlaceEventJsonArray;
+    private MyLatLng myLatLng;
+    private String markerUid;
+    private ArrayList<BookingSensors> bookingSensorsArrayListGlobal = new ArrayList<>();
+    private BookingSensors bookingSensorsGlobal;
+    private double adjustValue = 2;
+    private LatLng origin;
+    private int countadd = 0;
+    private BookingSensorsRoom bookingSensorsRoom;
+    private double adapterDistance;
+    private ArrayList<BookingSensors> bookingSensorsAdapterArrayList = new ArrayList<>();
+    private String adapterUid;
+    private String bottomUid;
+    private ArrayList<BookingSensors> bookingSensorsArrayListGlobalRoom = new ArrayList<>();
 
     public HomeFragment() {
 
@@ -364,6 +376,65 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     public static HomeFragment newInstance() {
         return new HomeFragment();
+    }
+
+    private static Boolean isLocationEnabled(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            // This is new method provided in API 28
+            LocationManager lm = (LocationManager) context.getSystemService(LOCATION_SERVICE);
+            return lm.isLocationEnabled();
+
+        } else {
+            // This is Deprecated in API 28
+            int mode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE,
+                    Settings.Secure.LOCATION_MODE_OFF);
+            return (mode != Settings.Secure.LOCATION_MODE_OFF);
+        }
+    }
+
+    private static int countDuplicates(ArrayList<BookingSensors> list) {
+        ArrayList<BookingSensors> distinctList = null;
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            distinctList = (ArrayList<BookingSensors>) list.stream().distinct().collect(Collectors.toList());
+        }
+        int dublicates = list.size() - distinctList.size();
+        return dublicates;
+    }
+
+    //for uber like car bearing
+    public static float getBearing(LatLng startPosition, LatLng newPos) {
+
+        //Source
+        double lat1 = startPosition.latitude;
+        double lng1 = startPosition.longitude;
+
+        // destination
+        double lat2 = newPos.latitude;
+        double lng2 = newPos.longitude;
+
+        double fLat = degreeToRadians(lat1);
+        double fLong = degreeToRadians(lng1);
+        double tLat = degreeToRadians(lat2);
+        double tLong = degreeToRadians(lng2);
+
+        double dLon = (tLong - fLong);
+
+        float degree = (float) (radiansToDegree(Math.atan2(Math.sin(dLon) * Math.cos(tLat),
+                Math.cos(fLat) * Math.sin(tLat) - Math.sin(fLat) * Math.cos(tLat) * Math.cos(dLon))));
+
+        if (degree >= 0) {
+            return degree;
+        } else {
+            return 360 + degree;
+        }
+    }
+
+    private static double degreeToRadians(double latLong) {
+        return (Math.PI * latLong / 180.0);
+    }
+
+    private static double radiansToDegree(double latLong) {
+        return (latLong * 180.0 / Math.PI);
     }
 
     @Override
@@ -608,11 +679,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         departureBtn = view.findViewById(R.id.departureBtn);
     }
 
-    private String parkingNumberOfIndividualMarker = "";
-    private BookingSensors bookingSensorsMarker;
-    private ArrayList<BookingSensors> bookingSensorsMarkerArrayList = new ArrayList<>();
-    private Marker previousMarker = null;
-
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public boolean onMarkerClick(Marker marker) {
@@ -768,7 +834,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     });
                 }
             } else {
-                ApplicationUtils.showMessageDialog("You have to exit from current destination to change new parking spot", context);
+                ApplicationUtils.showOnlyMessageDialog(context.getResources().getString(R.string.you_have_to_exit_from_current_destination), context);
             }
         } else {
             TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
@@ -873,10 +939,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     }
 
-    public interface SetBottomSheetCallBack {
-        void setBottomSheet();
-    }
-
     private synchronized void buildGoogleApiClient() {
         googleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addConnectionCallbacks(this)
@@ -886,9 +948,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         googleApiClient.connect();
     }
-
-    private Location onConnectedLocation;
-    private FusedLocationProviderClient fusedLocationClient;
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
@@ -1079,11 +1138,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 }).check();*/
     }
 
-    private final View.OnClickListener clickListener = view -> {
-        if (view.getId() == R.id.currentLocationImageButton && mMap != null && onConnectedLocation != null)
-            animateCamera(onConnectedLocation);
-    };
-
     public void animateCamera(@NonNull Location location) {
         //Timber.e("animateCamera called");
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
@@ -1182,12 +1236,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
         super.onDestroyView();
     }
-
-    private BookingSensors bookingSensors;
-    private BookingSensors bookingSensorsBottomSheet;
-    private ArrayList<BookingSensors> bookingSensorsArrayList = new ArrayList<>();
-    private ArrayList<BookingSensors> bookingSensorsBottomSheetArrayList = new ArrayList<>();
-    private double searchDistance;
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -1533,11 +1581,12 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         //dekhte hobee eta koi boshbe
                         if (getDirectionButtonClicked == 0) {
                             linearLayoutParkingAdapterBackBottom.setOnClickListener(v -> {
-                                ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.when_user_can_book), context);
+                                ApplicationUtils.showOnlyMessageDialog(context.getResources().getString(R.string.when_user_can_book), context);
                             });
                         } else {
                             linearLayoutParkingAdapterBackBottom.setOnClickListener(v -> {
-                                ApplicationUtils.showMessageDialog("Hey Shawn!!!", getContext());
+                                //ApplicationUtils.showMessageDialog("Hey Shawn!!!", getContext());
+                                Toast.makeText(context, "", Toast.LENGTH_SHORT).show();
                             });
                         }
 
@@ -1608,33 +1657,12 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         return false;
     }
 
-    private static Boolean isLocationEnabled(Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            // This is new method provided in API 28
-            LocationManager lm = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-            return lm.isLocationEnabled();
-
-        } else {
-            // This is Deprecated in API 28
-            int mode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE,
-                    Settings.Secure.LOCATION_MODE_OFF);
-            return (mode != Settings.Secure.LOCATION_MODE_OFF);
-        }
-    }
-
     private void dismissProgressDialog() {
         if (progressDialog != null && progressDialog.isShowing())
             progressDialog.dismiss();
         else if (bottomSheetProgressDialog != null && bottomSheetProgressDialog.isShowing())
             bottomSheetProgressDialog.dismiss();
     }
-
-    private JSONArray clickEventJsonArray;
-    private JSONArray searchPlaceEventJsonArray;
-    private JSONArray bottomSheetPlaceEventJsonArray;
-    private JSONArray adapterPlaceEventJsonArray;
-    private MyLatLng myLatLng;
-    private String markerUid;
 
     public void fetchSensors(Location location) {
         this.onConnectedLocation = location;
@@ -1784,13 +1812,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         return d;
     }
 
-    private ArrayList<BookingSensors> bookingSensorsArrayListGlobal = new ArrayList<>();
-    private BookingSensors bookingSensorsGlobal;
-    private double adjustValue = 2;
-    private LatLng origin;
-
-    private int countadd = 0;
-
     private String getAddress(Context context, double LATITUDE, double LONGITUDE) {
         //Set Address
         String addressTemp;
@@ -1842,10 +1863,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
 
         return addressTemp;
-    }
-
-    public interface AddressCallBack {
-        void addressCall(String address);
     }
 
     private String getAddress(Context context, double LATITUDE, double LONGITUDE, AddressCallBack addressCallBack) {
@@ -1966,8 +1983,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         return formatted_address[0];
     }
-
-    private BookingSensorsRoom bookingSensorsRoom;
 
     //fetch bottom sheet sensors
     private void fetchBottomSheetSensors(Location location) {
@@ -2120,15 +2135,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         ParkingApp.getInstance().addToRequestQueue(strReq);
     }
 
-    private static int countDuplicates(ArrayList<BookingSensors> list) {
-        ArrayList<BookingSensors> distinctList = null;
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            distinctList = (ArrayList<BookingSensors>) list.stream().distinct().collect(Collectors.toList());
-        }
-        int dublicates = list.size() - distinctList.size();
-        return dublicates;
-    }
-
     @SuppressLint("SetTextI18n")
     private void setBottomSheetFragmentControls(ArrayList<BookingSensors> sensors) {
         bottomSheetRecyclerView.setHasFixedSize(true);
@@ -2182,25 +2188,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         bottomSheetRecyclerView.setAdapter(bottomSheetAdapter);
     }
 
-    @SuppressLint("StaticFieldLeak")
-    public class TaskRequestDirections extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... strings) {
-            String responseString = "";
-            responseString = requestDirection(strings[0]);
-            return responseString;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            //Parse json here
-            TaskParser taskParser = new TaskParser();
-            taskParser.execute(s);
-        }
-    }
-
     private String requestDirection(String reqUrl) {
         String responseString = "";
         InputStream inputStream = null;
@@ -2237,112 +2224,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             httpURLConnection.disconnect();
         }
         return responseString;
-    }
-
-    @SuppressLint("StaticFieldLeak")
-    public class TaskParser extends AsyncTask<String, Void, List<List<HashMap<String, String>>>> {
-
-        @Override
-        protected List<List<HashMap<String, String>>> doInBackground(String... strings) {
-            JSONObject jsonObject = null;
-            List<List<HashMap<String, String>>> routes = null;
-            try {
-                jsonObject = new JSONObject(strings[0]);
-                DirectionsParser directionsParser = new DirectionsParser();
-                routes = directionsParser.parse(jsonObject);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return routes;
-        }
-
-        @Override
-        protected void onPostExecute(List<List<HashMap<String, String>>> lists) {
-            //Get list route and display it into the map
-
-            ArrayList points = null;
-            PolylineOptions polylineOptions = null;
-            MarkerOptions markerOptions = new MarkerOptions();
-            String distance = "";
-            String duration = "";
-
-            if (lists.size() < 1) {
-                Timber.e("lists size -> %s", lists.size());
-                //Toast.makeText(getActivity(), "No Points", Toast.LENGTH_SHORT).show();
-                return;
-            } else {
-                Timber.e("lists size -> %s", lists.size());
-            }
-
-            for (List<HashMap<String, String>> path : lists) {
-                points = new ArrayList();
-                polylineOptions = new PolylineOptions();
-                //for (int j = 0; j < path.size(); j++) {
-                for (HashMap<String, String> point : path) {
-                    double lat = Double.parseDouble(point.get("lat"));
-                    double lon = Double.parseDouble(point.get("lon"));
-                        /*if (j == 0) {    // Get distance from the list
-                            distance = (String) point.get("distance");
-                            continue;
-                        } else if (j == 1) { // Get duration from the list
-                            duration = (String) point.get("duration");
-                            continue;
-                        }
-
-                    Timber.e("duration -> %s", duration);*/
-
-                    points.add(new LatLng(lat, lon));
-                }
-            }
-            polylineOptions.addAll(points);
-            polylineOptions.width(5);
-            if (flag == 1) {
-                //polylineOptions.color(Color.BLACK);
-                polylineOptions.color(context.getResources().getColor(R.color.route_color));
-                polylineOptions.width(5);
-            }
-                /*else if (flag == 2) {
-                    if (googleMap != null)
-                       googleMap.clear();
-                    polylineOptions.color(Color.BLACK);
-                    polylineOptions.width(5);
-                }*/
-            flag++;
-
-            polylineOptions.geodesic(true);
-            if (polylineOptions != null) {
-                mMap.addPolyline(polylineOptions);
-            } else {
-                Toast.makeText(getActivity(), "Direction not found!", Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        public double showDistance(LatLng from, LatLng to) {
-
-            int Radius = 6371;// radius of earth in Km
-            double lat1 = from.latitude;
-            double lat2 = to.latitude;
-            double lon1 = from.longitude;
-            double lon2 = to.longitude;
-            double dLat = Math.toRadians(lat2 - lat1);
-            double dLon = Math.toRadians(lon2 - lon1);
-            double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
-                    + Math.cos(Math.toRadians(lat1))
-                    * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon / 2)
-                    * Math.sin(dLon / 2);
-            double c = 2 * Math.asin(Math.sqrt(a));
-            double valueResult = Radius * c;
-
-            double km = valueResult / 1;
-            DecimalFormat newFormat = new DecimalFormat("####");
-            int kmInDec = Integer.parseInt(newFormat.format(km));
-            double meter = valueResult % 1000;
-            int meterInDec = Integer.parseInt(newFormat.format(meter));
-            /*Timber.i("showDistance" + valueResult + "   KM  " + kmInDec
-                    + " Meter   " + meterInDec);*/
-
-            return (Radius * c);
-        }
     }
 
     private void storeVisitedPlace(String mobileNo, String placeId, double endLatitude, double endLongitude,
@@ -2646,42 +2527,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         googleMap.setPadding(left, top, right, bottom);
     }
 
-    //for uber like car bearing
-    public static float getBearing(LatLng startPosition, LatLng newPos) {
-
-        //Source
-        double lat1 = startPosition.latitude;
-        double lng1 = startPosition.longitude;
-
-        // destination
-        double lat2 = newPos.latitude;
-        double lng2 = newPos.longitude;
-
-        double fLat = degreeToRadians(lat1);
-        double fLong = degreeToRadians(lng1);
-        double tLat = degreeToRadians(lat2);
-        double tLong = degreeToRadians(lng2);
-
-        double dLon = (tLong - fLong);
-
-        float degree = (float) (radiansToDegree(Math.atan2(Math.sin(dLon) * Math.cos(tLat),
-                Math.cos(fLat) * Math.sin(tLat) - Math.sin(fLat) * Math.cos(tLat) * Math.cos(dLon))));
-
-        if (degree >= 0) {
-            return degree;
-        } else {
-            return 360 + degree;
-        }
-    }
-
-    private static double degreeToRadians(double latLong) {
-        return (Math.PI * latLong / 180.0);
-    }
-
-    private static double radiansToDegree(double latLong) {
-        return (latLong * 180.0 / Math.PI);
-    }
-
     private List<LatLng> decodePoly(String encoded) {
         List<LatLng> poly = new ArrayList<LatLng>();
         int index = 0, len = encoded.length();
@@ -2713,10 +2558,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
         return poly;
     }
-
-    private double adapterDistance;
-    private ArrayList<BookingSensors> bookingSensorsAdapterArrayList = new ArrayList<>();
-    private String adapterUid;
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onMessageEvent(SetMarkerEvent event) {
@@ -3051,8 +2892,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             linearLayoutMarkerBottom.setVisibility(View.GONE);
         }
     }
-
-    private String bottomUid;
 
     @SuppressLint("SetTextI18n")
     public void layoutBottomSheetVisible(boolean isVisible, String name, String count,
@@ -3446,7 +3285,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 //Toast.makeText(context, "adapter", Toast.LENGTH_SHORT).show();
                 if (getDirectionButtonClicked == 0) {
                     getDirectionButtonClicked++;
-                    ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
+                    //ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
                     if (location != null) {
                         EventBus.getDefault().post(new GetDirectionAfterButtonClickEvent(location));
                         //fetchSensors(onConnectedLocation);
@@ -3480,7 +3319,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     }
                 } else if (getDirectionButtonClicked == 1) {
                     ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
-                    getDirectionButtonClicked--;
+                    //getDirectionButtonClicked--;
                     if (isInAreaEnabled) {
                         Bundle bundle = new Bundle();
                         bundle.putBoolean("m", false); //m for more
@@ -3522,7 +3361,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 fromRouteDrawn = 1;
                 //Toast.makeText(context, "search", Toast.LENGTH_SHORT).show();
                 if (getDirectionSearchButtonClicked == 0) {
-                    ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.no_parking_spot_message), context);
+                    //ApplicationUtils.showOnlyMessageDialog(context.getResources().getString(R.string.no_parking_spot_message), context);
                     getDirectionSearchButtonClicked++;
                     if (searchPlaceLatLng != null) {
                         EventBus.getDefault().post(new GetDirectionForSearchEvent(searchPlaceLatLng));
@@ -3546,7 +3385,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     }
                 } else if (getDirectionSearchButtonClicked == 1) {
                     ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.no_parking_spot_message), context);
-                    getDirectionSearchButtonClicked--;
+                    //getDirectionSearchButtonClicked--;
                     if (mMap != null) {
                         TaskParser taskParser = new TaskParser();
                         double distance = taskParser.showDistance(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
@@ -3576,107 +3415,98 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         btnMarkerGetDirection.setOnClickListener(v -> {
             //Toast.makeText(context, "marker btn clicked", Toast.LENGTH_SHORT).show();
             if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
-                if (parkingNumberOfIndividualMarker.equals("0")) {
-                    ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.no_parking_spot_message), context);
-                } else {
-                    ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
-                }
                 mMap.setTrafficEnabled(false);
                 fromRouteDrawn = 1;
-                //Toast.makeText(context, "marker", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, "adapter", Toast.LENGTH_SHORT).show();
                 if (getDirectionMarkerButtonClicked == 0) {
                     getDirectionMarkerButtonClicked++;
+                    //ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
                     if (markerPlaceLatLng != null) {
                         EventBus.getDefault().post(new GetDirectionForMarkerEvent(markerPlaceLatLng));
-                        linearLayoutMarkerNameCount.setVisibility(View.GONE);
                         //fetchSensors(onConnectedLocation);
                         buttonSearch.setVisibility(View.GONE);
-                        bookingSensorsArrayListGlobal.clear();
-                        bookingSensorsArrayList.clear();
                         MarkerOptions markerOptions = new MarkerOptions();
                         markerOptions.position(markerPlaceLatLng);
                         coordList.add(new LatLng(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude));
-                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
                         mMap.addMarker(markerOptions);
                         //move map camera
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerPlaceLatLng, 16f));
-                        linearLayoutNameCount.setVisibility(View.GONE);
-                        linearLayoutSearchBottom.setVisibility(View.GONE);
                         linearLayoutBottom.setVisibility(View.GONE);
-                        linearLayoutMarkerNameCount.setVisibility(View.GONE);
-                        imageViewMarkerBack.setVisibility(View.VISIBLE);
+                        linearLayoutSearchBottom.setVisibility(View.GONE);
+                        linearLayoutMarkerBottom.setVisibility(View.VISIBLE);
+                        imageViewBack.setVisibility(View.VISIBLE);
+                        btnMarkerGetDirection.setText(context.getString(R.string.confirm_booking));
+                        btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
+                        btnMarkerGetDirection.setEnabled(true);
+                        btnMarkerGetDirection.setFocusable(true);
+                        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                         if (parkingNumberOfIndividualMarker.equals("0")) {
-                            Timber.e("parkingNumberOfIndividualMarker 0 if condition called");
-                            btnMarkerGetDirection.setText(context.getString(R.string.unavailable_parking_spot));
+                            Timber.e("count 0 if condition called");
+                            btnMarkerGetDirection.setText(context.getResources().getString(R.string.unavailable_parking_spot));
                             btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
                             btnMarkerGetDirection.setEnabled(true);
                             btnMarkerGetDirection.setFocusable(true);
-                            //parkingNumberOfIndividualMarker.equals("1");
-                            getDirectionMarkerButtonClicked = 1;
+                            ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.no_parking_spot_message), context);
                         } else {
-                            Timber.e("parkingNumberOfIndividualMarker not 0 else condition called");
+                            Timber.e("count not 0 else condition called");
                             btnMarkerGetDirection.setText(context.getResources().getString(R.string.confirm_booking));
                             btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
+                            //ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
                             btnMarkerGetDirection.setEnabled(true);
                             btnMarkerGetDirection.setFocusable(true);
                         }
-
                         if (isInAreaEnabled) {
-                            if (parkingNumberOfIndividualMarker.equals("0")) {
-                                btnMarkerGetDirection.setText(context.getResources().getString(R.string.unavailable_parking_spot));
-                                btnMarkerGetDirection.setEnabled(true);
-                                btnMarkerGetDirection.setFocusable(true);
-                                btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
-                            } else {
-                                btnMarkerGetDirection.setText(context.getResources().getString(R.string.confirm_booking));
-                                btnMarkerGetDirection.setEnabled(true);
-                                btnMarkerGetDirection.setFocusable(true);
-                                btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
-                                Toast.makeText(context, context.getResources().getString(R.string.you_can_book_parking_slot), Toast.LENGTH_LONG).show();
-                            }
+                            btnMarkerGetDirection.setEnabled(true);
+                            btnMarkerGetDirection.setFocusable(true);
+                            btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
+                            Toast.makeText(context, context.getResources().getString(R.string.you_can_book_parking_slot), Toast.LENGTH_LONG).show();
                         } else {
-                            btnMarkerGetDirection.setEnabled(false);
-                            btnMarkerGetDirection.setFocusable(false);
+                            btnMarkerGetDirection.setEnabled(true);
+                            btnMarkerGetDirection.setFocusable(true);
                             btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
                             //Toast.makeText(context, "Go to the Selected Parking Area", Toast.LENGTH_LONG).show();
                         }
-                        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     }
                 } else if (getDirectionMarkerButtonClicked == 1) {
+                    //getDirectionMarkerButtonClicked--;
                     if (parkingNumberOfIndividualMarker.equals("0")) {
-                        ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.no_parking_spot_message), context);
-                    } else {
-                        ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
-                        if (isInAreaEnabled) {
-                            Bundle bundle = new Bundle();
-                            bundle.putBoolean("m", false); //m for more
-                            bundle.putString("markerUid", markerUid);
-                            ScheduleFragment scheduleFragment = new ScheduleFragment();
-                            scheduleFragment.setArguments(bundle);
-                            listener.fragmentChange(scheduleFragment);
-                            bottomSheet.setVisibility(View.GONE);
-                        }
-                    }
-                    getDirectionMarkerButtonClicked--;
-                    /*if (mMap != null) {
-                    TaskParser taskParser = new TaskParser();
-                    double distance = taskParser.showDistance(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
-                            new LatLng(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude));
-                    if (distance < 0.1) {
-                        btnMarkerGetDirection.setText("Confirm Booking");
-                        btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
+                        Timber.e("count 0 if condition called");
+                        btnMarkerGetDirection.setText(context.getResources().getString(R.string.unavailable_parking_spot));
+                        btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
                         btnMarkerGetDirection.setEnabled(true);
                         btnMarkerGetDirection.setFocusable(true);
-                        bookedLayout.setVisibility(View.VISIBLE);
-
+                        ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.no_parking_spot_message), context);
+                    }else {
+                        ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
+                    }
+                    if (isInAreaEnabled) {
                         Bundle bundle = new Bundle();
                         bundle.putBoolean("m", false); //m for more
+                        bundle.putString("markerUid", markerUid);
                         ScheduleFragment scheduleFragment = new ScheduleFragment();
                         scheduleFragment.setArguments(bundle);
                         listener.fragmentChange(scheduleFragment);
                         bottomSheet.setVisibility(View.GONE);
                     }
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);                    ;
+                    /*if (mMap != null) {
+                        TaskParser taskParser = new TaskParser();
+                        double distance = taskParser.showDistance(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
+                            new LatLng(location.latitude, location.longitude));
+                    if (distance < 0.1) {
+                        btnGetDirection.setText("Confirm Booking");
+                        btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
+                        btnGetDirection.setEnabled(true);
+                        btnGetDirection.setFocusable(true);
+                        bookedLayout.setVisibility(View.VISIBLE);
+                        Bundle bundle = new Bundle();
+                        bundle.putBoolean("m", false); //m for more button check
+                        ScheduleFragment scheduleFragment = new ScheduleFragment();
+                        scheduleFragment.setArguments(bundle);
+                        listener.fragmentChange(scheduleFragment);
+                        bottomSheet.setVisibility(View.GONE);
+                    }
+                    SharedData.getInstance().setSensorArea(null);
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 }*/
                 }
             } else {
@@ -3696,7 +3526,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     if (count.equals("0")) {
                         ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.no_parking_spot_message), context);
                     } else {
-                        ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
+                        //ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
                     }
                     if (bottomSheetPlaceLatLng != null || location != null || markerPlaceLatLng != null || searchPlaceLatLng != null) {
                         Timber.e("all location called");
@@ -3729,6 +3559,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             Timber.e("count not 0 else condition called");
                             btnBottomSheetGetDirection.setText(context.getResources().getString(R.string.confirm_booking));
                             btnBottomSheetGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
+                            //ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
                             btnBottomSheetGetDirection.setEnabled(true);
                             btnBottomSheetGetDirection.setFocusable(true);
                         }
@@ -3756,7 +3587,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     }
                 } else if (getDirectionBottomSheetButtonClicked == 1) {
-                    getDirectionBottomSheetButtonClicked--;
+                    //getDirectionBottomSheetButtonClicked--;
                     ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
                     if (isInAreaEnabled) {
                         Bundle bundle = new Bundle();
@@ -3770,7 +3601,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                     if (mMap != null) {
                         fromMarkerRouteDrawn = 0;
-                    /*markerAlreadyClicked = 0;
+                        /*markerAlreadyClicked = 0;
                     TaskParser taskParser = new TaskParser();
                     double distance = taskParser.showDistance(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
                             new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
@@ -4189,8 +4020,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         saveTask.execute();
     }
 
-    private ArrayList<BookingSensors> bookingSensorsArrayListGlobalRoom = new ArrayList<>();
-
     private void fetchfromRoom() {
         Thread thread = new Thread(() -> {
             Timber.e("fetchfromRoom called");
@@ -4240,5 +4069,138 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     public void hideNoData() {
         textViewNoData.setVisibility(View.GONE);
+    }
+
+    public interface SetBottomSheetCallBack {
+        void setBottomSheet();
+    }
+
+    public interface AddressCallBack {
+        void addressCall(String address);
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    public class TaskRequestDirections extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String responseString = "";
+            responseString = requestDirection(strings[0]);
+            return responseString;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            //Parse json here
+            TaskParser taskParser = new TaskParser();
+            taskParser.execute(s);
+        }
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    public class TaskParser extends AsyncTask<String, Void, List<List<HashMap<String, String>>>> {
+
+        @Override
+        protected List<List<HashMap<String, String>>> doInBackground(String... strings) {
+            JSONObject jsonObject = null;
+            List<List<HashMap<String, String>>> routes = null;
+            try {
+                jsonObject = new JSONObject(strings[0]);
+                DirectionsParser directionsParser = new DirectionsParser();
+                routes = directionsParser.parse(jsonObject);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return routes;
+        }
+
+        @Override
+        protected void onPostExecute(List<List<HashMap<String, String>>> lists) {
+            //Get list route and display it into the map
+
+            ArrayList points = null;
+            PolylineOptions polylineOptions = null;
+            MarkerOptions markerOptions = new MarkerOptions();
+            String distance = "";
+            String duration = "";
+
+            if (lists.size() < 1) {
+                Timber.e("lists size -> %s", lists.size());
+                //Toast.makeText(getActivity(), "No Points", Toast.LENGTH_SHORT).show();
+                return;
+            } else {
+                Timber.e("lists size -> %s", lists.size());
+            }
+
+            for (List<HashMap<String, String>> path : lists) {
+                points = new ArrayList();
+                polylineOptions = new PolylineOptions();
+                //for (int j = 0; j < path.size(); j++) {
+                for (HashMap<String, String> point : path) {
+                    double lat = Double.parseDouble(point.get("lat"));
+                    double lon = Double.parseDouble(point.get("lon"));
+                        /*if (j == 0) {    // Get distance from the list
+                            distance = (String) point.get("distance");
+                            continue;
+                        } else if (j == 1) { // Get duration from the list
+                            duration = (String) point.get("duration");
+                            continue;
+                        }
+
+                    Timber.e("duration -> %s", duration);*/
+
+                    points.add(new LatLng(lat, lon));
+                }
+            }
+            polylineOptions.addAll(points);
+            polylineOptions.width(5);
+            if (flag == 1) {
+                //polylineOptions.color(Color.BLACK);
+                polylineOptions.color(context.getResources().getColor(R.color.route_color));
+                polylineOptions.width(5);
+            }
+                /*else if (flag == 2) {
+                    if (googleMap != null)
+                       googleMap.clear();
+                    polylineOptions.color(Color.BLACK);
+                    polylineOptions.width(5);
+                }*/
+            flag++;
+
+            polylineOptions.geodesic(true);
+            if (polylineOptions != null) {
+                mMap.addPolyline(polylineOptions);
+            } else {
+                Toast.makeText(getActivity(), "Direction not found!", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        public double showDistance(LatLng from, LatLng to) {
+
+            int Radius = 6371;// radius of earth in Km
+            double lat1 = from.latitude;
+            double lat2 = to.latitude;
+            double lon1 = from.longitude;
+            double lon2 = to.longitude;
+            double dLat = Math.toRadians(lat2 - lat1);
+            double dLon = Math.toRadians(lon2 - lon1);
+            double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                    + Math.cos(Math.toRadians(lat1))
+                    * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon / 2)
+                    * Math.sin(dLon / 2);
+            double c = 2 * Math.asin(Math.sqrt(a));
+            double valueResult = Radius * c;
+
+            double km = valueResult / 1;
+            DecimalFormat newFormat = new DecimalFormat("####");
+            int kmInDec = Integer.parseInt(newFormat.format(km));
+            double meter = valueResult % 1000;
+            int meterInDec = Integer.parseInt(newFormat.format(meter));
+            /*Timber.i("showDistance" + valueResult + "   KM  " + kmInDec
+                    + " Meter   " + meterInDec);*/
+
+            return (Radius * c);
+        }
     }
 }

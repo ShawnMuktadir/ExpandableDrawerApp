@@ -19,6 +19,7 @@ import android.location.Geocoder;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.IBinder;
@@ -250,6 +251,43 @@ public class ApplicationUtils {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             builder.setMessage(message);
             builder.setCancelable(true);
+            builder.setPositiveButton(context.getResources().getString(R.string.get_support), (dialog, which) -> {
+                showAlertDialog(context.getString(R.string.number), context, context.getString(R.string.call), context.getString(R.string.cancel),
+                        (dialog1, which1) -> {
+                            Timber.e("Positive Button clicked");
+                            String number = context.getString(R.string.number);
+                            Intent intent = new Intent();
+                            intent.setAction(Intent.ACTION_DIAL); // Action for what intent called for
+                            intent.setData(Uri.parse("tel: " + number)); // Datum with intent respective action on intent
+                            context.startActivity(intent);
+                            dialog1.dismiss();
+                        },
+
+                        (dialog1, which1) -> {
+                            Timber.e("Negative Button Clicked");
+                            dialog1.dismiss();
+                        });
+            });
+            builder.setNegativeButton(context.getResources().getString(R.string.ok), (dialog, which) -> {
+                if (context != null) {
+                    dialog.dismiss();
+                }
+            });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+
+            // Let's start with animation work. We just need to create a style and use it here as follows.
+            /*if (alertDialog.getWindow() != null)
+                alertDialog.getWindow().getAttributes().windowAnimations = R.style.slidingDialogAnimation;*/
+
+        }
+    }
+
+    public static void showOnlyMessageDialog(String message, Context context) {
+        if (context != null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setMessage(message);
+            builder.setCancelable(true);
             builder.setPositiveButton(context.getResources().getString(R.string.ok), (dialog, which) -> {
                 if (context != null) {
                     dialog.dismiss();
@@ -264,6 +302,8 @@ public class ApplicationUtils {
 
         }
     }
+
+
 
     public static void showAlertDialog(String message, Context context, String positiveText, String negativeText,
                                        DialogInterface.OnClickListener positiveCallback, DialogInterface.OnClickListener negativeCallback) {
@@ -393,7 +433,7 @@ public class ApplicationUtils {
 
     public static String getPSTTimeZoneCurrentDate() {
         //Output: ex: Wednesday, July 20, 2011
-        DateFormat df  = DateFormat.getDateInstance(DateFormat.FULL);
+        DateFormat df = DateFormat.getDateInstance(DateFormat.FULL);
         df.setTimeZone(TimeZone.getTimeZone("PST"));
         final String dateString = df.format(new Date());
         return dateString;
@@ -476,7 +516,7 @@ public class ApplicationUtils {
         transaction.commit();
     }
 
-    public static void replaceFragmentWithAnimation(@NonNull FragmentManager fragmentManager, @NonNull Fragment fragment){
+    public static void replaceFragmentWithAnimation(@NonNull FragmentManager fragmentManager, @NonNull Fragment fragment) {
         //, String tag
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
@@ -714,27 +754,6 @@ public class ApplicationUtils {
         return null;
     }
 
-    private String getCountryZipCode(Context context) {
-
-        String CountryID = "";
-        String CountryZipCode = "";
-
-        TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-        //getNetworkCountryIso
-        assert manager != null;
-        CountryID = manager.getSimCountryIso().toUpperCase();
-        String[] rl = context.getResources().getStringArray(R.array.CountryCodes);
-        for (int i = 0; i < rl.length; i++) {
-            String[] g = rl[i].split(",");
-            if (g[1].trim().equals(CountryID.trim())) {
-                CountryZipCode = g[0];
-                Timber.e("CountryZipCode -> %s", CountryZipCode);
-                break;
-            }
-        }
-        return CountryZipCode;
-    }
-
     public static boolean checkLocationPermission(Context context) {
         Timber.e("checkLocationPermission call hoiche");
         String permission = "android.permission.ACCESS_FINE_LOCATION";
@@ -845,5 +864,26 @@ public class ApplicationUtils {
         progressDialog.show();
 
         return progressDialog;
+    }
+
+    private String getCountryZipCode(Context context) {
+
+        String CountryID = "";
+        String CountryZipCode = "";
+
+        TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        //getNetworkCountryIso
+        assert manager != null;
+        CountryID = manager.getSimCountryIso().toUpperCase();
+        String[] rl = context.getResources().getStringArray(R.array.CountryCodes);
+        for (int i = 0; i < rl.length; i++) {
+            String[] g = rl[i].split(",");
+            if (g[1].trim().equals(CountryID.trim())) {
+                CountryZipCode = g[0];
+                Timber.e("CountryZipCode -> %s", CountryZipCode);
+                break;
+            }
+        }
+        return CountryZipCode;
     }
 }

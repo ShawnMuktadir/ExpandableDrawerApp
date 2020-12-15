@@ -17,15 +17,17 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/_70sdp"
         android:orientation="horizontal"
         android:gravity="center"
+        android:visibility="gone"
         android:layout_alignParentBottom="true">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center_horizontal"
+            android:scaleType="fitXY"
             android:layout_marginEnd="@dimen/app_radius"
             android:background="@drawable/ic_dmp_logo" />
 
@@ -33,9 +35,8 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center_horizontal"
+            android:scaleType="fitXY"
             android:layout_marginStart="@dimen/app_radius"
             android:background="@drawable/ic_locc_logo" />
     </LinearLayout>
-
-
 </RelativeLayout>

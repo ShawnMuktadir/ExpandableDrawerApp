@@ -9,12 +9,16 @@
         android:required="true" />
     <!-- internet permission -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- location permission -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- location permission -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" /> <!-- camera permission -->
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <!-- camera permission -->
     <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -121,7 +125,7 @@
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar"
             android:windowSoftInputMode="adjustResize" />
-<!--        android:theme="@style/AppTheme.NoActionBar"-->
+            <!--android:theme="@style/AppTheme.NoActionBar"-->
         <activity
             android:name=".ui.start.StartActivity"
             android:configChanges="locale"
@@ -153,7 +157,8 @@
             android:name=".ui.signUp.SignUpActivity"
             android:configChanges="locale"
             android:screenOrientation="unspecified"
-            android:theme="@style/AppTheme.DefaultActionBar" /> <!-- <activity android:name=".view.activity.registration.RegistrationActivity" -->
+            android:theme="@style/AppTheme.DefaultActionBar" />
+        <!-- <activity android:name=".view.activity.registration.RegistrationActivity" -->
         <!-- android:screenOrientation="unspecified" -->
         <!-- android:theme="@style/AppTheme.DefaultActionBar" /> -->
         <activity

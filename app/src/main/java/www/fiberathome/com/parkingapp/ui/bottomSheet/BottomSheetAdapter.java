@@ -167,7 +167,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
                 } else {
                     homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     homeFragment.bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._130sdp));
-                    ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.parking_spot_selection_rules), context);
+                    ApplicationUtils.showOnlyMessageDialog(context.getResources().getString(R.string.parking_spot_selection_rules), context);
                 }
             } else {
                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
