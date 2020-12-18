@@ -304,7 +304,6 @@ public class ApplicationUtils {
     }
 
 
-
     public static void showAlertDialog(String message, Context context, String positiveText, String negativeText,
                                        DialogInterface.OnClickListener positiveCallback, DialogInterface.OnClickListener negativeCallback) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -593,6 +592,25 @@ public class ApplicationUtils {
         }
 
         return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
+
+    public static String capitalizeFirstLetter(final String str) {
+        int strLen;
+        if (str == null || (strLen = str.length()) == 0) {
+            return str;
+        }
+
+        final char firstChar = str.charAt(0);
+        final char newChar = Character.toTitleCase(firstChar);
+        if (firstChar == newChar) {
+            // already capitalized
+            return str;
+        }
+
+        char[] newChars = new char[strLen];
+        newChars[0] = newChar;
+        str.getChars(1, strLen, newChars, 1);
+        return String.valueOf(newChars);
     }
 
     public static String allTrim(String str) {

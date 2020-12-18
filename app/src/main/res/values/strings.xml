@@ -109,7 +109,7 @@
     <string name="unavailable_parking_spot">Unavailable Parking Spot</string>
     <string name="no_parking_spot_message">You cannot reserve this spot for booking, as there is no parking slot</string>
     <string name="confirm_booking_message">
-        We do not allow booking to the parking \n spot until you reach the parking spot </string>
+        We do not allow booking to the parking spot until you reach the parking spot</string>
 
     //bottom sheet
     <string name="bottom_Sheet_text">Choose a spot or swipe up for more</string>

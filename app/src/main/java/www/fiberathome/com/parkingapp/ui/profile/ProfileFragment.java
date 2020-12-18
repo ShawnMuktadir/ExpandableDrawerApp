@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.google.zxing.common.StringUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -125,8 +126,9 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
             getActivity().setTitle(user.getFullName());
         }
 
-        String name = user.getFullName();
-        name = name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
+        String name = user.getFullName().trim();
+        //name = name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
+        name = ApplicationUtils.capitalizeFirstLetter(name);
         tvUserName.setText(name);
 
         tvUserMobileNo.setText(ApplicationUtils.addCountryPrefix(user.getMobileNo()));
