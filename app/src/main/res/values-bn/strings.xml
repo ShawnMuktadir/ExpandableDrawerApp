@@ -109,7 +109,8 @@
     <string name="confirm_booking">নিশ্চিত বুকিং</string>
     <string name="unavailable_parking_spot">অনুপলব্ধ পার্কিং স্পট</string>
     <string name="no_parking_spot_message">কোনও পার্কিং স্লট না থাকায় আপনি এই স্পটটি বুকিংয়ের জন্য সংরক্ষণ করতে পারবেন না!</string>
-    <string name="confirm_booking_message">একবার আপনার গন্তব্যে পৌঁছে গেলে,\nনিশ্চিত বুকিং বোতামটি চালু হবে &amp; আপনি আপনার পার্কিং স্পট সংরক্ষণ করতে পারেন</string>
+    <string name="confirm_booking_message">
+        আপনি পার্কিং স্পটে না পৌঁছা পর্যন্ত আমরা পার্কিং স্পটে বুকিং দেওয়ার অনুমতি দিই না</string>
 
     //bottom sheet
     <string name="bottom_Sheet_text">একটি স্পট চয়ন করুন বা, আরও কিছু জন্য সোয়াইপ আপ</string>
