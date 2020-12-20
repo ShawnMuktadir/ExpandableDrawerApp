@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 
 import com.android.volley.AuthFailureError;
@@ -83,7 +84,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
     @BindView(R.id.editTextPassword)
     EditText editTextPassword;
     @BindView(R.id.relativeLayoutLogin)
-    RelativeLayout relativeLayoutLogin;
+    ConstraintLayout relativeLayoutLogin;
     @BindView(R.id.login_rl_invisible)
     RelativeLayout relativeLayoutInvisible;
 
@@ -103,7 +104,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_login, container, false);
+        return inflater.inflate(R.layout.fragment_login_2, container, false);
     }
 
     @Override

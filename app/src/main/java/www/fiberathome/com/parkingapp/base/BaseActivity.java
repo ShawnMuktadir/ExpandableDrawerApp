@@ -403,4 +403,6 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         mInternetDialog = builder.create();
         mInternetDialog.show();
     }
+
+
 }

@@ -36,6 +36,7 @@
                     android:visibility="visible"
                     app:civ_border_color="@color/black"
                     app:civ_border_width="@dimen/dim2"
+                    android:focusable="true"
                     app:civ_circle_background_color="@android:color/transparent" />
 
                 <TextView
