@@ -31,7 +31,7 @@ public class SettingsActivity extends NavigationActivity {
 
         setTitle(context.getResources().getString(R.string.action_settings));
 
-        // Initialize Settings fragment
+        //Initialize Settings fragment
         ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
                 SettingsFragment.newInstance(), R.id.nav_host_fragment);
 

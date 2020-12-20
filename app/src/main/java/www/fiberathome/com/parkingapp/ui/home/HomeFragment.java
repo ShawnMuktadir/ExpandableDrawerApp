@@ -173,113 +173,163 @@ import static www.fiberathome.com.parkingapp.model.searchHistory.AppConstants.HI
 import static www.fiberathome.com.parkingapp.model.searchHistory.AppConstants.NEW_PLACE_SELECTED;
 import static www.fiberathome.com.parkingapp.model.searchHistory.AppConstants.NEW_SEARCH_ACTIVITY_REQUEST_CODE;
 
+@SuppressLint("NonConstantResourceId")
 public class HomeFragment extends BaseFragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener, GoogleMap.OnMarkerClickListener,
         IOnLoadLocationListener, GeoQueryEventListener, BottomSheetAdapter.AdapterCallback, IOnBackPressListener {
 
+    private final String TAG = getClass().getSimpleName();
+
     public static final int GPS_REQUEST_CODE = 9003;
     private static final int PLAY_SERVICES_ERROR_CODE = 9002;
-    public static Location currentLocation;
-    public static LatLng location;
-    private final String TAG = getClass().getSimpleName();
+    private final int LOCATION_PERMISSION_REQUEST_CODE = 100;
+
     @BindView(R.id.linearLayoutBottom)
     public LinearLayout linearLayoutBottom;
+
     @BindView(R.id.linearLayoutSearchBottom)
     public LinearLayout linearLayoutSearchBottom;
+
     @BindView(R.id.linearLayoutSearchBottomButton)
     public LinearLayout linearLayoutSearchBottomButton;
+
     @BindView(R.id.linearLayoutMarkerBackNGetDirection)
     public LinearLayout linearLayoutMarkerBackNGetDirection;
+
     @BindView(R.id.textViewBottomSheetParkingDistance)
     public TextView textViewBottomSheetParkingDistance;
+
     @BindView(R.id.textViewBottomSheetParkingTravelTime)
     public TextView textViewBottomSheetParkingTravelTime;
+
     @BindView(R.id.linearLayoutBottomSheetBottom)
     public LinearLayout linearLayoutBottomSheetBottom;
+
+    //from parking adapter
+    @BindView(R.id.btnGetDirection)
+    Button btnGetDirection;
+
+    @BindView(R.id.linearLayoutParkingSlot)
+    LinearLayout linearLayoutParkingBackNGetDirection;
+
+    @BindView(R.id.linearLayoutParkingAdapterBackBottom)
+    LinearLayout linearLayoutParkingAdapterBackBottom;
+
+    @BindView(R.id.imageViewBack)
+    ImageView imageViewBack;
+
+    @BindView(R.id.textViewParkingAreaCount)
+    TextView textViewParkingAreaCount;
+
+    @BindView(R.id.textViewParkingAreaName)
+    TextView textViewParkingAreaName;
+
+    @BindView(R.id.textViewParkingDistance)
+    TextView textViewParkingDistance;
+
+    @BindView(R.id.textViewParkingTravelTime)
+    TextView textViewParkingTravelTime;
+
+    @BindView(R.id.linearLayoutNameCount)
+    LinearLayout linearLayoutNameCount;
+
+    //from search
+    @BindView(R.id.btnSearchGetDirection)
+    Button btnSearchGetDirection;
+
+    @BindView(R.id.imageViewSearchBack)
+    ImageView imageViewSearchBack;
+
+    @BindView(R.id.textViewSearchParkingAreaCount)
+    TextView textViewSearchParkingAreaCount;
+
+    @BindView(R.id.textViewSearchParkingAreaName)
+    TextView textViewSearchParkingAreaName;
+
+    @BindView(R.id.textViewSearchParkingDistance)
+    TextView textViewSearchParkingDistance;
+
+    @BindView(R.id.textViewSearchParkingTravelTime)
+    TextView textViewSearchParkingTravelTime;
+
+    @BindView(R.id.linearLayoutSearchNameCount)
+    LinearLayout linearLayoutSearchNameCount;
+
+    //from marker
+    @BindView(R.id.btnMarkerGetDirection)
+    Button btnMarkerGetDirection;
+
+    @BindView(R.id.imageViewMarkerBack)
+    ImageView imageViewMarkerBack;
+
+    @BindView(R.id.textViewMarkerParkingAreaCount)
+    TextView textViewMarkerParkingAreaCount;
+
+    @BindView(R.id.textViewMarkerParkingAreaName)
+    TextView textViewMarkerParkingAreaName;
+
+    @BindView(R.id.textViewMarkerParkingDistance)
+    TextView textViewMarkerParkingDistance;
+
+    @BindView(R.id.textViewMarkerParkingTravelTime)
+    TextView textViewMarkerParkingTravelTime;
+
+    @BindView(R.id.linearLayoutMarkerBottom)
+    LinearLayout linearLayoutMarkerBottom;
+
+    @BindView(R.id.linearLayoutMarkerNameCount)
+    LinearLayout linearLayoutMarkerNameCount;
+
+    //from bottomSheet
+    @BindView(R.id.shimmer_view_container)
+    ShimmerFrameLayout mShimmerViewContainer;
+
+    @BindView(R.id.textViewNoData)
+    TextView textViewNoData;
+
+    @BindView(R.id.btnBottomSheetGetDirection)
+    Button btnBottomSheetGetDirection;
+
+    @BindView(R.id.imageViewBottomSheetBack)
+    ImageView imageViewBottomSheetBack;
+
+    @BindView(R.id.textViewBottomSheetParkingAreaCount)
+    TextView textViewBottomSheetParkingAreaCount;
+
+    @BindView(R.id.textViewBottomSheetParkingAreaName)
+    TextView textViewBottomSheetParkingAreaName;
+
+    @BindView(R.id.linearLayoutBottomSheetNameCount)
+    LinearLayout linearLayoutBottomSheetNameCount;
+
+    @BindView(R.id.linearLayoutBottomSheetGetDirection)
+    LinearLayout linearLayoutBottomSheetGetDirection;
+
+    @BindView(R.id.view)
+    View view;
+
+    @BindView(R.id.input_search)
+    Button buttonSearch;
+
+    private Unbinder unbinder;
+
+    private HomeActivity context;
+
     public BottomSheetBehavior bottomSheetBehavior;
+
+    public static Location currentLocation;
+    public static LatLng location;
     public LatLng searchPlaceLatLng;
     public LatLng bottomSheetPlaceLatLng;
     public LatLng markerPlaceLatLng;
     public String address, city, state, country, subAdminArea, test, knownName, postalCode = "";
     public GoogleMap mMap;
+
     //used in fetchSensor()
     public double nDistance = 132116456;
     public double nLatitude;
     public double nLongitude;
     public int fromRouteDrawn = 0;
-    //from parking adapter
-    @BindView(R.id.btnGetDirection)
-    Button btnGetDirection;
-    @BindView(R.id.linearLayoutParkingSlot)
-    LinearLayout linearLayoutParkingBackNGetDirection;
-    @BindView(R.id.linearLayoutParkingAdapterBackBottom)
-    LinearLayout linearLayoutParkingAdapterBackBottom;
-    @BindView(R.id.imageViewBack)
-    ImageView imageViewBack;
-    @BindView(R.id.textViewParkingAreaCount)
-    TextView textViewParkingAreaCount;
-    @BindView(R.id.textViewParkingAreaName)
-    TextView textViewParkingAreaName;
-    @BindView(R.id.textViewParkingDistance)
-    TextView textViewParkingDistance;
-    @BindView(R.id.textViewParkingTravelTime)
-    TextView textViewParkingTravelTime;
-    @BindView(R.id.linearLayoutNameCount)
-    LinearLayout linearLayoutNameCount;
-    //from search
-    @BindView(R.id.btnSearchGetDirection)
-    Button btnSearchGetDirection;
-    @BindView(R.id.imageViewSearchBack)
-    ImageView imageViewSearchBack;
-    @BindView(R.id.textViewSearchParkingAreaCount)
-    TextView textViewSearchParkingAreaCount;
-    @BindView(R.id.textViewSearchParkingAreaName)
-    TextView textViewSearchParkingAreaName;
-    @BindView(R.id.textViewSearchParkingDistance)
-    TextView textViewSearchParkingDistance;
-    @BindView(R.id.textViewSearchParkingTravelTime)
-    TextView textViewSearchParkingTravelTime;
-    @BindView(R.id.linearLayoutSearchNameCount)
-    LinearLayout linearLayoutSearchNameCount;
-    //from marker
-    @BindView(R.id.btnMarkerGetDirection)
-    Button btnMarkerGetDirection;
-    @BindView(R.id.imageViewMarkerBack)
-    ImageView imageViewMarkerBack;
-    @BindView(R.id.textViewMarkerParkingAreaCount)
-    TextView textViewMarkerParkingAreaCount;
-    @BindView(R.id.textViewMarkerParkingAreaName)
-    TextView textViewMarkerParkingAreaName;
-    @BindView(R.id.textViewMarkerParkingDistance)
-    TextView textViewMarkerParkingDistance;
-    @BindView(R.id.textViewMarkerParkingTravelTime)
-    TextView textViewMarkerParkingTravelTime;
-    @BindView(R.id.linearLayoutMarkerBottom)
-    LinearLayout linearLayoutMarkerBottom;
-    @BindView(R.id.linearLayoutMarkerNameCount)
-    LinearLayout linearLayoutMarkerNameCount;
-    //from bottomSheet
-    @BindView(R.id.shimmer_view_container)
-    ShimmerFrameLayout mShimmerViewContainer;
-    @BindView(R.id.textViewNoData)
-    TextView textViewNoData;
-    @BindView(R.id.btnBottomSheetGetDirection)
-    Button btnBottomSheetGetDirection;
-    @BindView(R.id.imageViewBottomSheetBack)
-    ImageView imageViewBottomSheetBack;
-    @BindView(R.id.textViewBottomSheetParkingAreaCount)
-    TextView textViewBottomSheetParkingAreaCount;
-    @BindView(R.id.textViewBottomSheetParkingAreaName)
-    TextView textViewBottomSheetParkingAreaName;
-    @BindView(R.id.linearLayoutBottomSheetNameCount)
-    LinearLayout linearLayoutBottomSheetNameCount;
-    @BindView(R.id.linearLayoutBottomSheetGetDirection)
-    LinearLayout linearLayoutBottomSheetGetDirection;
-    @BindView(R.id.view)
-    View view;
-    @BindView(R.id.input_search)
-    Button buttonSearch;
-    private Unbinder unbinder;
     private LinearLayout bottomSheet;
     private FragmentChangeListener listener;
     private long arrived, departure;
@@ -290,19 +340,20 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private Button departureBtn;
     private RecyclerView bottomSheetRecyclerView;
     private BottomSheetAdapter bottomSheetAdapter;
-    private int LOCATION_PERMISSION_REQUEST_CODE = 100;
+
     private Marker currentLocationMarker;
     private ArrayList<LatLng> coordList = new ArrayList<LatLng>();
     private String nearByDuration;
     private String fetchDuration;
     private SupportMapFragment supportMapFragment;
-    private HomeActivity context;
+
     private String name, count = "";
     private String distance;
     private String duration;
     private boolean isGPS;
     private GoogleApiClient googleApiClient;
     private String sensorStatus = "Occupied";
+
     //flags
     private int getDirectionButtonClicked = 0;
     private int getDirectionSearchButtonClicked = 0;
@@ -311,8 +362,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private ProgressDialog progressDialog;
     private ProgressDialog bottomSheetProgressDialog;
     private int fromMarkerRouteDrawn = 0;
+
     //route flag
     private int flag = 0;
+
     //polyline animate
     private List<LatLng> polyLineList;
     private PolylineOptions polylineOptions, blackPolylineOptions;
@@ -324,6 +377,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private LatLng startPosition, endPosition;
     private int index, next;
     private String searchPlaceCount = "0";
+
     //geoFence
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
@@ -340,15 +394,14 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private String parkingNumberOfIndividualMarker = "";
     private BookingSensors bookingSensorsMarker;
     private ArrayList<BookingSensors> bookingSensorsMarkerArrayList = new ArrayList<>();
+
     private Marker previousMarker = null;
     private Location onConnectedLocation;
     private final View.OnClickListener clickListener = view -> {
         if (view.getId() == R.id.currentLocationImageButton && mMap != null && onConnectedLocation != null)
             animateCamera(onConnectedLocation);
     };
-    private FusedLocationProviderClient fusedLocationClient;
-    private BookingSensors bookingSensors;
-    private BookingSensors bookingSensorsBottomSheet;
+
     private ArrayList<BookingSensors> bookingSensorsArrayList = new ArrayList<>();
     private ArrayList<BookingSensors> bookingSensorsBottomSheetArrayList = new ArrayList<>();
     private double searchDistance;
@@ -359,7 +412,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private MyLatLng myLatLng;
     private String markerUid;
     private ArrayList<BookingSensors> bookingSensorsArrayListGlobal = new ArrayList<>();
-    private BookingSensors bookingSensorsGlobal;
+
     private double adjustValue = 2;
     private LatLng origin;
     private int countadd = 0;

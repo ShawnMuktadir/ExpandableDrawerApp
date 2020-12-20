@@ -19,7 +19,7 @@ public class RatingReviewActivity extends NavigationActivity {
 
         setTitle(context.getResources().getString(R.string.give_review_rating));
 
-        // Initialize RatingReviewFragment
+        //Initialize RatingReview Fragment
         ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
                 RatingReviewFragment.newInstance(), R.id.nav_host_fragment);
 

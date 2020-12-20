@@ -22,7 +22,7 @@ public class SignUpActivity extends BaseActivity {
 
         context = this;
 
-        // Initialize splash fragment
+        //Initialize SignUp fragment
         ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
                 SignUpFragment.newInstance(), R.id.frameLayout);
     }

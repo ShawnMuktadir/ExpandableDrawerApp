@@ -19,7 +19,7 @@ public class ProfileActivity extends NavigationActivity {
 
         setTitle(context.getResources().getString(R.string.profile));
 
-        // Initialize Parking fragment
+        //Initialize Profile fragment
         ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
                 ProfileFragment.newInstance(), R.id.nav_host_fragment);
 

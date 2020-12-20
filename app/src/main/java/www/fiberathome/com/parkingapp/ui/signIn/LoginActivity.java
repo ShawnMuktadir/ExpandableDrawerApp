@@ -23,7 +23,7 @@ public class LoginActivity extends BaseActivity {
 
         context = this;
 
-        // Initialize login fragment
+        //Initialize login fragment
         ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
                 LoginFragment.newInstance(), R.id.frameLayout);
     }

@@ -28,7 +28,7 @@ public class PrivacyPolicyActivity extends NavigationActivity {
 
         setTitle(context.getResources().getString(R.string.privacy_policy));
 
-        // Initialize PrivacyPolicyFragment
+        // Initialize PrivacyPolicy Fragment
         ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
                 PrivacyPolicyFragment.newInstance(), R.id.nav_host_fragment);
 

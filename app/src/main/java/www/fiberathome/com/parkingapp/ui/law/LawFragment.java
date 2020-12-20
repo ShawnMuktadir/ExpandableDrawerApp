@@ -22,12 +22,15 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -59,9 +62,12 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
     @BindView(R.id.textViewNoData)
     public TextView textViewNoData;
 
-    private Context context;
     private Unbinder unbinder;
+
+    private LawActivity context;
+
     private LawAdapter lawAdapter;
+
     private ArrayList<Result> resultArrayList = new ArrayList<>();
 
     public LawFragment() {
@@ -81,18 +87,21 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_law, container, false);
-        unbinder = ButterKnife.bind(this, view);
-        context = getActivity();
-        recyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
-//        loadPDF();
-        setListeners();
-        return view;
+        return inflater.inflate(R.layout.fragment_law, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        unbinder = ButterKnife.bind(this, view);
+
+        context = (LawActivity) getActivity();
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+
+        //loadPDF();
+        setListeners();
 
         String jsonResult = fetchJSONFromAsset();
 
@@ -169,12 +178,22 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
         String json = null;
         try {
             if (getActivity() != null) {
-                InputStream is = getActivity().getAssets().open("traficlaw.json");
-                int size = is.available();
-                byte[] buffer = new byte[size];
-                is.read(buffer);
-                is.close();
-                json = new String(buffer, "UTF-8");
+                InputStream is;
+                if (Locale.getDefault().getLanguage().equals("en")) {
+                    is = getActivity().getAssets().open("traficlaw.json");
+                    int size = is.available();
+                    byte[] buffer = new byte[size];
+                    is.read(buffer);
+                    is.close();
+                    json = new String(buffer, StandardCharsets.UTF_8);
+                } else if (Locale.getDefault().getLanguage().equals("bn")) {
+                    is = getActivity().getAssets().open("traficlaw_bangla.json");
+                    int size = is.available();
+                    byte[] buffer = new byte[size];
+                    is.read(buffer);
+                    is.close();
+                    json = new String(buffer, StandardCharsets.UTF_8);
+                }
             }
         } catch (IOException ex) {
             ex.printStackTrace();

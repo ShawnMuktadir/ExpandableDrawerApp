@@ -20,7 +20,7 @@ public class LawActivity extends NavigationActivity {
 
         setTitle(context.getResources().getString(R.string.law));
 
-        // Initialize Parking fragment
+        //Initialize Law fragment
         ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
                 LawFragment.newInstance(), R.id.nav_host_fragment);
 

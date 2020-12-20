@@ -20,7 +20,7 @@ public class FollowUsActivity extends NavigationActivity {
 
         setTitle(context.getResources().getString(R.string.follow_us));
 
-        // Initialize FollowUsFragment
+        // Initialize FollowUs Fragment
         ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
                 FollowUsFragment.newInstance(), R.id.nav_host_fragment);
 

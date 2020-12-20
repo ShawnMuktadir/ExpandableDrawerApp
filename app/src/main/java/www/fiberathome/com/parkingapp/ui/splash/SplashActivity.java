@@ -21,7 +21,7 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_base);
         context = this;
 
-        // Initialize splash fragment
+        //Initialize splash fragment
         ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
                 SplashFragment.newInstance(), R.id.frameLayout);
     }
