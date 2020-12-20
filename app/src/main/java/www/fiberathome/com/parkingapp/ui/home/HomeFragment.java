@@ -535,8 +535,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             if (isServicesOk()) {
                 supportMapFragment = SupportMapFragment.newInstance();
 
-                if (getActivity() != null) {
-                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().
+                if (context != null) {
+                    FragmentTransaction ft = context.getSupportFragmentManager().beginTransaction().
                             replace(R.id.map, supportMapFragment);
                     ft.commit();
                     supportMapFragment.getMapAsync(this);
@@ -555,8 +555,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         /*if (isServicesOk()) {
             if (isGPSEnabled()) {
                 supportMapFragment = SupportMapFragment.newInstance();
-                if (getActivity() != null) {
-                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().
+                if (context != null) {
+                    FragmentTransaction ft = context.getSupportFragmentManager().beginTransaction().
                             replace(R.id.map, supportMapFragment);
                     ft.commit();
                     supportMapFragment.getMapAsync(this);
@@ -575,10 +575,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     }
                 });
 
-                if ((ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+                if ((ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
             */
 
-        /*ActivityCompat.requestPermissions(getActivity(),new String[] {Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission
+        /*ActivityCompat.requestPermissions(context,new String[] {Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission
                     .ACCESS_COARSE_LOCATION},LOCATION_PERMISSION_REQUEST_CODE);*/
 
         /*
@@ -771,7 +771,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                     String finalUid = uid;
                     Timber.e("jsonUid finalUid -> %s", finalUid);
-                    getAddress(getActivity(), markerPlaceLatLng.latitude, markerPlaceLatLng.longitude, address -> {
+                    getAddress(context, markerPlaceLatLng.latitude, markerPlaceLatLng.longitude, address -> {
 
                         String markerPlaceName = address;
                         TaskParser taskParser = new TaskParser();
@@ -860,7 +860,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 final String[] nearbyAreaName = {""};
                 if (distanceForNearbyLoc < 3 && !markerUid.equals(uid)) {
                     origin = new LatLng(latLng.latitude, latLng.longitude);
-                    getAddress(getActivity(), ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1), new AddressCallBack() {
+                    getAddress(context, ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1), new AddressCallBack() {
                         @Override
                         public void addressCall(String address) {
                             nearbyAreaName[0] = address;
@@ -940,7 +940,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     }
 
     private synchronized void buildGoogleApiClient() {
-        googleApiClient = new GoogleApiClient.Builder(getActivity())
+        googleApiClient = new GoogleApiClient.Builder(context)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
@@ -1021,8 +1021,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 }, (dialog, which) -> {
                     Timber.e("Negative Button Clicked");
                     dialog.dismiss();
-                    if (getActivity() != null) {
-                        getActivity().finish();
+                    if (context != null) {
+                        context.finish();
                         TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                     }
                 });*/
@@ -1078,8 +1078,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 }, (dialog, which) -> {
                     Timber.e("Negative Button Clicked");
                     dialog.dismiss();
-                    if (getActivity() != null) {
-                        getActivity().finish();
+                    if (context != null) {
+                        context.finish();
                         TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                     }
                 });
@@ -1113,7 +1113,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             Timber.e("Genjam");
         }
 
-        /*Dexter.withContext(getActivity()).withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+        /*Dexter.withContext(context).withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
                 .withListener(new PermissionListener() {
                     @Override
                     public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
@@ -1128,7 +1128,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                     @Override
                     public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
-                        Toast.makeText(getActivity(), "You must enable permission", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "You must enable permission", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
@@ -1295,7 +1295,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                 }
                 //get Address from search location
-                getAddress(getActivity(), searchPlaceLatLng.latitude, searchPlaceLatLng.longitude, new AddressCallBack() {
+                getAddress(context, searchPlaceLatLng.latitude, searchPlaceLatLng.longitude, new AddressCallBack() {
                     @Override
                     public void addressCall(String address) {
                         String searchPlaceName = address;
@@ -1332,7 +1332,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                                         if (distanceForNearbyLoc < 5) {
                                             origin = new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude);
-                                            getAddress(getActivity(), ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1), new AddressCallBack() {
+                                            getAddress(context, ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1), new AddressCallBack() {
                                                 @Override
                                                 public void addressCall(String address) {
 
@@ -1426,7 +1426,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                 }
                 //get address from search history location
-                getAddress(getActivity(), searchPlaceLatLng.latitude, searchPlaceLatLng.longitude, new AddressCallBack() {
+                getAddress(context, searchPlaceLatLng.latitude, searchPlaceLatLng.longitude, new AddressCallBack() {
                     @Override
                     public void addressCall(String address) {
                         String searchPlaceName = areaName;
@@ -1464,7 +1464,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                                         if (distanceForNearbyLoc < 5) {
                                             origin = new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude);
-                                            getAddress(getActivity(), ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1), new AddressCallBack() {
+                                            getAddress(context, ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1), new AddressCallBack() {
                                                 @Override
                                                 public void addressCall(String address) {
 
@@ -1544,8 +1544,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         Toast.makeText(context, "GPS is enabled", Toast.LENGTH_SHORT).show();
                         Timber.e("providerEnabled HomeFragment check called");
                         supportMapFragment = SupportMapFragment.newInstance();
-                        if (getActivity() != null) {
-                            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().
+                        if (context != null) {
+                            FragmentTransaction ft = context.getSupportFragmentManager().beginTransaction().
                                     replace(R.id.map, supportMapFragment);
                             ft.commit();
                             supportMapFragment.getMapAsync(HomeFragment.this);
@@ -1564,8 +1564,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             }
                         });
 
-                        if ((ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
-                    /*ActivityCompat.requestPermissions(getActivity(),new String[] {Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission
+                        if ((ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+                    /*ActivityCompat.requestPermissions(context,new String[] {Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission
                     .ACCESS_COARSE_LOCATION},LOCATION_PERMISSION_REQUEST_CODE);*/
                             requestPermissions(new String[]{
                                     Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
@@ -1616,9 +1616,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     supportMapFragment.getMapAsync(this);
                 //Toast.makeText(context, "Permission Granted", Toast.LENGTH_SHORT).show();
 
-            } else if (grantResults.length == FIRST_TIME_INSTALLED && getActivity() != null) {
-                if ((ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                        ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+            } else if (grantResults.length == FIRST_TIME_INSTALLED && context != null) {
+                if ((ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                        ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
 
                     requestPermissions(new String[]{
                             Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
@@ -2141,11 +2141,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         bottomSheetRecyclerView.setItemViewCacheSize(20);
         bottomSheetRecyclerView.setNestedScrollingEnabled(false);
 
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(context);
         bottomSheetRecyclerView.setLayoutManager(mLayoutManager);
         bottomSheetRecyclerView.addItemDecoration(new DividerItemDecoration(context, LinearLayoutManager.VERTICAL));
         bottomSheetRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        bottomSheetRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), bottomSheetRecyclerView, new RecyclerTouchListener.ClickListener() {
+        bottomSheetRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(context, bottomSheetRecyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
                 Timber.e("bottomSheetRecyclerView smoothScrollToPosition called");
@@ -2277,7 +2277,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     }
 
     private void showMessage(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 
     //bubble sort for nearest parking spot from searched area
@@ -2564,7 +2564,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         previousMarker = null;
         //Toast.makeText(context, "2287  previous null", Toast.LENGTH_SHORT).show();
         location = event.location;
-        //Toast.makeText(getActivity(), "Geche", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context, "Geche", Toast.LENGTH_SHORT).show();
         //if (bottomSheetProgressDialog.isShowing()) bottomSheetProgressDialog.dismiss();
         hideLoading();
         layoutVisible(true, ApplicationUtils.capitalize(name), count, distance, event.location);
@@ -2634,7 +2634,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         new LatLng(event.location.latitude, event.location.longitude));
 
                 String finalUid = uid;
-                getAddress(getActivity(), event.location.latitude, event.location.longitude, address -> {
+                getAddress(context, event.location.latitude, event.location.longitude, address -> {
                     String adapterPlaceName = address;
 
                     if (adapterDistance < 3000) {
@@ -2674,7 +2674,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 });
             } else {
                 Timber.e("updateBottomSheetForParkingAdapter else called");
-                Toast.makeText(getActivity(), "Something went wrong!!! Location cannot be identified!!!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Something went wrong!!! Location cannot be identified!!!", Toast.LENGTH_SHORT).show();
             }
         } else {
             TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
@@ -2683,7 +2683,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onCustomDirectionEvent(GetDirectionAfterButtonClickEvent event) {
-        //Toast.makeText(getActivity(), "Adapter Click e Geche", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context, "Adapter Click e Geche", Toast.LENGTH_SHORT).show();
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -2713,7 +2713,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onBottomSheetDirectionEvent(GetDirectionBottomSheetEvent event) {
-        //Toast.makeText(getActivity(), "BottomSheet Click e Geche", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context, "BottomSheet Click e Geche", Toast.LENGTH_SHORT).show();
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -2743,7 +2743,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onSearchDirectionEvent(GetDirectionForSearchEvent event) {
-        //Toast.makeText(getActivity(), "Search Click e Geche", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context, "Search Click e Geche", Toast.LENGTH_SHORT).show();
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -2777,7 +2777,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onMarkerDirectionEvent(GetDirectionForMarkerEvent event) {
-        //Toast.makeText(getActivity(), "Marker Click e Geche", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context, "Marker Click e Geche", Toast.LENGTH_SHORT).show();
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -2831,14 +2831,14 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         this.duration = duration;
 
         if (isVisible) {
-            /*BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
+            /*BottomNavigationView navBar = context.findViewById(R.id.bottomNavigationView);
             navBar.setVisibility(View.VISIBLE);*/
             linearLayoutSearchBottom.setVisibility(View.VISIBLE);
             linearLayoutSearchNameCount.setVisibility(View.GONE);
             textViewSearchParkingAreaCount.setText(count);
             textViewSearchParkingAreaName.setText(ApplicationUtils.capitalize(name));
         } else {
-            /*BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
+            /*BottomNavigationView navBar = context.findViewById(R.id.bottomNavigationView);
             navBar.setVisibility(View.VISIBLE);*/
             linearLayoutSearchBottom.setVisibility(View.GONE);
         }
@@ -2887,7 +2887,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             btnMarkerGetDirection.setFocusable(true);
             //}
         } else {
-            /*BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
+            /*BottomNavigationView navBar = context.findViewById(R.id.bottomNavigationView);
             navBar.setVisibility(View.VISIBLE);*/
             linearLayoutMarkerBottom.setVisibility(View.GONE);
         }
@@ -2957,7 +2957,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 bookingSensorsBottomSheetArrayList.clear();
                 //for getting the location name
                 String finalUid = uid;
-                getAddress(getActivity(), bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude, new AddressCallBack() {
+                getAddress(context, bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude, new AddressCallBack() {
                     @Override
                     public void addressCall(String address) {
 
@@ -3063,8 +3063,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         }, (dialog, which) -> {
                             Timber.e("Negative Button Clicked");
                             dialog.dismiss();
-                            if (getActivity() != null) {
-                                getActivity().finish();
+                            if (context != null) {
+                                context.finish();
                                 TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                             }
                         });
@@ -3127,8 +3127,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         }, (dialog, which) -> {
                             Timber.e("Negative Button Clicked");
                             dialog.dismiss();
-                            if (getActivity() != null) {
-                                getActivity().finish();
+                            if (context != null) {
+                                context.finish();
                                 TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                             }
                         });
@@ -3187,8 +3187,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         }, (dialog, which) -> {
                             Timber.e("Negative Button Clicked");
                             dialog.dismiss();
-                            if (getActivity() != null) {
-                                getActivity().finish();
+                            if (context != null) {
+                                context.finish();
                                 TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                             }
                         });
@@ -3244,8 +3244,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         }, (dialog, which) -> {
                             Timber.e("Negative Button Clicked");
                             dialog.dismiss();
-                            if (getActivity() != null) {
-                                getActivity().finish();
+                            if (context != null) {
+                                context.finish();
                                 TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                             }
                         });
@@ -3767,7 +3767,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         mapFragment.getMapAsync(MapsActivity.this);
 
         supportMapFragment = SupportMapFragment.newInstance();
-        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().
+        FragmentTransaction ft = context.getSupportFragmentManager().beginTransaction().
                 replace(R.id.map, supportMapFragment);
         ft.commit();*/
 
@@ -3980,7 +3980,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         if (result == ConnectionResult.SUCCESS) {
             return true;
         } else if (googleApi.isUserResolvableError(result)) {
-            Dialog dialog = googleApi.getErrorDialog(getActivity(), result, PLAY_SERVICES_ERROR_CODE, task ->
+            Dialog dialog = googleApi.getErrorDialog(context, result, PLAY_SERVICES_ERROR_CODE, task ->
                     Toast.makeText(context, "Dialog is cancelled by User", Toast.LENGTH_SHORT).show());
             dialog.show();
         }
@@ -4127,7 +4127,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
             if (lists.size() < 1) {
                 Timber.e("lists size -> %s", lists.size());
-                //Toast.makeText(getActivity(), "No Points", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, "No Points", Toast.LENGTH_SHORT).show();
                 return;
             } else {
                 Timber.e("lists size -> %s", lists.size());
@@ -4172,7 +4172,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             if (polylineOptions != null) {
                 mMap.addPolyline(polylineOptions);
             } else {
-                Toast.makeText(getActivity(), "Direction not found!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Direction not found!", Toast.LENGTH_SHORT).show();
             }
         }
 
