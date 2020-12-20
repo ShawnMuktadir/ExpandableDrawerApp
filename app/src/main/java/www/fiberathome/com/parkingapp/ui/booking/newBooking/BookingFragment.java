@@ -1,5 +1,6 @@
 package www.fiberathome.com.parkingapp.ui.booking.newBooking;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -57,6 +58,7 @@ import static android.content.Context.LOCATION_SERVICE;
 import static com.android.volley.VolleyLog.TAG;
 import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
 
+@SuppressLint("NonConstantResourceId")
 public class BookingFragment extends BaseFragment implements IOnBackPressListener {
 
     @BindView(R.id.recyclerViewBooking)
@@ -67,10 +69,12 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
     ImageView imageViewCross;
 
     private Unbinder unbinder;
+
+    private BookingActivity context;
+
     private BookingAdapter bookingAdapter;
     private ArrayList<BookingArea> bookingAreas = new ArrayList<>();
 
-    private BookingActivity context;
     private ProgressDialog progressDialog;
 
     public BookingFragment() {

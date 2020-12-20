@@ -66,6 +66,7 @@ import static android.content.Context.LOCATION_SERVICE;
 import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
 import static www.fiberathome.com.parkingapp.utils.ApplicationUtils.distance;
 
+@SuppressLint("NonConstantResourceId")
 public class ParkingFragment extends BaseFragment implements ParkingAdapter.ParkingAdapterClickListener, IOnBackPressListener {
 
     private static final String TAG = ParkingFragment.class.getCanonicalName();

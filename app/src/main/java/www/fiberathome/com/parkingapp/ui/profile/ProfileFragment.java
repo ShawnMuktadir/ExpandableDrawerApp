@@ -30,6 +30,7 @@ import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 
 import static android.content.Context.LOCATION_SERVICE;
 
+@SuppressLint("NonConstantResourceId")
 public class ProfileFragment extends Fragment implements IOnBackPressListener {
 
     @BindView(R.id.tvUserName)

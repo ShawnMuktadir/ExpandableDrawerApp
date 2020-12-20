@@ -1,5 +1,6 @@
 package www.fiberathome.com.parkingapp.ui.settings;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -43,6 +44,7 @@ import static android.content.Context.LOCATION_SERVICE;
 import static www.fiberathome.com.parkingapp.model.data.preference.StaticData.APP_LANGUAGE;
 import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
 
+@SuppressLint("NonConstantResourceId")
 public class SettingsFragment extends BaseFragment implements View.OnClickListener, IOnBackPressListener {
 
     /*@BindView(R.id.textViewBan)
@@ -59,10 +61,12 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
     ImageView ivDropDown;
 
     private Unbinder unbinder;
+
+    private Context context;
+
     private boolean lang_selected;
     private boolean selected = false;
 
-    private Context context;
     private Resources resources;
 
     private int language = 0;
