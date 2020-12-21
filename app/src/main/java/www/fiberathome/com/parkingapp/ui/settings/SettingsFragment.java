@@ -130,9 +130,11 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
                 }*/
 
                 AlertDialog.Builder languageDialog = new AlertDialog.Builder(context);
-                languageDialog.setTitle("Select Language");
+                languageDialog.setTitle(context.getResources().getString(R.string.select_language));
 
-                String[] languageDialogItems = {"English","Bangla"};
+                String[] languageDialogItems = {context.getResources().getString(R.string.english_item),
+                        context.getResources().getString(R.string.bangla_item),
+                        context.getResources().getString(R.string.cancel)};
 
                 languageDialog.setItems(languageDialogItems, (dialog, which) -> {
                     switch (which) {
@@ -147,6 +149,9 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
                             resources = context.getResources();
                             textViewLanguage.setText(resources.getString(R.string.lang_select_bn));
                             setNewLocale("bn", true);
+                            break;
+                        case 2:
+                            dialog.dismiss();
                             break;
                     }
                 });

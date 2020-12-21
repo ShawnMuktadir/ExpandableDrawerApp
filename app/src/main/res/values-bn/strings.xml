@@ -417,4 +417,8 @@
     <string name="call">কল করুন</string>
     <string name="you_have_to_exit_from_current_destination">নতুন পার্কিং স্পট পরিবর্তন করতে আপনাকে বর্তমান গন্তব্য থেকে প্রস্থান করতে হবে</string>
     <string name="please_try_again">অনুগ্রহপূর্বক আবার চেষ্টা করুন</string>
+    <string name="search_law">খুঁজুন (বাংলায়)…</string>
+    <string name="english_item">ইংরেজি</string>
+    <string name="bangla_item">বাংলা</string>
+    <string name="select_language">ভাষা নির্বাচন</string>
 </resources>

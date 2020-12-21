@@ -1,5 +1,6 @@
 package www.fiberathome.com.parkingapp.ui.splash;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,6 +25,7 @@ import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.ui.permission.PermissionActivity;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 
+@SuppressLint("NonConstantResourceId")
 public class SplashFragment extends BaseFragment {
 
     @BindView(R.id.splash_iv_logo)
@@ -38,8 +40,7 @@ public class SplashFragment extends BaseFragment {
     }
 
     public static SplashFragment newInstance() {
-        SplashFragment fragment = new SplashFragment();
-        return fragment;
+        return new SplashFragment();
     }
 
     @Override
@@ -59,6 +60,7 @@ public class SplashFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
 
         unbinder = ButterKnife.bind(this, view);
+
         context = (SplashActivity) getActivity();
 
         checkUserLogin();
@@ -86,8 +88,8 @@ public class SplashFragment extends BaseFragment {
                     } else {
                         TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_splash));
                         new Handler().postDelayed(() -> {
-                        dialog.dismiss();
-                        context.finish();
+                            dialog.dismiss();
+                            context.finish();
                         }, 700);
                     }
                 }, (dialog, which) -> {

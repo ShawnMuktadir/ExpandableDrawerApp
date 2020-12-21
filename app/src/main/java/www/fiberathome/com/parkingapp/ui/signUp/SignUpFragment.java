@@ -75,6 +75,7 @@ import www.fiberathome.com.parkingapp.utils.Validator;
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
+@SuppressLint("NonConstantResourceId")
 public class SignUpFragment extends BaseFragment implements View.OnClickListener, ProgressView {
 
     public static final String TAG = SignUpActivity.class.getSimpleName();

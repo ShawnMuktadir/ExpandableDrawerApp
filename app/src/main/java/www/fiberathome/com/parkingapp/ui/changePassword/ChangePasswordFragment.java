@@ -1,5 +1,6 @@
 package www.fiberathome.com.parkingapp.ui.changePassword;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -45,6 +46,7 @@ import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 
+@SuppressLint("NonConstantResourceId")
 public class ChangePasswordFragment extends BaseFragment implements View.OnClickListener {
 
     private static final String TAG = ChangePasswordFragment.class.getSimpleName();

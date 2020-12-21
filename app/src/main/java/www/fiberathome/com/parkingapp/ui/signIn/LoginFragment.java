@@ -1,6 +1,7 @@
 package www.fiberathome.com.parkingapp.ui.signIn;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -63,6 +64,7 @@ import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
 
+@SuppressLint("NonConstantResourceId")
 public class LoginFragment extends BaseFragment implements View.OnClickListener, ProgressView {
 
     private static final String TAG = LoginActivity.class.getSimpleName();

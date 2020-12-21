@@ -416,4 +416,8 @@
     <string name="call">Call</string>
     <string name="you_have_to_exit_from_current_destination">You have to exit from current destination to change new parking spot</string>
     <string name="please_try_again">Please try again</string>
+    <string name="search_law">Search...</string>
+    <string name="english_item">English</string>
+    <string name="bangla_item">Bangla</string>
+    <string name="select_language">Select Language</string>
 </resources>

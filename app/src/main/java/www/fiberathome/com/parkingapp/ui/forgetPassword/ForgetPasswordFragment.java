@@ -1,5 +1,6 @@
 package www.fiberathome.com.parkingapp.ui.forgetPassword;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -53,6 +54,7 @@ import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
 
+@SuppressLint("NonConstantResourceId")
 public class ForgetPasswordFragment extends BaseFragment {
 
     private static String TAG = ForgetPasswordActivity.class.getSimpleName();
