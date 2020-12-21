@@ -80,6 +80,7 @@ import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import static android.content.Context.LOCATION_SERVICE;
 import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
 
+@SuppressLint("NonConstantResourceId")
 public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBtnClickListener,
         IOnBackPressListener, AdapterView.OnItemSelectedListener {
 
@@ -87,30 +88,44 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
 
     @BindView(R.id.textViewCurrentDate)
     TextView textViewCurrentDate;
+
     @BindView(R.id.ivBackArrow)
     ImageView ivBackArrow;
+
     @BindView(R.id.action_bar_title)
     TextView textViewActionBarTitle;
+
     @BindView(R.id.action_bar_sub_title)
     TextView textViewActionBarSubTitle;
+
     @BindView(R.id.tvTotalParkingTime)
     TextView textViewTotalParkingTime;
+
     @BindView(R.id.spinner)
     Spinner spinner;
+
     @BindView(R.id.setBtn)
     Button setBtn;
+
     @BindView(R.id.cancelBtn)
     Button cancelBtn;
+
     @BindView(R.id.arriveDisableLayout)
     LinearLayout arriveDisableLayout;
+
     @BindView(R.id.departureDisableLayout)
     LinearLayout departureDisableLayout;
+
     @BindView(R.id.arrivedPicker)
     SingleDateAndTimePicker arrivedPicker;
+
     @BindView(R.id.departurePicker)
     SingleDateAndTimePicker departurePicker;
 
+    private Unbinder unbinder;
+
     private Context context;
+
     private Date arrivedDate, departedDate;
     private boolean setArrivedDate = false;
     private boolean more = false;
@@ -119,7 +134,6 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
     private String markerUid = "";
     private long arrived, departure, difference;
 
-    private Unbinder unbinder;
     private ProgressDialog progressDialog;
 
     public ScheduleFragment() {
