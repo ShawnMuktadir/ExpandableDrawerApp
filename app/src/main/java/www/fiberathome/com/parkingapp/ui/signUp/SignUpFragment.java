@@ -84,35 +84,50 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
     @BindView(R.id.tvLogin)
     TextView tvLogin;
+
     @BindView(R.id.btnSignup)
     Button btnSignup;
+
     @BindView(R.id.textInputLayoutFullName)
     TextInputLayout textInputLayoutFullName;
+
     @BindView(R.id.editTextFullName)
     EditText editTextFullName;
+
     @BindView(R.id.textInputLayoutMobile)
     TextInputLayout textInputLayoutMobile;
+
     @BindView(R.id.editTextMobileNumber)
     EditText editTextMobileNumber;
+
     @BindView(R.id.textInputLayoutVehicle)
     TextInputLayout textInputLayoutVehicle;
+
     @BindView(R.id.editTextVehicleRegNumber)
     EditText editTextVehicleRegNumber;
+
     @BindView(R.id.textInputLayoutPassword)
     TextInputLayout textInputLayoutPassword;
+
     @BindView(R.id.editTextPassword)
     EditText editTextPassword;
+
     @BindView(R.id.imageViewUploadProfileImage)
     CircleImageView imageViewUploadProfileImage;
+
     @BindView(R.id.imageViewCaptureImage)
     CircleImageView imageViewCaptureImage;
+
     @BindView(R.id.textViewTermsConditions)
     TextView textViewTermsConditions;
+
     @BindView(R.id.login_rl_invisible)
     RelativeLayout relativeLayoutInvisible;
 
     private Unbinder unbinder;
+
     private Bitmap bitmap;
+
     private SignUpActivity context;
 
     public SignUpFragment() {

@@ -57,10 +57,13 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
     //PDFView pdfView;
     @BindView(R.id.editTextSearchLaw)
     EditText editTextSearchLaw;
+
     @BindView(R.id.ivClearSearchText)
     ImageView ivClearSearchText;
+
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
+
     @BindView(R.id.textViewNoData)
     public TextView textViewNoData;
 

@@ -63,8 +63,10 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
 
     @BindView(R.id.recyclerViewBooking)
     RecyclerView recyclerViewBooking;
+
     @BindView(R.id.textViewNoData)
     TextView textViewNoData;
+
     @BindView(R.id.imageViewCross)
     ImageView imageViewCross;
 
@@ -73,6 +75,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
     private BookingActivity context;
 
     private BookingAdapter bookingAdapter;
+
     private ArrayList<BookingArea> bookingAreas = new ArrayList<>();
 
     private ProgressDialog progressDialog;

@@ -71,26 +71,36 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
 
     @BindView(R.id.btnSignIn)
     Button btnSignIn;
+
     @BindView(R.id.btnOTP)
     Button btnOTP;
+
     @BindView(R.id.tvForgetPassword)
     TextView tvForgetPassword;
+
     @BindView(R.id.textViewSignUp)
     TextView textViewSignUp;
+
     @BindView(R.id.textInputLayoutMobile)
     TextInputLayout textInputLayoutMobile;
+
     @BindView(R.id.editTextMobileNumber)
     EditText editTextMobile;
+
     @BindView(R.id.textInputLayoutPassword)
     TextInputLayout textInputLayoutPassword;
+
     @BindView(R.id.editTextPassword)
     EditText editTextPassword;
+
     @BindView(R.id.relativeLayoutLogin)
     ConstraintLayout relativeLayoutLogin;
+
     @BindView(R.id.login_rl_invisible)
     RelativeLayout relativeLayoutInvisible;
 
     private Unbinder unbinder;
+
     private LoginActivity context;
 
     public LoginFragment() {

@@ -73,36 +73,52 @@ public class ParkingFragment extends BaseFragment implements ParkingAdapter.Park
 
     @BindView(R.id.recyclerViewParking)
     RecyclerView recyclerViewParking;
+
     @BindView(R.id.textViewNoData)
     TextView textViewNoData;
+
     @BindView(R.id.linearLayoutBottom)
     LinearLayout linearLayoutBottom;
+
     @BindView(R.id.linearLayoutParkingFragment)
     LinearLayout linearLayoutParkingFragment;
+
     @BindView(R.id.editTextParking)
     EditText editTextParking;
+
     @BindView(R.id.ivClearSearchText)
     ImageView ivClearSearchText;
+
     @BindView(R.id.btnGetDirection)
     Button btnGetDirection;
+
     @BindView(R.id.imageViewBack)
     ImageView imageViewBack;
+
     @BindView(R.id.textViewParkingAreaCount)
     TextView textViewParkingAreaCount;
+
     @BindView(R.id.textViewParkingAreaName)
     TextView textViewParkingAreaName;
+
     @BindView(R.id.textViewParkingDistance)
     TextView textViewParkingDistance;
+
     @BindView(R.id.textViewParkingTravelTime)
     TextView textViewParkingTravelTime;
 
     private Unbinder unbinder;
 
     private ParkingActivity context;
+
     private ProgressDialog progressDialog;
+
     private ArrayList<SensorArea> sensorAreas;
+
     private ParkingAdapter parkingAdapter;
+
     private HomeFragment homeFragment;
+
     public String name, count;
     public LatLng location;
     public double distance;
