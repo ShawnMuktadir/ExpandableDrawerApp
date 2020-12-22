@@ -334,6 +334,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                     HomeFragment homeFragment = new HomeFragment();
                     homeFragment.setArguments(bundle);
                     listener.FragmentChange(homeFragment);*/
+
                     //open DialogHelper with total amount, time difference
 
                     /*Dialog dialog = new Dialog(requireActivity());

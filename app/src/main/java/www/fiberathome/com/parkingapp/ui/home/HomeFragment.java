@@ -2656,9 +2656,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                     if (distanceForCount < 0.001) {
                         adapterUid = uid;
-                            /*mMap.addMarker(new MarkerOptions().position(new LatLng(ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1)))
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running))
-                            .title(uid));*/
+                        /*mMap.addMarker(new MarkerOptions().position(new LatLng(ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1)))
+                          .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running))
+                          .title(uid));*/
                         Timber.e("adapterUid -> %s", adapterUid);
                         break;
                     }

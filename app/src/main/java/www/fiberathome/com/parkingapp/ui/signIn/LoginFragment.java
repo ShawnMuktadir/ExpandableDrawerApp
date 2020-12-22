@@ -103,6 +103,9 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
 
     private LoginActivity context;
 
+    private String deviceOs = "";
+    private int sdkVersion = 0;
+
     public LoginFragment() {
         // Required empty public constructor
     }
@@ -126,6 +129,12 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
         unbinder = ButterKnife.bind(this, view);
 
         context = (LoginActivity) getActivity();
+
+        deviceOs  = android.os.Build.VERSION.RELEASE; // e.g. myVersion := "10"
+        sdkVersion = android.os.Build.VERSION.SDK_INT; // e.g. sdkVersion := 29;
+
+        Timber.e("device OS -> %s", deviceOs);
+        Timber.e("device sdkVersion -> %s", sdkVersion);
 
         setListeners();
 
