@@ -46,8 +46,6 @@
         android:testOnly="false"
         tools:ignore="AllowBackup"
         tools:targetApi="q">
-
-        <receiver android:name=".utils.GeofenceBroadcastReceiver"/>
         <activity android:name=".ui.getDiscount.GetDiscountActivity"
             android:configChanges="locale"
             android:screenOrientation="unspecified"
@@ -88,7 +86,6 @@
             android:screenOrientation="unspecified"
             android:windowSoftInputMode="stateAlwaysHidden"
             android:theme="@style/AppTheme.DefaultActionBar"/>
-        <!--android:launchMode="singleInstance"-->
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -212,7 +209,8 @@
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@mipmap/ic_launcher" /> <!-- <provider -->
+            android:resource="@mipmap/ic_launcher" />
+        <!-- <provider -->
         <!-- android:name="androidx.core.content.FileProvider" -->
         <!-- android:authorities="www.fiberathome.com.parkingapp.fileprovider" -->
         <!-- android:exported="false" -->
@@ -231,6 +229,7 @@
                 android:resource="@xml/file_provider_paths" />
         </provider>
 
+        <receiver android:name=".utils.GeoFenceBroadcastReceiver"/>
         <receiver android:name=".module.notification.NotificationPublisher" />
 
         <service

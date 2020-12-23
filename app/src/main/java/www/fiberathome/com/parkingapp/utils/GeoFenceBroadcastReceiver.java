@@ -19,11 +19,13 @@ import com.google.android.gms.location.GeofencingEvent;
 import java.util.List;
 import java.util.Random;
 
+import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 
 import static www.fiberathome.com.parkingapp.base.ParkingApp.TAG;
 
-public class GeofenceBroadcastReceiver extends BroadcastReceiver {
+public class GeoFenceBroadcastReceiver extends BroadcastReceiver {
+
     private Context context2;
 
     // ...
@@ -33,7 +35,7 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
         if (geofencingEvent.hasError()) {
             String errorMessage = GeofenceStatusCodes
                     .getStatusCodeString(geofencingEvent.getErrorCode());
-            Log.e("geofencingClient", errorMessage);
+            Timber.e("geoFencingClient errorMessage -> %s", errorMessage);
             return;
         }
 
@@ -57,12 +59,12 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
             // Send notification and log the transition details.
 
             sendNotification("ParkingApp",  "entered the Parking Area");
-            Log.i("geofencingClient", "entered the Parking Area");
+            Timber.e("entered the Parking Area");
         } else if ( geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
             sendNotification("ParkingApp",  "Exited the Parking Area");
         } else {
             // Log the error.
-            Log.e("geofencingClient", "Error broadcast");
+            Timber.e("Error broadcast");
         }
     }
 

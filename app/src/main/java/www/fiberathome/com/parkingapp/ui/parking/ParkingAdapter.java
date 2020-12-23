@@ -40,7 +40,7 @@ import static android.content.Context.LOCATION_SERVICE;
 
 public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private Context context;
+    private ParkingActivity context;
     private ArrayList<SensorArea> sensorAreas;
     private ParkingFragment parkingFragment;
     private HomeFragment homeFragment;
@@ -63,7 +63,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         void onItemClick(int position);
     }
 
-    public ParkingAdapter(Context context, ParkingFragment parkingFragment, HomeFragment homeFragment,
+    public ParkingAdapter(ParkingActivity context, ParkingFragment parkingFragment, HomeFragment homeFragment,
                           ArrayList<SensorArea> sensorAreas, Location onConnectedLocation, ParkingAdapterClickListener mListener) {
         this.context = context;
         this.parkingFragment = parkingFragment;
@@ -79,7 +79,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         View itemView = LayoutInflater.
                 from(parent.getContext()).
                 inflate(R.layout.parking_row, parent, false);
-        context = parent.getContext();
+        context = (ParkingActivity) parent.getContext();
         return new ParkingViewHolder(itemView);
     }
 
@@ -128,6 +128,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 handler.postDelayed(() -> {
                     //mListener.onItemClick(position);
                     EventBus.getDefault().post(new GetDirectionEvent(new LatLng(sensorArea.getLat(), sensorArea.getLng())));
+                    context.setGeoFencing(new LatLng(sensorArea.getLat(), sensorArea.getLng()));
                 }, 300);
             } else {
                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));

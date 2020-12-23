@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.ui.MainActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 
 /**
@@ -46,7 +45,7 @@ public class GeofenceRegistrationService extends JobIntentService {
             int transaction = geofencingEvent.getGeofenceTransition();
             List<Geofence> geofences = geofencingEvent.getTriggeringGeofences();
             Geofence geofence = geofences.get(0);
-            if (transaction == Geofence.GEOFENCE_TRANSITION_ENTER && geofence.getRequestId().equals(Constants.GEOFENCE_ID)) {
+            if (transaction == Geofence.GEOFENCE_TRANSITION_ENTER && geofence.getRequestId().equals(GeofenceConstants.GEOFENCE_ID)) {
                 Log.d(TAG, "You are inside parking");
             } else {
                 Log.d(TAG, "You are outside parking");

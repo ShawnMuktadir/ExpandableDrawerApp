@@ -8,7 +8,7 @@ import java.util.HashMap;
  * Created by Manu on 11/24/2017.
  */
 
-public class Constants {
+public class GeofenceConstants {
 
     //Location
     public static final String GEOFENCE_ID = "parking";
@@ -21,7 +21,6 @@ public class Constants {
     public static long GEOFENCE_EXPIRATION_IN_MILLISECONDS= 12 * 60 * 60 * 1000;
 
     static {
-
         AREA_LANDMARKS.put(GEOFENCE_ID, new LatLng(25.116354, 55.390398));
     }
 }

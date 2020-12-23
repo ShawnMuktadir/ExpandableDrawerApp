@@ -569,11 +569,11 @@ public class ParkingFragment extends BaseFragment implements ParkingAdapter.Park
         recyclerViewParking.setNestedScrollingEnabled(false);
         recyclerViewParking.setMotionEventSplittingEnabled(false);
 
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(context);
         recyclerViewParking.setLayoutManager(mLayoutManager);
         recyclerViewParking.addItemDecoration(new DividerItemDecoration(context, LinearLayoutManager.VERTICAL));
         recyclerViewParking.setItemAnimator(new DefaultItemAnimator());
-        recyclerViewParking.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), recyclerViewParking, new RecyclerTouchListener.ClickListener() {
+        recyclerViewParking.addOnItemTouchListener(new RecyclerTouchListener(context, recyclerViewParking, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
                 //Toast.makeText(context, position + " is selected!", Toast.LENGTH_SHORT).show();
