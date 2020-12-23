@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -23,6 +24,7 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +38,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.view.ViewCompat;
@@ -68,6 +71,9 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingClient;
+import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
@@ -91,6 +97,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.SquareCap;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.firebase.FirebaseApp;
@@ -115,6 +122,7 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
+import java.util.AbstractSequentialList;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -160,6 +168,8 @@ import www.fiberathome.com.parkingapp.ui.bottomSheet.BottomSheetAdapter;
 import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
 import www.fiberathome.com.parkingapp.ui.search.SearchActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.Constants;
+import www.fiberathome.com.parkingapp.utils.GeofenceBroadcastReceiver;
 import www.fiberathome.com.parkingapp.utils.GpsUtils;
 import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
@@ -422,6 +432,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private String adapterUid;
     private String bottomUid;
     private ArrayList<BookingSensors> bookingSensorsArrayListGlobalRoom = new ArrayList<>();
+    private List<Geofence> geofenceList= new ArrayList<>();
+    private Geofence geoFance;
+    private GeofencingClient geofencingClient;
 
     public HomeFragment() {
 
@@ -508,6 +521,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         Timber.e("onCreateView called");
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false);
+
+
     }
 
     @Override
@@ -519,9 +534,13 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         context = (HomeActivity) getActivity();
 
+
         if (context != null) {
             context.changeDefaultActionBarDrawerToogleIcon();
+            geofencingClient = LocationServices.getGeofencingClient(context);
+
         }
+
 
         if (isAdded()) {
 
@@ -715,6 +734,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         //add circle for dangerous area
         //addCircleArea();
+
     }
 
     private void initUI(View view) {
@@ -753,6 +773,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_gray));
                         }
                     }
+
+                    setGeofancing(marker);
 
                     bookingSensorsMarkerArrayList.clear();
 
@@ -896,6 +918,71 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         return true;
     }
 
+    private void setGeofancing(Marker marker) {
+
+        geofenceList.add( new Geofence.Builder()
+                // Set the request ID of the geofence. This is a string to identify this
+                // geofence.
+                .setRequestId(Constants.GEOFENCE_ID)
+
+                .setCircularRegion(
+                        marker.getPosition().latitude,
+                        marker.getPosition().longitude,
+                        Constants.GEOFENCE_RADIUS_IN_METERS
+                )
+                .setExpirationDuration(Constants.GEOFENCE_EXPIRATION_IN_MILLISECONDS)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
+                        Geofence.GEOFENCE_TRANSITION_EXIT)
+                .build());
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+
+        geofencingClient.addGeofences(getGeofencingRequest(), getGeofencePendingIntent())
+                .addOnSuccessListener(context, new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // Geofences added
+                        // ...
+                        Log.e("geofencingClient","Success");
+                    }
+                })
+                .addOnFailureListener(context, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Failed to add geofences
+                        // ...
+                        //Allow location Access should be all the time
+                        Log.e("geofencingClient","Fail "+e.getMessage());
+                    }
+                });
+
+    }
+    private GeofencingRequest getGeofencingRequest() {
+        GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
+        builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
+        builder.addGeofences(geofenceList);
+        return builder.build();
+    }
+
+//    @NonNull
+//    private Geofence getGeofence() {
+//        LatLng latLng = Constants.AREA_LANDMARKS.get(Constants.GEOFENCE_ID);
+//        return new Geofence.Builder()
+//                .setRequestId(Constants.GEOFENCE_ID)
+//                .setExpirationDuration(Geofence.NEVER_EXPIRE)
+//                .setCircularRegion(latLng.latitude, latLng.longitude, Constants.GEOFENCE_RADIUS_IN_METERS)
+//                .setNotificationResponsiveness(1000)
+//                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT)
+//                .build();
+//    }
     private synchronized void setBottomSheetList(SetBottomSheetCallBack setBottomSheetCallBack, JSONArray jsonArray, LatLng latLng, ArrayList<BookingSensors> bookingSensorsArrayList, String markerUid) {
         final int[] count = {0};
         int count2 = jsonArray.length();
@@ -1280,6 +1367,22 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         super.onDestroy();
         //dismissProgressDialog();
         hideLoading();
+
+//        geofencingClient.removeGeofences(getGeofencePendingIntent())
+//                .addOnSuccessListener(context, new OnSuccessListener<Void>() {
+//                    @Override
+//                    public void onSuccess(Void aVoid) {
+//                        // Geofences removed
+//                        // ...
+//                    }
+//                })
+//                .addOnFailureListener(context, new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                        // Failed to remove geofences
+//                        // ...
+//                    }
+//                });
     }
 
     @Override
@@ -3749,13 +3852,13 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     @Override
     public void onKeyEntered(String key, GeoLocation location) {
-        sendNotification("ParkingApp", String.format("%s entered the Parking Area", key));
+//        sendNotification("ParkingApp", String.format("%s entered the Parking Area", key));
         isInAreaEnabled = true;
     }
 
     @Override
     public void onKeyExited(String key) {
-        sendNotification("ParkingApp", String.format("%s leave the Parking Area", key));
+//        sendNotification("ParkingApp", String.format("%s leave the Parking Area", key));
         isInAreaEnabled = false;
     }
 
@@ -4255,5 +4358,19 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
             return (Radius * c);
         }
+    }
+
+    private PendingIntent geofencePendingIntent;
+    private PendingIntent getGeofencePendingIntent() {
+        // Reuse the PendingIntent if we already have it.
+        if (geofencePendingIntent != null) {
+            return geofencePendingIntent;
+        }
+        Intent intent = new Intent(context, GeofenceBroadcastReceiver.class);
+        // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when
+        // calling addGeofences() and removeGeofences().
+        geofencePendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.
+                FLAG_UPDATE_CURRENT);
+        return geofencePendingIntent;
     }
 }

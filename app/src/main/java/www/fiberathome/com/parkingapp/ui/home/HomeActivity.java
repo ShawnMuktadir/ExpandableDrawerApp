@@ -1,11 +1,13 @@
 package www.fiberathome.com.parkingapp.ui.home;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -14,16 +16,23 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingClient;
+import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 import com.karumi.dexter.PermissionToken;
 
 import java.util.List;
@@ -51,7 +60,6 @@ import www.fiberathome.com.parkingapp.ui.ratingReview.RatingReviewFragment;
 import www.fiberathome.com.parkingapp.ui.settings.SettingsFragment;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
-import www.fiberathome.com.parkingapp.utils.LocationHelper;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
 public class HomeActivity extends NavigationActivity implements FragmentChangeListener, PermissionInterface {
@@ -75,6 +83,8 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
     public static final int GPS_REQUEST_CODE = 9003;
 
     private Context context;
+    private PendingIntent pendingIntent;
+    private GeofencingRequest geofencingRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,8 +92,9 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
 
         context = this;
         setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
-
         //setStatusBarColor(context);
+
+
 
         //location permission check
         handleLocationPermissionCheck(context);
@@ -414,4 +425,6 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
             }
         };
     }
+
+
 }

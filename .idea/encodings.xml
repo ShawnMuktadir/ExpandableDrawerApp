@@ -5,6 +5,8 @@
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/ui/NavigationActivity.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/ui/splash/SplashActivity.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/ui/splash/SplashFragment.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/utils/Constants.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/utils/GeofenceRegistrationService.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/utils/LocaleManager.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/utils/Utility.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/color/textview_colors.xml" charset="UTF-8" />
