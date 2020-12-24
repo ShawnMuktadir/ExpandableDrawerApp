@@ -13,6 +13,7 @@ public class SharedPreManager {
     private static final String KEY_VEHICLE_NO = "vehicle_no";
     private static final String KEY_PROFILE_PIC = "profile_pic";
     private static final String KEY_ID = "id";
+    private static final String KEY_LANGUAGE = "language";
     private static final String KEY_IS_LOCATION_PERMISSION = "KEY_IS_LOCATION_PERMISSION";
 
     // SMS Tags
@@ -62,6 +63,18 @@ public class SharedPreManager {
     public boolean isWaitingForSMS(){
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getBoolean(KEY_IS_WAITING_FOR_SMS, false);
+    }
+
+    public void setLanguage(String language){
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(KEY_LANGUAGE, language);
+        editor.apply();
+    }
+
+    public String getLanguage(){
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getString(KEY_LANGUAGE, "Choose a Language");
     }
 
     public void setIsLocationPermissionGiven(boolean isLocationPermissionGiven){

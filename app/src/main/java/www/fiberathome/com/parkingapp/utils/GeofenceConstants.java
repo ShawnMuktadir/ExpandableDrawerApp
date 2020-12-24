@@ -12,7 +12,7 @@ public class GeofenceConstants {
 
     //Location
     public static final String GEOFENCE_ID = "parking";
-    public static final float GEOFENCE_RADIUS_IN_METERS = 70;
+    public static final float GEOFENCE_RADIUS_IN_METERS = 1000;
 
     /**
      * Map for storing information about tacme in the dubai.

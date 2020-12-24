@@ -421,4 +421,10 @@
     <string name="english_item">ইংরেজি</string>
     <string name="bangla_item">বাংলা</string>
     <string name="select_language">ভাষা নির্বাচন</string>
+    <string name="gps_disabled">জিপিএস চালু করুন</string>
+    <string name="rules_for_using_app_through_gps">অ্যাপ্লিকেশনটি সঠিকভাবে ব্যবহার করতে আপনার ডিভাইসের জিপিএস চালু করুন</string>
+    <string name="permission_denied_permanently">অনুমতি স্থায়ীভাবে ডিনাইড</string>
+    <string name="allow">অনুমতি দিন</string>
+    <string name="allow_this_permission_from_settings">সেটিংস থেকে এই অনুমতি অনুমতি দিন</string>
+    <string name="u_cant_use_this_app_anymore">অনুমতি স্থায়ীভাবে অস্বীকার করা হয়েছে, আপনি এটি ব্যবহার করতে পারবেন না</string>
 </resources>

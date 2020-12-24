@@ -126,6 +126,13 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
             return;
         }
 
+        /*if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION}, GPS_ENABLE_REQUEST);
+        } else {
+            // permission granted
+            return;
+        }*/
+
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
     }
 
@@ -315,8 +322,8 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
 
     public void showGPSDisabledDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("GPS Disabled");
-        builder.setMessage("Gps is disabled, in order to use the application properly you need to enable GPS of your device");
+        builder.setTitle(context.getResources().getString(R.string.gps_disabled));
+        builder.setMessage(context.getResources().getString(R.string.rules_for_using_app_through_gps));
         builder.setPositiveButton(context.getResources().getString(R.string.enable_gps),
                 (dialog, which) ->
                         startActivityForResult(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS),

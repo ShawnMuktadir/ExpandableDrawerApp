@@ -420,4 +420,10 @@
     <string name="english_item">English</string>
     <string name="bangla_item">Bangla</string>
     <string name="select_language">Select Language</string>
+    <string name="gps_disabled">GPS Disabled</string>
+    <string name="rules_for_using_app_through_gps">Gps is disabled, in order to use the application properly you need to enable GPS of your device</string>
+    <string name="permission_denied_permanently">Permission Denied permanently</string>
+    <string name="allow">Allow</string>
+    <string name="allow_this_permission_from_settings">Please allow this permission from settings</string>
+    <string name="u_cant_use_this_app_anymore">Permission Denied permanently,You can\'t use this \napp any more.</string>
 </resources>

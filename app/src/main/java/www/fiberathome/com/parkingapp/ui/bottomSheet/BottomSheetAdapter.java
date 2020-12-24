@@ -156,13 +156,17 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
                             mAdapterCallback.onMethodCallback(new LatLng(bookingSensors.getLat(), bookingSensors.getLng()));
                         }
                     }
+
                     homeFragment.bottomSheetBehavior.setHideable(false);
+
                     homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
                     getDestinationDurationInfoForSearchLayout(context, new LatLng(bookingSensors.getLat(), bookingSensors.getLng()), holder, bookingSensors.type);
+
                     homeFragment.layoutBottomSheetVisible(true, bookingSensors.getParkingArea(), bookingSensors.getCount(),
                             holder.textViewParkingDistance.getText().toString(), holder.textViewParkingTravelTime.getText().toString(),
                             new LatLng(bookingSensors.getLat(), bookingSensors.getLng()), true);
+
                     homeFragment.bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._130sdp));
                 } else {
                     homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);

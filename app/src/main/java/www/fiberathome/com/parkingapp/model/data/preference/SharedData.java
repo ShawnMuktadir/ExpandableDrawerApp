@@ -39,6 +39,15 @@ public final class SharedData {
     private String registrationFullName;
     private String otp;
     private String forgetPasswordMobile;
+    private String selectedLanguage;
+
+    public String getSelectedLanguage() {
+        return selectedLanguage;
+    }
+
+    public void setSelectedLanguage(String selectedLanguage) {
+        this.selectedLanguage = selectedLanguage;
+    }
 
     public String getForgetPasswordMobile() {
         return forgetPasswordMobile;

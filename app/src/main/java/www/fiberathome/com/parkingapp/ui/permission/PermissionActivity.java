@@ -72,15 +72,15 @@ public class PermissionActivity extends BaseActivity implements PermissionInterf
 
         switch (permissionName) {
             case Manifest.permission.ACCESS_FINE_LOCATION:
-                permissionTV.setText("Permission Denied permanently");
+                permissionTV.setText(context.getResources().getString(R.string.permission_denied_permanently));
                 SharedPreManager.getInstance(context).setIsLocationPermissionGiven(false);
                 permissionTV.setTextColor(ContextCompat.getColor(this, R.color.LogoRed));
                 break;
         }
 
-        new AlertDialog.Builder(this).setTitle("Permission Denied permanently,You can't use this \napp any more.").
-                setMessage("Please allow this permission from settings").
-                setPositiveButton("Allow", new DialogInterface.OnClickListener() {
+        new AlertDialog.Builder(this).setTitle(context.getResources().getString(R.string.u_cant_use_this_app_anymore)).
+                setMessage(context.getResources().getString(R.string.allow_this_permission_from_settings)).
+                setPositiveButton(context.getResources().getString(R.string.allow), new DialogInterface.OnClickListener() {
 
                     @RequiresApi(api = Build.VERSION_CODES.Q)
                     @Override
@@ -89,7 +89,7 @@ public class PermissionActivity extends BaseActivity implements PermissionInterf
                         dialog.dismiss();
                     }
                 }).
-                setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                setNegativeButton(context.getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();

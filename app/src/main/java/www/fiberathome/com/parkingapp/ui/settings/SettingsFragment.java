@@ -32,6 +32,8 @@ import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
+import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
+import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
@@ -69,6 +71,8 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
 
     private Resources resources;
 
+    private AlertDialog.Builder languageDialog;
+
     private int language = 0;
     private boolean languageChanged = false;
 
@@ -92,8 +96,11 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        initView(view);
         context = getActivity();
+
+        languageDialog = new AlertDialog.Builder(context);
+
+        initView(view);
     }
 
     @Override
@@ -103,6 +110,13 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
             Timber.e("LanguageChanged -> %s, Language -> %s", languageChanged, language);
             switchLanguageAndRestartApp();
         }*/
+        if (SharedData.getInstance().getSelectedLanguage() != null || SharedPreManager.getInstance(context).getLanguage()!=null) {
+            languageDialog.setTitle(context.getResources().getString(R.string.select_language));
+            textViewLanguage.setText(SharedData.getInstance().getSelectedLanguage());
+            textViewLanguage.setText(SharedPreManager.getInstance(context).getLanguage());
+        } else {
+            languageDialog.setTitle(context.getResources().getString(R.string.select_language));
+        }
     }
 
     @Override
@@ -129,8 +143,12 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
                     checkedItem = 0;
                 }*/
 
-                AlertDialog.Builder languageDialog = new AlertDialog.Builder(context);
-                languageDialog.setTitle(context.getResources().getString(R.string.select_language));
+                if (SharedData.getInstance().getSelectedLanguage() != null) {
+                    languageDialog.setTitle(context.getResources().getString(R.string.select_language));
+                    textViewLanguage.setText(SharedData.getInstance().getSelectedLanguage());
+                } else {
+                    languageDialog.setTitle(context.getResources().getString(R.string.select_language));
+                }
 
                 String[] languageDialogItems = {context.getResources().getString(R.string.english_item),
                         context.getResources().getString(R.string.bangla_item),
@@ -141,17 +159,22 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
                         case 0:
                             context = LocaleHelper.setLocale(context, "en");
                             resources = context.getResources();
-                            textViewLanguage.setText(resources.getString(R.string.lang_select_en));
+                            textViewLanguage.setText(resources.getString(R.string.english_item));
+                            SharedData.getInstance().setSelectedLanguage(resources.getString(R.string.english_item));
+                            SharedPreManager.getInstance(context).setLanguage(resources.getString(R.string.english_item));
                             setNewLocale("en", true);
                             break;
                         case 1:
                             context = LocaleHelper.setLocale(context, "bn");
                             resources = context.getResources();
-                            textViewLanguage.setText(resources.getString(R.string.lang_select_bn));
+                            textViewLanguage.setText(resources.getString(R.string.bangla_item));
+                            SharedData.getInstance().setSelectedLanguage(resources.getString(R.string.bangla_item));
+                            SharedPreManager.getInstance(context).setLanguage(resources.getString(R.string.bangla_item));
                             setNewLocale("bn", true);
                             break;
                         case 2:
                             dialog.dismiss();
+                            //SharedData.getInstance().setSelectedLanguage(resources.getString(R.string.english_item));
                             break;
                     }
                 });
