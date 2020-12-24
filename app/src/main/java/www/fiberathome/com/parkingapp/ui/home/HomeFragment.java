@@ -958,12 +958,12 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                     double kim = (distanceForNearbyLoc / 1000) + adjustNearbyValue;
 
-                    if (kim > 1.9) {
-                        kim = kim + 2;
-                    } else if (kim == 1.5) {
-                        kim = kim + 1;
-                    } else if (kim < 1.5) {
-                        kim = kim + 0.5;
+                    if (distanceForNearbyLoc > 1.9) {
+                        distanceForNearbyLoc = distanceForNearbyLoc + 2;
+                    } else if (distanceForNearbyLoc > 1.9 && distanceForNearbyLoc < 1) {
+                        distanceForNearbyLoc = distanceForNearbyLoc + 1;
+                    } else {
+                        distanceForNearbyLoc = distanceForNearbyLoc + 0.5;
                     }
 
                     double nearbySearchDoubleDuration = ApplicationUtils.convertToDouble(new DecimalFormat("##.##", new DecimalFormatSymbols(Locale.US)).format(distanceForNearbyLoc * 2.43));

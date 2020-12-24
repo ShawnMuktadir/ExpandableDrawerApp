@@ -58,6 +58,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
@@ -77,29 +78,39 @@ import static android.content.Context.LOCATION_SERVICE;
 import static www.fiberathome.com.parkingapp.model.data.AppConstants.HISTORY_PLACE_SELECTED;
 import static www.fiberathome.com.parkingapp.model.data.AppConstants.NEW_PLACE_SELECTED;
 
-public class SearchFragment extends Fragment implements PlacesAutoCompleteAdapter.ClickListener {
+@SuppressLint("NonConstantResourceId")
+public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAdapter.ClickListener {
 
     private final String TAG = getClass().getSimpleName();
 
     @BindView(R.id.ivClearSearchText)
     ImageView ivClearSearchText;
+
     @BindView(R.id.editTextSearch)
     EditText editTextSearch;
+
     @BindView(R.id.imageViewCross)
     ImageView imageViewCross;
+
     @BindView(R.id.recyclerViewSearchPlaces)
     RecyclerView recyclerViewSearchPlaces;
+
     @BindView(R.id.imageViewSearchPlace)
     ImageView imageViewSearchPlace;
+
     @BindView(R.id.linearLayoutEmptyView)
     LinearLayout linearLayoutEmptyView;
+
     @BindView(R.id.tvEmptyView)
     TextView tvEmptyView;
 
     private Unbinder unbinder;
-    private PlacesAutoCompleteAdapter mAutoCompleteAdapter;
-    private PlacesClient placesClient;
+
     private SearchActivity context;
+
+    private PlacesAutoCompleteAdapter mAutoCompleteAdapter;
+
+    private PlacesClient placesClient;
 
     public SearchFragment() {
         // Required empty public constructor
@@ -319,14 +330,16 @@ public class SearchFragment extends Fragment implements PlacesAutoCompleteAdapte
         if (context.isFinishing()) {
             context.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         }
-        dismissProgressDialog();
+        //dismissProgressDialog();
+        hideLoading();
     }
 
     @Override
     public void onDestroy() {
         Timber.e("onDestroy called");
         super.onDestroy();
-        dismissProgressDialog();
+        //dismissProgressDialog();
+        hideLoading();
     }
 
     @Override
@@ -421,17 +434,21 @@ public class SearchFragment extends Fragment implements PlacesAutoCompleteAdapte
     private double startLng = 0.0;
 
     private ProgressDialog progressDialog;
+
     private void fetchSearchVisitorPlace(String mobileNo) {
         Timber.e("fetchSearchVisitorPlace mobileNo -> %s,", mobileNo);
         Timber.e("fetchSearchVisitorPlace() called");
 
-        progressDialog = ApplicationUtils.progressDialog(context, "Enabling GPS ....");
+        //progressDialog = ApplicationUtils.progressDialog(context, "Enabling GPS ....");
+
+        showLoading(context);
 
         HttpsTrustManager.allowAllSSL();
 
         StringRequest stringRequest = new StringRequest(Request.Method.DEPRECATED_GET_OR_POST, AppConfig.URL_SEARCH_HISTORY_GET, response -> {
             Timber.e("fetchSearchVisitorPlace() stringRequest called");
-            progressDialog.dismiss();
+            //progressDialog.dismiss();
+            hideLoading();
             if (response != null) {
                 try {
                     JSONObject object = new JSONObject(response);
@@ -629,14 +646,14 @@ public class SearchFragment extends Fragment implements PlacesAutoCompleteAdapte
     }
 
     private void setNoData() {
-        Timber.e("setNoData tcalled");
+        Timber.e("setNoData called");
         imageViewSearchPlace.setVisibility(View.GONE);
         tvEmptyView.setVisibility(View.VISIBLE);
         linearLayoutEmptyView.setVisibility(View.VISIBLE);
     }
 
     private void hideNoData() {
-        Timber.e("hideNoData tcalled");
+        Timber.e("hideNoData called");
         imageViewSearchPlace.setVisibility(View.GONE);
         tvEmptyView.setVisibility(View.GONE);
         linearLayoutEmptyView.setVisibility(View.GONE);

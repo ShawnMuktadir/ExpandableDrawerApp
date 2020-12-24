@@ -2,6 +2,7 @@ package www.fiberathome.com.parkingapp.ui.settings;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -12,7 +13,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
 
 import android.provider.Settings;
 import android.view.LayoutInflater;
@@ -71,10 +71,16 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
 
     private Resources resources;
 
-    private AlertDialog.Builder languageDialog;
+    private AlertDialog.Builder builder;
 
     private int language = 0;
     private boolean languageChanged = false;
+
+    /* single item array instance to store
+     which element is selected by user
+     initially it should be set to zero meaning
+     none of the element is selected by default */
+    final int[] checkedItem = {-1};
 
     public SettingsFragment() {
         // Required empty public constructor
@@ -98,24 +104,39 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
 
         context = getActivity();
 
-        languageDialog = new AlertDialog.Builder(context);
+        builder = new AlertDialog.Builder(context);
 
         initView(view);
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        /*if (languageChanged) {
-            Timber.e("LanguageChanged -> %s, Language -> %s", languageChanged, language);
-            switchLanguageAndRestartApp();
-        }*/
-        if (SharedData.getInstance().getSelectedLanguage() != null || SharedPreManager.getInstance(context).getLanguage()!=null) {
-            languageDialog.setTitle(context.getResources().getString(R.string.select_language));
+    public void onStart() {
+        super.onStart();
+        if (SharedData.getInstance().getSelectedLanguage() != null || SharedPreManager.getInstance(context).getLanguage() != null
+                || SharedPreManager.getInstance(context).getCheckedItem() != -1) {
+            builder.setTitle(context.getResources().getString(R.string.select_language));
             textViewLanguage.setText(SharedData.getInstance().getSelectedLanguage());
             textViewLanguage.setText(SharedPreManager.getInstance(context).getLanguage());
+            checkedItem[0] = SharedPreManager.getInstance(context).getCheckedItem();
+            Timber.e("checkedItem[0] onStart -> %s", checkedItem[0]);
         } else {
-            languageDialog.setTitle(context.getResources().getString(R.string.select_language));
+            builder.setTitle(context.getResources().getString(R.string.select_language));
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (SharedData.getInstance().getSelectedLanguage() != null || SharedPreManager.getInstance(context).getLanguage() != null
+                || SharedPreManager.getInstance(context).getCheckedItem() != -1) {
+            builder.setTitle(context.getResources().getString(R.string.select_language));
+            textViewLanguage.setText(SharedData.getInstance().getSelectedLanguage());
+            textViewLanguage.setText(SharedPreManager.getInstance(context).getLanguage());
+            checkedItem[0] = SharedPreManager.getInstance(context).getCheckedItem();
+            Timber.e("checkedItem[0] onResume -> %s", checkedItem[0]);
+        } else {
+            builder.setTitle(context.getResources().getString(R.string.select_language));
         }
     }
 
@@ -129,32 +150,78 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
     }
 
     @Override
+    public void onStop() {
+        SharedPreManager.getInstance(context).setCheckedItem(checkedItem[0]);
+        super.onStop();
+    }
+
+    @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_dialog_language:
             case R.id.linearLayoutLanguage:
             case R.id.ivDropDown:
-                //llDialogLanguage.setOnClickListener(v -> {
-                final String[] Language = {"ENGLISH", "BANGLA"};
-                final int checkedItem = 0;
-                /*if (selected && lang_selected) {
-                    checkedItem = 0;
-                } else {
-                    checkedItem = 0;
-                }*/
 
                 if (SharedData.getInstance().getSelectedLanguage() != null) {
-                    languageDialog.setTitle(context.getResources().getString(R.string.select_language));
+                    builder.setTitle(context.getResources().getString(R.string.select_language));
                     textViewLanguage.setText(SharedData.getInstance().getSelectedLanguage());
                 } else {
-                    languageDialog.setTitle(context.getResources().getString(R.string.select_language));
+                    builder.setTitle(context.getResources().getString(R.string.select_language));
                 }
 
                 String[] languageDialogItems = {context.getResources().getString(R.string.english_item),
-                        context.getResources().getString(R.string.bangla_item),
-                        context.getResources().getString(R.string.cancel)};
+                        context.getResources().getString(R.string.bangla_item)};
+                //context.getResources().getString(R.string.cancel)
 
-                languageDialog.setItems(languageDialogItems, (dialog, which) -> {
+                builder.setSingleChoiceItems(languageDialogItems, checkedItem[0], (dialog, which) -> {
+
+                    // update the selected item which is selected by the user
+                    // so that it should be selected when user opens the dialog next time
+                    // and pass the instance to setSingleChoiceItems method
+                    checkedItem[0] = which;
+                    SharedPreManager.getInstance(context).setCheckedItem(checkedItem[0]);
+
+                    switch (which) {
+                        case 0:
+                            SharedPreManager.getInstance(context).setCheckedItem(checkedItem[0]);
+                            Timber.e("checkedItem[0] onClick -> %s", checkedItem[0]);
+                            context = LocaleHelper.setLocale(context, "en");
+                            resources = context.getResources();
+                            textViewLanguage.setText(resources.getString(R.string.english_item));
+                            SharedData.getInstance().setSelectedLanguage(resources.getString(R.string.english_item));
+                            SharedPreManager.getInstance(context).setLanguage(resources.getString(R.string.english_item));
+                            setNewLocale("en", true);
+                            break;
+                        case 1:
+                            SharedPreManager.getInstance(context).setCheckedItem(checkedItem[0]);
+                            Timber.e("checkedItem[0] onClick -> %s", checkedItem[0]);
+                            context = LocaleHelper.setLocale(context, "bn");
+                            resources = context.getResources();
+                            textViewLanguage.setText(resources.getString(R.string.bangla_item));
+                            SharedData.getInstance().setSelectedLanguage(resources.getString(R.string.bangla_item));
+                            SharedPreManager.getInstance(context).setLanguage(resources.getString(R.string.bangla_item));
+                            setNewLocale("bn", true);
+                            break;
+                        /*case 2:
+                            dialog.dismiss();
+                            break;*/
+                    }
+
+                    // when selected an item the dialog should be closed with the dismiss method
+                    dialog.dismiss();
+                });
+
+                // set the negative button if the user
+                // is not interested to select or change
+                // already selected item
+                builder.setNegativeButton(context.getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                /*builder.setItems(languageDialogItems, (dialog, which) -> {
                     switch (which) {
                         case 0:
                             context = LocaleHelper.setLocale(context, "en");
@@ -174,44 +241,24 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
                             break;
                         case 2:
                             dialog.dismiss();
-                            //SharedData.getInstance().setSelectedLanguage(resources.getString(R.string.english_item));
                             break;
                     }
-                });
-                languageDialog.show();
+                });*/
 
-                /*final AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
-                builder.setTitle("Select a Language...")
-                        .set(Language, checkedItem, (dialog, i) -> {
-                            //Toast.makeText(context, "" + which, Toast.LENGTH_SHORT).show();
-                            textViewLanguage.setText(Language[i]);
-                            lang_selected = Language[i].equals("ENGLISH");
-                            //if user select prefered language as English then
-                            if (Language[i].equals("ENGLISH")) {
-                                context = LocaleHelper.setLocale(context, "en");
-                                resources = context.getResources();
-                                textViewLanguage.setText(resources.getString(R.string.lang_select_en));
-                                setLocale("en", "US");
-                                setNewLocale("en", true);
-                            }
-                            //if user select prefered language as bangla then
-                            if (Language[i].equals("BANGLA")) {
-                                context = LocaleHelper.setLocale(context, "bn");
-                                resources = context.getResources();
-                                textViewLanguage.setText(resources.getString(R.string.lang_select_bn));
-                                setLocale("bn", "BD");
-                                setNewLocale("bn", true);
-                            }
-                        });
-                        //.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
-                builder.create().show();*/
+                //builder.show();
+
+                // create and build the AlertDialog instance
+                // with the AlertDialog builder instance
+                AlertDialog customAlertDialog = builder.create();
+
+                // show the alert dialog when the button is clicked
+                customAlertDialog.show();
         }
     }
 
     @Override
     public boolean onBackPressed() {
         if (isGPSEnabled()) {
-            //HomeFragment nextFrag = new HomeFragment();
             if (getActivity() != null) {
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.nav_host_fragment, HomeFragment.newInstance())
@@ -252,46 +299,6 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
         llDialogLanguage.setOnClickListener(this);
         textViewLanguage.setOnClickListener(this);
         ivDropDown.setOnClickListener(this);
-
-        /*textViewBan.setOnClickListener(v -> {
-            Timber.e("textViewBan clicked");
-            ApplicationUtils.showAlertDialog(context.getString(R.string.change_language), context, context.getString(R.string.yes), context.getString(R.string.no), (dialog, which) -> {
-                //setNewLocale(LANGUAGE_BANGLA, false);
-                //context = LocaleHelper.setLocale(context, "en");
-                resources = context.getResources();
-                language = 0;
-                languageChanged = true;
-                switchLanguageAndRestartApp();
-            }, (dialog, which) -> {
-                dialog.dismiss();
-            });
-        });
-
-        textViewEng.setOnClickListener(v -> {
-            Timber.e("textViewEng clicked");
-            ApplicationUtils.showAlertDialog(context.getString(R.string.change_language), context, context.getString(R.string.yes), context.getString(R.string.no), (dialog, which) -> {
-                //setNewLocale(LANGUAGE_ENGLISH, false);
-                //context = LocaleHelper.setLocale(context, "en");
-                resources = context.getResources();
-                language = 1;
-                languageChanged = true;
-                switchLanguageAndRestartApp();
-            }, (dialog, which) -> {
-                dialog.dismiss();
-            });
-        });*/
-    }
-
-    private void switchLanguageAndRestartApp() {
-        if (language == 0) {
-            setLocale("bn", "BD");
-            //openHomeActivity();
-            //context.startActivityWithFinish(HomeActivity.class);
-        } else {
-            setLocale("en", "US");
-            //openHomeActivity();
-            //context.startActivityWithFinish(HomeActivity.class);
-        }
     }
 
     private void setNewLocale(String language, boolean restartProcess) {
@@ -305,22 +312,6 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
         } else {
             Toast.makeText(context, "Activity restarted", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private void openHomeActivity() {
-        Intent i = new Intent(context, HomeActivity.class);
-//        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        context.startActivity(i);
-    }
-
-    private void switchLangSelection(TextView textView1, TextView textView2) {
-        ApplicationUtils.setTextColor(textView1, context, R.color.white);
-        textView1.setOnClickListener(null);
-        ApplicationUtils.setBackground(context, textView1, R.color.black);
-        ApplicationUtils.setTextColor(textView2, context, R.color.white);
-        ApplicationUtils.setBackground(context, textView2, R.color.dark_gray);
     }
 
     private void setLocale(String language, String country) {

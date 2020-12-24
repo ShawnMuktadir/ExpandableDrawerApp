@@ -18,6 +18,7 @@ public class SharedPreManager {
 
     // SMS Tags
     private static final String KEY_IS_WAITING_FOR_SMS = "isWaitingForSMS22";
+    private static final String KEY_CHECKED_ITEM = "checked_item";
 
 
     private static SharedPreManager instance;
@@ -63,6 +64,20 @@ public class SharedPreManager {
     public boolean isWaitingForSMS(){
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getBoolean(KEY_IS_WAITING_FOR_SMS, false);
+    }
+
+    private int checkedItem;
+
+    public int getCheckedItem() {
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getInt(KEY_CHECKED_ITEM, 0);
+    }
+
+    public void setCheckedItem(int checkedItem) {
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(KEY_CHECKED_ITEM, checkedItem);
+        editor.apply();
     }
 
     public void setLanguage(String language){
