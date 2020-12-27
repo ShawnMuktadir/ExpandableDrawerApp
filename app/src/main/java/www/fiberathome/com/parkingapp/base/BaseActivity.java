@@ -133,6 +133,8 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
             return;
         }*/
 
+        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
     }
 

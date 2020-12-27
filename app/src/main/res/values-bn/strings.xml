@@ -427,4 +427,6 @@
     <string name="allow">অনুমতি দিন</string>
     <string name="allow_this_permission_from_settings">সেটিংস থেকে এই অনুমতি অনুমতি দিন</string>
     <string name="u_cant_use_this_app_anymore">অনুমতি স্থায়ীভাবে অস্বীকার করা হয়েছে, আপনি এটি ব্যবহার করতে পারবেন না</string>
+    <string name="permission_all_time">সমস্ত সময় অবস্থান অনুমতি দিন</string>
+    <string name="how_to_use_this_app">সেটিংস থেকে সমস্ত সময় অবস্থান অনুমতি দিন</string>
 </resources>

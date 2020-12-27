@@ -12,13 +12,21 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.DexterError;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.PermissionRequestErrorListener;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+
+import java.util.List;
 
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
@@ -47,6 +55,50 @@ public class PermissionActivity extends BaseActivity implements PermissionInterf
     public void takeLocationPermission(View view) {
         Dexter.withContext(this).withPermission(Manifest.permission.ACCESS_FINE_LOCATION).withListener(permissionListener).check();
     }
+
+    /*@RequiresApi(api = Build.VERSION_CODES.Q)
+    public void takeLocationPermission(View view) {
+        Dexter.withContext(this).withPermissions(Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+                        // check if all permissions are granted
+                        if (report.areAllPermissionsGranted()) {
+                            // do you work now
+                            Intent intent = new Intent(PermissionActivity.this, HomeActivity.class);
+                            SharedPreManager.getInstance(context).setIsLocationPermissionGiven(true);
+                            startActivity(intent);
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    finish();
+                                }
+                            }, 1000);
+                        }
+                        // check for permanent denial of any permission
+                        if (report.isAnyPermissionPermanentlyDenied()) {
+                            // permission is denied permanently, navigate user to app settings
+                            takeLocationPermission(view);
+                            Toast.makeText(context, "Please allow All Time Location for using Parking App...", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> list, PermissionToken permissionToken) {
+
+                    }
+                })
+                .withErrorListener(new PermissionRequestErrorListener() {
+                    @Override
+                    public void onError(DexterError error) {
+                        Toast.makeText(getApplicationContext(), "Error occurred! " + error.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .check();
+        //.withListener((MultiplePermissionsListener) permissionListener).check();
+    }*/
 
     @Override
     public void showPermissionGranted(String permissionName) {

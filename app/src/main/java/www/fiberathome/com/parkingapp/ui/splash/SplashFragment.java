@@ -20,6 +20,7 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
+import www.fiberathome.com.parkingapp.ui.permission.LocationPermissionActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.ui.permission.PermissionActivity;
@@ -109,7 +110,8 @@ public class SplashFragment extends BaseFragment {
             openActivity(new Intent(context, HomeActivity.class));
         } else if (SharedPreManager.getInstance(context).isLoggedIn() && !SharedPreManager.getInstance(context).isWaitingForLocationPermission()) {
             Timber.e("activity start else if -> %s", SharedPreManager.getInstance(context).isWaitingForLocationPermission());
-            openActivity(new Intent(context, PermissionActivity.class));
+            //openActivity(new Intent(context, PermissionActivity.class));
+            openActivity(new Intent(context, LocationPermissionActivity.class));
         } else {
             Timber.e("activity start else -> %s", SharedPreManager.getInstance(context).isWaitingForLocationPermission());
             openActivity(new Intent(context, LoginActivity.class));

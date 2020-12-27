@@ -416,7 +416,7 @@
     <string name="call">Call</string>
     <string name="you_have_to_exit_from_current_destination">You have to exit from current destination to change new parking spot</string>
     <string name="please_try_again">Please try again</string>
-    <string name="search_law">Search...</string>
+    <string name="search_law">Search…</string>
     <string name="english_item">English</string>
     <string name="bangla_item">Bangla</string>
     <string name="select_language">Select Language</string>
@@ -425,5 +425,7 @@
     <string name="permission_denied_permanently">Permission Denied permanently</string>
     <string name="allow">Allow</string>
     <string name="allow_this_permission_from_settings">Please allow this permission from settings</string>
-    <string name="u_cant_use_this_app_anymore">Permission Denied permanently,You can\'t use this \napp any more.</string>
+    <string name="u_cant_use_this_app_anymore">Permission Denied permanently,Please allow location for all the time from settings</string>
+    <string name="permission_all_time">Please allow All Time Location</string>
+    <string name="how_to_use_this_app">Please allow location for all the time from settings</string> />
 </resources>

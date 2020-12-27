@@ -44,6 +44,7 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
 import www.fiberathome.com.parkingapp.ui.NavigationActivity;
+import www.fiberathome.com.parkingapp.ui.permission.LocationPermissionActivity;
 import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
 import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.ui.booking.newBooking.BookingFragment;
@@ -374,7 +375,8 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(HomeActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             finish();
-            Intent intent = new Intent(context, PermissionActivity.class);
+            //Intent intent = new Intent(context, PermissionActivity.class);
+            Intent intent = new Intent(context, LocationPermissionActivity.class);
             startActivity(intent);
             SharedPreManager.getInstance(context).setIsLocationPermissionGiven(false);
             //return;
