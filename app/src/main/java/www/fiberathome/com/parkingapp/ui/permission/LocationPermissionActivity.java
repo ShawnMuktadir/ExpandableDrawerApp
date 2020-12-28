@@ -15,6 +15,7 @@ import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -119,12 +120,12 @@ public class LocationPermissionActivity extends AppCompatActivity {
                     //foreground permission allowed
                     if (grantResults[i] >= 0) {
                         foreground = true;
-                        permissionTV.setText("Foreground location permission allowed");
+                        permissionTV.setText(context.getResources().getString(R.string.foreground_location_permission_allowed));
                         permissionTV.setTextColor(ContextCompat.getColor(this, R.color.colorOrange));
                         //Toast.makeText(getApplicationContext(), "Foreground location permission allowed", Toast.LENGTH_SHORT).show();
                         continue;
                     } else {
-                        permissionTV.setText("Location Permission denied\nPlease click allow all the time for using Parking App");
+                        permissionTV.setText(context.getResources().getString(R.string.location_permission_denied_please_click_allow));
                         permissionTV.setTextColor(ContextCompat.getColor(this, R.color.red));
                         Timber.e("Background location permission denied 1st");
 
@@ -172,7 +173,7 @@ public class LocationPermissionActivity extends AppCompatActivity {
 
                                     @Override
                                     public void onPermissionGranted() {
-
+                                        Toast.makeText(getApplicationContext(), "Location Permission granted", Toast.LENGTH_SHORT).show();
                                     }
                                     //Toast.makeText(getApplicationContext(), "Location Permission denied", Toast.LENGTH_SHORT).show();
                                     //break;
@@ -184,11 +185,11 @@ public class LocationPermissionActivity extends AppCompatActivity {
                             foreground = true;
                             background = true;
                             SharedPreManager.getInstance(context).setIsLocationPermissionGiven(true);
-                            permissionTV.setText("Background location permission allowed");
+                            permissionTV.setText(context.getResources().getString(R.string.background_location_permission_allowed));
                             permissionTV.setTextColor(ContextCompat.getColor(this, R.color.colorOrange));
                             //Toast.makeText(getApplicationContext(), "Background location location permission allowed", Toast.LENGTH_SHORT).show();
                         } else {
-                            permissionTV.setText("Background location permission denied\nPlease click allow all the time for using Parking App");
+                            permissionTV.setText(context.getResources().getString(R.string.background_location_permission_denied_allow_all_the_time_for_using_parking_time));
                             permissionTV.setTextColor(ContextCompat.getColor(this, R.color.red));
                             Timber.e("Background location permission denied 2nd");
                             SharedPreManager.getInstance(context).setIsLocationPermissionGiven(false);
@@ -219,17 +220,17 @@ public class LocationPermissionActivity extends AppCompatActivity {
                         foreground = true;
                         background = true;
                         SharedPreManager.getInstance(context).setIsLocationPermissionGiven(true);
-                        permissionTV.setText("Background location permission allowed");
+                        permissionTV.setText(context.getResources().getString(R.string.background_location_permission_allowed));
                         permissionTV.setTextColor(ContextCompat.getColor(this, R.color.colorOrange));
                         //Toast.makeText(getApplicationContext(), "Background location location permission allowed", Toast.LENGTH_SHORT).show();
                     } else {
-                        permissionTV.setText("Background location permission denied\nPlease click allow all the time for using Parking App");
+                        permissionTV.setText(context.getResources().getString(R.string.background_location_permission_denied_allow_all_the_time_for_using_parking_time));
                         permissionTV.setTextColor(ContextCompat.getColor(this, R.color.red));
                         Timber.e("Background location permission denied 2nd");
                         SharedPreManager.getInstance(context).setIsLocationPermissionGiven(false);
                         new AlertDialog.Builder(context).setTitle(context.getResources().getString(R.string.permission_all_time)).
                                 //setMessage(context.getResources().getString(R.string.allow_this_permission_from_settings)).
-                                        setMessage(context.getResources().getString(R.string.how_to_use_this_app)).
+                                        setMessage(context.getResources().getString(R.string.in_order_to_use_this_app)).
                                 setPositiveButton(context.getResources().getString(R.string.allow), new DialogInterface.OnClickListener() {
 
                                     @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -270,7 +271,7 @@ public class LocationPermissionActivity extends AppCompatActivity {
     private void handleLocationUpdates() {
         Timber.e("handleLocationUpdates");
         //foreground and background
-        permissionTV.setText("Start Foreground and Background Location Updates");
+        permissionTV.setText(context.getResources().getString(R.string.start_foreground_background_updates));
         permissionTV.setTextColor(ContextCompat.getColor(this, R.color.green));
 
         SharedPreManager.getInstance(context).setIsLocationPermissionGiven(true);
@@ -291,7 +292,7 @@ public class LocationPermissionActivity extends AppCompatActivity {
     private void handleForegroundLocationUpdates() {
         //handleForeground Location Updates
         Timber.e("handleForegroundLocationUpdates");
-        permissionTV.setText("Start foreground location updates\nPlease click allow all the time for using Parking App");
+        permissionTV.setText(context.getResources().getString(R.string.start_foreground_location_updates_please_click_allow_all_the_time_for_using_parking_app));
         permissionTV.setTextColor(ContextCompat.getColor(this, R.color.colorOrange));
         SharedPreManager.getInstance(context).setIsLocationPermissionGiven(false);
         //Toast.makeText(getApplicationContext(),"Start foreground location updates",Toast.LENGTH_SHORT).show();

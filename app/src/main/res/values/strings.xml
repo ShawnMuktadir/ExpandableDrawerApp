@@ -127,12 +127,14 @@
     <string name="book">Your book</string>
     <string name="gps_network_not_enabled">GPS network not enabled!</string>
     <string name="open_location_settings">Open Location Settings</string>
-    <string name="locc_smart_parking_app_needs_permission_to_access_device_location_to_provide_required_services_please_allow_the_permission">LOCC Smart Parking App needs permission to access device location to provide required services. Please allow the permission</string>
+    <string name="locc_smart_parking_app_needs_permission_to_access_device_location_to_provide_required_services_please_allow_the_permission">
+        LOCC Smart Parking App needs permission to access all time device location to provide required services. Please allow the permission</string>
     <string name="permission_request">Permission Request</string>
     <string name="grant_permission">Grant Permission</string>
     <string name="no_data_available">Enter a valid place to search for on \nParking App</string>
     <string name="schedule_parking">Schedule Parking Book</string>
-    <string name="by_using_this_app_you_agree_to_our_terms_and_conditions_amp_privacy_policy"><![CDATA[By Using this app you agree to our Terms and Conditions & Privacy Policy]]></string>
+    <string name="by_using_this_app_you_agree_to_our_terms_and_conditions_amp_privacy_policy">
+        <![CDATA[By Using this app you agree to our Terms and Conditions & Privacy Policy]]></string>
 
     <string-array name="CountryCodes">
         <item>93,AF</item>
@@ -426,6 +428,16 @@
     <string name="allow">Allow</string>
     <string name="allow_this_permission_from_settings">Please allow this permission from settings</string>
     <string name="u_cant_use_this_app_anymore">Permission Denied permanently,Please allow location for all the time from settings</string>
+    <string name="in_order_to_use_this_app">In order to get all services from this app, Please allow location for all the time from settings</string>
     <string name="permission_all_time">Please allow All Time Location</string>
-    <string name="how_to_use_this_app">Please allow location for all the time from settings</string> />
+    <string name="how_to_use_this_app">Please allow location for all the time from settings</string>
+    <string name="background_location_permission_allowed">Background location permission allowed</string>
+    <string name="foreground_location_permission_allowed">Foreground location permission allowed</string>
+    <string name="start_foreground_background_updates">Start Foreground and Background Location Updates</string>
+    <string name="start_foreground_location_updates_please_click_allow_all_the_time_for_using_parking_app">
+        Start foreground location updates, Please click allow all the time for using Parking App</string>
+    <string name="background_location_permission_denied_allow_all_the_time_for_using_parking_time">
+        Background location permission denied, Please click allow all the time for using Parking App</string>
+    <string name="location_permission_denied_please_click_allow">Location Permission denied, Please click allow all the time for using Parking App</string>
+    />
 </resources>

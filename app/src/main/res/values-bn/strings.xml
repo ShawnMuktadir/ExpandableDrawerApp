@@ -129,7 +129,7 @@
     <string name="gps_network_not_enabled">জিপিএস নেটওয়ার্ক চালু নয়!</string>
     <string name="open_location_settings">স্থান সেটিংস খুলুন</string>
     <string name="locc_smart_parking_app_needs_permission_to_access_device_location_to_provide_required_services_please_allow_the_permission">
-        LOCC স্মার্ট পার্কিং অ্যাপ্লিকেশনটিকে প্রয়োজনীয় পরিষেবাগুলি সরবরাহ করতে ডিভাইসের অবস্থান অ্যাক্সেসের অনুমতি প্রয়োজন, অনুমতি দিন</string>
+        LOCC স্মার্ট পার্কিং অ্যাপ্লিকেশনটিকে প্রয়োজনীয় পরিষেবাগুলি সরবরাহ করতে সর্বকালের ডিভাইসের অবস্থান অ্যাক্সেসের অনুমতি প্রয়োজন, অনুমতি দিন</string>
     <string name="permission_request">অনুমতির অনুরোধ</string>
     <string name="grant_permission">অনুমতি প্রদান</string>
     <string name="no_data_available">পার্কিং অ্যাপ্লিকেশন অনুসন্ধান করার জন্য একটি \n বৈধ জায়গা সার্চ করুন</string>
@@ -427,6 +427,15 @@
     <string name="allow">অনুমতি দিন</string>
     <string name="allow_this_permission_from_settings">সেটিংস থেকে এই অনুমতি অনুমতি দিন</string>
     <string name="u_cant_use_this_app_anymore">অনুমতি স্থায়ীভাবে অস্বীকার করা হয়েছে, আপনি এটি ব্যবহার করতে পারবেন না</string>
+    <string name="in_order_to_use_this_app">এই অ্যাপ্লিকেশন থেকে সমস্ত পরিষেবাদি পেতে, দয়া করে সেটিংস থেকে সর্বদা অবস্থানের অনুমতি দিন</string>
     <string name="permission_all_time">সমস্ত সময় অবস্থান অনুমতি দিন</string>
     <string name="how_to_use_this_app">সেটিংস থেকে সমস্ত সময় অবস্থান অনুমতি দিন</string>
+    <string name="background_location_permission_allowed">ব্যাকগ্রাউন্ড অবস্থান অনুমতি অনুমোদিত</string>
+    <string name="foreground_location_permission_allowed">ফোগ্রাউন্‌ড্ অবস্থান অনুমতি অনুমোদিত</string>
+    <string name="start_foreground_background_updates">ফোগ্রাউন্‌ড্ এবং ব্যাকগ্রাউন্ড অবস্থান অনুমতি অনুমোদিত</string>
+    <string name="start_foreground_location_updates_please_click_allow_all_the_time_for_using_parking_app">
+        ফোগ্রাউন্‌ড্ অবস্থান আপডেট শুরু করুন, পার্কিং অ্যাপ্লিকেশন ব্যবহারের জন্য দয়া করে সর্বদা অনুমতি দিন ক্লিক করুন</string>
+    <string name="background_location_permission_denied_allow_all_the_time_for_using_parking_time">
+        ব্যাকগ্রাউন্ড অবস্থানের অনুমতি অস্বীকৃত, পার্কিং অ্যাপ্লিকেশন ব্যবহারের জন্য দয়া করে সর্বদা অনুমতি দিন ক্লিক করুন</string>
+    <string name="location_permission_denied_please_click_allow">অবস্থানের অনুমতি অস্বীকৃত, পার্কিং অ্যাপ্লিকেশন ব্যবহারের জন্য দয়া করে সর্বদা অনুমতি দিন ক্লিক করুন</string>
 </resources>
