@@ -106,6 +106,11 @@ public class ApplicationUtils {
         toastCountDown.start();
     }
 
+    public static double round (double value, int precision) {
+        int scale = (int) Math.pow(10, precision);
+        return (double) Math.round(value * scale) / scale;
+    }
+
     public static void setTextColor(TextView tvText, Context context, int resId) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             tvText.setTextColor(context.getColor(resId));

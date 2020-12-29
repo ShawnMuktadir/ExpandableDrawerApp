@@ -3,6 +3,7 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 
 android {
+    defaultConfig.applicationId="www.fiberathome.com.parkingapp"
     compileSdkVersion 30
 
     configurations {
@@ -84,7 +85,10 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
     implementation 'com.google.android.gms:play-services-places:17.0.0'
     implementation 'com.google.android.libraries.places:places:2.4.0'
+    //noinspection GradleDynamicVersion
     implementation 'com.google.maps.android:android-maps-utils:0.5+'
+    //apache
+    //implementation 'org.apache.directory.studio:org.apache.commons.io:2.4'
 
     // QR code
     implementation 'com.google.zxing:core:3.3.3'

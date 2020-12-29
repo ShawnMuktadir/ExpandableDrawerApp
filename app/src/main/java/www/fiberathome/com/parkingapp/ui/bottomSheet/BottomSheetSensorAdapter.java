@@ -25,6 +25,7 @@ import com.akexorcist.googledirection.model.Route;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -139,8 +140,10 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
                         //textItemViewColorGray=true;
                         ((TextBookingViewHolder) holder).textViewParkingAreaName.setText(ApplicationUtils.capitalize(bookingSensors.getParkingArea().trim()));
                         ((TextBookingViewHolder) holder).textViewParkingAreaCount.setText(bookingSensors.getCount());
+                       /* ((TextBookingViewHolder) holder).textViewParkingDistance.setText(
+                                new DecimalFormat("##.##").format(bookingSensors.getDistance()) + " km");*/
                         ((TextBookingViewHolder) holder).textViewParkingDistance.setText(
-                                new DecimalFormat("##.##").format(bookingSensors.getDistance()) + " km");
+                                ApplicationUtils.round(bookingSensors.getDistance(),1) + " km");
                         ((TextBookingViewHolder) holder).textViewParkingTravelTime.setText(bookingSensors.getDuration());
                         ((TextBookingViewHolder) holder).textViewStatic.setText(bookingSensors.getText());
 
@@ -180,41 +183,41 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
         }
     }
 
-//    @SuppressLint("SetTextI18n")
-//    @Override
-//    public void onBindViewHolder(@NonNull BookingViewHolder viewHolder, int position) {
-//        this.viewHolder = viewHolder;
-//
-//        BookingViewHolder bookingViewHolder = (BookingViewHolder) viewHolder;
-//
-//        BookingSensors bookingSensors = bookingSensorsArrayList.get(position);
-//
-//        bookingViewHolder.textViewParkingAreaName.setText(ApplicationUtils.capitalize(bookingSensors.getParkingArea().trim()));
-//        bookingViewHolder.textViewParkingAreaCount.setText(bookingSensors.getCount());
-//
-////        getDestinationDurationInfo(context, new LatLng(bookingSensors.getLat(), bookingSensors.getLng()), bookingViewHolder);
-//
-//        // Here I am just highlighting the background
-//        bookingViewHolder.itemView.setBackgroundColor(selectedItem == position ? Color.LTGRAY : Color.TRANSPARENT);
-//
-//        bookingViewHolder.itemView.setOnClickListener(v -> {
-////            Collections.swap(bookingSensorsArrayList, position, 0);
-////            notifyItemMoved(position, 0);
-////            notifyDataSetChanged();
-//            selectedItem = position;
-//            notifyDataSetChanged();
-//            getDestinationDurationInfoForSearchLayout(context, new LatLng(bookingSensors.getLat(), bookingSensors.getLng()),
-//                    bookingViewHolder);
-//            homeFragment.layoutBottomSheetVisible(true, bookingSensors.getParkingArea(), bookingSensors.getCount(),
-//                    bookingViewHolder.textViewParkingDistance.getText().toString(),
-//                    bookingViewHolder.textViewParkingTravelTime.getText().toString(),
-//                    new LatLng(bookingSensors.getLat(), bookingSensors.getLng()));
-//
-//            homeFragment.bottomSheetBehavior.setHideable(false);
-////            homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
-//            homeFragment.bottomSheetBehavior.setPeekHeight(300);
-//        });
-//    }
+    /*@SuppressLint("SetTextI18n")
+    @Override
+    public void onBindViewHolder(@NonNull BookingViewHolder viewHolder, int position) {
+        this.viewHolder = viewHolder;
+
+        BookingViewHolder bookingViewHolder = (BookingViewHolder) viewHolder;
+
+        BookingSensors bookingSensors = bookingSensorsArrayList.get(position);
+
+        bookingViewHolder.textViewParkingAreaName.setText(ApplicationUtils.capitalize(bookingSensors.getParkingArea().trim()));
+        bookingViewHolder.textViewParkingAreaCount.setText(bookingSensors.getCount());
+
+        //getDestinationDurationInfo(context, new LatLng(bookingSensors.getLat(), bookingSensors.getLng()), bookingViewHolder);
+
+        // Here I am just highlighting the background
+        bookingViewHolder.itemView.setBackgroundColor(selectedItem == position ? Color.LTGRAY : Color.TRANSPARENT);
+
+        bookingViewHolder.itemView.setOnClickListener(v -> {
+        //Collections.swap(bookingSensorsArrayList, position, 0);
+        //notifyItemMoved(position, 0);
+        //notifyDataSetChanged();
+            selectedItem = position;
+            notifyDataSetChanged();
+            getDestinationDurationInfoForSearchLayout(context, new LatLng(bookingSensors.getLat(), bookingSensors.getLng()),
+                    bookingViewHolder);
+            homeFragment.layoutBottomSheetVisible(true, bookingSensors.getParkingArea(), bookingSensors.getCount(),
+                    bookingViewHolder.textViewParkingDistance.getText().toString(),
+                    bookingViewHolder.textViewParkingTravelTime.getText().toString(),
+                    new LatLng(bookingSensors.getLat(), bookingSensors.getLng()));
+
+            homeFragment.bottomSheetBehavior.setHideable(false);
+            //homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
+            homeFragment.bottomSheetBehavior.setPeekHeight(300);
+        });
+    }*/
 
     @Override
     public int getItemViewType(int position) {
@@ -259,7 +262,7 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
                 .execute(new DirectionCallback() {
                     @Override
                     public void onDirectionSuccess(Direction direction, String rawBody) {
-//                        dismissDialog();
+                        //dismissDialog();
                         String status = direction.getStatus();
                         if (status.equals(RequestResult.OK)) {
                             Route route = direction.getRouteList().get(0);
@@ -272,18 +275,17 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
                             fromCurrentLocationDuration = duration;
                             Timber.e("fromCurrentLocationDistance -> %s", fromCurrentLocationDistance);
                             Timber.e("fromCurrentLocationDuration -> %s", fromCurrentLocationDuration);
-//                            if (homeFragment.bottomSheetSearch == 0) {
                             Timber.e("adapter homeFragment.bottomSheetSearch == 0 e dhukche");
-//                            bookingViewHolder.textViewParkingDistance.setText(fromCurrentLocationDistance);
-//                            bookingViewHolder.textViewParkingTravelTime.setText(fromCurrentLocationDuration);
-//                            }
+                            //bookingViewHolder.textViewParkingDistance.setText(fromCurrentLocationDistance);
+                            //bookingViewHolder.textViewParkingTravelTime.setText(fromCurrentLocationDuration);
+
 
                             homeFragment.textViewBottomSheetParkingDistance.setText(fromCurrentLocationDistance);
                             homeFragment.textViewBottomSheetParkingTravelTime.setText(fromCurrentLocationDuration);
 
                             Timber.e("getDestinationDurationInfo duration -> %s", bookingViewHolder.textViewParkingTravelTime.getText().toString());
                             //------------Displaying Distance and Time-----------------\\
-//                            showingDistanceTime(distance, duration); // Showing distance and time to the user in the UI \\
+                            //showingDistanceTime(distance, duration); // Showing distance and time to the user in the UI \\
                             String message = "Total Distance is " + distance + " and Estimated Time is " + duration;
                             Timber.e("duration message -> %s", message);
 
@@ -298,7 +300,6 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
                     }
                 });
         //-------------------------------------------------------------------------------\\
-
     }
 
     private void getDestinationDurationInfoForFirstSearchLayout(Context context, LatLng latLngDestination, BottomSheetSensorAdapter.TextBookingViewHolder textBookingViewHolder) {

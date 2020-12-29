@@ -23,6 +23,7 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -741,10 +742,13 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     @Override
     public boolean onMarkerClick(Marker marker) {
         String uid = "";
+
         String markerAreaName = "";
+
         if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
             if (bookingSensorsMarkerArrayList != null)
                 bookingSensorsMarkerArrayList.clear();
+
             if (fromRouteDrawn == 0) {
                 if (mMap != null) {
                     if (marker.getTitle() != null) {
@@ -852,12 +856,13 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         }
 
                         double kim = (markerDistance / 1000) + adjustValue;
-                        double markerDoubleDuration = ApplicationUtils.convertToDouble(new DecimalFormat("##.##", new DecimalFormatSymbols(Locale.US)).format(markerDistance * 2.43));
+                        double markerDoubleDuration = ApplicationUtils.convertToDouble(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(markerDistance * 2.43));
+                        //double markerDoubleDuration = ApplicationUtils.round(markerDistance * 2.43,1);
                         //double markerDoubleDuration = ApplicationUtils.convertToDouble(String.format(Locale.US, "%.2f", ApplicationUtils.convertToDouble(new DecimalFormat("##.##").format(markerDistance * 2.43))));
-                        String markerStringDuration = markerDoubleDuration + " mins";
+                        String markerStringDuration = String.valueOf(markerDoubleDuration);
 
                         bookingSensorsMarker = new BookingSensors(markerPlaceName, markerPlaceLatLng.latitude, markerPlaceLatLng.longitude,
-                                markerDistance, parkingNumberOfIndividualMarker, markerStringDuration,
+                                ApplicationUtils.round(markerDistance,1), parkingNumberOfIndividualMarker, markerStringDuration,
                                 context.getResources().getString(R.string.nearest_parking_from_your_destination),
                                 BookingSensors.TEXT_INFO_TYPE, 0);
                         if (marker.getTitle() != null && bookingSensorsMarker.getCount() != null) {
@@ -968,7 +973,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                     double nearbySearchDoubleDuration = ApplicationUtils.convertToDouble(new DecimalFormat("##.##", new DecimalFormatSymbols(Locale.US)).format(distanceForNearbyLoc * 2.43));
                     //double nearbySearchDoubleDuration = ApplicationUtils.convertToDouble(String.format(Locale.US, "%.2f", ApplicationUtils.convertToDouble(new DecimalFormat("##.##").format(km * 2.43))));
-                    String nearbySearchStringDuration = nearbySearchDoubleDuration + " mins";
+                    String nearbySearchStringDuration = String.valueOf(nearbySearchDoubleDuration);
 
                     bookingSensorsArrayList.add(new BookingSensors(nearbyAreaName[0], ApplicationUtils.convertToDouble(latitude1),
                             ApplicationUtils.convertToDouble(longitude1), distanceForNearbyLoc, parkingNumberOfNearbyDistanceLoc,
@@ -1406,6 +1411,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     TaskParser taskParser = new TaskParser();
                     searchDistance = taskParser.showDistance(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
                             new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));
+                    /*searchDistance = calculationByDistance(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
+                            new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));*/
                     Timber.e("searchDistance -> %s", searchDistance);
 
                     layoutSearchVisible(true, searchPlaceName, "0", textViewSearchParkingDistance.getText().toString(), searchPlaceLatLng);
@@ -1420,7 +1427,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                     double searchDoubleDuration = ApplicationUtils.convertToDouble(new DecimalFormat("##.##", new DecimalFormatSymbols(Locale.US)).format(searchDistance * 2.43));
 
-                    String searchStringDuration = searchDoubleDuration + " mins";
+                    String searchStringDuration = String.valueOf(searchDoubleDuration);
 
                     bookingSensorsArrayList.add(new BookingSensors(searchPlaceName, searchPlaceLatLng.latitude, searchPlaceLatLng.longitude,
                             searchDistance, "0", searchStringDuration,
@@ -1471,7 +1478,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                                     double nearbySearchDoubleDuration = ApplicationUtils.convertToDouble(new DecimalFormat("##.##", new DecimalFormatSymbols(Locale.US)).format(distanceForNearbyLoc * 2.43));
 
-                                    String nearbySearchStringDuration = nearbySearchDoubleDuration + " mins";
+                                    String nearbySearchStringDuration = String.valueOf(nearbySearchDoubleDuration);
 
                                     bookingSensorsArrayList.add(new BookingSensors(nearbyAreaName, ApplicationUtils.convertToDouble(latitude1),
                                             ApplicationUtils.convertToDouble(longitude1), distanceForNearbyLoc, parkingNumberOfNearbyDistanceLoc,
@@ -1556,6 +1563,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             TaskParser taskParser = new TaskParser();
                             searchDistance = taskParser.showDistance(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
                                     new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));
+                            /*searchDistance = calculationByDistance(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
+                                    new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));*/
                             Timber.e("searchDistance -> %s", searchDistance);
 
                             layoutSearchVisible(true, searchPlaceName, "0", textViewSearchParkingDistance.getText().toString(), searchPlaceLatLng);
@@ -1570,7 +1579,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                             double searchDoubleDuration = ApplicationUtils.convertToDouble(new DecimalFormat("##.##", new DecimalFormatSymbols(Locale.US)).format(searchDistance * 2.43));
 
-                            String searchStringDuration = searchDoubleDuration + " mins";
+                            String searchStringDuration = String.valueOf(searchDoubleDuration);
 
                             bookingSensorsArrayList.add(new BookingSensors(searchPlaceName, searchPlaceLatLng.latitude, searchPlaceLatLng.longitude,
                                     searchDistance, "0", searchStringDuration,
@@ -1621,7 +1630,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                                             double nearbySearchDoubleDuration = ApplicationUtils.convertToDouble(new DecimalFormat("##.##", new DecimalFormatSymbols(Locale.US)).format(distanceForNearbyLoc * 2.43));
 
-                                            String nearbySearchStringDuration = nearbySearchDoubleDuration + " mins";
+                                            String nearbySearchStringDuration = String.valueOf(nearbySearchDoubleDuration);
 
                                             bookingSensorsArrayList.add(new BookingSensors(nearbyAreaName, ApplicationUtils.convertToDouble(latitude1),
                                                     ApplicationUtils.convertToDouble(longitude1), distanceForNearbyLoc, parkingNumberOfNearbyDistanceLoc,
@@ -2173,7 +2182,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     double doubleDuration = ApplicationUtils.convertToDouble(new DecimalFormat("##.##", new DecimalFormatSymbols(Locale.US)).format(fetchDistance * 2.43));
                     Timber.e("kim doubleDuration -> %s", doubleDuration);
                     //double doubleDuration = ApplicationUtils.convertToDouble(String.format(Locale.US, "%.2f", ApplicationUtils.convertToDouble(new DecimalFormat("##.##").format(kim * 2.43))));
-                    String initialNearestDuration = doubleDuration + " mins";
+                    String initialNearestDuration = String.valueOf(doubleDuration);
                     Timber.e("kim initialNearestDuration -> %s", initialNearestDuration);
 
                     if (fetchDistance < 5) {
@@ -2254,7 +2263,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     double kim = (fetchDistance / 1000) + adjustValue;
                     double doubleDuration = ApplicationUtils.convertToDouble(new DecimalFormat("##.##", new DecimalFormatSymbols(Locale.US)).format(kim * 2.43));
 
-                    String initialNearestDuration = doubleDuration + " mins";
+                    String initialNearestDuration = String.valueOf(doubleDuration);
 
                     if (fetchDistance < 5) {
                         origin = new LatLng(location.getLatitude(), location.getLongitude());
@@ -2800,7 +2809,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 double kim = (adapterDistance / 1000) + adjustValue;
                 double adapterDoubleDuration = ApplicationUtils.convertToDouble(new DecimalFormat("##.##", new DecimalFormatSymbols(Locale.US)).format(adapterDistance * 2.43));
                 //double adapterDoubleDuration = ApplicationUtils.convertToDouble(String.format(Locale.US, "%.2f", ApplicationUtils.convertToDouble(new DecimalFormat("##.##").format(adapterDistance * 2.43))));
-                String adapterStringDuration = adapterDoubleDuration + " mins";
+                String adapterStringDuration = String.valueOf(adapterDoubleDuration);
 
                 bookingSensorsAdapterArrayList.add(new BookingSensors(adapterPlaceName, event.location.latitude, event.location.longitude,
                         adapterDistance, textViewParkingAreaCount.getText().toString(), adapterStringDuration,
@@ -3154,7 +3163,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                 double bottomSheetDoubleDuration = ApplicationUtils.convertToDouble(new DecimalFormat("##.##", new DecimalFormatSymbols(Locale.US)).format(bottomSheetDistance * 2.43));
                 //double bottomSheetDoubleDuration = ApplicationUtils.convertToDouble(String.format(Locale.US, "%.2f", ApplicationUtils.convertToDouble(new DecimalFormat("##.##").format(bottomSheetDistance * 2.43))));
-                String bottomSheetStringDuration = bottomSheetDoubleDuration + " mins";
+                String bottomSheetStringDuration = String.valueOf(bottomSheetDoubleDuration);
 
                 bookingSensorsBottomSheetArrayList.add(new BookingSensors(bottomSheetPlaceName, bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude,
                         bottomSheetDistance, textViewBottomSheetParkingAreaCount.getText().toString(), bottomSheetStringDuration,
@@ -3667,7 +3676,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             btnMarkerGetDirection.setEnabled(true);
                             btnMarkerGetDirection.setFocusable(true);
                         }
-                        if (isInAreaEnabled) {
+                        if (isInAreaEnabled ) {
                             context.setGeoFencing(new LatLng(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude));
                             btnMarkerGetDirection.setEnabled(true);
                             btnMarkerGetDirection.setFocusable(true);
@@ -4403,7 +4412,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     + Math.cos(Math.toRadians(lat1))
                     * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon / 2)
                     * Math.sin(dLon / 2);
-            double c = 2 * Math.asin(Math.sqrt(a));
+
+            double c = 2.5 * Math.asin(Math.sqrt(a));
             double valueResult = Radius * c;
 
             double km = valueResult / 1;
@@ -4411,8 +4421,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             int kmInDec = Integer.parseInt(newFormat.format(km));
             double meter = valueResult % 1000;
             int meterInDec = Integer.parseInt(newFormat.format(meter));
-            /*Timber.i("showDistance" + valueResult + "   KM  " + kmInDec
-                    + " Meter   " + meterInDec);*/
+            Timber.i("showDistance" + valueResult + "   KM  " + kmInDec
+                    + " Meter   " + meterInDec);
 
             return (Radius * c);
         }

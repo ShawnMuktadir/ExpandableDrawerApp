@@ -91,26 +91,44 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
             //view=holder.itemView;
             count++;
             if (count <= 1) {
-                Log.d(TAG, "onBindViewHolder: " + count);
+                Timber.d("onBindViewHolder: -> %s", count);
+
                 selectedItem = position;
-                Log.d(TAG, "onBindViewHolder: " + position);
+
+                Timber.d("onBindViewHolder position -> %s", position);
+
                 holder.relativeLayouTxtBottom.setVisibility(View.VISIBLE);
+
                 holder.textViewStatic.setText(bookingSensors.getText());
+
                 //holder.itemView.setBackgroundColor(Color.LTGRAY);
+
                 holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.selectedColor));
+
                 homeFragment.bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._130sdp));
+
                 ApplicationUtils.setMargins(holder.relativeLayoutTxt, 0, 0, 0, 0);
             }
         } else {
             holder.relativeLayouTxtBottom.setVisibility(View.GONE);
+
             ApplicationUtils.setMargins(holder.relativeLayoutTxt, 0, 0, 0, 0);
         }
 
         holder.textViewParkingAreaName.setText(bookingSensors.getParkingArea());
+
         holder.textViewParkingAreaCount.setText(bookingSensors.getCount());
         //holder.textViewParkingDistance.setText(new DecimalFormat("##.##").format(bookingSensors.getDistance()) + " km");
-        holder.textViewParkingDistance.setText(new DecimalFormat("##.##", new DecimalFormatSymbols(Locale.US)).format(bookingSensors.getDistance()) + " km");
-        holder.textViewParkingTravelTime.setText(bookingSensors.getDuration());
+        //holder.textViewParkingDistance.setText(new DecimalFormat("##.##", new DecimalFormatSymbols(Locale.US)).format(bookingSensors.getDistance()) + " km");
+
+        holder.textViewParkingDistance.setText(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(bookingSensors.getDistance()) + " km");
+
+        DecimalFormat decimalFormat = new DecimalFormat("00.0");
+
+        double tmp = Double.parseDouble(decimalFormat.format(Double
+                .parseDouble(bookingSensors.getDuration())));
+        holder.textViewParkingTravelTime.setText(String.valueOf(tmp)+ " mins");
+        //holder.textViewParkingTravelTime.setText(bookingSensors.getDuration());
 
         holder.itemView.setOnClickListener(v -> {
             if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {

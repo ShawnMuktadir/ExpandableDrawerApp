@@ -91,26 +91,34 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         SensorArea sensorArea = sensorAreas.get(position);
 
         parkingViewHolder.textViewParkingAreaName.setText(ApplicationUtils.capitalize(sensorArea.getParkingArea()));
+
         parkingViewHolder.textViewParkingAreaCount.setText(sensorArea.getCount());
 
         distance = ApplicationUtils.distance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
                 sensorArea.getLat(), sensorArea.getLng());
         sensorArea.setDistance(distance);
-        parkingViewHolder.textViewParkingDistance.setText(new DecimalFormat("##.##", new DecimalFormatSymbols(Locale.US)).format(distance) + " km");
+
+        parkingViewHolder.textViewParkingDistance.setText(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(distance) + " km");
         Timber.e("adapter distance -> %s", parkingViewHolder.textViewParkingDistance.getText());
+
         sensorArea.setDuration(duration);
+
         parkingViewHolder.textViewParkingTravelTime.setText(sensorArea.getDuration());
 
         //Here I am just highlighting the background
         parkingViewHolder.itemView.setBackgroundColor(selectedPosition == position ?
                 context.getResources().getColor(R.color.selectedColor) : Color.TRANSPARENT);
+
         //parkingViewHolder.itemView.setBackgroundColor(context.getResources().getColor(R.color.selectedColor));
+
         parkingViewHolder.itemView.setOnClickListener(v -> {
+
             long now = System.currentTimeMillis();
             if (now - mLastClickTime < CLICK_TIME_INTERVAL) {
                 return;
             }
             mLastClickTime = now;
+
             if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
                 selectedPosition = position;
                 mListener.onItemClick(position);

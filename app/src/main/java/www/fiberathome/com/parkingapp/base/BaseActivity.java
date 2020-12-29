@@ -5,16 +5,19 @@ import android.animation.ObjectAnimator;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -31,6 +34,7 @@ import www.fiberathome.com.parkingapp.utils.internet.Connectivity;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -91,6 +95,12 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
             checkInternetConnection();
         }
     };
+    private BroadcastReceiver mBackgroundLocationReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Timber.e("mBackgroundLocationReceiver");
+        }
+    };
     private AlertDialog mInternetDialog;
     private AlertDialog mGPSDialog;
 
@@ -114,6 +124,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         registerReceiver(mNetworkDetectReceiver, new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
+        registerReceiver(mBackgroundLocationReceiver, new IntentFilter(Manifest.permission.ACCESS_BACKGROUND_LOCATION));
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -142,6 +153,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
     protected void onDestroy() {
         mLocationManager.removeUpdates(this);
         unregisterReceiver(mNetworkDetectReceiver);
+        unregisterReceiver(mBackgroundLocationReceiver);
         super.onDestroy();
     }
 
@@ -260,7 +272,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
             TextView textViewOne = (TextView) snackView.findViewById(R.id.first_text_view);
             textViewOne.setText(context.getResources().getString(R.string.retry));
             textViewOne.setOnClickListener(v -> {
-                Log.d("Allow", "showTwoButtonSnackbar() : allow clicked");
+                Timber.d("showTwoButtonSnackbar() : allow clicked");
                 //snackbar.dismiss();
                 if (ApplicationUtils.checkInternet(context)) {
                     /*Intent intent = getIntent();
@@ -280,7 +292,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
             TextView textViewTwo = (TextView) snackView.findViewById(R.id.second_text_view);
             textViewTwo.setText(context.getResources().getString(R.string.close_app));
             textViewTwo.setOnClickListener(v -> {
-                Log.d("Deny", "showTwoButtonSnackbar() : deny clicked");
+                Timber.d("showTwoButtonSnackbar() : deny clicked");
                 snackbar.dismiss();
                 if (context != null) {
                     finishAffinity();
@@ -450,7 +462,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
                     public void onSuccess(Void aVoid) {
                         // Geofences added
                         // ...
-                        Log.e("geofencingClient", "Success");
+                        Timber.e("Success");
                     }
                 })
                 .addOnFailureListener(this, new OnFailureListener() {
@@ -459,10 +471,35 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
                         // Failed to add geofences
                         // ...
                         //Allow location Access should be all the time
-                        Log.e("geofencingClient", "Fail " + e.getMessage());
+                        Timber.e("Fail -> %s", e.getMessage());
+                        /*new android.app.AlertDialog.Builder(context).setTitle(context.getResources().getString(R.string.permission_all_time)).
+                                //setMessage(context.getResources().getString(R.string.allow_this_permission_from_settings)).
+                                        setMessage(context.getResources().getString(R.string.in_order_to_use_this_app)).
+                                setPositiveButton(context.getResources().getString(R.string.allow), new DialogInterface.OnClickListener() {
+
+                                    @RequiresApi(api = Build.VERSION_CODES.Q)
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        openSettings();
+                                        dialog.dismiss();
+                                    }
+                                }).
+                                setNegativeButton(context.getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                }).show();*/
                     }
                 });
 
+    }
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    private void openSettings() {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", getOpPackageName(), null);
+        intent.setData(uri);
+        startActivity(intent);
     }
 
     private GeofencingRequest getGeoFencingRequest() {

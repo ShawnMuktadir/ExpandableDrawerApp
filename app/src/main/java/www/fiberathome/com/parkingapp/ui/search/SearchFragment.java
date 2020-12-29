@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -40,6 +42,7 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.gson.Gson;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -65,6 +68,7 @@ import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
 import www.fiberathome.com.parkingapp.model.response.search.SearchVisitedPlaceResponse;
 import www.fiberathome.com.parkingapp.model.response.search.SearchVisitorData;
 import www.fiberathome.com.parkingapp.model.response.search.SelectedPlace;
+import www.fiberathome.com.parkingapp.module.eventBus.GetDirectionEvent;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.search.placesadapter.PlacesAutoCompleteAdapter;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
@@ -327,18 +331,20 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
     @Override
     public void onPause() {
         super.onPause();
+
         if (context.isFinishing()) {
             context.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         }
-        //dismissProgressDialog();
+
         hideLoading();
     }
 
     @Override
     public void onDestroy() {
         Timber.e("onDestroy called");
+
         super.onDestroy();
-        //dismissProgressDialog();
+
         hideLoading();
     }
 
@@ -349,39 +355,6 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
         }
         super.onDestroyView();
     }
-
-    /*@Override
-    public void onBackPressed() {
-        super.onBackPressed();
-    }*/
-
-    /*@Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        int x = (int) ev.getX();
-        int y = (int) ev.getY();
-
-        if (ev.getAction() == MotionEvent.ACTION_DOWN &&
-                !getLocationOnScreen(editTextSearch).contains(x, y)) {
-            InputMethodManager input = (InputMethodManager)
-                    context.getSystemService(Context.INPUT_METHOD_SERVICE);
-            input.hideSoftInputFromWindow(editTextSearch.getWindowToken(), 0);
-        }
-        return super.dispatchTouchEvent(ev);
-    }
-
-    protected Rect getLocationOnScreen(EditText mEditText) {
-        Rect mRect = new Rect();
-        int[] location = new int[2];
-
-        mEditText.getLocationOnScreen(location);
-
-        mRect.left = location[0];
-        mRect.top = location[1];
-        mRect.right = location[0] + mEditText.getWidth();
-        mRect.bottom = location[1] + mEditText.getHeight();
-
-        return mRect;
-    }*/
 
     private TextWatcher filterTextWatcher = new TextWatcher() {
 
@@ -433,13 +406,10 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
     private double startLat = 0.0;
     private double startLng = 0.0;
 
-    private ProgressDialog progressDialog;
-
     private void fetchSearchVisitorPlace(String mobileNo) {
         Timber.e("fetchSearchVisitorPlace mobileNo -> %s,", mobileNo);
-        Timber.e("fetchSearchVisitorPlace() called");
 
-        //progressDialog = ApplicationUtils.progressDialog(context, "Enabling GPS ....");
+        Timber.e("fetchSearchVisitorPlace() called");
 
         showLoading(context);
 
@@ -447,8 +417,9 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
 
         StringRequest stringRequest = new StringRequest(Request.Method.DEPRECATED_GET_OR_POST, AppConfig.URL_SEARCH_HISTORY_GET, response -> {
             Timber.e("fetchSearchVisitorPlace() stringRequest called");
-            //progressDialog.dismiss();
+
             hideLoading();
+
             if (response != null) {
                 try {
                     JSONObject object = new JSONObject(response);
@@ -466,23 +437,12 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
 
                             searchVisitorDataList.add(searchVisitorData);
 
-                            //Removing Duplicates;
-                            /*Set<SearchVisitorData> s = new LinkedHashSet<SearchVisitorData>();
-                            s.addAll(searchVisitorDataList);
-                            //searchVisitorDataList = new ArrayList<SearchVisitorData>();
-                            searchVisitorDataList.clear();
-                            searchVisitorDataList.addAll(s);*/
-
                             Timber.e("searchVisitorDataList -> %s", new Gson().toJson(searchVisitorDataList));
                         } else {
                             setNoData();
                         }
                     }
 
-                    /*setFragmentControls(removeDuplicatesSearchVisitorData(searchVisitorDataList));
-                    setFragmentControls(getUniqueList(searchVisitorDataList));
-                    setFragmentControls(clearListFromDuplicateVisitedArea(searchVisitorDataList));
-                    setFragmentControls(noRepeat);*/
                     setFragmentControls(searchVisitorDataList);
 
                 } catch (JSONException e) {
@@ -495,8 +455,7 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
 
         }, error -> {
             Timber.e("jsonObject onErrorResponse get post -> %s", error.getMessage());
-            Timber.e("jsonObject onError Cause get post -> %s", error.getCause());
-            //showMessage(error.getMessage());
+            Timber.e( error.getCause());
         }) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
@@ -510,7 +469,7 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         ParkingApp.getInstance().addToRequestQueue(stringRequest, TAG);
 
-        //fetch data by retrofit
+        //fetch data by retrofit (imp.)
 
         /*ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
         Call<SearchVisitedPlaceResponse> call = request.getVisitorData();
@@ -589,7 +548,7 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
         recyclerViewSearchPlaces.addOnItemTouchListener(new RecyclerTouchListener(context, recyclerViewSearchPlaces, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-//                Toast.makeText(context, position + " is selected!", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, position + " is selected!", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -640,11 +599,6 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
         recyclerViewSearchPlaces.setAdapter(mAutoCompleteAdapter);
     }
 
-    private void dismissProgressDialog() {
-        if (progressDialog != null && progressDialog.isShowing())
-            progressDialog.dismiss();
-    }
-
     private void setNoData() {
         Timber.e("setNoData called");
         imageViewSearchPlace.setVisibility(View.GONE);
@@ -671,7 +625,6 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
         if (providerEnabled) {
             return true;
         } else {
-
             /*AlertDialog alertDialog = new AlertDialog.Builder(context)
                     .setTitle("GPS Permissions")
                     .setMessage("GPS is required for this app to work. Please enable GPS.")
