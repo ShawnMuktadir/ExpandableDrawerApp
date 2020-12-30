@@ -130,13 +130,14 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
 
         if (SharedData.getInstance().getSelectedLanguage() != null || SharedPreManager.getInstance(context).getLanguage() != null
                 || SharedPreManager.getInstance(context).getCheckedItem() != -1) {
+            Timber.e(SharedPreManager.getInstance(context).getLanguage());
             builder.setTitle(context.getResources().getString(R.string.select_language));
             textViewLanguage.setText(SharedData.getInstance().getSelectedLanguage());
             textViewLanguage.setText(SharedPreManager.getInstance(context).getLanguage());
             checkedItem[0] = SharedPreManager.getInstance(context).getCheckedItem();
             Timber.e("checkedItem[0] onResume -> %s", checkedItem[0]);
         } else {
-            builder.setTitle(context.getResources().getString(R.string.select_language));
+            textViewLanguage.setText(resources.getString(R.string.english_item));
         }
     }
 

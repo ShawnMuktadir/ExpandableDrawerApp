@@ -398,7 +398,7 @@
     <string name="connect_to_parking_app">Please enable GPS and turn on Internet to use Parking App</string>
     <string name="upload_profile_photo">Try Again. Please Upload Profile Photo</string>
     <string name="thanks_message">Thanks for being with us</string>
-    <string name="reservation_successful">Parking Spot has Reservated Successfully</string>
+    <string name="reservation_successful">Parking Spot has Reserved Successfully</string>
     <string name="mobile_number_not_exist">Mobile Number doesn\'t exists</string>
     <string name="time_toolbar">Time</string>
     <string name="when_user_can_book">Once reach your destination you can reserve your booking spot</string>
@@ -439,5 +439,7 @@
     <string name="background_location_permission_denied_allow_all_the_time_for_using_parking_time">
         Background location permission denied, Please click allow all the time for using Parking App</string>
     <string name="location_permission_denied_please_click_allow">Location Permission denied, Please click allow all the time for using Parking App</string>
-    />
+    <string name="install_bangla_keyboard">Please search in bangla language for getting result. Install bangla enable keyboard &amp; change app language into Bangla</string>
+    <string name="not_available_at_bangla_search">Bangla searching is not available right now, Please wait until next version is coming</string>
+    <string name="change_app_language_to_english">Change app language into english</string>
 </resources>

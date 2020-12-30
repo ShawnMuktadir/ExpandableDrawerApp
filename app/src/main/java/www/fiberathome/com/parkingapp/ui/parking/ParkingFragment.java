@@ -54,6 +54,7 @@ import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
+import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
 import www.fiberathome.com.parkingapp.model.sensors.SensorArea;
 import www.fiberathome.com.parkingapp.module.eventBus.GetDirectionEvent;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
@@ -277,9 +278,15 @@ public class ParkingFragment extends BaseFragment implements ParkingAdapter.Park
                 if (contents.length() > 0) {
                     //do search
                     if (ApplicationUtils.checkInternet(context) && isGPSEnabled()) {
-                        filter(contents);
-                        parkingAdapter.notifyDataSetChanged();
-                        ApplicationUtils.hideKeyboard(context, editTextParking);
+                        if (SharedPreManager.getInstance(context).getLanguage().equalsIgnoreCase("English") && ApplicationUtils.textContainsBangla(contents)) {
+                            setNoDataForBangla();
+                            recyclerViewParking.setVisibility(View.GONE);
+                            editTextParking.setText("");
+                        } else {
+                            filter(contents);
+                            parkingAdapter.notifyDataSetChanged();
+                            ApplicationUtils.hideKeyboard(context, editTextParking);
+                        }
                     } else {
                         TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
                     }
@@ -309,6 +316,15 @@ public class ParkingFragment extends BaseFragment implements ParkingAdapter.Park
                     ivClearSearchText.setVisibility(View.VISIBLE);
                 } else {
                     ivClearSearchText.setVisibility(View.GONE);
+                }
+                if (SharedPreManager.getInstance(context).getLanguage().equalsIgnoreCase("English") && ApplicationUtils.textContainsBangla(charSequence.toString())) {
+                    setNoDataForBangla();
+                    recyclerViewParking.setVisibility(View.GONE);
+                    editTextParking.setText("");
+                } else {
+                    recyclerViewParking.setVisibility(View.VISIBLE);
+                    filter(charSequence.toString());
+                    parkingAdapter.notifyDataSetChanged();
                 }
             }
 
@@ -356,6 +372,12 @@ public class ParkingFragment extends BaseFragment implements ParkingAdapter.Park
             }
         };
         editTextParking.setFilters(new InputFilter[]{filter});*/
+    }
+
+    private void setNoDataForBangla() {
+        textViewNoData.setVisibility(View.VISIBLE);
+        textViewNoData.setText(context.getResources().getString(R.string.no_record_found));
+        ApplicationUtils.showOnlyMessageDialog(context.getResources().getString(R.string.not_available_at_bangla_search), context);
     }
 
     private TextWatcher filterTextWatcher = new TextWatcher() {
@@ -415,7 +437,7 @@ public class ParkingFragment extends BaseFragment implements ParkingAdapter.Park
 
     private void setNoData() {
         textViewNoData.setVisibility(View.VISIBLE);
-        //textViewNoData.setText(context.getString(R.string.no_record_found));
+        textViewNoData.setText(context.getString(R.string.no_record_found));
     }
 
     private void hideNoData() {

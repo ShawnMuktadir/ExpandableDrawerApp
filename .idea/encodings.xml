@@ -3,6 +3,7 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/base/BaseFragment.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/ui/NavigationActivity.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/ui/law/LawFragment.java" charset="ISO-8859-1" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/ui/splash/SplashActivity.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/ui/splash/SplashFragment.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/utils/GeofenceConstants.java" charset="UTF-8" />

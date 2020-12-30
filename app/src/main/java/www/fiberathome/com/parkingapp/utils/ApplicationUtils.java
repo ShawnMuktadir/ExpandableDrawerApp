@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -104,6 +105,40 @@ public class ApplicationUtils {
         // Show the toast and starts the countdown
         mToastToShow.show();
         toastCountDown.start();
+    }
+
+    public static boolean isProbablyBangla(String s) {
+        for (int i = 0; i < s.length();) {
+            int c = s.codePointAt(i);
+            if (c >= 0x0980 && c <= 0x09A0)
+                return true;
+            i += Character.charCount(c);
+        }
+        return false;
+    }
+
+    public static boolean textContainsBangla(String text) {
+        for (char c : text.toCharArray()) {
+            if (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.BENGALI) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isEnglish(String str)
+    {
+        return ((!str.equals(""))
+                && (str != null)
+                && (str.matches("^[a-zA-Z]*$")));
+    }
+
+    public static int getToolBarHeight(Context context) {
+        int[] attrs = new int[] {R.attr.actionBarSize};
+        TypedArray ta = context.obtainStyledAttributes(attrs);
+        int toolBarHeight = ta.getDimensionPixelSize(0, -1);
+        ta.recycle();
+        return toolBarHeight;
     }
 
     public static double round (double value, int precision) {

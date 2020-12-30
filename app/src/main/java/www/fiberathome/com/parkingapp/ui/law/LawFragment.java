@@ -1,7 +1,6 @@
 package www.fiberathome.com.parkingapp.ui.law;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.Editable;
@@ -17,7 +16,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -38,13 +36,14 @@ import butterknife.Unbinder;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
+import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
 import www.fiberathome.com.parkingapp.model.law.LawItem;
 import www.fiberathome.com.parkingapp.model.law.LocalJson;
 import www.fiberathome.com.parkingapp.model.law.Result;
+import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
-import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 
 import static android.content.Context.LOCATION_SERVICE;
 
@@ -230,7 +229,18 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
                 /*if (s.length() > 0) {
                     filter(s.toString());
                 }*/
-                lawAdapter.getFilter().filter(s.toString());
+                if (SharedPreManager.getInstance(context).getLanguage().equalsIgnoreCase("English") && ApplicationUtils.textContainsBangla(s.toString())) {
+                    setNoDataForBangla();
+                    recyclerView.setVisibility(View.GONE);
+                    editTextSearchLaw.setText("");
+                } else if (Locale.getDefault().getLanguage().equals("bn") && ApplicationUtils.isEnglish(s.toString())) {
+                    setNoDataForEnglish();
+                    recyclerView.setVisibility(View.GONE);
+                    editTextSearchLaw.setText("");
+                } else {
+                    recyclerView.setVisibility(View.VISIBLE);
+                    lawAdapter.getFilter().filter(s.toString());
+                }
 
                 if (s.length() == 0) {
                     fetchJSONFromAsset();
@@ -249,9 +259,18 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
                 String contents = editTextSearchLaw.getText().toString().trim();
                 if (contents.length() > 0) {
                     //do search
-                    lawAdapter.getFilter().filter(contents);
-                    lawAdapter.notifyDataSetChanged();
-                    ApplicationUtils.hideKeyboard(context, editTextSearchLaw);
+                    if (SharedPreManager.getInstance(context).getLanguage().equalsIgnoreCase("English") && ApplicationUtils.textContainsBangla(contents.toString())) {
+                        setNoDataForBangla();
+                        recyclerView.setVisibility(View.GONE);
+                        editTextSearchLaw.setText("");
+                    } else if (Locale.getDefault().getLanguage().equals("bn") && ApplicationUtils.isEnglish(contents.toString())) {
+                        setNoDataForEnglish();
+                        recyclerView.setVisibility(View.GONE);
+                        editTextSearchLaw.setText("");
+                    } else {
+                        recyclerView.setVisibility(View.VISIBLE);
+                        lawAdapter.getFilter().filter(contents.toString());
+                    }
                 } else {
                     //if something to do for empty edittext
                     ApplicationUtils.hideKeyboard(context, editTextSearchLaw);
@@ -262,36 +281,48 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
         });
 
         //handle special characters
-//        InputFilter filter = new InputFilter() {
-//            @Override
-//            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-//                boolean keepOriginal = true;
-//                StringBuilder sb = new StringBuilder(end - start);
-//                for (int i = start; i < end; i++) {
-//                    char c = source.charAt(i);
-//                    if (isCharAllowed(c)) // put your condition here
-//                        sb.append(c);
-//                    else
-//                        keepOriginal = false;
-//                }
-//                if (keepOriginal)
-//                    return null;
-//                else {
-//                    if (source instanceof Spanned) {
-//                        SpannableString sp = new SpannableString(sb);
-//                        TextUtils.copySpansFrom((Spanned) source, start, sb.length(), null, sp, 0);
-//                        return sp;
-//                    } else {
-//                        return sb;
-//                    }
-//                }
-//            }
-//
-//            private boolean isCharAllowed(char c) {
-//                return Character.isLetterOrDigit(c) || Character.isSpaceChar(c);
-//            }
-//        };
-//        editTextSearchLaw.setFilters(new InputFilter[]{filter});
+        /*InputFilter filter = new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                boolean keepOriginal = true;
+                StringBuilder sb = new StringBuilder(end - start);
+                for (int i = start; i < end; i++) {
+                    char c = source.charAt(i);
+                    if (isCharAllowed(c)) // put your condition here
+                        sb.append(c);
+                    else
+                        keepOriginal = false;
+                }
+                if (keepOriginal)
+                    return null;
+                else {
+                    if (source instanceof Spanned) {
+                        SpannableString sp = new SpannableString(sb);
+                        TextUtils.copySpansFrom((Spanned) source, start, sb.length(), null, sp, 0);
+                        return sp;
+                    } else {
+                        return sb;
+                    }
+                }
+            }
+
+            private boolean isCharAllowed(char c) {
+                return Character.isLetterOrDigit(c) || Character.isSpaceChar(c);
+            }
+        };
+        editTextSearchLaw.setFilters(new InputFilter[]{filter});*/
+    }
+
+    private void setNoDataForBangla() {
+        textViewNoData.setVisibility(View.VISIBLE);
+        textViewNoData.setText(context.getResources().getString(R.string.no_record_found));
+        ApplicationUtils.showOnlyMessageDialog(context.getResources().getString(R.string.install_bangla_keyboard), context);
+    }
+
+    private void setNoDataForEnglish() {
+        textViewNoData.setVisibility(View.VISIBLE);
+        textViewNoData.setText(context.getResources().getString(R.string.no_record_found));
+        ApplicationUtils.showOnlyMessageDialog(context.getResources().getString(R.string.change_app_language_to_english), context);
     }
 
     public void hideNoData() {
@@ -304,7 +335,7 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
     }
 
     private void loadPDF() {
-//        PDFView pdfView = (PDFView) findViewById(R.id.pdfView);
-//        pdfView.fromAsset("parkingrule.pdf").load();
+        /*PDFView pdfView = (PDFView) findViewById(R.id.pdfView);
+        pdfView.fromAsset("parkingrule.pdf").load();*/
     }
 }

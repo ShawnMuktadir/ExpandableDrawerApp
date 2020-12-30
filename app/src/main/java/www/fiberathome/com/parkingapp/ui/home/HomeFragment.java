@@ -22,10 +22,13 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -38,6 +41,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -333,7 +337,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private LinearLayout bottomSheet;
     private FragmentChangeListener listener;
     private long arrived, departure;
-    private TextView arrivedtimeTV, departuretimeTV, timeDifferenceTV, countDownTV, textViewTermsCondition;
+    private TextView arrivedTimeTV, departureTimeTV, timeDifferenceTV, countDownTV, textViewTermsCondition;
     private long difference;
     private Button moreBtn, btnLiveParking;
     private LinearLayout bookedLayout;
@@ -496,7 +500,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         setHasOptionsMenu(false);
         super.onCreate(savedInstanceState);
         if (bookingSensorsArrayListGlobal.isEmpty() && !bookingSensorsArrayListGlobalRoom.isEmpty()) {
-            fetchfromRoom();
+            fetchDataFromRoom();
         }
         if (context != null) {
             FirebaseApp.initializeApp(context);
@@ -719,15 +723,14 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         //add circle for dangerous area
         //addCircleArea();
-
     }
 
     private void initUI(View view) {
         view.findViewById(R.id.currentLocationImageButton).setOnClickListener(clickListener);
         bottomSheetRecyclerView = view.findViewById(R.id.bottomsheet_recyclerview);
         //for booking
-        arrivedtimeTV = view.findViewById(R.id.arrivedtimeTV);
-        departuretimeTV = view.findViewById(R.id.departureTimeTV);
+        arrivedTimeTV = view.findViewById(R.id.arrivedtimeTV);
+        departureTimeTV = view.findViewById(R.id.departureTimeTV);
         timeDifferenceTV = view.findViewById(R.id.timeDifferenceTV);
         countDownTV = view.findViewById(R.id.countDownTV);
         moreBtn = view.findViewById(R.id.moreBtn);
@@ -1117,15 +1120,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     }
                 });*/
             }
-            SharedData.getInstance().setOnConnectedLocation(onConnectedLocation);
-            progressDialog.dismiss();
 
-            buildLocationRequest();
-            buildLocationCallBack();
-            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
-
-            initArea();
-            settingGeoFire();
         } else {
             Timber.e("onConnected null called");
             previousMarker = null;
@@ -1174,17 +1169,21 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     }
                 });
             }
-
-            SharedData.getInstance().setOnConnectedLocation(onConnectedLocation);
-            progressDialog.dismiss();
-
-            buildLocationRequest();
-            buildLocationCallBack();
-            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
-
-            initArea();
-            settingGeoFire();
         }
+
+        SharedData.getInstance().setOnConnectedLocation(onConnectedLocation);
+
+        progressDialog.dismiss();
+
+        buildLocationRequest();
+
+        buildLocationCallBack();
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
+
+        initArea();
+
+        settingGeoFire();
 
         //value getting from parking adapter
         if (SharedData.getInstance().getSensorArea() != null) {
@@ -1202,30 +1201,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         } else {
             Timber.e("Genjam");
         }
-
-        /*Dexter.withContext(context).withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                .withListener(new PermissionListener() {
-                    @Override
-                    public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
-
-                        buildLocationRequest();
-                        buildLocationCallBack();
-                        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
-
-                        initArea();
-                        settingGeoFire();
-                    }
-
-                    @Override
-                    public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
-                        Toast.makeText(context, "You must enable permission", Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
-
-                    }
-                }).check();*/
     }
 
     public void animateCamera(@NonNull Location location) {
@@ -1269,7 +1244,45 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running))
                 .title("My Location")
                 .rotation(location.getBearing()).flat(true).anchor(0.5f, 0.5f));
+
+        animateMarker(currentLocationMarker, location); // Helper method for smooth animation
     }
+
+    public void animateMarker(final Marker marker, final Location location) {
+        final Handler handler = new Handler();
+        final long start = SystemClock.uptimeMillis();
+        final LatLng startLatLng = marker.getPosition();
+        final double startRotation = marker.getRotation();
+        final long duration = 500;
+
+        final Interpolator interpolator = new LinearInterpolator();
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                long elapsed = SystemClock.uptimeMillis() - start;
+                float t = interpolator.getInterpolation((float) elapsed
+                        / duration);
+
+                double lng = t * location.getLongitude() + (1 - t)
+                        * startLatLng.longitude;
+                double lat = t * location.getLatitude() + (1 - t)
+                        * startLatLng.latitude;
+
+                float rotation = (float) (t * location.getBearing() + (1 - t)
+                        * startRotation);
+
+                marker.setPosition(new LatLng(lat, lng));
+                marker.setRotation(rotation);
+
+                if (t < 1.0) {
+                    // Post again 16ms later.
+                    handler.postDelayed(this, 16);
+                }
+            }
+        });
+    }
+
 
     @Override
     public void onStart() {
@@ -1685,7 +1698,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    progressDialog.dismiss();
+                    hideLoading();
                     if (providerEnabled) {
                         Toast.makeText(context, "GPS is enabled", Toast.LENGTH_SHORT).show();
                         Timber.e("providerEnabled HomeFragment check called");
@@ -1721,8 +1734,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             Timber.d("onViewCreated: in else");
                         }
 
-                        arrivedtimeTV.setText(new StringBuilder().append("Arrived ").append(getDate(arrived)).toString());
-                        departuretimeTV.setText(new StringBuilder().append("Departure ").append(getDate(departure)).toString());
+                        arrivedTimeTV.setText(new StringBuilder().append("Arrived ").append(getDate(arrived)).toString());
+                        departureTimeTV.setText(new StringBuilder().append("Departure ").append(getDate(departure)).toString());
                         timeDifferenceTV.setText(new StringBuilder().append(getTimeDifference(difference)).append(" min").toString());
                         //dekhte hobee eta koi boshbe
                         if (getDirectionButtonClicked == 0) {
@@ -2642,7 +2655,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                 }
                             });
                             polyLineAnimator.start();*/
-                            //zoomRoute(mMap, polyLineList);
+                            zoomRoute(mMap, polyLineList);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -2680,13 +2693,14 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         int routePadding = 250;
         int left = 50;
         int right = 50;
-        int top = 20;
-        int bottom = 250;
+        int top = ApplicationUtils.getToolBarHeight(context);
+        int bottom = (int) context.getResources().getDimension(R.dimen._200sdp);
 
         LatLngBounds latLngBounds = boundsBuilder.build();
 
         googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, routePadding));
         googleMap.setPadding(left, top, right, bottom);
+        //googleMap.moveCamera(CameraUpdateFactory.zoomTo(13.5f));
     }
 
     private List<LatLng> decodePoly(String encoded) {
@@ -2749,7 +2763,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         if (bookingSensorsArrayListGlobal.isEmpty()) {
             //todo
             Timber.e("bookingSensorsArrayListGlobal isEmpty() called");
-            fetchfromRoom();
+            fetchDataFromRoom();
         }
 
         if (ApplicationUtils.checkInternet(context) && isGPSEnabled()) {
@@ -2853,7 +2867,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             @Override
             public void run() {
                 location = event.location;
-                //EventBus.getDefault().post(new SetMarkerEvent(location));
                 MarkerOptions markerOptions = new MarkerOptions();
 
                 markerOptions.position(location);
@@ -2862,10 +2875,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
                 mMap.addMarker(markerOptions);
                 //move map camera
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 16f));
+                //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 16f));
 
                 btnGetDirection.setVisibility(View.VISIBLE);
-                //linearLayoutNameCount.setVisibility(View.VISIBLE);
                 linearLayoutBottom.setVisibility(View.VISIBLE);
                 imageViewBack.setVisibility(View.VISIBLE);
 
@@ -2886,7 +2898,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                //animateCamera(currentLocation);
                 bottomSheetPlaceLatLng = event.location;
                 location = event.location;
                 searchPlaceLatLng = event.location;
@@ -2897,7 +2908,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
                 mMap.addMarker(markerOptions);
                 //move map camera
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bottomSheetPlaceLatLng, 16f));
+                //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bottomSheetPlaceLatLng, 16f));
                 btnBottomSheetGetDirection.setVisibility(View.VISIBLE);
                 linearLayoutBottomSheetBottom.setVisibility(View.VISIBLE);
                 imageViewBottomSheetBack.setVisibility(View.VISIBLE);
@@ -2933,7 +2944,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
                 mMap.addMarker(markerOptions);
                 //move map camera
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 16f));
+                //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 16f));
                 btnSearchGetDirection.setVisibility(View.VISIBLE);
                 /*linearLayoutNameCount.setVisibility(View.VISIBLE);
                 linearLayoutSearchBottom.setVisibility(View.VISIBLE);*/
@@ -2969,7 +2980,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
                 mMap.addMarker(markerOptions);
                 //move map camera
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerPlaceLatLng, 16f));
+                //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerPlaceLatLng, 16f));
                 btnMarkerGetDirection.setVisibility(View.VISIBLE);
 
                 String url = getDirectionsUrl(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()), markerPlaceLatLng);
@@ -2980,6 +2991,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                 setMapZoomLevelDirection(new LatLng(onConnectedLocation.getLatitude(),
                         onConnectedLocation.getLongitude()), markerPlaceLatLng);
+
+                /*float zoomLevel = getZoomLevel(markerDistance);
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(markerPlaceLatLng, zoomLevel));*/
 
             }
         }, 1000);
@@ -3005,29 +3019,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             //getBoundsZoomLevel(startPosition,endPosition,width,height);
             mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding));
         }
-    }
-
-    final static int GLOBE_WIDTH = 256; // a constant in Google's map projection
-    final static int ZOOM_MAX = 21;
-
-    public static int getBoundsZoomLevel(LatLng northeast,LatLng southwest,
-                                         int width, int height) {
-        double latFraction = (latRad(northeast.latitude) - latRad(southwest.latitude)) / Math.PI;
-        double lngDiff = northeast.longitude - southwest.longitude;
-        double lngFraction = ((lngDiff < 0) ? (lngDiff + 360) : lngDiff) / 360;
-        double latZoom = zoom(height, GLOBE_WIDTH, latFraction);
-        double lngZoom = zoom(width, GLOBE_WIDTH, lngFraction);
-        double zoom = Math.min(Math.min(latZoom, lngZoom),ZOOM_MAX);
-        return (int)(zoom);
-    }
-    private static double latRad(double lat) {
-        double sin = Math.sin(lat * Math.PI / 180);
-        double radX2 = Math.log((1 + sin) / (1 - sin)) / 2;
-        return Math.max(Math.min(radX2, Math.PI), -Math.PI) / 2;
-    }
-    private static double zoom(double mapPx, double worldPx, double fraction) {
-        final double LN2 = .693147180559945309417;
-        return (Math.log(mapPx / worldPx / fraction) / LN2);
     }
 
     @SuppressLint("SetTextI18n")
@@ -3148,7 +3139,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
                 mMap.addMarker(markerOptions);
                 //move map camera
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bottomSheetPlaceLatLng, 16f));
+                //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bottomSheetPlaceLatLng, 16f));
 
                 for (int i = 0; i < bottomSheetPlaceEventJsonArray.length(); i++) {
                     JSONObject jsonObject;
@@ -3571,14 +3562,13 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     //ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
                     if (location != null) {
                         EventBus.getDefault().post(new GetDirectionAfterButtonClickEvent(location));
-                        //fetchSensors(onConnectedLocation);
                         buttonSearch.setVisibility(View.GONE);
                         MarkerOptions markerOptions = new MarkerOptions();
                         markerOptions.position(location);
                         coordList.add(new LatLng(location.latitude, location.longitude));
                         mMap.addMarker(markerOptions);
                         //move map camera
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 16f));
+                        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 16f));
                         linearLayoutBottom.setVisibility(View.VISIBLE);
                         linearLayoutSearchBottom.setVisibility(View.GONE);
                         linearLayoutMarkerBottom.setVisibility(View.GONE);
@@ -3649,14 +3639,13 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     getDirectionSearchButtonClicked++;
                     if (searchPlaceLatLng != null) {
                         EventBus.getDefault().post(new GetDirectionForSearchEvent(searchPlaceLatLng));
-                        //fetchSensors(onConnectedLocation);
                         buttonSearch.setVisibility(View.GONE);
                         MarkerOptions markerDestinationPositionOptions = new MarkerOptions();
                         markerDestinationPositionOptions.position(searchPlaceLatLng);
                         coordList.add(new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));
                         mMap.addMarker(markerDestinationPositionOptions);
                         //move map camera
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 16f));
+                        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 16f));
                         linearLayoutSearchBottomButton.setVisibility(View.VISIBLE);
                         linearLayoutBottom.setVisibility(View.GONE);
                         linearLayoutMarkerBottom.setVisibility(View.GONE);
@@ -3707,14 +3696,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     //ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
                     if (markerPlaceLatLng != null) {
                         EventBus.getDefault().post(new GetDirectionForMarkerEvent(markerPlaceLatLng));
-                        //fetchSensors(onConnectedLocation);
                         buttonSearch.setVisibility(View.GONE);
                         MarkerOptions markerOptions = new MarkerOptions();
                         markerOptions.position(markerPlaceLatLng);
                         coordList.add(new LatLng(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude));
                         mMap.addMarker(markerOptions);
-                        //move map camera
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerPlaceLatLng, 16f));
                         linearLayoutBottom.setVisibility(View.GONE);
                         linearLayoutSearchBottom.setVisibility(View.GONE);
                         linearLayoutMarkerBottom.setVisibility(View.VISIBLE);
@@ -3823,7 +3809,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
                         mMap.addMarker(markerOptions);
                         //move map camera
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bottomSheetPlaceLatLng, 16f));
+                        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bottomSheetPlaceLatLng, 16f));
                         linearLayoutBottom.setVisibility(View.GONE);
                         linearLayoutSearchBottom.setVisibility(View.GONE);
                         linearLayoutMarkerBottom.setVisibility(View.GONE);
@@ -4306,7 +4292,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         saveTask.execute();
     }
 
-    private void fetchfromRoom() {
+    private void fetchDataFromRoom() {
         Thread thread = new Thread(() -> {
             Timber.e("fetchfromRoom called");
             List<BookingSensorsRoom> sensorsRooms = DatabaseClient.getInstance(context).getAppDatabase().bookingSensorsDao().getAll();

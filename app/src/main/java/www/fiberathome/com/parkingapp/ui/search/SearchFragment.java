@@ -175,7 +175,7 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
             mAutoCompleteAdapter.clearList();
             if (searchVisitorDataList != null) {
                 hideNoData();
-                fetchSearchVisitorPlace(SharedPreManager.getInstance(context).getUser().getMobileNo());
+                fetchSearchVisitorPlaceWithoutProgressBar(SharedPreManager.getInstance(context).getUser().getMobileNo());
             } else {
                 setNoData();
             }
@@ -212,7 +212,7 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
                     }
                     if (searchVisitorDataList != null) {
                         hideNoData();
-                        fetchSearchVisitorPlace(SharedPreManager.getInstance(context).getUser().getMobileNo());
+                        fetchSearchVisitorPlaceWithoutProgressBar(SharedPreManager.getInstance(context).getUser().getMobileNo());
                     } else {
                         setNoData();
                     }
@@ -419,6 +419,132 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
             Timber.e("fetchSearchVisitorPlace() stringRequest called");
 
             hideLoading();
+
+            if (response != null) {
+                try {
+                    JSONObject object = new JSONObject(response);
+                    JSONArray jsonArray = object.getJSONArray("visitor_data");
+                    ArrayList<SearchVisitorData> noRepeat = null;
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        searchVisitorData = new SearchVisitorData();
+                        JSONArray array = jsonArray.getJSONArray(i);
+                        if (array != null) {
+                            hideNoData();
+                            searchVisitorData.setVisitedArea(array.getString(6).trim());
+                            searchVisitorData.setEndLat(Double.parseDouble(array.getString(2).trim()));
+                            searchVisitorData.setEndLng(Double.parseDouble(array.getString(3).trim()));
+                            searchVisitorData.setPlaceId(array.getString(1).trim());
+
+                            searchVisitorDataList.add(searchVisitorData);
+
+                            Timber.e("searchVisitorDataList -> %s", new Gson().toJson(searchVisitorDataList));
+                        } else {
+                            setNoData();
+                        }
+                    }
+
+                    setFragmentControls(searchVisitorDataList);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Timber.e("response search history is null");
+            }
+
+
+        }, error -> {
+            Timber.e("jsonObject onErrorResponse get post -> %s", error.getMessage());
+            Timber.e( error.getCause());
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Timber.e("map called");
+                Map<String, String> params = new HashMap<>();
+                params.put("mobile_number", mobileNo);
+                return params;
+            }
+        };
+
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        ParkingApp.getInstance().addToRequestQueue(stringRequest, TAG);
+
+        //fetch data by retrofit (imp.)
+
+        /*ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+        Call<SearchVisitedPlaceResponse> call = request.getVisitorData();
+        call.enqueue(new Callback<SearchVisitedPlaceResponse>() {
+            @Override
+            public void onResponse(@NotNull Call<SearchVisitedPlaceResponse> call, @NotNull Response<SearchVisitedPlaceResponse> response) {
+                Timber.e("onResponse searchHistory-> %s", new Gson().toJson(response.body()));
+
+                if (response.body() != null) {
+                    list = response.body().getVisitorData();
+                    Timber.e("list -> %s", list);
+
+                    searchVisitedPlaceResponse = response.body();
+
+                    visitedPlaceList = searchVisitedPlaceResponse.getVisitorData();
+                    if (visitedPlaceList!=null){
+                        for (List<String> visitedPlaceData : visitedPlaceList) {
+                            for (int i = 0; i < visitedPlaceData.size(); i++) {
+
+                                Log.d(TAG, "onResponse: i=" + i);
+
+                                if (i == 6) {
+                                    parkingArea = visitedPlaceData.get(i);
+                                }
+
+                                if (i == 1) {
+                                    placeId = visitedPlaceData.get(i);
+                                }
+
+                                if (i == 2) {
+                                    endLat = Double.parseDouble(visitedPlaceData.get(i));
+                                }
+
+                                if (i == 3) {
+                                    endLng = Double.parseDouble(visitedPlaceData.get(i));
+                                }
+
+                                if (i == 4) {
+                                    startLat = Double.parseDouble(visitedPlaceData.get(i));
+                                }
+
+                                if (i == 5) {
+                                    startLng = Double.parseDouble(visitedPlaceData.get(i));
+                                }
+                            }
+                            SearchVisitorData searchVisitorData = new SearchVisitorData(parkingArea, placeId, endLat, endLng, startLat, startLng);
+                            searchVisitorDataList.add(searchVisitorData);
+                            Timber.e("searchVisitorData -> %s", new Gson().toJson(searchVisitorData));
+                        }
+                        setFragmentControls(searchVisitorDataList);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<SearchVisitedPlaceResponse> call, @NonNull Throwable t) {
+                Timber.e("onFailure -> %s", t.getMessage());
+                ApplicationUtils.showMessageDialog("Something went wrong...Please try later!", context);
+            }
+        });*/
+    }
+
+    private void fetchSearchVisitorPlaceWithoutProgressBar(String mobileNo) {
+        Timber.e("fetchSearchVisitorPlace mobileNo -> %s,", mobileNo);
+
+        Timber.e("fetchSearchVisitorPlace() called");
+
+        //showLoading(context);
+
+        HttpsTrustManager.allowAllSSL();
+
+        StringRequest stringRequest = new StringRequest(Request.Method.DEPRECATED_GET_OR_POST, AppConfig.URL_SEARCH_HISTORY_GET, response -> {
+            Timber.e("fetchSearchVisitorPlace() stringRequest called");
+
+            //hideLoading();
 
             if (response != null) {
                 try {

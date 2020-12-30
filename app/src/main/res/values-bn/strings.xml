@@ -438,4 +438,7 @@
     <string name="background_location_permission_denied_allow_all_the_time_for_using_parking_time">
         ব্যাকগ্রাউন্ড অবস্থানের অনুমতি অস্বীকৃত, পার্কিং অ্যাপ্লিকেশন ব্যবহারের জন্য দয়া করে সর্বদা অনুমতি দিন ক্লিক করুন</string>
     <string name="location_permission_denied_please_click_allow">অবস্থানের অনুমতি অস্বীকৃত, পার্কিং অ্যাপ্লিকেশন ব্যবহারের জন্য দয়া করে সর্বদা অনুমতি দিন ক্লিক করুন</string>
+    <string name="install_bangla_keyboard">ফলাফল পাওয়ার জন্য দয়া করে বাংলা ভাষায় অনুসন্ধান করুন। বাংলা সক্ষম কীবোর্ড ইনস্টল করুন এবং অ্যাপ্লিকেশনটির ভাষা বাংলায় পরিবর্তন করুন</string>
+    <string name="not_available_at_bangla_search">বাংলা অনুসন্ধান এখনই পাওয়া যাবে না নয়, দয়া করে পরবর্তী সংস্করণ না আসা পর্যন্ত অপেক্ষা করুন</string>
+    <string name="change_app_language_to_english">অ্যাপ্লিকেশন ভাষাটিকে ইংরেজিতে পরিবর্তন করুন</string>
 </resources>
