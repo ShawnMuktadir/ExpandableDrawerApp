@@ -426,6 +426,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private String adapterUid;
     private String bottomUid;
     private ArrayList<BookingSensors> bookingSensorsArrayListGlobalRoom = new ArrayList<>();
+    private Marker markerClicked;
+    private boolean isNotificationSent=false;
 
     public HomeFragment() {
 
@@ -763,10 +765,16 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             }
                             previousMarker = marker;
                             marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_gray));
+                            markerClicked= marker;
+                            isNotificationSent = false;
                         }
                     }
 
-                    context.setGeoFencing(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
+//                    context.setGeoFencing(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
+
+
+
+//                    context.startGeofence(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
 
                     bookingSensorsMarkerArrayList.clear();
 
@@ -1244,6 +1252,19 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running))
                 .title("My Location")
                 .rotation(location.getBearing()).flat(true).anchor(0.5f, 0.5f));
+        if(markerClicked!=null){
+            checkParkingSpotDistance(latLng,markerClicked.getPosition());
+        }
+
+    }
+
+    private void checkParkingSpotDistance(LatLng car, LatLng spot) {
+        double distanceBetween = ApplicationUtils.distance(car.latitude, car.longitude, spot.latitude, spot.longitude);
+       if(distanceBetween <=70 && !isNotificationSent ){
+           sendNotification("You Entered parking spot","You can book parking slot");
+
+           isNotificationSent = true;
+       }
 
         animateMarker(currentLocationMarker, location); // Helper method for smooth animation
     }

@@ -2,6 +2,7 @@ package www.fiberathome.com.parkingapp.base;
 
 import android.Manifest;
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -17,6 +18,7 @@ import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,6 +37,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.provider.Settings;
+import android.provider.SyncStateContract;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -43,6 +46,8 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
@@ -148,6 +153,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
 
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+
     }
 
     @Override
@@ -524,6 +530,11 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         geoFencePendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.
                 FLAG_UPDATE_CURRENT);
         return geoFencePendingIntent;
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+
     }
 
 }
