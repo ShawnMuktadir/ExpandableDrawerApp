@@ -427,7 +427,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private String bottomUid;
     private ArrayList<BookingSensors> bookingSensorsArrayListGlobalRoom = new ArrayList<>();
     private Marker markerClicked;
-    private boolean isNotificationSent=false;
+    private boolean isNotificationSent = false;
 
     public HomeFragment() {
 
@@ -765,13 +765,12 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             }
                             previousMarker = marker;
                             marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_gray));
-                            markerClicked= marker;
+                            markerClicked = marker;
                             isNotificationSent = false;
                         }
                     }
 
 //                    context.setGeoFencing(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
-
 
 
 //                    context.startGeofence(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
@@ -872,7 +871,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         String markerStringDuration = String.valueOf(markerDoubleDuration);
 
                         bookingSensorsMarker = new BookingSensors(markerPlaceName, markerPlaceLatLng.latitude, markerPlaceLatLng.longitude,
-                                ApplicationUtils.round(markerDistance,1), parkingNumberOfIndividualMarker, markerStringDuration,
+                                ApplicationUtils.round(markerDistance, 1), parkingNumberOfIndividualMarker, markerStringDuration,
                                 context.getResources().getString(R.string.nearest_parking_from_your_destination),
                                 BookingSensors.TEXT_INFO_TYPE, 0);
                         if (marker.getTitle() != null && bookingSensorsMarker.getCount() != null) {
@@ -1239,9 +1238,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     public void onLocationChanged(Location location) {
         //Timber.e("onLocationChanged: ");
         currentLocation = location;
-        //Timber.e("onLocationChanged currentLocation -> %s", currentLocation);
-        //previousMarker = null;
-        //Toast.makeText(context, "900 onLocationChanged previous null", Toast.LENGTH_SHORT).show();
+
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
         if (currentLocationMarker != null) {
@@ -1252,21 +1249,22 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running))
                 .title("My Location")
                 .rotation(location.getBearing()).flat(true).anchor(0.5f, 0.5f));
-        if(markerClicked!=null){
-            checkParkingSpotDistance(latLng,markerClicked.getPosition());
-        }
 
+        animateMarker(currentLocationMarker, location); // Helper method for smooth animation
+
+        if (markerClicked != null) {
+            checkParkingSpotDistance(latLng, markerClicked.getPosition());
+        }
     }
 
     private void checkParkingSpotDistance(LatLng car, LatLng spot) {
         double distanceBetween = ApplicationUtils.distance(car.latitude, car.longitude, spot.latitude, spot.longitude);
-       if(distanceBetween <=70 && !isNotificationSent ){
-           sendNotification("You Entered parking spot","You can book parking slot");
+        if (distanceBetween <= 70 && !isNotificationSent) {
 
-           isNotificationSent = true;
-       }
+            sendNotification("You Entered parking spot", "You can book parking slot");
 
-        animateMarker(currentLocationMarker, location); // Helper method for smooth animation
+            isNotificationSent = true;
+        }
     }
 
     public void animateMarker(final Marker marker, final Location location) {
@@ -1303,7 +1301,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             }
         });
     }
-
 
     @Override
     public void onStart() {
@@ -1591,115 +1588,115 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 /*getAddress(context, searchPlaceLatLng.latitude, searchPlaceLatLng.longitude, new AddressCallBack() {
                     @Override
                     public void addressCall(String address) {*/
-                        String searchPlaceName = areaName;
-                        if (onConnectedLocation != null && searchPlaceLatLng != null) {
-                            TaskParser taskParser = new TaskParser();
-                            searchDistance = taskParser.showDistance(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
-                                    new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));
+                String searchPlaceName = areaName;
+                if (onConnectedLocation != null && searchPlaceLatLng != null) {
+                    TaskParser taskParser = new TaskParser();
+                    searchDistance = taskParser.showDistance(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
+                            new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));
                             /*searchDistance = calculationByDistance(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
                                     new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));*/
-                            Timber.e("searchDistance -> %s", searchDistance);
+                    Timber.e("searchDistance -> %s", searchDistance);
 
-                            layoutSearchVisible(true, searchPlaceName, "0", textViewSearchParkingDistance.getText().toString(), searchPlaceLatLng);
+                    layoutSearchVisible(true, searchPlaceName, "0", textViewSearchParkingDistance.getText().toString(), searchPlaceLatLng);
 
-                            bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._90sdp));
+                    bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._90sdp));
 
                             /*if (searchDistance < 3000) {
                                 adjustValue = 1;
                             }*/
 
-                            double kim = (searchDistance / 1000) + adjustValue;
+                    double kim = (searchDistance / 1000) + adjustValue;
 
-                            double searchDoubleDuration = ApplicationUtils.convertToDouble(new DecimalFormat("##.##", new DecimalFormatSymbols(Locale.US)).format(searchDistance * 2.43));
+                    double searchDoubleDuration = ApplicationUtils.convertToDouble(new DecimalFormat("##.##", new DecimalFormatSymbols(Locale.US)).format(searchDistance * 2.43));
 
-                            String searchStringDuration = String.valueOf(searchDoubleDuration);
+                    String searchStringDuration = String.valueOf(searchDoubleDuration);
 
-                            bookingSensorsArrayList.add(new BookingSensors(searchPlaceName, searchPlaceLatLng.latitude, searchPlaceLatLng.longitude,
-                                    searchDistance, "0", searchStringDuration,
-                                    context.getResources().getString(R.string.nearest_parking_from_your_destination),
-                                    BookingSensors.TEXT_INFO_TYPE, 0));
+                    bookingSensorsArrayList.add(new BookingSensors(searchPlaceName, searchPlaceLatLng.latitude, searchPlaceLatLng.longitude,
+                            searchDistance, "0", searchStringDuration,
+                            context.getResources().getString(R.string.nearest_parking_from_your_destination),
+                            BookingSensors.TEXT_INFO_TYPE, 0));
 
-                            if (searchPlaceEventJsonArray != null) {
-                                for (int i = 0; i < searchPlaceEventJsonArray.length(); i++) {
-                                    JSONObject jsonObject;
-                                    try {
-                                        jsonObject = searchPlaceEventJsonArray.getJSONObject(i);
-                                        String latitude1 = jsonObject.get("latitude").toString();
-                                        String longitude1 = jsonObject.get("longitude").toString();
-                                        String nearestSearchAreaName = jsonObject.get("parking_area").toString();
+                    if (searchPlaceEventJsonArray != null) {
+                        for (int i = 0; i < searchPlaceEventJsonArray.length(); i++) {
+                            JSONObject jsonObject;
+                            try {
+                                jsonObject = searchPlaceEventJsonArray.getJSONObject(i);
+                                String latitude1 = jsonObject.get("latitude").toString();
+                                String longitude1 = jsonObject.get("longitude").toString();
+                                String nearestSearchAreaName = jsonObject.get("parking_area").toString();
 
-                                        double distanceForNearbyLoc = calculateDistance(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude,
-                                                ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1));
-                                        //Timber.e("DistanceForNearbyLoc -> %s", distanceForNearbyLoc);
+                                double distanceForNearbyLoc = calculateDistance(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude,
+                                        ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1));
+                                //Timber.e("DistanceForNearbyLoc -> %s", distanceForNearbyLoc);
 
-                                        if (distanceForNearbyLoc < 5) {
-                                            origin = new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude);
+                                if (distanceForNearbyLoc < 5) {
+                                    origin = new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude);
                                             /*getAddress(context, ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1), new AddressCallBack() {
                                                 @Override
                                                 public void addressCall(String address) {*/
 
-                                            String nearbyAreaName = nearestSearchAreaName;
-                                            String parkingNumberOfNearbyDistanceLoc = null;
-                                            try {
-                                                parkingNumberOfNearbyDistanceLoc = jsonObject.get("no_of_parking").toString();
-                                            } catch (JSONException e) {
-                                                e.printStackTrace();
-                                            }
+                                    String nearbyAreaName = nearestSearchAreaName;
+                                    String parkingNumberOfNearbyDistanceLoc = null;
+                                    try {
+                                        parkingNumberOfNearbyDistanceLoc = jsonObject.get("no_of_parking").toString();
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
 
-                                            int adjustNearbyValue = 2;
+                                    int adjustNearbyValue = 2;
                                             /*if (distanceForNearbyLoc < 1000) {
                                                 adjustNearbyValue = 1;
                                             }*/
 
-                                            double km = (distanceForNearbyLoc / 1000) + adjustNearbyValue;
+                                    double km = (distanceForNearbyLoc / 1000) + adjustNearbyValue;
 
-                                            if (distanceForNearbyLoc > 1.9) {
-                                                distanceForNearbyLoc = distanceForNearbyLoc + 2;
-                                            } else if (distanceForNearbyLoc > 1.9 && distanceForNearbyLoc > 1) {
-                                                distanceForNearbyLoc = distanceForNearbyLoc + 1;
-                                            } else {
-                                                distanceForNearbyLoc = distanceForNearbyLoc + 0.5;
-                                            }
+                                    if (distanceForNearbyLoc > 1.9) {
+                                        distanceForNearbyLoc = distanceForNearbyLoc + 2;
+                                    } else if (distanceForNearbyLoc > 1.9 && distanceForNearbyLoc > 1) {
+                                        distanceForNearbyLoc = distanceForNearbyLoc + 1;
+                                    } else {
+                                        distanceForNearbyLoc = distanceForNearbyLoc + 0.5;
+                                    }
 
-                                            double nearbySearchDoubleDuration = ApplicationUtils.convertToDouble(new DecimalFormat("##.##", new DecimalFormatSymbols(Locale.US)).format(distanceForNearbyLoc * 2.43));
+                                    double nearbySearchDoubleDuration = ApplicationUtils.convertToDouble(new DecimalFormat("##.##", new DecimalFormatSymbols(Locale.US)).format(distanceForNearbyLoc * 2.43));
 
-                                            String nearbySearchStringDuration = String.valueOf(nearbySearchDoubleDuration);
+                                    String nearbySearchStringDuration = String.valueOf(nearbySearchDoubleDuration);
 
-                                            bookingSensorsArrayList.add(new BookingSensors(nearbyAreaName, ApplicationUtils.convertToDouble(latitude1),
-                                                    ApplicationUtils.convertToDouble(longitude1), distanceForNearbyLoc, parkingNumberOfNearbyDistanceLoc,
-                                                    nearbySearchStringDuration,
-                                                    BookingSensors.INFO_TYPE, 1));
+                                    bookingSensorsArrayList.add(new BookingSensors(nearbyAreaName, ApplicationUtils.convertToDouble(latitude1),
+                                            ApplicationUtils.convertToDouble(longitude1), distanceForNearbyLoc, parkingNumberOfNearbyDistanceLoc,
+                                            nearbySearchStringDuration,
+                                            BookingSensors.INFO_TYPE, 1));
 
-                                            bubbleSortArrayList(bookingSensorsArrayList);
+                                    bubbleSortArrayList(bookingSensorsArrayList);
 
-                                            if (bookingSensorsArrayList != null) {
-                                                if (bottomSheetAdapter != null) {
-                                                    bookingSensorsArrayListGlobal.clear();
-                                                    bookingSensorsArrayListGlobal.addAll(bookingSensorsArrayList);
-                                                    bottomSheetAdapter.notifyDataSetChanged();
-                                                }
-                                            }
+                                    if (bookingSensorsArrayList != null) {
+                                        if (bottomSheetAdapter != null) {
+                                            bookingSensorsArrayListGlobal.clear();
+                                            bookingSensorsArrayListGlobal.addAll(bookingSensorsArrayList);
+                                            bottomSheetAdapter.notifyDataSetChanged();
+                                        }
+                                    }
                                                 /*}
                                             });*/
-                                        } else {
-                                            if (bookingSensorsArrayList != null) {
-                                                if (bottomSheetAdapter != null) {
-                                                    bookingSensorsArrayListGlobal.clear();
-                                                    bookingSensorsArrayListGlobal.addAll(bookingSensorsArrayList);
-                                                    bottomSheetAdapter.notifyDataSetChanged();
-                                                }
-                                            }
+                                } else {
+                                    if (bookingSensorsArrayList != null) {
+                                        if (bottomSheetAdapter != null) {
+                                            bookingSensorsArrayListGlobal.clear();
+                                            bookingSensorsArrayListGlobal.addAll(bookingSensorsArrayList);
+                                            bottomSheetAdapter.notifyDataSetChanged();
                                         }
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
                                     }
                                 }
-                            } else {
-                                Toast.makeText(context, "Something went wrong!!! Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                        } else {
-                            Toast.makeText(context, "Location cannot be identified!!!", Toast.LENGTH_SHORT).show();
                         }
+                    } else {
+                        Toast.makeText(context, "Something went wrong!!! Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(context, "Location cannot be identified!!!", Toast.LENGTH_SHORT).show();
+                }
                     /*}
                 });*/
             }
@@ -3746,7 +3743,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             btnMarkerGetDirection.setEnabled(true);
                             btnMarkerGetDirection.setFocusable(true);
                         }
-                        if (isInAreaEnabled ) {
+                        if (isInAreaEnabled) {
                             context.setGeoFencing(new LatLng(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude));
                             btnMarkerGetDirection.setEnabled(true);
                             btnMarkerGetDirection.setFocusable(true);
