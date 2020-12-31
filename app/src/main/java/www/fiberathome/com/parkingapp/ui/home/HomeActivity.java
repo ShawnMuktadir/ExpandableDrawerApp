@@ -375,8 +375,8 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(HomeActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             finish();
-            //Intent intent = new Intent(context, PermissionActivity.class);
-            Intent intent = new Intent(context, LocationPermissionActivity.class);
+            Intent intent = new Intent(context, PermissionActivity.class);
+            //Intent intent = new Intent(context, LocationPermissionActivity.class);
             startActivity(intent);
             SharedPreManager.getInstance(context).setIsLocationPermissionGiven(false);
             //return;

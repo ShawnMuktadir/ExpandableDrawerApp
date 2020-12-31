@@ -1,5 +1,6 @@
 package www.fiberathome.com.parkingapp.ui.search.placesadapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -54,19 +55,33 @@ import static android.content.Context.LOCATION_SERVICE;
 public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
     private final String TAG = getClass().getSimpleName();
+
     public ArrayList<PlaceAutocomplete> mResultList = new ArrayList<>();
-    private Context mContext;
+
+    private final Context mContext;
+
     private CharacterStyle STYLE_BOLD;
+
     private CharacterStyle STYLE_NORMAL;
+
     private PlacesClient placesClient;
+
     private ClickListener clickListener;
+
     private AutocompleteSessionToken token;
+
     public ArrayList<SearchVisitorData> searchVisitorDataList = new ArrayList<>();
 
+    private CharSequence charSequence;
+
     private int selectedPosition = -1;
+
     private static final int VIEW_TYPE_PLACE = 0;
+
     private static final int VIEW_TYPE_HISTORY = 1;
+
     private static final int VIEW_TYPE_EMPTY = 2;
+
     private boolean isShownEmpty = false;
 
     private long mLastClickTime = System.currentTimeMillis();
@@ -81,13 +96,6 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
         this.placesClient = placesClient;
         this.searchVisitorDataList = searchVisitorDataList;
     }
-
-    public PlacesAutoCompleteAdapter(Context context, ArrayList<SearchVisitorData> searchVisitorDataList) {
-        this.mContext = context;
-        this.searchVisitorDataList = searchVisitorDataList;
-    }
-
-    CharSequence charSequence;
 
     /**
      * Returns the filter for the current set of autocomplete results.
@@ -109,7 +117,6 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
                         results.count = mResultList.size();
                         isShownEmpty = false;
                     }
-
                 }
                 return results;
             }
@@ -119,18 +126,24 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
                 if (results != null && results.count > 0) {
                     // The API returned at least one result, update the data.
                     mResultList = (ArrayList<PlaceAutocomplete>) results.values;
+
                     notifyDataSetChanged();
                 } else {
                     // The API did not return any results, invalidate the data set.
                     //notifyDataSetInvalidated();
                     searchVisitorDataList.clear();
+
                     notifyDataSetChanged();
+
                     isShownEmpty = true;
                     /*Toast.makeText(mContext, "No Places found!", Toast.LENGTH_SHORT).show();
                     final Toast toast = Toast.makeText(mContext, "No Places found!", Toast.LENGTH_SHORT);*/
                     Toast toast = TastyToast.makeText(mContext, "No Places found!", TastyToast.LENGTH_SHORT, TastyToast.WARNING);
+
                     toast.show();
+
                     Handler handler = new Handler();
+
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -160,8 +173,8 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
 
         Task<FindAutocompletePredictionsResponse> autocompletePredictions = placesClient.findAutocompletePredictions(request);
 
-        // This method should have been called off the main UI thread. Block and wait for at most
-        // 60s for a result from the API.
+        /* This method should have been called off the main UI thread. Block and wait for at most
+         60s for a result from the API.*/
         try {
             Tasks.await(autocompletePredictions, 60, TimeUnit.SECONDS);
         } catch (ExecutionException | InterruptedException | TimeoutException e) {
@@ -172,7 +185,7 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
             FindAutocompletePredictionsResponse findAutocompletePredictionsResponse = autocompletePredictions.getResult();
             if (findAutocompletePredictionsResponse != null)
                 for (AutocompletePrediction prediction : findAutocompletePredictionsResponse.getAutocompletePredictions()) {
-                    Log.i(TAG, prediction.getPlaceId());
+                    Timber.e(prediction.getPlaceId());
                     resultList.add(new PlaceAutocomplete(prediction.getPlaceId(), prediction.getPrimaryText(STYLE_NORMAL).toString(), prediction.getFullText(STYLE_BOLD).toString()));
                 }
 
@@ -229,8 +242,8 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
                         Timber.e(e);
                     }
                     PlaceAutocomplete item;
-                    Log.d(TAG, "List size :" + mResultList.size());
-                    Log.d(TAG, "position :" + selectedPosition);
+                    Timber.d("List size : -> %s", mResultList.size());
+                    Timber.d("position : -> %s", selectedPosition);
 
                    /* Toast.makeText(mContext,"position:"+position,Toast.LENGTH_SHORT).show();
                     for (PlaceAutocomplete autoComplete:mResultList) {
@@ -264,7 +277,7 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
                     } catch (IndexOutOfBoundsException e) {
                         //Toast.makeText(mContext, "Please try again", Toast.LENGTH_SHORT).show();
                         ApplicationUtils.showOnlyMessageDialog(mContext.getResources().getString(R.string.please_try_again), mContext);
-                        Log.d(TAG, "exception: " + e);
+                        Timber.d("exception: -> %s", e.getMessage());
                         //throw new RuntimeException("Test Crash");
                     }
                 } else {
@@ -432,11 +445,17 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
         return mResultList.get(position);
     }
 
+    @SuppressLint("NonConstantResourceId")
     public static class SearchPredictionViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private TextView address, area;
-        private LinearLayout mRow;
+
+        private final TextView address;
+        private final TextView area;
+
+        private final LinearLayout mRow;
+
         @BindView(R.id.imageViewSearchPlace)
         ImageView imageViewSearchPlace;
+
         @BindView(R.id.textViewNoData)
         TextView textViewNoData;
 
@@ -477,15 +496,21 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
         }
     }
 
+    @SuppressLint("NonConstantResourceId")
     public static class SearchHistoryViewHolder extends RecyclerView.ViewHolder {
+
         @BindView(R.id.textViewHistoryArea)
         TextView textViewHistoryArea;
+
         @BindView(R.id.textViewHistoryAddress)
         TextView textViewHistoryAddress;
+
         @BindView(R.id.circleImageView)
         ImageView circleImageView;
+
         @BindView(R.id.imageViewSearchPlace)
         ImageView imageViewSearchPlace;
+
         @BindView(R.id.textViewNoData)
         TextView textViewNoData;
 
@@ -500,8 +525,9 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
      */
     public static class PlaceAutocomplete {
 
-        private CharSequence placeId;
-        private CharSequence address, area;
+        private final CharSequence placeId;
+        private final CharSequence address;
+        private final CharSequence area;
 
         PlaceAutocomplete(CharSequence placeId, CharSequence area, CharSequence address) {
             this.placeId = placeId;

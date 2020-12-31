@@ -62,7 +62,8 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         this.mAdapterCallback = callback;
     }
 
-    public BottomSheetAdapter(Context context, HomeFragment homeFragment, ArrayList<BookingSensors> sensors, Location onConnectedLocation, AdapterCallback callback) {
+    public BottomSheetAdapter(Context context, HomeFragment homeFragment, ArrayList<BookingSensors> sensors,
+                              Location onConnectedLocation, AdapterCallback callback) {
         this.context = context;
         this.homeFragment = homeFragment;
         this.bookingSensorsArrayList = sensors;
@@ -211,7 +212,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
     @Override
     public int getItemCount() {
-        if (bookingSensorsArrayList.size() > 6) {
+        if (bookingSensorsArrayList.size() > 5) {
             return 5;
         } else {
             return bookingSensorsArrayList.size();
@@ -240,7 +241,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         if (SharedData.getInstance().getOnConnectedLocation() != null) {
             onConnectedLocation = SharedData.getInstance().getOnConnectedLocation();
         }
-        // Api Key For Google Direction API \\
+        // Api Key For Google Direction API
         String serverKey = context.getResources().getString(R.string.google_maps_key);
 
         origin = new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude());

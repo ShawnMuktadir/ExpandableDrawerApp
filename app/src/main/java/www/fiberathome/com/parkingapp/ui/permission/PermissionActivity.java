@@ -162,7 +162,7 @@ public class PermissionActivity extends BaseActivity implements PermissionInterf
     public void showPermissionDenied(String permissionName) {
         switch (permissionName) {
             case Manifest.permission.ACCESS_FINE_LOCATION:
-                permissionTV.setText("Permission Denied,You can't search nearest \n parking location from you. For further use please allow location");
+                permissionTV.setText(context.getResources().getString(R.string.permission_denied_u_cant_search_nearest_parking_location_from_you));
                 SharedPreManager.getInstance(context).setIsLocationPermissionGiven(false);
                 permissionTV.setTextColor(ContextCompat.getColor(this, R.color.LogoRed));
                 break;

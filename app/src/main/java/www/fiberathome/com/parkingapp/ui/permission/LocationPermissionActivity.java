@@ -60,7 +60,7 @@ public class LocationPermissionActivity extends AppCompatActivity implements Per
         permissionListener = new DexterPermissionListener(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-            getWindow().setStatusBarColor(context.getResources().getColor(R.color.lightBg));
+            getWindow().setStatusBarColor(context.getResources().getColor(R.color.updatedColorPrimaryDark));
         }
 
         deviceOs = android.os.Build.VERSION.RELEASE;
@@ -94,7 +94,7 @@ public class LocationPermissionActivity extends AppCompatActivity implements Per
     public void setStatusBarColor(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             int startColor = getWindow().getStatusBarColor();
-            int endColor = ContextCompat.getColor(context, R.color.lightBg);
+            int endColor = ContextCompat.getColor(context, R.color.updatedColorPrimaryDark);
             ObjectAnimator.ofArgb(getWindow(), "statusBarColor", startColor, endColor).start();
         }
     }

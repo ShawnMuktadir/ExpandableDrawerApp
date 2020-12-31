@@ -234,7 +234,7 @@
                 android:resource="@xml/file_provider_paths" />
         </provider>
 
-        <receiver android:name=".utils.GeoFenceBroadcastReceiver"/>
+        <!-- <receiver android:name=".utils.GeoFenceBroadcastReceiver"/>-->
         <receiver android:name=".module.notification.NotificationPublisher" />
 
         <service

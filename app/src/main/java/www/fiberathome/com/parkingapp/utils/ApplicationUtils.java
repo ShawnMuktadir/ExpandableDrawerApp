@@ -611,7 +611,7 @@ public class ApplicationUtils {
         return (rad * 180.0 / Math.PI);
     }
 
-    public static double distance(double lat1, double lon1, double lat2, double lon2) {
+    public static double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
         double theta = lon1 - lon2;
         double mile = Math.sin(deg2rad(lat1))
                 * Math.sin(deg2rad(lat2))

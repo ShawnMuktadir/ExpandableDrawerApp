@@ -110,8 +110,8 @@ public class SplashFragment extends BaseFragment {
             openActivity(new Intent(context, HomeActivity.class));
         } else if (SharedPreManager.getInstance(context).isLoggedIn() && !SharedPreManager.getInstance(context).isWaitingForLocationPermission()) {
             Timber.e("activity start else if -> %s", SharedPreManager.getInstance(context).isWaitingForLocationPermission());
-            //openActivity(new Intent(context, PermissionActivity.class));
-            openActivity(new Intent(context, LocationPermissionActivity.class));
+            openActivity(new Intent(context, PermissionActivity.class));
+            //openActivity(new Intent(context, LocationPermissionActivity.class));
         } else {
             Timber.e("activity start else -> %s", SharedPreManager.getInstance(context).isWaitingForLocationPermission());
             openActivity(new Intent(context, LoginActivity.class));

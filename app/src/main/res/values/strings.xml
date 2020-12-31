@@ -127,8 +127,10 @@
     <string name="book">Your book</string>
     <string name="gps_network_not_enabled">GPS network not enabled!</string>
     <string name="open_location_settings">Open Location Settings</string>
-    <string name="locc_smart_parking_app_needs_permission_to_access_device_location_to_provide_required_services_please_allow_the_permission">
+    <string name="locc_smart_parking_app_needs_permission_to_access_all_time_device_location_to_provide_required_services_please_allow_the_permission">
         LOCC Smart Parking App needs permission to access all time device location to provide required services. Please allow the permission</string>
+    <string name="locc_smart_parking_app_needs_permission_to_access_device_location_to_provide_required_services_please_allow_the_permission">
+        LOCC Smart Parking App needs permission to access device location to provide required services. Please allow the permission</string>
     <string name="permission_request">Permission Request</string>
     <string name="grant_permission">Grant Permission</string>
     <string name="no_data_available">Enter a valid place to search for on \nParking App</string>
@@ -442,4 +444,6 @@
     <string name="install_bangla_keyboard">Please search in bangla language for getting result. Install bangla enable keyboard &amp; change app language into Bangla</string>
     <string name="not_available_at_bangla_search">Bangla searching is not available right now, Please wait until next version is coming</string>
     <string name="change_app_language_to_english">Change app language into english</string>
+    <string name="permission_denied_u_cant_search_nearest_parking_location_from_you">
+        Permission Denied,You can\'t search nearest parking location from you. For further use please allow location</string>
 </resources>

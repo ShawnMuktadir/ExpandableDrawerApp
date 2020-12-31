@@ -1,7 +1,6 @@
 package www.fiberathome.com.parkingapp.ui.parking;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
@@ -63,14 +62,13 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         void onItemClick(int position);
     }
 
-    public ParkingAdapter(ParkingActivity context, ParkingFragment parkingFragment, HomeFragment homeFragment,
-                          ArrayList<SensorArea> sensorAreas, Location onConnectedLocation, ParkingAdapterClickListener mListener) {
+    public ParkingAdapter(ParkingActivity context, ArrayList<SensorArea> sensorAreas,
+                          Location onConnectedLocation) {
         this.context = context;
         this.parkingFragment = parkingFragment;
-        this.homeFragment = homeFragment;
         this.sensorAreas = sensorAreas;
         this.onConnectedLocation = onConnectedLocation;
-        this.mListener = mListener;
+        //this.mListener = mListener;
     }
 
     @NonNull
@@ -94,7 +92,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         parkingViewHolder.textViewParkingAreaCount.setText(sensorArea.getCount());
 
-        distance = ApplicationUtils.distance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
+        distance = ApplicationUtils.calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
                 sensorArea.getLat(), sensorArea.getLng());
         sensorArea.setDistance(distance);
 
@@ -121,7 +119,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
                 selectedPosition = position;
-                mListener.onItemClick(position);
+                //mListener.onItemClick(position);
                 try {
                     notifyDataSetChanged();
                     Timber.e("try called");

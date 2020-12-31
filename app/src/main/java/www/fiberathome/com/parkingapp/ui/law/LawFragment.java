@@ -229,7 +229,7 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
                 /*if (s.length() > 0) {
                     filter(s.toString());
                 }*/
-                if (SharedPreManager.getInstance(context).getLanguage().equalsIgnoreCase("English") && ApplicationUtils.textContainsBangla(s.toString())) {
+                if (Locale.getDefault().getLanguage().equals("en") && ApplicationUtils.textContainsBangla(s.toString())) {
                     setNoDataForBangla();
                     recyclerView.setVisibility(View.GONE);
                     editTextSearchLaw.setText("");

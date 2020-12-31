@@ -2,11 +2,9 @@ package www.fiberathome.com.parkingapp.base;
 
 import android.Manifest;
 import android.animation.ObjectAnimator;
-import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -18,7 +16,6 @@ import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +24,7 @@ import androidx.core.content.ContextCompat;
 
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.GeofenceConstants;
 import www.fiberathome.com.parkingapp.utils.GeoFenceBroadcastReceiver;
@@ -37,8 +35,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.provider.Settings;
-import android.provider.SyncStateContract;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,8 +42,6 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
@@ -59,6 +53,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Base activity to check GPS disabled and Internet <br/>
@@ -121,7 +116,15 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-            getWindow().setStatusBarColor(context.getResources().getColor(R.color.lightBg));
+            getWindow().setStatusBarColor(context.getResources().getColor(R.color.updatedColorPrimaryDark));
+        }
+
+        if (Locale.getDefault().getLanguage().equals("en")) {
+            SharedPreManager.getInstance(context).setLanguage(context.getResources().getString(R.string.english_item));
+        } else if (Locale.getDefault().getLanguage().equals("bn")) {
+            SharedPreManager.getInstance(context).setLanguage(context.getResources().getString(R.string.bangla_item));
+        } else {
+            SharedPreManager.getInstance(context).setLanguage(context.getResources().getString(R.string.english_item));
         }
 
         snackbar = Snackbar.make(this.findViewById(android.R.id.content), context.getResources().getString(R.string.connect_to_internet), 86400000);
@@ -150,7 +153,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
             return;
         }
 
-        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
 
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 
@@ -336,7 +339,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
     public void setStatusBarColor(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             int startColor = getWindow().getStatusBarColor();
-            int endColor = ContextCompat.getColor(context, R.color.lightBg);
+            int endColor = ContextCompat.getColor(context, R.color.updatedColorPrimaryDark);
             ObjectAnimator.ofArgb(getWindow(), "statusBarColor", startColor, endColor).start();
         }
     }
@@ -501,6 +504,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
                 });
 
     }
+
     @RequiresApi(api = Build.VERSION_CODES.Q)
     private void openSettings() {
         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
@@ -531,6 +535,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
                 FLAG_UPDATE_CURRENT);
         return geoFencePendingIntent;
     }
+
     @Override
     protected void onStop() {
         super.onStop();
