@@ -2169,9 +2169,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     }
 
     //fetch bottom sheet sensors
-    //fetch bottom sheet sensors
-    private void fetchBottomSheetSensors(Location location) {
-        Timber.e("fetchBottomSheetSensors called");
+    public void fetchBottomSheetSensors(Location location) {
         if (bookingSensorsArrayListGlobal != null) {
             bookingSensorsArrayListGlobal.clear();
         }
@@ -2181,10 +2179,12 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         if (mShimmerViewContainer != null)
             startShimmer();
         StringRequest strReq = new StringRequest(Request.Method.GET, AppConfig.URL_FETCH_SENSORS, response -> {
+
             hideLoading();
-            //bottomSheetProgressDialog.dismiss();
+
             if (mShimmerViewContainer != null)
                 stopShimmer();
+
             try {
                 JSONObject object = new JSONObject(response);
                 JSONArray jsonArray = object.getJSONArray("sensors");
@@ -2195,7 +2195,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     String areaName = jsonObject.get("parking_area").toString();
                     double latitude = ApplicationUtils.convertToDouble(jsonObject.get("latitude").toString());
                     double longitude = ApplicationUtils.convertToDouble(jsonObject.get("longitude").toString());
-                    //Timber.e("api lat -> %s lon -> %s", latitude, longitude);
+
                     String count = jsonObject.get("no_of_parking").toString();
 
                     TaskParser taskParser = new TaskParser();
@@ -2240,14 +2240,23 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                         String nearestCurrentAreaName = areaName;
                         Timber.e("nearestCurrentAreaName -> %s", nearestCurrentAreaName);
+
                         bookingSensorsArrayListGlobal.add(new BookingSensors(nearestCurrentAreaName, latitude, longitude,
                                 fetchDistance, count, initialNearestDuration,
                                 BookingSensors.INFO_TYPE, 1));
+
                         //fetch distance in ascending order
                         Collections.sort(bookingSensorsArrayListGlobal, (c1, c2) -> Double.compare(c1.getDistance(), c2.getDistance()));
+
+                        if (bookingSensorsArrayListGlobal.isEmpty()) {
+                            setNoData();
+                        } else {
+                            hideNoData();
+                        }
                     }
                 }
-                setBottomSheetRecyclerView(bookingSensorsArrayListGlobal);
+                setBottomSheetFragmentControls(bookingSensorsArrayListGlobal);
+                saveTask();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -2262,6 +2271,39 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         strReq.setRetryPolicy(new DefaultRetryPolicy(50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         strReq.setShouldCache(true);
         ParkingApp.getInstance().addToRequestQueue(strReq);
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void setBottomSheetFragmentControls(ArrayList<BookingSensors> sensors) {
+        bottomSheetRecyclerView.setHasFixedSize(true);
+        bottomSheetRecyclerView.setItemViewCacheSize(20);
+        bottomSheetRecyclerView.setNestedScrollingEnabled(false);
+
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        bottomSheetRecyclerView.setLayoutManager(mLayoutManager);
+        bottomSheetRecyclerView.addItemDecoration(new DividerItemDecoration(context, LinearLayoutManager.VERTICAL));
+        bottomSheetRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        bottomSheetRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), bottomSheetRecyclerView, new RecyclerTouchListener.ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                Timber.e("bottomSheetRecyclerView smoothScrollToPosition called");
+                bottomSheetRecyclerView.smoothScrollToPosition(0);
+                //Toast.makeText(getApplicationContext(), movie.getTitle() + " is selected!", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        }));
+        ViewCompat.setNestedScrollingEnabled(bottomSheetRecyclerView, false);
+
+        setBottomSheetRecyclerViewAdapter(sensors);
+    }
+
+    private void setBottomSheetRecyclerViewAdapter(ArrayList<BookingSensors> bookingSensors) {
+        bottomSheetAdapter = new BottomSheetAdapter(context, this, bookingSensors, onConnectedLocation, this);
+        bottomSheetRecyclerView.setAdapter(bottomSheetAdapter);
     }
 
     private void fetchBottomSheetSensorsWithoutProgressBar(Location location) {
@@ -2312,7 +2354,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         });
                     }
                 }
-                setBottomSheetRecyclerView(bookingSensorsArrayListGlobal);
+                setBottomSheetFragmentControls(bookingSensorsArrayListGlobal);
                 //Collections.sort(bookingSensorsArrayListGlobal, BookingSensors.BY_NAME_ASCENDING_ORDER);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -2327,45 +2369,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         };
         strReq.setRetryPolicy(new DefaultRetryPolicy(50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         ParkingApp.getInstance().addToRequestQueue(strReq);
-    }
-
-    @SuppressLint("SetTextI18n")
-    private void setBottomSheetRecyclerView(ArrayList<BookingSensors> sensors) {
-        bottomSheetRecyclerView.setHasFixedSize(true);
-        bottomSheetRecyclerView.setItemViewCacheSize(20);
-        bottomSheetRecyclerView.setNestedScrollingEnabled(false);
-
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(context);
-        bottomSheetRecyclerView.setLayoutManager(mLayoutManager);
-        bottomSheetRecyclerView.addItemDecoration(new DividerItemDecoration(context, LinearLayoutManager.VERTICAL));
-        bottomSheetRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        bottomSheetRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(context, bottomSheetRecyclerView, new RecyclerTouchListener.ClickListener() {
-            @Override
-            public void onClick(View view, int position) {
-                Timber.e("bottomSheetRecyclerView smoothScrollToPosition called");
-                bottomSheetRecyclerView.smoothScrollToPosition(0);
-                //Toast.makeText(getApplicationContext(), movie.getTitle() + " is selected!", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onLongClick(View view, int position) {
-
-            }
-        }));
-        ViewCompat.setNestedScrollingEnabled(bottomSheetRecyclerView, false);
-
-        setBottomSheetRecyclerViewAdapter(sensors);
-    }
-
-    private void setBottomSheetRecyclerViewAdapter(ArrayList<BookingSensors> bookingSensors) {
-
-        if (bookingSensors.isEmpty()) {
-            setNoData();
-        } else {
-            bottomSheetAdapter = new BottomSheetAdapter(context, this, bookingSensors, onConnectedLocation, this);
-            bottomSheetRecyclerView.setAdapter(bottomSheetAdapter);
-            hideNoData();
-        }
     }
 
     private void storeVisitedPlace(String mobileNo, String placeId, double endLatitude, double endLongitude,
@@ -3226,24 +3229,18 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 Intent intent = new Intent(requireActivity(), SearchActivity.class);
                 //startActivity(intent);
                 startActivityForResult(intent, NEW_SEARCH_ACTIVITY_REQUEST_CODE);
-
                 if (searchPlaceLatLng != null)
                     bookingSensorsArrayList.clear();
-
                 if (mMap != null)
                     mMap.clear();
-
                 bookingSensorsArrayListGlobal.clear();
                 bookingSensorsArrayList.clear();
                 bookingSensorsMarkerArrayList.clear();
-
                 if (SharedData.getInstance().getOnConnectedLocation() != null) {
                     fetchBottomSheetSensorsWithoutProgressBar(SharedData.getInstance().getOnConnectedLocation());
-                    fetchSensors(onConnectedLocation);
+                    //fetchSensors(onConnectedLocation);
                 }
-
                 buttonSearch.setText(null);
-                bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._90sdp));
                 linearLayoutBottom.setVisibility(View.GONE);
                 linearLayoutSearchBottom.setVisibility(View.GONE);
                 linearLayoutMarkerBottom.setVisibility(View.GONE);
@@ -3258,19 +3255,14 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 if (mMap != null) {
                     mMap.clear();
                     mMap.setTrafficEnabled(true);
-
-                    if (mShimmerViewContainer != null)
-                        startShimmer();
-
+                    startShimmer();
                     previousMarker = null;
                     fromRouteDrawn = 0;
                     bookingSensorsArrayListGlobal.clear();
                     bookingSensorsArrayList.clear();
                     bookingSensorsMarkerArrayList.clear();
                     bookingSensorsAdapterArrayList.clear();
-
                     animateCamera(SharedData.getInstance().getOnConnectedLocation());
-
                     if (ApplicationUtils.checkInternet(context)) {
                         fetchSensors(SharedData.getInstance().getOnConnectedLocation());
                         fetchBottomSheetSensors(SharedData.getInstance().getOnConnectedLocation());
@@ -3286,13 +3278,12 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         }, (dialog, which) -> {
                             Timber.e("Negative Button Clicked");
                             dialog.dismiss();
-                            if (context != null) {
-                                context.finish();
+                            if (getActivity() != null) {
+                                getActivity().finish();
                                 TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                             }
                         });
                     }
-
                     buttonSearch.setText(null);
                     buttonSearch.setVisibility(View.VISIBLE);
                     layoutVisible(false, "", "", " ", null);
@@ -3302,9 +3293,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     linearLayoutSearchBottom.setVisibility(View.GONE);
                     linearLayoutMarkerBottom.setVisibility(View.GONE);
                     linearLayoutBottomSheetBottom.setVisibility(View.GONE);
-
                     SharedData.getInstance().setSensorArea(null);
-
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._90sdp));
                     btnGetDirection.setText(context.getResources().getString(R.string.get_direction));
@@ -3324,24 +3313,20 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     mMap.setTrafficEnabled(true);
                     fromRouteDrawn = 0;
                     previousMarker = null;
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    btnSearchGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
                     bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._90sdp));
-
                     if (getDirectionSearchButtonClicked == 1) {
                         btnSearchGetDirection.setText(context.getResources().getString(R.string.get_direction));
                         btnSearchGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
                         getDirectionSearchButtonClicked--;
                     }
-
                     buttonSearch.setText(null);
                     buttonSearch.setVisibility(View.VISIBLE);
                     bookingSensorsArrayListGlobal.clear();
                     bookingSensorsArrayList.clear();
                     bookingSensorsAdapterArrayList.clear();
                     bookingSensorsMarkerArrayList.clear();
-
                     animateCamera(SharedData.getInstance().getOnConnectedLocation());
-
                     if (ApplicationUtils.checkInternet(context)) {
                         fetchSensors(SharedData.getInstance().getOnConnectedLocation());
                         fetchBottomSheetSensors(SharedData.getInstance().getOnConnectedLocation());
@@ -3357,23 +3342,21 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         }, (dialog, which) -> {
                             Timber.e("Negative Button Clicked");
                             dialog.dismiss();
-                            if (context != null) {
-                                context.finish();
+                            if (getActivity() != null) {
+                                getActivity().finish();
                                 TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                             }
                         });
                     }
-
-                    ApplicationUtils.refreshFragment(getParentFragmentManager(), this, R.id.nav_host_fragment);
-                    //ApplicationUtils.replaceFragmentWithAnimation(context.getSupportFragmentManager(), this);
+                    //ApplicationUtils.refreshFragment(getParentFragmentManager(), this, R.id.nav_host_fragment);
+                    ApplicationUtils.replaceFragmentWithAnimation(context.getSupportFragmentManager(), this);
                     layoutSearchVisible(false, "", "", "", null);
                     linearLayoutBottom.setVisibility(View.GONE);
                     linearLayoutSearchBottom.setVisibility(View.GONE);
                     linearLayoutMarkerBottom.setVisibility(View.GONE);
                     linearLayoutBottomSheetBottom.setVisibility(View.GONE);
-
                     SharedData.getInstance().setBookingSensors(null);
-
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     btnSearchGetDirection.setText(context.getResources().getString(R.string.get_direction));
                     btnSearchGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
                     btnSearchGetDirection.setEnabled(true);
@@ -3389,25 +3372,19 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 if (mMap != null) {
                     mMap.clear();
                     mMap.setTrafficEnabled(true);
-
                     fromRouteDrawn = 0;
                     previousMarker = null;
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._90sdp));
-
                     if (getDirectionMarkerButtonClicked == 1) {
                         btnMarkerGetDirection.setText(context.getResources().getString(R.string.get_direction));
                         btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
                         getDirectionMarkerButtonClicked--;
                     }
-
                     bookingSensorsArrayListGlobal.clear();
                     bookingSensorsArrayList.clear();
                     bookingSensorsAdapterArrayList.clear();
                     bookingSensorsMarkerArrayList.clear();
-
                     animateCamera(SharedData.getInstance().getOnConnectedLocation());
-
                     if (ApplicationUtils.checkInternet(context)) {
                         fetchSensors(SharedData.getInstance().getOnConnectedLocation());
                         fetchBottomSheetSensors(SharedData.getInstance().getOnConnectedLocation());
@@ -3425,22 +3402,22 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         }, (dialog, which) -> {
                             Timber.e("Negative Button Clicked");
                             dialog.dismiss();
-                            if (context != null) {
-                                context.finish();
+                            if (getActivity() != null) {
+                                getActivity().finish();
                                 TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                             }
                         });
                     }
-
                     buttonSearch.setText(null);
                     buttonSearch.setVisibility(View.VISIBLE);
-                    ApplicationUtils.refreshFragment(getParentFragmentManager(), this, R.id.nav_host_fragment);
-                    //ApplicationUtils.replaceFragmentWithAnimation(context.getSupportFragmentManager(), this);
+                    //ApplicationUtils.refreshFragment(getParentFragmentManager(), this, R.id.nav_host_fragment);
+                    ApplicationUtils.replaceFragmentWithAnimation(context.getSupportFragmentManager(), this);
                     layoutMarkerVisible(false, "", "", "", null);
                     linearLayoutBottom.setVisibility(View.GONE);
                     linearLayoutSearchBottom.setVisibility(View.GONE);
                     linearLayoutMarkerBottom.setVisibility(View.GONE);
                     linearLayoutBottomSheetBottom.setVisibility(View.GONE);
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     btnMarkerGetDirection.setText(context.getResources().getString(R.string.get_direction));
                     btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
                     btnMarkerGetDirection.setEnabled(true);
@@ -3465,12 +3442,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     bookingSensorsAdapterArrayList.clear();
                     bookingSensorsMarkerArrayList.clear();
                     bookingSensorsBottomSheetArrayList.clear();
-                    //bottomSheetAdapter.updateData(bookingSensorsArrayListGlobal);
-
+                    bottomSheetAdapter.updateData(bookingSensorsArrayListGlobal);
                     if (ApplicationUtils.checkInternet(context)) {
                         fetchSensors(SharedData.getInstance().getOnConnectedLocation());
                         fetchBottomSheetSensors(SharedData.getInstance().getOnConnectedLocation());
-                        //bottomSheetAdapter.notifyDataSetChanged();
+                        bottomSheetAdapter.notifyDataSetChanged();
                     } else {
                         //ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.connect_to_internet), context);
                         ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
@@ -3484,8 +3460,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         }, (dialog, which) -> {
                             Timber.e("Negative Button Clicked");
                             dialog.dismiss();
-                            if (context != null) {
-                                context.finish();
+                            if (getActivity() != null) {
+                                getActivity().finish();
                                 TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                             }
                         });
@@ -3500,7 +3476,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     }
                     layoutBottomSheetVisible(false, "", "", "", "", null, false);
                     //ApplicationUtils.refreshFragment(getParentFragmentManager(), this, R.id.nav_host_fragment);
-                    //ApplicationUtils.replaceFragmentWithAnimation(context.getSupportFragmentManager(), this);
+                    ApplicationUtils.replaceFragmentWithAnimation(context.getSupportFragmentManager(), this);
                     linearLayoutBottom.setVisibility(View.GONE);
                     linearLayoutSearchBottom.setVisibility(View.GONE);
                     linearLayoutMarkerBottom.setVisibility(View.GONE);
@@ -3525,16 +3501,17 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 //Toast.makeText(context, "adapter", Toast.LENGTH_SHORT).show();
                 if (getDirectionButtonClicked == 0) {
                     getDirectionButtonClicked++;
-                    //ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
+                    ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
                     if (adapterPlaceLatLng != null) {
                         EventBus.getDefault().post(new GetDirectionAfterButtonClickEvent(adapterPlaceLatLng));
+                        //fetchSensors(onConnectedLocation);
                         buttonSearch.setVisibility(View.GONE);
                         MarkerOptions markerOptions = new MarkerOptions();
                         markerOptions.position(adapterPlaceLatLng);
                         coordList.add(new LatLng(adapterPlaceLatLng.latitude, adapterPlaceLatLng.longitude));
                         mMap.addMarker(markerOptions);
                         //move map camera
-                        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 16f));
+                        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(adapterPlaceLatLng, 16f));
                         linearLayoutBottom.setVisibility(View.VISIBLE);
                         linearLayoutSearchBottom.setVisibility(View.GONE);
                         linearLayoutMarkerBottom.setVisibility(View.GONE);
@@ -3544,9 +3521,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         btnGetDirection.setEnabled(true);
                         btnGetDirection.setFocusable(true);
                         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-
                         if (isInAreaEnabled) {
-                            context.setGeoFencing(new LatLng(adapterPlaceLatLng.latitude, adapterPlaceLatLng.longitude));
                             btnGetDirection.setEnabled(true);
                             btnGetDirection.setFocusable(true);
                             btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
@@ -3560,8 +3535,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     }
                 } else if (getDirectionButtonClicked == 1) {
                     ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
-                    //getDirectionButtonClicked--;
-
+                    getDirectionButtonClicked--;
                     if (isInAreaEnabled) {
                         Bundle bundle = new Bundle();
                         bundle.putBoolean("m", false); //m for more
@@ -3603,10 +3577,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 fromRouteDrawn = 1;
                 //Toast.makeText(context, "search", Toast.LENGTH_SHORT).show();
                 if (getDirectionSearchButtonClicked == 0) {
-                    //ApplicationUtils.showOnlyMessageDialog(context.getResources().getString(R.string.no_parking_spot_message), context);
+                    ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.no_parking_spot_message), context);
                     getDirectionSearchButtonClicked++;
                     if (searchPlaceLatLng != null) {
                         EventBus.getDefault().post(new GetDirectionForSearchEvent(searchPlaceLatLng));
+                        //fetchSensors(onConnectedLocation);
                         buttonSearch.setVisibility(View.GONE);
                         MarkerOptions markerDestinationPositionOptions = new MarkerOptions();
                         markerDestinationPositionOptions.position(searchPlaceLatLng);
@@ -3626,7 +3601,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     }
                 } else if (getDirectionSearchButtonClicked == 1) {
                     ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.no_parking_spot_message), context);
-                    //getDirectionSearchButtonClicked--;
+                    getDirectionSearchButtonClicked--;
                     if (mMap != null) {
                         TaskParser taskParser = new TaskParser();
                         double distance = taskParser.showDistance(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
@@ -3656,98 +3631,108 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         btnMarkerGetDirection.setOnClickListener(v -> {
             //Toast.makeText(context, "marker btn clicked", Toast.LENGTH_SHORT).show();
             if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
+                if (parkingNumberOfIndividualMarker.equals("0")) {
+                    ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.no_parking_spot_message), context);
+                } else {
+                    ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
+                }
                 mMap.setTrafficEnabled(false);
                 fromRouteDrawn = 1;
-                //Toast.makeText(context, "adapter", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, "marker", Toast.LENGTH_SHORT).show();
                 if (getDirectionMarkerButtonClicked == 0) {
                     getDirectionMarkerButtonClicked++;
-                    //ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
                     if (markerPlaceLatLng != null) {
                         EventBus.getDefault().post(new GetDirectionForMarkerEvent(markerPlaceLatLng));
+                        linearLayoutMarkerNameCount.setVisibility(View.GONE);
+                        //fetchSensors(onConnectedLocation);
                         buttonSearch.setVisibility(View.GONE);
+                        bookingSensorsArrayListGlobal.clear();
+                        bookingSensorsArrayList.clear();
                         MarkerOptions markerOptions = new MarkerOptions();
                         markerOptions.position(markerPlaceLatLng);
                         coordList.add(new LatLng(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude));
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
                         mMap.addMarker(markerOptions);
-                        linearLayoutBottom.setVisibility(View.GONE);
+                        //move map camera
+                        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerPlaceLatLng, 16f));
+                        linearLayoutNameCount.setVisibility(View.GONE);
                         linearLayoutSearchBottom.setVisibility(View.GONE);
-                        linearLayoutMarkerBottom.setVisibility(View.VISIBLE);
-                        imageViewBack.setVisibility(View.VISIBLE);
-                        btnMarkerGetDirection.setText(context.getString(R.string.confirm_booking));
-                        btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
-                        btnMarkerGetDirection.setEnabled(true);
-                        btnMarkerGetDirection.setFocusable(true);
-                        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                        linearLayoutBottom.setVisibility(View.GONE);
+                        linearLayoutMarkerNameCount.setVisibility(View.GONE);
+                        imageViewMarkerBack.setVisibility(View.VISIBLE);
                         if (parkingNumberOfIndividualMarker.equals("0")) {
-                            Timber.e("count 0 if condition called");
-                            btnMarkerGetDirection.setText(context.getResources().getString(R.string.unavailable_parking_spot));
+                            Timber.e("parkingNumberOfIndividualMarker 0 if condition called");
+                            btnMarkerGetDirection.setText(context.getString(R.string.unavailable_parking_spot));
                             btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
                             btnMarkerGetDirection.setEnabled(true);
                             btnMarkerGetDirection.setFocusable(true);
-                            ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.no_parking_spot_message), context);
+                            //parkingNumberOfIndividualMarker.equals("1");
+                            getDirectionMarkerButtonClicked = 1;
                         } else {
-                            Timber.e("count not 0 else condition called");
+                            Timber.e("parkingNumberOfIndividualMarker not 0 else condition called");
                             btnMarkerGetDirection.setText(context.getResources().getString(R.string.confirm_booking));
                             btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
-                            //ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
                             btnMarkerGetDirection.setEnabled(true);
                             btnMarkerGetDirection.setFocusable(true);
                         }
 
                         if (isInAreaEnabled) {
-                            context.setGeoFencing(new LatLng(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude));
-                            btnMarkerGetDirection.setEnabled(true);
-                            btnMarkerGetDirection.setFocusable(true);
-                            btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
-                            Toast.makeText(context, context.getResources().getString(R.string.you_can_book_parking_slot), Toast.LENGTH_LONG).show();
+                            if (parkingNumberOfIndividualMarker.equals("0")) {
+                                btnMarkerGetDirection.setText(context.getResources().getString(R.string.unavailable_parking_spot));
+                                btnMarkerGetDirection.setEnabled(true);
+                                btnMarkerGetDirection.setFocusable(true);
+                                btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
+                            } else {
+                                btnMarkerGetDirection.setText(context.getResources().getString(R.string.confirm_booking));
+                                btnMarkerGetDirection.setEnabled(true);
+                                btnMarkerGetDirection.setFocusable(true);
+                                btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
+                                Toast.makeText(context, context.getResources().getString(R.string.you_can_book_parking_slot), Toast.LENGTH_LONG).show();
+                            }
                         } else {
                             btnMarkerGetDirection.setEnabled(true);
                             btnMarkerGetDirection.setFocusable(true);
                             btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
                             //Toast.makeText(context, "Go to the Selected Parking Area", Toast.LENGTH_LONG).show();
                         }
+                        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     }
                 } else if (getDirectionMarkerButtonClicked == 1) {
-                    //getDirectionMarkerButtonClicked--;
                     if (parkingNumberOfIndividualMarker.equals("0")) {
-                        Timber.e("count 0 if condition called");
-                        btnMarkerGetDirection.setText(context.getResources().getString(R.string.unavailable_parking_spot));
-                        btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
-                        btnMarkerGetDirection.setEnabled(true);
-                        btnMarkerGetDirection.setFocusable(true);
                         ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.no_parking_spot_message), context);
                     } else {
                         ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
+                        if (isInAreaEnabled) {
+                            Bundle bundle = new Bundle();
+                            bundle.putBoolean("m", false); //m for more
+                            bundle.putString("markerUid", markerUid);
+                            ScheduleFragment scheduleFragment = new ScheduleFragment();
+                            scheduleFragment.setArguments(bundle);
+                            listener.fragmentChange(scheduleFragment);
+                            bottomSheet.setVisibility(View.GONE);
+                        }
                     }
+                    getDirectionMarkerButtonClicked--;
+                    /*if (mMap != null) {
+                    TaskParser taskParser = new TaskParser();
+                    double distance = taskParser.showDistance(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
+                            new LatLng(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude));
+                    if (distance < 0.1) {
+                        btnMarkerGetDirection.setText("Confirm Booking");
+                        btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
+                        btnMarkerGetDirection.setEnabled(true);
+                        btnMarkerGetDirection.setFocusable(true);
+                        bookedLayout.setVisibility(View.VISIBLE);
 
-                    if (isInAreaEnabled) {
                         Bundle bundle = new Bundle();
                         bundle.putBoolean("m", false); //m for more
-                        bundle.putString("markerUid", markerUid);
                         ScheduleFragment scheduleFragment = new ScheduleFragment();
                         scheduleFragment.setArguments(bundle);
                         listener.fragmentChange(scheduleFragment);
                         bottomSheet.setVisibility(View.GONE);
                     }
-                    /*if (mMap != null) {
-                        TaskParser taskParser = new TaskParser();
-                        double distance = taskParser.showDistance(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
-                            new LatLng(location.latitude, location.longitude));
-                    if (distance < 0.1) {
-                        btnGetDirection.setText("Confirm Booking");
-                        btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
-                        btnGetDirection.setEnabled(true);
-                        btnGetDirection.setFocusable(true);
-                        bookedLayout.setVisibility(View.VISIBLE);
-                        Bundle bundle = new Bundle();
-                        bundle.putBoolean("m", false); //m for more button check
-                        ScheduleFragment scheduleFragment = new ScheduleFragment();
-                        scheduleFragment.setArguments(bundle);
-                        listener.fragmentChange(scheduleFragment);
-                        bottomSheet.setVisibility(View.GONE);
-                    }
-                    SharedData.getInstance().setSensorArea(null);
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    //bottomSheetBehavior.setPeekHeight(400)                             ;
                 }*/
                 }
             } else {
@@ -3767,12 +3752,12 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     if (count.equals("0")) {
                         ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.no_parking_spot_message), context);
                     } else {
-                        //ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
+                        ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
                     }
                     if (bottomSheetPlaceLatLng != null || adapterPlaceLatLng != null || markerPlaceLatLng != null || searchPlaceLatLng != null) {
                         Timber.e("all location called");
                         EventBus.getDefault().post(new GetDirectionBottomSheetEvent(bottomSheetPlaceLatLng));
-
+                        //fetchSensors(onConnectedLocation);
                         MarkerOptions markerOptions = new MarkerOptions();
                         markerOptions.position(bottomSheetPlaceLatLng);
                         coordList.add(new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
@@ -3800,7 +3785,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             Timber.e("count not 0 else condition called");
                             btnBottomSheetGetDirection.setText(context.getResources().getString(R.string.confirm_booking));
                             btnBottomSheetGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
-                            //ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
                             btnBottomSheetGetDirection.setEnabled(true);
                             btnBottomSheetGetDirection.setFocusable(true);
                         }
@@ -3813,7 +3797,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                 btnBottomSheetGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
                                 //ApplicationUtils.showMessageDialog("You cannot reserve this spot for booking, as there is no parking slot!", context);
                             } else {
-                                context.setGeoFencing(new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
                                 btnBottomSheetGetDirection.setText(context.getResources().getString(R.string.confirm_booking));
                                 btnBottomSheetGetDirection.setEnabled(true);
                                 btnBottomSheetGetDirection.setFocusable(true);
@@ -3826,13 +3809,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             btnBottomSheetGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
                             //Toast.makeText(context, "Go to the Selected Parking Area", Toast.LENGTH_LONG).show();
                         }
-
                         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     }
                 } else if (getDirectionBottomSheetButtonClicked == 1) {
-                    //getDirectionBottomSheetButtonClicked--;
+                    getDirectionBottomSheetButtonClicked--;
                     ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
-
                     if (isInAreaEnabled) {
                         Bundle bundle = new Bundle();
                         bundle.putBoolean("m", false); //m for more
@@ -3845,25 +3826,25 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                     if (mMap != null) {
                         fromMarkerRouteDrawn = 0;
-                        /*markerAlreadyClicked = 0;
-                        TaskParser taskParser = new TaskParser();
-                        double distance = taskParser.showDistance(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
-                                new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
+                    /*markerAlreadyClicked = 0;
+                    TaskParser taskParser = new TaskParser();
+                    double distance = taskParser.showDistance(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
+                            new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
 
-                        if (distance < 0.1) {
-                            btnBottomSheetGetDirection.setText("Confirm Booking");
-                            btnBottomSheetGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
-                            btnBottomSheetGetDirection.setEnabled(true);
-                            btnBottomSheetGetDirection.setFocusable(true);
-                            bookedLayout.setVisibility(View.VISIBLE);
+                    if (distance < 0.1) {
+                        btnBottomSheetGetDirection.setText("Confirm Booking");
+                        btnBottomSheetGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
+                        btnBottomSheetGetDirection.setEnabled(true);
+                        btnBottomSheetGetDirection.setFocusable(true);
+                        bookedLayout.setVisibility(View.VISIBLE);
 
-                            Bundle bundle = new Bundle();
-                            bundle.putBoolean("m", false); //m for more
-                            ScheduleFragment scheduleFragment = new ScheduleFragment();
-                            scheduleFragment.setArguments(bundle);
-                            listener.fragmentChange(scheduleFragment);
-                            bottomSheet.setVisibility(View.GONE);
-                        }*/
+                        Bundle bundle = new Bundle();
+                        bundle.putBoolean("m", false); //m for more
+                        ScheduleFragment scheduleFragment = new ScheduleFragment();
+                        scheduleFragment.setArguments(bundle);
+                        listener.fragmentChange(scheduleFragment);
+                        bottomSheet.setVisibility(View.GONE);
+                    }*/
                         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     }
                 }
