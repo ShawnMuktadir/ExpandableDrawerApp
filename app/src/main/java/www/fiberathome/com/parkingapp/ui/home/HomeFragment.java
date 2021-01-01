@@ -2169,26 +2169,22 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     }
 
     //fetch bottom sheet sensors
+    //fetch bottom sheet sensors
     private void fetchBottomSheetSensors(Location location) {
         Timber.e("fetchBottomSheetSensors called");
-
         if (bookingSensorsArrayListGlobal != null) {
             bookingSensorsArrayListGlobal.clear();
         }
-
         //initialize the progress dialog and show it
         if (!context.isFinishing())
             showLoading(context);
-
         if (mShimmerViewContainer != null)
             startShimmer();
         StringRequest strReq = new StringRequest(Request.Method.GET, AppConfig.URL_FETCH_SENSORS, response -> {
-
             hideLoading();
-
+            //bottomSheetProgressDialog.dismiss();
             if (mShimmerViewContainer != null)
                 stopShimmer();
-
             try {
                 JSONObject object = new JSONObject(response);
                 JSONArray jsonArray = object.getJSONArray("sensors");
@@ -2223,24 +2219,24 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                     double doubleDuration = ApplicationUtils.convertToDouble(new DecimalFormat("##.##", new DecimalFormatSymbols(Locale.US)).format(fetchDistance * 2.43));
                     Timber.e("kim doubleDuration -> %s", doubleDuration);
-
+                    //double doubleDuration = ApplicationUtils.convertToDouble(String.format(Locale.US, "%.2f", ApplicationUtils.convertToDouble(new DecimalFormat("##.##").format(kim * 2.43))));
                     String initialNearestDuration = String.valueOf(doubleDuration);
                     Timber.e("kim initialNearestDuration -> %s", initialNearestDuration);
 
                     if (fetchDistance < 5) {
                         origin = new LatLng(location.getLatitude(), location.getLongitude());
-                       /* getAddress(context, latitude, longitude, new AddressCallBack() {
+                        getAddress(context, latitude, longitude, new AddressCallBack() {
                             @Override
                             public void addressCall(String address) {
                                 //bottomSheetBehavior.setPeekHeight(400)
                             }
-                        });*/
+                        });
                         //storing room database from json (No need at this moment)
-                        /*bookingSensorsRoom = new BookingSensorsRoom();
+                        bookingSensorsRoom = new BookingSensorsRoom();
                         bookingSensorsRoom.setParkingArea(areaName);
                         bookingSensorsRoom.setNoOfParking(count);
                         bookingSensorsRoom.setLatitude(latitude);
-                        bookingSensorsRoom.setLongitude(longitude);*/
+                        bookingSensorsRoom.setLongitude(longitude);
 
                         String nearestCurrentAreaName = areaName;
                         Timber.e("nearestCurrentAreaName -> %s", nearestCurrentAreaName);
@@ -2249,12 +2245,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                 BookingSensors.INFO_TYPE, 1));
                         //fetch distance in ascending order
                         Collections.sort(bookingSensorsArrayListGlobal, (c1, c2) -> Double.compare(c1.getDistance(), c2.getDistance()));
-
                     }
                 }
                 setBottomSheetRecyclerView(bookingSensorsArrayListGlobal);
-                saveTask();
-                //Collections.sort(bookingSensorsArrayListGlobal, BookingSensors.BY_NAME_ASCENDING_ORDER);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -2365,7 +2358,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     }
 
     private void setBottomSheetRecyclerViewAdapter(ArrayList<BookingSensors> bookingSensors) {
-        bottomSheetAdapter = null;
+
         if (bookingSensors.isEmpty()) {
             setNoData();
         } else {
@@ -3463,23 +3456,23 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 if (mMap != null) {
                     mMap.clear();
                     mMap.setTrafficEnabled(true);
-
                     fromRouteDrawn = 0;
                     previousMarker = null;
                     buttonSearch.setText(null);
                     buttonSearch.setVisibility(View.VISIBLE);
-
                     bookingSensorsArrayListGlobal.clear();
                     bookingSensorsArrayList.clear();
                     bookingSensorsAdapterArrayList.clear();
                     bookingSensorsMarkerArrayList.clear();
                     bookingSensorsBottomSheetArrayList.clear();
+                    //bottomSheetAdapter.updateData(bookingSensorsArrayListGlobal);
 
                     if (ApplicationUtils.checkInternet(context)) {
                         fetchSensors(SharedData.getInstance().getOnConnectedLocation());
                         fetchBottomSheetSensors(SharedData.getInstance().getOnConnectedLocation());
-                        bottomSheetAdapter.notifyDataSetChanged();
+                        //bottomSheetAdapter.notifyDataSetChanged();
                     } else {
+                        //ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.connect_to_internet), context);
                         ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
                             Timber.e("Positive Button clicked");
                             if (ApplicationUtils.checkInternet(context)) {
@@ -3497,9 +3490,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             }
                         });
                     }
-
                     animateCamera(SharedData.getInstance().getOnConnectedLocation());
-
                     if (getDirectionBottomSheetButtonClicked == 1) {
                         btnBottomSheetGetDirection.setText(context.getResources().getString(R.string.get_direction));
                         btnBottomSheetGetDirection.setEnabled(true);
@@ -3507,12 +3498,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         btnBottomSheetGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
                         getDirectionBottomSheetButtonClicked--;
                     }
-
                     layoutBottomSheetVisible(false, "", "", "", "", null, false);
-
-                    ApplicationUtils.refreshFragment(getParentFragmentManager(), this, R.id.nav_host_fragment);
+                    //ApplicationUtils.refreshFragment(getParentFragmentManager(), this, R.id.nav_host_fragment);
                     //ApplicationUtils.replaceFragmentWithAnimation(context.getSupportFragmentManager(), this);
-
                     linearLayoutBottom.setVisibility(View.GONE);
                     linearLayoutSearchBottom.setVisibility(View.GONE);
                     linearLayoutMarkerBottom.setVisibility(View.GONE);
