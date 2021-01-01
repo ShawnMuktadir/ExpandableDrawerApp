@@ -392,7 +392,7 @@
     <string name="want_change_language">Want to change language?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="change_language">Change Language</string>
+    <string name="change_language">Choose a Language</string>
     <string name="where_to">Where To?</string>
     <string name="search">Search…</string>
     <string name="connect_to_internet_splash">Please connect to internet and try again</string>

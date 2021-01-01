@@ -121,6 +121,7 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
             Timber.e("checkedItem[0] onStart -> %s", checkedItem[0]);
         } else {
             builder.setTitle(context.getResources().getString(R.string.select_language));
+            Timber.e("select_language condition called");
         }
     }
 
@@ -203,6 +204,15 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
                             SharedPreManager.getInstance(context).setLanguage(resources.getString(R.string.bangla_item));
                             setNewLocale("bn", true);
                             break;
+
+                        default:
+                            SharedPreManager.getInstance(context).setCheckedItem(checkedItem[0]);
+                            Timber.e("checkedItem[0] onClick -> %s", checkedItem[0]);
+                            context = LocaleHelper.setLocale(context, "en");
+                            resources = context.getResources();
+                            textViewLanguage.setText(resources.getString(R.string.english_item));
+                            SharedData.getInstance().setSelectedLanguage(resources.getString(R.string.english_item));
+                            SharedPreManager.getInstance(context).setLanguage(resources.getString(R.string.english_item));
                         /*case 2:
                             dialog.dismiss();
                             break;*/

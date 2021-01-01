@@ -119,13 +119,13 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
             getWindow().setStatusBarColor(context.getResources().getColor(R.color.updatedColorPrimaryDark));
         }
 
-        if (Locale.getDefault().getLanguage().equals("en")) {
+        /*if (Locale.getDefault().getLanguage().equals("en")) {
             SharedPreManager.getInstance(context).setLanguage(context.getResources().getString(R.string.english_item));
         } else if (Locale.getDefault().getLanguage().equals("bn")) {
             SharedPreManager.getInstance(context).setLanguage(context.getResources().getString(R.string.bangla_item));
         } else {
             SharedPreManager.getInstance(context).setLanguage(context.getResources().getString(R.string.english_item));
-        }
+        }*/
 
         snackbar = Snackbar.make(this.findViewById(android.R.id.content), context.getResources().getString(R.string.connect_to_internet), 86400000);
 

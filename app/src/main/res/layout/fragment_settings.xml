@@ -113,7 +113,7 @@
                 android:dropDownVerticalOffset="35dp"
                 android:gravity="center"
                 android:popupBackground="@color/black"
-                android:text="@string/change_language"
+                android:text="@string/english_item"
                 android:textColor="@color/white" />
 
             <ImageView

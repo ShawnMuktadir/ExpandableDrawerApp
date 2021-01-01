@@ -2332,17 +2332,33 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     TaskParser taskParser = new TaskParser();
                     double fetchDistance = taskParser.showDistance(new LatLng(location.getLatitude(), location.getLongitude()),
                             new LatLng(latitude, longitude));
+                    Timber.e("kim fetchDistance -> %s", fetchDistance);
 
                     double kim = (fetchDistance / 1000) + adjustValue;
-                    double doubleDuration = ApplicationUtils.convertToDouble(new DecimalFormat("##.##", new DecimalFormatSymbols(Locale.US)).format(kim * 2.43));
+                    Timber.e("kim fetchBottomSheetSensors -> %s", kim);
 
+                    if (fetchDistance > 1.9) {
+                        fetchDistance = fetchDistance + 2;
+                        Timber.e("kim 1st if -> %s", kim);
+                    } else if (fetchDistance < 1.9 && fetchDistance > 1) {
+                        fetchDistance = fetchDistance + 1;
+                        Timber.e("kim 2nd if-> %s", kim);
+                    } else {
+                        fetchDistance = fetchDistance + 0.5;
+                        Timber.e("kim else-> %s", kim);
+                    }
+
+                    double doubleDuration = ApplicationUtils.convertToDouble(new DecimalFormat("##.##", new DecimalFormatSymbols(Locale.US)).format(fetchDistance * 2.43));
+                    Timber.e("kim doubleDuration -> %s", doubleDuration);
+                    //double doubleDuration = ApplicationUtils.convertToDouble(String.format(Locale.US, "%.2f", ApplicationUtils.convertToDouble(new DecimalFormat("##.##").format(kim * 2.43))));
                     String initialNearestDuration = String.valueOf(doubleDuration);
+                    Timber.e("kim initialNearestDuration -> %s", initialNearestDuration);
 
                     if (fetchDistance < 5) {
                         origin = new LatLng(location.getLatitude(), location.getLongitude());
-                        getAddress(context, latitude, longitude, new AddressCallBack() {
+                        /*getAddress(context, latitude, longitude, new AddressCallBack() {
                             @Override
-                            public void addressCall(String address) {
+                            public void addressCall(String address) {*/
                                 String nearestCurrentAreaName = areaName;
                                 Timber.e("nearestCurrentAreaName without progressBar-> %s", nearestCurrentAreaName);
                                 bookingSensorsArrayListGlobal.add(new BookingSensors(nearestCurrentAreaName, latitude, longitude,
@@ -2350,8 +2366,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                         BookingSensors.INFO_TYPE, 1));
                                 //fetch distance in ascending order
                                 Collections.sort(bookingSensorsArrayListGlobal, (c1, c2) -> Double.compare(c1.getDistance(), c2.getDistance()));
-                            }
-                        });
+                           /* }
+                        });*/
                     }
                 }
                 setBottomSheetFragmentControls(bookingSensorsArrayListGlobal);
@@ -3238,7 +3254,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 bookingSensorsMarkerArrayList.clear();
                 if (SharedData.getInstance().getOnConnectedLocation() != null) {
                     fetchBottomSheetSensorsWithoutProgressBar(SharedData.getInstance().getOnConnectedLocation());
-                    //fetchSensors(onConnectedLocation);
+                    fetchSensors(SharedData.getInstance().getOnConnectedLocation());
                 }
                 buttonSearch.setText(null);
                 linearLayoutBottom.setVisibility(View.GONE);
