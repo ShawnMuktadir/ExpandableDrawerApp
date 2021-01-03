@@ -82,5 +82,4 @@
         android:textSize="18sp"
         android:visibility="gone" />
 
-
 </LinearLayout>

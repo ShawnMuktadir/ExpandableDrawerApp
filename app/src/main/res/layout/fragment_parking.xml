@@ -66,11 +66,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dim3"
+            android:padding="@dimen/dim3"
+            android:elevation="@dimen/dim3"
             android:background="?android:attr/selectableItemBackground"
             android:clipToPadding="false"
-            android:elevation="@dimen/dim3"
             android:overScrollMode="never"
-            android:padding="@dimen/dim3"
             android:scrollbars="vertical" />
 
         <TextView

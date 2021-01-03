@@ -175,6 +175,7 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
             mAutoCompleteAdapter.clearList();
             if (searchVisitorDataList != null) {
                 hideNoData();
+                searchVisitorDataList.clear();
                 fetchSearchVisitorPlaceWithoutProgressBar(SharedPreManager.getInstance(context).getUser().getMobileNo());
             } else {
                 setNoData();
@@ -212,6 +213,7 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
                     }
                     if (searchVisitorDataList != null) {
                         hideNoData();
+                        searchVisitorDataList.clear();
                         fetchSearchVisitorPlaceWithoutProgressBar(SharedPreManager.getInstance(context).getUser().getMobileNo());
                     } else {
                         setNoData();

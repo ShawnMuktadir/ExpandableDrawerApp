@@ -1249,7 +1249,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 .title("My Location")
                 .rotation(location.getBearing()).flat(true).anchor(0.5f, 0.5f));
 
-        animateMarker(currentLocationMarker, location); // Helper method for smooth animation
+        // Helper method for smooth animation
+        //animateMarker(currentLocationMarker, location);
 
         if (markerClicked != null) {
             checkParkingSpotDistance(latLng, markerClicked.getPosition());
@@ -3242,7 +3243,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         buttonSearch.setOnClickListener(v -> {
             if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
-                Intent intent = new Intent(requireActivity(), SearchActivity.class);
+                Intent intent = new Intent(context, SearchActivity.class);
                 //startActivity(intent);
                 startActivityForResult(intent, NEW_SEARCH_ACTIVITY_REQUEST_CODE);
                 if (searchPlaceLatLng != null)
