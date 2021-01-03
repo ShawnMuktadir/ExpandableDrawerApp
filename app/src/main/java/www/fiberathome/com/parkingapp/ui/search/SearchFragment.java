@@ -134,8 +134,11 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         unbinder = ButterKnife.bind(this, view);
+
         context = (SearchActivity) getActivity();
+
         setListeners();
 
         //this.getSupportActionBar().hide();
@@ -144,8 +147,10 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
         placesClient = Places.createClient(context);
 
         if (ApplicationUtils.checkInternet(context)) {
+
             fetchSearchVisitorPlace(SharedPreManager.getInstance(context).getUser().getMobileNo());
             Timber.e("searchActivity mobileNo -> %s", SharedPreManager.getInstance(context).getUser().getMobileNo());
+
             editTextSearch.addTextChangedListener(filterTextWatcher);
             editTextSearch.requestFocus();
             editTextSearch.requestLayout();
@@ -175,8 +180,10 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
             mAutoCompleteAdapter.clearList();
             if (searchVisitorDataList != null) {
                 hideNoData();
-                searchVisitorDataList.clear();
-                fetchSearchVisitorPlaceWithoutProgressBar(SharedPreManager.getInstance(context).getUser().getMobileNo());
+                updateAdapter();
+                //searchVisitorDataList.clear();
+                //fetchSearchVisitorPlaceWithoutProgressBar(SharedPreManager.getInstance(context).getUser().getMobileNo());
+
             } else {
                 setNoData();
             }
@@ -213,8 +220,9 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
                     }
                     if (searchVisitorDataList != null) {
                         hideNoData();
-                        searchVisitorDataList.clear();
-                        fetchSearchVisitorPlaceWithoutProgressBar(SharedPreManager.getInstance(context).getUser().getMobileNo());
+                        updateAdapter();
+                        //searchVisitorDataList.clear();
+                        //fetchSearchVisitorPlaceWithoutProgressBar(SharedPreManager.getInstance(context).getUser().getMobileNo());
                     } else {
                         setNoData();
                     }
@@ -411,8 +419,6 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
     private void fetchSearchVisitorPlace(String mobileNo) {
         Timber.e("fetchSearchVisitorPlace mobileNo -> %s,", mobileNo);
 
-        Timber.e("fetchSearchVisitorPlace() called");
-
         showLoading(context);
 
         HttpsTrustManager.allowAllSSL();
@@ -457,7 +463,7 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
 
         }, error -> {
             Timber.e("jsonObject onErrorResponse get post -> %s", error.getMessage());
-            Timber.e( error.getCause());
+            Timber.e(error.getCause());
         }) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
@@ -536,6 +542,9 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
 
     private void fetchSearchVisitorPlaceWithoutProgressBar(String mobileNo) {
 
+        if (searchVisitorDataList != null)
+            searchVisitorDataList.clear();
+
         HttpsTrustManager.allowAllSSL();
 
         StringRequest stringRequest = new StringRequest(Request.Method.DEPRECATED_GET_OR_POST, AppConfig.URL_SEARCH_HISTORY_GET, response -> {
@@ -575,7 +584,7 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
 
         }, error -> {
             Timber.e("jsonObject onErrorResponse get post -> %s", error.getMessage());
-            Timber.e( error.getCause());
+            Timber.e(error.getCause());
         }) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
@@ -655,6 +664,15 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
         ViewCompat.setNestedScrollingEnabled(recyclerViewSearchPlaces, false);
         mAutoCompleteAdapter.setClickListener(this);
         recyclerViewSearchPlaces.setAdapter(mAutoCompleteAdapter);
+    }
+
+    private void updateAdapter() {
+        if (searchVisitorDataList != null) {
+            if (mAutoCompleteAdapter != null) {
+                mAutoCompleteAdapter = null;
+            }
+        }
+        setPlacesRecyclerAdapter();
     }
 
     private void setNoData() {

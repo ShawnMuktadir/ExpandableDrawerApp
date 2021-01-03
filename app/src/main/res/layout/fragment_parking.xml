@@ -61,10 +61,14 @@
                 app:srcCompat="@drawable/ic_clear" />
         </RelativeLayout>
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewParking"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_margin="@dimen/dim3"
             android:padding="@dimen/dim3"
             android:elevation="@dimen/dim3"
@@ -72,6 +76,7 @@
             android:clipToPadding="false"
             android:overScrollMode="never"
             android:scrollbars="vertical" />
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/textViewNoData"
