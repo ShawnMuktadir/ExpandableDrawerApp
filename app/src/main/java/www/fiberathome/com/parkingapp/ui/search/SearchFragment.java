@@ -671,8 +671,10 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
             if (mAutoCompleteAdapter != null) {
                 mAutoCompleteAdapter = null;
             }
+            setPlacesRecyclerAdapter();
+        } else {
+            setNoData();
         }
-        setPlacesRecyclerAdapter();
     }
 
     private void setNoData() {
