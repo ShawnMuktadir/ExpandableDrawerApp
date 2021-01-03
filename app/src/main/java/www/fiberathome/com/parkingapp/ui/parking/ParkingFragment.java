@@ -281,13 +281,11 @@ public class ParkingFragment extends BaseFragment implements ParkingAdapter.Park
                             setNoDataForBangla();
                             recyclerViewParking.setVisibility(View.GONE);
                             editTextParking.setText("");
-                        }
-                        else if (Locale.getDefault().getLanguage().equals("bn") && ApplicationUtils.isEnglish(contents)) {
+                        } else if (Locale.getDefault().getLanguage().equals("bn") && ApplicationUtils.isEnglish(contents)) {
                             setNoDataForEnglish();
                             recyclerViewParking.setVisibility(View.VISIBLE);
                             editTextParking.setText("");
-                        }
-                        else {
+                        } else {
                             filter(contents);
                             parkingAdapter.notifyDataSetChanged();
                             ApplicationUtils.hideKeyboard(context, editTextParking);
@@ -507,12 +505,12 @@ public class ParkingFragment extends BaseFragment implements ParkingAdapter.Park
     }
 
     private void setAdapter() {
-        parkingAdapter = new ParkingAdapter(context,  sensorAreas, onConnectedLocation);
+        parkingAdapter = new ParkingAdapter(context, sensorAreas, onConnectedLocation);
         recyclerViewParking.setAdapter(parkingAdapter);
     }
 
     private void updateAdapter() {
-        if (parkingAdapter!=null){
+        if (parkingAdapter != null) {
             parkingAdapter = null;
         }
         setAdapter();

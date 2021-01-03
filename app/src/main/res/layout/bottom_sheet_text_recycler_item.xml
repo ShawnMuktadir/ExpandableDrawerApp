@@ -13,13 +13,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_margin="@dimen/dim2"
+        android:layout_marginStart="@dimen/dim2"
         android:padding="@dimen/dim2"
         android:layout_marginBottom="@dimen/dim2">
 
         <LinearLayout
             android:layout_width="@dimen/_70sdp"
-            android:layout_height="@dimen/_43sdp"
+            android:layout_height="match_parent"
             android:background="@color/transparent"
             android:weightSum="3"
             android:orientation="vertical">
@@ -50,7 +50,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_40sdp"
+            android:layout_height="match_parent"
             android:layout_marginStart="@dimen/dim5"
             android:orientation="vertical">
 

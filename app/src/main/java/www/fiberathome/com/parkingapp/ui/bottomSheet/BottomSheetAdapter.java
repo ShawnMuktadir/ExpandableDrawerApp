@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -90,6 +91,18 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
         ApplicationUtils.setMargins(holder.relativeLayoutTxt, 0, 0, 0, 0);
 
+        holder.itemView.post(new Runnable() {
+            @Override
+            public void run() {
+                // this will give you cell width dynamically
+                int cellWidth = holder.itemView.getWidth();
+                Timber.e("cellWidth -> %s", cellWidth);
+                // this will give you cell height dynamically
+                int cellHeight = holder.itemView.getHeight();
+                Timber.e("cellHeight -> %s", cellHeight);
+            }
+        });
+
         if (bookingSensors.type == BookingSensors.TEXT_INFO_TYPE) {
             //view=holder.itemView;
             count++;
@@ -130,7 +143,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
         double tmp = Double.parseDouble(decimalFormat.format(Double
                 .parseDouble(bookingSensors.getDuration())));
-        holder.textViewParkingTravelTime.setText(String.valueOf(tmp)+ " mins");
+        holder.textViewParkingTravelTime.setText(String.valueOf(tmp) + " mins");
         //holder.textViewParkingTravelTime.setText(bookingSensors.getDuration());
 
         holder.itemView.setOnClickListener(v -> {
@@ -309,6 +322,12 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         notifyDataSetChanged();
     }
 
+    public void setData(ArrayList<BookingSensors> bookingSensors) {
+        this.bookingSensorsArrayList.clear();
+        bookingSensorsArrayList.addAll(bookingSensors);
+        notifyDataSetChanged();
+    }
+
     private boolean isGPSEnabled() {
 
         LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
@@ -335,24 +354,35 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
     }
 
     // implements View.OnClickListener
+    @SuppressLint("NonConstantResourceId")
     public static class TextBookingViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.textViewParkingAreaName)
         public TextView textViewParkingAreaName;
+
         @BindView(R.id.textViewParkingAreaCount)
         public TextView textViewParkingAreaCount;
+
         @BindView(R.id.textViewParkingAreaAddress)
         public TextView textViewParkingAreaAddress;
+
         @BindView(R.id.textViewParkingDistance)
         public TextView textViewParkingDistance;
+
         @BindView(R.id.textViewParkingTravelTime)
         public TextView textViewParkingTravelTime;
+
         @BindView(R.id.textViewStatic)
         public TextView textViewStatic;
+
         @BindView(R.id.relativeLayoutTxt)
         public RelativeLayout relativeLayoutTxt;
+
         @BindView(R.id.textBottom)
         public RelativeLayout relativeLayouTxtBottom;
+
+        @BindView(R.id.rowFG)
+        public LinearLayout rowFG;
 
         public TextBookingViewHolder(View itemView) {
             super(itemView);

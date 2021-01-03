@@ -160,6 +160,7 @@ import www.fiberathome.com.parkingapp.module.room.BookingSensorsRoom;
 import www.fiberathome.com.parkingapp.module.room.DatabaseClient;
 import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.ui.bottomSheet.BottomSheetAdapter;
+import www.fiberathome.com.parkingapp.ui.parking.ParkingAdapter;
 import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
 import www.fiberathome.com.parkingapp.ui.search.SearchActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
@@ -1249,9 +1250,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 .title("My Location")
                 .rotation(location.getBearing()).flat(true).anchor(0.5f, 0.5f));
 
-        // Helper method for smooth animation
-        //animateMarker(currentLocationMarker, location);
-
         if (markerClicked != null) {
             checkParkingSpotDistance(latLng, markerClicked.getPosition());
         } else if (adapterPlaceLatLng != null) {
@@ -1263,7 +1261,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     private void checkParkingSpotDistance(LatLng car, LatLng spot) {
         double distanceBetween = ApplicationUtils.calculateDistance(car.latitude, car.longitude, spot.latitude, spot.longitude);
-        if (distanceBetween <= 0.07 && !isNotificationSent) {
+        if (distanceBetween <= 0.05 && !isNotificationSent) {
 
             sendNotification("You Entered parking spot", "You can book parking slot");
 
@@ -1275,41 +1273,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
             isInAreaEnabled = false;
         }
-    }
-
-    public void animateMarker(final Marker marker, final Location location) {
-        final Handler handler = new Handler();
-        final long start = SystemClock.uptimeMillis();
-        final LatLng startLatLng = marker.getPosition();
-        final double startRotation = marker.getRotation();
-        final long duration = 500;
-
-        final Interpolator interpolator = new LinearInterpolator();
-
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                long elapsed = SystemClock.uptimeMillis() - start;
-                float t = interpolator.getInterpolation((float) elapsed
-                        / duration);
-
-                double lng = t * location.getLongitude() + (1 - t)
-                        * startLatLng.longitude;
-                double lat = t * location.getLatitude() + (1 - t)
-                        * startLatLng.latitude;
-
-                float rotation = (float) (t * location.getBearing() + (1 - t)
-                        * startRotation);
-
-                marker.setPosition(new LatLng(lat, lng));
-                marker.setRotation(rotation);
-
-                if (t < 1.0) {
-                    // Post again 16ms later.
-                    handler.postDelayed(this, 16);
-                }
-            }
-        });
     }
 
     @Override
@@ -2270,7 +2233,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         };
         strReq.setRetryPolicy(new DefaultRetryPolicy(50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        strReq.setShouldCache(true);
+        //strReq.setShouldCache(true);
         ParkingApp.getInstance().addToRequestQueue(strReq);
     }
 
@@ -2303,6 +2266,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     }
 
     private void setBottomSheetRecyclerViewAdapter(ArrayList<BookingSensors> bookingSensors) {
+        bottomSheetAdapter = null;
         bottomSheetAdapter = new BottomSheetAdapter(context, this, bookingSensors, onConnectedLocation, this);
         bottomSheetRecyclerView.setAdapter(bottomSheetAdapter);
     }
@@ -2360,13 +2324,13 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         /*getAddress(context, latitude, longitude, new AddressCallBack() {
                             @Override
                             public void addressCall(String address) {*/
-                                String nearestCurrentAreaName = areaName;
-                                Timber.e("nearestCurrentAreaName without progressBar-> %s", nearestCurrentAreaName);
-                                bookingSensorsArrayListGlobal.add(new BookingSensors(nearestCurrentAreaName, latitude, longitude,
-                                        fetchDistance, count, initialNearestDuration,
-                                        BookingSensors.INFO_TYPE, 1));
-                                //fetch distance in ascending order
-                                Collections.sort(bookingSensorsArrayListGlobal, (c1, c2) -> Double.compare(c1.getDistance(), c2.getDistance()));
+                        String nearestCurrentAreaName = areaName;
+                        Timber.e("nearestCurrentAreaName without progressBar-> %s", nearestCurrentAreaName);
+                        bookingSensorsArrayListGlobal.add(new BookingSensors(nearestCurrentAreaName, latitude, longitude,
+                                fetchDistance, count, initialNearestDuration,
+                                BookingSensors.INFO_TYPE, 1));
+                        //fetch distance in ascending order
+                        Collections.sort(bookingSensorsArrayListGlobal, (c1, c2) -> Double.compare(c1.getDistance(), c2.getDistance()));
                            /* }
                         });*/
                     }
@@ -3253,17 +3217,33 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 bookingSensorsArrayListGlobal.clear();
                 bookingSensorsArrayList.clear();
                 bookingSensorsMarkerArrayList.clear();
-                if (SharedData.getInstance().getOnConnectedLocation() != null) {
-                    fetchBottomSheetSensorsWithoutProgressBar(SharedData.getInstance().getOnConnectedLocation());
-                    fetchSensors(SharedData.getInstance().getOnConnectedLocation());
-                }
+                //if (SharedData.getInstance().getOnConnectedLocation() != null) {
+                fetchBottomSheetSensorsWithoutProgressBar(SharedData.getInstance().getOnConnectedLocation());
+                fetchSensors(SharedData.getInstance().getOnConnectedLocation());
+                //}
                 buttonSearch.setText(null);
                 linearLayoutBottom.setVisibility(View.GONE);
                 linearLayoutSearchBottom.setVisibility(View.GONE);
                 linearLayoutMarkerBottom.setVisibility(View.GONE);
                 linearLayoutBottomSheetBottom.setVisibility(View.GONE);
             } else {
-                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
+                //TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
+                ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
+                    Timber.e("Positive Button clicked");
+                    if (ApplicationUtils.checkInternet(context)) {
+                        fetchSensors(onConnectedLocation);
+                        fetchBottomSheetSensors(onConnectedLocation);
+                    } else {
+                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                    }
+                }, (dialog, which) -> {
+                    Timber.e("Negative Button Clicked");
+                    dialog.dismiss();
+                    if (getActivity() != null) {
+                        getActivity().finish();
+                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                    }
+                });
             }
         });
 
@@ -3280,32 +3260,16 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     bookingSensorsMarkerArrayList.clear();
                     bookingSensorsAdapterArrayList.clear();
                     animateCamera(SharedData.getInstance().getOnConnectedLocation());
-                    if (ApplicationUtils.checkInternet(context)) {
-                        fetchSensors(SharedData.getInstance().getOnConnectedLocation());
-                        fetchBottomSheetSensors(SharedData.getInstance().getOnConnectedLocation());
-                    } else {
-                        ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
-                            Timber.e("Positive Button clicked");
-                            if (ApplicationUtils.checkInternet(context)) {
-                                fetchSensors(onConnectedLocation);
-                                fetchBottomSheetSensors(onConnectedLocation);
-                            } else {
-                                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
-                            }
-                        }, (dialog, which) -> {
-                            Timber.e("Negative Button Clicked");
-                            dialog.dismiss();
-                            if (getActivity() != null) {
-                                getActivity().finish();
-                                TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
-                            }
-                        });
-                    }
+
+                    fetchSensors(SharedData.getInstance().getOnConnectedLocation());
+                    fetchBottomSheetSensors(SharedData.getInstance().getOnConnectedLocation());
+
                     buttonSearch.setText(null);
                     buttonSearch.setVisibility(View.VISIBLE);
+
                     layoutVisible(false, "", "", " ", null);
                     SharedData.getInstance().setParkingLocation(null);
-                    //ApplicationUtils.reLoadFragment(getParentFragmentManager(), this);
+
                     linearLayoutBottom.setVisibility(View.GONE);
                     linearLayoutSearchBottom.setVisibility(View.GONE);
                     linearLayoutMarkerBottom.setVisibility(View.GONE);
@@ -3319,7 +3283,23 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     btnGetDirection.setFocusable(true);
                 }
             } else {
-                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
+                //TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
+                ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
+                    Timber.e("Positive Button clicked");
+                    if (ApplicationUtils.checkInternet(context)) {
+                        fetchSensors(onConnectedLocation);
+                        fetchBottomSheetSensors(onConnectedLocation);
+                    } else {
+                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                    }
+                }, (dialog, which) -> {
+                    Timber.e("Negative Button Clicked");
+                    dialog.dismiss();
+                    if (getActivity() != null) {
+                        getActivity().finish();
+                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                    }
+                });
             }
         });
 
@@ -3344,27 +3324,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     bookingSensorsAdapterArrayList.clear();
                     bookingSensorsMarkerArrayList.clear();
                     animateCamera(SharedData.getInstance().getOnConnectedLocation());
-                    if (ApplicationUtils.checkInternet(context)) {
-                        fetchSensors(SharedData.getInstance().getOnConnectedLocation());
-                        fetchBottomSheetSensors(SharedData.getInstance().getOnConnectedLocation());
-                    } else {
-                        ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
-                            Timber.e("Positive Button clicked");
-                            if (ApplicationUtils.checkInternet(context)) {
-                                fetchSensors(onConnectedLocation);
-                                fetchBottomSheetSensors(onConnectedLocation);
-                            } else {
-                                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
-                            }
-                        }, (dialog, which) -> {
-                            Timber.e("Negative Button Clicked");
-                            dialog.dismiss();
-                            if (getActivity() != null) {
-                                getActivity().finish();
-                                TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
-                            }
-                        });
-                    }
+
+                    fetchSensors(SharedData.getInstance().getOnConnectedLocation());
+                    fetchBottomSheetSensors(SharedData.getInstance().getOnConnectedLocation());
+
                     //ApplicationUtils.refreshFragment(getParentFragmentManager(), this, R.id.nav_host_fragment);
                     ApplicationUtils.replaceFragmentWithAnimation(context.getSupportFragmentManager(), this);
                     layoutSearchVisible(false, "", "", "", null);
@@ -3380,7 +3343,23 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     btnSearchGetDirection.setFocusable(true);
                 }
             } else {
-                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
+                //TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
+                ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
+                    Timber.e("Positive Button clicked");
+                    if (ApplicationUtils.checkInternet(context)) {
+                        fetchSensors(onConnectedLocation);
+                        fetchBottomSheetSensors(onConnectedLocation);
+                    } else {
+                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                    }
+                }, (dialog, which) -> {
+                    Timber.e("Negative Button Clicked");
+                    dialog.dismiss();
+                    if (getActivity() != null) {
+                        getActivity().finish();
+                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                    }
+                });
             }
         });
 
@@ -3402,31 +3381,13 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     bookingSensorsAdapterArrayList.clear();
                     bookingSensorsMarkerArrayList.clear();
                     animateCamera(SharedData.getInstance().getOnConnectedLocation());
-                    if (ApplicationUtils.checkInternet(context)) {
-                        fetchSensors(SharedData.getInstance().getOnConnectedLocation());
-                        fetchBottomSheetSensors(SharedData.getInstance().getOnConnectedLocation());
-                    } else {
-                        //ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.connect_to_internet), context);
-                        ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
-                            Timber.e("Positive Button clicked");
-                            if (ApplicationUtils.checkInternet(context)) {
-                                fetchSensors(onConnectedLocation);
-                                fetchBottomSheetSensors(onConnectedLocation);
-                                bottomSheetAdapter.notifyDataSetChanged();
-                            } else {
-                                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
-                            }
-                        }, (dialog, which) -> {
-                            Timber.e("Negative Button Clicked");
-                            dialog.dismiss();
-                            if (getActivity() != null) {
-                                getActivity().finish();
-                                TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
-                            }
-                        });
-                    }
+
+                    fetchSensors(SharedData.getInstance().getOnConnectedLocation());
+                    fetchBottomSheetSensors(SharedData.getInstance().getOnConnectedLocation());
+
                     buttonSearch.setText(null);
                     buttonSearch.setVisibility(View.VISIBLE);
+
                     //ApplicationUtils.refreshFragment(getParentFragmentManager(), this, R.id.nav_host_fragment);
                     ApplicationUtils.replaceFragmentWithAnimation(context.getSupportFragmentManager(), this);
                     layoutMarkerVisible(false, "", "", "", null);
@@ -3441,7 +3402,24 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     btnMarkerGetDirection.setFocusable(true);
                 }
             } else {
-                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
+                //TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
+                ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
+                    Timber.e("Positive Button clicked");
+                    if (ApplicationUtils.checkInternet(context)) {
+                        fetchSensors(onConnectedLocation);
+                        fetchBottomSheetSensors(onConnectedLocation);
+                        bottomSheetAdapter.notifyDataSetChanged();
+                    } else {
+                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                    }
+                }, (dialog, which) -> {
+                    Timber.e("Negative Button Clicked");
+                    dialog.dismiss();
+                    if (getActivity() != null) {
+                        getActivity().finish();
+                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                    }
+                });
             }
         });
 
@@ -3460,29 +3438,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     bookingSensorsMarkerArrayList.clear();
                     bookingSensorsBottomSheetArrayList.clear();
                     bottomSheetAdapter.updateData(bookingSensorsArrayListGlobal);
-                    if (ApplicationUtils.checkInternet(context)) {
-                        fetchSensors(SharedData.getInstance().getOnConnectedLocation());
-                        fetchBottomSheetSensors(SharedData.getInstance().getOnConnectedLocation());
-                        bottomSheetAdapter.notifyDataSetChanged();
-                    } else {
-                        //ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.connect_to_internet), context);
-                        ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
-                            Timber.e("Positive Button clicked");
-                            if (ApplicationUtils.checkInternet(context)) {
-                                fetchSensors(onConnectedLocation);
-                                fetchBottomSheetSensors(onConnectedLocation);
-                            } else {
-                                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
-                            }
-                        }, (dialog, which) -> {
-                            Timber.e("Negative Button Clicked");
-                            dialog.dismiss();
-                            if (getActivity() != null) {
-                                getActivity().finish();
-                                TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
-                            }
-                        });
-                    }
+
+                    fetchSensors(SharedData.getInstance().getOnConnectedLocation());
+                    fetchBottomSheetSensors(SharedData.getInstance().getOnConnectedLocation());
+                    bottomSheetAdapter.notifyDataSetChanged();
+
                     animateCamera(SharedData.getInstance().getOnConnectedLocation());
                     if (getDirectionBottomSheetButtonClicked == 1) {
                         btnBottomSheetGetDirection.setText(context.getResources().getString(R.string.get_direction));
@@ -3492,6 +3452,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         getDirectionBottomSheetButtonClicked--;
                     }
                     layoutBottomSheetVisible(false, "", "", "", "", null, false);
+
                     //ApplicationUtils.refreshFragment(getParentFragmentManager(), this, R.id.nav_host_fragment);
                     ApplicationUtils.replaceFragmentWithAnimation(context.getSupportFragmentManager(), this);
                     linearLayoutBottom.setVisibility(View.GONE);
@@ -3507,7 +3468,23 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     getDirectionBottomSheetButtonClicked = 0;
                 }
             } else {
-                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
+                //TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
+                ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
+                    Timber.e("Positive Button clicked");
+                    if (ApplicationUtils.checkInternet(context)) {
+                        fetchSensors(onConnectedLocation);
+                        fetchBottomSheetSensors(onConnectedLocation);
+                    } else {
+                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                    }
+                }, (dialog, which) -> {
+                    Timber.e("Negative Button Clicked");
+                    dialog.dismiss();
+                    if (getActivity() != null) {
+                        getActivity().finish();
+                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                    }
+                });
             }
         });
 
@@ -3883,6 +3860,13 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         btnLiveParking.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
 
         textViewTermsCondition.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
+    }
+
+    private void updateAdapter() {
+        if (bottomSheetAdapter != null) {
+            bottomSheetAdapter = null;
+        }
+        setBottomSheetRecyclerViewAdapter(bookingSensorsArrayListGlobal);
     }
 
     @Override
