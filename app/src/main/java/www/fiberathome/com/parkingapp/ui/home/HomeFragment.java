@@ -3219,6 +3219,58 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }*/
     }
 
+    private void commonBackOperations() {
+        if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
+            if (mMap != null) {
+                mMap.clear();
+                mMap.setTrafficEnabled(true);
+                startShimmer();
+                previousMarker = null;
+                fromRouteDrawn = 0;
+                bookingSensorsArrayListGlobal.clear();
+                bookingSensorsArrayList.clear();
+                bookingSensorsMarkerArrayList.clear();
+                bookingSensorsAdapterArrayList.clear();
+                animateCamera(SharedData.getInstance().getOnConnectedLocation());
+
+                if (bottomSheetAdapter != null) {
+                    bottomSheetAdapter = null;
+                }
+
+                fetchSensors(SharedData.getInstance().getOnConnectedLocation());
+                fetchBottomSheetSensors(SharedData.getInstance().getOnConnectedLocation());
+
+                linearLayoutBottom.setVisibility(View.GONE);
+                linearLayoutSearchBottom.setVisibility(View.GONE);
+                linearLayoutMarkerBottom.setVisibility(View.GONE);
+                linearLayoutBottomSheetBottom.setVisibility(View.GONE);
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._90sdp));
+
+                buttonSearch.setText(null);
+                buttonSearch.setVisibility(View.VISIBLE);
+            }
+        } else {
+            //TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
+            ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
+                Timber.e("Positive Button clicked");
+                if (ApplicationUtils.checkInternet(context)) {
+                    fetchSensors(onConnectedLocation);
+                    fetchBottomSheetSensors(onConnectedLocation);
+                } else {
+                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                }
+            }, (dialog, which) -> {
+                Timber.e("Negative Button Clicked");
+                dialog.dismiss();
+                if (getActivity() != null) {
+                    getActivity().finish();
+                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                }
+            });
+        }
+    }
+
     private void setListeners() {
 
         buttonSearch.setOnClickListener(v -> {
@@ -3264,256 +3316,70 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         });
 
         imageViewBack.setOnClickListener(v -> {
-            if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
-                if (mMap != null) {
-                    mMap.clear();
-                    mMap.setTrafficEnabled(true);
-                    startShimmer();
-                    previousMarker = null;
-                    fromRouteDrawn = 0;
-                    bookingSensorsArrayListGlobal.clear();
-                    bookingSensorsArrayList.clear();
-                    bookingSensorsMarkerArrayList.clear();
-                    bookingSensorsAdapterArrayList.clear();
-                    animateCamera(SharedData.getInstance().getOnConnectedLocation());
 
-                    fetchSensors(SharedData.getInstance().getOnConnectedLocation());
-                    fetchBottomSheetSensors(SharedData.getInstance().getOnConnectedLocation());
+            commonBackOperations();
+            layoutVisible(false, "", "", " ", null);
+            SharedData.getInstance().setParkingLocation(null);
+            SharedData.getInstance().setSensorArea(null);
 
-                    buttonSearch.setText(null);
-                    buttonSearch.setVisibility(View.VISIBLE);
+            btnGetDirection.setText(context.getResources().getString(R.string.get_direction));
+            btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
+            btnGetDirection.setEnabled(true);
+            btnGetDirection.setFocusable(true);
 
-                    layoutVisible(false, "", "", " ", null);
-                    SharedData.getInstance().setParkingLocation(null);
-
-                    linearLayoutBottom.setVisibility(View.GONE);
-                    linearLayoutSearchBottom.setVisibility(View.GONE);
-                    linearLayoutMarkerBottom.setVisibility(View.GONE);
-                    linearLayoutBottomSheetBottom.setVisibility(View.GONE);
-                    SharedData.getInstance().setSensorArea(null);
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                    bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._90sdp));
-                    btnGetDirection.setText(context.getResources().getString(R.string.get_direction));
-                    btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
-                    btnGetDirection.setEnabled(true);
-                    btnGetDirection.setFocusable(true);
-                }
-            } else {
-                //TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
-                ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
-                    Timber.e("Positive Button clicked");
-                    if (ApplicationUtils.checkInternet(context)) {
-                        fetchSensors(onConnectedLocation);
-                        fetchBottomSheetSensors(onConnectedLocation);
-                    } else {
-                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
-                    }
-                }, (dialog, which) -> {
-                    Timber.e("Negative Button Clicked");
-                    dialog.dismiss();
-                    if (getActivity() != null) {
-                        getActivity().finish();
-                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
-                    }
-                });
-            }
         });
 
         imageViewSearchBack.setOnClickListener(v -> {
-            if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
-                if (mMap != null) {
-                    mMap.clear();
-                    mMap.setTrafficEnabled(true);
-                    fromRouteDrawn = 0;
-                    previousMarker = null;
-                    btnSearchGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
-                    bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._90sdp));
-                    if (getDirectionSearchButtonClicked == 1) {
-                        btnSearchGetDirection.setText(context.getResources().getString(R.string.get_direction));
-                        btnSearchGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
-                        getDirectionSearchButtonClicked--;
-                    }
-                    buttonSearch.setText(null);
-                    buttonSearch.setVisibility(View.VISIBLE);
-                    bookingSensorsArrayListGlobal.clear();
-                    bookingSensorsArrayList.clear();
-                    bookingSensorsAdapterArrayList.clear();
-                    bookingSensorsMarkerArrayList.clear();
-                    animateCamera(SharedData.getInstance().getOnConnectedLocation());
 
-                    if (bottomSheetAdapter != null) {
-                        bottomSheetAdapter = null;
-                    }
+            commonBackOperations();
+            layoutSearchVisible(false, "", "", "", null);
 
-                    fetchSensors(SharedData.getInstance().getOnConnectedLocation());
-                    fetchBottomSheetSensors(SharedData.getInstance().getOnConnectedLocation());
-
-                    //ApplicationUtils.refreshFragment(getParentFragmentManager(), this, R.id.nav_host_fragment);
-                    ApplicationUtils.replaceFragmentWithAnimation(context.getSupportFragmentManager(), this);
-                    layoutSearchVisible(false, "", "", "", null);
-                    linearLayoutBottom.setVisibility(View.GONE);
-                    linearLayoutSearchBottom.setVisibility(View.GONE);
-                    linearLayoutMarkerBottom.setVisibility(View.GONE);
-                    linearLayoutBottomSheetBottom.setVisibility(View.GONE);
-                    SharedData.getInstance().setBookingSensors(null);
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                    btnSearchGetDirection.setText(context.getResources().getString(R.string.get_direction));
-                    btnSearchGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
-                    btnSearchGetDirection.setEnabled(true);
-                    btnSearchGetDirection.setFocusable(true);
-                }
-            } else {
-                //TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
-                ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
-                    Timber.e("Positive Button clicked");
-                    if (ApplicationUtils.checkInternet(context)) {
-                        fetchSensors(onConnectedLocation);
-                        fetchBottomSheetSensors(onConnectedLocation);
-                    } else {
-                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
-                    }
-                }, (dialog, which) -> {
-                    Timber.e("Negative Button Clicked");
-                    dialog.dismiss();
-                    if (getActivity() != null) {
-                        getActivity().finish();
-                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
-                    }
-                });
+            btnSearchGetDirection.setText(context.getResources().getString(R.string.get_direction));
+            btnSearchGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
+            btnSearchGetDirection.setEnabled(true);
+            btnSearchGetDirection.setFocusable(true);
+            btnSearchGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
+            if (getDirectionSearchButtonClicked == 1) {
+                //bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._90sdp));
+                btnSearchGetDirection.setText(context.getResources().getString(R.string.get_direction));
+                btnSearchGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
+                getDirectionSearchButtonClicked--;
             }
         });
 
         imageViewMarkerBack.setOnClickListener(v -> {
-            if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
-                if (mMap != null) {
-                    mMap.clear();
-                    mMap.setTrafficEnabled(true);
-                    fromRouteDrawn = 0;
-                    previousMarker = null;
-                    bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._90sdp));
-                    if (getDirectionMarkerButtonClicked == 1) {
-                        btnMarkerGetDirection.setText(context.getResources().getString(R.string.get_direction));
-                        btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
-                        getDirectionMarkerButtonClicked--;
-                    }
-                    bookingSensorsArrayListGlobal.clear();
-                    bookingSensorsArrayList.clear();
-                    bookingSensorsAdapterArrayList.clear();
-                    bookingSensorsMarkerArrayList.clear();
-                    animateCamera(SharedData.getInstance().getOnConnectedLocation());
 
-                    if (bottomSheetAdapter != null) {
-                        bottomSheetAdapter = null;
-                    }
+            commonBackOperations();
+            layoutMarkerVisible(false, "", "", "", null);
 
-                    fetchSensors(SharedData.getInstance().getOnConnectedLocation());
-                    fetchBottomSheetSensors(SharedData.getInstance().getOnConnectedLocation());
-
-                    buttonSearch.setText(null);
-                    buttonSearch.setVisibility(View.VISIBLE);
-
-                    //ApplicationUtils.refreshFragment(getParentFragmentManager(), this, R.id.nav_host_fragment);
-                    ApplicationUtils.replaceFragmentWithAnimation(context.getSupportFragmentManager(), this);
-                    layoutMarkerVisible(false, "", "", "", null);
-                    linearLayoutBottom.setVisibility(View.GONE);
-                    linearLayoutSearchBottom.setVisibility(View.GONE);
-                    linearLayoutMarkerBottom.setVisibility(View.GONE);
-                    linearLayoutBottomSheetBottom.setVisibility(View.GONE);
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                    btnMarkerGetDirection.setText(context.getResources().getString(R.string.get_direction));
-                    btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
-                    btnMarkerGetDirection.setEnabled(true);
-                    btnMarkerGetDirection.setFocusable(true);
-                }
-            } else {
-                //TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
-                ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
-                    Timber.e("Positive Button clicked");
-                    if (ApplicationUtils.checkInternet(context)) {
-                        fetchSensors(onConnectedLocation);
-                        fetchBottomSheetSensors(onConnectedLocation);
-                        bottomSheetAdapter.notifyDataSetChanged();
-                    } else {
-                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
-                    }
-                }, (dialog, which) -> {
-                    Timber.e("Negative Button Clicked");
-                    dialog.dismiss();
-                    if (getActivity() != null) {
-                        getActivity().finish();
-                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
-                    }
-                });
+            btnMarkerGetDirection.setText(context.getResources().getString(R.string.get_direction));
+            btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
+            btnMarkerGetDirection.setEnabled(true);
+            btnMarkerGetDirection.setFocusable(true);
+            if (getDirectionMarkerButtonClicked == 1) {
+                btnMarkerGetDirection.setText(context.getResources().getString(R.string.get_direction));
+                btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
+                getDirectionMarkerButtonClicked--;
             }
         });
 
         imageViewBottomSheetBack.setOnClickListener(v -> {
-            if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
-                if (mMap != null) {
-                    mMap.clear();
-                    mMap.setTrafficEnabled(true);
-                    fromRouteDrawn = 0;
-                    previousMarker = null;
-                    buttonSearch.setText(null);
-                    buttonSearch.setVisibility(View.VISIBLE);
-                    bookingSensorsArrayListGlobal.clear();
-                    bookingSensorsArrayList.clear();
-                    bookingSensorsAdapterArrayList.clear();
-                    bookingSensorsMarkerArrayList.clear();
-                    bookingSensorsBottomSheetArrayList.clear();
-                    bottomSheetAdapter.updateData(bookingSensorsArrayListGlobal);
 
-                    if (bottomSheetAdapter != null) {
-                        bottomSheetAdapter = null;
-                    }
+            commonBackOperations();
+            layoutBottomSheetVisible(false, "", "", "", "", null, false);
 
-                    fetchSensors(SharedData.getInstance().getOnConnectedLocation());
-                    fetchBottomSheetSensors(SharedData.getInstance().getOnConnectedLocation());
-                    bottomSheetAdapter.notifyDataSetChanged();
-
-                    animateCamera(SharedData.getInstance().getOnConnectedLocation());
-                    if (getDirectionBottomSheetButtonClicked == 1) {
-                        btnBottomSheetGetDirection.setText(context.getResources().getString(R.string.get_direction));
-                        btnBottomSheetGetDirection.setEnabled(true);
-                        btnBottomSheetGetDirection.setFocusable(true);
-                        btnBottomSheetGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
-                        getDirectionBottomSheetButtonClicked--;
-                    }
-                    layoutBottomSheetVisible(false, "", "", "", "", null, false);
-
-                    //ApplicationUtils.refreshFragment(getParentFragmentManager(), this, R.id.nav_host_fragment);
-                    ApplicationUtils.replaceFragmentWithAnimation(context.getSupportFragmentManager(), this);
-                    linearLayoutBottom.setVisibility(View.GONE);
-                    linearLayoutSearchBottom.setVisibility(View.GONE);
-                    linearLayoutMarkerBottom.setVisibility(View.GONE);
-                    linearLayoutBottomSheetBottom.setVisibility(View.GONE);
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                    bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._90sdp));
-                    btnBottomSheetGetDirection.setText(context.getResources().getString(R.string.get_direction));
-                    btnBottomSheetGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
-                    btnBottomSheetGetDirection.setEnabled(true);
-                    btnBottomSheetGetDirection.setFocusable(true);
-                    getDirectionBottomSheetButtonClicked = 0;
-                }
-            } else {
-                //TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
-                ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
-                    Timber.e("Positive Button clicked");
-                    if (ApplicationUtils.checkInternet(context)) {
-                        fetchSensors(onConnectedLocation);
-                        fetchBottomSheetSensors(onConnectedLocation);
-                    } else {
-                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
-                    }
-                }, (dialog, which) -> {
-                    Timber.e("Negative Button Clicked");
-                    dialog.dismiss();
-                    if (getActivity() != null) {
-                        getActivity().finish();
-                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
-                    }
-                });
+            if (getDirectionBottomSheetButtonClicked == 1) {
+                btnBottomSheetGetDirection.setText(context.getResources().getString(R.string.get_direction));
+                btnBottomSheetGetDirection.setEnabled(true);
+                btnBottomSheetGetDirection.setFocusable(true);
+                btnBottomSheetGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
+                getDirectionBottomSheetButtonClicked--;
             }
+            btnBottomSheetGetDirection.setText(context.getResources().getString(R.string.get_direction));
+            btnBottomSheetGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
+            btnBottomSheetGetDirection.setEnabled(true);
+            btnBottomSheetGetDirection.setFocusable(true);
+            getDirectionBottomSheetButtonClicked = 0;
         });
 
         btnGetDirection.setOnClickListener(v -> {
