@@ -54,6 +54,7 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
 
     //@BindView(R.id.pdfView)
     //PDFView pdfView;
+
     @BindView(R.id.editTextSearchLaw)
     EditText editTextSearchLaw;
 
@@ -111,12 +112,12 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
 
         LocalJson localJson = new Gson().fromJson(jsonResult, LocalJson.class);
         if (localJson != null) {
-//            Toast.makeText(context, "Data", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, "Data", Toast.LENGTH_SHORT).show();
             List<Result> resultList = localJson.getResult();
             List<LawItem> lawItems = new ArrayList<>();
 
             for (Result r : resultList) {
-                Log.d(TAG, "onViewCreated: " + r.getTitle());
+                Timber.d("onViewCreated Result: -> %s", r.getTitle());
                 LawItem item = new LawItem(r.getTitle(), r.getLaws());
                 lawItems.add(item);
             }

@@ -591,7 +591,7 @@ public class ApplicationUtils {
     }
 
     public static void reLoadFragment(@NonNull FragmentManager fragmentManager, @NonNull Fragment fragment) {
-        Timber.e("reloading fragment");
+        //Timber.e("reloading fragment");
         fragmentManager.beginTransaction().replace(fragment.getId(),
                 fragment).commit();
     }

@@ -22,13 +22,10 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.SystemClock;
 import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Interpolator;
-import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -160,7 +157,6 @@ import www.fiberathome.com.parkingapp.module.room.BookingSensorsRoom;
 import www.fiberathome.com.parkingapp.module.room.DatabaseClient;
 import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.ui.bottomSheet.BottomSheetAdapter;
-import www.fiberathome.com.parkingapp.ui.parking.ParkingAdapter;
 import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
 import www.fiberathome.com.parkingapp.ui.search.SearchActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
@@ -1005,7 +1001,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             nearbySearchStringDuration,
                             BookingSensors.INFO_TYPE, 1));
 
-                    Timber.e("onMarkerClick bookingSensorsMarkerArrayList INFO_TYPE-> %s", new Gson().toJson(bookingSensorsArrayList));
+                    //Timber.e("onMarkerClick bookingSensorsMarkerArrayList INFO_TYPE-> %s", new Gson().toJson(bookingSensorsArrayList));
 
                     bubbleSortArrayList(bookingSensorsArrayList);
 
@@ -2285,6 +2281,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         bottomSheetAdapter = null;
         bottomSheetAdapter = new BottomSheetAdapter(context, this, bookingSensors, onConnectedLocation, this);
         bottomSheetRecyclerView.setAdapter(bottomSheetAdapter);
+
     }
 
     private void fetchBottomSheetSensorsWithoutProgressBar(Location location) {
@@ -3224,7 +3221,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             if (mMap != null) {
                 mMap.clear();
                 mMap.setTrafficEnabled(true);
-                startShimmer();
                 previousMarker = null;
                 fromRouteDrawn = 0;
                 bookingSensorsArrayListGlobal.clear();
@@ -3237,8 +3233,19 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     bottomSheetAdapter = null;
                 }
 
-                fetchSensors(SharedData.getInstance().getOnConnectedLocation());
-                fetchBottomSheetSensors(SharedData.getInstance().getOnConnectedLocation());
+                try {
+                    if (onConnectedLocation != null) {
+                        fetchSensors(onConnectedLocation);
+                        fetchBottomSheetSensors(onConnectedLocation);
+                    } else {
+                        fetchSensors(SharedData.getInstance().getOnConnectedLocation());
+                        fetchBottomSheetSensors(SharedData.getInstance().getOnConnectedLocation());
+                    }
+                } catch (Exception e) {
+                    e.getCause();
+                }
+
+                //ApplicationUtils.refreshFragment(getParentFragmentManager(), this, R.id.nav_host_fragment);
 
                 linearLayoutBottom.setVisibility(View.GONE);
                 linearLayoutSearchBottom.setVisibility(View.GONE);
@@ -3286,8 +3293,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 bookingSensorsArrayList.clear();
                 bookingSensorsMarkerArrayList.clear();
                 //if (SharedData.getInstance().getOnConnectedLocation() != null) {
-                fetchBottomSheetSensorsWithoutProgressBar(SharedData.getInstance().getOnConnectedLocation());
-                fetchSensors(SharedData.getInstance().getOnConnectedLocation());
+                fetchBottomSheetSensorsWithoutProgressBar(onConnectedLocation);
+                fetchSensors(onConnectedLocation);
                 //}
                 buttonSearch.setText(null);
                 linearLayoutBottom.setVisibility(View.GONE);
@@ -3780,6 +3787,13 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
         geoQuery = geoFire.queryAtLocation(new GeoLocation(latLng.latitude, latLng.longitude), 0.1f); // 500m
         geoQuery.addGeoQueryEventListener(HomeFragment.this);
+    }
+
+    private BottomSheetAdapter.TextBookingViewHolder holder;
+
+    @Override
+    public void onMethodCallback(@NonNull BottomSheetAdapter.TextBookingViewHolder holder) {
+        this.holder = holder;
     }
 
     private void setTimer(long difference) {
