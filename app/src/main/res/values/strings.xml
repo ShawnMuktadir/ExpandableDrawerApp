@@ -410,7 +410,7 @@
 
     <string name="set">Set</string>
     <string name="you_can_book_parking_slot">You can Book your selected parking area now</string>
-    <string name="parking_spot_selection_rules">You have to exit from current destination to change new parking spot</string>
+    <string name="parking_spot_selection_rules">You have to exit from current destination to change new parking spot, Do you want to change the parking spot?</string>
     <string name="schedule_fragment_title">00:00–00:00pm</string>
     <string name="parking_total_time">00:00min</string>
     <string name="please_wait">Please wait…</string>
@@ -418,7 +418,7 @@
     <string name="get_support">Get Support</string>
     <string name="number">01924262749</string>
     <string name="call">Call</string>
-    <string name="you_have_to_exit_from_current_destination">You have to exit from current destination to change new parking spot</string>
+    <string name="you_have_to_exit_from_current_destination">You have to exit from current destination to change new parking spot, do you want to change the parking spot?</string>
     <string name="please_try_again">Please try again</string>
     <string name="search_law">Search…</string>
     <string name="english_item">English</string>

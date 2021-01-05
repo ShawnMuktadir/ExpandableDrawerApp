@@ -80,6 +80,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.JointType;
 import com.google.android.gms.maps.model.LatLng;
@@ -588,8 +589,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
             listener = (FragmentChangeListener) context;
 
-            progressDialog = new ProgressDialog(requireActivity());
-            progressDialog.setMessage("Initializing....");
+            if (mMap == null) {
+                showLoading(context, "Initializing....");
+                /*progressDialog = new ProgressDialog(requireActivity());
+                progressDialog.setMessage("Initializing....");*/
+            }
 
             if (isServicesOk()) {
                 supportMapFragment = SupportMapFragment.newInstance();
@@ -671,14 +675,17 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }*/
     }
 
+    LatLng point;
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         Timber.e("onMapReady called");
 
-        if (progressDialog.isShowing()) {
+        /*if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
             Timber.d("onMapReady: if cond");
-        }
+        }*/
+        hideLoading();
 
         //changing map style
         /*try {
@@ -715,6 +722,16 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         //mMap.setOnInfoWindowClickListener(this);
         mMap.setOnMarkerClickListener(this);
 
+        /*mMap.setOnMapClickListener((LatLng point) -> {
+            Timber.d("Map clicked");
+
+            //currentLocationMarker.remove();
+
+            if (markerPlaceLatLng != null) {
+                checkParkingSpotDistance(new LatLng(point.latitude, point.longitude), new LatLng(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude));
+            }
+        });*/
+
         if (fusedLocationProviderClient != null) {
             fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
         }
@@ -723,22 +740,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         //addCircleArea();
     }
 
-    private void initUI(View view) {
-        view.findViewById(R.id.currentLocationImageButton).setOnClickListener(clickListener);
-        bottomSheetRecyclerView = view.findViewById(R.id.bottomsheet_recyclerview);
-        //for booking
-        arrivedTimeTV = view.findViewById(R.id.arrivedtimeTV);
-        departureTimeTV = view.findViewById(R.id.departureTimeTV);
-        timeDifferenceTV = view.findViewById(R.id.timeDifferenceTV);
-        countDownTV = view.findViewById(R.id.countDownTV);
-        moreBtn = view.findViewById(R.id.moreBtn);
-        btnLiveParking = view.findViewById(R.id.btnLiveParking);
-        textViewTermsCondition = view.findViewById(R.id.textViewTermsCondition);
-        bookedLayout = view.findViewById(R.id.bookedLayout);
-        departureBtn = view.findViewById(R.id.departureBtn);
-    }
-
     boolean isMyCurrentLocation = false;
+
+    private Circle circle;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -773,10 +777,12 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                 //Toast.makeText(context, "previous null", Toast.LENGTH_SHORT).show();
                             }
                             previousMarker = marker;
+                            removeCircle();
                             marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_gray));
                             markerClicked = marker;
                             isNotificationSent = false;
                             isInAreaEnabled = false;
+
                         }
                     }
 
@@ -922,13 +928,27 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     //});
                 }
             } else {
-                ApplicationUtils.showOnlyMessageDialog(context.getResources().getString(R.string.you_have_to_exit_from_current_destination), context);
+                //ApplicationUtils.showOnlyMessageDialog(context.getResources().getString(R.string.you_have_to_exit_from_current_destination), context);
+                ApplicationUtils.showAlertDialog(context.getString(R.string.you_have_to_exit_from_current_destination), context, context.getString(R.string.yes), context.getString(R.string.no), (dialog, which) -> {
+                    Timber.e("Positive Button clicked");
+                    commonBackOperations();
+
+                }, (dialog, which) -> {
+                    Timber.e("Negative Button Clicked");
+                    dialog.dismiss();
+                });
             }
         } else {
             TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
         }
 
         return true;
+    }
+
+    public void removeCircle() {
+        if (circle != null) {
+            circle.remove();
+        }
     }
 
     /*@NonNull
@@ -1017,7 +1037,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     } else if (bottomSheetPlaceLatLng != null) {
                         linearLayoutBottomSheetGetDirection.setVisibility(View.VISIBLE);
                     }
-                    progressDialog.dismiss();
+                    /*if (progressDialog != null && progressDialog.isShowing())
+                        progressDialog.dismiss();*/
                         /*}
                     });*/
                 }
@@ -1192,7 +1213,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         SharedData.getInstance().setOnConnectedLocation(onConnectedLocation);
 
-        progressDialog.dismiss();
+        //progressDialog.dismiss();
 
         buildLocationRequest();
 
@@ -1222,13 +1243,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
     }
 
-    public void animateCamera(@NonNull Location location) {
-        //Timber.e("animateCamera called");
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        if (mMap != null)
-            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(getCameraPositionWithBearing(latLng)));
-    }
-
     @NonNull
     private CameraPosition getCameraPositionWithBearing(LatLng latLng) {
         //Timber.e("getCameraPositionWithBearing called");
@@ -1251,7 +1265,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         //Timber.e("onLocationChanged: ");
         currentLocation = location;
 
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
 
         if (currentLocationMarker != null) {
             currentLocationMarker.remove();
@@ -1271,11 +1285,48 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
     }
 
+    private void getCircleOnLocation(LatLng latLng) {
+        circle = mMap.addCircle(
+                new CircleOptions()
+                        .center(latLng)
+                        .radius(70)
+                        .strokeWidth(0f)
+                        .fillColor(context.getResources().getColor(R.color.light_blue))
+        );
+    }
+
     private void checkParkingSpotDistance(LatLng car, LatLng spot) {
         double distanceBetween = ApplicationUtils.calculateDistance(car.latitude, car.longitude, spot.latitude, spot.longitude);
-        if (distanceBetween <= 0.05 && !isNotificationSent) {
+
+        if (markerPlaceLatLng != null) {
+            getCircleOnLocation(markerPlaceLatLng);
+        } else if (bottomSheetPlaceLatLng != null) {
+            getCircleOnLocation(bottomSheetPlaceLatLng);
+        } else if (adapterPlaceLatLng != null) {
+            getCircleOnLocation(adapterPlaceLatLng);
+        }
+
+        float[] distance = new float[2];
+
+        Location.distanceBetween(car.latitude, car.longitude, circle.getCenter().latitude, circle.getCenter().longitude, distance);
+
+        if (distance[0] <= circle.getRadius()) {
+            // Inside The Circle
+            isInAreaEnabled = true;
+            isNotificationSent = true;
+            Toast.makeText(context, "inside circle", Toast.LENGTH_SHORT).show();
+        } else {
+            // Outside The Circle
+            isInAreaEnabled = false;
+            isNotificationSent = false;
+            Toast.makeText(context, "outside circle", Toast.LENGTH_SHORT).show();
+        }
+
+        /*if (distanceBetween <= 0.07 && !isNotificationSent) {
 
             sendNotification("You Entered parking spot", "You can book parking slot");
+
+            Toast.makeText(context, (int) distanceBetween + " got", Toast.LENGTH_SHORT).show();
 
             isNotificationSent = true;
 
@@ -1284,7 +1335,27 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             isNotificationSent = false;
 
             isInAreaEnabled = false;
-        }
+        }*/
+
+        /*if ((isInAreaEnabled)) {
+            Timber.e("isInAreaEnabled if called");
+            if (markerPlaceLatLng != null) {
+                btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
+            } else if (bottomSheetPlaceLatLng != null) {
+                btnBottomSheetGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
+            } else if (adapterPlaceLatLng != null) {
+                btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
+            }
+        } else {
+            Timber.e("isInAreaEnabled else called");
+            if (markerPlaceLatLng != null) {
+                btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
+            } else if (bottomSheetPlaceLatLng != null) {
+                btnBottomSheetGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
+            } else if (adapterPlaceLatLng != null) {
+                btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
+            }
+        }*/
     }
 
     @Override
@@ -1695,10 +1766,13 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
 
             boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-            progressDialog = ApplicationUtils.progressDialog(context, "Enabling GPS ....");
+            //progressDialog = ApplicationUtils.progressDialog(context, "Enabling GPS ....");
+            showLoading(context, "Enabling GPS ....");
+
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    //progressDialog.dismiss();
                     hideLoading();
                     if (providerEnabled) {
                         Toast.makeText(context, "GPS is enabled", Toast.LENGTH_SHORT).show();
@@ -1771,11 +1845,16 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                 // Showing the toast message
                 Timber.d("onRequestPermissionResult: on requestPermission if-if");
-                progressDialog.show();
-                if (isLocationEnabled(context))
+                if (progressDialog != null) {
+                    progressDialog.show();
+                }
+                if (isLocationEnabled(context)) {
                     supportMapFragment.getMapAsync(this);
+                    if (progressDialog != null && progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
+                }
                 //Toast.makeText(context, "Permission Granted", Toast.LENGTH_SHORT).show();
-
             } else if (grantResults.length == FIRST_TIME_INSTALLED && context != null) {
                 if ((ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                         ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
@@ -1817,6 +1896,28 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         return false;
     }
 
+    private void initUI(View view) {
+        view.findViewById(R.id.currentLocationImageButton).setOnClickListener(clickListener);
+        bottomSheetRecyclerView = view.findViewById(R.id.bottomsheet_recyclerview);
+        //for booking
+        arrivedTimeTV = view.findViewById(R.id.arrivedtimeTV);
+        departureTimeTV = view.findViewById(R.id.departureTimeTV);
+        timeDifferenceTV = view.findViewById(R.id.timeDifferenceTV);
+        countDownTV = view.findViewById(R.id.countDownTV);
+        moreBtn = view.findViewById(R.id.moreBtn);
+        btnLiveParking = view.findViewById(R.id.btnLiveParking);
+        textViewTermsCondition = view.findViewById(R.id.textViewTermsCondition);
+        bookedLayout = view.findViewById(R.id.bookedLayout);
+        departureBtn = view.findViewById(R.id.departureBtn);
+    }
+
+    public void animateCamera(@NonNull Location location) {
+        //Timber.e("animateCamera called");
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        if (mMap != null)
+            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(getCameraPositionWithBearing(latLng)));
+    }
+
     private void dismissProgressDialog() {
         if (progressDialog != null && progressDialog.isShowing())
             progressDialog.dismiss();
@@ -1826,10 +1927,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     public void fetchSensors(Location location) {
         this.onConnectedLocation = location;
-        /*progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage("Fetching The Parking Sensors....");
-        progressDialog.setCancelable(false);
-        progressDialog.show();*/
 
         //Timber.d("fetchSensors: " + mMap);
         if (mMap != null) {
@@ -1838,8 +1935,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
 
         StringRequest strReq = new StringRequest(Request.Method.GET, AppConfig.URL_FETCH_SENSORS, response -> {
-            //progressDialog.dismiss();
+
             Timber.e(" fetchSensors Response -> %s", response);
+
             try {
                 JSONObject object = new JSONObject(response);
                 JSONArray jsonArray = object.getJSONArray("sensors");
@@ -2125,8 +2223,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             @Override
             public void onErrorResponse(VolleyError error) {
                 Timber.e("Error Message -> %s ", error.getMessage());
-                /*if (progressDialog != null) progressDialog.dismiss();
-                showMessage(error.getMessage());*/
             }
         }) {
 
@@ -3216,7 +3312,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }*/
     }
 
-    private void commonBackOperations() {
+    public void commonBackOperations() {
         if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
             if (mMap != null) {
                 mMap.clear();

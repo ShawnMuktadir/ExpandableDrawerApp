@@ -195,6 +195,8 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
                         }
                     }
 
+                    homeFragment.removeCircle();
+
                     homeFragment.bottomSheetBehavior.setHideable(false);
 
                     homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -209,7 +211,15 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
                 } else {
                     homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     homeFragment.bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._130sdp));
-                    ApplicationUtils.showOnlyMessageDialog(context.getResources().getString(R.string.parking_spot_selection_rules), context);
+                    //ApplicationUtils.showOnlyMessageDialog(context.getResources().getString(R.string.parking_spot_selection_rules), context);
+                    ApplicationUtils.showAlertDialog(context.getString(R.string.you_have_to_exit_from_current_destination), context, context.getString(R.string.yes), context.getString(R.string.no), (dialog, which) -> {
+                        Timber.e("Positive Button clicked");
+                        homeFragment.commonBackOperations();
+
+                    }, (dialog, which) -> {
+                        Timber.e("Negative Button Clicked");
+                        dialog.dismiss();
+                    });
                 }
             } else {
                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));

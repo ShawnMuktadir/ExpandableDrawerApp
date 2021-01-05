@@ -53,11 +53,6 @@ public class BookingSensors {
         this.count = count;
     }
 
-    public BookingSensors(double lat, double lng) {
-        this.lat = lat;
-        this.lng = lng;
-    }
-
     public int compareTo(BookingSensors element) {
         int res = 0;
         if (this.distance < element.getDistance()) {
@@ -70,7 +65,7 @@ public class BookingSensors {
     }
 
     public static final Comparator<BookingSensors> BY_NAME_ASCENDING_ORDER = (bookingSensors, t1) -> {
-//            return Double.compare(t1.getDistance(), bookingSensors.getDistance());
+        //return Double.compare(t1.getDistance(), bookingSensors.getDistance());
         return bookingSensors.parkingArea.compareTo(t1.parkingArea);
     };
 
