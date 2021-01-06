@@ -1,112 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="@dimen/_5sdp">
+    android:layout_height="@dimen/_50sdp"
+    android:orientation="horizontal"
+    android:padding="@dimen/dim3">
+
+    <LinearLayout
+        android:layout_width="@dimen/_70sdp"
+        android:layout_height="match_parent"
+        android:background="@color/placeholder_background"
+        android:orientation="vertical"
+        android:weightSum="3">
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_weight="2"
+            android:text="@string/demo_number"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_22ssp"
+            android:textStyle="bold" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@color/placeholder_background"
+            android:gravity="center"
+            android:text="@string/parking_slots"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_7ssp"
+            android:textStyle="normal" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/dim2"
-        android:layout_marginBottom="@dimen/dim2"
-        android:orientation="horizontal"
-        android:padding="@dimen/dim2">
-
-        <LinearLayout
-            android:layout_width="@dimen/_70sdp"
-            android:layout_height="@dimen/_43sdp"
-            android:background="@color/placeholder_background"
-            android:orientation="vertical"
-            android:weightSum="3">
-
-            <View
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_gravity="center"
-                android:layout_weight="2"
-                android:text="@string/demo_number"
-                android:textColor="@color/black"
-                android:textSize="@dimen/_22ssp"
-                android:textStyle="bold" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:background="@color/placeholder_background"
-                android:gravity="center"
-                android:text="@string/parking_slots"
-                android:textColor="@color/white"
-                android:textSize="@dimen/_7ssp"
-                android:textStyle="normal" />
-
-        </LinearLayout>
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/dim5"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_40sdp"
-            android:layout_marginStart="@dimen/dim5"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:weightSum="2">
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"
+                android:layout_weight="1"
+                android:layout_margin="@dimen/dim2"
+                android:orientation="vertical"
                 android:weightSum="2">
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:layout_margin="@dimen/dim2"
-                    android:orientation="vertical"
-                    android:weightSum="2">
+                <View
+                    android:layout_width="@dimen/_150sdp"
+                    android:layout_height="@dimen/_10sdp"
+                    android:background="@color/placeholder_background" />
 
-                    <View
-                        android:layout_width="@dimen/_150sdp"
-                        android:layout_height="@dimen/_10sdp"
-                        android:background="@color/placeholder_background" />
+                <View
+                    android:layout_width="@dimen/_200sdp"
+                    android:layout_height="@dimen/_10sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:background="@color/placeholder_background"/>
 
-                    <View
-                        android:layout_width="@dimen/_200sdp"
-                        android:layout_height="@dimen/_10sdp"
-                        android:layout_marginTop="@dimen/_5sdp"
-                        android:background="@color/placeholder_background"/>
-
-                    <View
-                        android:layout_width="@dimen/_110sdp"
-                        android:layout_height="@dimen/_10sdp"
-                        android:layout_marginTop="@dimen/_5sdp"
-                        android:background="@color/placeholder_background"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:layout_margin="@dimen/dim2"
-                    android:weightSum="2">
-
-                    <View
-                        android:layout_width="@dimen/_150sdp"
-                        android:layout_height="@dimen/_10sdp"
-                        android:background="@color/placeholder_background" />
-
-                    <View
-                        android:layout_width="@dimen/_200sdp"
-                        android:layout_height="@dimen/_10sdp"
-                        android:layout_marginTop="@dimen/_5sdp"
-                        android:background="@color/placeholder_background"/>
-
-                    <View
-                        android:layout_width="@dimen/_110sdp"
-                        android:layout_height="@dimen/_10sdp"
-                        android:layout_marginTop="@dimen/_5sdp"
-                        android:background="@color/placeholder_background"/>
-                </LinearLayout>
+                <View
+                    android:layout_width="@dimen/_110sdp"
+                    android:layout_height="@dimen/_10sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:background="@color/placeholder_background"/>
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_margin="@dimen/dim2"
+                android:weightSum="2">
+
+                <View
+                    android:layout_width="@dimen/_150sdp"
+                    android:layout_height="@dimen/_10sdp"
+                    android:background="@color/placeholder_background" />
+
+                <View
+                    android:layout_width="@dimen/_200sdp"
+                    android:layout_height="@dimen/_10sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:background="@color/placeholder_background"/>
+
+                <View
+                    android:layout_width="@dimen/_110sdp"
+                    android:layout_height="@dimen/_10sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:background="@color/placeholder_background"/>
+            </LinearLayout>
+
         </LinearLayout>
+
     </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>

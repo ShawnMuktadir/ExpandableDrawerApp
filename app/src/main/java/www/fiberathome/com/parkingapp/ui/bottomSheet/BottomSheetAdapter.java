@@ -26,6 +26,7 @@ import com.akexorcist.googledirection.model.Info;
 import com.akexorcist.googledirection.model.Leg;
 import com.akexorcist.googledirection.model.Route;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import java.lang.reflect.Constructor;
@@ -50,11 +51,17 @@ import static android.content.Context.LOCATION_SERVICE;
 public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.TextBookingViewHolder> {
 
     private final String TAG = getClass().getSimpleName();
+
     public Context context;
+
     private HomeFragment homeFragment;
+
     private ArrayList<BookingSensors> bookingSensorsArrayList;
+
     public Location location;
+
     private int selectedItem = -1;
+
     private int count = 0;
 
     private AdapterCallback mAdapterCallback;
@@ -91,22 +98,19 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
     public void onBindViewHolder(@NonNull TextBookingViewHolder holder, int position) {
         BookingSensors bookingSensors = bookingSensorsArrayList.get(position);
 
-        holder.itemView.post(new Runnable() {
-            @Override
-            public void run() {
-                // this will give you cell width dynamically
-                int cellWidth = holder.itemView.getWidth();
-                Timber.e("cellWidth -> %s", cellWidth);
-                // this will give you cell height dynamically
-                int cellHeight = holder.itemView.getHeight();
-                Timber.e("cellHeight -> %s", cellHeight);
-            }
+        holder.itemView.post(() -> {
+            // this will give you cell width dynamically
+            int cellWidth = holder.itemView.getWidth();
+            Timber.e("cellWidth -> %s", cellWidth);
+            // this will give you cell height dynamically
+            int cellHeight = holder.itemView.getHeight();
+            Timber.e("cellHeight -> %s", cellHeight);
         });
 
         if (bookingSensors.type == BookingSensors.TEXT_INFO_TYPE) {
             //view=holder.itemView;
-            count++;
-            if (count <= 1) {
+            //count++;
+            //if (count <= 1) {
                 Timber.d("onBindViewHolder: -> %s", count);
 
                 selectedItem = position;
@@ -123,15 +127,14 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
                 homeFragment.bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._130sdp));
 
-                ApplicationUtils.setMargins(holder.relativeLayoutTxt, 0, 0, 0, 0);
-            }
-        }
-        else {
+                //ApplicationUtils.setMargins(holder.relativeLayoutTxt, 0, 0, 0, 0);
+            //}
+        } else {
             holder.relativeLayoutTxtBottom.setVisibility(View.GONE);
 
-            holder.itemView.requestLayout();
+            //holder.itemView.requestLayout();
 
-            ApplicationUtils.setMargins(holder.relativeLayoutTxt, 0, 0, 0, 0);
+            //ApplicationUtils.setMargins(holder.relativeLayoutTxt, 0, 0, 0, 0);
         }
 
         holder.textViewParkingAreaName.setText(bookingSensors.getParkingArea());
@@ -153,10 +156,12 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
             if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
                 if (homeFragment.fromRouteDrawn == 0) {
                     selectedItem = 0;
+
                     if (bookingSensorsArrayList != null && !bookingSensorsArrayList.isEmpty()) {
                         Collections.swap(bookingSensorsArrayList, position, 0);
                         notifyItemMoved(position, 0);
                         homeFragment.bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._130sdp));
+                        notifyDataSetChanged();
                     }
 
                     try {
@@ -191,7 +196,8 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
                                 });
                             }
                             mAdapterCallback.onMethodCallback(new LatLng(bookingSensors.getLat(), bookingSensors.getLng()));
-                            mAdapterCallback.onMethodCallback(holder);
+
+                            //mAdapterCallback.onMethodCallback(holder);
                         }
                     }
 
@@ -230,12 +236,8 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         if (selectedItem == position) {
             //holder.itemView.setBackgroundColor(Color.LTGRAY);
             holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.selectedColor));
-            //Toast.makeText(context, "if", Toast.LENGTH_SHORT).show();
-            //Log.d(TAG, "onBindViewHolder: gray");
         } else {
             holder.itemView.setBackgroundColor(Color.TRANSPARENT);
-            //Toast.makeText(context, "else", Toast.LENGTH_SHORT).show();
-            //Log.d(TAG, "onBindViewHolder: transparent");
         }
     }
 
@@ -329,21 +331,6 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
     }
 
-    private void resizeView(View view, int newWidth, int newHeight) {
-        try {
-            Constructor<? extends ViewGroup.LayoutParams> ctor = view.getLayoutParams().getClass().getDeclaredConstructor(int.class, int.class);
-            view.setLayoutParams(ctor.newInstance(newWidth, newHeight));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void rowSize (@NonNull TextBookingViewHolder holder) {
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) holder.relativeLayoutTxtBottom.getLayoutParams();
-        params.height = 0;
-        holder.relativeLayoutTxtBottom.setLayoutParams(params);
-    }
-
     public void updateData(ArrayList<BookingSensors> bookingSensors) {
         Timber.e("updateData call hoiche");
         bookingSensorsArrayList.clear();
@@ -352,8 +339,13 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
     }
 
     public void setData(ArrayList<BookingSensors> bookingSensors) {
-        this.bookingSensorsArrayList.clear();
+        bookingSensorsArrayList.clear();
         bookingSensorsArrayList.addAll(bookingSensors);
+        notifyDataSetChanged();
+    }
+
+    public void clear() {
+        bookingSensorsArrayList.clear();
         notifyDataSetChanged();
     }
 

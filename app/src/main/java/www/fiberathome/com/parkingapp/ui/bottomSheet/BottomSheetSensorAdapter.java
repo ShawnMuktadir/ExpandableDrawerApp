@@ -41,7 +41,7 @@ import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 
 public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final String TAG = getClass().getSimpleName();
-//public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdapter.BookingViewHolder> {
+    //public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdapter.BookingViewHolder> {
 
     public Context context;
     private HomeFragment homeFragment;
@@ -59,7 +59,7 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
         this.homeFragment = homeFragment;
         this.bookingSensorsArrayList = sensors;
         this.location = onConnectedLocation;
-//        selectedItem = -1;
+        //selectedItem = -1;
     }
 
 
@@ -182,42 +182,6 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
             }
         }
     }
-
-    /*@SuppressLint("SetTextI18n")
-    @Override
-    public void onBindViewHolder(@NonNull BookingViewHolder viewHolder, int position) {
-        this.viewHolder = viewHolder;
-
-        BookingViewHolder bookingViewHolder = (BookingViewHolder) viewHolder;
-
-        BookingSensors bookingSensors = bookingSensorsArrayList.get(position);
-
-        bookingViewHolder.textViewParkingAreaName.setText(ApplicationUtils.capitalize(bookingSensors.getParkingArea().trim()));
-        bookingViewHolder.textViewParkingAreaCount.setText(bookingSensors.getCount());
-
-        //getDestinationDurationInfo(context, new LatLng(bookingSensors.getLat(), bookingSensors.getLng()), bookingViewHolder);
-
-        // Here I am just highlighting the background
-        bookingViewHolder.itemView.setBackgroundColor(selectedItem == position ? Color.LTGRAY : Color.TRANSPARENT);
-
-        bookingViewHolder.itemView.setOnClickListener(v -> {
-        //Collections.swap(bookingSensorsArrayList, position, 0);
-        //notifyItemMoved(position, 0);
-        //notifyDataSetChanged();
-            selectedItem = position;
-            notifyDataSetChanged();
-            getDestinationDurationInfoForSearchLayout(context, new LatLng(bookingSensors.getLat(), bookingSensors.getLng()),
-                    bookingViewHolder);
-            homeFragment.layoutBottomSheetVisible(true, bookingSensors.getParkingArea(), bookingSensors.getCount(),
-                    bookingViewHolder.textViewParkingDistance.getText().toString(),
-                    bookingViewHolder.textViewParkingTravelTime.getText().toString(),
-                    new LatLng(bookingSensors.getLat(), bookingSensors.getLng()));
-
-            homeFragment.bottomSheetBehavior.setHideable(false);
-            //homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
-            homeFragment.bottomSheetBehavior.setPeekHeight(300);
-        });
-    }*/
 
     @Override
     public int getItemViewType(int position) {
