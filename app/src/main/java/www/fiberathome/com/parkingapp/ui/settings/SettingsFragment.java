@@ -110,8 +110,15 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Timber.e("onCreate called");
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
+        Timber.e("onStart called");
         if (SharedData.getInstance().getSelectedLanguage() != null || SharedPreManager.getInstance(context).getLanguage() != null
                 || SharedPreManager.getInstance(context).getCheckedItem() != -1) {
             builder.setTitle(context.getResources().getString(R.string.select_language));
@@ -121,6 +128,7 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
             Timber.e("checkedItem[0] onStart -> %s", checkedItem[0]);
         } else {
             builder.setTitle(context.getResources().getString(R.string.select_language));
+            textViewLanguage.setText(SharedPreManager.getInstance(context).getLanguage());
             Timber.e("select_language condition called");
         }
     }
@@ -129,23 +137,15 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
     public void onResume() {
         super.onResume();
 
-        if (SharedData.getInstance().getSelectedLanguage() != null || SharedPreManager.getInstance(context).getLanguage() != null
-                || SharedPreManager.getInstance(context).getCheckedItem() != -1) {
-            Timber.e(SharedPreManager.getInstance(context).getLanguage());
-            builder.setTitle(context.getResources().getString(R.string.select_language));
-            textViewLanguage.setText(SharedData.getInstance().getSelectedLanguage());
-            textViewLanguage.setText(SharedPreManager.getInstance(context).getLanguage());
-            checkedItem[0] = SharedPreManager.getInstance(context).getCheckedItem();
-            Timber.e("checkedItem[0] onResume -> %s", checkedItem[0]);
-        } else {
-            textViewLanguage.setText(resources.getString(R.string.english_item));
-        }
+        Timber.e("onResume called");
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+
         Timber.e("onDestroyView called ");
+
         if (unbinder != null) {
             unbinder.unbind();
         }
@@ -190,7 +190,7 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
                             context = LocaleHelper.setLocale(context, "en");
                             resources = context.getResources();
                             textViewLanguage.setText(resources.getString(R.string.english_item));
-                            SharedData.getInstance().setSelectedLanguage(resources.getString(R.string.english_item));
+                            //SharedData.getInstance().setSelectedLanguage(resources.getString(R.string.english_item));
                             SharedPreManager.getInstance(context).setLanguage(resources.getString(R.string.english_item));
                             setNewLocale("en", true);
                             break;
@@ -200,18 +200,19 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
                             context = LocaleHelper.setLocale(context, "bn");
                             resources = context.getResources();
                             textViewLanguage.setText(resources.getString(R.string.bangla_item));
-                            SharedData.getInstance().setSelectedLanguage(resources.getString(R.string.bangla_item));
+                            //SharedData.getInstance().setSelectedLanguage(resources.getString(R.string.bangla_item));
                             SharedPreManager.getInstance(context).setLanguage(resources.getString(R.string.bangla_item));
                             setNewLocale("bn", true);
                             break;
 
                         default:
+                            context = LocaleHelper.setLocale(context, "en");
                             SharedPreManager.getInstance(context).setCheckedItem(checkedItem[0]);
                             Timber.e("checkedItem[0] onClick -> %s", checkedItem[0]);
                             context = LocaleHelper.setLocale(context, "en");
                             resources = context.getResources();
                             textViewLanguage.setText(resources.getString(R.string.english_item));
-                            SharedData.getInstance().setSelectedLanguage(resources.getString(R.string.english_item));
+                            //SharedData.getInstance().setSelectedLanguage(resources.getString(R.string.english_item));
                             SharedPreManager.getInstance(context).setLanguage(resources.getString(R.string.english_item));
                         /*case 2:
                             dialog.dismiss();

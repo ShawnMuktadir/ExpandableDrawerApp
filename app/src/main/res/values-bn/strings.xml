@@ -392,7 +392,7 @@
     <string name="want_change_language">ভাষা পরিবর্তন করতে চান?</string>
     <string name="yes">হ্যাঁ</string>
     <string name="no">না</string>
-    <string name="change_language">ভাষা পরিবর্তন</string>
+<!--    <string name="change_language">ভাষা পরিবর্তন</string>-->
     <string name="where_to">কোথায়?</string>
     <string name="search">খুঁজুন…</string>
     <string name="connect_to_internet_splash">ইন্টারনেট সংযোগ করুন এবং আবার চেষ্টা করুন</string>
@@ -417,7 +417,7 @@
     <string name="get_support">সাপোর্ট</string>
     <string name="number">01924262749</string>
     <string name="call">কল করুন</string>
-    <string name="you_have_to_exit_from_current_destination">নতুন পার্কিং স্পট পরিবর্তন করতে আপনাকে বর্তমান গন্তব্য থেকে প্রস্থান করতে হবে, আপনি কি পার্কিং স্পট পরিবর্তন করতে চান?</string>
+    <string name="you_have_to_exit_from_current_destination">নতুন পার্কিং স্পট পরিবর্তন করতে আপনাকে বর্তমান গন্তব্য থেকে প্রস্থান করতে হবে। আপনি কি পার্কিং স্পট পরিবর্তন করতে চান?</string>
     <string name="please_try_again">অনুগ্রহপূর্বক আবার চেষ্টা করুন</string>
     <string name="search_law">খুঁজুন (বাংলায়)…</string>
     <string name="english_item">ইংরেজি</string>

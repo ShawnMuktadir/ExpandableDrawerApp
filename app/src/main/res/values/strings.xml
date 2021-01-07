@@ -24,7 +24,7 @@
     <string name="hint_phoneno">Mobile Number</string>
     <string name="hint_old_password">Old Password</string>
     <string name="hint_new_password">New Password</string>
-    <string name="hint_confirm_password">Confrim Password</string>
+    <string name="hint_confirm_password">Confirm Password</string>
 
     //OTP
     <string name="btn_retrive_otp">Retrieve OTP</string>
@@ -115,7 +115,11 @@
     <string name="bottom_Sheet_text">Choose a spot or swipe up for more</string>
     <string name="nearest_parking_from_your_destination">Nearest Parking From Your Destination</string>
 
-    <string name="lorum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
+    <string name="lorum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+        incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+        laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit
+        esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+        sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
 
     <string name="loream_ipsum">is simply dummy text of the printing and typesetting industry.
         Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s.</string>
@@ -392,7 +396,7 @@
     <string name="want_change_language">Want to change language?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="change_language">Choose a Language</string>
+<!--    <string name="change_language">Choose a Language</string>-->
     <string name="where_to">Where To?</string>
     <string name="search">Search…</string>
     <string name="connect_to_internet_splash">Please connect to internet and try again</string>
@@ -410,7 +414,8 @@
 
     <string name="set">Set</string>
     <string name="you_can_book_parking_slot">You can Book your selected parking area now</string>
-    <string name="parking_spot_selection_rules">You have to exit from current destination to change new parking spot, Do you want to change the parking spot?</string>
+    <string name="parking_spot_selection_rules">You have to exit from current destination to change new parking spot.
+        Do you want to change the parking spot?</string>
     <string name="schedule_fragment_title">00:00–00:00pm</string>
     <string name="parking_total_time">00:00min</string>
     <string name="please_wait">Please wait…</string>
@@ -418,7 +423,8 @@
     <string name="get_support">Get Support</string>
     <string name="number">01924262749</string>
     <string name="call">Call</string>
-    <string name="you_have_to_exit_from_current_destination">You have to exit from current destination to change new parking spot, do you want to change the parking spot?</string>
+    <string name="you_have_to_exit_from_current_destination">You have to exit from current destination to change new parking spot.
+        Do you want to change the parking spot?</string>
     <string name="please_try_again">Please try again</string>
     <string name="search_law">Search…</string>
     <string name="english_item">English</string>
