@@ -664,6 +664,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         });
 
         mMap.setOnCameraChangeListener(cameraPosition -> {
+            LatLng midLatLng = mMap.getCameraPosition().target;
+            if (currentLocationMarker!=null) currentLocationMarker.setPosition(midLatLng);
+            else Timber.d("Marker is null");
             isCameraChange = true;
             showCurrentLocationButton();
         });
@@ -3216,7 +3219,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 previousMarker = null;
                 fromRouteDrawn = 0;
 
-                animateCamera(SharedData.getInstance().getOnConnectedLocation());
+                animateCamera(onConnectedLocation);
 
                 if (bottomSheetAdapter != null) {
                     bottomSheetAdapter.clear();
@@ -3235,7 +3238,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     e.getCause();
                 }
 
-                //ApplicationUtils.refreshFragment(getParentFragmentManager(), this, R.id.nav_host_fragment);
+                ApplicationUtils.replaceFragmentWithAnimation(getParentFragmentManager(), this);
 
                 linearLayoutBottom.setVisibility(View.GONE);
                 linearLayoutSearchBottom.setVisibility(View.GONE);
