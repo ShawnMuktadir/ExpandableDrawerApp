@@ -30,7 +30,6 @@
                 android:weightSum="1.4"
                 android:orientation="horizontal"
                 android:padding="@dimen/dim5">
-                <!--android:layout_alignParentBottom="true"-->
 
                 <TextView
                     android:id="@+id/message_text_view"

@@ -6,59 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.settings.SettingsFragment">
 
-    <!--<LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="@dimen/_5sdp">
-
-        <TextView
-            android:id="@+id/textViewLanguage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:layout_marginLeft="@dimen/_5sdp"
-            android:gravity="center"
-            android:text="@string/language"
-            android:textColor="@color/black"
-            android:textSize="@dimen/_16sdp"
-            android:textStyle="bold" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/dim15"
-            android:layout_marginLeft="@dimen/dim15"
-            android:background="@drawable/rect_white_bg_gray_border_rounded"
-            android:orientation="horizontal"
-            android:padding="@dimen/dim2">
-
-            <TextView
-                android:id="@+id/textViewBan"
-                android:layout_width="@dimen/dim60"
-                android:layout_height="@dimen/dim40"
-                android:background="@color/transparent_black"
-                android:gravity="center"
-                android:text="@string/lang_select_bn"
-                android:textColor="@color/textview_colors"
-                android:textSize="@dimen/dimTex20"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/textViewEng"
-                android:layout_width="@dimen/dim60"
-                android:layout_height="@dimen/dim40"
-                android:background="@color/transparent_black"
-                android:gravity="center"
-                android:text="@string/lang_select_en"
-                android:textColor="@color/textview_colors"
-                android:textSize="@dimen/dimTex20"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-    </LinearLayout>-->
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

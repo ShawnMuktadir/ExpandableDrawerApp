@@ -62,6 +62,7 @@
                 android:layout_margin="@dimen/dim5"
                 android:text="@string/signup_title"
                 android:textAlignment="center"
+                android:visibility="gone"
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/dimTex20"
                 android:textStyle="bold" />

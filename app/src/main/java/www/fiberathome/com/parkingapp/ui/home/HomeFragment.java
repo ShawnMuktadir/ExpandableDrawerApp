@@ -27,6 +27,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -176,7 +177,8 @@ import static www.fiberathome.com.parkingapp.model.searchHistory.AppConstants.NE
 @SuppressLint("NonConstantResourceId")
 public class HomeFragment extends BaseFragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener, GoogleMap.OnMarkerClickListener,
-        IOnLoadLocationListener, GeoQueryEventListener, BottomSheetAdapter.AdapterCallback, IOnBackPressListener {
+        IOnLoadLocationListener, GeoQueryEventListener, BottomSheetAdapter.AdapterCallback,
+        IOnBackPressListener {
 
     private final String TAG = getClass().getSimpleName();
 
@@ -311,6 +313,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     @BindView(R.id.input_search)
     Button buttonSearch;
 
+    @BindView(R.id.currentLocationImageButton)
+    ImageButton currentLocationImageButton;
+
     private Unbinder unbinder;
 
     private HomeActivity context;
@@ -397,10 +402,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     private Marker previousMarker = null;
     private Location onConnectedLocation;
-    private final View.OnClickListener clickListener = view -> {
-        if (view.getId() == R.id.currentLocationImageButton && mMap != null && onConnectedLocation != null)
-            animateCamera(onConnectedLocation);
-    };
 
     private ArrayList<BookingSensors> bookingSensorsArrayList = new ArrayList<>();
     private ArrayList<BookingSensors> bookingSensorsBottomSheetArrayList = new ArrayList<>();
@@ -523,11 +524,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         context = (HomeActivity) getActivity();
 
-
         if (context != null) {
             context.changeDefaultActionBarDrawerToogleIcon();
         }
-
 
         if (isAdded()) {
 
@@ -613,91 +612,15 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             polyLineList = new ArrayList<>();
             mService = Common.getGoogleApi();
         }
-
-        /*if (isServicesOk()) {
-            if (isGPSEnabled()) {
-                supportMapFragment = SupportMapFragment.newInstance();
-                if (context != null) {
-                    FragmentTransaction ft = context.getSupportFragmentManager().beginTransaction().
-                            replace(R.id.map, supportMapFragment);
-                    ft.commit();
-                    supportMapFragment.getMapAsync(this);
-                } else {
-                    Toast.makeText(context, "Enable your Gps Location", Toast.LENGTH_SHORT).show();
-                }
-
-                progressDialog = new ProgressDialog(requireActivity());
-                progressDialog.setMessage("Initializing....");
-
-                new GpsUtils(context).turnGPSOn(new GpsUtils.onGpsListener() {
-                    @Override
-                    public void gpsStatus(boolean isGPSEnable) {
-                        // turn on GPS
-                        isGPS = isGPSEnable;
-                    }
-                });
-
-                if ((ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
-            */
-
-        /*ActivityCompat.requestPermissions(context,new String[] {Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission
-                    .ACCESS_COARSE_LOCATION},LOCATION_PERMISSION_REQUEST_CODE);*/
-
-        /*
-                    requestPermissions(new String[]{
-                            Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
-                    Log.d(TAG, "onViewCreated: in if");
-                } else {
-                  //  supportMapFragment.getMapAsync(this);
-                    Log.d(TAG, "onViewCreated: in else");
-                }
-
-                arrivedtimeTV.setText("Arrived " + getDate(arrived));
-                departuretimeTV.setText("Departure " + getDate(departure));
-                timeDifferenceTV.setText(getTimeDifference(difference) + " min");
-                //dekhte hobee eta koi boshbe
-                if (getDirectionButtonClicked == 0) {
-                    linearLayoutParkingAdapterBackBottom.setOnClickListener(v -> {
-                        ApplicationUtils.showMessageDialog("Once reach your destination you can reserve your booking spot!!!", context);
-                    });
-                } else {
-                    linearLayoutParkingAdapterBackBottom.setOnClickListener(v -> {
-                        ApplicationUtils.showMessageDialog("Hey Shawn!!!", getContext());
-                    });
-                }
-            }
-            else {
-                Toast.makeText(context, "Enable your Gps Location", Toast.LENGTH_SHORT).show();
-            }
-        } else {
-            Toast.makeText(context, "Enable your Gps Location", Toast.LENGTH_SHORT).show();
-        }*/
     }
-
-    LatLng point;
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         Timber.e("onMapReady called");
+        mMap = googleMap;
 
-        /*if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
-            Timber.d("onMapReady: if cond");
-        }*/
         hideLoading();
 
-        //changing map style
-        /*try {
-            boolean isSuccess = googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(context, R.raw.uber_map_style20));
-
-            if (!isSuccess) {
-                Timber.e("Error...Map Style load failed!!!");
-            }
-        } catch (Resources.NotFoundException e) {
-            e.printStackTrace();
-        }*/
-
-        mMap = googleMap;
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -708,35 +631,61 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
+
         mMap.setMyLocationEnabled(false);
         mMap.getUiSettings().setMyLocationButtonEnabled(false);
+
         //mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setZoomGesturesEnabled(true);
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        //mMap.setMyLocationEnabled(false);//if false it remove the blue dot over icon
+
+        //mMap.setMyLocationEnabled(false);
+        //if false it remove the blue dot over icon
         mMap.setBuildingsEnabled(false);
         mMap.setTrafficEnabled(true);
         mMap.setIndoorEnabled(false);
+
         buildGoogleApiClient();
         //mMap.setOnInfoWindowClickListener(this);
         mMap.setOnMarkerClickListener(this);
-
-        /*mMap.setOnMapClickListener((LatLng point) -> {
-            Timber.d("Map clicked");
-
-            //currentLocationMarker.remove();
-
-            if (markerPlaceLatLng != null) {
-                checkParkingSpotDistance(new LatLng(point.latitude, point.longitude), new LatLng(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude));
-            }
-        });*/
 
         if (fusedLocationProviderClient != null) {
             fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
         }
 
-        //add circle for dangerous area
-        //addCircleArea();
+        mMap.setOnMapClickListener((LatLng point) -> {
+            Timber.d("Map clicked");
+
+            currentLocationImageButton.setVisibility(View.VISIBLE);
+            if (!isCameraChange) {
+                showCurrentLocationButton();
+                isCameraChange = false;
+            }
+        });
+
+        mMap.setOnCameraChangeListener(cameraPosition -> {
+            isCameraChange = true;
+            showCurrentLocationButton();
+        });
+    }
+
+    private final View.OnClickListener clickListener = view -> {
+        if (view.getId() == R.id.currentLocationImageButton && mMap != null && onConnectedLocation != null)
+            animateCamera(onConnectedLocation);
+        currentLocationButton = 0;
+    };
+
+    private boolean isCameraChange = false;
+    private int currentLocationButton = 1;
+
+    private void showCurrentLocationButton() {
+        if (currentLocationButton == 1) {
+            currentLocationImageButton.setVisibility(View.VISIBLE);
+            currentLocationButton--;
+        } else if (currentLocationButton == 0) {
+            currentLocationImageButton.setVisibility(View.GONE);
+            currentLocationButton++;
+        }
     }
 
     boolean isMyCurrentLocation = false;
