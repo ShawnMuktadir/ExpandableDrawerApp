@@ -622,7 +622,7 @@ public class ApplicationUtils {
         mile = rad2deg(mile);
         mile = mile * 60 * 1.1515;
         double km = mile / 0.62137;
-        Timber.e("distance -> %s", km);
+        //Timber.e("distance -> %s", km);
         return (km);
     }
 

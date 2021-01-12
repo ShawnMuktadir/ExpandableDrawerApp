@@ -414,8 +414,6 @@ public class ParkingFragment extends BaseFragment implements ParkingAdapter.Park
     private void fetchParkingSlotSensors() {
         Timber.e("fetchParkingSlotSensors called");
 
-        /*progressDialog = ApplicationUtils.progressDialog(getActivity(),
-                "Please wait...");*/
         if (!context.isFinishing())
             showLoading(context);
 
@@ -439,7 +437,6 @@ public class ParkingFragment extends BaseFragment implements ParkingAdapter.Park
                     for (int i = 0; i < jsonArray.length(); i++) {
                         SensorArea sensorArea = new SensorArea();
                         JSONArray array = jsonArray.getJSONArray(i);
-                        //Timber.e("Array " + i, array.getString(1));
 
                         try {
                             double fetchDistance = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
@@ -486,9 +483,11 @@ public class ParkingFragment extends BaseFragment implements ParkingAdapter.Park
         recyclerViewParking.addOnItemTouchListener(new RecyclerTouchListener(context, recyclerViewParking, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                //Toast.makeText(context, position + " is selected!", Toast.LENGTH_SHORT).show();
+
                 if (context != null) {
+
                     context.navigationView.getMenu().getItem(1).setChecked(false);
+
                     ApplicationUtils.hideKeyboard(context, editTextParking);
                 }
             }
@@ -537,7 +536,6 @@ public class ParkingFragment extends BaseFragment implements ParkingAdapter.Park
                     .show();
 
         }
-
         return false;
     }
 }

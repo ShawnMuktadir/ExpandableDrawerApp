@@ -26,10 +26,8 @@ import com.akexorcist.googledirection.model.Info;
 import com.akexorcist.googledirection.model.Leg;
 import com.akexorcist.googledirection.model.Route;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
-import java.lang.reflect.Constructor;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
@@ -42,9 +40,9 @@ import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingSensors;
+import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
-import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 
 import static android.content.Context.LOCATION_SERVICE;
 
@@ -81,8 +79,6 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
     public interface AdapterCallback {
         void onMethodCallback(LatLng latLng);
-
-        void onMethodCallback(@NonNull TextBookingViewHolder holder);
     }
 
     @NonNull
@@ -108,9 +104,6 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         });
 
         if (bookingSensors.type == BookingSensors.TEXT_INFO_TYPE) {
-            //view=holder.itemView;
-            //count++;
-            //if (count <= 1) {
                 Timber.d("onBindViewHolder: -> %s", count);
 
                 selectedItem = position;
@@ -127,22 +120,13 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
                 homeFragment.bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._130sdp));
 
-                //ApplicationUtils.setMargins(holder.relativeLayoutTxt, 0, 0, 0, 0);
-            //}
         } else {
             holder.relativeLayoutTxtBottom.setVisibility(View.GONE);
-
-            //holder.itemView.requestLayout();
-
-            //ApplicationUtils.setMargins(holder.relativeLayoutTxt, 0, 0, 0, 0);
         }
 
         holder.textViewParkingAreaName.setText(bookingSensors.getParkingArea());
 
         holder.textViewParkingAreaCount.setText(bookingSensors.getCount());
-        //holder.textViewParkingDistance.setText(new DecimalFormat("##.##").format(bookingSensors.getDistance()) + " km");
-        //holder.textViewParkingDistance.setText(new DecimalFormat("##.##", new DecimalFormatSymbols(Locale.US)).format(bookingSensors.getDistance()) + " km");
-
         holder.textViewParkingDistance.setText(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(bookingSensors.getDistance()) + " km");
 
         DecimalFormat decimalFormat = new DecimalFormat("00.0");
@@ -150,11 +134,10 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         double tmp = Double.parseDouble(decimalFormat.format(Double
                 .parseDouble(bookingSensors.getDuration())));
         holder.textViewParkingTravelTime.setText(String.valueOf(tmp) + " mins");
-        //holder.textViewParkingTravelTime.setText(bookingSensors.getDuration());
 
         holder.itemView.setOnClickListener(v -> {
             if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
-                if (homeFragment.fromRouteDrawn == 0) {
+                if (homeFragment.isRouteDrawn == 0) {
                     selectedItem = 0;
 
                     if (bookingSensorsArrayList != null && !bookingSensorsArrayList.isEmpty()) {
@@ -182,7 +165,6 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
                                     Timber.e("Positive Button clicked");
                                     if (ApplicationUtils.checkInternet(context)) {
                                         homeFragment.fetchSensors(onConnectedLocation);
-                                        //fetchBottomSheetSensors(onConnectedLocation);
                                     } else {
                                         TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                                     }
@@ -196,8 +178,6 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
                                 });
                             }
                             mAdapterCallback.onMethodCallback(new LatLng(bookingSensors.getLat(), bookingSensors.getLng()));
-
-                            //mAdapterCallback.onMethodCallback(holder);
                         }
                     }
 
@@ -217,7 +197,6 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
                 } else {
                     homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     homeFragment.bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._130sdp));
-                    //ApplicationUtils.showOnlyMessageDialog(context.getResources().getString(R.string.parking_spot_selection_rules), context);
                     ApplicationUtils.showAlertDialog(context.getString(R.string.you_have_to_exit_from_current_destination), context, context.getString(R.string.yes), context.getString(R.string.no), (dialog, which) -> {
                         Timber.e("Positive Button clicked");
                         homeFragment.commonBackOperations();
@@ -306,11 +285,6 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
                             homeFragment.textViewBottomSheetParkingDistance.setText(fromCurrentLocationDistance);
                             homeFragment.textViewBottomSheetParkingTravelTime.setText(fromCurrentLocationDuration);
-                            /*if (type == BookingSensors.TEXT_INFO_TYPE) {
-
-                            } else {
-                                // Timber.e("getDestinationDurationInfo duration -> %s", bookingViewHolder.textViewParkingTravelTime.getText().toString());
-                            }*/
 
                             //------------Displaying Distance and Time-----------------\\
                             //showingDistanceTime(distance, duration); // Showing distance and time to the user in the UI \\
@@ -328,7 +302,6 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
                     }
                 });
         //-------------------------------------------------------------------------------\\
-
     }
 
     public void updateData(ArrayList<BookingSensors> bookingSensors) {

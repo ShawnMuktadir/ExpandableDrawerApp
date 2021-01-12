@@ -82,7 +82,7 @@ public class DirectionsParser {
         return routes;
     }
 
-    //    Dijkstra's shortest path algorithm
+    // Dijkstra's shortest path algorithm
 
     private List decodePolyline(String encoded) {
 

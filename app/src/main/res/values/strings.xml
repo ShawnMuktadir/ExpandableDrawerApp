@@ -423,8 +423,7 @@
     <string name="get_support">Get Support</string>
     <string name="number">01924262749</string>
     <string name="call">Call</string>
-    <string name="you_have_to_exit_from_current_destination">You have to exit from current destination to change new parking spot.
-        Do you want to change the parking spot?</string>
+    <string name="you_have_to_exit_from_current_destination">Do you want to change the parking spot?</string>
     <string name="please_try_again">Please try again</string>
     <string name="search_law">Search…</string>
     <string name="english_item">English</string>
@@ -452,4 +451,5 @@
     <string name="change_app_language_to_english">Change app language into english</string>
     <string name="permission_denied_u_cant_search_nearest_parking_location_from_you">
         Permission Denied,You can\'t search nearest parking location from you. For further use please allow location</string>
+    <string name="enabling_gps">Enabling GPS</string>
 </resources>
