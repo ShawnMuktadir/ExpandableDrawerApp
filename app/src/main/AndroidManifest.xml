@@ -100,7 +100,6 @@
             android:screenOrientation="unspecified"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.DefaultActionBar" />
-        <!--android:launchMode="singleInstance"-->
         <activity
             android:name=".ui.changePassword.ChangePasswordActivity"
             android:configChanges="locale"
@@ -132,21 +131,12 @@
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar"
             android:windowSoftInputMode="adjustResize" />
-            <!--android:theme="@style/AppTheme.NoActionBar"-->
         <activity
             android:name=".ui.start.StartActivity"
             android:configChanges="locale"
             android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar">
-
-            <!--
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            -->
         </activity>
         <activity
             android:name=".ui.splash.SplashActivity"

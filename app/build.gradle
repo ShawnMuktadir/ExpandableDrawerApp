@@ -105,6 +105,9 @@ dependencies {
         transitive = true
     }
 
+    // Material Dialog dependency
+    implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
+
     // android circular imageView
     implementation 'de.hdodenhof:circleimageview:3.1.0'
 

@@ -111,6 +111,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DecimalFormat;
@@ -147,6 +148,8 @@ import www.fiberathome.com.parkingapp.model.response.search.SearchVisitorData;
 import www.fiberathome.com.parkingapp.model.response.search.SelectedPlace;
 import www.fiberathome.com.parkingapp.model.sensors.SensorArea;
 import www.fiberathome.com.parkingapp.module.GoogleMapWebServiceNDistance.DirectionsParser;
+import www.fiberathome.com.parkingapp.module.GoogleMapWebServiceNDistance.directionModules.DirectionFinder;
+import www.fiberathome.com.parkingapp.module.GoogleMapWebServiceNDistance.directionModules.DirectionFinderListener;
 import www.fiberathome.com.parkingapp.module.eventBus.GetDirectionAfterButtonClickEvent;
 import www.fiberathome.com.parkingapp.module.eventBus.GetDirectionBottomSheetEvent;
 import www.fiberathome.com.parkingapp.module.eventBus.GetDirectionForMarkerEvent;
@@ -174,12 +177,14 @@ import static www.fiberathome.com.parkingapp.model.searchHistory.AppConstants.FI
 import static www.fiberathome.com.parkingapp.model.searchHistory.AppConstants.HISTORY_PLACE_SELECTED;
 import static www.fiberathome.com.parkingapp.model.searchHistory.AppConstants.NEW_PLACE_SELECTED;
 import static www.fiberathome.com.parkingapp.model.searchHistory.AppConstants.NEW_SEARCH_ACTIVITY_REQUEST_CODE;
+import static www.fiberathome.com.parkingapp.utils.GoogleMapHelper.getDefaultPolyLines;
+import static www.fiberathome.com.parkingapp.utils.GoogleMapHelper.getDottedPolylines;
 
 @SuppressLint("NonConstantResourceId")
 public class HomeFragment extends BaseFragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener, GoogleMap.OnMarkerClickListener,
         IOnLoadLocationListener, GeoQueryEventListener, BottomSheetAdapter.AdapterCallback,
-        IOnBackPressListener {
+        IOnBackPressListener, DirectionFinderListener {
 
     private final String TAG = getClass().getSimpleName();
 
@@ -877,7 +882,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     hashMapMarker.remove(YourUniqueKey);*/
 
 
-                    EventBus.getDefault().post(new GetDirectionForMarkerEvent(tempMarker.getPosition()));
+                    //EventBus.getDefault().post(new GetDirectionForMarkerEvent(tempMarker.getPosition()));
 
                     if (tempMarker.getTitle() != null) {
                         if (!tempMarker.getTitle().equals("My Location")) {
@@ -896,9 +901,18 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         }
                     }
 
-                    String url = getDirectionsUrl(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()), tempMarker.getPosition());
+                    if (polyline == null || !polyline.isVisible())
+                        return;
+                    List<LatLng> points = polyline.getPoints();
+                    polyline.remove();
+                    polyline = mMap.addPolyline(getDottedPolylines(points));
+                    Timber.e("lat string "+String.valueOf(new LatLng(onConnectedLocation.getLatitude(),onConnectedLocation.getLongitude())));
+                    fetchDirections(String.valueOf(new LatLng(onConnectedLocation.getLatitude(),onConnectedLocation.getLongitude())),
+                            String.valueOf(new LatLng(marker.getPosition().latitude,marker.getPosition().longitude)));
+
+                    /*String url = getDirectionsUrl(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()), tempMarker.getPosition());
                     TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
-                    taskRequestDirections.execute(url);
+                    taskRequestDirections.execute(url);*/
 
                 }, (dialog, which) -> {
                     Timber.e("Negative Button Clicked");
@@ -3721,6 +3735,37 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         void addressCall(String address);
     }
 
+    private void fetchDirections(String origin, String destination) {
+        try {
+            new DirectionFinder(this, origin, destination).execute();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Polyline polyline;
+
+    @Override
+    public void onDirectionFinderStart() {
+        showLoading(context);
+    }
+
+    @Override
+    public void onDirectionFinderSuccess(List<www.fiberathome.com.parkingapp.module.GoogleMapWebServiceNDistance.directionModules.Route> route) {
+        hideLoading();
+        if (!route.isEmpty() && polyline != null) polyline.remove();
+        try {
+            for (www.fiberathome.com.parkingapp.module.GoogleMapWebServiceNDistance.directionModules.Route route1 : route) {
+                PolylineOptions polylineOptions = getDefaultPolyLines(route1.points);
+                /*if (polylineStyle == PolylineStyle.DOTTED)
+                    polylineOptions = getDottedPolylines(route.points);*/
+                polyline = mMap.addPolyline(polylineOptions);
+            }
+        } catch (Exception e) {
+            Toast.makeText(context, "Error occurred on finding the directions...", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     @SuppressLint("StaticFieldLeak")
     public class TaskRequestDirections extends AsyncTask<String, Void, String> {
 
@@ -3803,15 +3848,20 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             PolylineOptions polylineOptions = null;
             MarkerOptions markerOptions = new MarkerOptions();
             String distance = "";
+
+            try {
+                if (lists!=null && lists.size() < 1) {
+                    Timber.e("lists size -> %s", lists.size());
+                    //Toast.makeText(context, "No Points", Toast.LENGTH_SHORT).show();
+                    return;
+                } else {
+                    Timber.e("lists size -> %s", lists.size());
+                }
+            } catch (Exception e) {
+                e.getCause();
+            }
             String duration = "";
 
-            if (lists.size() < 1) {
-                Timber.e("lists size -> %s", lists.size());
-                //Toast.makeText(context, "No Points", Toast.LENGTH_SHORT).show();
-                return;
-            } else {
-                Timber.e("lists size -> %s", lists.size());
-            }
 
             for (List<HashMap<String, String>> path : lists) {
                 points = new ArrayList();
@@ -3828,9 +3878,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         } else if (j == 1) { // Get duration from the list
                             duration = (String) point.get("duration");
                             continue;
-                        }
+                        }*/
 
-                    Timber.e("duration -> %s", duration);*/
+                    Timber.e("duration -> %s", duration);
 
                     points.add(new LatLng(lat, lon));
                 }
@@ -3842,12 +3892,12 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 polylineOptions.color(context.getResources().getColor(R.color.route_color));
                 polylineOptions.width(5);
             }
-            /*else if (flag == 2) {
+            else if (flag == 2) {
                 if (mMap != null)
                     mMap.clear();
                 polylineOptions.color(Color.TRANSPARENT);
                 polylineOptions.width(5);
-            }*/
+            }
             flag++;
 
             polylineOptions.geodesic(true);
