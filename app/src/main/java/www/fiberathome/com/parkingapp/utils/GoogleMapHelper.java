@@ -15,6 +15,8 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import java.util.Arrays;
 import java.util.List;
 
+import www.fiberathome.com.parkingapp.R;
+
 public class GoogleMapHelper {
 
     private static final int ZOOM_LEVEL = 18;
@@ -26,8 +28,10 @@ public class GoogleMapHelper {
 
     public static PolylineOptions getDefaultPolyLines(List<LatLng> points) {
         PolylineOptions polylineOptions = new PolylineOptions()
-                .color(Color.BLUE);
+                .color(R.color.route_color);
+
         for (LatLng point : points) polylineOptions.add(point);
+
         return polylineOptions;
     }
 
