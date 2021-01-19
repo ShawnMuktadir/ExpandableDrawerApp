@@ -94,14 +94,14 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
     public void onBindViewHolder(@NonNull TextBookingViewHolder holder, int position) {
         BookingSensors bookingSensors = bookingSensorsArrayList.get(position);
 
-        holder.itemView.post(() -> {
+        /*holder.itemView.post(() -> {
             // this will give you cell width dynamically
             int cellWidth = holder.itemView.getWidth();
             Timber.e("cellWidth -> %s", cellWidth);
             // this will give you cell height dynamically
             int cellHeight = holder.itemView.getHeight();
             Timber.e("cellHeight -> %s", cellHeight);
-        });
+        });*/
 
         if (bookingSensors.type == BookingSensors.TEXT_INFO_TYPE) {
                 Timber.d("onBindViewHolder: -> %s", count);

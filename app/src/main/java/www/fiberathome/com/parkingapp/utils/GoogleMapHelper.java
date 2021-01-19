@@ -42,13 +42,20 @@ public class GoogleMapHelper {
     }
 
     public static void defaultMapSettings(GoogleMap googleMap) {
-        googleMap.getUiSettings().setZoomControlsEnabled(true);
+        googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        googleMap.getUiSettings().setZoomControlsEnabled(false);
+        googleMap.getUiSettings().setZoomGesturesEnabled(true);
+
+        googleMap.setBuildingsEnabled(false);
+        googleMap.setTrafficEnabled(true);
+        googleMap.setIndoorEnabled(false);
+
         googleMap.getUiSettings().setMapToolbarEnabled(false);
         googleMap.getUiSettings().setRotateGesturesEnabled(true);
         googleMap.getUiSettings().setMapToolbarEnabled(false);
         googleMap.getUiSettings().setTiltGesturesEnabled(true);
         googleMap.getUiSettings().setCompassEnabled(false);
-        googleMap.setBuildingsEnabled(true);
+        googleMap.getUiSettings().setMyLocationButtonEnabled(false);
     }
 
     public static CameraUpdate buildCameraUpdate(LatLng latLng) {
@@ -59,5 +66,4 @@ public class GoogleMapHelper {
                 .build();
         return CameraUpdateFactory.newCameraPosition(cameraPosition);
     }
-
 }

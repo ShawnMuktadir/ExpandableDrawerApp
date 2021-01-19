@@ -452,4 +452,5 @@
     <string name="permission_denied_u_cant_search_nearest_parking_location_from_you">
         Permission Denied,You can\'t search nearest parking location from you. For further use please allow location</string>
     <string name="enabling_gps">Enabling GPS</string>
+    <string name="slow_internet_connection">Internet connection is too slow</string>
 </resources>

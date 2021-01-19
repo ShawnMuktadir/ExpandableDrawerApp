@@ -446,4 +446,5 @@
     <string name="permission_denied_u_cant_search_nearest_parking_location_from_you">
         অবস্থানের অনুমতি অস্বীকৃত, আপনি আপনার কাছের নিকটতম পার্কিংয়ের অবস্থান অনুসন্ধান করতে পারবেন না। আরও ব্যবহারের জন্য দয়া করে অবস্থানের অনুমতি দিন</string>
     <string name="enabling_gps">জিপিএস সক্ষম করা হচ্ছে</string>
+    <string name="slow_internet_connection">ইন্টারনেট সংযোগ খুব ধীর</string>
 </resources>
