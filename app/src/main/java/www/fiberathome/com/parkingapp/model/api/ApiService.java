@@ -17,6 +17,9 @@ import www.fiberathome.com.parkingapp.model.searchHistory.SearchHistoryCommon;
 import www.fiberathome.com.parkingapp.model.response.common.CommonResponse;
 import www.fiberathome.com.parkingapp.model.response.search.SearchVisitedPlaceResponse;
 import www.fiberathome.com.parkingapp.model.response.search.SearchVisitedPostResponse;
+import www.fiberathome.com.parkingapp.model.sensors.Sensor;
+import www.fiberathome.com.parkingapp.model.sensors.Sensors;
+import www.fiberathome.com.parkingapp.model.sensors.SensorsResponse;
 
 public interface ApiService {
 
@@ -80,4 +83,8 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("visitor_place_history.php")
     Call<ResponseBody> getSearchHistory(@Part("mobile_number") String mobileNo);
+
+
+    @GET("sensors.php")
+    Call<SensorsResponse> getSensors();
 }

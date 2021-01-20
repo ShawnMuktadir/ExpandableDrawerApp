@@ -137,6 +137,8 @@ import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
+import www.fiberathome.com.parkingapp.model.api.ApiClient;
+import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.api.Common;
 import www.fiberathome.com.parkingapp.model.api.IGoogleApi;
@@ -144,9 +146,14 @@ import www.fiberathome.com.parkingapp.model.data.AppConstants;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingSensors;
+import www.fiberathome.com.parkingapp.model.response.common.CommonResponse;
 import www.fiberathome.com.parkingapp.model.response.search.SearchVisitorData;
 import www.fiberathome.com.parkingapp.model.response.search.SelectedPlace;
+import www.fiberathome.com.parkingapp.model.sensors.Sensor;
 import www.fiberathome.com.parkingapp.model.sensors.SensorArea;
+import www.fiberathome.com.parkingapp.model.sensors.SensorList;
+import www.fiberathome.com.parkingapp.model.sensors.Sensors;
+import www.fiberathome.com.parkingapp.model.sensors.SensorsResponse;
 import www.fiberathome.com.parkingapp.module.GoogleMapWebServiceNDistance.DirectionsParser;
 import www.fiberathome.com.parkingapp.module.GoogleMapWebServiceNDistance.directionModules.DirectionFinder;
 import www.fiberathome.com.parkingapp.module.GoogleMapWebServiceNDistance.directionModules.DirectionFinderListener;
@@ -164,6 +171,7 @@ import www.fiberathome.com.parkingapp.ui.bottomSheet.BottomSheetAdapter;
 import www.fiberathome.com.parkingapp.ui.bottomSheet.CustomLinearLayoutManager;
 import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
 import www.fiberathome.com.parkingapp.ui.search.SearchActivity;
+import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.GpsUtils;
 import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
@@ -978,6 +986,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
             if (ApplicationUtils.checkInternet(context)) {
                 fetchSensors(onConnectedLocation);
+                fetchSensorRetrofit(onConnectedLocation);
                 fetchBottomSheetSensors(onConnectedLocation);
             } else {
                 /*ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
@@ -1732,6 +1741,106 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     }
 
     private ArrayList<MarkerOptions> mMarkerArrayList = new ArrayList<>();
+    private List<SensorsResponse.Sensor> sensorArrayList = new ArrayList<>();
+
+    public void fetchSensorRetrofit(Location location){
+        this.onConnectedLocation = location;
+
+        // Changing Password through UI Service.
+        ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+        Call<SensorsResponse> sensorsCall = service.getSensors();
+
+        // Gathering results.
+        sensorsCall.enqueue(new Callback<SensorsResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<SensorsResponse> call, @NonNull retrofit2.Response<SensorsResponse> response) {
+                Timber.e("response -> %s", response.message());
+
+                if (!response.body().getError()) {
+                    if (response.isSuccessful()) {
+                        sensorArrayList = response.body().getSensors();
+                        for (int i = 0; i < sensorArrayList.size(); i++) {
+
+
+                            SensorsResponse.Sensor sensor = sensorArrayList.get(i);
+
+
+                            double latitude = ApplicationUtils.convertToDouble(sensor.getLatitude());
+                            double longitude = ApplicationUtils.convertToDouble(sensor.getLongitude());
+
+                            double tDistance = calculateDistance(latitude, longitude, location.getLatitude(), location.getLongitude());
+
+                            if (tDistance < nDistance) {
+                                nDistance = tDistance;
+                                nLatitude = latitude;
+                                nLongitude = longitude;
+                            }
+
+                            if (sensor.getSStatus().equalsIgnoreCase("1")) {
+                                if (sensor.getReserveStatus().toString().equalsIgnoreCase("1")) {
+                                    sensorStatus = "Occupied";
+                                    double lat = latitude;
+                                    double lon = longitude;
+                                    if (mMap != null) {
+                                        //MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).title(jsonObject.get("uid").toString()).snippet("Booked And Parked").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
+                                        MarkerOptions marker = new MarkerOptions()
+                                                .position(new LatLng(lat, lon))
+                                                .title(sensor.getUid().toString())
+                                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
+
+                                       Marker marker1 = mMap.addMarker(marker);
+                                       marker1.setTag(sensor);
+                                        mMarkerArrayList.add(marker);
+                                    }
+                                } else {
+                                    sensorStatus = "Empty";
+                                    double lat = latitude;
+                                    double lon = longitude;
+
+                                    if (mMap != null) {
+                                        //MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).title(jsonObject.get("uid").toString()).snippet("Occupied.").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
+                                        MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).title(sensor.getUid()).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
+                                        mMap.addMarker(marker);
+                                        mMarkerArrayList.add(marker);
+                                    }
+                                }
+                            } else {
+                                if (jsonObject.get("reserve_status").toString().equalsIgnoreCase("1")) {
+                                    sensorStatus = "Occupied";
+                                    double lat = latitude;
+                                    double lon = longitude;
+                                    if (mMap != null) {
+                                        //MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).title(jsonObject.get("uid").toString()).snippet("Booked but No Vehicle").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
+                                        MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).title(jsonObject.get("uid").toString()).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
+                                        mMap.addMarker(marker);
+                                        mMarkerArrayList.add(marker);
+                                    }
+
+                                } else {
+                                    sensorStatus = "Empty";
+                                    double lat = latitude;
+                                    double lon = longitude;
+                                    if (mMap != null) {
+                                        MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).title(jsonObject.get("uid").toString()).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
+                                        mMap.addMarker(marker);
+                                        mMarkerArrayList.add(marker);
+                                    }
+                                }
+                            }
+                        }
+
+                    } else {
+                        Timber.e("Errors: ");
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<SensorsResponse> call, @NonNull Throwable errors) {
+                Timber.e("Throwable Errors: -> %s", errors.toString());
+            }
+        });
+    }
 
     public void fetchSensors(Location location) {
         this.onConnectedLocation = location;
