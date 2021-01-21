@@ -8,39 +8,66 @@ public class Sensor {
     @SerializedName("id")
     @Expose
     private String id;
+
     @SerializedName("uid")
     @Expose
     private String uid;
+
     @SerializedName("s_status")
     @Expose
     private String sStatus;
+
     @SerializedName("last_updated")
     @Expose
     private String lastUpdated;
+
     @SerializedName("event_time")
     @Expose
     private String eventTime;
+
     @SerializedName("latitude")
     @Expose
     private String latitude;
+
     @SerializedName("longitude")
     @Expose
     private String longitude;
+
     @SerializedName("created_at")
     @Expose
     private String createdAt;
+
     @SerializedName("parking_area")
     @Expose
     private String parkingArea;
+
     @SerializedName("status")
     @Expose
     private String status;
+
     @SerializedName("address")
     @Expose
     private String address;
+
+    @SerializedName("sensor_no")
+    @Expose
+    private String sensorNo;
+
+    @SerializedName("area_no")
+    @Expose
+    private String areaNo;
+
+    @SerializedName("area_id")
+    @Expose
+    private String areaId;
+
+    @SerializedName("no_of_parking")
+    @Expose
+    private String noOfParking;
+
     @SerializedName("reserve_status")
     @Expose
-    private String reserveStatus;
+    private Integer reserveStatus;
 
     public String getId() {
         return id;
@@ -130,11 +157,43 @@ public class Sensor {
         this.address = address;
     }
 
-    public String getReserveStatus() {
+    public String getSensorNo() {
+        return sensorNo;
+    }
+
+    public void setSensorNo(String sensorNo) {
+        this.sensorNo = sensorNo;
+    }
+
+    public String getAreaNo() {
+        return areaNo;
+    }
+
+    public void setAreaNo(String areaNo) {
+        this.areaNo = areaNo;
+    }
+
+    public String getAreaId() {
+        return areaId;
+    }
+
+    public void setAreaId(String areaId) {
+        this.areaId = areaId;
+    }
+
+    public String getNoOfParking() {
+        return noOfParking;
+    }
+
+    public void setNoOfParking(String noOfParking) {
+        this.noOfParking = noOfParking;
+    }
+
+    public Integer getReserveStatus() {
         return reserveStatus;
     }
 
-    public void setReserveStatus(String reserveStatus) {
+    public void setReserveStatus(Integer reserveStatus) {
         this.reserveStatus = reserveStatus;
     }
 }

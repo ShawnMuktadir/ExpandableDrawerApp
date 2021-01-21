@@ -25,8 +25,12 @@ import com.akexorcist.googledirection.model.Direction;
 import com.akexorcist.googledirection.model.Info;
 import com.akexorcist.googledirection.model.Leg;
 import com.akexorcist.googledirection.model.Route;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+
+import org.json.JSONObject;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -40,6 +44,7 @@ import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingSensors;
+import www.fiberathome.com.parkingapp.model.sensors.Sensor;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
@@ -63,22 +68,28 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
     private int count = 0;
 
     private AdapterCallback mAdapterCallback;
+    private onItemClickListeners clickListeners;
 
     public BottomSheetAdapter(AdapterCallback callback) {
         this.mAdapterCallback = callback;
     }
 
     public BottomSheetAdapter(Context context, HomeFragment homeFragment, ArrayList<BookingSensors> sensors,
-                              Location onConnectedLocation, AdapterCallback callback) {
+                              Location onConnectedLocation, AdapterCallback callback, onItemClickListeners clickListeners) {
         this.context = context;
         this.homeFragment = homeFragment;
         this.bookingSensorsArrayList = sensors;
         this.location = onConnectedLocation;
         this.mAdapterCallback = callback;
+        this.clickListeners = clickListeners;
     }
 
     public interface AdapterCallback {
         void onMethodCallback(LatLng latLng);
+    }
+
+    public interface onItemClickListeners {
+        void onClick(BookingSensors bookingSensors);
     }
 
     @NonNull
@@ -94,15 +105,6 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
     public void onBindViewHolder(@NonNull TextBookingViewHolder holder, int position) {
         BookingSensors bookingSensors = bookingSensorsArrayList.get(position);
 
-        /*holder.itemView.post(() -> {
-            // this will give you cell width dynamically
-            int cellWidth = holder.itemView.getWidth();
-            Timber.e("cellWidth -> %s", cellWidth);
-            // this will give you cell height dynamically
-            int cellHeight = holder.itemView.getHeight();
-            Timber.e("cellHeight -> %s", cellHeight);
-        });*/
-
         if (bookingSensors.type == BookingSensors.TEXT_INFO_TYPE) {
                 Timber.d("onBindViewHolder: -> %s", count);
 
@@ -113,8 +115,6 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
                 holder.relativeLayoutTxtBottom.setVisibility(View.VISIBLE);
 
                 holder.textViewStatic.setText(bookingSensors.getText());
-
-                //holder.itemView.setBackgroundColor(Color.LTGRAY);
 
                 holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.selectedColor));
 
@@ -128,6 +128,14 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
         holder.textViewParkingAreaCount.setText(bookingSensors.getCount());
         holder.textViewParkingDistance.setText(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(bookingSensors.getDistance()) + " km");
+
+        holder.rowFG.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                clickListeners.onClick(bookingSensors);
+            }
+        });
+
 
         DecimalFormat decimalFormat = new DecimalFormat("00.0");
 
@@ -159,12 +167,12 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
                         if (homeFragment.mMap != null) {
                             homeFragment.mMap.clear();
                             if (ApplicationUtils.checkInternet(context)) {
-                                homeFragment.fetchSensors(homeFragmentOnConnectedLocation);
+                                homeFragment.fetchSensorRetrofit(homeFragmentOnConnectedLocation);
                             } else {
                                 ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
                                     Timber.e("Positive Button clicked");
                                     if (ApplicationUtils.checkInternet(context)) {
-                                        homeFragment.fetchSensors(onConnectedLocation);
+                                        homeFragment.fetchSensorRetrofit(onConnectedLocation);
                                     } else {
                                         TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                                     }
@@ -194,17 +202,6 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
                             new LatLng(bookingSensors.getLat(), bookingSensors.getLng()), true);
 
                     homeFragment.bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._130sdp));
-                } else {
-                    homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                    homeFragment.bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._130sdp));
-                    ApplicationUtils.showAlertDialog(context.getString(R.string.you_have_to_exit_from_current_destination), context, context.getString(R.string.yes), context.getString(R.string.no), (dialog, which) -> {
-                        Timber.e("Positive Button clicked");
-                        homeFragment.commonBackOperations();
-
-                    }, (dialog, which) -> {
-                        Timber.e("Negative Button Clicked");
-                        dialog.dismiss();
-                    });
                 }
             } else {
                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
@@ -213,7 +210,6 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         });
 
         if (selectedItem == position) {
-            //holder.itemView.setBackgroundColor(Color.LTGRAY);
             holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.selectedColor));
         } else {
             holder.itemView.setBackgroundColor(Color.TRANSPARENT);
