@@ -3,6 +3,7 @@ package www.fiberathome.com.parkingapp.model.response.common;
 public class CommonResponse {
 
     private Boolean error;
+
     private String message;
 
     public CommonResponse(){

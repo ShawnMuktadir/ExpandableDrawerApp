@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.model.sensors;
+package www.fiberathome.com.parkingapp.model.response.sensors;
 
 public class Sensors {
     public String icon;

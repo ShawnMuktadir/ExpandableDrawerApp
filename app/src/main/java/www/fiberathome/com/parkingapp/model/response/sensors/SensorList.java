@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.model.sensors;
+package www.fiberathome.com.parkingapp.model.response.sensors;
 
 import android.util.Log;
 import android.view.View;

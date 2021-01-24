@@ -10,7 +10,7 @@ import java.util.List;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.module.geoFenceInterface.MyLatLng;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingSensors;
-import www.fiberathome.com.parkingapp.model.sensors.SensorArea;
+import www.fiberathome.com.parkingapp.model.response.sensors.SensorArea;
 
 public final class SharedData {
 
