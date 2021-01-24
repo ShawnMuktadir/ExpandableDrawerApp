@@ -1244,7 +1244,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        Timber.e("onActivityResult HomeFragment called");
+        //Timber.e("onActivityResult HomeFragment called");
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == AppConstants.GPS_REQUEST && resultCode == RESULT_OK) {
@@ -1293,11 +1293,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 16f), 500, null);
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 16f));
 
-                if (ApplicationUtils.checkInternet(context)) {
-                    fetchSensors(onConnectedLocation);
+                /*if (ApplicationUtils.checkInternet(context)) {
+                    fetchSensorRetrofit(onConnectedLocation);
                 } else {
                     TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
-                }
+                }*/
 
                 if (onConnectedLocation != null && searchPlaceLatLng != null) {
                     TaskParser taskParser = new TaskParser();
@@ -1308,7 +1308,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                     layoutSearchVisible(true, areaName, "0", textViewSearchParkingDistance.getText().toString(), searchPlaceLatLng);
 
-                    bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._90sdp));
+                    bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._130sdp));
 
                     if (searchDistance < 3000) {
                         adjustValue = 1;
@@ -1415,12 +1415,13 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 //move map camera
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 16f), 500, null);
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 16f));
-                if (ApplicationUtils.checkInternet(context)) {
-                    fetchSensors(onConnectedLocation);
+
+                /*if (ApplicationUtils.checkInternet(context)) {
+                    fetchSensorRetrofit(onConnectedLocation);
                 } else {
                     TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
 
-                }
+                }*/
 
                 String searchPlaceName = areaName;
                 if (onConnectedLocation != null && searchPlaceLatLng != null) {
@@ -1432,11 +1433,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                     layoutSearchVisible(true, searchPlaceName, "0", textViewSearchParkingDistance.getText().toString(), searchPlaceLatLng);
 
-                    bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._90sdp));
+                    bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._130sdp));
 
                     double kim = (searchDistance / 1000) + adjustValue;
 
-                    double searchDoubleDuration = ApplicationUtils.convertToDouble(new DecimalFormat("##.##", new DecimalFormatSymbols(Locale.US)).format(searchDistance * 2.43));
+                    double searchDoubleDuration = ApplicationUtils.convertToDouble(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(searchDistance * 2.43));
 
                     String searchStringDuration = String.valueOf(searchDoubleDuration);
 
@@ -1764,6 +1765,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         showLoading(context);
 
+        startShimmer();
+
         // Gathering results.
         sensorsCall.enqueue(new Callback<SensorsResponse>() {
             @Override
@@ -1774,6 +1777,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     if (response.isSuccessful()) {
 
                         hideLoading();
+
+                        stopShimmer();
 
                         sensorArrayList = response.body().getSensors();
 
@@ -2305,10 +2310,234 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     private void setBottomSheetRecyclerViewAdapter(ArrayList<BookingSensors> bookingSensors) {
         bottomSheetAdapter = null;
+
         bottomSheetAdapter = new BottomSheetAdapter(context, this, bookingSensors, onConnectedLocation, this, new BottomSheetAdapter.onItemClickListeners() {
             @Override
             public void onClick(BookingSensors bookingSensors) {
-                Toast.makeText(context, "Hi", Toast.LENGTH_SHORT).show();
+
+                bookingSensorsBottomSheetArrayList.clear();
+
+                bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._130sdp));
+
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+                if (previousMarker != null)
+                    previousMarker.remove();
+
+                if (previousDestinationMarker != null)
+                    previousDestinationMarker.remove();
+
+                if (previousGetDestinationMarker != null)
+                    previousGetDestinationMarker.remove();
+
+                if (newBottomSheetMarker != null) {
+                    newBottomSheetMarker.remove();
+                    newBottomSheetMarker = null;
+                }
+
+                bottomSheetPlaceLatLng = new LatLng(bookingSensors.getLat(), bookingSensors.getLng());
+
+                if (isRouteDrawn == 0) {
+                    //for getting the location name
+
+                    if (bottomSheetAdapter != null) {
+                        MarkerOptions markerOptions = new MarkerOptions();
+                        markerOptions.position(bottomSheetPlaceLatLng);
+
+                        coordList.add(new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
+                        previousDestinationMarker = mMap.addMarker(markerOptions);
+
+                        for (int i = 0; i < sensorArrayList.size(); i++) {
+                            Sensor sensor = sensorArrayList.get(i);
+                            try {
+                                String latitude1 = sensor.getLatitude();
+                                String longitude1 = sensor.getLongitude();
+                                uid = sensor.getUid();
+                                /*if (isSearchAreaVisible) {
+                                    locationName = name;
+                                } else {*/
+                                locationName = sensor.getParkingArea();
+                                //}
+                                double distanceForCount = calculateDistance(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude, ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1));
+
+                                if (distanceForCount < 0.001) {
+                                    bottomUid = uid;
+                                    Timber.e("bottomUid -> %s", bottomUid);
+                                    break;
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                    String finalUid = uid;
+
+                    String bottomSheetPlaceName = locationName;
+
+                    TaskParser taskParser = new TaskParser();
+                    double bottomSheetDistance = taskParser.showDistance(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
+                            new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
+
+                    Timber.e(" searchDistance bottomSheetDistance -> %s", bottomSheetDistance);
+                    Timber.e(" bottomSheetDistance -> %s", searchDistance);
+
+                    double kim = (bottomSheetDistance / 1000) + adjustValue;
+
+                    if (kim > 1.9) {
+                        kim = kim + 2;
+                    } else if (kim == 1.5) {
+                        kim = kim + 1;
+                    } else {
+                        kim = kim + 0.5;
+                    }
+
+                    double bottomSheetDoubleDuration = ApplicationUtils.convertToDouble(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(bottomSheetDistance * 2.43));
+
+                    String bottomSheetStringDuration = String.valueOf(bottomSheetDoubleDuration);
+
+                    layoutBottomSheetVisible(true, bookingSensors.getParkingArea(), bookingSensors.getCount(),
+                            String.valueOf(bottomSheetDistance), bottomSheetStringDuration,
+                            new LatLng(bookingSensors.getLat(), bookingSensors.getLng()), false);
+
+                    bookingSensorsBottomSheetArrayList.add(new BookingSensors(bottomSheetPlaceName, bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude,
+                            bottomSheetDistance, textViewBottomSheetParkingAreaCount.getText().toString(), bottomSheetStringDuration,
+                            context.getResources().getString(R.string.nearest_parking_from_your_destination),
+                            BookingSensors.TEXT_INFO_TYPE, 0));
+
+                    if (sensorArrayList != null) {
+                        setBottomSheetList(() -> {
+                            if (bottomSheetAdapter != null) {
+                                Timber.e("setBottomSheet if called");
+                                bookingSensorsArrayListGlobal.clear();
+                                bookingSensorsArrayListGlobal.addAll(bookingSensorsBottomSheetArrayList);
+                                bottomSheetAdapter.notifyDataSetChanged();
+                                bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._90sdp));
+                            } else {
+                                Timber.e("setBottomSheet if else called");
+                            }
+                        }, sensorArrayList, bottomSheetPlaceLatLng, bookingSensorsBottomSheetArrayList, finalUid);
+                    } else {
+                        Toast.makeText(context, "Something went wrong!!! Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    ApplicationUtils.showAlertDialog(context.getString(R.string.you_have_to_exit_from_current_destination), context, context.getString(R.string.yes), context.getString(R.string.no), (dialog, which) -> {
+
+                        if (polyline == null || !polyline.isVisible())
+                            return;
+
+                        points = polyline.getPoints();
+
+                        if (polyline != null) {
+                            polyline.remove();
+                        }
+
+                        if (previousMarker != null) {
+                            previousMarker.remove();
+                            previousMarker = null;
+                        }
+
+                        if (previousGetDestinationMarker != null) {
+                            previousGetDestinationMarker.remove();
+                            previousDestinationMarker = null;
+                        }
+
+                        if (previousDestinationMarker != null) {
+                            previousDestinationMarker.remove();
+                            previousDestinationMarker = null;
+                        }
+
+                        if (newBottomSheetMarker != null) {
+                            newBottomSheetMarker.remove();
+                            newBottomSheetMarker = null;
+                        }
+
+                        if (bottomSheetPlaceLatLng != null) {
+                            markerOptions = new MarkerOptions();
+                            markerOptions.position(bottomSheetPlaceLatLng).title(markerUid);
+                            coordList.add(new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
+                            previousDestinationMarker = mMap.addMarker(markerOptions);
+                        }
+
+                        btnBottomSheetGetDirection.setVisibility(View.VISIBLE);
+
+                        String origin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
+
+                        String destination = null;
+
+                        if (bottomSheetPlaceLatLng != null) {
+                            destination = "" + bottomSheetPlaceLatLng.latitude + ", " + bottomSheetPlaceLatLng.longitude;
+                        }
+
+                        fetchDirections(origin, destination);
+
+                        //fromMarkerRouteDrawn = 1;
+
+                        if (bookingSensorsBottomSheetArrayList != null)
+                            bookingSensorsBottomSheetArrayList.clear();
+
+                        String bottomSheetPlaceName = null;
+                        for (int i = 0; i < sensorArrayList.size(); i++) {
+
+                            Sensor sensor = sensorArrayList.get(i);
+                            try {
+                                String latitude1 = sensor.getLatitude();
+                                String longitude1 = sensor.getLongitude();
+                                uid1[0] = sensor.getUid();
+                                bottomSheetPlaceName = sensor.getParkingArea();
+                                double distanceForCount = calculateDistance(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude,
+                                        ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1));
+
+                                if (distanceForCount < 0.001) {
+                                    bottomUid = uid1[0];
+                                    Timber.e("bottomUid -> %s", bottomUid);
+
+                                    parkingNumberOfIndividualMarker = sensor.getNoOfParking();
+                                    textViewMarkerParkingAreaCount.setText(parkingNumberOfIndividualMarker);
+                                    break;
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        TaskParser taskParser = new TaskParser();
+
+                        double bottomSheetDistance = taskParser.showDistance(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
+                                new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
+
+                        double kim = (bottomSheetDistance / 1000) + adjustValue;
+                        double bottomSheetDoubleDuration = ApplicationUtils.convertToDouble(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(bottomSheetDistance * 2.43));
+                        String bottomSheetStringDuration = String.valueOf(bottomSheetDoubleDuration);
+
+                        bookingSensorsBottomSheetArrayList.add(new BookingSensors(bottomSheetPlaceName, bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude,
+                                bottomSheetDistance, textViewBottomSheetParkingAreaCount.getText().toString(), bottomSheetStringDuration,
+                                context.getResources().getString(R.string.nearest_parking_from_your_destination),
+                                BookingSensors.TEXT_INFO_TYPE, 0));
+
+                        if (sensorArrayList != null) {
+
+                            setBottomSheetList(() -> {
+                                if (bottomSheetAdapter != null) {
+                                    bookingSensorsArrayListGlobal.clear();
+                                    bookingSensorsArrayListGlobal.addAll(bookingSensorsBottomSheetArrayList);
+                                    bottomSheetAdapter.notifyDataSetChanged();
+                                    bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._130sdp));
+                                } else {
+
+                                }
+                            }, sensorArrayList, bottomSheetPlaceLatLng, bookingSensorsBottomSheetArrayList, bottomUid);
+                        }
+
+                        bottomSheetAdapter.setDataList(bookingSensorsBottomSheetArrayList);
+
+                    }, (dialog, which) -> {
+                        Timber.e("Negative Button Clicked");
+                        dialog.dismiss();
+                    });
+                }
             }
         });
         bottomSheetRecyclerView.setAdapter(bottomSheetAdapter);
@@ -2821,6 +3050,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }, 1000);
     }
 
+    private Marker newBottomSheetMarker;
+
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onBottomSheetDirectionEvent(GetDirectionBottomSheetEvent event) {
         //Toast.makeText(context, "BottomSheet Click e Geche", Toast.LENGTH_SHORT).show();
@@ -2836,16 +3067,27 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 markerOptions.position(bottomSheetPlaceLatLng);
                 coordList.add(new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
                 markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
-                mMap.addMarker(markerOptions);
+                newBottomSheetMarker = mMap.addMarker(markerOptions);
 
                 btnBottomSheetGetDirection.setVisibility(View.VISIBLE);
                 linearLayoutBottomSheetBottom.setVisibility(View.VISIBLE);
                 imageViewBottomSheetBack.setVisibility(View.VISIBLE);
 
-                String url = getDirectionsUrl(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()), event.location);
-
+                /*String url = getDirectionsUrl(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()), event.location);
                 TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
-                taskRequestDirections.execute(url);
+                taskRequestDirections.execute(url);*/
+
+                String origin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
+
+                String destination = null;
+
+                if (event.location != null) {
+                    destination = "" + event.location.latitude + ", " + event.location.longitude;
+                }
+
+                fetchDirections(origin, destination);
+
+                isRouteDrawn = 1;
 
                 setMapZoomLevelDirection(new LatLng(onConnectedLocation.getLatitude(),
                         onConnectedLocation.getLongitude()), event.location);
@@ -3049,24 +3291,27 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(bottomSheetPlaceLatLng);
 
+                if (previousMarker != null)
+                    previousMarker.remove();
+
                 coordList.add(new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
-                //markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
                 markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
-                mMap.addMarker(markerOptions);
+                previousMarker = mMap.addMarker(markerOptions);
 
                 for (int i = 0; i < sensorArrayList.size(); i++) {
-                    JSONObject jsonObject;
+
                     Sensor sensor = sensorArrayList.get(i);
                     try {
-                        //   jsonObject = bottomSheetPlaceEventJsonArray.getJSONObject(i);
                         String latitude1 = sensor.getLatitude();
                         String longitude1 = sensor.getLongitude();
                         uid = sensor.getUid();
+
                         if (isSearchAreaVisible) {
                             locationName = name;
                         } else {
                             locationName = sensor.getParkingArea();
                         }
+
                         double distanceForCount = calculateDistance(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude, ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1));
 
                         if (distanceForCount < 0.001) {
@@ -3094,7 +3339,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         if (isClicked) {
             Timber.e("isClicked called");
-            if (bottomSheetPlaceLatLng != null && bookingSensorsBottomSheetArrayList != null && bottomSheetAdapter != null) {
+            if (bottomSheetPlaceLatLng != null && bottomSheetAdapter != null) {
 
                 bookingSensorsBottomSheetArrayList.clear();
 
@@ -3178,6 +3423,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     //fetchBottomSheetSensors(onConnectedLocation);
                     animateCamera(onConnectedLocation);
                 }
+
+                ApplicationUtils.replaceFragmentWithAnimation(getParentFragmentManager(), this);
 
                 linearLayoutBottom.setVisibility(View.GONE);
                 linearLayoutSearchBottom.setVisibility(View.GONE);
@@ -3513,6 +3760,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         }
 
                         isDestinationMarkerDrawn = true;
+
                         btnMarkerGetDirection.setVisibility(View.VISIBLE);
 
                         /*String url = getDirectionsUrl(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()), markerPlaceLatLng);
@@ -3576,6 +3824,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         }
                         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     }
+
                 } else if (getDirectionMarkerButtonClicked == 1) {
                     if (parkingNumberOfIndividualMarker.equals("0")) {
                         ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.no_parking_spot_message), context);
@@ -3613,7 +3862,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         //ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
                     }
                     if (bottomSheetPlaceLatLng != null || adapterPlaceLatLng != null || markerPlaceLatLng != null || searchPlaceLatLng != null) {
-                        Timber.e("all location called");
+                        //Timber.e("all location called");
+
                         EventBus.getDefault().post(new GetDirectionBottomSheetEvent(bottomSheetPlaceLatLng));
 
                         MarkerOptions markerOptions = new MarkerOptions();
@@ -4059,7 +4309,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         polyline.remove();
 
-        Timber.e("marker origin destination -> %s -> %s", origin, destination);
+        //Timber.e("marker origin destination -> %s -> %s", origin, destination);
+
         try {
             if (polyline == null || !polyline.isVisible())
                 return;

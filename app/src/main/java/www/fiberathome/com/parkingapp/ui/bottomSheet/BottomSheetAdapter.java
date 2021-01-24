@@ -1,7 +1,6 @@
 package www.fiberathome.com.parkingapp.ui.bottomSheet;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
@@ -26,12 +25,10 @@ import com.akexorcist.googledirection.model.Info;
 import com.akexorcist.googledirection.model.Leg;
 import com.akexorcist.googledirection.model.Route;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Locale;
 
 import butterknife.BindView;
@@ -41,8 +38,6 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingSensors;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
 import static android.content.Context.LOCATION_SERVICE;
 
@@ -101,19 +96,18 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         BookingSensors bookingSensors = bookingSensorsArrayList.get(position);
 
         if (bookingSensors.type == BookingSensors.TEXT_INFO_TYPE) {
-                Timber.d("onBindViewHolder: -> %s", count);
 
-                selectedItem = position;
+            selectedItem = position;
 
-                Timber.d("onBindViewHolder position -> %s", position);
+            holder.relativeLayoutTxtBottom.setVisibility(View.VISIBLE);
 
-                holder.relativeLayoutTxtBottom.setVisibility(View.VISIBLE);
+            holder.textViewStatic.setText(bookingSensors.getText());
 
-                holder.textViewStatic.setText(bookingSensors.getText());
+            holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.selectedColor));
 
-                holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.selectedColor));
+            holder.relativeLayoutTxtBottom.setVisibility(View.VISIBLE);
 
-                homeFragment.bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._130sdp));
+            //homeFragment.bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._130sdp));
 
         } else {
             holder.relativeLayoutTxtBottom.setVisibility(View.GONE);
@@ -136,73 +130,8 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
         double tmp = Double.parseDouble(decimalFormat.format(Double
                 .parseDouble(bookingSensors.getDuration())));
+
         holder.textViewParkingTravelTime.setText(String.valueOf(tmp) + " mins");
-
-        holder.itemView.setOnClickListener(v -> {
-            if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
-                if (homeFragment.isRouteDrawn == 0) {
-                    selectedItem = 0;
-
-                    if (bookingSensorsArrayList != null && !bookingSensorsArrayList.isEmpty()) {
-                        Collections.swap(bookingSensorsArrayList, position, 0);
-                        notifyItemMoved(position, 0);
-                        homeFragment.bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._130sdp));
-                        notifyDataSetChanged();
-                    }
-
-                    try {
-                        notifyDataSetChanged();
-                        homeFragment.linearLayoutSearchBottomButton.setVisibility(View.GONE);
-                    } catch (Exception e) {
-                        Timber.e(e);
-                    }
-
-                    if (SharedData.getInstance().getOnConnectedLocation() != null) {
-                        Location homeFragmentOnConnectedLocation = SharedData.getInstance().getOnConnectedLocation();
-                        if (homeFragment.mMap != null) {
-                            homeFragment.mMap.clear();
-                            if (ApplicationUtils.checkInternet(context)) {
-                                homeFragment.fetchSensorRetrofit(homeFragmentOnConnectedLocation);
-                            } else {
-                                ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
-                                    Timber.e("Positive Button clicked");
-                                    if (ApplicationUtils.checkInternet(context)) {
-                                        homeFragment.fetchSensorRetrofit(onConnectedLocation);
-                                    } else {
-                                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
-                                    }
-                                }, (dialog, which) -> {
-                                    Timber.e("Negative Button Clicked");
-                                    dialog.dismiss();
-                                    if (context != null) {
-                                        ((Activity) context).finish();
-                                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
-                                    }
-                                });
-                            }
-                            mAdapterCallback.onMethodCallback(new LatLng(bookingSensors.getLat(), bookingSensors.getLng()));
-                        }
-                    }
-
-                    homeFragment.removeCircle();
-
-                    homeFragment.bottomSheetBehavior.setHideable(false);
-
-                    homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-
-                    getDestinationDurationInfoForSearchLayout(context, new LatLng(bookingSensors.getLat(), bookingSensors.getLng()), holder, bookingSensors.type);
-
-                    homeFragment.layoutBottomSheetVisible(true, bookingSensors.getParkingArea(), bookingSensors.getCount(),
-                            holder.textViewParkingDistance.getText().toString(), holder.textViewParkingTravelTime.getText().toString(),
-                            new LatLng(bookingSensors.getLat(), bookingSensors.getLng()), true);
-
-                    homeFragment.bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._130sdp));
-                }
-            } else {
-                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
-            }
-
-        });
 
         if (selectedItem == position) {
             holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.selectedColor));
@@ -225,10 +154,8 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         switch (bookingSensorsArrayList.get(position).type) {
             case 0:
                 return BookingSensors.TEXT_INFO_TYPE;
-            case 1:
-                return BookingSensors.INFO_TYPE;
             default:
-                return -1;
+                return BookingSensors.INFO_TYPE;
         }
     }
 
@@ -343,7 +270,6 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         return false;
     }
 
-    // implements View.OnClickListener
     @SuppressLint("NonConstantResourceId")
     public static class TextBookingViewHolder extends RecyclerView.ViewHolder {
 
