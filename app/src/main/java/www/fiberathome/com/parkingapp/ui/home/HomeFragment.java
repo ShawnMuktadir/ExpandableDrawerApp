@@ -858,8 +858,24 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     }
                 }
             } else {
-                ApplicationUtils.showAlertDialog(context.getString(R.string.you_have_to_exit_from_current_destination), context, context.getString(R.string.yes), context.getString(R.string.no), (dialog, which) -> {
 
+                ApplicationUtils.showAlertDialog(context.getString(R.string.you_have_to_exit_from_current_destination), context, context.getString(R.string.yes), context.getString(R.string.no), (dialog, which) -> {
+                    if (marker.getTitle() != null) {
+                        if (!marker.getTitle().equals("My Location")) {
+                            if (previousMarker != null) {
+                                previousMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
+                                //Toast.makeText(context, "previous", Toast.LENGTH_SHORT).show();
+                            } else {
+                                //Toast.makeText(context, "previous null", Toast.LENGTH_SHORT).show();
+                            }
+                            previousMarker = marker;
+                            removeCircle();
+                            marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_gray));
+                            markerClicked = marker;
+                            isNotificationSent = false;
+                            isInAreaEnabled = false;
+                        }
+                    }
                     if (polyline == null || !polyline.isVisible())
                         return;
 
@@ -874,6 +890,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         markerOptions.position(marker.getPosition()).title(markerUid);
                         coordList.add(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
                         markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
+
                     }
 
                     if (adapterPlaceLatLng != null) {
@@ -1793,17 +1810,17 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                         stopShimmer();
 
-                        sensorArrayList = response.body().getSensors();
+                            sensorArrayList = response.body().getSensors();
 
-                        for (int i = 0; i < sensorArrayList.size(); i++) {
+                            for (int i = 0; i < sensorArrayList.size(); i++) {
 
-                            Sensor sensor = sensorArrayList.get(i);
+                                Sensor sensor = sensorArrayList.get(i);
 
-                            String areaName = sensor.getParkingArea();
+                                String areaName = sensor.getParkingArea();
 
-                            String parkingCount = sensor.getNoOfParking();
+                                String parkingCount = sensor.getNoOfParking();
 
-                            double latitude = ApplicationUtils.convertToDouble(sensor.getLatitude());
+                                double latitude = ApplicationUtils.convertToDouble(sensor.getLatitude());
 
                             double longitude = ApplicationUtils.convertToDouble(sensor.getLongitude());
 
