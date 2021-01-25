@@ -107,8 +107,6 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         parkingViewHolder.itemView.setBackgroundColor(selectedPosition == position ?
                 context.getResources().getColor(R.color.selectedColor) : Color.TRANSPARENT);
 
-        //parkingViewHolder.itemView.setBackgroundColor(context.getResources().getColor(R.color.selectedColor));
-
         parkingViewHolder.itemView.setOnClickListener(v -> {
 
             long now = System.currentTimeMillis();
@@ -184,19 +182,24 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return false;
     }
 
-    // implements View.OnClickListener
+    @SuppressLint("NonConstantResourceId")
     public static class ParkingViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.textViewParkingAreaName)
         TextView textViewParkingAreaName;
+
         @BindView(R.id.textViewParkingAreaCount)
         TextView textViewParkingAreaCount;
+
         @BindView(R.id.textViewParkingAreaAddress)
         TextView textViewParkingAreaAddress;
+
         @BindView(R.id.relativeLayout)
         RelativeLayout relativeLayout;
+
         @BindView(R.id.textViewParkingDistance)
         TextView textViewParkingDistance;
+
         @BindView(R.id.textViewParkingTravelTime)
         TextView textViewParkingTravelTime;
 
