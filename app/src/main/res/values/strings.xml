@@ -88,7 +88,7 @@
     <string name="parking_slots">Parking Slots</string>
     <string name="parking_area_name">Parking Area Name</string>
     <string name="address">Address</string>
-    <string name="no_record_found">No Record Found</string>
+    <string name="no_nearest_parking_area_found">No nearest parking area found</string>
 
     //common
     <string name="connect_to_internet">Please Connect to Internet</string>

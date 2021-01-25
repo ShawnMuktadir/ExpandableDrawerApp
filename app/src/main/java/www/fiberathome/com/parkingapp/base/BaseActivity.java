@@ -172,7 +172,9 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
     protected void onDestroy() {
         mLocationManager.removeUpdates(this);
         unregisterReceiver(mNetworkDetectReceiver);
-        unregisterReceiver(mBackgroundLocationReceiver);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            unregisterReceiver(mBackgroundLocationReceiver);
+        }
         super.onDestroy();
     }
 
@@ -182,7 +184,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
     }
 
     @Override
-    public void onLocationChanged(Location location) {
+    public void onLocationChanged(@NonNull Location location) {
     }
 
     @Override
@@ -190,7 +192,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
     }
 
     @Override
-    public void onProviderEnabled(String provider) {
+    public void onProviderEnabled(@NonNull String provider) {
     }
 
     @Override

@@ -5,7 +5,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -316,13 +315,13 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
 
     private void setNoDataForBangla() {
         textViewNoData.setVisibility(View.VISIBLE);
-        textViewNoData.setText(context.getResources().getString(R.string.no_record_found));
+        textViewNoData.setText(context.getResources().getString(R.string.no_nearest_parking_area_found));
         ApplicationUtils.showOnlyMessageDialog(context.getResources().getString(R.string.install_bangla_keyboard), context);
     }
 
     private void setNoDataForEnglish() {
         textViewNoData.setVisibility(View.VISIBLE);
-        textViewNoData.setText(context.getResources().getString(R.string.no_record_found));
+        textViewNoData.setText(context.getResources().getString(R.string.no_nearest_parking_area_found));
         ApplicationUtils.showOnlyMessageDialog(context.getResources().getString(R.string.change_app_language_to_english), context);
     }
 
@@ -332,7 +331,7 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
 
     public void setNoData() {
         textViewNoData.setVisibility(View.VISIBLE);
-        textViewNoData.setText(context.getResources().getString(R.string.no_record_found));
+        textViewNoData.setText(context.getResources().getString(R.string.no_nearest_parking_area_found));
     }
 
     private void loadPDF() {

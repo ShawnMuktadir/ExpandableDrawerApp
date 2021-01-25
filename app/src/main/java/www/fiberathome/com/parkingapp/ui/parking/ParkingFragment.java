@@ -348,13 +348,13 @@ public class ParkingFragment extends BaseFragment implements ParkingAdapter.Park
 
     private void setNoDataForEnglish() {
         textViewNoData.setVisibility(View.VISIBLE);
-        textViewNoData.setText(context.getResources().getString(R.string.no_record_found));
+        textViewNoData.setText(context.getResources().getString(R.string.no_nearest_parking_area_found));
         ApplicationUtils.showOnlyMessageDialog(context.getResources().getString(R.string.change_app_language_to_english), context);
     }
 
     private void setNoDataForBangla() {
         textViewNoData.setVisibility(View.VISIBLE);
-        textViewNoData.setText(context.getResources().getString(R.string.no_record_found));
+        textViewNoData.setText(context.getResources().getString(R.string.no_nearest_parking_area_found));
         ApplicationUtils.showOnlyMessageDialog(context.getResources().getString(R.string.not_available_at_bangla_search), context);
     }
 
@@ -383,7 +383,7 @@ public class ParkingFragment extends BaseFragment implements ParkingAdapter.Park
 
     private void setNoData() {
         textViewNoData.setVisibility(View.VISIBLE);
-        textViewNoData.setText(context.getString(R.string.no_record_found));
+        textViewNoData.setText(context.getString(R.string.no_nearest_parking_area_found));
     }
 
     private void hideNoData() {

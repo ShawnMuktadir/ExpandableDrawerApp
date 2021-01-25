@@ -25,7 +25,6 @@ import com.akexorcist.googledirection.model.Route;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -113,7 +112,7 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
                             Location homeFragmentOnConnectedLocation = SharedData.getInstance().getOnConnectedLocation();
                             if (homeFragment.mMap != null) {
                                 homeFragment.mMap.clear();
-                                homeFragment.fetchSensors(homeFragmentOnConnectedLocation);
+                                //homeFragment.fetchSensor(homeFragmentOnConnectedLocation);
                             }
                         }
 
@@ -162,7 +161,7 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
                                 Location homeFragmentOnConnectedLocation = SharedData.getInstance().getOnConnectedLocation();
                                 if (homeFragment.mMap != null) {
                                     homeFragment.mMap.clear();
-                                    homeFragment.fetchSensors(homeFragmentOnConnectedLocation);
+                                    //homeFragment.fetchSensor(homeFragmentOnConnectedLocation);
                                 }
                             }
                             getDestinationDurationInfoForFirstSearchLayout(context, new LatLng(bookingSensors.getLat(), bookingSensors.getLng()),

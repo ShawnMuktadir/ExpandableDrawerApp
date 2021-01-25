@@ -93,6 +93,20 @@
                     tools:targetApi="lollipop"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent" />
+
+                <TextView
+                    android:id="@+id/textViewNoData"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/no_nearest_parking_area_found"
+                    android:textColor="@color/red"
+                    android:textSize="@dimen/dimTex16"
+                    android:visibility="gone"
+                    app:layout_constraintTop_toBottomOf="@+id/bottomsheet_recyclerview"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </FrameLayout>
 
@@ -103,16 +117,5 @@
             android:alpha="0.6"
             android:background="@android:color/transparent" />
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/textViewNoData"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top"
-        android:gravity="top"
-        android:text="@string/no_record_found"
-        android:textColor="@color/red"
-        android:textSize="@dimen/dimTex18"
-        android:visibility="gone" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

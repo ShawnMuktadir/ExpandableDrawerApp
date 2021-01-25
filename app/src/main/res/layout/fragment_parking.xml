@@ -84,7 +84,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_gravity="center"
-            android:text="@string/no_record_found"
+            android:text="@string/no_nearest_parking_area_found"
             android:textColor="@android:color/holo_red_dark"
             android:textSize="18sp"
             android:visibility="gone"

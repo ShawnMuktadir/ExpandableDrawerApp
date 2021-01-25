@@ -89,7 +89,7 @@
     <string name="parking_slots">পার্কিং স্লট</string>
     <string name="parking_area_name">পার্কিং এলাকার নাম</string>
     <string name="address">ঠিকানা</string>
-    <string name="no_record_found">কোন তথ্য পাওয়া যায়নি</string>
+    <string name="no_nearest_parking_area_found">পার্শ্ববর্তী কোনও পার্কিং অঞ্চল পাওয়া যায় নি</string>
 
     //common
     <string name="connect_to_internet">ইন্টারনেট সংযোগ করুন</string>

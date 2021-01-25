@@ -38,6 +38,7 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingSensors;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
+import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 
 import static android.content.Context.LOCATION_SERVICE;
 
@@ -107,8 +108,6 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
             holder.relativeLayoutTxtBottom.setVisibility(View.VISIBLE);
 
-            //homeFragment.bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._130sdp));
-
         } else {
             holder.relativeLayoutTxtBottom.setVisibility(View.GONE);
         }
@@ -126,9 +125,9 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         });
 
 
-        DecimalFormat decimalFormat = new DecimalFormat("00.0");
+        DecimalFormat decimalFormat = new DecimalFormat("00.0", new DecimalFormatSymbols(Locale.US));
 
-        double tmp = Double.parseDouble(decimalFormat.format(Double
+        double tmp = ApplicationUtils.convertToDouble(decimalFormat.format(Double
                 .parseDouble(bookingSensors.getDuration())));
 
         holder.textViewParkingTravelTime.setText(String.valueOf(tmp) + " mins");

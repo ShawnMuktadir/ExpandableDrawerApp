@@ -80,6 +80,7 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
         /*bookingViewHolder.textViewParkingTotalPaymentAmount.setText(context.getResources().getString(R.string.total_fair));
 
         bookingViewHolder.card_view.setOnClickListener(v -> {
