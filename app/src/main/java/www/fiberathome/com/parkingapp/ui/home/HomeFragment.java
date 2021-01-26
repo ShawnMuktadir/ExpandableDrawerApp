@@ -2774,7 +2774,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onBottomSheetDirectionEvent(GetDirectionBottomSheetEvent event) {
-        //Toast.makeText(context, "BottomSheet Click e Geche", Toast.LENGTH_SHORT).show();
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -2797,10 +2796,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 linearLayoutBottomSheetBottom.setVisibility(View.VISIBLE);
                 imageViewBottomSheetBack.setVisibility(View.VISIBLE);
 
-                /*String url = getDirectionsUrl(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()), event.location);
-                TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
-                taskRequestDirections.execute(url);*/
-
                 String origin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
 
                 String destination = null;
@@ -2820,7 +2815,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onSearchDirectionEvent(GetDirectionForSearchEvent event) {
-        //Toast.makeText(context, "Search Click e Geche", Toast.LENGTH_SHORT).show();
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -2864,7 +2858,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onMarkerDirectionEvent(GetDirectionForMarkerEvent event) {
-        //Toast.makeText(context, "Marker Click e Geche", Toast.LENGTH_SHORT).show();
 
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
