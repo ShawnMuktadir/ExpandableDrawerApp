@@ -453,4 +453,5 @@
         Permission Denied,You can\'t search nearest parking location from you. For further use please allow location</string>
     <string name="enabling_gps">Enabling GPS</string>
     <string name="slow_internet_connection">Internet connection is too slow</string>
+    <string name="no_data_found">No data found</string>
 </resources>

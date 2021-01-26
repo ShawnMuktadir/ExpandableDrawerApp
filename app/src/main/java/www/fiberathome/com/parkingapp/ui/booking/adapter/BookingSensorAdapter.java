@@ -81,7 +81,7 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<RecyclerView.View
         if (bookingSensors != null) {
             switch (bookingSensors.type) {
                 case BookingSensors.INFO_TYPE:
-                    ((BookingViewHolder) holder).textViewParkingAreaName.setText(ApplicationUtils.capitalize(bookingSensors.getParkingArea()));
+                    ((BookingViewHolder) holder).textViewParkingAreaName.setText(ApplicationUtils.capitalizeFirstLetter(bookingSensors.getParkingArea()));
                     ((BookingViewHolder) holder).textViewParkingAreaCount.setText(bookingSensors.getCount());
                     ((BookingViewHolder) holder).textViewParkingDistance.setText(
                             new DecimalFormat("##.##").format(bookingSensors.getDistance()) + " km");
@@ -105,7 +105,7 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<RecyclerView.View
                     break;
 
                 case BookingSensors.TEXT_INFO_TYPE:
-                    ((TextBookingViewHolder) holder).textViewParkingAreaName.setText(ApplicationUtils.capitalize(bookingSensors.getParkingArea()));
+                    ((TextBookingViewHolder) holder).textViewParkingAreaName.setText(ApplicationUtils.capitalizeFirstLetter(bookingSensors.getParkingArea()));
                     ((TextBookingViewHolder) holder).textViewParkingAreaCount.setText(bookingSensors.getCount());
                     ((TextBookingViewHolder) holder).textViewParkingDistance.setText(
                             new DecimalFormat("##.##").format(bookingSensors.getDistance()) + " km");

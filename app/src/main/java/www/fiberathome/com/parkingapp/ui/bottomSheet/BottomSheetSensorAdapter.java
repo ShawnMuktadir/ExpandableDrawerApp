@@ -86,7 +86,7 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
         if (bookingSensors != null) {
             switch (bookingSensors.type) {
                 case BookingSensors.INFO_TYPE:
-                    ((BookingViewHolder) holder).textViewParkingAreaName.setText(ApplicationUtils.capitalize(bookingSensors.getParkingArea().trim()));
+                    ((BookingViewHolder) holder).textViewParkingAreaName.setText(ApplicationUtils.capitalizeFirstLetter(bookingSensors.getParkingArea().trim()));
                     ((BookingViewHolder) holder).textViewParkingAreaCount.setText(bookingSensors.getCount());
                     ((BookingViewHolder) holder).textViewParkingDistance.setText(new DecimalFormat("##.##").format(bookingSensors.getDistance()) + " km");
                     ((BookingViewHolder) holder).textViewParkingTravelTime.setText(bookingSensors.getDuration());
@@ -137,7 +137,7 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
                         //this.textViewItem=holder.itemView;
                         ((TextBookingViewHolder) holder).relativeLayoutxt.setBackgroundColor(Color.LTGRAY);
                         //textItemViewColorGray=true;
-                        ((TextBookingViewHolder) holder).textViewParkingAreaName.setText(ApplicationUtils.capitalize(bookingSensors.getParkingArea().trim()));
+                        ((TextBookingViewHolder) holder).textViewParkingAreaName.setText(ApplicationUtils.capitalizeFirstLetter(bookingSensors.getParkingArea().trim()));
                         ((TextBookingViewHolder) holder).textViewParkingAreaCount.setText(bookingSensors.getCount());
                        /* ((TextBookingViewHolder) holder).textViewParkingDistance.setText(
                                 new DecimalFormat("##.##").format(bookingSensors.getDistance()) + " km");*/

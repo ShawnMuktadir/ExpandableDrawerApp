@@ -3,6 +3,7 @@ package www.fiberathome.com.parkingapp.model.data.preference;
 import android.location.Location;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.gson.Gson;
 
 import java.util.List;
@@ -189,5 +190,15 @@ public final class SharedData {
 
     public void setLastLocation(Location lastLocation) {
         this.lastLocation = lastLocation;
+    }
+
+    private Marker previousAdapterSetMarkerEvent;
+
+    public Marker getPreviousAdapterSetMarkerEvent() {
+        return previousAdapterSetMarkerEvent;
+    }
+
+    public void setPreviousAdapterSetMarkerEvent(Marker previousAdapterSetMarkerEvent) {
+        this.previousAdapterSetMarkerEvent = previousAdapterSetMarkerEvent;
     }
 }

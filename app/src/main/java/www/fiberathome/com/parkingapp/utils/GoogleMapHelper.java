@@ -1,7 +1,15 @@
 package www.fiberathome.com.parkingapp.utils;
 
-import android.graphics.Color;
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.os.Looper;
 
+import androidx.core.app.ActivityCompat;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -41,9 +49,24 @@ public class GoogleMapHelper {
         return polylineOptions;
     }
 
-    public static void defaultMapSettings(GoogleMap googleMap) {
+    public static void defaultMapSettings(Context context, GoogleMap googleMap, FusedLocationProviderClient fusedLocationProviderClient, LocationRequest locationRequest, LocationCallback locationCallback) {
+
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+
+        googleMap.setMyLocationEnabled(false);
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         googleMap.getUiSettings().setZoomControlsEnabled(false);
+        googleMap.getUiSettings().setScrollGesturesEnabledDuringRotateOrZoom(true);
         googleMap.getUiSettings().setZoomGesturesEnabled(true);
 
         googleMap.setBuildingsEnabled(false);
@@ -56,6 +79,10 @@ public class GoogleMapHelper {
         googleMap.getUiSettings().setTiltGesturesEnabled(true);
         googleMap.getUiSettings().setCompassEnabled(false);
         googleMap.getUiSettings().setMyLocationButtonEnabled(false);
+
+        if (fusedLocationProviderClient != null) {
+            fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
+        }
     }
 
     public static CameraUpdate buildCameraUpdate(LatLng latLng) {

@@ -341,7 +341,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         TextView tvUserVehicleNo = headerView.findViewById(R.id.header_vehicle_no);
         ImageView ivUserProfile = headerView.findViewById(R.id.header_profile_pic);
 
-        tvUserFullName.setText(ApplicationUtils.capitalize(user.getFullName()));
+        tvUserFullName.setText(ApplicationUtils.capitalizeFirstLetter(user.getFullName()));
 
         StringBuilder stringBuilder = new StringBuilder();
         if (user.getVehicleNo() != null) {

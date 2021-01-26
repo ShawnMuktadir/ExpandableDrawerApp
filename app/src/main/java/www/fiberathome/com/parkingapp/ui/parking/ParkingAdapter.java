@@ -41,8 +41,6 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     private ParkingActivity context;
     private ArrayList<SensorArea> sensorAreas;
-    private ParkingFragment parkingFragment;
-    private HomeFragment homeFragment;
     private double distance;
     private String duration;
     public LatLng location;
@@ -65,10 +63,8 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public ParkingAdapter(ParkingActivity context, ArrayList<SensorArea> sensorAreas,
                           Location onConnectedLocation) {
         this.context = context;
-        this.parkingFragment = parkingFragment;
         this.sensorAreas = sensorAreas;
         this.onConnectedLocation = onConnectedLocation;
-        //this.mListener = mListener;
     }
 
     @NonNull
@@ -88,7 +84,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         SensorArea sensorArea = sensorAreas.get(position);
 
-        parkingViewHolder.textViewParkingAreaName.setText(ApplicationUtils.capitalize(sensorArea.getParkingArea()));
+        parkingViewHolder.textViewParkingAreaName.setText(ApplicationUtils.capitalizeFirstLetter(sensorArea.getParkingArea()));
 
         parkingViewHolder.textViewParkingAreaCount.setText(sensorArea.getCount());
 
@@ -97,7 +93,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         sensorArea.setDistance(distance);
 
         parkingViewHolder.textViewParkingDistance.setText(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(distance) + " km");
-        Timber.e("adapter distance -> %s", parkingViewHolder.textViewParkingDistance.getText());
+        //Timber.e("adapter distance -> %s", parkingViewHolder.textViewParkingDistance.getText());
 
         sensorArea.setDuration(duration);
 

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/custom_marker_view"
+    android:layout_width="52dp"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/user_dp"
+        android:layout_width="@dimen/_30sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="4dp"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_destination_pin" />
+
+    <RelativeLayout
+        android:layout_width="@dimen/_30sdp"
+        android:layout_height="@dimen/_30sdp">
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:alpha="0.8"
+            android:background="@color/gloss_white"
+            android:gravity="center"
+            android:text="marker"
+            android:textColor="#000"
+            android:textSize="7sp"
+            android:visibility="gone" />
+    </RelativeLayout>
+</RelativeLayout>
