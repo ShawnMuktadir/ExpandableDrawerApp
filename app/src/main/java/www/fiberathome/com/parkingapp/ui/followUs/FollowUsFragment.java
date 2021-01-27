@@ -6,7 +6,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,9 +48,10 @@ public class FollowUsFragment extends BaseFragment implements IOnBackPressListen
     @Override
     public boolean onBackPressed() {
         if (isGPSEnabled()) {
+            HomeFragment homeFragment = new HomeFragment();
             if (getActivity() != null) {
                 getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.nav_host_fragment, HomeFragment.newInstance())
+                        .replace(R.id.nav_host_fragment, homeFragment)
                         .addToBackStack(null)
                         .commit();
             } else {

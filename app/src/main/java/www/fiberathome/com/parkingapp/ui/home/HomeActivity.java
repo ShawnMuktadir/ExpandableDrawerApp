@@ -1,12 +1,7 @@
 package www.fiberathome.com.parkingapp.ui.home;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.core.view.GravityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -14,59 +9,58 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
+import androidx.core.app.ActivityCompat;
+import androidx.core.view.GravityCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.Geofence;
-import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
 import com.karumi.dexter.PermissionToken;
 
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
 import www.fiberathome.com.parkingapp.ui.NavigationActivity;
-import www.fiberathome.com.parkingapp.ui.permission.LocationPermissionActivity;
-import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
 import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.ui.booking.newBooking.BookingFragment;
 import www.fiberathome.com.parkingapp.ui.followUs.FollowUsFragment;
 import www.fiberathome.com.parkingapp.ui.getDiscount.GetDiscountFragment;
 import www.fiberathome.com.parkingapp.ui.law.LawFragment;
-import www.fiberathome.com.parkingapp.ui.location.LocationActivity;
 import www.fiberathome.com.parkingapp.ui.parking.ParkingFragment;
 import www.fiberathome.com.parkingapp.ui.permission.PermissionActivity;
 import www.fiberathome.com.parkingapp.ui.permission.listener.PermissionInterface;
 import www.fiberathome.com.parkingapp.ui.privacyPolicy.PrivacyPolicyFragment;
 import www.fiberathome.com.parkingapp.ui.profile.ProfileFragment;
 import www.fiberathome.com.parkingapp.ui.ratingReview.RatingReviewFragment;
+import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
 import www.fiberathome.com.parkingapp.ui.settings.SettingsFragment;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
+@SuppressLint("NonConstantResourceId")
 public class HomeActivity extends NavigationActivity implements FragmentChangeListener, PermissionInterface {
 
     @BindView(R.id.tvTimeToolbar)
     public TextView tvTimeToolbar;
+
     @BindView(R.id.linearLayoutToolbarTime)
     public LinearLayout linearLayoutToolbarTime;
 
@@ -92,8 +86,10 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
         super.onCreate(savedInstanceState);
 
         context = this;
+
+        unbinder = ButterKnife.bind(this);
+
         setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
-        //setStatusBarColor(context);
 
         //location permission check
         handleLocationPermissionCheck(context);
@@ -119,35 +115,18 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
             fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
         }
 
+        double lat = getIntent().getDoubleExtra("lat", 0.0);
+        //Timber.e("lat parking activity -> %s",lat);
+        double lng = getIntent().getDoubleExtra("lng", 0.0);
+        //Timber.e("lng parking activity -> %s",lng);
+        String areaName = getIntent().getStringExtra("areaName");
+        String count = getIntent().getStringExtra("count");
+
         //initialize home fragment
         ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
-                HomeFragment.newInstance(), R.id.nav_host_fragment);
+                HomeFragment.newInstance(lat, lng, areaName, count), R.id.nav_host_fragment);
         linearLayoutToolbarTime.setVisibility(View.VISIBLE);
         navigationView.getMenu().getItem(0).setChecked(true);
-
-        /*if (savedInstanceState == null && SharedPreManager.getInstance(context).isWaitingForLocationPermission()
-                && new LocationHelper(this).isLocationEnabled()) {
-            // Initialize Home fragment
-            ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
-                    HomeFragment.newInstance(), R.id.nav_host_fragment);
-            linearLayoutToolbarTime.setVisibility(View.VISIBLE);
-            navigationView.getMenu().getItem(0).setChecked(true);
-        }
-        else {
-            //startActivity(new Intent(context, LocationActivity.class));
-            Intent intent = new Intent(context, LocationActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    finish();
-                }
-            }, 2000);
-
-            return;
-            //TastyToastUtils.showTastyInfoToast(context,"Sorry! You can't use Parking App. For use, please enable your GPS!");
-        }*/
 
         if (!SharedPreManager.getInstance(this).isLoggedIn()) {
             startActivityWithFinish(LoginActivity.class);
@@ -278,9 +257,9 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                 navigationView.getMenu().getItem(8).setChecked(false);
                 navigationView.getMenu().getItem(9).setChecked(false);
                 navigationView.getMenu().getItem(10).setChecked(false);
-                if (SharedData.getInstance().getOnConnectedLocation() != null) {
-                    HomeFragment.newInstance().animateCamera(SharedData.getInstance().getOnConnectedLocation());
-                }
+                /*if (SharedData.getInstance().getOnConnectedLocation() != null) {
+                    HomeFragment.newInstance(lat, lng).animateCamera(SharedData.getInstance().getOnConnectedLocation());
+                }*/
             }
         } else {
             TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_parking_app));
@@ -360,9 +339,6 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
     private void setListeners() {
         linearLayoutToolbarTime.setOnClickListener(v -> {
             if (isGPSEnabled()) {
-                /*toolbar.setTitle(context.getResources().getString(R.string.schedule_fragment_title));
-                toolbar.setSubtitle(context.getResources().getString(R.string.subject_to_availability));
-                getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, new ScheduleFragment()).commit();*/
                 ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
                         ScheduleFragment.newInstance(), R.id.nav_host_fragment);
             } else {
@@ -425,6 +401,4 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
             }
         };
     }
-
-
 }

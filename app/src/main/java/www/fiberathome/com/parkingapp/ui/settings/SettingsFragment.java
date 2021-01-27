@@ -35,7 +35,6 @@ import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.LocaleHelper;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
@@ -271,9 +270,10 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
     @Override
     public boolean onBackPressed() {
         if (isGPSEnabled()) {
+            HomeFragment homeFragment = new HomeFragment();
             if (getActivity() != null) {
                 getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.nav_host_fragment, HomeFragment.newInstance())
+                        .replace(R.id.nav_host_fragment, homeFragment)
                         .addToBackStack(null)
                         .commit();
             } else {

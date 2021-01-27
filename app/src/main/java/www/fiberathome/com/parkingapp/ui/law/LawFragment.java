@@ -142,9 +142,10 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
     @Override
     public boolean onBackPressed() {
         if (isGPSEnabled()) {
+            HomeFragment homeFragment = new HomeFragment();
             if (getActivity() != null) {
                 getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.nav_host_fragment, HomeFragment.newInstance())
+                        .replace(R.id.nav_host_fragment, homeFragment)
                         .addToBackStack(null)
                         .commit();
             } else {

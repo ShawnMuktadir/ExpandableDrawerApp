@@ -35,7 +35,6 @@ import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 
-import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -56,7 +55,7 @@ import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.response.sensors.SensorArea;
-import www.fiberathome.com.parkingapp.module.eventBus.GetDirectionEvent;
+import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
@@ -68,7 +67,7 @@ import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CO
 import static www.fiberathome.com.parkingapp.utils.ApplicationUtils.calculateDistance;
 
 @SuppressLint("NonConstantResourceId")
-public class ParkingFragment extends BaseFragment implements ParkingAdapter.ParkingAdapterClickListener, IOnBackPressListener {
+public class ParkingFragment extends BaseFragment implements IOnBackPressListener {
 
     private static final String TAG = ParkingFragment.class.getCanonicalName();
 
@@ -216,9 +215,10 @@ public class ParkingFragment extends BaseFragment implements ParkingAdapter.Park
     @Override
     public boolean onBackPressed() {
         if (isGPSEnabled()) {
+            HomeFragment homeFragment = new HomeFragment();
             if (getActivity() != null) {
                 getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.nav_host_fragment, HomeFragment.newInstance())
+                        .replace(R.id.nav_host_fragment, homeFragment)
                         .addToBackStack(null)
                         .commit();
             } else {
@@ -226,17 +226,6 @@ public class ParkingFragment extends BaseFragment implements ParkingAdapter.Park
             }
         }
         return false;
-    }
-
-    @Override
-    public void onItemClick(int position) {
-        Timber.e("parkingFragment onItemClick called");
-
-        if (ApplicationUtils.checkInternet(context) && isGPSEnabled()) {
-            Timber.e("parkingFragment onItemClick if called");
-        } else {
-            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
-        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -248,7 +237,7 @@ public class ParkingFragment extends BaseFragment implements ParkingAdapter.Park
 
         btnGetDirection.setOnClickListener(v -> {
             Toast.makeText(context, "Parking Fragment theke geche", Toast.LENGTH_SHORT).show();
-            EventBus.getDefault().post(new GetDirectionEvent(location));
+            //EventBus.getDefault().post(new GetDirectionEvent(location));
         });
 
         ivClearSearchText.setOnClickListener(view -> {
@@ -497,8 +486,44 @@ public class ParkingFragment extends BaseFragment implements ParkingAdapter.Park
         setAdapter();
     }
 
+    private long mLastClickTime = System.currentTimeMillis();
+
+    private static final long CLICK_TIME_INTERVAL = 300;
+
     private void setAdapter() {
-        parkingAdapter = new ParkingAdapter(context, sensorAreas, onConnectedLocation);
+        parkingAdapter = new ParkingAdapter(context, sensorAreas, onConnectedLocation, new ParkingAdapter.ParkingAdapterClickListener() {
+            @Override
+            public void onItemClick(int position, double lat, double lng, String parkingAreaName, String count) {
+                Toast.makeText(context, "Clicked", Toast.LENGTH_SHORT).show();
+
+                long now = System.currentTimeMillis();
+
+                if (now - mLastClickTime < CLICK_TIME_INTERVAL) {
+                    return;
+                }
+
+                mLastClickTime = now;
+
+                if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
+                    try {
+                        Timber.e("try called");
+                        SharedData.getInstance().setSensorArea(sensorAreas.get(position));
+                    } catch (Exception e) {
+                        Timber.e("try catch called -> %s", e.getMessage());
+                    }
+                    Bundle bundle = new Bundle();
+                    bundle.putDouble("lat", lat);
+                    Timber.e("lat -> %s", lat);
+                    bundle.putDouble("lng", lng);
+                    Timber.e("lng -> %s", lng);
+                    bundle.putString("areaName",parkingAreaName);
+                    bundle.putString("count",count);
+                    context.startActivity(HomeActivity.class, bundle);
+                } else {
+                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
+                }
+            }
+        });
         recyclerViewParking.setAdapter(parkingAdapter);
     }
 

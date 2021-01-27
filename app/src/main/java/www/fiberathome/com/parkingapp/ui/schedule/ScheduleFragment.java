@@ -13,7 +13,6 @@ import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,15 +28,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker;
 import com.google.gson.Gson;
@@ -68,7 +64,6 @@ import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
 import www.fiberathome.com.parkingapp.model.response.booking.Reservation;
 import www.fiberathome.com.parkingapp.module.notification.NotificationPublisher;
 import www.fiberathome.com.parkingapp.ui.booking.PaymentFragment;
-import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
@@ -408,10 +403,10 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
     @Override
     public boolean onBackPressed() {
         if (isGPSEnabled()) {
-            //HomeFragment nextFrag = new HomeFragment();
+            HomeFragment homeFragment = new HomeFragment();
             if (getActivity() != null) {
                 getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.nav_host_fragment, HomeFragment.newInstance())
+                        .replace(R.id.nav_host_fragment, homeFragment)
                         .addToBackStack(null)
                         .commit();
             } else {
@@ -495,11 +490,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                         reservation.setTimeEnd(reservationJson.getString("time_end"));
                         reservation.setSpotId(reservationJson.getString("spot_id"));*/
                         if (isGPSEnabled()) {
-                            /*getActivity().getSupportFragmentManager().beginTransaction()
-                                    .replace(R.id.nav_host_fragment, HomeFragment.newInstance())
-                                    .addToBackStack(null)
-                                    .commit();*/
-                            ApplicationUtils.replaceFragmentWithAnimation(getParentFragmentManager(), HomeFragment.newInstance());
+                            ApplicationUtils.replaceFragmentWithAnimation(getParentFragmentManager(), new HomeFragment());
                         } else {
                             TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
                         }

@@ -73,7 +73,7 @@ public class PaymentFragment extends Fragment {
                 bundle.putBoolean("s", true);
                 bundle.putLong("arrived", arrived);
                 bundle.putLong("departure", departure);
-                HomeFragment homeFragment = HomeFragment.newInstance();
+                HomeFragment homeFragment = new HomeFragment();
                 homeFragment.setArguments(bundle);
                 listener.fragmentChange(homeFragment);
             }

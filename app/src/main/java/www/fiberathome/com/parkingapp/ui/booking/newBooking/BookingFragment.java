@@ -2,7 +2,6 @@ package www.fiberathome.com.parkingapp.ui.booking.newBooking;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -10,7 +9,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,7 +24,6 @@ import android.widget.Toast;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONArray;
@@ -176,13 +173,16 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
     @Override
     public boolean onBackPressed() {
         if (isGPSEnabled()) {
-            if (getActivity() != null) {
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.nav_host_fragment, HomeFragment.newInstance())
-                        .addToBackStack(null)
-                        .commit();
-            } else {
-                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
+            if (isGPSEnabled()) {
+                HomeFragment homeFragment = new HomeFragment();
+                if (getActivity() != null) {
+                    getActivity().getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.nav_host_fragment, homeFragment)
+                            .addToBackStack(null)
+                            .commit();
+                } else {
+                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
+                }
             }
         }
         return false;
@@ -300,7 +300,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
             }
             if (getFragmentManager() != null) {
                 FragmentTransaction fragmentTransaction = context.getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.nav_host_fragment, HomeFragment.newInstance());
+                fragmentTransaction.replace(R.id.nav_host_fragment, new HomeFragment());
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
             }

@@ -182,7 +182,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         }
 
         if (savedInstanceState == null && SharedPreManager.getInstance(context).isWaitingForLocationPermission() && new LocationHelper(this).isLocationEnabled()) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, HomeFragment.newInstance()).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
             navigationView.setCheckedItem(R.id.nav_home);
             linearLayoutToolbarTime.setVisibility(View.VISIBLE);
             navigationView.getMenu().getItem(0).setChecked(true);
@@ -256,7 +256,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                     toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
                     tvTimeToolbar.setVisibility(View.VISIBLE);
                     linearLayoutToolbarTime.setVisibility(View.VISIBLE);
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, HomeFragment.newInstance()).commit();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
                     SharedData.getInstance().setOnConnectedLocation(null);
                 } else {
                     TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
@@ -494,7 +494,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 navigationView.getMenu().getItem(9).setChecked(false);
                 navigationView.getMenu().getItem(10).setChecked(false);
                 if (SharedData.getInstance().getOnConnectedLocation() != null) {
-                    HomeFragment.newInstance().animateCamera(SharedData.getInstance().getOnConnectedLocation());
+                    new HomeFragment().animateCamera(SharedData.getInstance().getOnConnectedLocation());
                 }
             }
         } else {
@@ -611,7 +611,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         tvTimeToolbar.setVisibility(View.VISIBLE);
         linearLayoutToolbarTime.setVisibility(View.VISIBLE);
         ProgressDialog progressDialog = ApplicationUtils.progressDialog(context, context.getResources().getString(R.string.please_wait));
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, HomeFragment.newInstance()).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override

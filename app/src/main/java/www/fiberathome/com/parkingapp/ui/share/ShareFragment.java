@@ -12,12 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.Objects;
-
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener;
-import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 
 import static android.content.Context.LOCATION_SERVICE;
@@ -70,7 +66,7 @@ public class ShareFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         listener = (FragmentChangeListener) context;
-        listener.fragmentChange(HomeFragment.newInstance());
+        listener.fragmentChange(new HomeFragment());
 
         shareApp();
     }

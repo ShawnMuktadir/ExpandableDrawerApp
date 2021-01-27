@@ -13,7 +13,6 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
-import com.google.zxing.common.StringUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -85,10 +84,10 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
     @Override
     public boolean onBackPressed() {
         if (isGPSEnabled()) {
-//            HomeFragment nextFrag = new HomeFragment();
+            HomeFragment homeFragment = new HomeFragment();
             if (getActivity() != null) {
                 getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.nav_host_fragment, HomeFragment.newInstance())
+                        .replace(R.id.nav_host_fragment, homeFragment)
                         .addToBackStack(null)
                         .commit();
             } else {

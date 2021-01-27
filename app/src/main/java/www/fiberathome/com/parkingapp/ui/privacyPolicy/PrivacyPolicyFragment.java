@@ -107,10 +107,10 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
     @Override
     public boolean onBackPressed() {
         if (isGPSEnabled()) {
-//            HomeFragment nextFrag = new HomeFragment();
+            HomeFragment homeFragment = new HomeFragment();
             if (getActivity() != null) {
                 getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.nav_host_fragment, HomeFragment.newInstance())
+                        .replace(R.id.nav_host_fragment, homeFragment)
                         .addToBackStack(null)
                         .commit();
             } else {

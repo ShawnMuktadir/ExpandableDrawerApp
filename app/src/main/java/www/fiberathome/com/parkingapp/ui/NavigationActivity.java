@@ -413,6 +413,16 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         return wrapDrawable;
     }
 
+    public void startActivity(Class activityClass) {
+        startActivity(new Intent(getApplicationContext(), activityClass));
+    }
+
+    public void startActivity(Class activityClass, Bundle bundle) {
+        Intent intent = new Intent(getApplicationContext(), activityClass);
+        intent.putExtras(bundle);
+        startActivity(intent);
+    }
+
     private void shareApp() {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
