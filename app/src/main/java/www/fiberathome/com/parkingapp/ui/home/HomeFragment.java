@@ -996,6 +996,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 new Handler().postDelayed(() -> {
                     if (lat != null && lng != null && areaName != null && parkingSlotCount != null) {
 
+                        hideNoData();
+
                         MarkerOptions markerOptions = new MarkerOptions();
 
                         markerOptions.position(new LatLng(lat, lng));
