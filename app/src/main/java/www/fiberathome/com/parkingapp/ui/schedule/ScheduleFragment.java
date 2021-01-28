@@ -403,10 +403,9 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
     @Override
     public boolean onBackPressed() {
         if (isGPSEnabled()) {
-            HomeFragment homeFragment = new HomeFragment();
             if (getActivity() != null) {
                 getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.nav_host_fragment, homeFragment)
+                        .replace(R.id.nav_host_fragment, HomeFragment.newInstance())
                         .addToBackStack(null)
                         .commit();
             } else {
@@ -490,7 +489,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                         reservation.setTimeEnd(reservationJson.getString("time_end"));
                         reservation.setSpotId(reservationJson.getString("spot_id"));*/
                         if (isGPSEnabled()) {
-                            ApplicationUtils.replaceFragmentWithAnimation(getParentFragmentManager(), new HomeFragment());
+                            ApplicationUtils.replaceFragmentWithAnimation(getParentFragmentManager(), HomeFragment.newInstance());
                         } else {
                             TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
                         }

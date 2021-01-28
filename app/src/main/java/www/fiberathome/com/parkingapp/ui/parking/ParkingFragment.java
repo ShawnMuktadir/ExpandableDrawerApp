@@ -119,7 +119,6 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
     public double distance;
     public String duration;
 
-    private SearchVisitorData searchVisitorData;
     private final ArrayList<SensorArea> sensorAreaArrayList = new ArrayList<>();
     private List<List<String>> parkingSlotList = null;
     private List<List<String>> list;
@@ -223,10 +222,9 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
     @Override
     public boolean onBackPressed() {
         if (isGPSEnabled()) {
-            HomeFragment homeFragment = new HomeFragment();
             if (getActivity() != null) {
                 getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.nav_host_fragment, homeFragment)
+                        .replace(R.id.nav_host_fragment, HomeFragment.newInstance())
                         .addToBackStack(null)
                         .commit();
             } else {
@@ -238,15 +236,6 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
 
     @SuppressLint("ClickableViewAccessibility")
     private void setListeners() {
-
-        /*imageViewBack.setOnClickListener(v -> {
-            layoutVisible(false, "", "", 0.0, "", null);
-        });*/
-
-        btnGetDirection.setOnClickListener(v -> {
-            Toast.makeText(context, "Parking Fragment theke geche", Toast.LENGTH_SHORT).show();
-            //EventBus.getDefault().post(new GetDirectionEvent(location));
-        });
 
         ivClearSearchText.setOnClickListener(view -> {
             editTextParking.setText("");

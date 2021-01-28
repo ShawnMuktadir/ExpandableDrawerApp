@@ -270,10 +270,9 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
     @Override
     public boolean onBackPressed() {
         if (isGPSEnabled()) {
-            HomeFragment homeFragment = new HomeFragment();
             if (getActivity() != null) {
                 getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.nav_host_fragment, homeFragment)
+                        .replace(R.id.nav_host_fragment, HomeFragment.newInstance())
                         .addToBackStack(null)
                         .commit();
             } else {

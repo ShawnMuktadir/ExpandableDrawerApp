@@ -31,11 +31,16 @@ import static android.content.Context.LOCATION_SERVICE;
 public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ParkingActivity context;
+
     private ArrayList<SensorArea> sensorAreas;
+
     private double distance;
+
     private String duration;
+
     public LatLng location;
-    private Location onConnectedLocation;
+
+    private final Location onConnectedLocation;
 
     private int selectedPosition = -1;
 
@@ -84,10 +89,6 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         sensorArea.setDuration(duration);
 
         parkingViewHolder.textViewParkingTravelTime.setText(sensorArea.getDuration());
-
-        //Here I am just highlighting the background
-        /*parkingViewHolder.relativeLayout.setBackgroundColor(selectedPosition == position ?
-                context.getResources().getColor(R.color.selectedColor) : Color.TRANSPARENT);*/
 
         parkingViewHolder.relativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override

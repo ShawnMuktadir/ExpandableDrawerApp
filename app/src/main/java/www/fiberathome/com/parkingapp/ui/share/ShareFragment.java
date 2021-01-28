@@ -66,7 +66,8 @@ public class ShareFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         listener = (FragmentChangeListener) context;
-        listener.fragmentChange(new HomeFragment());
+
+        listener.fragmentChange(HomeFragment.newInstance());
 
         shareApp();
     }

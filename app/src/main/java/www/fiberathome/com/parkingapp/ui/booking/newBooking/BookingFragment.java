@@ -174,10 +174,9 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
     public boolean onBackPressed() {
         if (isGPSEnabled()) {
             if (isGPSEnabled()) {
-                HomeFragment homeFragment = new HomeFragment();
                 if (getActivity() != null) {
                     getActivity().getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.nav_host_fragment, homeFragment)
+                            .replace(R.id.nav_host_fragment, HomeFragment.newInstance())
                             .addToBackStack(null)
                             .commit();
                 } else {
@@ -300,7 +299,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
             }
             if (getFragmentManager() != null) {
                 FragmentTransaction fragmentTransaction = context.getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.nav_host_fragment, new HomeFragment());
+                fragmentTransaction.replace(R.id.nav_host_fragment, HomeFragment.newInstance());
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
             }

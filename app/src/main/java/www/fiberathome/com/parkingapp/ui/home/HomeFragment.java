@@ -442,6 +442,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     }
 
+    public static HomeFragment newInstance() {
+        HomeFragment fragment = new HomeFragment();
+        return fragment;
+    }
+
     public static HomeFragment newInstance(double lat, double lng, String areaName, String count) {
         HomeFragment fragment = new HomeFragment();
         Bundle bundle = new Bundle();
@@ -972,11 +977,13 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         if (onConnectedLocation != null) {
             Timber.e("onConnected not null called");
+
             SharedData.getInstance().setOnConnectedLocation(onConnectedLocation);
 
-            LatLng latLng = new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude());
-
             if (mMap != null) {
+
+                LatLng latLng = new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude());
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13.5f));
 
                 animateCamera(onConnectedLocation);
 
