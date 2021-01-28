@@ -3,61 +3,27 @@ package www.fiberathome.com.parkingapp.model.response.sensors;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class SensorArea implements Parcelable {
+public class SensorArea {
 
     private String parkingArea;
-    private double lat;
-    private double lng;
+
     private double distance;
     private String count;
     private String duration;
     private boolean isChecked;
 
-    public SensorArea() {
-    }
+    private String placeId = null;
+    private double endLat = 0.0;
+    private double endLng = 0.0;
+    private double fetchDistance = 0.0;
 
-    public SensorArea(String parkingArea, double lat, double lng, double distance, String count) {
+    public SensorArea(String parkingArea, String placeId, double endLat, double endLng, String count, double fetchDistance) {
         this.parkingArea = parkingArea;
-        this.lat = lat;
-        this.lng = lng;
-        this.distance = distance;
+        this.placeId = placeId;
+        this.endLat = endLat;
+        this.endLng = endLng;
         this.count = count;
-    }
-
-    protected SensorArea(Parcel in) {
-        parkingArea = in.readString();
-        lat = in.readDouble();
-        lng = in.readDouble();
-        distance = in.readDouble();
-        count = in.readString();
-        isChecked = in.readByte() != 0;
-    }
-
-    public static final Creator<SensorArea> CREATOR = new Creator<SensorArea>() {
-        @Override
-        public SensorArea createFromParcel(Parcel in) {
-            return new SensorArea(in);
-        }
-
-        @Override
-        public SensorArea[] newArray(int size) {
-            return new SensorArea[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(parkingArea);
-        dest.writeDouble(lat);
-        dest.writeDouble(lng);
-        dest.writeDouble(distance);
-        dest.writeString(count);
-        dest.writeByte((byte) (isChecked ? 1 : 0));
+        this.fetchDistance = fetchDistance;
     }
 
     public String getParkingArea() {
@@ -68,20 +34,28 @@ public class SensorArea implements Parcelable {
         this.parkingArea = parkingArea;
     }
 
-    public double getLat() {
-        return lat;
+    public String getPlaceId() {
+        return placeId;
     }
 
-    public void setLat(double lat) {
-        this.lat = lat;
+    public void setPlaceId(String placeId) {
+        this.placeId = placeId;
     }
 
-    public double getLng() {
-        return lng;
+    public double getEndLat() {
+        return endLat;
     }
 
-    public void setLng(double lng) {
-        this.lng = lng;
+    public void setEndLat(double endLat) {
+        this.endLat = endLat;
+    }
+
+    public double getEndLng() {
+        return endLng;
+    }
+
+    public void setEndLng(double endLng) {
+        this.endLng = endLng;
     }
 
     public double getDistance() {
@@ -114,5 +88,16 @@ public class SensorArea implements Parcelable {
 
     public void setDuration(String duration) {
         this.duration = duration;
+    }
+
+    public int compareTo(SensorArea element) {
+        int res = 0;
+        if (this.distance < element.getDistance()) {
+            res = -1;
+        }
+        if (this.distance > element.getDistance()) {
+            res = 1;
+        }
+        return res;
     }
 }

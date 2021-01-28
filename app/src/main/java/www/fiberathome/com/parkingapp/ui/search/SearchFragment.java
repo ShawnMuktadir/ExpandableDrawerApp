@@ -149,6 +149,7 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
         if (ApplicationUtils.checkInternet(context)) {
 
             fetchSearchVisitorPlace(SharedPreManager.getInstance(context).getUser().getMobileNo());
+
             Timber.e("searchActivity mobileNo -> %s", SharedPreManager.getInstance(context).getUser().getMobileNo());
 
             editTextSearch.addTextChangedListener(filterTextWatcher);
@@ -181,9 +182,6 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
             if (searchVisitorDataList != null) {
                 hideNoData();
                 updateAdapter();
-                //searchVisitorDataList.clear();
-                //fetchSearchVisitorPlaceWithoutProgressBar(SharedPreManager.getInstance(context).getUser().getMobileNo());
-
             } else {
                 setNoData();
             }
@@ -377,7 +375,6 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
             if (!ApplicationUtils.checkInternet(context)) {
                 ApplicationUtils.hideKeyboard(context, editTextSearch);
             }
-
         }
 
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -538,65 +535,6 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
                 ApplicationUtils.showMessageDialog("Something went wrong...Please try later!", context);
             }
         });*/
-    }
-
-    private void fetchSearchVisitorPlaceWithoutProgressBar(String mobileNo) {
-
-        if (searchVisitorDataList != null)
-            searchVisitorDataList.clear();
-
-        HttpsTrustManager.allowAllSSL();
-
-        StringRequest stringRequest = new StringRequest(Request.Method.DEPRECATED_GET_OR_POST, AppConfig.URL_SEARCH_HISTORY_GET, response -> {
-
-            if (response != null) {
-                try {
-                    JSONObject object = new JSONObject(response);
-                    JSONArray jsonArray = object.getJSONArray("visitor_data");
-                    ArrayList<SearchVisitorData> noRepeat = null;
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        searchVisitorData = new SearchVisitorData();
-                        JSONArray array = jsonArray.getJSONArray(i);
-                        if (array != null) {
-                            hideNoData();
-                            searchVisitorData.setVisitedArea(array.getString(6).trim());
-                            searchVisitorData.setEndLat(Double.parseDouble(array.getString(2).trim()));
-                            searchVisitorData.setEndLng(Double.parseDouble(array.getString(3).trim()));
-                            searchVisitorData.setPlaceId(array.getString(1).trim());
-
-                            searchVisitorDataList.add(searchVisitorData);
-
-                            Timber.e("searchVisitorDataList -> %s", new Gson().toJson(searchVisitorDataList));
-                        } else {
-                            setNoData();
-                        }
-                    }
-
-                    setFragmentControls(searchVisitorDataList);
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                Timber.e("response search history is null");
-            }
-
-
-        }, error -> {
-            Timber.e("jsonObject onErrorResponse get post -> %s", error.getMessage());
-            Timber.e(error.getCause());
-        }) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Timber.e("map called");
-                Map<String, String> params = new HashMap<>();
-                params.put("mobile_number", mobileNo);
-                return params;
-            }
-        };
-
-        stringRequest.setRetryPolicy(new DefaultRetryPolicy(50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        ParkingApp.getInstance().addToRequestQueue(stringRequest, TAG);
     }
 
     private void setFragmentControls(ArrayList<SearchVisitorData> searchVisitorDataList) {

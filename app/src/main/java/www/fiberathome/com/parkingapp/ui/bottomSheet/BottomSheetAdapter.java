@@ -115,6 +115,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         holder.textViewParkingAreaName.setText(bookingSensors.getParkingArea());
 
         holder.textViewParkingAreaCount.setText(bookingSensors.getCount());
+
         holder.textViewParkingDistance.setText(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(bookingSensors.getDistance()) + " km");
 
         holder.rowFG.setOnClickListener(new View.OnClickListener() {

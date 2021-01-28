@@ -61,8 +61,6 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
 
     private PrivacyPolicyActivity context;
 
-    private ProgressDialog progressDialog;
-
     public PrivacyPolicyFragment() {
         // Required empty public constructor
     }
@@ -86,13 +84,11 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
 
         context = (PrivacyPolicyActivity) getActivity();
 
-        if (ApplicationUtils.checkInternet(requireActivity())) {
+        if (ApplicationUtils.checkInternet(context)) {
             fetchPrivacyPolicy();
         } else {
             TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
         }
-
-        //openPrivacyPolicy();
     }
 
     @Override
@@ -145,12 +141,10 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
     }
 
     private ArrayList<TermsCondition> termsConditionsGlobal = new ArrayList<>();
-    private PrivacyPolicyAdapter privacyPolicyAdapter;
 
     private void fetchPrivacyPolicy() {
         Timber.e("fetchPrivacyPolicy called");
-       /* progressDialog = ApplicationUtils.progressDialog(getActivity(),
-                "Please wait...");*/
+
         if (!context.isFinishing())
             showLoading(context);
 
@@ -236,14 +230,15 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
         recyclerViewPrivacy.setItemAnimator(new DefaultItemAnimator());
 
         ViewCompat.setNestedScrollingEnabled(recyclerViewPrivacy, false);
-        privacyPolicyAdapter = new PrivacyPolicyAdapter(context, termsConditionsGlobal);
+        PrivacyPolicyAdapter privacyPolicyAdapter = new PrivacyPolicyAdapter(context, termsConditionsGlobal);
         recyclerViewPrivacy.setAdapter(privacyPolicyAdapter);
     }
 
     @SuppressLint("SetJavaScriptEnabled")
     private void openPrivacyPolicy() {
-        //progressDialog = ApplicationUtils.progressDialog(context, "Please wait...");
+
         showLoading(context);
+
         if (ApplicationUtils.checkInternet(context)) {
             webView.setWebViewClient(new WebViewClient() {
                 @Override
@@ -254,20 +249,16 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
 
                 @Override
                 public void onPageFinished(WebView view, String url) {
-                    /*if (progressDialog.isShowing()) {
-                        progressDialog.dismiss();
-                    }*/
+
                     hideLoading();
                 }
 
                 @Override
                 public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-                    /*if (progressDialog.isShowing()) {
-                        progressDialog.dismiss();
-                    }*/
-                    hideLoading();
-                    Toast.makeText(context, "Error:" + description, Toast.LENGTH_SHORT).show();
 
+                    hideLoading();
+
+                    Toast.makeText(context, "Error:" + description, Toast.LENGTH_SHORT).show();
                 }
             });
             webView.getSettings().setJavaScriptEnabled(true);

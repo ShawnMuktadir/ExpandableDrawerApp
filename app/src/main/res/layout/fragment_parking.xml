@@ -68,7 +68,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewParking"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_margin="@dimen/dim3"
             android:padding="@dimen/dim3"
             android:elevation="@dimen/dim3"
@@ -82,13 +82,11 @@
             android:id="@+id/textViewNoData"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_gravity="center"
             android:text="@string/no_data_found"
+            android:layout_gravity="center_horizontal"
             android:textColor="@android:color/holo_red_dark"
-            android:textSize="18sp"
-            android:visibility="gone"
-            android:gravity="center" />
+            android:textSize="@dimen/_15ssp"
+            android:visibility="gone" />
     </LinearLayout>
 
     <LinearLayout

@@ -38,10 +38,8 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private Location onConnectedLocation;
 
     private int selectedPosition = -1;
-    private boolean isItemClicked = false;
-    private boolean isExpanded = false;
 
-    private ParkingAdapterClickListener mListener;
+    private final ParkingAdapterClickListener mListener;
 
     public interface ParkingAdapterClickListener {
         void onItemClick(int position, double lat, double lng, String parkingArea, String count);
@@ -77,7 +75,8 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         parkingViewHolder.textViewParkingAreaCount.setText(sensorArea.getCount());
 
         distance = ApplicationUtils.calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
-                sensorArea.getLat(), sensorArea.getLng());
+                sensorArea.getEndLat(), sensorArea.getEndLng());
+
         sensorArea.setDistance(distance);
 
         parkingViewHolder.textViewParkingDistance.setText(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(distance) + " km");
@@ -87,17 +86,23 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         parkingViewHolder.textViewParkingTravelTime.setText(sensorArea.getDuration());
 
         //Here I am just highlighting the background
-        parkingViewHolder.itemView.setBackgroundColor(selectedPosition == position ?
-                context.getResources().getColor(R.color.selectedColor) : Color.TRANSPARENT);
+        /*parkingViewHolder.relativeLayout.setBackgroundColor(selectedPosition == position ?
+                context.getResources().getColor(R.color.selectedColor) : Color.TRANSPARENT);*/
 
         parkingViewHolder.relativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                parkingViewHolder.relativeLayout.setBackgroundColor(selectedPosition == position ?
-                        context.getResources().getColor(R.color.selectedColor) : Color.TRANSPARENT);
-                mListener.onItemClick(position, sensorArea.getLat(), sensorArea.getLng(), sensorArea.getParkingArea(), sensorArea.getCount());
+                selectedPosition = position;
+                notifyDataSetChanged();
+                mListener.onItemClick(position, sensorArea.getEndLat(), sensorArea.getEndLng(), sensorArea.getParkingArea(), sensorArea.getCount());
             }
         });
+
+        if (selectedPosition == position) {
+            parkingViewHolder.relativeLayout.setBackgroundColor(context.getResources().getColor(R.color.selectedColor));
+        } else {
+            parkingViewHolder.relativeLayout.setBackgroundColor(Color.TRANSPARENT);
+        }
     }
 
     @Override
@@ -108,6 +113,11 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     //called by parking fragment
     public void filterList(ArrayList<SensorArea> filteredList) {
         sensorAreas = filteredList;
+        notifyDataSetChanged();
+    }
+
+    public void setDataList(ArrayList<SensorArea> dataList) {
+        this.sensorAreas = dataList;
         notifyDataSetChanged();
     }
 

@@ -12,6 +12,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
+import www.fiberathome.com.parkingapp.model.response.parkingSlot.ParkingSlotResponse;
 import www.fiberathome.com.parkingapp.model.searchHistory.Parameters;
 import www.fiberathome.com.parkingapp.model.searchHistory.SearchHistoryCommon;
 import www.fiberathome.com.parkingapp.model.response.common.CommonResponse;
@@ -82,7 +83,9 @@ public interface ApiService {
     @POST("visitor_place_history.php")
     Call<ResponseBody> getSearchHistory(@Part("mobile_number") String mobileNo);
 
-
     @GET("sensors.php")
     Call<SensorsResponse> getSensors();
+
+    @GET("sensor_area.php")
+    Call<ParkingSlotResponse> getParkingSlots();
 }

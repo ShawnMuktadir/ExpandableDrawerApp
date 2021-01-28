@@ -1,5 +1,6 @@
 package www.fiberathome.com.parkingapp.ui.privacyPolicy;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +23,10 @@ import www.fiberathome.com.parkingapp.model.termsCondition.TermsCondition;
 public class PrivacyPolicyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context context;
-    private ArrayList<TermsCondition> termsConditions;
+
+    private final ArrayList<TermsCondition> termsConditions;
+
+    private boolean isTextViewClicked = false;
 
     public PrivacyPolicyAdapter(Context context, ArrayList<TermsCondition> termsConditions) {
         this.context = context;
@@ -50,8 +54,22 @@ public class PrivacyPolicyAdapter extends RecyclerView.Adapter<RecyclerView.View
         } else {
             privacyPolicyViewHolder.tvPrivacyHeader.setVisibility(View.GONE);
         }
+
         privacyPolicyViewHolder.tvPrivacyHeader.setText(termsCondition.getTermsConditionDomain());
+
         privacyPolicyViewHolder.tvPrivacyBody.setText(termsCondition.getTermsConditionBody());
+
+        privacyPolicyViewHolder.tvPrivacyBody.setOnClickListener(v -> {
+            if(isTextViewClicked) {
+                //This will shrink textview to 2 lines if it is expanded.
+                privacyPolicyViewHolder.tvPrivacyBody.setMaxLines(2);
+                isTextViewClicked = false;
+            } else {
+                //This will expand the textview if it is of 2 lines
+                privacyPolicyViewHolder.tvPrivacyBody.setMaxLines(Integer.MAX_VALUE);
+                isTextViewClicked = true;
+            }
+        });
     }
 
     @Override
@@ -59,10 +77,12 @@ public class PrivacyPolicyAdapter extends RecyclerView.Adapter<RecyclerView.View
         return termsConditions.size();
     }
 
+    @SuppressLint("NonConstantResourceId")
     public static class PrivacyPolicyViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.tvPrivacyHeader)
         TextView tvPrivacyHeader;
+
         @BindView(R.id.tvPrivacyBody)
         TextView tvPrivacyBody;
 

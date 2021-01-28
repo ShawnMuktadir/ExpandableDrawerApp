@@ -29,31 +29,29 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import retrofit2.Call;
+import retrofit2.Callback;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
-import www.fiberathome.com.parkingapp.base.ParkingApp;
+import www.fiberathome.com.parkingapp.model.api.ApiClient;
+import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
+import www.fiberathome.com.parkingapp.model.response.parkingSlot.ParkingSlotResponse;
+import www.fiberathome.com.parkingapp.model.response.search.SearchVisitorData;
 import www.fiberathome.com.parkingapp.model.response.sensors.SensorArea;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
@@ -64,7 +62,6 @@ import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
-import static www.fiberathome.com.parkingapp.utils.ApplicationUtils.calculateDistance;
 
 @SuppressLint("NonConstantResourceId")
 public class ParkingFragment extends BaseFragment implements IOnBackPressListener {
@@ -121,6 +118,17 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
     public LatLng location;
     public double distance;
     public String duration;
+
+    private SearchVisitorData searchVisitorData;
+    private final ArrayList<SensorArea> sensorAreaArrayList = new ArrayList<>();
+    private List<List<String>> parkingSlotList = null;
+    private List<List<String>> list;
+    private ParkingSlotResponse parkingSlotResponse;
+    private String parkingArea = null;
+    private String placeId = null;
+    private double endLat = 0.0;
+    private double endLng = 0.0;
+    private double fetchDistance = 0.0;
 
     public ParkingFragment() {
         // Required empty public constructor
@@ -231,9 +239,9 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
     @SuppressLint("ClickableViewAccessibility")
     private void setListeners() {
 
-        imageViewBack.setOnClickListener(v -> {
+        /*imageViewBack.setOnClickListener(v -> {
             layoutVisible(false, "", "", 0.0, "", null);
-        });
+        });*/
 
         btnGetDirection.setOnClickListener(v -> {
             Toast.makeText(context, "Parking Fragment theke geche", Toast.LENGTH_SHORT).show();
@@ -331,126 +339,85 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
         });
     }
 
-    private void setNoDataForEnglish() {
-        textViewNoData.setVisibility(View.VISIBLE);
-        textViewNoData.setText(context.getResources().getString(R.string.no_nearest_parking_area_found));
-        ApplicationUtils.showOnlyMessageDialog(context.getResources().getString(R.string.change_app_language_to_english), context);
-    }
-
-    private void setNoDataForBangla() {
-        textViewNoData.setVisibility(View.VISIBLE);
-        textViewNoData.setText(context.getResources().getString(R.string.no_nearest_parking_area_found));
-        ApplicationUtils.showOnlyMessageDialog(context.getResources().getString(R.string.not_available_at_bangla_search), context);
-    }
-
-    private void filter(String text) {
-        ArrayList<SensorArea> filteredList = new ArrayList<>();
-        if (ApplicationUtils.checkInternet(context) && isGPSEnabled()) {
-
-            for (SensorArea item : sensorAreas) {
-                if (item.getParkingArea().toLowerCase().contains(text.toLowerCase()) || item.getCount().toLowerCase().contains(text.toLowerCase())) {
-                    hideNoData();
-                    filteredList.add(item);
-                }
-            }
-
-            if (filteredList.isEmpty()) {
-                setNoData();
-            } else {
-                hideNoData();
-            }
-
-            parkingAdapter.filterList(filteredList);
-        } else {
-            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
-        }
-    }
-
-    private void setNoData() {
-        textViewNoData.setVisibility(View.VISIBLE);
-        textViewNoData.setText(context.getString(R.string.no_nearest_parking_area_found));
-    }
-
-    private void hideNoData() {
-        textViewNoData.setVisibility(View.GONE);
-    }
-
-    private void layoutVisible(boolean isVisible, String name, String count, double distance, String duration, LatLng location) {
-        this.name = name;
-        this.count = count;
-        this.location = location;
-        this.distance = distance;
-        this.duration = duration;
-
-        if (isVisible) {
-            linearLayoutBottom.setVisibility(View.VISIBLE);
-            textViewParkingAreaCount.setText(count);
-            textViewParkingAreaName.setText(name);
-            textViewParkingDistance.setText(new DecimalFormat("##.##").format(distance) + " km");
-            textViewParkingTravelTime.setText(duration);
-        } else {
-            linearLayoutBottom.setVisibility(View.GONE);
-        }
-    }
-
     private void fetchParkingSlotSensors() {
         Timber.e("fetchParkingSlotSensors called");
 
-        if (!context.isFinishing())
-            showLoading(context);
-
-        ArrayList<SensorArea> sensorAreas = new ArrayList<>();
+        showLoading(context);
 
         if (SharedData.getInstance().getOnConnectedLocation() != null) {
             onConnectedLocation = SharedData.getInstance().getOnConnectedLocation();
         }
 
-        StringRequest strReq = new StringRequest(Request.Method.GET, AppConfig.URL_FETCH_SENSOR_AREA, new Response.Listener<String>() {
-
+        ApiService request = ApiClient.getRetrofitInstance(AppConfig.URL_FETCH_SENSOR_AREA).create(ApiService.class);
+        Call<ParkingSlotResponse> call = request.getParkingSlots();
+        call.enqueue(new Callback<ParkingSlotResponse>() {
             @Override
-            public void onResponse(String response) {
-
+            public void onResponse(@NonNull Call<ParkingSlotResponse> call, @NonNull retrofit2.Response<ParkingSlotResponse> response) {
                 hideLoading();
+                if (response.body() != null) {
+                    list = response.body().getSensors();
+                    Timber.e("list -> %s", list);
 
-                try {
-                    JSONObject object = new JSONObject(response);
-                    JSONArray jsonArray = object.getJSONArray("sensors");
-                    Timber.e("parkingFragment response -> %s", new Gson().toJson(jsonArray));
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        SensorArea sensorArea = new SensorArea();
+                    parkingSlotResponse = response.body();
 
-                        JSONArray array = jsonArray.getJSONArray(i);
+                    parkingSlotList = parkingSlotResponse.getSensors();
 
-                        try {
-                            double fetchDistance = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
-                                    Double.parseDouble(array.getString(2).trim()), Double.parseDouble(array.getString(3).trim()));
+                    if (parkingSlotList != null) {
+                        for (List<String> baseStringList : parkingSlotList) {
+                            for (int i = 0; i < baseStringList.size(); i++) {
 
-                            sensorArea.setParkingArea(array.getString(1).trim());
-                            sensorArea.setLat(Double.parseDouble(array.getString(2).trim()));
-                            sensorArea.setLng(Double.parseDouble(array.getString(3).trim()));
-                            sensorArea.setCount(array.getString(4).trim());
+                                Timber.d("onResponse: i ->  %s", i);
+
+                                if (i == 1) {
+                                    parkingArea = baseStringList.get(i);
+                                }
+
+                                if (i == 0) {
+                                    placeId = baseStringList.get(i);
+                                }
+
+                                if (i == 2) {
+                                    endLat = Double.parseDouble(baseStringList.get(i));
+                                }
+
+                                if (i == 3) {
+                                    endLng = Double.parseDouble(baseStringList.get(i));
+                                }
+
+                                if (i == 4) {
+                                    count = baseStringList.get(i);
+                                }
+
+                                fetchDistance = ApplicationUtils.calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
+                                        endLat, endLng);
+                            }
+                            SensorArea sensorArea = new SensorArea(parkingArea, placeId, endLat, endLng, count, fetchDistance);
+
                             sensorArea.setDistance(fetchDistance);
 
-                            sensorAreas.add(sensorArea);
-                            //sorting distance in ascending way
-                            Collections.sort(sensorAreas, new Comparator<SensorArea>() {
-                                @Override
-                                public int compare(SensorArea c1, SensorArea c2) {
-                                    return Double.compare(c1.getDistance(), c2.getDistance());
-                                }
-                            });
-                        } catch (Exception e) {
-                            e.getCause();
+                            sensorAreaArrayList.add(sensorArea);
+
+                            Timber.e("searchVisitorData -> %s", new Gson().toJson(sensorArea));
                         }
+
+                        Collections.sort(sensorAreaArrayList, new Comparator<SensorArea>() {
+                            @Override
+                            public int compare(SensorArea c1, SensorArea c2) {
+                                return Double.compare(c1.getDistance(), c2.getDistance());
+                            }
+                        });
+
+                        setFragmentControls(sensorAreaArrayList);
                     }
-                    setFragmentControls(sensorAreas);
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
             }
-        }, e -> e.printStackTrace()) {
-        };
-        ParkingApp.getInstance().addToRequestQueue(strReq);
+
+            @Override
+            public void onFailure(Call<ParkingSlotResponse> call, Throwable t) {
+                Timber.e("onFailure -> %s", t.getMessage());
+                ApplicationUtils.showMessageDialog("Something went wrong...Please try later!", context);
+            }
+        });
     }
 
     private void setFragmentControls(ArrayList<SensorArea> sensorAreas) {
@@ -483,55 +450,99 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
 
         ViewCompat.setNestedScrollingEnabled(recyclerViewParking, false);
 
-        setAdapter();
+        setAdapter(sensorAreas);
     }
 
     private long mLastClickTime = System.currentTimeMillis();
 
     private static final long CLICK_TIME_INTERVAL = 300;
 
-    private void setAdapter() {
-        parkingAdapter = new ParkingAdapter(context, sensorAreas, onConnectedLocation, new ParkingAdapter.ParkingAdapterClickListener() {
-            @Override
-            public void onItemClick(int position, double lat, double lng, String parkingAreaName, String count) {
-                Toast.makeText(context, "Clicked", Toast.LENGTH_SHORT).show();
+    private void setAdapter(ArrayList<SensorArea> sensorAreas) {
+        this.sensorAreas = sensorAreas;
 
-                long now = System.currentTimeMillis();
+        parkingAdapter = new ParkingAdapter(context, sensorAreas, onConnectedLocation, (position, lat, lng, parkingAreaName, count) -> {
+            //Toast.makeText(context, "Clicked", Toast.LENGTH_SHORT).show();
 
-                if (now - mLastClickTime < CLICK_TIME_INTERVAL) {
-                    return;
+            long now = System.currentTimeMillis();
+
+            if (now - mLastClickTime < CLICK_TIME_INTERVAL) {
+                return;
+            }
+
+            mLastClickTime = now;
+
+            if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
+                try {
+                    Timber.e("try called");
+                    SharedData.getInstance().setSensorArea(this.sensorAreas.get(position));
+                } catch (Exception e) {
+                    Timber.e("try catch called -> %s", e.getMessage());
                 }
+                Bundle bundle = new Bundle();
+                bundle.putDouble("lat", lat);
+                Timber.e("lat -> %s", lat);
+                bundle.putDouble("lng", lng);
+                Timber.e("lng -> %s", lng);
+                bundle.putString("areaName", parkingAreaName);
+                bundle.putString("count", count);
 
-                mLastClickTime = now;
-
-                if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
-                    try {
-                        Timber.e("try called");
-                        SharedData.getInstance().setSensorArea(sensorAreas.get(position));
-                    } catch (Exception e) {
-                        Timber.e("try catch called -> %s", e.getMessage());
-                    }
-                    Bundle bundle = new Bundle();
-                    bundle.putDouble("lat", lat);
-                    Timber.e("lat -> %s", lat);
-                    bundle.putDouble("lng", lng);
-                    Timber.e("lng -> %s", lng);
-                    bundle.putString("areaName",parkingAreaName);
-                    bundle.putString("count",count);
-                    context.startActivity(HomeActivity.class, bundle);
-                } else {
-                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
-                }
+                context.startActivity(HomeActivity.class, bundle);
+            } else {
+                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
             }
         });
+
         recyclerViewParking.setAdapter(parkingAdapter);
+
+        /*bubbleSortArrayList(sensorAreas);
+
+        parkingAdapter.setDataList(sensorAreas);*/
+    }
+
+    private void setNoDataForEnglish() {
+        textViewNoData.setVisibility(View.VISIBLE);
+        textViewNoData.setText(context.getResources().getString(R.string.no_nearest_parking_area_found));
+        ApplicationUtils.showOnlyMessageDialog(context.getResources().getString(R.string.change_app_language_to_english), context);
+    }
+
+    private void setNoDataForBangla() {
+        textViewNoData.setVisibility(View.VISIBLE);
+        textViewNoData.setText(context.getResources().getString(R.string.no_nearest_parking_area_found));
+        ApplicationUtils.showOnlyMessageDialog(context.getResources().getString(R.string.not_available_at_bangla_search), context);
+    }
+
+    ArrayList<SensorArea> filteredList = new ArrayList<>();
+
+    private void filter(String text) {
+        ArrayList<SensorArea> filteredList = new ArrayList<>();
+        if (ApplicationUtils.checkInternet(context) && isGPSEnabled()) {
+
+            if (!sensorAreas.isEmpty()) {
+                for (SensorArea item : sensorAreas) {
+                    if (item.getParkingArea().toLowerCase().contains(text.toLowerCase()) || item.getCount().toLowerCase().contains(text.toLowerCase())) {
+                        hideNoData();
+                        filteredList.add(item);
+                    }
+                }
+
+                if (filteredList.isEmpty()) {
+                    setNoData();
+                } else {
+                    hideNoData();
+                }
+
+                parkingAdapter.filterList(filteredList);
+            }
+        } else {
+            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
+        }
     }
 
     private void updateAdapter() {
         if (parkingAdapter != null) {
             parkingAdapter = null;
         }
-        setAdapter();
+        setAdapter(sensorAreas);
     }
 
     private boolean isGPSEnabled() {
@@ -556,5 +567,14 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
 
         }
         return false;
+    }
+
+    private void setNoData() {
+        textViewNoData.setVisibility(View.VISIBLE);
+        textViewNoData.setText(context.getString(R.string.no_nearest_parking_area_found));
+    }
+
+    private void hideNoData() {
+        textViewNoData.setVisibility(View.GONE);
     }
 }

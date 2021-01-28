@@ -44,7 +44,7 @@ public class ParkingActivity extends NavigationActivity {
     protected void onStart() {
         super.onStart();
         setNavDrawerItem(R.id.nav_parking);
-        EventBus.getDefault().register(this);
+        //EventBus.getDefault().register(this);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class ParkingActivity extends NavigationActivity {
     @Override
     protected void onDestroy() {
         dismissDialog();
-        EventBus.getDefault().unregister(this);
+        //EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 
@@ -68,7 +68,7 @@ public class ParkingActivity extends NavigationActivity {
 
     private ProgressDialog progressDialog;
 
-    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    /*@Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onMessageEvent(GetDirectionEvent event) {
         Timber.e("parkingFragment GetDirectionEvent onMessageEvent called");
         navigationView.getMenu().getItem(0).setChecked(true);
@@ -110,5 +110,5 @@ public class ParkingActivity extends NavigationActivity {
                 }
             }, 4000);
         }
-    }
+    }*/
 }
