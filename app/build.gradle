@@ -16,7 +16,7 @@ android {
         buildToolsVersion = '29.0.3'
         targetSdkVersion 30
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         //strip other than english resources
@@ -73,6 +73,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment:2.3.1'
     implementation 'androidx.navigation:navigation-ui:2.3.1'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
@@ -87,8 +88,7 @@ dependencies {
     implementation 'com.google.android.libraries.places:places:2.4.0'
     //noinspection GradleDynamicVersion
     implementation 'com.google.maps.android:android-maps-utils:0.5+'
-    //apache
-    //implementation 'org.apache.directory.studio:org.apache.commons.io:2.4'
+
 
     // QR code
     implementation 'com.google.zxing:core:3.3.3'
@@ -167,13 +167,14 @@ dependencies {
     // Add the Firebase Crashlytics SDK.
     implementation 'com.google.firebase:firebase-crashlytics:17.1.0'
     implementation 'com.google.firebase:firebase-analytics:17.4.3'
+    implementation 'com.google.firebase:firebase-config:20.0.3'
+    implementation 'com.google.firebase:firebase-database:18.0.0'
 
     //For managing request permission
     implementation 'com.karumi:dexter:6.2.0'
 
     //geoFence Libraries
     implementation 'com.firebase:geofire-android:3.0.0'
-    implementation 'com.google.firebase:firebase-database:18.0.0'
 
     // rx java
     implementation "io.reactivex.rxjava2:rxjava:$rootProject.rxjava2Version"

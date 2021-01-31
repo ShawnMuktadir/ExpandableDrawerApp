@@ -607,6 +607,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     private MarkerOptions markerOptionsForMarkerClick;
 
+    private MarkerOptions markerOptionsForSecondMarkerClick;
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public boolean onMarkerClick(Marker marker) {
@@ -654,6 +656,13 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         if (!marker.getTitle().equals("My Location")) {
                             if (previousMarker != null) {
                                 previousMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
+                                if (previousSecondMarkerDestinationMarker != null) {
+                                    previousSecondMarkerDestinationMarker.remove();
+                                    previousSecondMarkerDestinationMarker = null;
+                                }
+                                /*else {
+                                    previousSecondMarkerDestinationMarker = mMap.addMarker(markerOptions);
+                                }*/
                                 //Toast.makeText(context, "previous", Toast.LENGTH_SHORT).show();
                             } else {
                                 //Toast.makeText(context, "previous null", Toast.LENGTH_SHORT).show();
@@ -661,6 +670,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             previousMarker = marker;
                             removeCircle();
                             marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_gray));
+                            markerOptionsForSecondMarkerClick = new MarkerOptions();
+                            markerOptionsForSecondMarkerClick.position(marker.getPosition()).title(markerUid);
+                            coordList.add(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
+                            markerOptionsForSecondMarkerClick.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
+                            previousSecondMarkerDestinationMarker = mMap.addMarker(markerOptionsForSecondMarkerClick);
                             markerClicked = marker;
                             isNotificationSent = false;
                             isInAreaEnabled = false;
@@ -725,8 +739,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                 uid[0] = sensor.getUid();
                                 markerAreaName = sensor.getParkingArea();
                                 //Timber.e("jsonUid -> %s", uid[0]);
-                                double distanceForCount = calculateDistance(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude,
-                                        ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1));
+                                TaskParser taskParser = new TaskParser();
+                                double distanceForCount = taskParser.showDistance(new LatLng(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude),
+                                        new LatLng(ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1)));
 
                                 if (distanceForCount < 0.001) {
                                     parkingNumberOfIndividualMarker = sensor.getNoOfParking();
@@ -836,6 +851,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         markerOptionsForMarkerClick.position(marker.getPosition()).title(markerUid);
                         coordList.add(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
                         markerOptionsForMarkerClick.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
+                    }
+
+                    if (previousSecondMarkerDestinationMarker != null) {
+                        previousSecondMarkerDestinationMarker.remove();
+                        previousSecondMarkerDestinationMarker = null;
                     }
 
                     if (previousGetDestinationMarker != null) {
@@ -1074,8 +1094,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         layoutVisible(true, ApplicationUtils.capitalizeFirstLetter(areaName), parkingSlotCount,
                                 String.valueOf(adapterDistance), new LatLng(lat, lng));
 
-                        bookingSensorsAdapterArrayList.add(new BookingSensors(adapterPlaceName, lat, lng,
-                                adapterDistance, textViewParkingAreaCount.getText().toString(), adapterStringDuration,
+                        bookingSensorsAdapterArrayList.add(new BookingSensors(ApplicationUtils.capitalizeFirstLetter(areaName), lat, lng,
+                                adapterDistance, parkingSlotCount, adapterStringDuration,
                                 context.getResources().getString(R.string.nearest_parking_from_your_destination),
                                 BookingSensors.TEXT_INFO_TYPE, 0));
 
@@ -1967,14 +1987,17 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             String initialNearestDuration = String.valueOf(doubleDuration);
                             Timber.e("kim initialNearestDuration -> %s", initialNearestDuration);
 
-                            if (fetchDistance < 5) {
+                            if (fetchDistance < 7) {
                                 origin = new LatLng(location.getLatitude(), location.getLongitude());
 
                                 String nearestCurrentAreaName = areaName;
-                                Timber.e("nearestCurrentAreaName without progressBar-> %s", nearestCurrentAreaName);
+
+                                Timber.e("nearestCurrentAreaName -> %s", nearestCurrentAreaName);
+
                                 bookingSensorsArrayListGlobal.add(new BookingSensors(nearestCurrentAreaName, latitude, longitude,
                                         fetchDistance, parkingCount, initialNearestDuration,
                                         BookingSensors.INFO_TYPE, 1));
+
                                 //fetch distance in ascending order
                                 Collections.sort(bookingSensorsArrayListGlobal, (c1, c2) -> Double.compare(c1.getDistance(), c2.getDistance()));
                             }
@@ -2846,6 +2869,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     }
 
     public Marker previousDestinationMarker;
+    public Marker previousSecondMarkerDestinationMarker;
     String YourUniqueKey = "Direction";
     HashMap<String, Marker> hashMapMarker = new HashMap<>();
     public boolean isDestinationMarkerDrawn = false;

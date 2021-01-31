@@ -2,6 +2,8 @@ package www.fiberathome.com.parkingapp.ui.splash;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AlertDialog;
@@ -10,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.ForceUpdateChecker;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
 public class SplashActivity extends BaseActivity {

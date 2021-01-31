@@ -454,4 +454,8 @@
     <string name="enabling_gps">Enabling GPS</string>
     <string name="slow_internet_connection">Internet connection is too slow</string>
     <string name="no_data_found">No data found</string>
+    <string name="update">Update</string>
+    <string name="new_version_available">New version available</string>
+    <string name="please_update_the_app">Please, update app to new version to continue using</string>
+    <string name="no_thanks">No, thanks</string>
 </resources>

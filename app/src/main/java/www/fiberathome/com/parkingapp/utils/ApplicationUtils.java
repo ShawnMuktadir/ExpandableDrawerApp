@@ -366,13 +366,33 @@ public class ApplicationUtils {
     }
 
 
+    public static void showAlertDialog(String title, String message, Context context, String positiveText, String negativeText,
+                                       DialogInterface.OnClickListener positiveCallback, DialogInterface.OnClickListener negativeCallback) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(title);
+        builder.setMessage(message);
+        builder.setCancelable(true);
+
+        builder.setPositiveButton(positiveText, positiveCallback);
+        if (!TextUtils.isEmpty(negativeText)) {
+            builder.setNegativeButton(negativeText, negativeCallback);
+        }
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.setOnShowListener(arg0 -> alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(context.getResources().getColor(R.color.red)));
+        alertDialog.setCancelable(false);
+
+        if (!((Activity) context).isFinishing()) {
+            alertDialog.show();
+        }
+    }
+
+
     public static double convertToDouble(String value) {
         double intValue;
         try {
             intValue = Double.parseDouble(value);
-        } catch (NumberFormatException ex) {
-            intValue = 0.00;
-        } catch (NullPointerException ex) {
+        } catch (NumberFormatException | NullPointerException ex) {
             intValue = 0.00;
         }
         return intValue;

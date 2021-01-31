@@ -18,7 +18,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,6 +31,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -51,7 +51,6 @@ import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.response.parkingSlot.ParkingSlotResponse;
-import www.fiberathome.com.parkingapp.model.response.search.SearchVisitorData;
 import www.fiberathome.com.parkingapp.model.response.sensors.SensorArea;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
@@ -335,6 +334,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
 
         if (SharedData.getInstance().getOnConnectedLocation() != null) {
             onConnectedLocation = SharedData.getInstance().getOnConnectedLocation();
+            Timber.e("onConnectedLocation -> %s", onConnectedLocation);
         }
 
         ApiService request = ApiClient.getRetrofitInstance(AppConfig.URL_FETCH_SENSOR_AREA).create(ApiService.class);
@@ -345,7 +345,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                 hideLoading();
                 if (response.body() != null) {
                     list = response.body().getSensors();
-                    Timber.e("list -> %s", list);
+                    Timber.e("list -> %s", new Gson().toJson(list));
 
                     parkingSlotResponse = response.body();
 
@@ -366,11 +366,13 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                                 }
 
                                 if (i == 2) {
-                                    endLat = Double.parseDouble(baseStringList.get(i));
+                                    endLat = Double.parseDouble(baseStringList.get(i).trim());
+                                    Timber.e("endLat -> %s",endLat);
                                 }
 
                                 if (i == 3) {
-                                    endLng = Double.parseDouble(baseStringList.get(i));
+                                    endLng = Double.parseDouble(baseStringList.get(i).trim());
+                                    Timber.e("endLng -> %s",endLng);
                                 }
 
                                 if (i == 4) {
@@ -385,8 +387,6 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                             sensorArea.setDistance(fetchDistance);
 
                             sensorAreaArrayList.add(sensorArea);
-
-                            Timber.e("searchVisitorData -> %s", new Gson().toJson(sensorArea));
                         }
 
                         Collections.sort(sensorAreaArrayList, new Comparator<SensorArea>() {
@@ -565,5 +565,33 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
 
     private void hideNoData() {
         textViewNoData.setVisibility(View.GONE);
+    }
+
+    public double showDistance(LatLng from, LatLng to) {
+
+        int Radius = 6371;// radius of earth in Km
+        double lat1 = from.latitude;
+        double lat2 = to.latitude;
+        double lon1 = from.longitude;
+        double lon2 = to.longitude;
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(Math.toRadians(lat1))
+                * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon / 2)
+                * Math.sin(dLon / 2);
+
+        double c = 2.5 * Math.asin(Math.sqrt(a));
+        double valueResult = Radius * c;
+
+        double km = valueResult / 1;
+        DecimalFormat newFormat = new DecimalFormat("####");
+        int kmInDec = Integer.parseInt(newFormat.format(km));
+        double meter = valueResult % 1000;
+        int meterInDec = Integer.parseInt(newFormat.format(meter));
+        Timber.i("showDistance" + valueResult + "   KM  " + kmInDec
+                + " Meter   " + meterInDec);
+
+        return (Radius * c);
     }
 }

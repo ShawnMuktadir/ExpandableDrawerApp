@@ -448,4 +448,9 @@
     <string name="enabling_gps">জিপিএস সক্ষম করা হচ্ছে</string>
     <string name="slow_internet_connection">ইন্টারনেট সংযোগ খুব ধীর</string>
     <string name="no_data_found">কোন ডাটা পাওয়া যায় নি</string>
+    <string name="update">হালনাগাদ</string>
+    <string name="new_version_available">নতুন সংস্করণ উপলব্ধ</string>
+    <string name="please_update_the_app">দয়া করে ব্যবহার চালিয়ে যেতে অ্যাপ্লিকেশনটিকে নতুন সংস্করণে আপডেট করুন
+</string>
+    <string name="no_thanks">না, ধন্যবাদ</string>
 </resources>

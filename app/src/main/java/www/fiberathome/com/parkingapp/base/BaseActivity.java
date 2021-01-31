@@ -2,7 +2,9 @@ package www.fiberathome.com.parkingapp.base;
 
 import android.Manifest;
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.app.PendingIntent;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -48,9 +50,12 @@ import java.util.List;
 import java.util.Locale;
 
 import timber.log.Timber;
+import www.fiberathome.com.parkingapp.BuildConfig;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.DialogUtil;
+import www.fiberathome.com.parkingapp.utils.ForceUpdateChecker;
 import www.fiberathome.com.parkingapp.utils.GeoFenceBroadcastReceiver;
 import www.fiberathome.com.parkingapp.utils.GeofenceConstants;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
@@ -67,10 +72,11 @@ import www.fiberathome.com.parkingapp.utils.internet.Connectivity;
  *
  * </ul>
  */
-public class BaseActivity extends AppCompatActivity implements LocationListener {
+public class BaseActivity extends AppCompatActivity implements LocationListener, ForceUpdateChecker.OnUpdateNeededListener {
 
     private static final int GPS_ENABLE_REQUEST = 0x1001;
     private static final int WIFI_ENABLE_REQUEST = 0x1006;
+    private static final int UPDATE_CODE = 1000;
 
     private View overlay;
     private Snackbar snackbar;
@@ -111,6 +117,8 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
 
         context = this;
 
+        ForceUpdateChecker.with(this).onUpdateNeeded(this).check();
+
         isFastConnection = Connectivity.isConnectedFast(context);
 
         geofencingClient = LocationServices.getGeofencingClient(context);
@@ -135,7 +143,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
 
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
-        if (isConnectedFast(context)){
+        if (isConnectedFast(context)) {
             registerReceiver(mNetworkDetectReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         } else {
             Toast.makeText(context, context.getResources().getString(R.string.slow_internet_connection), Toast.LENGTH_SHORT).show();
@@ -215,9 +223,61 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
             }
 
         } else if (requestCode == WIFI_ENABLE_REQUEST) {
+            Timber.e("requestCode WIFI_ENABLE_REQUEST");
+        } else if (requestCode == UPDATE_CODE) {
+            if (!BuildConfig.VERSION_NAME.equalsIgnoreCase(ForceUpdateChecker.KEY_CURRENT_VERSION)) {
+                DialogUtil.getInstance().alertDialog(
+                        (Activity) context,
+                        context.getResources().getString(R.string.new_version_available), context.getResources().getString(R.string.please_update_the_app),
+                        context.getResources().getString(R.string.update), context.getResources().getString(R.string.no_thanks),
+                        new DialogUtil.DialogClickListener() {
+                            @Override
+                            public void onPositiveClick() {
+                                redirectStore(ForceUpdateChecker.KEY_UPDATE_URL);
+                            }
+
+                            @Override
+                            public void onNegativeClick() {
+                                finishAffinity();
+                                TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                            }
+                        }).show();
+            }
 
         } else {
             super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
+    public void onUpdateNeeded(final String updateUrl) {
+        DialogUtil.getInstance().alertDialog(
+                (Activity) context,
+                context.getResources().getString(R.string.new_version_available), context.getResources().getString(R.string.please_update_the_app),
+                context.getResources().getString(R.string.update), context.getResources().getString(R.string.no_thanks),
+                new DialogUtil.DialogClickListener() {
+                    @Override
+                    public void onPositiveClick() {
+                        redirectStore(updateUrl);
+                    }
+
+                    @Override
+                    public void onNegativeClick() {
+                        finishAffinity();
+                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                    }
+                }).show();
+    }
+
+
+    private void redirectStore(String updateUrl) {
+        try {
+            final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(updateUrl));
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivityForResult(intent, UPDATE_CODE);
+        } catch (ActivityNotFoundException e) {
+            e.getCause();
+            Toast.makeText(context, "Please try again", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -598,7 +658,5 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         } else {
             return false;
         }
-
     }
-
 }
