@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:orientation="vertical">
 
     <WebView
@@ -15,8 +16,7 @@
         android:id="@+id/recyclerViewPrivacy"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="@dimen/app_padding"
-        android:background="?android:attr/selectableItemBackground"
+        android:layout_margin="@dimen/dim5"
         android:clipToPadding="false"
         android:elevation="@dimen/dim3"
         android:overScrollMode="never"

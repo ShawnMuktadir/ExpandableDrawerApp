@@ -458,4 +458,5 @@
     <string name="new_version_available">New version available</string>
     <string name="please_update_the_app">Please, update app to new version to continue using</string>
     <string name="no_thanks">No, thanks</string>
+    <string name="are_you_sure_you_want_to_exit">Are you sure you want to exit?</string>
 </resources>

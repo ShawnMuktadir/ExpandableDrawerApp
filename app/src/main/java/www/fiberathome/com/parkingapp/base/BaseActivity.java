@@ -72,7 +72,7 @@ import www.fiberathome.com.parkingapp.utils.internet.Connectivity;
  *
  * </ul>
  */
-public class BaseActivity extends AppCompatActivity implements LocationListener, ForceUpdateChecker.OnUpdateNeededListener {
+public class BaseActivity extends AppCompatActivity implements LocationListener {
 
     private static final int GPS_ENABLE_REQUEST = 0x1001;
     private static final int WIFI_ENABLE_REQUEST = 0x1006;
@@ -116,8 +116,6 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
         super.onCreate(savedInstanceState);
 
         context = this;
-
-        ForceUpdateChecker.with(this).onUpdateNeeded(this).check();
 
         isFastConnection = Connectivity.isConnectedFast(context);
 
@@ -222,9 +220,11 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
                 showGPSDisabledDialog();
             }
 
-        } else if (requestCode == WIFI_ENABLE_REQUEST) {
+        }
+        else if (requestCode == WIFI_ENABLE_REQUEST) {
             Timber.e("requestCode WIFI_ENABLE_REQUEST");
-        } else if (requestCode == UPDATE_CODE) {
+        }
+        /*else if (requestCode == UPDATE_CODE) {
             if (!BuildConfig.VERSION_NAME.equalsIgnoreCase(ForceUpdateChecker.KEY_CURRENT_VERSION)) {
                 DialogUtil.getInstance().alertDialog(
                         (Activity) context,
@@ -242,44 +242,15 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
                                 TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                             }
                         }).show();
-            }
+            }*/
 
-        } else {
+        //}
+        else {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
-    @Override
-    public void onUpdateNeeded(final String updateUrl) {
-        DialogUtil.getInstance().alertDialog(
-                (Activity) context,
-                context.getResources().getString(R.string.new_version_available), context.getResources().getString(R.string.please_update_the_app),
-                context.getResources().getString(R.string.update), context.getResources().getString(R.string.no_thanks),
-                new DialogUtil.DialogClickListener() {
-                    @Override
-                    public void onPositiveClick() {
-                        redirectStore(updateUrl);
-                    }
 
-                    @Override
-                    public void onNegativeClick() {
-                        finishAffinity();
-                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
-                    }
-                }).show();
-    }
-
-
-    private void redirectStore(String updateUrl) {
-        try {
-            final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(updateUrl));
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivityForResult(intent, UPDATE_CODE);
-        } catch (ActivityNotFoundException e) {
-            e.getCause();
-            Toast.makeText(context, "Please try again", Toast.LENGTH_SHORT).show();
-        }
-    }
 
     private boolean isConnected = false;
 

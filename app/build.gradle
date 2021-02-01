@@ -10,35 +10,43 @@ android {
         javadocDeps
     }
 
+    def versionMajor = 1
+    def versionMinor = 0
+    def versionPatch = 0
+
     defaultConfig {
         applicationId "www.fiberathome.com.parkingapp"
         minSdkVersion 19
-        buildToolsVersion = '29.0.3'
         targetSdkVersion 30
-        versionCode 1
-        versionName "1.0.0"
+        versionCode versionMajor + versionMinor + versionPatch
+        versionName "${versionMajor}.${versionMinor}.${versionPatch}"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
-        //strip other than english resources
-        //resConfigs "en"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+
+    signingConfigs {
+        release {
+            storeFile file("/$project.rootDir/locc-smart-parking-fiber-at-home.jks")
+            storePassword STORE_PASSWORD
+            keyAlias "locc-smart-parking"
+            keyPassword KEY_PASSWORD
+        }
+    }
+
     buildTypes {
         debug {
             versionNameSuffix '-DEBUG'
             debuggable true
             minifyEnabled false
+            signingConfig signingConfigs.debug
         }
 
         release {
-            /*lintOptions {
-                disable 'MissingTranslation'
-                checkReleaseBuilds false
-                abortOnError false
-            }*/
-            debuggable false
+            debuggable true
             minifyEnabled true
             shrinkResources true
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -96,7 +104,8 @@ dependencies {
 
     // Volley
     implementation 'com.android.volley:volley:1.1.1'
-    // Gson
+
+    // GSON
     implementation 'com.google.code.gson:gson:2.8.6'
 
     // Glide
@@ -171,7 +180,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:18.0.0'
 
     //For managing request permission
-    implementation 'com.karumi:dexter:6.2.0'
+    implementation 'com.karumi:dexter:6.2.2'
 
     //geoFence Libraries
     implementation 'com.firebase:geofire-android:3.0.0'

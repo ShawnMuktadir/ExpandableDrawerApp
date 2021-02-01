@@ -23,6 +23,8 @@ public class ForceUpdateChecker {
 
     public interface OnUpdateNeededListener {
         void onUpdateNeeded(String updateUrl);
+
+        void noUpdateNeeded();
     }
 
     public static Builder with(@NonNull Context context) {
@@ -45,11 +47,20 @@ public class ForceUpdateChecker {
 
             if (!TextUtils.equals(currentVersion, appVersion)
                     && onUpdateNeededListener != null) {
-                if (updateUrl!=null){
+
+                if (updateUrl != null) {
                     onUpdateNeededListener.onUpdateNeeded(updateUrl);
-                }else {
+                } else {
                     Toast.makeText(context, "No play store URL found", Toast.LENGTH_SHORT).show();
                 }
+            } else {
+                if (onUpdateNeededListener != null) {
+                    onUpdateNeededListener.noUpdateNeeded();
+                }
+            }
+        } else {
+            if (onUpdateNeededListener != null) {
+                onUpdateNeededListener.noUpdateNeeded();
             }
         }
     }

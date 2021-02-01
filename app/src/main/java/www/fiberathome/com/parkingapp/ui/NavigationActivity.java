@@ -423,6 +423,13 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         startActivity(intent);
     }
 
+    public void startActivityWithFinish(Class activityClass, Bundle bundle) {
+        Intent intent = new Intent(getApplicationContext(), activityClass);
+        intent.putExtras(bundle);
+        startActivity(intent);
+        finishAffinity();
+    }
+
     private void shareApp() {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");

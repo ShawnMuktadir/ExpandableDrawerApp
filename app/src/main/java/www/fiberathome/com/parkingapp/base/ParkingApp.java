@@ -46,6 +46,7 @@ public class ParkingApp extends Application {
         initTimber();
 
         firebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
+
         setAppDefaults();
     }
 

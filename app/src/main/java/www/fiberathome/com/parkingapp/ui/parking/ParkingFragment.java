@@ -475,7 +475,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                 bundle.putString("areaName", parkingAreaName);
                 bundle.putString("count", count);
 
-                context.startActivity(HomeActivity.class, bundle);
+                context.startActivityWithFinish(HomeActivity.class, bundle);
             } else {
                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
             }

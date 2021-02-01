@@ -279,38 +279,6 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
             }
             return false;
         });
-
-        //handle special characters
-        /*InputFilter filter = new InputFilter() {
-            @Override
-            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-                boolean keepOriginal = true;
-                StringBuilder sb = new StringBuilder(end - start);
-                for (int i = start; i < end; i++) {
-                    char c = source.charAt(i);
-                    if (isCharAllowed(c)) // put your condition here
-                        sb.append(c);
-                    else
-                        keepOriginal = false;
-                }
-                if (keepOriginal)
-                    return null;
-                else {
-                    if (source instanceof Spanned) {
-                        SpannableString sp = new SpannableString(sb);
-                        TextUtils.copySpansFrom((Spanned) source, start, sb.length(), null, sp, 0);
-                        return sp;
-                    } else {
-                        return sb;
-                    }
-                }
-            }
-
-            private boolean isCharAllowed(char c) {
-                return Character.isLetterOrDigit(c) || Character.isSpaceChar(c);
-            }
-        };
-        editTextSearchLaw.setFilters(new InputFilter[]{filter});*/
     }
 
     private void setNoDataForBangla() {
@@ -332,10 +300,5 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
     public void setNoData() {
         textViewNoData.setVisibility(View.VISIBLE);
         textViewNoData.setText(context.getResources().getString(R.string.no_nearest_parking_area_found));
-    }
-
-    private void loadPDF() {
-        /*PDFView pdfView = (PDFView) findViewById(R.id.pdfView);
-        pdfView.fromAsset("parkingrule.pdf").load();*/
     }
 }
