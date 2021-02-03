@@ -5,9 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:padding="@dimen/dim20"
     android:windowSoftInputMode="adjustPan"
-    tools:context=".view.signUp.SignUpActivity">
+    tools:context=".ui.signUp.SignUpActivity">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -19,7 +18,8 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:padding="@dimen/dim15">
+            android:layout_margin="@dimen/dim10"
+            android:padding="@dimen/dim10">
 
             <RelativeLayout
                 android:layout_width="@dimen/_120sdp"
@@ -59,7 +59,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/dim15"
+                android:layout_margin="@dimen/dim5"
                 android:text="@string/signup_title"
                 android:textAlignment="center"
                 android:textColor="@android:color/black"
@@ -95,7 +95,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:imeOptions="actionNext"
-                    android:inputType="phone"
+                    android:inputType="numberDecimal"
                     android:maxLength="11"
                     android:textColor="@android:color/black"
                     android:textColorHint="@android:color/darker_gray" />
@@ -143,7 +143,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dim20"
                 android:layout_marginBottom="@dimen/dim20"
-                android:background="@color/colorPrimary"
+                android:background="@color/black"
                 android:padding="@dimen/dim10"
                 android:text="@string/create_account"
                 android:textAllCaps="false"
@@ -159,7 +159,7 @@
                 android:gravity="center"
                 android:text="@string/already_a_member_click_here"
                 android:textAllCaps="false"
-                android:textColor="@color/blackColor"
+                android:textColor="@color/black"
                 android:textSize="@dimen/dimTex14"
                 android:textStyle="normal" />
 
@@ -177,5 +177,13 @@
         </LinearLayout>
 
     </ScrollView>
+
+    <RelativeLayout
+        android:id="@+id/login_rl_invisible"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/transparent_gray"
+        android:focusableInTouchMode="true"
+        android:visibility="gone" />
 
 </RelativeLayout>

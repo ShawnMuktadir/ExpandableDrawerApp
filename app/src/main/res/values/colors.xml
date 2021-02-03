@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 <!--    <color name="colorPrimary">#CF1F25</color>-->
-    <color name="colorPrimary">#000000</color>
-    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorPrimary">#ffffff</color>
+    <color name="colorPrimaryDark">#ffffff</color>
     <color name="exColorPrimaryDark">#7A7676</color>
     <color name="colorAccent">#3A3839</color>
 
-    <color name="lightBg">#F5F5F5</color>
+    <color name="updatedColorPrimaryDark">#F5F5F5</color>
+    <color name="smoke_white">#dcdcdc</color>
 
     <color name="LogoRed">#b62126</color>
     <color name="whiteColor">#ffffff</color>
@@ -15,7 +16,7 @@
     <color name="light_blue">#6AD2FA</color>
     <color name="exColorPrimary">#25A848</color>
     <color name="fab_color">#EDFDCC</color>
-    <color name="black">#000</color>
+    <color name="black">#000000</color>
     <color name="black2">#161616</color>
     <color name="white">#fff</color>
     <color name="white2">#FDFEFE</color>

@@ -8,21 +8,27 @@ public class Parameters {
     @SerializedName("mobile_number")
     @Expose
     private String mobileNumber;
+
     @SerializedName("place_id")
     @Expose
     private String placeId;
+
     @SerializedName("end_let")
     @Expose
     private String endLet;
+
     @SerializedName("end_long")
     @Expose
     private String endLong;
+
     @SerializedName("start_let")
     @Expose
     private String startLet;
+
     @SerializedName("start_long")
     @Expose
     private String startLong;
+
     @SerializedName("address")
     @Expose
     private String address;

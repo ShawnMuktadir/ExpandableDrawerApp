@@ -104,7 +104,7 @@
           "C": "2. A vehicle shall not be parked on that side of a section of roadway along the edge of which traffic sign number RRM 008 [double yellow lines] has been provided"
         },
         {
-          "C": "3. A vehicle shall not be parked on a section of roadway where traffic sign number RUS 019 [No Parking sign] has been provided, during the period indicated on the information plate accompanying such traffic sign;"
+          "C": "3. A vehicle shall not be parked on a section of roadway where traffic sign number RUS 019 [No Parking sign] has been provided, during the period indicated on the information plate accompanying such traffic sign."
         },
         {
           "C": "4. A vehicle shall not be parked within 5 metres of a road junction"
@@ -122,10 +122,10 @@
           "C": "8. A vehicle shall not be parked in any place, position or manner that will result in the vehicle obstructing an entrance or an exit for vehicles to or from a premises, save with the consent of the occupier of such premises"
         },
         {
-          "C": "9. A vehicle shall not be parked within 15 metres (on the approach side) or 5 metres (on the side other than the approach side) of a section of roadway where any of the following traffic signs have been provided— a. traffic sign number RPC 001 [Pedestrian Crossing]; b. traffic sign number RPC 002 [Pedestrian Crossing Complex]; c. traffic sign numbers RTS 00I, RTS 002, RTS 003 or RTS 004 [traffic lights];"
+          "C": "9. A vehicle shall not be parked within 15 metres (on the approach side) or 5 metres (on the side other than the approach side) of a section of roadway where any of the following traffic signs have been provided— a. traffic sign number RPC 001 [Pedestrian Crossing]; b. traffic sign number RPC 002 [Pedestrian Crossing Complex]; c. traffic sign numbers RTS 00I, RTS 002, RTS 003 or RTS 004 [traffic lights]."
         },
         {
-          "C": "10.A vehicle shall not be parked on a footway, a grass margin or a median strip"
+          "C": "10. A vehicle shall not be parked on a footway, a grass margin or a median strip"
         },
         {
           "C": "11. A vehicle shall not be parked on a part of a roadway which is a casual trading area, during hours of trading, unless the vehicle is for the time being in use for the purposes of casual trading"
@@ -193,25 +193,25 @@
       "title": "Basic Parking Rule",
       "laws": [
         {
-          "C": "● Do not park any vehicle on the part of a road where traffic is flowing. Drive the vehicle off the road onto the shoulder while stopping."
+          "C": "1. Do not park any vehicle on the part of a road where traffic is flowing. Drive the vehicle off the road onto the shoulder while stopping."
         },
         {
-          "C": "● Do not park in such a place where one do not have a clear view for at least 50 meters in both the directions."
+          "C": "2. Do not park in such a place where one do not have a clear view for at least 50 meters in both the directions."
         },
         {
-          "C": "● Before opening the door of the parked vehicle, look around. Close the door the moment one gets down."
+          "C": "3. Before opening the door of the parked vehicle, look around. Close the door the moment one gets down."
         },
         {
-          "C": "● Do not park in a place that blocks a vehicle already parked, a sidewalk, crosswalk, pedestrian crossing or road entrance."
+          "C": "4. Do not park in a place that blocks a vehicle already parked, a sidewalk, crosswalk, pedestrian crossing or road entrance."
         },
         {
-          "C": "● Park the vehicle on the left side in the direction of the traffic."
+          "C": "5. Park the vehicle on the left side in the direction of the traffic."
         },
         {
-          "C": "● Do not park near the public entrance to a hotel, theatre or public hall when it is open to the public."
+          "C": "6. Do not park near the public entrance to a hotel, theatre or public hall when it is open to the public."
         },
         {
-          "C": "● Do not park near any intersection or a round-about."
+          "C": "7. Do not park near any intersection or a round-about."
         }
       ]
     },
@@ -220,22 +220,22 @@
       "laws": [
         {
           "B": "",
-          "C": "● Slowly reverse into the space provided for parking, turning the steering wheel anti-clockwise. Take care that you have cleared the vehicle ahead."
+          "C": "1. Slowly reverse into the space provided for parking, turning the steering wheel anti-clockwise. Take care that you have cleared the vehicle ahead."
         },
         {
-          "C": "● After seeing the outside rear corner of the vehicle in front of your space, turn the steering wheel clockwise. Do not forget to look back so that you do not hit the vehicle already parked behind you."
+          "C": "2. After seeing the outside rear corner of the vehicle in front of your space, turn the steering wheel clockwise. Do not forget to look back so that you do not hit the vehicle already parked behind you."
         },
         {
-          "C": "● Bring the vehicle in line with the curb."
+          "C": "3. Bring the vehicle in line with the curb."
         },
         {
-          "C": "● If the vehicle is not parallel to the curb, drive forward to straighten. Make sure the wheels of the car are straight."
+          "C": "4. If the vehicle is not parallel to the curb, drive forward to straighten. Make sure the wheels of the car are straight."
         },
         {
-          "C": "● After the vehicle is properly parked, pull the handbrake and shift into first or reverse gear. Turn off the engine and remove the key from the ignition."
+          "C": "5. After the vehicle is properly parked, pull the handbrake and shift into first or reverse gear. Turn off the engine and remove the key from the ignition."
         },
         {
-          "C": "● Check the traffic before opening door of the vehicle."
+          "C": "6. Check the traffic before opening door of the vehicle."
         }
       ]
     },
@@ -243,16 +243,16 @@
       "title": "Angular Parking",
       "laws": [
         {
-          "C": "● First and foremost look through the mirrors and over the shoulder for traffic behind you."
+          "C": "1. First and foremost look through the mirrors and over the shoulder for traffic behind you."
         },
         {
-          "C": "● Give the left indicator to signal to the vehicle behind that you intend to park the vehicle."
+          "C": "2. Give the left indicator to signal to the vehicle behind that you intend to park the vehicle."
         },
         {
-          "C": "● Steer into the provided parking space and straighten the wheels."
+          "C": "3. Steer into the provided parking space and straighten the wheels."
         },
         {
-          "C": "● Keep equal distance on both the sides, pull the handbrake and shift into first or reverse gear."
+          "C": "4. Keep equal distance on both the sides, pull the handbrake and shift into first or reverse gear."
         }
       ]
     },
@@ -261,13 +261,13 @@
       "laws": [
         {
           "B": "",
-          "C": "● Pass ahead of the parked vehicle next to available space."
+          "C": "1. Pass ahead of the parked vehicle next to available space."
         },
         {
-          "C": "● Look through the rear view mirrors and over the shoulder for clear traffic."
+          "C": "2. Look through the rear view mirrors and over the shoulder for clear traffic."
         },
         {
-          "C": "● Turn the steering anti-clockwise and reverse slowly until you are in the centre of the parking space."
+          "C": "3. Turn the steering anti-clockwise and reverse slowly until you are in the centre of the parking space."
         }
       ]
     }

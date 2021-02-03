@@ -2,27 +2,28 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="www.fiberathome.com.parkingapp">
-
     <!-- gps hardware permission -->
     <uses-feature android:name="android.hardware.location.gps" />
     <uses-feature
         android:glEsVersion="0x00020000"
         android:required="true" />
-
     <!-- internet permission -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
     <!-- location permission -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-
     <!-- camera permission -->
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-feature android:name="android.hardware.camera"
-        android:required="true"/>
+
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
     <uses-feature android:name="android.hardware.camera.flash" />
 
@@ -36,15 +37,55 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:requestLegacyExternalStorage="true"
         android:networkSecurityConfig="@xml/network_security_config"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
+        android:testOnly="false"
         tools:ignore="AllowBackup"
         tools:targetApi="q">
+        <activity android:name=".ui.getDiscount.GetDiscountActivity"
+            android:configChanges="locale"
+            android:screenOrientation="unspecified"
+            android:theme="@style/AppTheme.DefaultActionBar"/>
 
+        <activity android:name=".ui.followUs.FollowUsActivity"
+            android:configChanges="locale"
+            android:screenOrientation="unspecified"
+            android:theme="@style/AppTheme.DefaultActionBar"/>
+
+        <activity android:name=".ui.ratingReview.RatingReviewActivity"
+            android:configChanges="locale"
+            android:screenOrientation="unspecified"
+            android:theme="@style/AppTheme.DefaultActionBar"/>
+
+        <activity android:name=".ui.share.ShareActivity"
+            android:configChanges="locale"
+            android:screenOrientation="unspecified"
+            android:theme="@style/AppTheme.DefaultActionBar"/>
+
+        <activity android:name=".ui.profile.ProfileActivity"
+            android:configChanges="locale"
+            android:screenOrientation="unspecified"
+            android:theme="@style/AppTheme.DefaultActionBar"/>
+
+        <activity android:name=".ui.law.LawActivity"
+            android:configChanges="locale"
+            android:screenOrientation="unspecified"
+            android:theme="@style/AppTheme.DefaultActionBar"/>
+
+        <activity android:name=".ui.booking.newBooking.BookingActivity"
+            android:configChanges="locale"
+            android:screenOrientation="unspecified"
+            android:theme="@style/AppTheme.DefaultActionBar"/>
+
+        <activity android:name=".ui.parking.ParkingActivity"
+            android:configChanges="locale"
+            android:screenOrientation="unspecified"
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:theme="@style/AppTheme.DefaultActionBar"/>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -53,110 +94,126 @@
              sign the APK for publishing.
              You can define the keys for the debug and release targets in src/debug/ and src/release/.
         -->
-
         <activity
-            android:name=".view.changePassword.ChangePasswordActivity"
+            android:name=".ui.home.HomeActivity"
+            android:configChanges="locale"
+            android:screenOrientation="unspecified"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.DefaultActionBar" />
+        <activity
+            android:name=".ui.changePassword.ChangePasswordActivity"
+            android:configChanges="locale"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
-
         <activity
-            android:name=".view.changePassword.ChangePasswordActivityForOTP"
+            android:name=".ui.changePassword.ChangePasswordActivityForOTP"
+            android:configChanges="locale"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
-
         <activity
-            android:name=".view.permission.PermissionActivity"
+            android:name=".ui.permission.PermissionActivity"
+            android:configChanges="locale"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
-
         <activity
-            android:name=".view.location.LocationActivity"
+            android:name=".ui.permission.LocationPermissionActivity"
+            android:configChanges="locale"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
-
         <activity
-            android:name=".view.search.SearchActivity"
-            android:noHistory="true"
-            android:theme="@style/AppTheme.NoActionBar" />
-
+            android:name=".ui.location.LocationActivity"
+            android:configChanges="locale"
+            android:screenOrientation="unspecified"
+            android:theme="@style/AppTheme.DefaultActionBar" />
         <activity
-            android:name=".view.start.StartActivity"
+            android:name=".ui.search.SearchActivity"
+            android:configChanges="locale"
+            android:screenOrientation="unspecified"
+            android:theme="@style/AppTheme.DefaultActionBar"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ui.start.StartActivity"
+            android:configChanges="locale"
             android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar">
+        </activity>
+        <activity
+            android:name=".ui.splash.SplashActivity"
+            android:configChanges="locale"
+            android:label="@string/app_name"
+            android:screenOrientation="unspecified"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name=".view.main.MainActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|mcc|mnc"
+            android:name=".ui.signUp.SignUpActivity"
+            android:configChanges="locale"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
-
+        <!-- <activity android:name=".view.activity.registration.RegistrationActivity" -->
+        <!-- android:screenOrientation="unspecified" -->
+        <!-- android:theme="@style/AppTheme.DefaultActionBar" /> -->
         <activity
-            android:name=".view.signUp.SignUpActivity"
+            android:name=".ui.verifyPhone.VerifyPhoneActivity"
+            android:parentActivityName=".ui.signIn.LoginActivity"
+            android:configChanges="locale"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
-
-<!--        <activity android:name=".view.activity.registration.RegistrationActivity"-->
-<!--            android:screenOrientation="unspecified"-->
-<!--            android:theme="@style/AppTheme.DefaultActionBar" />-->
         <activity
-            android:name=".view.signUp.verifyPhone.VerifyPhoneActivity"
+            android:name=".ui.signIn.LoginActivity"
+            android:configChanges="locale"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
-
         <activity
-            android:name=".view.signIn.LoginActivity"
+            android:name=".ui.forgetPassword.ForgetPasswordActivity"
+            android:configChanges="locale"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
-
         <activity
-            android:name=".view.forgetPassword.ForgetPasswordActivity"
+            android:name=".ui.reserveSpot.ReserveSpotActivity"
+            android:configChanges="locale"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
-
         <activity
-            android:name=".view.reserveSpot.ReserveSpotActivity"
+            android:name=".ui.privacyPolicy.PrivacyPolicyActivity"
+            android:launchMode="singleTop"
+            android:configChanges="locale"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
-
         <activity
-            android:name=".view.privacyPolicy.PrivacyPolicyActivity"
+            android:name=".ui.termsConditions.TermsConditionsActivity"
+            android:configChanges="locale"
             android:screenOrientation="unspecified"
-            android:theme="@style/AppTheme.DefaultActionBar"  />
-
+            android:theme="@style/AppTheme.DefaultActionBar" />
         <activity
-            android:name=".view.termsConditions.TermsConditionsActivity"
+            android:name=".ui.settings.SettingsActivity"
+            android:configChanges="locale"
             android:screenOrientation="unspecified"
-            android:theme="@style/AppTheme.DefaultActionBar"  />
+            android:theme="@style/AppTheme.DefaultActionBar" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
-
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@mipmap/ic_launcher" />
-
-<!--        <provider-->
-<!--            android:name="androidx.core.content.FileProvider"-->
-<!--            android:authorities="www.fiberathome.com.parkingapp.fileprovider"-->
-<!--            android:exported="false"-->
-<!--            android:grantUriPermissions="true">-->
-<!--            <meta-data-->
-<!--                android:name="android.support.FILE_PROVIDER_PATHS"-->
-<!--                android:resource="@xml/file_paths" />-->
-<!--        </provider>-->
-
+        <!-- <provider -->
+        <!-- android:name="androidx.core.content.FileProvider" -->
+        <!-- android:authorities="www.fiberathome.com.parkingapp.fileprovider" -->
+        <!-- android:exported="false" -->
+        <!-- android:grantUriPermissions="true"> -->
+        <!-- <meta-data -->
+        <!-- android:name="android.support.FILE_PROVIDER_PATHS" -->
+        <!-- android:resource="@xml/file_paths" /> -->
+        <!-- </provider> -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -167,7 +224,8 @@
                 android:resource="@xml/file_provider_paths" />
         </provider>
 
-        <receiver android:name=".module.notification.NotificationPublisher"/>
+        <!-- <receiver android:name=".utils.GeoFenceBroadcastReceiver"/>-->
+        <receiver android:name=".module.notification.NotificationPublisher" />
 
         <service
             android:name=".module.gps.GPSTracker"

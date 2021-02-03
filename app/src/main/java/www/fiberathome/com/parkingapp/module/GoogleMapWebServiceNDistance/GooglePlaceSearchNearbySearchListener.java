@@ -1,6 +1,6 @@
 package www.fiberathome.com.parkingapp.module.GoogleMapWebServiceNDistance;
 
-import www.fiberathome.com.parkingapp.model.sensors.SensorList;
+import www.fiberathome.com.parkingapp.model.response.sensors.SensorList;
 
 public interface GooglePlaceSearchNearbySearchListener {
 

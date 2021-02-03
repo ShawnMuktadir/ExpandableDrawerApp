@@ -1,0 +1,300 @@
+package www.fiberathome.com.parkingapp.ui.privacyPolicy;
+
+import android.annotation.SuppressLint;
+import android.location.LocationManager;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.webkit.WebView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.view.ViewCompat;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+import retrofit2.Call;
+import retrofit2.Callback;
+import timber.log.Timber;
+import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.base.BaseFragment;
+import www.fiberathome.com.parkingapp.model.api.ApiClient;
+import www.fiberathome.com.parkingapp.model.api.ApiService;
+import www.fiberathome.com.parkingapp.model.api.AppConfig;
+import www.fiberathome.com.parkingapp.model.termsCondition.TermsCondition;
+import www.fiberathome.com.parkingapp.model.termsCondition.TermsConditionResponse;
+import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
+import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
+import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+
+import static android.content.Context.LOCATION_SERVICE;
+
+@SuppressLint("NonConstantResourceId")
+public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressListener {
+
+    @BindView(R.id.webView)
+    WebView webView;
+
+    @BindView(R.id.recyclerViewPrivacy)
+    RecyclerView recyclerViewPrivacy;
+
+    private Unbinder unbinder;
+
+    private PrivacyPolicyActivity context;
+
+    public PrivacyPolicyFragment() {
+        // Required empty public constructor
+    }
+
+    public static PrivacyPolicyFragment newInstance() {
+        return new PrivacyPolicyFragment();
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_privacy_policy, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        unbinder = ButterKnife.bind(this, view);
+
+        context = (PrivacyPolicyActivity) getActivity();
+
+        if (ApplicationUtils.checkInternet(context)) {
+            fetchPrivacyPolicy();
+        } else {
+            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        if (unbinder != null) {
+            unbinder.unbind();
+        }
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        if (isGPSEnabled()) {
+            if (getActivity() != null) {
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.nav_host_fragment, HomeFragment.newInstance())
+                        .addToBackStack(null)
+                        .commit();
+            } else {
+                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
+            }
+        }
+        return false;
+    }
+
+    private boolean isGPSEnabled() {
+
+        LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
+
+        boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+        if (providerEnabled) {
+            return true;
+        } else {
+
+            /*AlertDialog alertDialog = new AlertDialog.Builder(context)
+                    .setTitle("GPS Permissions")
+                    .setMessage("GPS is required for this app to work. Please enable GPS.")
+                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivityForResult(intent, GPS_REQUEST_CODE);
+                    }))
+                    .setCancelable(false)
+                    .show();*/
+
+        }
+        return false;
+    }
+
+    private ArrayList<TermsCondition> termsConditionsGlobal = new ArrayList<>();
+
+    /*private void fetchPrivacyPolicy() {
+        Timber.e("fetchPrivacyPolicy called");
+
+        if (!context.isFinishing())
+            showLoading(context);
+
+        StringRequest strReq = new StringRequest(Request.Method.GET, AppConfig.URL_PRIVACY_POLICY, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                //progressDialog.dismiss();
+                hideLoading();
+                try {
+                    JSONObject object = new JSONObject(response);
+                    JSONArray jsonArray = object.getJSONArray("termsCondition");
+
+                    TermsCondition termsConditionTemp = new TermsCondition();
+
+                    if (jsonArray.length() > 0) {
+                        JSONArray array2 = jsonArray.getJSONArray(1);
+                        termsConditionTemp.setTermsConditionDomain(array2.getString(6).trim());
+                        termsConditionTemp.setTermsConditionBody(array2.getString(2).trim());
+                    }
+
+                    for (int i = 1; i < jsonArray.length(); i++) {
+                        JSONArray array = jsonArray.getJSONArray(i);
+
+                        TermsCondition termsCondition = new TermsCondition();
+
+                        termsCondition.setTermsConditionId(array.getString(0).trim());
+                        termsCondition.setTermsConditionSerialNo(array.getString(1).trim());
+                        termsCondition.setTermsConditionRemarks(array.getString(3).trim());
+                        termsCondition.setTermsConditionDate(array.getString(4).trim());
+                        termsCondition.setTermsConditionUser(array.getString(5).trim());
+                        termsCondition.setTermsConditionDomain(array.getString(6).trim());
+
+
+                        if (array.getString(6).trim().equals(termsConditionTemp.getTermsConditionDomain()) && i != 1) {
+
+                            termsCondition.setTermsConditionDomain("");
+                            termsCondition.setTermsConditionBody(array.getString(2).trim());
+
+                            JSONArray array2 = jsonArray.getJSONArray(i);
+                            termsConditionTemp.setTermsConditionDomain(array2.getString(6).trim());
+                            termsConditionTemp.setTermsConditionBody(array2.getString(2).trim());
+                        } else {
+
+                            termsCondition.setTermsConditionDomain(array.getString(6).trim());
+                            termsCondition.setTermsConditionBody(array.getString(2).trim());
+
+                            JSONArray array2 = jsonArray.getJSONArray(i);
+                            termsConditionTemp.setTermsConditionDomain(array2.getString(6).trim());
+                            termsConditionTemp.setTermsConditionBody(array2.getString(2).trim());
+                        }
+
+                        termsConditionsGlobal.add(termsCondition);
+                        Timber.e("termsConditions -> %s", new Gson().toJson(termsConditionsGlobal));
+                    }
+
+                    setTermsConditions(termsConditionsGlobal);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError e) {
+                e.printStackTrace();
+            }
+        }) {
+
+        };
+
+        ParkingApp.getInstance().addToRequestQueue(strReq);
+    }*/
+
+    private final ArrayList<TermsCondition> termsConditionArrayList = new ArrayList<>();
+    private List<List<String>> termConditionList = null;
+    private List<List<String>> list;
+    private TermsConditionResponse termsConditionResponse;
+
+    private String title = null;
+
+    private String description = null;
+
+    private String date = null;
+
+    private void fetchPrivacyPolicy() {
+        Timber.e("fetchPrivacyPolicy called");
+
+        showLoading(context);
+
+        ApiService request = ApiClient.getRetrofitInstance(AppConfig.URL_PRIVACY_POLICY).create(ApiService.class);
+
+        Call<TermsConditionResponse> call = request.getTermCondition();
+
+        call.enqueue(new Callback<TermsConditionResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<TermsConditionResponse> call, @NonNull retrofit2.Response<TermsConditionResponse> response) {
+                hideLoading();
+                if (response.body() != null) {
+
+                    hideLoading();
+
+                    list = response.body().getTermsCondition();
+
+                    Timber.e("list -> %s", new Gson().toJson(list));
+
+                    termsConditionResponse = response.body();
+
+                    termConditionList = termsConditionResponse.getTermsCondition();
+
+                    if (termConditionList != null) {
+
+                        for (List<String> baseStringList : termConditionList) {
+                            for (int i = 0; i < baseStringList.size(); i++) {
+
+                                Timber.d("onResponse: i ->  %s", i);
+
+                                if (i == 6) {
+                                    title = baseStringList.get(i).trim();
+                                }
+
+                                if (i == 2) {
+                                    description = baseStringList.get(i).trim();
+                                }
+
+                                if (i == 4) {
+                                    date = baseStringList.get(i).trim();
+                                }
+                            }
+                            TermsCondition termsCondition = new TermsCondition(title, description, date);
+
+                            termsConditionArrayList.add(termsCondition);
+                        }
+
+                        setTermsConditions(termsConditionArrayList);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<TermsConditionResponse> call, @NonNull Throwable t) {
+                Timber.e("onFailure -> %s", t.getMessage());
+            }
+        });
+    }
+
+    private void setTermsConditions(ArrayList<TermsCondition> termsConditions) {
+        this.termsConditionsGlobal = termsConditions;
+        recyclerViewPrivacy.setHasFixedSize(true);
+        recyclerViewPrivacy.setItemViewCacheSize(20);
+        recyclerViewPrivacy.setNestedScrollingEnabled(false);
+
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        recyclerViewPrivacy.setLayoutManager(mLayoutManager);
+        recyclerViewPrivacy.addItemDecoration(new DividerItemDecoration(context, LinearLayoutManager.VERTICAL));
+        recyclerViewPrivacy.setItemAnimator(new DefaultItemAnimator());
+
+        ViewCompat.setNestedScrollingEnabled(recyclerViewPrivacy, false);
+        PrivacyPolicyAdapter privacyPolicyAdapter = new PrivacyPolicyAdapter(context, termsConditionsGlobal);
+        recyclerViewPrivacy.setAdapter(privacyPolicyAdapter);
+    }
+}

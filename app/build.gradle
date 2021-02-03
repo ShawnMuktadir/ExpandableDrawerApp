@@ -3,41 +3,50 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 
 android {
+    defaultConfig.applicationId="www.fiberathome.com.parkingapp"
     compileSdkVersion 30
 
     configurations {
         javadocDeps
     }
 
+    def versionMajor = 1
+    def versionMinor = 0
+    def versionPatch = 0
+
     defaultConfig {
         applicationId "www.fiberathome.com.parkingapp"
         minSdkVersion 19
-        buildToolsVersion = '29.0.3'
         targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
+        versionCode versionMajor + versionMinor + versionPatch
+        versionName "${versionMajor}.${versionMinor}.${versionPatch}"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
-        //strip other than english resources
-        resConfigs "en"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+
+    signingConfigs {
+        release {
+            storeFile file("/$project.rootDir/locc-smart-parking-fiber-at-home.jks")
+            storePassword STORE_PASSWORD
+            keyAlias "locc-smart-parking"
+            keyPassword KEY_PASSWORD
+        }
+    }
+
     buildTypes {
         debug {
             versionNameSuffix '-DEBUG'
             debuggable true
             minifyEnabled false
+            signingConfig signingConfigs.debug
         }
 
         release {
-            lintOptions {
-                disable 'MissingTranslation'
-                checkReleaseBuilds false
-                abortOnError false
-            }
             debuggable false
             minifyEnabled true
             shrinkResources true
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -72,6 +81,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment:2.3.1'
     implementation 'androidx.navigation:navigation-ui:2.3.1'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
@@ -84,7 +94,9 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
     implementation 'com.google.android.gms:play-services-places:17.0.0'
     implementation 'com.google.android.libraries.places:places:2.4.0'
+    //noinspection GradleDynamicVersion
     implementation 'com.google.maps.android:android-maps-utils:0.5+'
+
 
     // QR code
     implementation 'com.google.zxing:core:3.3.3'
@@ -92,7 +104,8 @@ dependencies {
 
     // Volley
     implementation 'com.android.volley:volley:1.1.1'
-    // gson
+
+    // GSON
     implementation 'com.google.code.gson:gson:2.8.6'
 
     // Glide
@@ -100,6 +113,10 @@ dependencies {
     implementation('com.github.bumptech.glide:glide:4.11.0@aar') {
         transitive = true
     }
+
+    // Material Dialog dependency
+    implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
+
     // android circular imageView
     implementation 'de.hdodenhof:circleimageview:3.1.0'
 
@@ -121,6 +138,10 @@ dependencies {
 
     //event bus
     implementation 'org.greenrobot:eventbus:3.2.0'
+
+    // Shimmer
+    implementation 'com.facebook.shimmer:shimmer:0.4.0@aar'
+    implementation 'com.facebook.shimmer:shimmer:0.4.0'
 
     //ssp & sdp
     implementation 'com.intuit.sdp:sdp-android:1.0.6'
@@ -155,13 +176,14 @@ dependencies {
     // Add the Firebase Crashlytics SDK.
     implementation 'com.google.firebase:firebase-crashlytics:17.1.0'
     implementation 'com.google.firebase:firebase-analytics:17.4.3'
+    implementation 'com.google.firebase:firebase-config:20.0.3'
+    implementation 'com.google.firebase:firebase-database:18.0.0'
 
     //For managing request permission
-    implementation 'com.karumi:dexter:6.2.0'
+    implementation 'com.karumi:dexter:6.2.2'
 
     //geoFence Libraries
     implementation 'com.firebase:geofire-android:3.0.0'
-    implementation 'com.google.firebase:firebase-database:18.0.0'
 
     // rx java
     implementation "io.reactivex.rxjava2:rxjava:$rootProject.rxjava2Version"
@@ -172,6 +194,8 @@ dependencies {
     implementation "android.arch.persistence.room:runtime:$room_version"
     annotationProcessor "android.arch.persistence.room:compiler:$room_version"
     testImplementation "android.arch.persistence.room:testing:$room_version"
+    //capialize first letter
+    //implementation 'org.apache.commons:commons-lang3:3.6'
 
     // lib for SMS verification (Phone Auth)
     implementation 'com.google.android.gms:play-services-auth:18.1.0'

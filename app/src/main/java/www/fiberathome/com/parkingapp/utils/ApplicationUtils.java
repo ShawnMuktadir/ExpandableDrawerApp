@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -19,7 +20,9 @@ import android.location.Geocoder;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Build;
+import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
@@ -32,14 +35,15 @@ import android.text.style.BackgroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.TextAppearanceSpan;
 import android.text.style.UnderlineSpan;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,6 +63,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.Normalizer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -66,6 +71,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -78,10 +84,69 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.data.preference.StaticData;
-import www.fiberathome.com.parkingapp.utils.internetUtils.ConnectivityInterceptor;
-import www.fiberathome.com.parkingapp.view.main.home.HomeFragment;
+import www.fiberathome.com.parkingapp.utils.internet.ConnectivityInterceptor;
 
 public class ApplicationUtils {
+
+    public static void showToast(Context context, String message, long countDown) {
+        // Set the toast and duration
+        final Toast mToastToShow = Toast.makeText(context, message, Toast.LENGTH_LONG);
+
+        // Set the countdown to display the toast
+        CountDownTimer toastCountDown;
+        toastCountDown = new CountDownTimer(countDown, countDown /*Tick duration*/) {
+            public void onTick(long millisUntilFinished) {
+                mToastToShow.show();
+            }
+
+            public void onFinish() {
+                mToastToShow.cancel();
+            }
+        };
+
+        // Show the toast and starts the countdown
+        mToastToShow.show();
+        toastCountDown.start();
+    }
+
+    public static boolean isProbablyBangla(String s) {
+        for (int i = 0; i < s.length();) {
+            int c = s.codePointAt(i);
+            if (c >= 0x0980 && c <= 0x09A0)
+                return true;
+            i += Character.charCount(c);
+        }
+        return false;
+    }
+
+    public static boolean textContainsBangla(String text) {
+        for (char c : text.toCharArray()) {
+            if (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.BENGALI) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isEnglish(String str)
+    {
+        return ((!str.equals(""))
+                && (str != null)
+                && (str.matches("^[a-zA-Z]*$")));
+    }
+
+    public static int getToolBarHeight(Context context) {
+        int[] attrs = new int[] {R.attr.actionBarSize};
+        TypedArray ta = context.obtainStyledAttributes(attrs);
+        int toolBarHeight = ta.getDimensionPixelSize(0, -1);
+        ta.recycle();
+        return toolBarHeight;
+    }
+
+    public static double round (double value, int precision) {
+        int scale = (int) Math.pow(10, precision);
+        return (double) Math.round(value * scale) / scale;
+    }
 
     public static void setTextColor(TextView tvText, Context context, int resId) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -211,7 +276,56 @@ public class ApplicationUtils {
         return isConnected;
     }
 
+    public static boolean isConnected(Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo wifiInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        NetworkInfo mobileInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+
+        if ((wifiInfo != null && wifiInfo.isConnected()) || (mobileInfo != null && mobileInfo.isConnected())) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public static void showMessageDialog(String message, Context context) {
+        if (context != null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setMessage(message);
+            builder.setCancelable(true);
+            builder.setPositiveButton(context.getResources().getString(R.string.get_support), (dialog, which) -> {
+                showAlertDialog(context.getString(R.string.number), context, context.getString(R.string.call), context.getString(R.string.cancel),
+                        (dialog1, which1) -> {
+                            Timber.e("Positive Button clicked");
+                            String number = context.getString(R.string.number);
+                            Intent intent = new Intent();
+                            intent.setAction(Intent.ACTION_DIAL); // Action for what intent called for
+                            intent.setData(Uri.parse("tel: " + number)); // Datum with intent respective action on intent
+                            context.startActivity(intent);
+                            dialog1.dismiss();
+                        },
+
+                        (dialog1, which1) -> {
+                            Timber.e("Negative Button Clicked");
+                            dialog1.dismiss();
+                        });
+            });
+            builder.setNegativeButton(context.getResources().getString(R.string.ok), (dialog, which) -> {
+                if (context != null) {
+                    dialog.dismiss();
+                }
+            });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+
+            // Let's start with animation work. We just need to create a style and use it here as follows.
+            /*if (alertDialog.getWindow() != null)
+                alertDialog.getWindow().getAttributes().windowAnimations = R.style.slidingDialogAnimation;*/
+
+        }
+    }
+
+    public static void showOnlyMessageDialog(String message, Context context) {
         if (context != null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             builder.setMessage(message);
@@ -224,12 +338,13 @@ public class ApplicationUtils {
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
 
-//            // Let's start with animation work. We just need to create a style and use it here as follows.
-//            if (alertDialog.getWindow() != null)
-//                alertDialog.getWindow().getAttributes().windowAnimations = R.style.slidingDialogAnimation;
+            // Let's start with animation work. We just need to create a style and use it here as follows.
+            /*if (alertDialog.getWindow() != null)
+                alertDialog.getWindow().getAttributes().windowAnimations = R.style.slidingDialogAnimation;*/
 
         }
     }
+
 
     public static void showAlertDialog(String message, Context context, String positiveText, String negativeText,
                                        DialogInterface.OnClickListener positiveCallback, DialogInterface.OnClickListener negativeCallback) {
@@ -251,13 +366,33 @@ public class ApplicationUtils {
     }
 
 
+    public static void showAlertDialog(String title, String message, Context context, String positiveText, String negativeText,
+                                       DialogInterface.OnClickListener positiveCallback, DialogInterface.OnClickListener negativeCallback) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(title);
+        builder.setMessage(message);
+        builder.setCancelable(true);
+
+        builder.setPositiveButton(positiveText, positiveCallback);
+        if (!TextUtils.isEmpty(negativeText)) {
+            builder.setNegativeButton(negativeText, negativeCallback);
+        }
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.setOnShowListener(arg0 -> alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(context.getResources().getColor(R.color.red)));
+        alertDialog.setCancelable(false);
+
+        if (!((Activity) context).isFinishing()) {
+            alertDialog.show();
+        }
+    }
+
+
     public static double convertToDouble(String value) {
         double intValue;
         try {
             intValue = Double.parseDouble(value);
-        } catch (NumberFormatException ex) {
-            intValue = 0.00;
-        } catch (NullPointerException ex) {
+        } catch (NumberFormatException | NullPointerException ex) {
             intValue = 0.00;
         }
         return intValue;
@@ -357,6 +492,14 @@ public class ApplicationUtils {
         return formattedDate;
     }
 
+    public static String getPSTTimeZoneCurrentDate() {
+        //Output: ex: Wednesday, July 20, 2011
+        DateFormat df = DateFormat.getDateInstance(DateFormat.FULL);
+        df.setTimeZone(TimeZone.getTimeZone("PST"));
+        final String dateString = df.format(new Date());
+        return dateString;
+    }
+
     public static String getTime(String dateTime) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.US);
         SimpleDateFormat expectedFormat = new SimpleDateFormat("hh:mm a", Locale.US);
@@ -398,10 +541,10 @@ public class ApplicationUtils {
         alertDialog.setCancelable(false);
         alertDialog.show();
 
-//        WindowManager.LayoutParams lp = alertDialog.getWindow().getAttributes();
-//        lp.dimAmount = 0.4f;
-//        alertDialog.getWindow().setAttributes(lp);
-//        alertDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+       /* WindowManager.LayoutParams lp = alertDialog.getWindow().getAttributes();
+        lp.dimAmount = 0.4f;
+        alertDialog.getWindow().setAttributes(lp);
+        alertDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);*/
         outside_view.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -411,13 +554,10 @@ public class ApplicationUtils {
             }
         });
 
-        tv_exit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialog.dismiss();
-                activity.finish();
-                TastyToastUtils.showTastySuccessToast(activity, "Thanks for being with us");
-            }
+        tv_exit.setOnClickListener(v -> {
+            alertDialog.dismiss();
+            activity.finish();
+            TastyToastUtils.showTastySuccessToast(activity, activity.getResources().getString(R.string.thanks_message));
         });
 
     }
@@ -437,12 +577,22 @@ public class ApplicationUtils {
         transaction.commit();
     }
 
+    public static void replaceFragmentWithAnimation(@NonNull FragmentManager fragmentManager, @NonNull Fragment fragment) {
+        //, String tag
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
+        transaction.replace(R.id.nav_host_fragment, fragment);
+        //transaction.addToBackStack(tag);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
     public static void refreshFragment(@NonNull FragmentManager fragmentManager,
                                        @NonNull Fragment fragment, int frameId) {
         // Reload current fragment
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-//        transaction.setCustomAnimations(android.R.anim.fade_in,
-//                android.R.anim.fade_out);
+        //transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+        transaction.setCustomAnimations(0, 0);
         transaction.replace(frameId, fragment);
         transaction.detach(fragment);
         transaction.attach(fragment);
@@ -453,10 +603,8 @@ public class ApplicationUtils {
                                             @NonNull Fragment fragment) {
         try {
             Fragment.SavedState savedState = fragmentManager.saveFragmentInstanceState(fragment);
-
             Fragment newInstance = fragment.getClass().newInstance();
             newInstance.setInitialSavedState(savedState);
-
             return newInstance;
         } catch (Exception e) // InstantiationException, IllegalAccessException
         {
@@ -465,9 +613,9 @@ public class ApplicationUtils {
     }
 
     public static void reLoadFragment(@NonNull FragmentManager fragmentManager, @NonNull Fragment fragment) {
-        Timber.e("reloading fragment");
+        //Timber.e("reloading fragment");
         fragmentManager.beginTransaction().replace(fragment.getId(),
-                HomeFragment.newInstance()).commit();
+                fragment).commit();
     }
 
     public static void detachAttachFragment(@NonNull FragmentManager fragmentManager, @NonNull Fragment fragment) {
@@ -485,7 +633,7 @@ public class ApplicationUtils {
         return (rad * 180.0 / Math.PI);
     }
 
-    public static double distance(double lat1, double lon1, double lat2, double lon2) {
+    public static double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
         double theta = lon1 - lon2;
         double mile = Math.sin(deg2rad(lat1))
                 * Math.sin(deg2rad(lat2))
@@ -496,7 +644,7 @@ public class ApplicationUtils {
         mile = rad2deg(mile);
         mile = mile * 60 * 1.1515;
         double km = mile / 0.62137;
-        Timber.e("distance -> %s", km);
+        //Timber.e("distance -> %s", km);
         return (km);
     }
 
@@ -506,6 +654,25 @@ public class ApplicationUtils {
         }
 
         return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
+
+    public static String capitalizeFirstLetter(final String str) {
+        int strLen;
+        if (str == null || (strLen = str.length()) == 0) {
+            return str;
+        }
+
+        final char firstChar = str.charAt(0);
+        final char newChar = Character.toTitleCase(firstChar);
+        if (firstChar == newChar) {
+            // already capitalized
+            return str;
+        }
+
+        char[] newChars = new char[strLen];
+        newChars[0] = newChar;
+        str.getChars(1, strLen, newChars, 1);
+        return String.valueOf(newChars);
     }
 
     public static String allTrim(String str) {
@@ -667,27 +834,6 @@ public class ApplicationUtils {
         return null;
     }
 
-    private String getCountryZipCode(Context context) {
-
-        String CountryID = "";
-        String CountryZipCode = "";
-
-        TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-        //getNetworkCountryIso
-        assert manager != null;
-        CountryID = manager.getSimCountryIso().toUpperCase();
-        String[] rl = context.getResources().getStringArray(R.array.CountryCodes);
-        for (int i = 0; i < rl.length; i++) {
-            String[] g = rl[i].split(",");
-            if (g[1].trim().equals(CountryID.trim())) {
-                CountryZipCode = g[0];
-                Timber.e("CountryZipCode -> %s", CountryZipCode);
-                break;
-            }
-        }
-        return CountryZipCode;
-    }
-
     public static boolean checkLocationPermission(Context context) {
         Timber.e("checkLocationPermission call hoiche");
         String permission = "android.permission.ACCESS_FINE_LOCATION";
@@ -798,5 +944,48 @@ public class ApplicationUtils {
         progressDialog.show();
 
         return progressDialog;
+    }
+
+    private String getCountryZipCode(Context context) {
+
+        String CountryID = "";
+        String CountryZipCode = "";
+
+        TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        //getNetworkCountryIso
+        assert manager != null;
+        CountryID = manager.getSimCountryIso().toUpperCase();
+        String[] rl = context.getResources().getStringArray(R.array.CountryCodes);
+        for (int i = 0; i < rl.length; i++) {
+            String[] g = rl[i].split(",");
+            if (g[1].trim().equals(CountryID.trim())) {
+                CountryZipCode = g[0];
+                Timber.e("CountryZipCode -> %s", CountryZipCode);
+                break;
+            }
+        }
+        return CountryZipCode;
+    }
+
+    public static Bitmap createCustomMarker(Context context, @DrawableRes int resource, String _name) {
+
+        View marker = ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.custom_marker_layout, null);
+
+        ImageView markerImage = (ImageView) marker.findViewById(R.id.user_dp);
+        markerImage.setImageResource(resource);
+        TextView txt_name = (TextView)marker.findViewById(R.id.name);
+        txt_name.setText(_name);
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        marker.setLayoutParams(new ViewGroup.LayoutParams(52, ViewGroup.LayoutParams.WRAP_CONTENT));
+        marker.measure(displayMetrics.widthPixels, displayMetrics.heightPixels);
+        marker.layout(0, 0, displayMetrics.widthPixels, displayMetrics.heightPixels);
+        marker.buildDrawingCache();
+        Bitmap bitmap = Bitmap.createBitmap(marker.getMeasuredWidth(), marker.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        marker.draw(canvas);
+
+        return bitmap;
     }
 }

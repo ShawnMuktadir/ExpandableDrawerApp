@@ -8,30 +8,39 @@ public class SearchVisitedPostResponse {
     @SerializedName("id")
     @Expose
     private String id;
+
     @SerializedName("mobile_number")
     @Expose
     private String mobileNumber;
+
     @SerializedName("end_let")
     @Expose
     private String endLet;
+
     @SerializedName("end_long")
     @Expose
     private String endLong;
+
     @SerializedName("start_let")
     @Expose
     private String startLet;
+
     @SerializedName("start_long")
     @Expose
     private String startLong;
+
     @SerializedName("place_id")
     @Expose
     private String placeId;
+
     @SerializedName("date_visited")
     @Expose
     private String dateVisited;
+
     @SerializedName("token_id")
     @Expose
     private String tokenId;
+
     @SerializedName("address")
     @Expose
     private String address;

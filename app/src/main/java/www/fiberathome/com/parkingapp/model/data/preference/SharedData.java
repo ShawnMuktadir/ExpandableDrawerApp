@@ -3,6 +3,7 @@ package www.fiberathome.com.parkingapp.model.data.preference;
 import android.location.Location;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.gson.Gson;
 
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.module.geoFenceInterface.MyLatLng;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingSensors;
-import www.fiberathome.com.parkingapp.model.sensors.SensorArea;
+import www.fiberathome.com.parkingapp.model.response.sensors.SensorArea;
 
 public final class SharedData {
 
@@ -39,6 +40,15 @@ public final class SharedData {
     private String registrationFullName;
     private String otp;
     private String forgetPasswordMobile;
+    private String selectedLanguage;
+
+    public String getSelectedLanguage() {
+        return selectedLanguage;
+    }
+
+    public void setSelectedLanguage(String selectedLanguage) {
+        this.selectedLanguage = selectedLanguage;
+    }
 
     public String getForgetPasswordMobile() {
         return forgetPasswordMobile;
@@ -180,5 +190,15 @@ public final class SharedData {
 
     public void setLastLocation(Location lastLocation) {
         this.lastLocation = lastLocation;
+    }
+
+    private Marker previousAdapterSetMarkerEvent;
+
+    public Marker getPreviousAdapterSetMarkerEvent() {
+        return previousAdapterSetMarkerEvent;
+    }
+
+    public void setPreviousAdapterSetMarkerEvent(Marker previousAdapterSetMarkerEvent) {
+        this.previousAdapterSetMarkerEvent = previousAdapterSetMarkerEvent;
     }
 }

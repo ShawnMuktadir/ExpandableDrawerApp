@@ -9,172 +9,139 @@
 
     <string name="start_title">SMART PARKING APPLICATION</string>
     <string name="start_sub_title">A Project of DMP and LOCC</string>
-    <string name="login">LOGIN</string>
-    <string name="signup">SIGN UP</string>
+    <string name="login">Login</string>
+    <string name="signup">Sign Up</string>
     <string name="powered_by">Powered By: </string>
 
+    //title
     <string name="signup_title">Sign Up</string>
     <string name="signin_title">Sign In</string>
     <string name="btn_signin">Sign In</string>
     <string name="btn_retrieve_password">Retrieve Password</string>
 
-    <!-- hints -->
+    //hint
     <string name="hint_pass">Enter Password</string>
     <string name="hint_phoneno">Mobile Number</string>
     <string name="hint_old_password">Old Password</string>
     <string name="hint_new_password">New Password</string>
-    <string name="hint_confirm_password">Confrim Password</string>
+    <string name="hint_confirm_password">Confirm Password</string>
 
-    <string name="full_name">Full Name</string>
-    <string name="reg_num">Vehicle Registration Number</string>
-
-    <string name="profile_title">User Profile</string>
-    <string name="title_activity_map">Map</string>
-
-
-    <!-- Google Map API -->
-    <!--        <string name="google_maps_key">AIzaSyCsEedODXq-mkA1JYedp-Y-QARH0x4h0kI</string>-->
-
-    <!-- otp button -->
+    //OTP
     <string name="btn_retrive_otp">Retrieve OTP</string>
-
-    <!-- Error Message -->
-    <string name="err_msg_mobile">Enter valid mobile number!</string>
-    <string name="err_msg_password">Enter valid password!</string>
-    <string name="err_msg_fullname">Enter Full Name!</string>
-    <string name="err_msg_vehicle">Enter vehicle no!</string>
-    <string name="err_old_password">Enter valid old password!</string>
-    <string name="err_msg_pin">Enter valid pin!</string>
-    <string name="find_nearest">Find Nearest</string>
-    <string name="refresh">Refresh</string>
-
     <string name="pin_content_desc">PIN input field</string>
-    <string name="pin_label_text">PIN</string>
-
-    <!--Toolbar titles when navigation menu item is selected -->
-    <string-array name="nav_item_activity_title">
-        <item>Home</item>
-        <item>Photo</item>
-        <item>Movies</item>
-        <item>Notifications</item>
-    </string-array>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="openDrawer">Open</string>
-    <string name="closeDrawer">Close</string>
-
-
-    <!-- OTP text information -->
     <string name="msg_sit_back">Sit back &amp; Relax! while we verify your mobile number</string>
     <string name="msg_manual_otp">(Enter the OTP below in case if we fail to detect the SMS automatically)</string>
-    <string name="lbl_enter_otp">Enter OTP</string>
-    <string name="submit">Submit</string>
-    <string name="lbl_change_phone_number">Change Phone Number</string>
+    <string name="resend_otp">Resend OTP</string>
 
-
-    <!-- All Title -->
+    //password
     <string name="title_change_password">Change Password</string>
-    <string name="title_qr_code">QR Code</string>
-    <string name="title_profile">User Profile</string>
     <string name="title_forget_password">Forget Password</string>
+    <string name="retreive_password">Retrieve Password</string>
 
-
-    <string name="err_new_password">Enter valid new password!</string>
-    <string name="err_confirm_password">Enter valid confirm password!</string>
+    //error message
+    <string name="err_msg_mobile">Enter valid mobile number</string>
+    <string name="err_msg_fullname">Enter Full Name</string>
+    <string name="err_msg_vehicle">Enter vehicle no</string>
+    <string name="err_old_password">Enter valid old password</string>
+    <string name="err_msg_password">Enter valid password</string>
+    <string name="err_msg_pin">Enter valid pin</string>
+    <string name="find_nearest">Find Nearest</string>
+    <string name="err_new_password">Enter valid new password</string>
+    <string name="err_confirm_password">Enter valid confirm password</string>
     <string name="no_account_yet_click_here">No account yet? Click Here</string>
     <string name="forget_password_click_here">Forget Password? Click Here</string>
-    <string name="retreive_password">Retrieve Password</string>
+
+    //navigation
     <string name="home">Home</string>
     <string name="bookings">Bookings</string>
     <string name="profile">Profile</string>
-    <string name="qr_code">QR Code</string>
     <string name="logout">Logout</string>
-    <string name="create_account">Create Account</string>
-    <string name="already_a_member_click_here">Already a member? Click here</string>
-    <string name="notification">Notification</string>
-    <string name="my_account">My Account</string>
-    <string name="parking">Parking</string>
-    <string name="no_record_found">No Record Found</string>
-    <string name="parking_area_name">Parking Area Name</string>
-    <string name="address">Address</string>
-    <string name="connect_to_internet">Please Connect to Internet</string>
-    <string name="connect_to_internet_gps">Please Connect to GPS/Internet</string>
-    <string name="close_app">Close App</string>
-    <string name="conn_failed">Connection Failed</string>
-    <string name="ok">Ok</string>
-    <string name="retry">Retry</string>
-    <string name="demo_number">70</string>
-    <string name="parking_slots">Parking Slots</string>
-    <string name="subject_to_availability">Subject to availability</string>
-    <string name="get_direction">Get Direction</string>
-    <string name="welcome_to_locc_parking">Welcome, LOCC Smart Parking</string>
-    <string name="search_parking">Search Parking</string>
-    <string name="pay_bill">Pay Bill</string>
-    <string name="cancel">Cancel</string>
-    <string name="reserve">Reserve</string>
-    <string name="exit_message">Please Press here to exit!</string>
-    <string name="exit_message_main">Press OK to exit!</string>
     <string name="law">Law</string>
-    <string name="demo_price">Tk 100/h</string>
-    <string name="distance">2 km</string>
-    <string name="availability">Availability</string>
-    <string name="parking_time">Arrival 04.30pm - 12.30pm Departure </string>
-    <string name="menu_search">Search...</string>
-    <string name="bottom_Sheet_text">Choose a spot or swipe up for more</string>
-    <string name="nearest_parking_from_your_destination">Nearest Parking From Your Destination</string>
-
-    <string name="lorum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
-    <string name="search">Search…</string>
-    <string name="parking_spot">Parking Spot</string>
-    <string name="learn_law">Learn Laws</string>
-    <string name="your_account">Your Account</string>
     <string name="get_discount">Get Discount</string>
     <string name="give_review_rating">Give Rating/Review</string>
     <string name="follow_us">Follow Us</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="share">Share</string>
     <string name="your_booked">Your Booked</string>
-    <string name="parking_slot">Parking Slot 17</string>h
-    <string name="total_time">2.30h</string>
-    <string name="total_fair">Total: BDT726.00</string>
-    <string name="rate_tip">Rate and tip</string>
-    <string name="view_receipt">View Receipt</string>
-    <string name="get_help">Get Help</string>
-    <string name="time">4.86 mins</string>
-    <string name="title_activity_main2">Main2Activity</string>
+    <string name="notification">Notification</string>
+    <string name="my_account">My Account</string>
+    <string name="parking">Parking</string>
+    <string name="parking_spot">Parking Spot</string>
+    <string name="learn_law">Learn Laws</string>
+    <string name="openDrawer">Open</string>
+    <string name="closeDrawer">Close</string>
 
-    <string name="menu_home">Home</string>
-    <string name="menu_gallery">Gallery</string>
-    <string name="menu_slideshow">Slideshow</string>
-
-    <string name="home_second">Home Second</string>
-    <string name="search_law">Search Law</string>
+    //registration
+    <string name="car_number">Car Number</string>
+    <string name="nid_number">NID Number</string>
+    <string name="occupation">Occupation (Optional)</string>
+    <string name="signOut">Sign Out</string>
+    <string name="create_account">Create Account</string>
+    <string name="already_a_member_click_here">Already a member? Click here</string>
+    <string name="submit">Submit</string>
+    <string name="full_name">Full Name</string>
+    <string name="reg_num">Vehicle Registration Number</string>
     <string name="vehicle_no">Vehicle No</string>
     <string name="user_phone_no">User Phone No</string>
+
+    //parking slot
+    <string name="parking_slots">Parking Slots</string>
+    <string name="parking_area_name">Parking Area Name</string>
+    <string name="address">Address</string>
+    <string name="no_nearest_parking_area_found">No nearest parking area found</string>
+
+    //common
+    <string name="connect_to_internet">Please Connect to Internet</string>
+    <string name="connect_to_internet_gps">Please Connect to GPS/Internet</string>
+    <string name="close_app">Close App</string>
+    <string name="conn_failed">Connection Failed</string>
+    <string name="ok">OK</string>
+    <string name="retry">Retry</string>
+    <string name="demo_number">70</string>
+    <string name="subject_to_availability">Subject to availability</string>
+    <string name="get_direction">Get Direction</string>
+    <string name="welcome_to_locc_parking">Welcome, LOCC Smart Parking</string>
+    <string name="exit_message">Please Press here to exit!</string>
+    <string name="exit_message_main">Press OK to exit!</string>
+    <string name="distance">%1$s</string>
+    <string name="parking_time">Arrival 04.30pm - 12.30pm Departure </string>
+    <string name="confirm_booking">Confirm Booking</string>
+    <string name="unavailable_parking_spot">Unavailable Parking Spot</string>
+    <string name="no_parking_spot_message">You cannot reserve this spot for booking, as there is no parking slot</string>
+    <string name="confirm_booking_message">
+        We do not allow booking to the parking spot until you reach the parking spot</string>
+
+    //bottom sheet
+    <string name="bottom_Sheet_text">Choose a spot or swipe up for more</string>
+    <string name="nearest_parking_from_your_destination">Nearest Parking From Your Destination</string>
+
+    <string name="lorum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+        incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+        laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit
+        esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+        sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
 
     <string name="loream_ipsum">is simply dummy text of the printing and typesetting industry.
         Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s.</string>
 
     <string name="date">wed,5 Feb</string>
-    <string name="heading">Schedule Book</string>
-    <string name="arrived">Arrived at the parking spot :</string>
-    <string name="departure">Departure at the parking spot :</string>
+    <string name="schedule_heading">Schedule</string>
+    <string name="arrived">Arrived at the parking spot:</string>
+    <string name="departure">Departure at the parking spot:</string>
     <string name="book">Your book</string>
-    <string name="resend_otp">Resend OTP</string>
     <string name="gps_network_not_enabled">GPS network not enabled!</string>
     <string name="open_location_settings">Open Location Settings</string>
-    <string name="locc_smart_parking_app_needs_permission_to_access_device_location_to_provide_required_services_please_allow_the_permission">LOCC Smart Parking App needs permission to access device location to provide required services. Please allow the permission</string>
+    <string name="locc_smart_parking_app_needs_permission_to_access_all_time_device_location_to_provide_required_services_please_allow_the_permission">
+        LOCC Smart Parking App needs permission to access all time device location to provide required services. Please allow the permission</string>
+    <string name="locc_smart_parking_app_needs_permission_to_access_device_location_to_provide_required_services_please_allow_the_permission">
+        LOCC Smart Parking App needs permission to access device location to provide required services. Please allow the permission</string>
     <string name="permission_request">Permission Request</string>
     <string name="grant_permission">Grant Permission</string>
     <string name="no_data_available">Enter a valid place to search for on \nParking App</string>
-    <string name="schedule_parking">Parking Schedule</string>
-    <string name="by_using_this_app_you_agree_to_our_terms_and_conditions_amp_privacy_policy"><![CDATA[By Using this app you agree to our Terms and Conditions & Privacy Policy]]></string>
-    <string name="car_number">Car Number</string>
-    <string name="nid_number">NID Number</string>
-    <string name="occupation">Occupation (Optional)</string>
-    <string name="signOut">Sign Out</string>
-    <string name="password">Password</string>
+    <string name="schedule_parking">Schedule Parking Book</string>
+    <string name="by_using_this_app_you_agree_to_our_terms_and_conditions_amp_privacy_policy">
+        <![CDATA[By Using this app you agree to our Terms and Conditions & Privacy Policy]]></string>
+
     <string-array name="CountryCodes">
         <item>93,AF</item>
         <item>355,AL</item>
@@ -384,6 +351,10 @@
         <item>263,ZW</item>
     </string-array>
 
+    //booking
+    <string name="pay_bill">Pay Bill</string>
+    <string name="cancel">Cancel</string>
+    <string name="reserve">Reserve</string>
     <string name="time_ago_now">few moments ago</string>
     <string name="time_ago_full_seconds">%1$d seconds ago</string>
     <string name="time_ago_full_minute">%1$d minute ago</string>
@@ -394,16 +365,15 @@
     <string name="time_ago_full_days">%1$d days ago</string>
     <string name="time_ago_full_month">%1$d month ago</string>
     <string name="time_ago_full_months">%1$d months ago</string>
-
     <string name="time_ago_seconds">%1$d sec ago</string>
     <string name="time_ago_minute">%1$d min ago</string>
     <string name="time_ago_minutes">%1$d min ago</string>
     <string name="time_ago_hour">%1$d h ago</string>
     <string name="time_ago_hours">%1$d h ago</string>
     <string name="time_ago_yesterday_at">Yesterday at %1$s</string>
-    <string name="time_ago_days">%1$d d ago</string>
-    <string name="time_ago_month">%1$d m ago</string>
-    <string name="time_ago_months">%1$d m ago</string>
+    <string name="time_ago_days">%1$d days ago</string>
+    <string name="time_ago_month">%1$d month ago</string>
+    <string name="time_ago_months">%1$d month ago</string>
     <string name="grant_location">Enable Location</string>
     <string name="location_request">Enable Location</string>
     <string name="spinner_title">Vehicle reg.</string>
@@ -411,4 +381,82 @@
     <string name="your_books">Your Books</string>
     <string name="developed_by">Developed By:</string>
     <string name="locc">LOCC</string>
+    <string name="parking_slot">Parking Slot 17</string>h
+    <string name="total_time">2.30h</string>
+    <string name="total_fair">Total: BDT726.00</string>
+    <string name="rate_tip">Rate and tip</string>
+    <string name="view_receipt">View Receipt</string>
+    <string name="get_help">Get Help</string>
+    <string name="time">4.86 mins</string>
+
+    //language
+    <string name="language">Language</string>
+    <string name="lang_select_bn">BAN</string>
+    <string name="lang_select_en">ENG</string>
+    <string name="want_change_language">Want to change language?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+<!--    <string name="change_language">Choose a Language</string>-->
+    <string name="where_to">Where To?</string>
+    <string name="search">Search…</string>
+    <string name="connect_to_internet_splash">Please connect to internet and try again</string>
+    <string name="connect_to_gps">Connect to GPS</string>
+    <string name="connect_to_parking_app">Please enable GPS and turn on Internet to use Parking App</string>
+    <string name="upload_profile_photo">Try Again. Please Upload Profile Photo</string>
+    <string name="thanks_message">Thanks for being with us</string>
+    <string name="reservation_successful">Parking Spot has Reserved Successfully</string>
+    <string name="mobile_number_not_exist">Mobile Number doesn\'t exists</string>
+    <string name="time_toolbar">Time</string>
+    <string name="when_user_can_book">Once reach your destination you can reserve your booking spot</string>
+    <string name="fiber_home">Fiber@Home</string>
+    <string name="vehicle_no_d_13456">Vehicle No: D-13456</string>
+    <string name="enable_gps">Enable GPS</string>
+
+    <string name="set">Set</string>
+    <string name="you_can_book_parking_slot">You can Book your selected parking area now</string>
+    <string name="parking_spot_selection_rules">You have to exit from current destination to change new parking spot.
+        Do you want to change the parking spot?</string>
+    <string name="schedule_fragment_title">00:00–00:00pm</string>
+    <string name="parking_total_time">00:00min</string>
+    <string name="please_wait">Please wait…</string>
+    <string name="are_you_sure">Are you sure you want to exit?</string>
+    <string name="get_support">Get Support</string>
+    <string name="number">01924262749</string>
+    <string name="call">Call</string>
+    <string name="you_have_to_exit_from_current_destination">Do you want to change the parking spot?</string>
+    <string name="please_try_again">Please try again</string>
+    <string name="search_law">Search…</string>
+    <string name="english_item">English</string>
+    <string name="bangla_item">Bangla</string>
+    <string name="select_language">Select Language</string>
+    <string name="gps_disabled">GPS Disabled</string>
+    <string name="rules_for_using_app_through_gps">Gps is disabled, in order to use the application properly you need to enable GPS of your device</string>
+    <string name="permission_denied_permanently">Permission Denied permanently</string>
+    <string name="allow">Allow</string>
+    <string name="allow_this_permission_from_settings">Please allow this permission from settings</string>
+    <string name="u_cant_use_this_app_anymore">Permission Denied permanently,Please allow location for all the time from settings</string>
+    <string name="in_order_to_use_this_app">In order to get all services from this app, Please allow location for all the time from settings</string>
+    <string name="permission_all_time">Please allow All Time Location</string>
+    <string name="how_to_use_this_app">Please allow location for all the time from settings</string>
+    <string name="background_location_permission_allowed">Background location permission allowed</string>
+    <string name="foreground_location_permission_allowed">Foreground location permission allowed</string>
+    <string name="start_foreground_background_updates">Start Foreground and Background Location Updates</string>
+    <string name="start_foreground_location_updates_please_click_allow_all_the_time_for_using_parking_app">
+        Start foreground location updates, Please click allow all the time for using Parking App</string>
+    <string name="background_location_permission_denied_allow_all_the_time_for_using_parking_time">
+        Background location permission denied, Please click allow all the time for using Parking App</string>
+    <string name="location_permission_denied_please_click_allow">Location Permission denied, Please click allow all the time for using Parking App</string>
+    <string name="install_bangla_keyboard">Please search in bangla language for getting result. Install bangla enable keyboard &amp; change app language into Bangla</string>
+    <string name="not_available_at_bangla_search">Bangla searching is not available right now, Please wait until next version is coming</string>
+    <string name="change_app_language_to_english">Change app language into english</string>
+    <string name="permission_denied_u_cant_search_nearest_parking_location_from_you">
+        Permission Denied,You can\'t search nearest parking location from you. For further use please allow location</string>
+    <string name="enabling_gps">Enabling GPS</string>
+    <string name="slow_internet_connection">Internet connection is too slow</string>
+    <string name="no_data_found">No data found</string>
+    <string name="update">Update</string>
+    <string name="new_version_available">New version available</string>
+    <string name="please_update_the_app">Please, update app to new version to continue using</string>
+    <string name="no_thanks">No, thanks</string>
+    <string name="are_you_sure_you_want_to_exit">Are you sure you want to exit?</string>
 </resources>

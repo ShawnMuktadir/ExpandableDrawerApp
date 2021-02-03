@@ -9,7 +9,7 @@ public class AppConfig {
     public static final String URL_LOGIN        = BASE_URL + "verify_user.php";
     public static final String  URL_VERIFY_OTP   = BASE_URL + "verify_otp.php";
     public static final String URL_OTP_VERIFY= "http://163.47.157.195:5000/otp_varification";
-//    public static final String IMAGES_URL       = "http://163.47.157.195/parkingapp/uploads/";
+    //public static final String IMAGES_URL       = "http://163.47.157.195/parkingapp/uploads/";
     public static final String IMAGES_URL       = "http://163.47.157.198/parkingapp/uploads/";
     public static final String URL_FETCH_SENSORS = BASE_URL + "sensors.php";
 
@@ -29,12 +29,11 @@ public class AppConfig {
 
     public static final String URL_SAVE_SEARCH_HISTORY_POST = BASE_URL + "visitor_place_history.php";
     public static final String URL_SEARCH_HISTORY_GET = BASE_URL + "visitor_place_tracker_get.php";
-//    public static final String URL_SEARCH_HISTORY_GET = BASE_URL + "test1.php";
 
-    // SMS provider identification
-    // It should match with your SMS gateway origin
-    // You can use MSGIND, TESTER and ALERTS as sender ID
-    // If you want custom sender Id, approve Msg91 to get one
+    /* SMS provider identification
+     It should match with your SMS gateway origin
+     You can use MSGIND, TESTER and ALERTS as sender ID
+     If you want custom sender Id, approve Msg91 to get one*/
     public static final String SMS_ORIGIN       = "PARKINGAPP_";
     public static final String SHARED_PREFERENCES = "";
 

@@ -1,7 +1,7 @@
 package www.fiberathome.com.parkingapp.model.data.preference;
 
 /**
- * Created by Shawn on 03-March-2020.
+ * Created by Md. Muktadir on 03-March-2020.
  */
 
 public class StaticData {
@@ -14,13 +14,8 @@ public class StaticData {
     public static final String PHONE_REGEX = "^(?:\\+?88)?01[3-9]\\d{8}$";
     public static final String WEB_REGEX = "^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
 
-    //Session
-    public static final String PREFERENCE_NAME = "app_preference";
-    public static final String LOGIN_STATE = "login_state";
-    public static final String FIRST_LOGIN = "first_login";
-    public static final String UPDATE_AVAILABLE = "update_available";
-
+    //Language and locale
+    public static final String APP_LANGUAGE = "app_lang";
 
     public static final String OS = "os";
-
 }

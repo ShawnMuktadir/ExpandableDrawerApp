@@ -25,4 +25,12 @@
         <item name="android:dropDownVerticalOffset">16dp</item>
     </style>
 
+    <style name="AppTheme.OnlyStatusBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:statusBarColor">@color/white</item>
+    </style>
+
 </resources>

@@ -9,7 +9,7 @@ www.fiberathome.com.parkingapp.model.response.booking
 www.fiberathome.com.parkingapp.model.response.common
 www.fiberathome.com.parkingapp.model.response.search
 www.fiberathome.com.parkingapp.model.searchHistory
-www.fiberathome.com.parkingapp.model.sensors
+www.fiberathome.com.parkingapp.model.response.sensors
 www.fiberathome.com.parkingapp.model.termsCondition
 www.fiberathome.com.parkingapp.module.GoogleMapWebServiceNDistance
 www.fiberathome.com.parkingapp.module.GoogleMapWebServiceNDistance.MovingMarker

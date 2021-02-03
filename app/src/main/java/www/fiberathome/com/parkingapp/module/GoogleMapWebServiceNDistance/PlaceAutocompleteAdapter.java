@@ -237,6 +237,4 @@ public class PlaceAutocompleteAdapter
         Log.e(TAG, "Google API client is not connected for autocomplete query.");
         return null;
     }
-
-
 }

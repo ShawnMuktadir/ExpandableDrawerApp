@@ -3,102 +3,89 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <!--    <group android:checkableBehavior="single">-->
     <group
         android:id="@+id/grp1"
-        android:checkableBehavior="single">
+        android:checkableBehavior="single"
+        tools:targetApi="o">
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_home_black"
             android:iconTint="@color/black"
             android:title="@string/home" />
-<!--    </group>-->
-<!--    <group-->
-<!--        android:id="@+id/grp2"-->
-<!--        android:checkableBehavior="single">-->
+
         <item
             android:id="@+id/nav_parking"
             android:icon="@drawable/ic_parkingspot"
             android:iconTint="@color/black"
             android:title="@string/parking_spot" />
-<!--    </group>-->
-<!--    <group android:id="@+id/grp3">-->
+
         <item
             android:id="@+id/nav_booking"
             android:icon="@drawable/ic_your_books"
             android:iconTint="@color/black"
             android:title="@string/bookings" />
-<!--    </group>-->
-<!--    <group-->
-<!--        android:id="@+id/grp4"-->
-<!--        android:checkableBehavior="single">-->
+
         <item
             android:id="@+id/nav_law"
-            android:icon="@drawable/ic_laws"
+            android:icon="@drawable/ic_laws_new"
             android:iconTint="@color/black"
             android:title="@string/learn_law" />
-<!--    </group>-->
-<!--    <group-->
-<!--        android:id="@+id/grp5"-->
-<!--        android:checkableBehavior="single">-->
+
         <item
             android:id="@+id/nav_notification"
             android:icon="@drawable/ic_notification"
             android:iconTint="@color/black"
             android:title="@string/notification" />
-<!--    </group>-->
-<!--    <group-->
-<!--        android:id="@+id/grp6"-->
-<!--        android:checkableBehavior="single">-->
+
         <item
             android:id="@+id/nav_profile"
             android:icon="@drawable/ic_profilesettings"
             android:iconTint="@color/black"
             android:title="@string/my_account" />
     </group>
+
     <group
         android:id="@+id/grp7"
-        android:checkableBehavior="single">
+        android:checkableBehavior="none"
+        tools:targetApi="o">
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_settings"
             android:iconTint="@color/black"
             android:title="@string/action_settings" />
-<!--    </group>-->
-<!--    <group android:id="@+id/grp8">-->
+
         <item
             android:id="@+id/nav_get_discount"
             android:icon="@drawable/ic_discount"
             android:iconTint="@color/black"
+            android:visible="false"
             android:title="@string/get_discount" />
-<!--    </group>-->
-<!--    <group android:id="@+id/grp9">-->
+
         <item
             android:id="@+id/nav_rating_review"
             android:icon="@drawable/ic_rating"
             android:iconTint="@color/black"
+            android:visible="false"
             android:title="@string/give_review_rating" />
-<!--    </group>-->
-<!--    <group android:id="@+id/grp10">-->
+
         <item
             android:id="@+id/nav_follow_us"
             android:icon="@drawable/ic_followus"
             android:iconTint="@color/black"
+            android:visible="false"
             android:title="@string/follow_us" />
-<!--    </group>-->
-<!--    <group android:id="@+id/grp11">-->
+
         <item
             android:id="@+id/nav_privacy_policy"
             android:icon="@drawable/ic_privacypolicy"
             android:iconTint="@color/black"
             android:title="@string/privacy_policy" />
-<!--    </group>-->
-<!--    <group android:id="@+id/grp12">-->
+
         <item
             android:id="@+id/nav_share"
             android:icon="@drawable/ic_share"
             android:iconTint="@color/black"
             android:title="@string/share" />
     </group>
-    <!--    </group>-->
+
 </menu>
