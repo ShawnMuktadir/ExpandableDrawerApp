@@ -12,25 +12,16 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.karumi.dexter.Dexter;
-import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.DexterError;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.PermissionRequestErrorListener;
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
-
-import java.util.List;
 
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
-import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
+import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.permission.listener.DexterPermissionListener;
 import www.fiberathome.com.parkingapp.ui.permission.listener.PermissionInterface;
@@ -106,7 +97,7 @@ public class PermissionActivity extends BaseActivity implements PermissionInterf
             case Manifest.permission.ACCESS_FINE_LOCATION:
                 //Intent intent = new Intent(PermissionActivity.this, MainActivity.class);
                 Intent intent = new Intent(PermissionActivity.this, HomeActivity.class);
-                SharedPreManager.getInstance(context).setIsLocationPermissionGiven(true);
+                Preferences.getInstance(context).setIsLocationPermissionGiven(true);
                 startActivity(intent);
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -125,7 +116,7 @@ public class PermissionActivity extends BaseActivity implements PermissionInterf
         switch (permissionName) {
             case Manifest.permission.ACCESS_FINE_LOCATION:
                 permissionTV.setText(context.getResources().getString(R.string.permission_denied_permanently));
-                SharedPreManager.getInstance(context).setIsLocationPermissionGiven(false);
+                Preferences.getInstance(context).setIsLocationPermissionGiven(false);
                 permissionTV.setTextColor(ContextCompat.getColor(this, R.color.LogoRed));
                 break;
         }
@@ -163,7 +154,7 @@ public class PermissionActivity extends BaseActivity implements PermissionInterf
         switch (permissionName) {
             case Manifest.permission.ACCESS_FINE_LOCATION:
                 permissionTV.setText(context.getResources().getString(R.string.permission_denied_u_cant_search_nearest_parking_location_from_you));
-                SharedPreManager.getInstance(context).setIsLocationPermissionGiven(false);
+                Preferences.getInstance(context).setIsLocationPermissionGiven(false);
                 permissionTV.setTextColor(ContextCompat.getColor(this, R.color.LogoRed));
                 break;
         }
@@ -211,7 +202,7 @@ public class PermissionActivity extends BaseActivity implements PermissionInterf
                     public void onClick(DialogInterface arg0, int arg1) {
 //                        PermissionActivity.super.onBackPressed();
                         finish();
-                        SharedPreManager.getInstance(context).setIsLocationPermissionGiven(false);
+                        Preferences.getInstance(context).setIsLocationPermissionGiven(false);
                         TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                     }
                 }).create();

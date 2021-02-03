@@ -46,8 +46,8 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
-import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
-import www.fiberathome.com.parkingapp.model.loginUser.User;
+import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
+import www.fiberathome.com.parkingapp.model.user.User;
 import www.fiberathome.com.parkingapp.ui.booking.newBooking.BookingActivity;
 import www.fiberathome.com.parkingapp.ui.changePassword.ChangePasswordFragment;
 import www.fiberathome.com.parkingapp.ui.followUs.FollowUsActivity;
@@ -185,7 +185,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
             return true;
         } else if (item.getItemId() == R.id.menu_logout) {
             // do your code
-            SharedPreManager.getInstance(this).logout();
+            Preferences.getInstance(this).logout();
             startActivityWithFinish(LoginActivity.class);
             return true;
         }
@@ -335,7 +335,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
     }
 
     private void setupNavigationDrawerHeader() {
-        User user = SharedPreManager.getInstance(this).getUser();
+        User user = Preferences.getInstance(this).getUser();
         View headerView = navigationView.getHeaderView(0);
         TextView tvUserFullName = headerView.findViewById(R.id.header_fullname);
         TextView tvUserVehicleNo = headerView.findViewById(R.id.header_vehicle_no);

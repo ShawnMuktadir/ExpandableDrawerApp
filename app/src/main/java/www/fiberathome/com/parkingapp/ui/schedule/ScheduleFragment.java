@@ -60,7 +60,7 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
-import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
+import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.booking.Reservation;
 import www.fiberathome.com.parkingapp.module.notification.NotificationPublisher;
 import www.fiberathome.com.parkingapp.ui.booking.PaymentFragment;
@@ -351,7 +351,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                         if (minutes > 120) {
                             Toast.makeText(requireActivity(), "You can't set Booking time more than 2 hours", Toast.LENGTH_SHORT).show();
                         } else {
-                            storeReservation(SharedPreManager.getInstance(context).getUser().getMobileNo(),
+                            storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
                                     getDate(arrivedDate.getTime()), getDate(departedDate.getTime()), markerUid);
                         }
                     } else {

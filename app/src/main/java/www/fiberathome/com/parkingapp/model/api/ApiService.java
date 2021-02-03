@@ -1,30 +1,22 @@
 package www.fiberathome.com.parkingapp.model.api;
 
-import java.util.ArrayList;
 
-import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
-import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
-import retrofit2.http.Multipart;
 import retrofit2.http.POST;
-import retrofit2.http.Part;
+import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 import www.fiberathome.com.parkingapp.model.response.parkingSlot.ParkingSlotResponse;
-import www.fiberathome.com.parkingapp.model.searchHistory.Parameters;
-import www.fiberathome.com.parkingapp.model.searchHistory.SearchHistoryCommon;
-import www.fiberathome.com.parkingapp.model.response.common.CommonResponse;
 import www.fiberathome.com.parkingapp.model.response.search.SearchVisitedPlaceResponse;
-import www.fiberathome.com.parkingapp.model.response.search.SearchVisitedPostResponse;
 import www.fiberathome.com.parkingapp.model.response.sensors.SensorsResponse;
+import www.fiberathome.com.parkingapp.model.termsCondition.TermsConditionResponse;
 
 public interface ApiService {
 
     @FormUrlEncoded
     @POST("change_password.php")
-    Call<CommonResponse> updatePassword(
+    Call<BaseResponse> updatePassword(
             @Field("old_password") String old_password,
             @Field("new_password") String new_password,
             @Field("confirm_password") String confirm_password,
@@ -33,7 +25,7 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("change_password_otp.php")
-    Call<CommonResponse> forgetPassword(
+    Call<BaseResponse> forgetPassword(
             @Field("new_password") String new_password,
             @Field("confirm_password") String confirm_password,
             @Field("mobile_no") String mobile_no
@@ -41,7 +33,7 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("request_sms.php")
-    Call<CommonResponse> createUser(
+    Call<BaseResponse> createUser(
             @Field("fullname") String name,
             @Field("password") String password,
             @Field("mobile_no") String mobileNo,
@@ -50,8 +42,12 @@ public interface ApiService {
     );
 
     @FormUrlEncoded
+    @POST("verify_otp.php")
+    Call<BaseResponse> verifyOtp(@Field("otp") String otp);
+
+    @FormUrlEncoded
     @POST("visitor_place_history.php")
-    Call<CommonResponse> storeSearchHistory(
+    Call<BaseResponse> storeSearchHistory(
             @Field("mobile_number") String mobileNo,
             @Field("place_id") String placeId,
             @Field("end_let") String endLatitude,
@@ -62,30 +58,15 @@ public interface ApiService {
     );
 
     @FormUrlEncoded
-    @POST("verify_otp.php")
-    Call<CommonResponse> verifyOtp(@Field("otp") String otp);
-
-    @GET("visitor_place_tracker_get.php")
-    Call<SearchVisitedPlaceResponse> getVisitorData();
-
-    @FormUrlEncoded
-    @POST("visitor_place_history.php")
-    Call<SearchHistoryCommon> storeSearchHistory(@Field ("parameters") ArrayList<Parameters> parametersArrayList);
-
-    @Multipart
-    @POST("recent_visit_place")
-    Call<SearchVisitedPostResponse> storeSearchHistory(@Part("token_id") RequestBody tokenId, @Part("mobile_no") RequestBody mobileNo);
-
-    @POST("recent_visit_place")
-    Call<ResponseBody> postSearchHistory(@Body RequestBody body);
-
-    @FormUrlEncoded
-    @POST("visitor_place_history.php")
-    Call<ResponseBody> getSearchHistory(@Part("mobile_number") String mobileNo);
+    @POST("visitor_place_tracker_get.php")
+    Call<SearchVisitedPlaceResponse> getSearchHistory(@Field("mobile_number") String mobileNo);
 
     @GET("sensors.php")
     Call<SensorsResponse> getSensors();
 
     @GET("sensor_area.php")
     Call<ParkingSlotResponse> getParkingSlots();
+
+    @GET("terms_condition.php")
+    Call<TermsConditionResponse> getTermCondition();
 }

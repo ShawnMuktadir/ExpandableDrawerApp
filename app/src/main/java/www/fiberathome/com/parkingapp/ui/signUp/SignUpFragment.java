@@ -60,7 +60,7 @@ import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
-import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
+import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.ui.helper.ProgressView;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.privacyPolicy.PrivacyPolicyActivity;
@@ -156,7 +156,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         setListeners();
 
         // Check user is logged in
-        if (SharedPreManager.getInstance(context).isLoggedIn()) {
+        if (Preferences.getInstance(context).isLoggedIn()) {
             Intent intent = new Intent(context, HomeActivity.class);
             startActivity(intent);
             context.finish();
@@ -503,8 +503,8 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                         // FETCHING USER INFORMATION FROM DATABASE
                         JSONObject userJson = jsonObject.getJSONObject("user");
 
-                        if (SharedPreManager.getInstance(context).isWaitingForSMS()) {
-                            SharedPreManager.getInstance(context).setIsWaitingForSMS(false);
+                        if (Preferences.getInstance(context).isWaitingForSMS()) {
+                            Preferences.getInstance(context).setIsWaitingForSMS(false);
 
                             // MOVE TO ANOTHER ACTIVITY
                             showMessage("Dear " + userJson.getString("fullname") + ", Your registration completed successfully.");

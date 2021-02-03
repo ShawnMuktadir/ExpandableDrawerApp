@@ -21,7 +21,7 @@ import butterknife.Unbinder;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
-import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
+import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.permission.PermissionActivity;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
@@ -117,16 +117,16 @@ public class SplashFragment extends BaseFragment implements ForceUpdateChecker.O
 
     private void checkUserLogin() {
         // Check user is logged in
-        if (SharedPreManager.getInstance(context).isLoggedIn() && SharedPreManager.getInstance(context) != null && SharedPreManager.getInstance(context).isWaitingForLocationPermission()) {
-            Timber.e("activity start if -> %s", SharedPreManager.getInstance(context).isWaitingForLocationPermission());
+        if (Preferences.getInstance(context).isLoggedIn() && Preferences.getInstance(context) != null && Preferences.getInstance(context).isWaitingForLocationPermission()) {
+            Timber.e("activity start if -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
             //openActivity(new Intent(context, MainActivity.class));
             openActivity(new Intent(context, HomeActivity.class));
-        } else if (SharedPreManager.getInstance(context).isLoggedIn() && !SharedPreManager.getInstance(context).isWaitingForLocationPermission()) {
-            Timber.e("activity start else if -> %s", SharedPreManager.getInstance(context).isWaitingForLocationPermission());
+        } else if (Preferences.getInstance(context).isLoggedIn() && !Preferences.getInstance(context).isWaitingForLocationPermission()) {
+            Timber.e("activity start else if -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
             openActivity(new Intent(context, PermissionActivity.class));
             //openActivity(new Intent(context, LocationPermissionActivity.class));
         } else {
-            Timber.e("activity start else -> %s", SharedPreManager.getInstance(context).isWaitingForLocationPermission());
+            Timber.e("activity start else -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
             openActivity(new Intent(context, LoginActivity.class));
         }
     }

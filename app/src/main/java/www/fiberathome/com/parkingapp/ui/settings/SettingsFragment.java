@@ -33,7 +33,7 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
-import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
+import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.LocaleHelper;
@@ -118,16 +118,16 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
     public void onStart() {
         super.onStart();
         Timber.e("onStart called");
-        if (SharedData.getInstance().getSelectedLanguage() != null || SharedPreManager.getInstance(context).getLanguage() != null
-                || SharedPreManager.getInstance(context).getCheckedItem() != -1) {
+        if (SharedData.getInstance().getSelectedLanguage() != null || Preferences.getInstance(context).getLanguage() != null
+                || Preferences.getInstance(context).getCheckedItem() != -1) {
             builder.setTitle(context.getResources().getString(R.string.select_language));
             textViewLanguage.setText(SharedData.getInstance().getSelectedLanguage());
-            textViewLanguage.setText(SharedPreManager.getInstance(context).getLanguage());
-            checkedItem[0] = SharedPreManager.getInstance(context).getCheckedItem();
+            textViewLanguage.setText(Preferences.getInstance(context).getLanguage());
+            checkedItem[0] = Preferences.getInstance(context).getCheckedItem();
             Timber.e("checkedItem[0] onStart -> %s", checkedItem[0]);
         } else {
             builder.setTitle(context.getResources().getString(R.string.select_language));
-            textViewLanguage.setText(SharedPreManager.getInstance(context).getLanguage());
+            textViewLanguage.setText(Preferences.getInstance(context).getLanguage());
             Timber.e("select_language condition called");
         }
     }
@@ -152,7 +152,7 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
 
     @Override
     public void onStop() {
-        SharedPreManager.getInstance(context).setCheckedItem(checkedItem[0]);
+        Preferences.getInstance(context).setCheckedItem(checkedItem[0]);
         super.onStop();
     }
 
@@ -180,39 +180,39 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
                     // so that it should be selected when user opens the dialog next time
                     // and pass the instance to setSingleChoiceItems method
                     checkedItem[0] = which;
-                    SharedPreManager.getInstance(context).setCheckedItem(checkedItem[0]);
+                    Preferences.getInstance(context).setCheckedItem(checkedItem[0]);
 
                     switch (which) {
                         case 0:
-                            SharedPreManager.getInstance(context).setCheckedItem(checkedItem[0]);
+                            Preferences.getInstance(context).setCheckedItem(checkedItem[0]);
                             Timber.e("checkedItem[0] onClick -> %s", checkedItem[0]);
                             context = LocaleHelper.setLocale(context, "en");
                             resources = context.getResources();
                             textViewLanguage.setText(resources.getString(R.string.english_item));
                             //SharedData.getInstance().setSelectedLanguage(resources.getString(R.string.english_item));
-                            SharedPreManager.getInstance(context).setLanguage(resources.getString(R.string.english_item));
+                            Preferences.getInstance(context).setLanguage(resources.getString(R.string.english_item));
                             setNewLocale("en", true);
                             break;
                         case 1:
-                            SharedPreManager.getInstance(context).setCheckedItem(checkedItem[0]);
+                            Preferences.getInstance(context).setCheckedItem(checkedItem[0]);
                             Timber.e("checkedItem[0] onClick -> %s", checkedItem[0]);
                             context = LocaleHelper.setLocale(context, "bn");
                             resources = context.getResources();
                             textViewLanguage.setText(resources.getString(R.string.bangla_item));
                             //SharedData.getInstance().setSelectedLanguage(resources.getString(R.string.bangla_item));
-                            SharedPreManager.getInstance(context).setLanguage(resources.getString(R.string.bangla_item));
+                            Preferences.getInstance(context).setLanguage(resources.getString(R.string.bangla_item));
                             setNewLocale("bn", true);
                             break;
 
                         default:
                             context = LocaleHelper.setLocale(context, "en");
-                            SharedPreManager.getInstance(context).setCheckedItem(checkedItem[0]);
+                            Preferences.getInstance(context).setCheckedItem(checkedItem[0]);
                             Timber.e("checkedItem[0] onClick -> %s", checkedItem[0]);
                             context = LocaleHelper.setLocale(context, "en");
                             resources = context.getResources();
                             textViewLanguage.setText(resources.getString(R.string.english_item));
                             //SharedData.getInstance().setSelectedLanguage(resources.getString(R.string.english_item));
-                            SharedPreManager.getInstance(context).setLanguage(resources.getString(R.string.english_item));
+                            Preferences.getInstance(context).setLanguage(resources.getString(R.string.english_item));
                         /*case 2:
                             dialog.dismiss();
                             break;*/

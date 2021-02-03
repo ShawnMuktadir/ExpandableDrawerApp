@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.model.loginUser;
+package www.fiberathome.com.parkingapp.model.user;
 
 import com.google.gson.annotations.SerializedName;
 

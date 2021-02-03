@@ -77,10 +77,10 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
-import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
+import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.module.eventBus.GetDirectionEvent;
 import www.fiberathome.com.parkingapp.module.eventBus.SetMarkerEvent;
-import www.fiberathome.com.parkingapp.model.loginUser.User;
+import www.fiberathome.com.parkingapp.model.user.User;
 import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
 import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.ui.booking.newBooking.BookingFragment;
@@ -181,7 +181,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
         }
 
-        if (savedInstanceState == null && SharedPreManager.getInstance(context).isWaitingForLocationPermission() && new LocationHelper(this).isLocationEnabled()) {
+        if (savedInstanceState == null && Preferences.getInstance(context).isWaitingForLocationPermission() && new LocationHelper(this).isLocationEnabled()) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, HomeFragment.newInstance()).commit();
             navigationView.setCheckedItem(R.id.nav_home);
             linearLayoutToolbarTime.setVisibility(View.VISIBLE);
@@ -203,7 +203,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             //  TastyToastUtils.showTastyInfoToast(context,"Sorry! You can't use Parking App. For use, please enable your GPS!");
         }
 
-        if (!SharedPreManager.getInstance(this).isLoggedIn()) {
+        if (!Preferences.getInstance(this).isLoggedIn()) {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
             finish();
@@ -237,7 +237,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             return true;
         } else if (item.getItemId() == R.id.menu_logout) {
             // do your code
-            SharedPreManager.getInstance(this).logout();
+            Preferences.getInstance(this).logout();
             Intent intentLogout = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intentLogout);
             finishAffinity();
@@ -675,7 +675,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     private void setupNavigationDrawerHeader() {
-        User user = SharedPreManager.getInstance(this).getUser();
+        User user = Preferences.getInstance(this).getUser();
         View headerView = navigationView.getHeaderView(0);
         TextView tvUserFullName = headerView.findViewById(R.id.header_fullname);
         TextView tvUserVehicleNo = headerView.findViewById(R.id.header_vehicle_no);
@@ -821,11 +821,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             finish();
             Intent intent = new Intent(MainActivity.this, PermissionActivity.class);
             startActivity(intent);
-            SharedPreManager.getInstance(context).setIsLocationPermissionGiven(false);
+            Preferences.getInstance(context).setIsLocationPermissionGiven(false);
 //            return;
         } else {
             // Write you code here if permission already given.
-            SharedPreManager.getInstance(context).setIsLocationPermissionGiven(true);
+            Preferences.getInstance(context).setIsLocationPermissionGiven(true);
 
         }
     }

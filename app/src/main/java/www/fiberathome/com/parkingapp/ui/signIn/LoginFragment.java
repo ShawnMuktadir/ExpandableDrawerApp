@@ -51,12 +51,11 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
-import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
-import www.fiberathome.com.parkingapp.model.loginUser.User;
+import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
+import www.fiberathome.com.parkingapp.model.user.User;
 import www.fiberathome.com.parkingapp.ui.forgetPassword.ForgetPasswordActivity;
 import www.fiberathome.com.parkingapp.ui.helper.ProgressView;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
-import www.fiberathome.com.parkingapp.ui.permission.LocationPermissionActivity;
 import www.fiberathome.com.parkingapp.ui.permission.PermissionActivity;
 import www.fiberathome.com.parkingapp.ui.signUp.SignUpActivity;
 import www.fiberathome.com.parkingapp.ui.verifyPhone.VerifyPhoneActivity;
@@ -139,16 +138,16 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
 
         setListeners();
 
-        if (SharedPreManager.getInstance(context).isLoggedIn() && SharedPreManager.getInstance(context) != null && SharedPreManager.getInstance(context).isWaitingForLocationPermission()) {
-            Timber.e("isWaitingForLocationPermission -> %s", SharedPreManager.getInstance(context).isWaitingForLocationPermission());
+        if (Preferences.getInstance(context).isLoggedIn() && Preferences.getInstance(context) != null && Preferences.getInstance(context).isWaitingForLocationPermission()) {
+            Timber.e("isWaitingForLocationPermission -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
             //Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             Intent intent = new Intent(context, HomeActivity.class);
             startActivity(intent);
             context.finish();
             return;
-        } else if (SharedPreManager.getInstance(context).isLoggedIn() && !SharedPreManager.getInstance(context).isWaitingForLocationPermission()) {
+        } else if (Preferences.getInstance(context).isLoggedIn() && !Preferences.getInstance(context).isWaitingForLocationPermission()) {
             //Timber.e("location check else method called");
-            Timber.e("isWaitingForLocationPermission else -> %s", SharedPreManager.getInstance(context).isWaitingForLocationPermission());
+            Timber.e("isWaitingForLocationPermission else -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
             Intent intent = new Intent(context, PermissionActivity.class);
             //Intent intent = new Intent(context, LocationPermissionActivity.class);
             startActivity(intent);
@@ -407,7 +406,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                     user.setProfilePic(userJson.getString("image"));
 
                     // storing the user in sharedPreference
-                    SharedPreManager.getInstance(context).userLogin(user);
+                    Preferences.getInstance(context).userLogin(user);
                     Timber.e("user after login -> %s", new Gson().toJson(user));
 
                     if (response.equals("Please verify Your Account by OTP")) {
@@ -421,20 +420,20 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                         // Move to another Activity
 
                         if ((ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
-                            Timber.e("activity login if -> %s", SharedPreManager.getInstance(context).isWaitingForLocationPermission());
+                            Timber.e("activity login if -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
                             Intent intent = new Intent(context, PermissionActivity.class);
                             //Intent intent = new Intent(context, LocationPermissionActivity.class);
                             startActivity(intent);
                             context.finish();
                             //Toast.makeText(context, "nai ami", Toast.LENGTH_SHORT).show();
-                        } else if (!SharedPreManager.getInstance(context).isWaitingForLocationPermission()) {
-                            Timber.e("activity login else if -> %s", SharedPreManager.getInstance(context).isWaitingForLocationPermission());
+                        } else if (!Preferences.getInstance(context).isWaitingForLocationPermission()) {
+                            Timber.e("activity login else if -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
                             Intent intent = new Intent(context, PermissionActivity.class);
                             //Intent intent = new Intent(context, LocationPermissionActivity.class);
                             startActivity(intent);
                             context.finish();
                         } else {
-                            Timber.e("activity login else -> %s", SharedPreManager.getInstance(context).isWaitingForLocationPermission());
+                            Timber.e("activity login else -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
                             //Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             Intent intent = new Intent(context, HomeActivity.class);
                             startActivity(intent);

@@ -5,9 +5,9 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-import www.fiberathome.com.parkingapp.model.response.common.CommonResponse;
+import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 
-public class TermsConditionResponse extends CommonResponse {
+public class TermsConditionResponse extends BaseResponse {
 
     @SerializedName("termsCondition")
     @Expose

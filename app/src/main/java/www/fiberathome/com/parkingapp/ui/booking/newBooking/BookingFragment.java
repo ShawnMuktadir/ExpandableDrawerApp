@@ -42,7 +42,7 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
-import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
+import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingArea;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
@@ -107,7 +107,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
 
         setListeners();
 
-        String mobileNo = SharedPreManager.getInstance(context).getUser().getMobileNo();
+        String mobileNo = Preferences.getInstance(context).getUser().getMobileNo();
         if (ApplicationUtils.checkInternet(context)) {
             fetchParkingBookingSpot(mobileNo);
         } else {

@@ -1,7 +1,6 @@
 package www.fiberathome.com.parkingapp.ui.changePassword;
 
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,7 +10,6 @@ import com.google.gson.Gson;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -37,10 +35,9 @@ import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
-import www.fiberathome.com.parkingapp.model.loginUser.User;
-import www.fiberathome.com.parkingapp.model.response.common.CommonResponse;
-import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
-import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
+import www.fiberathome.com.parkingapp.model.user.User;
+import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
+import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
@@ -215,7 +212,7 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
     private void changePassword() {
 
         if (checkFields()) {
-            User user = SharedPreManager.getInstance(getContext()).getUser();
+            User user = Preferences.getInstance(getContext()).getUser();
             String oldPassword = editTextOldPassword.getText().toString().trim();
             String newPassword = editTextNewPassword.getText().toString().trim();
             String confirmPassword = editTextConfirmPassword.getText().toString().trim();
@@ -256,28 +253,27 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
     }
 
     private void updatePassword(String oldPassword, String newPassword, String confirmPassword, String mobileNo) {
-        /*ProgressDialog progressDialog = ApplicationUtils.progressDialog(context,
-                "Please wait...");*/
+
         showLoading(context);
 
         // Changing Password through UI Service.
         ApiService service = ApiClient.getRetrofitInstance(AppConfig.URL_CHANGE_PASSWORD).create(ApiService.class);
-        Call<CommonResponse> passwordUpgradeCall = service.updatePassword(oldPassword, newPassword, confirmPassword, mobileNo);
+        Call<BaseResponse> passwordUpgradeCall = service.updatePassword(oldPassword, newPassword, confirmPassword, mobileNo);
 
         // Gathering results.
-        passwordUpgradeCall.enqueue(new Callback<CommonResponse>() {
+        passwordUpgradeCall.enqueue(new Callback<BaseResponse>() {
             @Override
-            public void onResponse(@NonNull Call<CommonResponse> call, @NonNull Response<CommonResponse> response) {
-                Timber.e("change password response message -> %s", response.message());
+            public void onResponse(@NonNull Call<BaseResponse> call, @NonNull Response<BaseResponse> response) {
+
                 Timber.e("change password response body-> %s", new Gson().toJson(response.body()));
 
-                //progressDialog.dismiss();
                 hideLoading();
+
                 if (response.body() != null) {
                     if (!response.body().getError()) {
                         showMessage(response.body().getMessage());
 
-                        SharedPreManager.getInstance(context).logout();
+                        Preferences.getInstance(context).logout();
                         Intent intentLogout = new Intent(context, LoginActivity.class);
                         startActivity(intentLogout);
                         if (getActivity()!= null) {
@@ -290,7 +286,7 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
             }
 
             @Override
-            public void onFailure(Call<CommonResponse> call, Throwable errors) {
+            public void onFailure(Call<BaseResponse> call, Throwable errors) {
                 Timber.e("Throwable Errors: -> %s", errors.toString());
             }
         });

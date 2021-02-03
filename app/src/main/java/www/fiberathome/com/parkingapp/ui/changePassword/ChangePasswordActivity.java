@@ -2,8 +2,8 @@ package www.fiberathome.com.parkingapp.ui.changePassword;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -29,9 +29,9 @@ import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
-import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
-import www.fiberathome.com.parkingapp.model.loginUser.User;
-import www.fiberathome.com.parkingapp.model.response.common.CommonResponse;
+import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
+import www.fiberathome.com.parkingapp.model.user.User;
+import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
@@ -61,6 +61,7 @@ public class ChangePasswordActivity extends BaseActivity implements View.OnClick
         initUI();
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -121,11 +122,15 @@ public class ChangePasswordActivity extends BaseActivity implements View.OnClick
 
             // COLLECT OLD PASSWORD | NEW PASSWORD | CONFIRMATION PASSWORD
 
-            User user = SharedPreManager.getInstance(context).getUser();
+            User user = Preferences.getInstance(context).getUser();
+
             String oldPassword = SharedData.getInstance().getOtp().trim();
+
             String newPassword = editTextNewPassword.getText().toString().trim();
+
             String confirmPassword = editTextConfirmPassword.getText().toString().trim();
             //String mobileNo = user.getMobileNo().trim();
+
             String mobileNo = SharedData.getInstance().getForgetPasswordMobile();
 
             if (validatePassword()) {
@@ -137,8 +142,6 @@ public class ChangePasswordActivity extends BaseActivity implements View.OnClick
     }
 
     private boolean checkFields() {
-        /*editTextOldPassword.requestFocus();
-        boolean isOldPasswordValid = Validator.checkValidity(textInputLayoutOldPassword, editTextOldPassword.getText().toString(), context.getString(R.string.err_old_password), "textPassword");*/
         boolean isNewPasswordValid = Validator.checkValidity(textInputLayoutNewPassword, editTextNewPassword.getText().toString(), context.getString(R.string.err_new_password), "textPassword");
         boolean isConfirmPasswordValid = Validator.checkValidity(textInputLayoutConfirmPassword, editTextConfirmPassword.getText().toString(), context.getString(R.string.err_confirm_password), "textPassword");
         return isNewPasswordValid && isConfirmPasswordValid;
@@ -173,12 +176,12 @@ public class ChangePasswordActivity extends BaseActivity implements View.OnClick
 
         // Changing Password through UI Service.
         ApiService service = ApiClient.getRetrofitInstance(AppConfig.URL_CHANGE_PASSWORD_OTP).create(ApiService.class);
-        Call<CommonResponse> passwordUpgradeCall = service.forgetPassword(newPassword, confirmPassword, mobileNo);
+        Call<BaseResponse> passwordUpgradeCall = service.forgetPassword(newPassword, confirmPassword, mobileNo);
 
         // Gathering results.
-        passwordUpgradeCall.enqueue(new Callback<CommonResponse>() {
+        passwordUpgradeCall.enqueue(new Callback<BaseResponse>() {
             @Override
-            public void onResponse(@NonNull Call<CommonResponse> call, @NonNull Response<CommonResponse> response) {
+            public void onResponse(@NonNull Call<BaseResponse> call, @NonNull Response<BaseResponse> response) {
                 Timber.e("response -> %s", response.message());
 
                 progressDialog.dismiss();
@@ -189,7 +192,7 @@ public class ChangePasswordActivity extends BaseActivity implements View.OnClick
                         //editTextOldPassword.setText("");
                         editTextNewPassword.setText("");
                         editTextConfirmPassword.setText("");
-                        SharedPreManager.getInstance(context).logout();
+                        Preferences.getInstance(context).logout();
                         Intent intentLogout = new Intent(context, LoginActivity.class);
                         startActivity(intentLogout);
                         finish();
@@ -200,7 +203,7 @@ public class ChangePasswordActivity extends BaseActivity implements View.OnClick
             }
 
             @Override
-            public void onFailure(@NonNull Call<CommonResponse> call, @NonNull Throwable errors) {
+            public void onFailure(@NonNull Call<BaseResponse> call, @NonNull Throwable errors) {
                 Timber.e("Throwable Errors: -> %s", errors.toString());
             }
         });

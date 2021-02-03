@@ -2,9 +2,7 @@ package www.fiberathome.com.parkingapp.base;
 
 import android.Manifest;
 import android.animation.ObjectAnimator;
-import android.app.Activity;
 import android.app.PendingIntent;
-import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -50,12 +48,9 @@ import java.util.List;
 import java.util.Locale;
 
 import timber.log.Timber;
-import www.fiberathome.com.parkingapp.BuildConfig;
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
+import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
-import www.fiberathome.com.parkingapp.utils.DialogUtil;
-import www.fiberathome.com.parkingapp.utils.ForceUpdateChecker;
 import www.fiberathome.com.parkingapp.utils.GeoFenceBroadcastReceiver;
 import www.fiberathome.com.parkingapp.utils.GeofenceConstants;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
@@ -128,13 +123,13 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
 
         if (Locale.getDefault().getLanguage().equals("en")) {
             Timber.e("en if checked");
-            SharedPreManager.getInstance(context).setLanguage(context.getResources().getString(R.string.english_item));
+            Preferences.getInstance(context).setLanguage(context.getResources().getString(R.string.english_item));
         } else if (Locale.getDefault().getLanguage().equals("bn")) {
             Timber.e("en bn if checked");
-            SharedPreManager.getInstance(context).setLanguage(context.getResources().getString(R.string.bangla_item));
+            Preferences.getInstance(context).setLanguage(context.getResources().getString(R.string.bangla_item));
         } else {
             Timber.e("en else checked");
-            SharedPreManager.getInstance(context).setLanguage(context.getResources().getString(R.string.english_item));
+            Preferences.getInstance(context).setLanguage(context.getResources().getString(R.string.english_item));
         }
 
         snackbar = Snackbar.make(this.findViewById(android.R.id.content), context.getResources().getString(R.string.connect_to_internet), 86400000);

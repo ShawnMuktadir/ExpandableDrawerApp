@@ -22,8 +22,8 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 import java.util.Objects;
 
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.model.loginUser.User;
-import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
+import www.fiberathome.com.parkingapp.model.user.User;
+import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -49,7 +49,7 @@ public class QRCodeFragment extends Fragment {
 
         QRCode = view.findViewById(R.id.sample_qr_iv);
 
-        User user = SharedPreManager.getInstance(getContext()).getUser();
+        User user = Preferences.getInstance(getContext()).getUser();
         Objects.requireNonNull(requireActivity()).setTitle(user.getFullName());
 
         //show QR on create

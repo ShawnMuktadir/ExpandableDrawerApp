@@ -39,25 +39,29 @@ public class PrivacyPolicyAdapter extends RecyclerView.Adapter<RecyclerView.View
         View itemView = LayoutInflater.
                 from(parent.getContext()).
                 inflate(R.layout.privacy_policy_row, parent, false);
+
         context = parent.getContext();
+
         return new PrivacyPolicyViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         PrivacyPolicyViewHolder privacyPolicyViewHolder = (PrivacyPolicyViewHolder) holder;
+
         TermsCondition termsCondition = termsConditions.get(position);
+
         Timber.e("termsConditions adapter-> %s", new Gson().toJson(termsConditions));
 
-        if (!termsCondition.getTermsConditionDomain().equals("")) {
-            privacyPolicyViewHolder.tvPrivacyHeader.setText(termsCondition.getTermsConditionDomain());
+        if (!termsCondition.getTitle().equals("")) {
+            privacyPolicyViewHolder.tvPrivacyHeader.setText(termsCondition.getTitle());
         } else {
             privacyPolicyViewHolder.tvPrivacyHeader.setVisibility(View.GONE);
         }
 
-        privacyPolicyViewHolder.tvPrivacyHeader.setText(termsCondition.getTermsConditionDomain());
+        privacyPolicyViewHolder.tvPrivacyHeader.setText(termsCondition.getTitle());
 
-        privacyPolicyViewHolder.tvPrivacyBody.setText(termsCondition.getTermsConditionBody());
+        privacyPolicyViewHolder.tvPrivacyBody.setText(termsCondition.getDescription());
 
         privacyPolicyViewHolder.tvPrivacyBody.setOnClickListener(v -> {
             if(isTextViewClicked) {

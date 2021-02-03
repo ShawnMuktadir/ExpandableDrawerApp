@@ -136,8 +136,9 @@ import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.api.Common;
 import www.fiberathome.com.parkingapp.model.api.IGoogleApi;
 import www.fiberathome.com.parkingapp.model.data.AppConstants;
+import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
-import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
+import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingSensors;
 import www.fiberathome.com.parkingapp.model.response.search.SearchVisitorData;
 import www.fiberathome.com.parkingapp.model.response.search.SelectedPlace;
@@ -367,8 +368,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private int getDirectionSearchButtonClicked = 0;
     private int getDirectionMarkerButtonClicked = 0;
     private int getDirectionBottomSheetButtonClicked = 0;
+
     private ProgressDialog progressDialog;
-    private ProgressDialog bottomSheetProgressDialog;
+
     public int fromMarkerRouteDrawn = 0;
 
     //route flag
@@ -399,6 +401,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private final ArrayList<BookingSensors> bookingSensorsMarkerArrayList = new ArrayList<>();
 
     private Marker previousMarker = null;
+
     private Location onConnectedLocation;
 
     private final ArrayList<BookingSensors> bookingSensorsArrayList = new ArrayList<>();
@@ -1323,6 +1326,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         super.onDestroyView();
     }
 
+    private Marker searchPlaceMarker;
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -1337,18 +1342,20 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
             //new search result
             SelectedPlace selectedPlace = (SelectedPlace) data.getSerializableExtra(NEW_PLACE_SELECTED); //This line may produce null point exception
+
             if (selectedPlace != null) {
                 previousMarker = null;
+
                 hideNoData();
 
-                //Toast.makeText(context, "1639  previous null", Toast.LENGTH_SHORT).show();
                 searchPlaceLatLng = new LatLng(selectedPlace.getLatitude(), selectedPlace.getLongitude());
 
                 String areaName = selectedPlace.getAreaName();
                 String areaAddress = selectedPlace.getAreaAddress();
                 String placeId = selectedPlace.getPlaceId();
 
-                storeVisitedPlace(SharedPreManager.getInstance(context).getUser().getMobileNo(), placeId,
+                //store visited place
+                storeVisitedPlace(Preferences.getInstance(context).getUser().getMobileNo(), placeId,
                         selectedPlace.getLatitude(), selectedPlace.getLongitude(),
                         onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), areaName);
 
@@ -1358,24 +1365,20 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 btnSearchGetDirection.setVisibility(View.VISIBLE);
                 btnSearchGetDirection.setEnabled(true);
                 imageViewSearchBack.setVisibility(View.VISIBLE);
-                //Timber.e("selectedPlace searchPlaceLatLng -> %s", searchPlaceLatLng);
 
                 if (mMap != null)
                     mMap.clear();
+
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(searchPlaceLatLng);
                 coordList.add(new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));
                 markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
-                mMap.addMarker(markerOptions);
+                searchPlaceMarker = mMap.addMarker(markerOptions);
                 //move map camera
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 13.5f), 500, null);
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 13.5f));
 
-                /*if (ApplicationUtils.checkInternet(context)) {
-                    fetchSensorRetrofit(onConnectedLocation);
-                } else {
-                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
-                }*/
+                String searchPlaceName = areaName;
 
                 if (onConnectedLocation != null && searchPlaceLatLng != null) {
                     TaskParser taskParser = new TaskParser();
@@ -1384,27 +1387,26 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                     Timber.e("searchDistance -> %s", searchDistance);
 
-                    layoutSearchVisible(true, areaName, "0", textViewSearchParkingDistance.getText().toString(), searchPlaceLatLng);
+                    layoutSearchVisible(true, searchPlaceName, "0",
+                            textViewSearchParkingDistance.getText().toString(), searchPlaceLatLng);
 
                     bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._130sdp));
 
-                    if (searchDistance < 3000) {
-                        adjustValue = 1;
-                    }
-
                     double kim = (searchDistance / 1000) + adjustValue;
 
-                    double searchDoubleDuration = ApplicationUtils.convertToDouble(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(searchDistance * 2.43));
+                    double searchDoubleDuration = ApplicationUtils.convertToDouble(new DecimalFormat("##.#",
+                            new DecimalFormatSymbols(Locale.US)).format(searchDistance * 2.43));
 
                     String searchStringDuration = String.valueOf(searchDoubleDuration);
 
-                    bookingSensorsArrayList.add(new BookingSensors(areaName, searchPlaceLatLng.latitude, searchPlaceLatLng.longitude,
+                    bookingSensorsArrayList.add(new BookingSensors(searchPlaceName, searchPlaceLatLng.latitude, searchPlaceLatLng.longitude,
                             searchDistance, "0", searchStringDuration,
                             context.getResources().getString(R.string.nearest_parking_from_your_destination),
                             BookingSensors.TEXT_INFO_TYPE, 0));
 
                     if (sensorArrayList != null) {
-                        for (int i = 0; i < sensorArrayList.size(); i++) {
+                        for (int i = 0; i < (sensorArrayList != null ? sensorArrayList.size() : 0); i++) {
+
                             Sensor sensor = sensorArrayList.get(i);
                             String latitude1 = sensor.getLatitude();
                             String longitude1 = sensor.getLongitude();
@@ -1442,9 +1444,20 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                                 bubbleSortArrayList(bookingSensorsArrayList);
 
-                                if (bottomSheetAdapter != null) {
-                                    bookingSensorsArrayListGlobal.clear();
-                                    bottomSheetAdapter.setDataList(bookingSensorsArrayList);
+                                if (sensorArrayList != null) {
+                                    if (bottomSheetAdapter != null) {
+                                        bookingSensorsArrayListGlobal.clear();
+                                        bookingSensorsArrayListGlobal.addAll(bookingSensorsArrayList);
+                                        bottomSheetAdapter.notifyDataSetChanged();
+                                    }
+                                }
+                            } else {
+                                if (sensorArrayList != null) {
+                                    if (bottomSheetAdapter != null) {
+                                        bookingSensorsArrayListGlobal.clear();
+                                        bookingSensorsArrayListGlobal.addAll(bookingSensorsArrayList);
+                                        bottomSheetAdapter.notifyDataSetChanged();
+                                    }
                                 }
                             }
                         }
@@ -1453,12 +1466,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     }
                 } else {
                     Toast.makeText(context, "Location cannot be identified!!!", Toast.LENGTH_SHORT).show();
-                }
-
-                if (bottomSheetAdapter != null) {
-                    bookingSensorsArrayListGlobal.clear();
-                    bookingSensorsArrayListGlobal.addAll(bookingSensorsArrayList);
-                    bottomSheetAdapter.notifyDataSetChanged();
                 }
             }
 
@@ -1488,16 +1495,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 markerOptions.position(searchPlaceLatLng);
                 coordList.add(new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));
                 markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
-                mMap.addMarker(markerOptions);
+                searchPlaceMarker = mMap.addMarker(markerOptions);
                 //move map camera
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 13.5f), 500, null);
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchPlaceLatLng, 13.5f));
-
-                /*if (ApplicationUtils.checkInternet(context)) {
-                    fetchSensorRetrofit(onConnectedLocation);
-                } else {
-                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
-                }*/
 
                 String searchPlaceName = areaName;
 
@@ -1555,7 +1556,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                     distanceForNearbyLoc = distanceForNearbyLoc + 0.5;
                                 }
 
-                                double nearbySearchDoubleDuration = ApplicationUtils.convertToDouble(new DecimalFormat("##.##", new DecimalFormatSymbols(Locale.US)).format(distanceForNearbyLoc * 2.43));
+                                double nearbySearchDoubleDuration = ApplicationUtils.convertToDouble(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(distanceForNearbyLoc * 2.43));
 
                                 String nearbySearchStringDuration = String.valueOf(nearbySearchDoubleDuration);
 
@@ -1857,13 +1858,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         googleApiClient.connect();
     }
 
-    private void dismissProgressDialog() {
-        if (progressDialog != null && progressDialog.isShowing())
-            progressDialog.dismiss();
-        else if (bottomSheetProgressDialog != null && bottomSheetProgressDialog.isShowing())
-            bottomSheetProgressDialog.dismiss();
-    }
-
     private final ArrayList<MarkerOptions> mMarkerArrayList = new ArrayList<>();
 
     private List<Sensor> sensorArrayList = new ArrayList<>();
@@ -2086,6 +2080,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             if (previousSecondMarkerDestinationMarker != null)
                 previousSecondMarkerDestinationMarker.remove();
 
+            if (searchPlaceMarker != null)
+                searchPlaceMarker.remove();
+
             if (SharedData.getInstance().getPreviousAdapterSetMarkerEvent() != null) {
                 previousAdapterSetMarkerEvent.remove();
                 SharedData.getInstance().setPreviousAdapterSetMarkerEvent(null);
@@ -2220,6 +2217,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     if (newBottomSheetMarker != null) {
                         newBottomSheetMarker.remove();
                         newBottomSheetMarker = null;
+                    }
+
+                    if (searchPlaceMarker != null) {
+                        searchPlaceMarker.remove();
                     }
 
                     if (bottomSheetPlaceLatLng != null) {
@@ -2482,49 +2483,32 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     private void storeVisitedPlace(String mobileNo, String placeId, double endLatitude, double endLongitude,
                                    double startLatitude, double startLongitude, String areaAddress) {
-        HttpsTrustManager.allowAllSSL();
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_SAVE_SEARCH_HISTORY_POST, response -> {
+        // UI Service.
+        ApiService service = ApiClient.getRetrofitInstance(AppConfig.URL_SAVE_SEARCH_HISTORY_POST).create(ApiService.class);
+        Call<BaseResponse> sensorsCall = service.storeSearchHistory(mobileNo, placeId, String.valueOf(endLatitude),
+                String.valueOf(endLongitude), String.valueOf(startLatitude), String.valueOf(startLongitude), String.valueOf(areaAddress));
 
-            try {
-                //converting response to json object
-                JSONObject jsonObject = new JSONObject(response);
-                Timber.e("jsonObject -> %s", jsonObject.toString());
-
-                // if no error response
-                if (!jsonObject.getBoolean("error")) {
-                    Timber.e("storeVisitedPlace jsonObject if called");
-                    Timber.e("storeVisitedPlace error message if block-> %s", jsonObject.getString("message"));
-
-                } else {
-                    Timber.e("storeVisitedPlace jsonObject else called");
-                    Timber.e("storeVisitedPlace error message else block-> %s", jsonObject.getString("message"));
-                }
-            } catch (JSONException e) {
-                Timber.e("storeVisitedPlace jsonObject catch -> %s", e.getMessage());
-                e.printStackTrace();
-            }
-
-        }, error -> {
-            Timber.e("storeVisitedPlace jsonObject onErrorResponse -> %s", error.getMessage());
-        }) {
+        // Gathering results.
+        sensorsCall.enqueue(new Callback<BaseResponse>() {
             @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("mobile_number", mobileNo);
-                params.put("place_id", placeId);
-                params.put("end_let", String.valueOf(endLatitude));
-                params.put("end_long", String.valueOf(endLongitude));
-                params.put("start_let", String.valueOf(startLatitude));
-                params.put("start_long", String.valueOf(startLongitude));
-                params.put("address", areaAddress);
+            public void onResponse(@NonNull Call<BaseResponse> call, @NonNull retrofit2.Response<BaseResponse> response) {
+                Timber.e("response -> %s", response.message());
 
-                return params;
+                if (response.body() != null && !response.body().getError()) {
+                    if (response.isSuccessful()) {
+                        Timber.e("response search result store -> %s", new Gson().toJson(response.body()));
+                    } else {
+                        Timber.e("Errors: -> %s",new Gson().toJson(response.message()));
+                    }
+                }
             }
-        };
 
-        stringRequest.setRetryPolicy(new DefaultRetryPolicy(50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        ParkingApp.getInstance().addToRequestQueue(stringRequest, TAG);
+            @Override
+            public void onFailure(@NonNull Call<BaseResponse> call, @NonNull Throwable errors) {
+                Timber.e("Throwable Errors: -> %s", errors.toString());
+            }
+        });
     }
 
     //bubble sort for nearest parking spot from searched area
@@ -2854,12 +2838,12 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             public void run() {
                 searchPlaceLatLng = event.location;
 
-                MarkerOptions markerOptions = new MarkerOptions();
+                /*MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(searchPlaceLatLng);
 
                 coordList.add(new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));
                 markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
-                mMap.addMarker(markerOptions);
+                mMap.addMarker(markerOptions);*/
 
                 btnSearchGetDirection.setVisibility(View.VISIBLE);
 
@@ -3238,9 +3222,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                 fetchSensorRetrofit(onConnectedLocation);
 
-                /*fetchBottomSheetSensorsWithoutProgressBar(onConnectedLocation);
-                fetchSensors(onConnectedLocation);*/
-
                 buttonSearch.setText(null);
                 linearLayoutBottom.setVisibility(View.GONE);
                 linearLayoutSearchBottom.setVisibility(View.GONE);
@@ -3413,11 +3394,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                         buttonSearch.setVisibility(View.GONE);
 
-                        MarkerOptions markerSearchPlaceOptions = new MarkerOptions();
+                        /*MarkerOptions markerSearchPlaceOptions = new MarkerOptions();
                         markerSearchPlaceOptions.position(searchPlaceLatLng);
                         coordList.add(new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));
 
-                        mMap.addMarker(markerSearchPlaceOptions);
+                        mMap.addMarker(markerSearchPlaceOptions);*/
 
                         linearLayoutSearchBottomButton.setVisibility(View.VISIBLE);
                         linearLayoutBottom.setVisibility(View.GONE);

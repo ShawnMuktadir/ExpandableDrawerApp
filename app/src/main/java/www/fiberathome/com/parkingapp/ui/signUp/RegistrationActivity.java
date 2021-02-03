@@ -70,7 +70,7 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
-import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
+import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.FileCompressor;
@@ -125,7 +125,7 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
         mCompressor = new FileCompressor(this);
         setListeners();
         // Check user is logged in
-        if (SharedPreManager.getInstance(getApplicationContext()).isLoggedIn()) {
+        if (Preferences.getInstance(getApplicationContext()).isLoggedIn()) {
             Intent intent = new Intent(RegistrationActivity.this, HomeActivity.class);
             startActivity(intent);
             finish();

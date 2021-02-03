@@ -27,7 +27,7 @@ import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.ui.permission.PermissionActivity;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
-import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
+import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.ui.signUp.SignUpActivity;
 
 public class StartActivity extends BaseActivity implements View.OnClickListener {
@@ -51,7 +51,7 @@ public class StartActivity extends BaseActivity implements View.OnClickListener 
         unbinder = ButterKnife.bind(this);
         context = this;
 
-        if (SharedPreManager.getInstance(getApplicationContext()).isLoggedIn()) {
+        if (Preferences.getInstance(getApplicationContext()).isLoggedIn()) {
             splash();
         }
 
@@ -134,20 +134,20 @@ public class StartActivity extends BaseActivity implements View.OnClickListener 
                         else
                             openActivity(new Intent(context, LoginActivity.class));*/
                         if (ApplicationUtils.checkInternet(context)) {
-                            if (SharedPreManager.getInstance(getApplicationContext()).isLoggedIn() && SharedPreManager.getInstance(context) != null && SharedPreManager.getInstance(context).isWaitingForLocationPermission()) {
-                                Timber.e("activity start if -> %s", SharedPreManager.getInstance(context).isWaitingForLocationPermission());
+                            if (Preferences.getInstance(getApplicationContext()).isLoggedIn() && Preferences.getInstance(context) != null && Preferences.getInstance(context).isWaitingForLocationPermission()) {
+                                Timber.e("activity start if -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
                                 Intent intent = new Intent(StartActivity.this, HomeActivity.class);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent);
                                 finish();
-                            } else if (SharedPreManager.getInstance(getApplicationContext()).isLoggedIn() && !SharedPreManager.getInstance(context).isWaitingForLocationPermission()) {
-                                Timber.e("activity start else if -> %s", SharedPreManager.getInstance(context).isWaitingForLocationPermission());
+                            } else if (Preferences.getInstance(getApplicationContext()).isLoggedIn() && !Preferences.getInstance(context).isWaitingForLocationPermission()) {
+                                Timber.e("activity start else if -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
                                 Intent intent = new Intent(StartActivity.this, PermissionActivity.class);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent);
                                 finish();
                             } else {
-                                Timber.e("activity start else -> %s", SharedPreManager.getInstance(context).isWaitingForLocationPermission());
+                                Timber.e("activity start else -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
                                 Intent intent = new Intent(StartActivity.this, LoginActivity.class);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent);
@@ -175,20 +175,20 @@ public class StartActivity extends BaseActivity implements View.OnClickListener 
                     //sleep(1000);
 
                     // Check user is logged in
-                    if (SharedPreManager.getInstance(getApplicationContext()).isLoggedIn() && SharedPreManager.getInstance(context) != null && SharedPreManager.getInstance(context).isWaitingForLocationPermission()) {
-                        Timber.e("activity start if -> %s", SharedPreManager.getInstance(context).isWaitingForLocationPermission());
+                    if (Preferences.getInstance(getApplicationContext()).isLoggedIn() && Preferences.getInstance(context) != null && Preferences.getInstance(context).isWaitingForLocationPermission()) {
+                        Timber.e("activity start if -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
                         Intent intent = new Intent(StartActivity.this, HomeActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                         finish();
-                    } else if (SharedPreManager.getInstance(getApplicationContext()).isLoggedIn() && !SharedPreManager.getInstance(context).isWaitingForLocationPermission()) {
-                        Timber.e("activity start else if -> %s", SharedPreManager.getInstance(context).isWaitingForLocationPermission());
+                    } else if (Preferences.getInstance(getApplicationContext()).isLoggedIn() && !Preferences.getInstance(context).isWaitingForLocationPermission()) {
+                        Timber.e("activity start else if -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
                         Intent intent = new Intent(StartActivity.this, PermissionActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                         finish();
                     } else {
-                        Timber.e("activity start else -> %s", SharedPreManager.getInstance(context).isWaitingForLocationPermission());
+                        Timber.e("activity start else -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
                         Intent intent = new Intent(StartActivity.this, LoginActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);

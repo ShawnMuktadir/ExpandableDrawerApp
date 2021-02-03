@@ -1,7 +1,6 @@
 package www.fiberathome.com.parkingapp.ui.privacyPolicy;
 
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -20,27 +19,24 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import retrofit2.Call;
+import retrofit2.Callback;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
-import www.fiberathome.com.parkingapp.base.ParkingApp;
+import www.fiberathome.com.parkingapp.model.api.ApiClient;
+import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.termsCondition.TermsCondition;
+import www.fiberathome.com.parkingapp.model.termsCondition.TermsConditionResponse;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
@@ -141,7 +137,7 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
 
     private ArrayList<TermsCondition> termsConditionsGlobal = new ArrayList<>();
 
-    private void fetchPrivacyPolicy() {
+    /*private void fetchPrivacyPolicy() {
         Timber.e("fetchPrivacyPolicy called");
 
         if (!context.isFinishing())
@@ -215,6 +211,78 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
         };
 
         ParkingApp.getInstance().addToRequestQueue(strReq);
+    }*/
+
+    private final ArrayList<TermsCondition> termsConditionArrayList = new ArrayList<>();
+    private List<List<String>> termConditionList = null;
+    private List<List<String>> list;
+    private TermsConditionResponse parkingSlotResponse;
+
+    private String title = null;
+
+    private String description = null;
+
+    private String date = null;
+
+    private void fetchPrivacyPolicy() {
+        Timber.e("fetchPrivacyPolicy called");
+
+        showLoading(context);
+
+        ApiService request = ApiClient.getRetrofitInstance(AppConfig.URL_PRIVACY_POLICY).create(ApiService.class);
+
+        Call<TermsConditionResponse> call = request.getTermCondition();
+
+        call.enqueue(new Callback<TermsConditionResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<TermsConditionResponse> call, @NonNull retrofit2.Response<TermsConditionResponse> response) {
+                hideLoading();
+                if (response.body() != null) {
+
+                    hideLoading();
+
+                    list = response.body().getTermsCondition();
+
+                    Timber.e("list -> %s", new Gson().toJson(list));
+
+                    parkingSlotResponse = response.body();
+
+                    termConditionList = parkingSlotResponse.getTermsCondition();
+
+                    if (termConditionList != null) {
+
+                        for (List<String> baseStringList : termConditionList) {
+                            for (int i = 0; i < baseStringList.size(); i++) {
+
+                                Timber.d("onResponse: i ->  %s", i);
+
+                                if (i == 6) {
+                                    title = baseStringList.get(i).trim();
+                                }
+
+                                if (i == 2) {
+                                    description = baseStringList.get(i).trim();
+                                }
+
+                                if (i == 4) {
+                                    date = baseStringList.get(i).trim();
+                                }
+                            }
+                            TermsCondition termsCondition = new TermsCondition(title, description, date);
+
+                            termsConditionArrayList.add(termsCondition);
+                        }
+
+                        setTermsConditions(termsConditionArrayList);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<TermsConditionResponse> call, @NonNull Throwable t) {
+                Timber.e("onFailure -> %s", t.getMessage());
+            }
+        });
     }
 
     private void setTermsConditions(ArrayList<TermsCondition> termsConditions) {
@@ -231,63 +299,5 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
         ViewCompat.setNestedScrollingEnabled(recyclerViewPrivacy, false);
         PrivacyPolicyAdapter privacyPolicyAdapter = new PrivacyPolicyAdapter(context, termsConditionsGlobal);
         recyclerViewPrivacy.setAdapter(privacyPolicyAdapter);
-    }
-
-    @SuppressLint("SetJavaScriptEnabled")
-    private void openPrivacyPolicy() {
-
-        showLoading(context);
-
-        if (ApplicationUtils.checkInternet(context)) {
-            webView.setWebViewClient(new WebViewClient() {
-                @Override
-                public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                    view.loadUrl(url);
-                    return true;
-                }
-
-                @Override
-                public void onPageFinished(WebView view, String url) {
-
-                    hideLoading();
-                }
-
-                @Override
-                public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-
-                    hideLoading();
-
-                    Toast.makeText(context, "Error:" + description, Toast.LENGTH_SHORT).show();
-                }
-            });
-            webView.getSettings().setJavaScriptEnabled(true);
-            webView.getSettings().setUseWideViewPort(true);
-            webView.getSettings().setLoadWithOverviewMode(true);
-            webView.getSettings().setBuiltInZoomControls(true);
-            webView.setInitialScale(1);
-            webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
-            webView.setScrollbarFadingEnabled(false);
-            webView.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
-            webView.loadUrl("https://docs.google.com/document/d/e/2PACX-1vQ5ikmuSBW8iYYSUXutxZkPGEZ_HhFlxxWKC5m0v9MpPvezmBvyb4WLZjSuuJnXl6xs6f7gc7UwQ223/pub");
-        } else {
-            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
-        }
-    }
-
-    public static class AppWebViewClients extends WebViewClient {
-
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            view.loadUrl(url);
-            return true;
-        }
-
-        @Override
-        public void onPageFinished(WebView view, String url) {
-            // TODO Auto-generated method stub
-            super.onPageFinished(view, url);
-            /*view.loadUrl("javascript:(function() { " +
-            "document.getElementsByClassName('ndfHFb-c4YZDc-GSQQnc-LgbsSe ndfHFb-c4YZDc-to915-LgbsSe VIpgJd-TzA9Ye-eEGnhe ndfHFb-c4YZDc-LgbsSe')[0].style.display='none'; })()");*/
-        }
     }
 }

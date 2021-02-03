@@ -28,12 +28,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.model.loginUser.User;
+import www.fiberathome.com.parkingapp.model.user.User;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
-import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
+import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 
 import static com.android.volley.VolleyLog.TAG;
 
@@ -61,7 +60,7 @@ public class OldLocalArrayListBookingFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_booking, container, false);
 
-        User user = SharedPreManager.getInstance(getContext()).getUser();
+        User user = Preferences.getInstance(getContext()).getUser();
 
         if (getActivity() != null) {
             getActivity().setTitle(user.getFullName());

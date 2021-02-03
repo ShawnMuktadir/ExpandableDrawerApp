@@ -36,7 +36,7 @@ import butterknife.Unbinder;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
-import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
+import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.ui.NavigationActivity;
 import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.ui.booking.newBooking.BookingFragment;
@@ -128,7 +128,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
         linearLayoutToolbarTime.setVisibility(View.VISIBLE);
         navigationView.getMenu().getItem(0).setChecked(true);
 
-        if (!SharedPreManager.getInstance(this).isLoggedIn()) {
+        if (!Preferences.getInstance(this).isLoggedIn()) {
             startActivityWithFinish(LoginActivity.class);
             return;
         }
@@ -354,11 +354,11 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
             Intent intent = new Intent(context, PermissionActivity.class);
             //Intent intent = new Intent(context, LocationPermissionActivity.class);
             startActivity(intent);
-            SharedPreManager.getInstance(context).setIsLocationPermissionGiven(false);
+            Preferences.getInstance(context).setIsLocationPermissionGiven(false);
             //return;
         } else {
             // Write you code here if permission already given.
-            SharedPreManager.getInstance(context).setIsLocationPermissionGiven(true);
+            Preferences.getInstance(context).setIsLocationPermissionGiven(true);
 
         }
     }

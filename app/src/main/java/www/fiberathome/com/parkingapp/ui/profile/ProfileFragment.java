@@ -19,10 +19,10 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.model.loginUser.User;
+import www.fiberathome.com.parkingapp.model.user.User;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
-import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
+import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
@@ -66,7 +66,7 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         unbinder = ButterKnife.bind(this, view);
         context = getActivity();
-        User user = SharedPreManager.getInstance(getContext()).getUser();
+        User user = Preferences.getInstance(getContext()).getUser();
         setData(user);
 
         return view;

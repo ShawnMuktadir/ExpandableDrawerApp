@@ -35,7 +35,7 @@ import butterknife.Unbinder;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
-import www.fiberathome.com.parkingapp.model.data.preference.SharedPreManager;
+import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.law.LawItem;
 import www.fiberathome.com.parkingapp.model.law.LocalJson;
 import www.fiberathome.com.parkingapp.model.law.Result;
@@ -259,7 +259,7 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
                 String contents = editTextSearchLaw.getText().toString().trim();
                 if (contents.length() > 0) {
                     //do search
-                    if (SharedPreManager.getInstance(context).getLanguage().equalsIgnoreCase("English") && ApplicationUtils.textContainsBangla(contents.toString())) {
+                    if (Preferences.getInstance(context).getLanguage().equalsIgnoreCase("English") && ApplicationUtils.textContainsBangla(contents.toString())) {
                         setNoDataForBangla();
                         recyclerView.setVisibility(View.GONE);
                         editTextSearchLaw.setText("");

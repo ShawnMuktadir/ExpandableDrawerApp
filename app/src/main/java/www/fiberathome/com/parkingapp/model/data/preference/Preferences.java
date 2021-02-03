@@ -3,9 +3,9 @@ package www.fiberathome.com.parkingapp.model.data.preference;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import www.fiberathome.com.parkingapp.model.loginUser.User;
+import www.fiberathome.com.parkingapp.model.user.User;
 
-public class SharedPreManager {
+public class Preferences {
 
     private static final String SHARED_PREF_NAME = "PARKINGAPP";
     private static final String KEY_FULLNAME = "fullname";
@@ -22,16 +22,17 @@ public class SharedPreManager {
     private static final String KEY_CHECKED_ITEM = "checked_item";
 
 
-    private static SharedPreManager instance;
+    private static Preferences instance;
+
     private static Context mContext;
 
-    public SharedPreManager(Context context) {
+    public Preferences(Context context) {
         mContext = context;
     }
 
-    public static synchronized SharedPreManager getInstance(Context context){
+    public static synchronized Preferences getInstance(Context context){
         if (instance == null){
-            instance = new SharedPreManager(context);
+            instance = new Preferences(context);
         }
 
         return instance;
@@ -92,8 +93,6 @@ public class SharedPreManager {
         editor.putInt(KEY_CHECKED_ITEM, checkedItem);
         editor.apply();
     }
-
-
 
     public void setLanguage(String language){
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
