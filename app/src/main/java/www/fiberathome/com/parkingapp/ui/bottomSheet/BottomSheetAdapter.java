@@ -4,26 +4,16 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
-import android.location.LocationManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.akexorcist.googledirection.DirectionCallback;
-import com.akexorcist.googledirection.GoogleDirection;
-import com.akexorcist.googledirection.constant.RequestResult;
-import com.akexorcist.googledirection.constant.TransportMode;
-import com.akexorcist.googledirection.model.Direction;
-import com.akexorcist.googledirection.model.Info;
-import com.akexorcist.googledirection.model.Leg;
-import com.akexorcist.googledirection.model.Route;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.text.DecimalFormat;
@@ -33,18 +23,12 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingSensors;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 
-import static android.content.Context.LOCATION_SERVICE;
-
 public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.TextBookingViewHolder> {
-
-    private final String TAG = getClass().getSimpleName();
 
     public Context context;
 
@@ -59,11 +43,8 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
     private int count = 0;
 
     private AdapterCallback mAdapterCallback;
-    private onItemClickListeners clickListeners;
 
-    public BottomSheetAdapter(AdapterCallback callback) {
-        this.mAdapterCallback = callback;
-    }
+    private onItemClickListeners clickListeners;
 
     public BottomSheetAdapter(Context context, HomeFragment homeFragment, ArrayList<BookingSensors> sensors,
                               Location onConnectedLocation, AdapterCallback callback, onItemClickListeners clickListeners) {
@@ -159,76 +140,6 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         }
     }
 
-    private LatLng origin = null;
-    private String fromCurrentLocationDistance;
-    private String fromCurrentLocationDuration;
-    private Location onConnectedLocation;
-
-    private void getDestinationDurationInfoForSearchLayout(Context context, LatLng latLngDestination, TextBookingViewHolder textBookingViewHolder, int type) {
-
-        if (SharedData.getInstance().getOnConnectedLocation() != null) {
-            onConnectedLocation = SharedData.getInstance().getOnConnectedLocation();
-        }
-        // Api Key For Google Direction API
-        String serverKey = context.getResources().getString(R.string.google_maps_key);
-
-        origin = new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude());
-
-        LatLng destination = latLngDestination;
-
-        //-------------Using AK Exorcist Google Direction Library---------------\\
-        GoogleDirection.withServerKey(serverKey)
-                .from(origin)
-                .to(destination)
-                .transportMode(TransportMode.DRIVING)
-                .execute(new DirectionCallback() {
-                    @Override
-                    public void onDirectionSuccess(Direction direction, String rawBody) {
-                        //dismissDialog();
-                        String status = direction.getStatus();
-                        if (status.equals(RequestResult.OK)) {
-                            Route route = direction.getRouteList().get(0);
-                            Leg leg = route.getLegList().get(0);
-                            Info distanceInfo = leg.getDistance();
-                            Info durationInfo = leg.getDuration();
-                            String distance = distanceInfo.getText();
-                            String duration = durationInfo.getText();
-                            textBookingViewHolder.textViewParkingDistance.setText(distance);
-                            textBookingViewHolder.textViewParkingTravelTime.setText(duration);
-                            fromCurrentLocationDistance = distance;
-                            fromCurrentLocationDuration = duration;
-                            Timber.e("fromCurrentLocationDistance -> %s", fromCurrentLocationDistance);
-                            Timber.e("fromCurrentLocationDuration -> %s", fromCurrentLocationDuration);
-                            Timber.e("adapter homeFragment.bottomSheetSearch == 0 called");
-
-                            homeFragment.textViewBottomSheetParkingDistance.setText(fromCurrentLocationDistance);
-                            homeFragment.textViewBottomSheetParkingTravelTime.setText(fromCurrentLocationDuration);
-
-                            //------------Displaying Distance and Time-----------------\\
-                            //showingDistanceTime(distance, duration); // Showing distance and time to the user in the UI \\
-                            String message = "Total Distance is " + distance + " and Estimated Time is " + duration;
-                            Timber.e("duration message -> %s", message);
-
-                        } else if (status.equals(RequestResult.NOT_FOUND)) {
-                            Toast.makeText(context, "No routes exist", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onDirectionFailure(Throwable t) {
-                        // Do something here
-                    }
-                });
-        //-------------------------------------------------------------------------------\\
-    }
-
-    public void updateData(ArrayList<BookingSensors> bookingSensors) {
-        Timber.e("updateData call hoiche");
-        bookingSensorsArrayList.clear();
-        bookingSensorsArrayList.addAll(bookingSensors);
-        notifyDataSetChanged();
-    }
-
     public void setData(ArrayList<BookingSensors> bookingSensors) {
         bookingSensorsArrayList.clear();
         bookingSensorsArrayList.addAll(bookingSensors);
@@ -243,31 +154,6 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
     public void clear() {
         bookingSensorsArrayList.clear();
         notifyDataSetChanged();
-    }
-
-    private boolean isGPSEnabled() {
-
-        LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-
-        boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-        if (providerEnabled) {
-
-            return true;
-        } else {
-            /*AlertDialog alertDialog = new AlertDialog.Builder(context)
-                    .setTitle("GPS Permissions")
-                    .setMessage("GPS is required for this app to work. Please enable GPS.")
-                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
-                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        startActivityForResult(intent, GPS_REQUEST_CODE);
-                    }))
-                    .setCancelable(false)
-                    .show();*/
-
-        }
-
-        return false;
     }
 
     @SuppressLint("NonConstantResourceId")
