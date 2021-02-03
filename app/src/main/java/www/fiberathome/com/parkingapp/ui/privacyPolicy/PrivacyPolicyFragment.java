@@ -6,10 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -216,7 +213,7 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
     private final ArrayList<TermsCondition> termsConditionArrayList = new ArrayList<>();
     private List<List<String>> termConditionList = null;
     private List<List<String>> list;
-    private TermsConditionResponse parkingSlotResponse;
+    private TermsConditionResponse termsConditionResponse;
 
     private String title = null;
 
@@ -245,9 +242,9 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
 
                     Timber.e("list -> %s", new Gson().toJson(list));
 
-                    parkingSlotResponse = response.body();
+                    termsConditionResponse = response.body();
 
-                    termConditionList = parkingSlotResponse.getTermsCondition();
+                    termConditionList = termsConditionResponse.getTermsCondition();
 
                     if (termConditionList != null) {
 
