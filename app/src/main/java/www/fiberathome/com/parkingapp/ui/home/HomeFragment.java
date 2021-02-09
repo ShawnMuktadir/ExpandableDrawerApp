@@ -184,161 +184,144 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         IOnLoadLocationListener, GeoQueryEventListener, BottomSheetAdapter.AdapterCallback,
         IOnBackPressListener, DirectionFinderListener {
 
-    private final String TAG = getClass().getSimpleName();
-
     public static final int GPS_REQUEST_CODE = 9003;
     private static final int PLAY_SERVICES_ERROR_CODE = 9002;
-    private final int LOCATION_PERMISSION_REQUEST_CODE = 100;
-
-    @BindView(R.id.linearLayoutBottom)
-    public LinearLayout linearLayoutBottom;
-
-    @BindView(R.id.linearLayoutSearchBottom)
-    public LinearLayout linearLayoutSearchBottom;
-
-    @BindView(R.id.linearLayoutSearchBottomButton)
-    public LinearLayout linearLayoutSearchBottomButton;
-
-    @BindView(R.id.linearLayoutMarkerBackNGetDirection)
-    public LinearLayout linearLayoutMarkerBackNGetDirection;
-
-    @BindView(R.id.textViewBottomSheetParkingDistance)
-    public TextView textViewBottomSheetParkingDistance;
-
-    @BindView(R.id.textViewBottomSheetParkingTravelTime)
-    public TextView textViewBottomSheetParkingTravelTime;
-
-    @BindView(R.id.linearLayoutBottomSheetBottom)
-    public LinearLayout linearLayoutBottomSheetBottom;
-
-    //from parking adapter
-    @BindView(R.id.btnGetDirection)
-    Button btnGetDirection;
-
-    @BindView(R.id.linearLayoutParkingSlot)
-    LinearLayout linearLayoutParkingBackNGetDirection;
-
-    @BindView(R.id.linearLayoutParkingAdapterBackBottom)
-    LinearLayout linearLayoutParkingAdapterBackBottom;
-
-    @BindView(R.id.imageViewBack)
-    ImageView imageViewBack;
-
-    @BindView(R.id.textViewParkingAreaCount)
-    TextView textViewParkingAreaCount;
-
-    @BindView(R.id.textViewParkingAreaName)
-    TextView textViewParkingAreaName;
-
-    @BindView(R.id.textViewParkingDistance)
-    TextView textViewParkingDistance;
-
-    @BindView(R.id.textViewParkingTravelTime)
-    TextView textViewParkingTravelTime;
-
-    @BindView(R.id.linearLayoutNameCount)
-    LinearLayout linearLayoutNameCount;
-
-    //from search
-    @BindView(R.id.btnSearchGetDirection)
-    Button btnSearchGetDirection;
-
-    @BindView(R.id.imageViewSearchBack)
-    ImageView imageViewSearchBack;
-
-    @BindView(R.id.textViewSearchParkingAreaCount)
-    TextView textViewSearchParkingAreaCount;
-
-    @BindView(R.id.textViewSearchParkingAreaName)
-    TextView textViewSearchParkingAreaName;
-
-    @BindView(R.id.textViewSearchParkingDistance)
-    TextView textViewSearchParkingDistance;
-
-    @BindView(R.id.textViewSearchParkingTravelTime)
-    TextView textViewSearchParkingTravelTime;
-
-    @BindView(R.id.linearLayoutSearchNameCount)
-    LinearLayout linearLayoutSearchNameCount;
-
-    //from marker
-    @BindView(R.id.btnMarkerGetDirection)
-    Button btnMarkerGetDirection;
-
-    @BindView(R.id.imageViewMarkerBack)
-    ImageView imageViewMarkerBack;
-
-    @BindView(R.id.textViewMarkerParkingAreaCount)
-    TextView textViewMarkerParkingAreaCount;
-
-    @BindView(R.id.textViewMarkerParkingAreaName)
-    TextView textViewMarkerParkingAreaName;
-
-    @BindView(R.id.textViewMarkerParkingDistance)
-    TextView textViewMarkerParkingDistance;
-
-    @BindView(R.id.textViewMarkerParkingTravelTime)
-    TextView textViewMarkerParkingTravelTime;
-
-    @BindView(R.id.linearLayoutMarkerBottom)
-    LinearLayout linearLayoutMarkerBottom;
-
-    @BindView(R.id.linearLayoutMarkerNameCount)
-    LinearLayout linearLayoutMarkerNameCount;
-
-    //from bottomSheet
-    @BindView(R.id.shimmer_view_container)
-    ShimmerFrameLayout mShimmerViewContainer;
-
-    @BindView(R.id.textViewNoData)
-    TextView textViewNoData;
-
-    @BindView(R.id.btnBottomSheetGetDirection)
-    public Button btnBottomSheetGetDirection;
-
-    @BindView(R.id.imageViewBottomSheetBack)
-    ImageView imageViewBottomSheetBack;
-
-    @BindView(R.id.textViewBottomSheetParkingAreaCount)
-    TextView textViewBottomSheetParkingAreaCount;
-
-    @BindView(R.id.textViewBottomSheetParkingAreaName)
-    TextView textViewBottomSheetParkingAreaName;
-
-    @BindView(R.id.linearLayoutBottomSheetNameCount)
-    LinearLayout linearLayoutBottomSheetNameCount;
-
-    @BindView(R.id.linearLayoutBottomSheetGetDirection)
-    LinearLayout linearLayoutBottomSheetGetDirection;
-
-    @BindView(R.id.view)
-    View view;
-
-    @BindView(R.id.input_search)
-    Button buttonSearch;
-
-    @BindView(R.id.currentLocationImageButton)
-    ImageButton currentLocationImageButton;
-
-    private Unbinder unbinder;
-
-    private HomeActivity context;
-
-    public BottomSheetBehavior bottomSheetBehavior;
-
     public static Location currentLocation;
     public static LatLng adapterPlaceLatLng;
+    static MarkerOptions markerOptionsPin;
+    public final ArrayList<LatLng> coordList = new ArrayList<LatLng>();
+    final String[] uid1 = {""};
+    final String[] markerAreaName1 = {""};
+    private final String TAG = getClass().getSimpleName();
+    private final int LOCATION_PERMISSION_REQUEST_CODE = 100;
+    private final ArrayList<BookingSensors> bookingSensorsMarkerArrayList = new ArrayList<>();
+    private final ArrayList<BookingSensors> bookingSensorsArrayList = new ArrayList<>();
+    private final ArrayList<BookingSensors> bookingSensorsBottomSheetArrayList = new ArrayList<>();
+    private final ArrayList<BookingSensors> bookingSensorsArrayListGlobal = new ArrayList<>();
+    private final ArrayList<BookingSensors> bookingSensorsAdapterArrayList = new ArrayList<>();
+    private final boolean isCameraChange = false;
+    private final ArrayList<MarkerOptions> mMarkerArrayList = new ArrayList<>();
+    @BindView(R.id.linearLayoutBottom)
+    public LinearLayout linearLayoutBottom;
+    @BindView(R.id.linearLayoutSearchBottom)
+    public LinearLayout linearLayoutSearchBottom;
+    @BindView(R.id.linearLayoutSearchBottomButton)
+    public LinearLayout linearLayoutSearchBottomButton;
+    @BindView(R.id.linearLayoutMarkerBackNGetDirection)
+    public LinearLayout linearLayoutMarkerBackNGetDirection;
+    @BindView(R.id.textViewBottomSheetParkingDistance)
+    public TextView textViewBottomSheetParkingDistance;
+    @BindView(R.id.textViewBottomSheetParkingTravelTime)
+    public TextView textViewBottomSheetParkingTravelTime;
+    @BindView(R.id.linearLayoutBottomSheetBottom)
+    public LinearLayout linearLayoutBottomSheetBottom;
+    @BindView(R.id.btnBottomSheetGetDirection)
+    public Button btnBottomSheetGetDirection;
+    public BottomSheetBehavior bottomSheetBehavior;
     public LatLng searchPlaceLatLng;
     public LatLng bottomSheetPlaceLatLng;
     public LatLng markerPlaceLatLng;
     public String address, city, state, country, subAdminArea, test, knownName, postalCode = "";
     public GoogleMap mMap;
-
     //used in fetchSensor()
     public double nDistance = 132116456;
     public double nLatitude;
     public double nLongitude;
     public int isRouteDrawn = 0;
+    public int fromMarkerRouteDrawn = 0;
+    public Polyline polyline;
+    public List<LatLng> points = new ArrayList<>();
+    public Marker previousGetDestinationMarker;
+    public Marker previousBottomSheetGetDestinationMarker;
+    public Marker previousAdapterDestinationMarker;
+    public Marker previousAdapterGetDirectionMarker;
+    public Marker previousAdapterSetMarkerEvent;
+    public Marker previousDestinationMarker;
+    public Marker previousSecondMarkerDestinationMarker;
+    public boolean isDestinationMarkerDrawn = false;
+    public MarkerOptions markerOptions;
+    public String[] finalUid;
+    //from parking adapter
+    @BindView(R.id.btnGetDirection)
+    Button btnGetDirection;
+    @BindView(R.id.linearLayoutParkingSlot)
+    LinearLayout linearLayoutParkingBackNGetDirection;
+    @BindView(R.id.linearLayoutParkingAdapterBackBottom)
+    LinearLayout linearLayoutParkingAdapterBackBottom;
+    @BindView(R.id.imageViewBack)
+    ImageView imageViewBack;
+    @BindView(R.id.textViewParkingAreaCount)
+    TextView textViewParkingAreaCount;
+    @BindView(R.id.textViewParkingAreaName)
+    TextView textViewParkingAreaName;
+    @BindView(R.id.textViewParkingDistance)
+    TextView textViewParkingDistance;
+    @BindView(R.id.textViewParkingTravelTime)
+    TextView textViewParkingTravelTime;
+    @BindView(R.id.linearLayoutNameCount)
+    LinearLayout linearLayoutNameCount;
+    //from search
+    @BindView(R.id.btnSearchGetDirection)
+    Button btnSearchGetDirection;
+    @BindView(R.id.imageViewSearchBack)
+    ImageView imageViewSearchBack;
+    @BindView(R.id.textViewSearchParkingAreaCount)
+    TextView textViewSearchParkingAreaCount;
+    @BindView(R.id.textViewSearchParkingAreaName)
+    TextView textViewSearchParkingAreaName;
+    @BindView(R.id.textViewSearchParkingDistance)
+    TextView textViewSearchParkingDistance;
+    @BindView(R.id.textViewSearchParkingTravelTime)
+    TextView textViewSearchParkingTravelTime;
+    @BindView(R.id.linearLayoutSearchNameCount)
+    LinearLayout linearLayoutSearchNameCount;
+    //from marker
+    @BindView(R.id.btnMarkerGetDirection)
+    Button btnMarkerGetDirection;
+    @BindView(R.id.imageViewMarkerBack)
+    ImageView imageViewMarkerBack;
+    @BindView(R.id.textViewMarkerParkingAreaCount)
+    TextView textViewMarkerParkingAreaCount;
+    @BindView(R.id.textViewMarkerParkingAreaName)
+    TextView textViewMarkerParkingAreaName;
+    @BindView(R.id.textViewMarkerParkingDistance)
+    TextView textViewMarkerParkingDistance;
+    @BindView(R.id.textViewMarkerParkingTravelTime)
+    TextView textViewMarkerParkingTravelTime;
+    @BindView(R.id.linearLayoutMarkerBottom)
+    LinearLayout linearLayoutMarkerBottom;
+    @BindView(R.id.linearLayoutMarkerNameCount)
+    LinearLayout linearLayoutMarkerNameCount;
+    //from bottomSheet
+    @BindView(R.id.shimmer_view_container)
+    ShimmerFrameLayout mShimmerViewContainer;
+    @BindView(R.id.textViewNoData)
+    TextView textViewNoData;
+    @BindView(R.id.imageViewBottomSheetBack)
+    ImageView imageViewBottomSheetBack;
+    @BindView(R.id.textViewBottomSheetParkingAreaCount)
+    TextView textViewBottomSheetParkingAreaCount;
+    @BindView(R.id.textViewBottomSheetParkingAreaName)
+    TextView textViewBottomSheetParkingAreaName;
+    @BindView(R.id.linearLayoutBottomSheetNameCount)
+    LinearLayout linearLayoutBottomSheetNameCount;
+    @BindView(R.id.linearLayoutBottomSheetGetDirection)
+    LinearLayout linearLayoutBottomSheetGetDirection;
+    @BindView(R.id.view)
+    View view;
+    @BindView(R.id.input_search)
+    Button buttonSearch;
+    @BindView(R.id.currentLocationImageButton)
+    ImageButton currentLocationImageButton;
+    boolean isMyCurrentLocation = false;
+    Marker pinMarker = null;
+    String uid = "";
+    String markerAreaName = "";
+    String locationName = "";
+    String YourUniqueKey = "Direction";
+    HashMap<String, Marker> hashMapMarker = new HashMap<>();
+    private Unbinder unbinder;
+    private HomeActivity context;
     private LinearLayout bottomSheet;
     private FragmentChangeListener listener;
     private long arrived, departure;
@@ -349,40 +332,30 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private Button departureBtn;
     private RecyclerView bottomSheetRecyclerView;
     private BottomSheetAdapter bottomSheetAdapter;
-
     private Marker currentLocationMarker;
-    public final ArrayList<LatLng> coordList = new ArrayList<LatLng>();
     private String nearByDuration;
     private String fetchDuration;
     private SupportMapFragment supportMapFragment;
-
     private String name, count = "";
     private String distance;
     private String duration;
     private boolean isGPS;
     private GoogleApiClient googleApiClient;
     private String sensorStatus = "Occupied";
-
     //flags
     private int getDirectionButtonClicked = 0;
     private int getDirectionSearchButtonClicked = 0;
     private int getDirectionMarkerButtonClicked = 0;
     private int getDirectionBottomSheetButtonClicked = 0;
-
     private ProgressDialog progressDialog;
-
-    public int fromMarkerRouteDrawn = 0;
-
     //route flag
     private int flag = 0;
-
     //polyline animate
     private List<LatLng> polyLineList;
     private PolylineOptions polylineOptions, blackPolylineOptions;
     private Polyline blackPolyline, grayPolyline;
     private IGoogleApi mService;
     private String searchPlaceCount = "0";
-
     //geoFence
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
@@ -398,48 +371,36 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private boolean isInAreaEnabled = false;
     private String parkingNumberOfIndividualMarker = "";
     private BookingSensors bookingSensorsMarker;
-    private final ArrayList<BookingSensors> bookingSensorsMarkerArrayList = new ArrayList<>();
-
     private Marker previousMarker = null;
-
     private Location onConnectedLocation;
-
-    private final ArrayList<BookingSensors> bookingSensorsArrayList = new ArrayList<>();
-    private final ArrayList<BookingSensors> bookingSensorsBottomSheetArrayList = new ArrayList<>();
     private double searchDistance;
     private String markerUid;
-    private final ArrayList<BookingSensors> bookingSensorsArrayListGlobal = new ArrayList<>();
-
     private double adjustValue = 2;
-
     private LatLng origin;
-
     private int countadd = 0;
-
     private BookingSensorsRoom bookingSensorsRoom;
-
     private double adapterDistance;
-
-    private final ArrayList<BookingSensors> bookingSensorsAdapterArrayList = new ArrayList<>();
-
     private String adapterUid;
     private String bottomUid;
     private Marker markerClicked;
-
     private boolean isNotificationSent = false;
-
-    public Polyline polyline;
-
-    public List<LatLng> points = new ArrayList<>();
-
     private Double lat, lng;
     private String areaName, parkingSlotCount;
-
-    public Marker previousGetDestinationMarker;
-    public Marker previousBottomSheetGetDestinationMarker;
-    public Marker previousAdapterDestinationMarker;
-    public Marker previousAdapterGetDirectionMarker;
-    public Marker previousAdapterSetMarkerEvent;
+    private Circle circle;
+    private Sensor markerTagObj;
+    private MarkerOptions markerOptionsForMarkerClick;
+    private MarkerOptions markerOptionsForSecondMarkerClick;
+    private final int fromParkingSpot = 0;
+    private Marker searchPlaceMarker;
+    private int currentLocationButton = 1;
+    private final View.OnClickListener clickListener = view -> {
+        if (view.getId() == R.id.currentLocationImageButton && mMap != null && onConnectedLocation != null)
+            animateCamera(onConnectedLocation);
+        currentLocationButton = 0;
+    };
+    private List<Sensor> sensorArrayList = new ArrayList<>();
+    private Marker newBottomSheetMarker;
+    private boolean isSearchAreaVisible = false;
 
     public HomeFragment() {
 
@@ -449,15 +410,16 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         HomeFragment fragment = new HomeFragment();
         return fragment;
     }
-   static MarkerOptions markerOptionsPin;
+
     public static MarkerOptions newPinMarkerInstance() {
-        if(markerOptionsPin==null){
+        if (markerOptionsPin == null) {
             markerOptionsPin = new MarkerOptions();
         }
         return markerOptionsPin;
 
 
     }
+
     public static HomeFragment newInstance(double lat, double lng, String areaName, String count) {
         HomeFragment fragment = new HomeFragment();
         Bundle bundle = new Bundle();
@@ -467,6 +429,20 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         bundle.putString("count", count);
         fragment.setArguments(bundle);
         return fragment;
+    }
+
+    private static Boolean isLocationEnabled(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            // This is new method provided in API 28
+            LocationManager lm = (LocationManager) context.getSystemService(LOCATION_SERVICE);
+            return lm.isLocationEnabled();
+
+        } else {
+            // This is Deprecated in API 28
+            int mode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE,
+                    Settings.Secure.LOCATION_MODE_OFF);
+            return (mode != Settings.Secure.LOCATION_MODE_OFF);
+        }
     }
 
     @Override
@@ -610,16 +586,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         mMap.setOnMarkerClickListener(this);
     }
 
-    boolean isMyCurrentLocation = false;
-
-    private Circle circle;
-
-    private Sensor markerTagObj;
-
-    private MarkerOptions markerOptionsForMarkerClick;
-
-    private MarkerOptions markerOptionsForSecondMarkerClick;
-
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public boolean onMarkerClick(Marker marker) {
@@ -681,7 +647,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             previousMarker = marker;
                             removeCircle();
                             marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_gray));
-                            getDirectionPinMarkerDraw(marker.getPosition(),markerUid);
+                            getDirectionPinMarkerDraw(marker.getPosition(), markerUid);
 
                             coordList.add(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
 
@@ -707,7 +673,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 //                    if (marker.getPosition() != null) {
 //                        markerOptions = new MarkerOptions();
 //                        markerOptions.position(marker.getPosition()).title(markerUid);
-//                        coordList.add(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
+                    coordList.add(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
 //                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
 //                    }
 //
@@ -718,12 +684,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 //                        previousDestinationMarker = mMap.addMarker(markerOptions);
 //                    }
 
-                    getDirectionPinMarkerDraw(marker.getPosition(),markerUid);
 
-                    if (SharedData.getInstance().getPreviousAdapterSetMarkerEvent() != null) {
-                        previousAdapterSetMarkerEvent.remove();
-                        SharedData.getInstance().setPreviousAdapterSetMarkerEvent(null);
-                    }
+//                    if (SharedData.getInstance().getPreviousAdapterSetMarkerEvent() != null) {
+//                        previousAdapterSetMarkerEvent.remove();
+//                        SharedData.getInstance().setPreviousAdapterSetMarkerEvent(null);
+//                    }
 
                     getDestinationInfoForDuration(markerPlaceLatLng);
 
@@ -859,11 +824,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     }
 
 
-                    getDirectionPinMarkerDraw(marker.getPosition(),markerUid);
+                    getDirectionPinMarkerDraw(marker.getPosition(), markerUid);
 //                    if (marker.getPosition() != null) {
 //                        markerOptionsForMarkerClick = new MarkerOptions();
 //                        markerOptionsForMarkerClick.position(marker.getPosition()).title(markerUid);
-//                        coordList.add(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
+                    coordList.add(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
 //                        markerOptionsForMarkerClick.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
 //                    }
 
@@ -990,9 +955,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         return true;
     }
-    Marker pinMarker;
+
     private void getDirectionPinMarkerDraw(LatLng pinPosition, String markerUid) {
-        if(pinMarker!=null) {
+        if (pinMarker != null) {
             pinMarker.remove();
         }
         pinMarker = mMap.addMarker(newPinMarkerInstance().position(pinPosition)
@@ -1000,8 +965,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 .title(markerUid));
 
     }
-
-    private int fromParkingSpot = 0;
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
@@ -1050,21 +1013,23 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                         hideNoData();
 
-                        MarkerOptions markerOptions = new MarkerOptions();
+                        getDirectionPinMarkerDraw(new LatLng(lat, lng), adapterUid);
 
-                        markerOptions.position(new LatLng(lat, lng));
-
+//                        MarkerOptions markerOptions = new MarkerOptions();
+//
+//                        markerOptions.position(new LatLng(lat, lng));
+//
                         coordList.add(new LatLng(lat, lng));
+//
+//                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin)).title(adapterUid);
 
-                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin)).title(adapterUid);
-
-                        previousAdapterSetMarkerEvent = mMap.addMarker(markerOptions);
+//                        previousAdapterSetMarkerEvent = mMap.addMarker(markerOptions);
 
                         //move map camera
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 13.5f), 500, null);
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 13.5f));
 
-                        SharedData.getInstance().setPreviousAdapterSetMarkerEvent(previousAdapterSetMarkerEvent);
+//                        SharedData.getInstance().setPreviousAdapterSetMarkerEvent(previousAdapterSetMarkerEvent);
 
                         String uid = "";
 
@@ -1346,8 +1311,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
         super.onDestroyView();
     }
-
-    private Marker searchPlaceMarker;
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -1733,30 +1696,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         return new CameraPosition.Builder().target(latLng).zoom(13.8f).build();
     }
 
-    private static Boolean isLocationEnabled(Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            // This is new method provided in API 28
-            LocationManager lm = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-            return lm.isLocationEnabled();
-
-        } else {
-            // This is Deprecated in API 28
-            int mode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE,
-                    Settings.Secure.LOCATION_MODE_OFF);
-            return (mode != Settings.Secure.LOCATION_MODE_OFF);
-        }
-    }
-
-    private final View.OnClickListener clickListener = view -> {
-        if (view.getId() == R.id.currentLocationImageButton && mMap != null && onConnectedLocation != null)
-            animateCamera(onConnectedLocation);
-        currentLocationButton = 0;
-    };
-
-    private final boolean isCameraChange = false;
-
-    private int currentLocationButton = 1;
-
     private void showCurrentLocationButton() {
         if (currentLocationButton == 1) {
             currentLocationImageButton.setVisibility(View.VISIBLE);
@@ -1878,10 +1817,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         googleApiClient.connect();
     }
-
-    private final ArrayList<MarkerOptions> mMarkerArrayList = new ArrayList<>();
-
-    private List<Sensor> sensorArrayList = new ArrayList<>();
 
     public void fetchSensorRetrofit(Location location) {
 
@@ -2065,16 +2000,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         setBottomSheetRecyclerViewAdapter(sensors);
     }
 
-    String uid = "";
-
-    String markerAreaName = "";
-
-    final String[] uid1 = {""};
-
-    final String[] markerAreaName1 = {""};
-
-    String locationName = "";
-
     private void setBottomSheetRecyclerViewAdapter(ArrayList<BookingSensors> bookingSensors) {
         bottomSheetAdapter = null;
 
@@ -2086,7 +2011,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
-            if (previousMarker != null)
+       /*     if (previousMarker != null)
                 previousMarker.remove();
 
             if (previousDestinationMarker != null)
@@ -2117,7 +2042,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             if (newBottomSheetMarker != null) {
                 newBottomSheetMarker.remove();
                 newBottomSheetMarker = null;
-            }
+            }*/
 
             bottomSheetPlaceLatLng = new LatLng(bookingSensors1.getLat(), bookingSensors1.getLng());
 
@@ -2125,12 +2050,14 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 //for getting the location name
 
                 if (bottomSheetAdapter != null) {
-                    MarkerOptions markerOptions = new MarkerOptions();
-                    markerOptions.position(bottomSheetPlaceLatLng);
 
                     coordList.add(new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
+                    getDirectionPinMarkerDraw(bottomSheetPlaceLatLng, bookingSensors1.getUid());
+                   /* MarkerOptions markerOptions = new MarkerOptions();
+                    markerOptions.position(bottomSheetPlaceLatLng);
+
                     markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
-                    previousDestinationMarker = mMap.addMarker(markerOptions);
+                    previousDestinationMarker = mMap.addMarker(markerOptions);*/
 
                     //move map camera
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude), 13.5f), 500, null);
@@ -2220,7 +2147,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         polyline.remove();
                     }
 
-                    if (previousMarker != null) {
+                /*    if (previousMarker != null) {
                         previousMarker.remove();
                         previousMarker = null;
                     }
@@ -2243,13 +2170,14 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     if (searchPlaceMarker != null) {
                         searchPlaceMarker.remove();
                     }
-
+*/
                     if (bottomSheetPlaceLatLng != null) {
-                        markerOptions = new MarkerOptions();
-                        markerOptions.position(bottomSheetPlaceLatLng).title(markerUid);
                         coordList.add(new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
+                        /*markerOptions = new MarkerOptions();
+                        markerOptions.position(bottomSheetPlaceLatLng).title(markerUid);
                         markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
-                        previousDestinationMarker = mMap.addMarker(markerOptions);
+                        previousDestinationMarker = mMap.addMarker(markerOptions);*/
+                        getDirectionPinMarkerDraw(bottomSheetPlaceLatLng, markerUid);
 
                         //move map camera
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude), 13.5f), 500, null);
@@ -2520,7 +2448,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     if (response.isSuccessful()) {
                         Timber.e("response search result store -> %s", new Gson().toJson(response.body()));
                     } else {
-                        Timber.e("Errors: -> %s",new Gson().toJson(response.message()));
+                        Timber.e("Errors: -> %s", new Gson().toJson(response.message()));
                     }
                 }
             }
@@ -2775,9 +2703,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             public void run() {
                 adapterPlaceLatLng = event.location;
 
-                MarkerOptions markerOptions = new MarkerOptions();
-                markerOptions.position(event.location);
+                getDirectionPinMarkerDraw(adapterPlaceLatLng, "");
+
                 coordList.add(new LatLng(event.location.latitude, event.location.longitude));
+              /*  MarkerOptions markerOptions = new MarkerOptions();
+                markerOptions.position(event.location);
                 markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
 
                 if (previousAdapterDestinationMarker != null) {
@@ -2786,7 +2716,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 }
 
                 previousAdapterDestinationMarker = mMap.addMarker(markerOptions);
-
+*/
                 btnGetDirection.setVisibility(View.VISIBLE);
                 linearLayoutBottom.setVisibility(View.VISIBLE);
                 imageViewBack.setVisibility(View.VISIBLE);
@@ -2808,8 +2738,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }, 1000);
     }
 
-    private Marker newBottomSheetMarker;
-
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onBottomSheetDirectionEvent(GetDirectionBottomSheetEvent event) {
         final Handler handler = new Handler();
@@ -2824,11 +2752,12 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                 markerPlaceLatLng = event.location;
 
-                MarkerOptions markerOptions = new MarkerOptions();
-                markerOptions.position(bottomSheetPlaceLatLng);
+//                MarkerOptions markerOptions = new MarkerOptions();
+//                markerOptions.position(bottomSheetPlaceLatLng);
                 coordList.add(new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
-                markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
-                newBottomSheetMarker = mMap.addMarker(markerOptions);
+//                markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
+//                newBottomSheetMarker = mMap.addMarker(markerOptions);
+                getDirectionPinMarkerDraw(bottomSheetPlaceLatLng, "");
 
                 btnBottomSheetGetDirection.setVisibility(View.VISIBLE);
                 linearLayoutBottomSheetBottom.setVisibility(View.VISIBLE);
@@ -2859,10 +2788,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             public void run() {
                 searchPlaceLatLng = event.location;
 
+                coordList.add(new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));
                 /*MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(searchPlaceLatLng);
 
-                coordList.add(new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));
                 markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
                 mMap.addMarker(markerOptions);*/
 
@@ -2888,13 +2817,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }, 1000);
     }
 
-    public Marker previousDestinationMarker;
-    public Marker previousSecondMarkerDestinationMarker;
-    String YourUniqueKey = "Direction";
-    HashMap<String, Marker> hashMapMarker = new HashMap<>();
-    public boolean isDestinationMarkerDrawn = false;
-    public MarkerOptions markerOptions;
-
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onMarkerDirectionEvent(GetDirectionForMarkerEvent event) {
 
@@ -2904,11 +2826,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             public void run() {
 
                 markerPlaceLatLng = event.location;
-                getDirectionPinMarkerDraw(markerPlaceLatLng,markerUid);
+                getDirectionPinMarkerDraw(markerPlaceLatLng, markerUid);
 //                if (markerPlaceLatLng != null && adapterPlaceLatLng == null) {
 //                    markerOptions = new MarkerOptions();
 //                    markerOptions.position(markerPlaceLatLng).title(markerUid);
-//                    coordList.add(new LatLng(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude));
+                coordList.add(new LatLng(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude));
 //                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
 //                }
 //
@@ -2979,8 +2901,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
     }
 
-    private boolean isSearchAreaVisible = false;
-
     @SuppressLint("SetTextI18n")
     private void layoutSearchVisible(boolean isVisible, String name, String count,
                                      String distance, LatLng location) {
@@ -3025,8 +2945,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
     }
 
-    public String[] finalUid;
-
     @SuppressLint("SetTextI18n")
     public void layoutBottomSheetVisible(boolean isVisible, String name, String count,
                                          String distance, String duration, LatLng location, boolean isClicked) {
@@ -3043,15 +2961,16 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         if (isVisible) {
             if (bottomSheetPlaceLatLng != null) {
-                MarkerOptions markerOptions = new MarkerOptions();
+
+                coordList.add(new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
+              /*  MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(bottomSheetPlaceLatLng);
 
                 if (previousMarker != null)
                     previousMarker.remove();
 
-                coordList.add(new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
                 markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
-                previousMarker = mMap.addMarker(markerOptions);
+                previousMarker = mMap.addMarker(markerOptions);*/
 
                 for (int i = 0; i < sensorArrayList.size(); i++) {
 
@@ -3081,6 +3000,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 }
 
             }
+            getDirectionPinMarkerDraw(bottomSheetPlaceLatLng, bottomUid);
             linearLayoutBottomSheetBottom.setVisibility(View.VISIBLE);
             linearLayoutBottomSheetNameCount.setVisibility(View.GONE);
             textViewBottomSheetParkingAreaCount.setText(count);
@@ -3472,11 +3392,12 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         buttonSearch.setVisibility(View.GONE);
                         bookingSensorsArrayListGlobal.clear();
                         bookingSensorsArrayList.clear();
+                        getDirectionPinMarkerDraw(markerPlaceLatLng, markerUid);
 
-                        if (markerPlaceLatLng != null) {
+                        coordList.add(new LatLng(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude));
+                   /*     if (markerPlaceLatLng != null) {
                             markerOptions = new MarkerOptions();
                             markerOptions.position(markerPlaceLatLng).title(markerUid);
-                            coordList.add(new LatLng(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude));
                             markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
                         }
 
@@ -3485,7 +3406,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             previousDestinationMarker = null;
                             previousDestinationMarker = mMap.addMarker(markerOptions);
                         }
-
+*/
                         isDestinationMarkerDrawn = true;
 
                         btnMarkerGetDirection.setVisibility(View.VISIBLE);
@@ -3590,12 +3511,12 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         //Timber.e("all location called");
 
                         EventBus.getDefault().post(new GetDirectionBottomSheetEvent(bottomSheetPlaceLatLng));
-
-                        MarkerOptions markerOptions = new MarkerOptions();
-                        markerOptions.position(bottomSheetPlaceLatLng);
+                        getDirectionPinMarkerDraw(bottomSheetPlaceLatLng, "");
+//                        MarkerOptions markerOptions = new MarkerOptions();
+//                        markerOptions.position(bottomSheetPlaceLatLng);
                         coordList.add(new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
-                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
-                        previousBottomSheetGetDestinationMarker = mMap.addMarker(markerOptions);
+//                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
+//                        previousBottomSheetGetDestinationMarker = mMap.addMarker(markerOptions);
 
                         linearLayoutBottom.setVisibility(View.GONE);
                         linearLayoutSearchBottom.setVisibility(View.GONE);
@@ -4000,14 +3921,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         textViewNoData.setVisibility(View.GONE);
     }
 
-    public interface SetBottomSheetCallBack {
-        void setBottomSheet();
-    }
-
-    public interface AddressCallBack {
-        void addressCall(String address);
-    }
-
     public void fetchDirections(String origin, String destination) {
 
         polyline = mMap.addPolyline(getDefaultPolyLines(points));
@@ -4061,6 +3974,14 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         } catch (Exception e) {
             Toast.makeText(context, "Error occurred on finding the directions...", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public interface SetBottomSheetCallBack {
+        void setBottomSheet();
+    }
+
+    public interface AddressCallBack {
+        void addressCall(String address);
     }
 
     /*@SuppressLint("StaticFieldLeak")
