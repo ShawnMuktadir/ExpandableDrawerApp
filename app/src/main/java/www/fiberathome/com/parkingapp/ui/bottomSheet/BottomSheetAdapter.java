@@ -42,22 +42,15 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
     private int count = 0;
 
-    private AdapterCallback mAdapterCallback;
-
     private onItemClickListeners clickListeners;
 
-    public BottomSheetAdapter(Context context, HomeFragment homeFragment, ArrayList<BookingSensors> sensors,
-                              Location onConnectedLocation, AdapterCallback callback, onItemClickListeners clickListeners) {
+    public BottomSheetAdapter(Context context, HomeFragment homeFragment,
+                              Location onConnectedLocation, onItemClickListeners clickListeners) {
         this.context = context;
         this.homeFragment = homeFragment;
-        this.bookingSensorsArrayList = sensors;
         this.location = onConnectedLocation;
-        this.mAdapterCallback = callback;
         this.clickListeners = clickListeners;
-    }
-
-    public interface AdapterCallback {
-        void onMethodCallback(LatLng latLng);
+        this.bookingSensorsArrayList = new ArrayList<>();
     }
 
     public interface onItemClickListeners {
@@ -99,13 +92,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
         holder.textViewParkingDistance.setText(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(bookingSensors.getDistance()) + " km");
 
-        holder.rowFG.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                clickListeners.onClick(bookingSensors);
-            }
-        });
-
+        holder.rowFG.setOnClickListener(view -> clickListeners.onClick(bookingSensors));
 
         DecimalFormat decimalFormat = new DecimalFormat("00.0", new DecimalFormatSymbols(Locale.US));
 
@@ -132,18 +119,10 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
     @Override
     public int getItemViewType(int position) {
-        switch (bookingSensorsArrayList.get(position).type) {
-            case 0:
-                return BookingSensors.TEXT_INFO_TYPE;
-            default:
-                return BookingSensors.INFO_TYPE;
+        if (bookingSensorsArrayList.get(position).type == 0) {
+            return BookingSensors.TEXT_INFO_TYPE;
         }
-    }
-
-    public void setData(ArrayList<BookingSensors> bookingSensors) {
-        bookingSensorsArrayList.clear();
-        bookingSensorsArrayList.addAll(bookingSensors);
-        notifyDataSetChanged();
+        return BookingSensors.INFO_TYPE;
     }
 
     public void setDataList(ArrayList<BookingSensors> dataList) {

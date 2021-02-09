@@ -131,7 +131,7 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
 
         if (ApplicationUtils.checkInternet(context)) {
 
-            fetchSearchVisitorPlace(Preferences.getInstance(context).getUser().getMobileNo());
+            fetchSearchedDestinationPlace(Preferences.getInstance(context).getUser().getMobileNo());
 
             Timber.e("searchActivity mobileNo -> %s", Preferences.getInstance(context).getUser().getMobileNo());
 
@@ -357,6 +357,7 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
             }*/
 
             mAutoCompleteAdapter.notifyDataSetChanged();
+
             if (!ApplicationUtils.checkInternet(context)) {
                 ApplicationUtils.hideKeyboard(context, editTextSearch);
             }
@@ -398,13 +399,13 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
     private double startLat = 0.0;
     private double startLng = 0.0;
 
-    private void fetchSearchVisitorPlace(String mobileNo) {
+    private void fetchSearchedDestinationPlace(String mobileNo) {
 
         Timber.e("fetchSearchVisitorPlace mobileNo -> %s,", mobileNo);
 
         showLoading(context);
 
-        ApiService service = ApiClient.getRetrofitInstance(AppConfig.URL_SAVE_SEARCH_HISTORY_POST).create(ApiService.class);
+        ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
         Call<SearchVisitedPlaceResponse> searchHistoryResponseCall = service.getSearchHistory(mobileNo);
 
         // Gathering results.
@@ -487,7 +488,7 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
         this.searchVisitorDataList = searchVisitorDataList;
 
         recyclerViewSearchPlaces.setHasFixedSize(true);
-        recyclerViewSearchPlaces.setItemViewCacheSize(20);
+        //recyclerViewSearchPlaces.setItemViewCacheSize(20);
         recyclerViewSearchPlaces.setNestedScrollingEnabled(false);
         recyclerViewSearchPlaces.setMotionEventSplittingEnabled(false);
 
@@ -495,22 +496,12 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
         recyclerViewSearchPlaces.setLayoutManager(mLayoutManager);
         recyclerViewSearchPlaces.addItemDecoration(new DividerItemDecoration(context, LinearLayoutManager.VERTICAL));
         recyclerViewSearchPlaces.setItemAnimator(new DefaultItemAnimator());
-        recyclerViewSearchPlaces.addOnItemTouchListener(new RecyclerTouchListener(context, recyclerViewSearchPlaces, new RecyclerTouchListener.ClickListener() {
-            @Override
-            public void onClick(View view, int position) {
-                //Toast.makeText(context, position + " is selected!", Toast.LENGTH_SHORT).show();
-            }
 
-            @Override
-            public void onLongClick(View view, int position) {
-
-            }
-        }));
         ViewCompat.setNestedScrollingEnabled(recyclerViewSearchPlaces, false);
 
-        mAutoCompleteAdapter = null;
         mAutoCompleteAdapter = new PlacesAutoCompleteAdapter(context, placesClient, searchVisitorDataList);
         mAutoCompleteAdapter.setClickListener(this);
+        mAutoCompleteAdapter.setDataList(searchVisitorDataList);
         recyclerViewSearchPlaces.setAdapter(mAutoCompleteAdapter);
     }
 
@@ -519,31 +510,21 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
         recyclerViewSearchPlaces.setLayoutManager(new LinearLayoutManager(context));
         recyclerViewSearchPlaces.addItemDecoration(new DividerItemDecoration(context, LinearLayoutManager.VERTICAL));
         recyclerViewSearchPlaces.setItemAnimator(new DefaultItemAnimator());
-        recyclerViewSearchPlaces.addOnItemTouchListener(new RecyclerTouchListener(context, recyclerViewSearchPlaces, new RecyclerTouchListener.ClickListener() {
-            @Override
-            public void onClick(View view, int position) {
-                //Toast.makeText(context, position + " is selected!", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onLongClick(View view, int position) {
-
-            }
-        }));
 
         recyclerViewSearchPlaces.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
             @Override
             public void onChildViewAttachedToWindow(@NonNull View view) {
-                Timber.e("onChildViewAttachedToWindow tcalled");
+                Timber.e("onChildViewAttachedToWindow called");
                 hideNoData();
             }
 
             @Override
             public void onChildViewDetachedFromWindow(@NonNull View view) {
-                Timber.e("onChildViewDetachedFromWindow tcalled");
+                Timber.e("onChildViewDetachedFromWindow called");
                 //setNoData();
             }
         });
+
         ViewCompat.setNestedScrollingEnabled(recyclerViewSearchPlaces, false);
         mAutoCompleteAdapter.setClickListener(this);
         recyclerViewSearchPlaces.setAdapter(mAutoCompleteAdapter);
@@ -600,18 +581,11 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
         return false;
     }
 
-    public void selectData(SearchVisitorData data) {
-        if (!searchVisitorDataList.contains(searchVisitorData)) {
-            searchVisitorDataList.add(searchVisitorData);
-            mAutoCompleteAdapter.setData(searchVisitorDataList);
-        }
-    }
-
     public boolean checkIfAlreadyExist(SearchVisitorData searchVisitorData) {
         //return searchVisitorDataList.contains(searchVisitorData);
         if (!searchVisitorDataList.contains(searchVisitorData)) {
             searchVisitorDataList.add(searchVisitorData);
-            mAutoCompleteAdapter.setData(searchVisitorDataList);
+            mAutoCompleteAdapter.setDataList(searchVisitorDataList);
             return true;
         } else {
             return false;

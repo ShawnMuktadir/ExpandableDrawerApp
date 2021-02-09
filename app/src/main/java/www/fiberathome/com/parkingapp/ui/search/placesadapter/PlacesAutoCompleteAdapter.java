@@ -369,7 +369,7 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
         this.clickListener = clickListener;
     }
 
-    public void setData(ArrayList<SearchVisitorData> searchVisitorDataList) {
+    public void setDataList(ArrayList<SearchVisitorData> searchVisitorDataList) {
         this.searchVisitorDataList = searchVisitorDataList;
         notifyDataSetChanged();
     }

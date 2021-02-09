@@ -29,12 +29,4 @@ public class AppConfig {
 
     public static final String URL_SAVE_SEARCH_HISTORY_POST = BASE_URL + "visitor_place_history.php";
     public static final String URL_SEARCH_HISTORY_GET = BASE_URL + "visitor_place_tracker_get.php";
-
-    /* SMS provider identification
-     It should match with your SMS gateway origin
-     You can use MSGIND, TESTER and ALERTS as sender ID
-     If you want custom sender Id, approve Msg91 to get one*/
-    public static final String SMS_ORIGIN       = "PARKINGAPP_";
-    public static final String SHARED_PREFERENCES = "";
-
 }

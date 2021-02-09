@@ -3,6 +3,7 @@ package www.fiberathome.com.parkingapp.utils;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.Handler;
 import android.os.Looper;
 
 import androidx.core.app.ActivityCompat;
@@ -17,6 +18,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Dot;
 import com.google.android.gms.maps.model.Gap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.PatternItem;
 import com.google.android.gms.maps.model.PolylineOptions;
 

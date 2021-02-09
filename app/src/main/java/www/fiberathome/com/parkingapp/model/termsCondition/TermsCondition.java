@@ -1,8 +1,5 @@
 package www.fiberathome.com.parkingapp.model.termsCondition;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 public class TermsCondition {
 
     private String title;

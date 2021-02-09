@@ -16,7 +16,15 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,16 +32,12 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import retrofit2.Call;
-import retrofit2.Callback;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
-import www.fiberathome.com.parkingapp.model.api.ApiClient;
-import www.fiberathome.com.parkingapp.model.api.ApiService;
+import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.termsCondition.TermsCondition;
-import www.fiberathome.com.parkingapp.model.termsCondition.TermsConditionResponse;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
@@ -117,7 +121,6 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
         if (providerEnabled) {
             return true;
         } else {
-
             /*AlertDialog alertDialog = new AlertDialog.Builder(context)
                     .setTitle("GPS Permissions")
                     .setMessage("GPS is required for this app to work. Please enable GPS.")
@@ -127,25 +130,27 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
                     }))
                     .setCancelable(false)
                     .show();*/
-
         }
         return false;
     }
 
     private ArrayList<TermsCondition> termsConditionsGlobal = new ArrayList<>();
+    private final ArrayList<TermsCondition> termsConditionArrayList = new ArrayList<>();
+    private List<List<String>> termConditionList = null;
+    private List<List<String>> list;
 
-    /*private void fetchPrivacyPolicy() {
+    private void fetchPrivacyPolicy() {
         Timber.e("fetchPrivacyPolicy called");
 
-        if (!context.isFinishing())
-            showLoading(context);
+        showLoading(context);
 
         StringRequest strReq = new StringRequest(Request.Method.GET, AppConfig.URL_PRIVACY_POLICY, new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {
-                //progressDialog.dismiss();
+
                 hideLoading();
+
                 try {
                     JSONObject object = new JSONObject(response);
                     JSONArray jsonArray = object.getJSONArray("termsCondition");
@@ -154,8 +159,8 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
 
                     if (jsonArray.length() > 0) {
                         JSONArray array2 = jsonArray.getJSONArray(1);
-                        termsConditionTemp.setTermsConditionDomain(array2.getString(6).trim());
-                        termsConditionTemp.setTermsConditionBody(array2.getString(2).trim());
+                        termsConditionTemp.setTitle(array2.getString(6).trim());
+                        termsConditionTemp.setDescription(array2.getString(2).trim());
                     }
 
                     for (int i = 1; i < jsonArray.length(); i++) {
@@ -163,30 +168,27 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
 
                         TermsCondition termsCondition = new TermsCondition();
 
-                        termsCondition.setTermsConditionId(array.getString(0).trim());
-                        termsCondition.setTermsConditionSerialNo(array.getString(1).trim());
-                        termsCondition.setTermsConditionRemarks(array.getString(3).trim());
-                        termsCondition.setTermsConditionDate(array.getString(4).trim());
-                        termsCondition.setTermsConditionUser(array.getString(5).trim());
-                        termsCondition.setTermsConditionDomain(array.getString(6).trim());
+                        termsCondition.setTitle(array.getString(6).trim());
+                        termsCondition.setDescription(array.getString(2).trim());
+                        termsCondition.setDate(array.getString(4).trim());
 
 
-                        if (array.getString(6).trim().equals(termsConditionTemp.getTermsConditionDomain()) && i != 1) {
+                        if (array.getString(6).trim().equals(termsConditionTemp.getTitle()) && i != 1) {
 
-                            termsCondition.setTermsConditionDomain("");
-                            termsCondition.setTermsConditionBody(array.getString(2).trim());
+                            termsCondition.setTitle("");
+                            termsCondition.setDescription(array.getString(2).trim());
 
                             JSONArray array2 = jsonArray.getJSONArray(i);
-                            termsConditionTemp.setTermsConditionDomain(array2.getString(6).trim());
-                            termsConditionTemp.setTermsConditionBody(array2.getString(2).trim());
+                            termsConditionTemp.setTitle(array2.getString(6).trim());
+                            termsConditionTemp.setDescription(array2.getString(2).trim());
                         } else {
 
-                            termsCondition.setTermsConditionDomain(array.getString(6).trim());
-                            termsCondition.setTermsConditionBody(array.getString(2).trim());
+                            termsCondition.setTitle(array.getString(6).trim());
+                            termsCondition.setDescription(array.getString(2).trim());
 
                             JSONArray array2 = jsonArray.getJSONArray(i);
-                            termsConditionTemp.setTermsConditionDomain(array2.getString(6).trim());
-                            termsConditionTemp.setTermsConditionBody(array2.getString(2).trim());
+                            termsConditionTemp.setTitle(array2.getString(6).trim());
+                            termsConditionTemp.setDescription(array2.getString(2).trim());
                         }
 
                         termsConditionsGlobal.add(termsCondition);
@@ -208,9 +210,9 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
         };
 
         ParkingApp.getInstance().addToRequestQueue(strReq);
-    }*/
+    }
 
-    private final ArrayList<TermsCondition> termsConditionArrayList = new ArrayList<>();
+    /*private final ArrayList<TermsCondition> termsConditionArrayList = new ArrayList<>();
     private List<List<String>> termConditionList = null;
     private List<List<String>> list;
     private TermsConditionResponse termsConditionResponse;
@@ -226,13 +228,14 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
 
         showLoading(context);
 
-        ApiService request = ApiClient.getRetrofitInstance(AppConfig.URL_PRIVACY_POLICY).create(ApiService.class);
+        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
 
         Call<TermsConditionResponse> call = request.getTermCondition();
 
         call.enqueue(new Callback<TermsConditionResponse>() {
             @Override
-            public void onResponse(@NonNull Call<TermsConditionResponse> call, @NonNull retrofit2.Response<TermsConditionResponse> response) {
+            public void onResponse(@NonNull Call<TermsConditionResponse> call,
+                                   @NonNull retrofit2.Response<TermsConditionResponse> response) {
                 hideLoading();
                 if (response.body() != null) {
 
@@ -241,6 +244,14 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
                     list = response.body().getTermsCondition();
 
                     Timber.e("list -> %s", new Gson().toJson(list));
+
+                    TermsCondition termsConditionTemp = new TermsCondition();
+
+                    if (list.size() > 0) {
+                        //JSONArray array2 = jsonArray.getJSONArray(1);
+                        termsConditionTemp.setTitle(list.get(6).toString());
+                        termsConditionTemp.setDescription(list.get(2).toString());
+                    }
 
                     termsConditionResponse = response.body();
 
@@ -280,10 +291,10 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
                 Timber.e("onFailure -> %s", t.getMessage());
             }
         });
-    }
+    }*/
 
     private void setTermsConditions(ArrayList<TermsCondition> termsConditions) {
-        this.termsConditionsGlobal = termsConditions;
+
         recyclerViewPrivacy.setHasFixedSize(true);
         recyclerViewPrivacy.setItemViewCacheSize(20);
         recyclerViewPrivacy.setNestedScrollingEnabled(false);
@@ -294,7 +305,7 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
         recyclerViewPrivacy.setItemAnimator(new DefaultItemAnimator());
 
         ViewCompat.setNestedScrollingEnabled(recyclerViewPrivacy, false);
-        PrivacyPolicyAdapter privacyPolicyAdapter = new PrivacyPolicyAdapter(context, termsConditionsGlobal);
+        PrivacyPolicyAdapter privacyPolicyAdapter = new PrivacyPolicyAdapter(context, termsConditions);
         recyclerViewPrivacy.setAdapter(privacyPolicyAdapter);
     }
 }
