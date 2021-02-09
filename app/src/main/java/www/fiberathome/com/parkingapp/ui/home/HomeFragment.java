@@ -449,7 +449,15 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         HomeFragment fragment = new HomeFragment();
         return fragment;
     }
+   static MarkerOptions markerOptionsPin;
+    public static MarkerOptions newPinMarkerInstance() {
+        if(markerOptionsPin==null){
+            markerOptionsPin = new MarkerOptions();
+        }
+        return markerOptionsPin;
 
+
+    }
     public static HomeFragment newInstance(double lat, double lng, String areaName, String count) {
         HomeFragment fragment = new HomeFragment();
         Bundle bundle = new Bundle();
@@ -673,11 +681,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             previousMarker = marker;
                             removeCircle();
                             marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_gray));
-                            markerOptionsForSecondMarkerClick = new MarkerOptions();
-                            markerOptionsForSecondMarkerClick.position(marker.getPosition()).title(markerUid);
+                            getDirectionPinMarkerDraw(marker.getPosition(),markerUid);
+
                             coordList.add(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
-                            markerOptionsForSecondMarkerClick.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
-                            previousSecondMarkerDestinationMarker = mMap.addMarker(markerOptionsForSecondMarkerClick);
+
                             markerClicked = marker;
                             isNotificationSent = false;
                             isInAreaEnabled = false;
@@ -697,19 +704,21 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     //calculate Duration
                     markerPlaceLatLng = new LatLng(marker.getPosition().latitude, marker.getPosition().longitude);
 
-                    if (marker.getPosition() != null) {
-                        markerOptions = new MarkerOptions();
-                        markerOptions.position(marker.getPosition()).title(markerUid);
-                        coordList.add(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
-                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
-                    }
+//                    if (marker.getPosition() != null) {
+//                        markerOptions = new MarkerOptions();
+//                        markerOptions.position(marker.getPosition()).title(markerUid);
+//                        coordList.add(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
+//                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
+//                    }
+//
+//                    if (previousDestinationMarker != null) {
+//                        previousDestinationMarker.remove();
+//                        previousDestinationMarker = null;
+//                    } else {
+//                        previousDestinationMarker = mMap.addMarker(markerOptions);
+//                    }
 
-                    if (previousDestinationMarker != null) {
-                        previousDestinationMarker.remove();
-                        previousDestinationMarker = null;
-                    } else {
-                        previousDestinationMarker = mMap.addMarker(markerOptions);
-                    }
+                    getDirectionPinMarkerDraw(marker.getPosition(),markerUid);
 
                     if (SharedData.getInstance().getPreviousAdapterSetMarkerEvent() != null) {
                         previousAdapterSetMarkerEvent.remove();
@@ -849,14 +858,16 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         polyline.remove();
                     }
 
-                    if (marker.getPosition() != null) {
-                        markerOptionsForMarkerClick = new MarkerOptions();
-                        markerOptionsForMarkerClick.position(marker.getPosition()).title(markerUid);
-                        coordList.add(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
-                        markerOptionsForMarkerClick.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
-                    }
 
-                    if (previousSecondMarkerDestinationMarker != null) {
+                    getDirectionPinMarkerDraw(marker.getPosition(),markerUid);
+//                    if (marker.getPosition() != null) {
+//                        markerOptionsForMarkerClick = new MarkerOptions();
+//                        markerOptionsForMarkerClick.position(marker.getPosition()).title(markerUid);
+//                        coordList.add(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
+//                        markerOptionsForMarkerClick.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
+//                    }
+
+                 /*   if (previousSecondMarkerDestinationMarker != null) {
                         previousSecondMarkerDestinationMarker.remove();
                         previousSecondMarkerDestinationMarker = null;
                     }
@@ -895,7 +906,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         previousAdapterDestinationMarker = null;
                     } else {
                         previousAdapterDestinationMarker = mMap.addMarker(markerOptionsForMarkerClick);
-                    }
+                    }*/
 
                     isDestinationMarkerDrawn = true;
 
@@ -978,6 +989,16 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
 
         return true;
+    }
+    Marker pinMarker;
+    private void getDirectionPinMarkerDraw(LatLng pinPosition, String markerUid) {
+        if(pinMarker!=null) {
+            pinMarker.remove();
+        }
+        pinMarker = mMap.addMarker(newPinMarkerInstance().position(pinPosition)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin))
+                .title(markerUid));
+
     }
 
     private int fromParkingSpot = 0;
@@ -2883,20 +2904,20 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             public void run() {
 
                 markerPlaceLatLng = event.location;
-
-                if (markerPlaceLatLng != null && adapterPlaceLatLng == null) {
-                    markerOptions = new MarkerOptions();
-                    markerOptions.position(markerPlaceLatLng).title(markerUid);
-                    coordList.add(new LatLng(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude));
-                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
-                }
-
-                if (previousDestinationMarker != null) {
-                    previousDestinationMarker.remove();
-                    previousDestinationMarker = null;
-                }
-
-                previousDestinationMarker = mMap.addMarker(markerOptions);
+                getDirectionPinMarkerDraw(markerPlaceLatLng,markerUid);
+//                if (markerPlaceLatLng != null && adapterPlaceLatLng == null) {
+//                    markerOptions = new MarkerOptions();
+//                    markerOptions.position(markerPlaceLatLng).title(markerUid);
+//                    coordList.add(new LatLng(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude));
+//                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
+//                }
+//
+//                if (previousDestinationMarker != null) {
+//                    previousDestinationMarker.remove();
+//                    previousDestinationMarker = null;
+//                }
+//
+//                previousDestinationMarker = mMap.addMarker(markerOptions);
 
                 isDestinationMarkerDrawn = true;
 
