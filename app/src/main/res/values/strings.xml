@@ -459,4 +459,6 @@
     <string name="please_update_the_app">Please, update app to new version to continue using</string>
     <string name="no_thanks">No, thanks</string>
     <string name="are_you_sure_you_want_to_exit">Are you sure you want to exit?</string>
+    <string name="no_route_exist">No routes exist</string>
+    <string name="something_went_wrong_please_check_internet_connection">Something went wrong!!! Please check your Internet connection</string>
 </resources>

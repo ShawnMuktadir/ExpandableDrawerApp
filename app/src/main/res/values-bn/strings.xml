@@ -450,8 +450,10 @@
     <string name="no_data_found">কোন ডাটা পাওয়া যায় নি</string>
     <string name="update">হালনাগাদ</string>
     <string name="new_version_available">নতুন সংস্করণ উপলব্ধ</string>
-    <string name="please_update_the_app">দয়া করে ব্যবহার চালিয়ে যেতে অ্যাপ্লিকেশনটিকে নতুন সংস্করণে আপডেট করুন
-</string>
+    <string name="please_update_the_app">দয়া করে ব্যবহার চালিয়ে যেতে অ্যাপ্লিকেশনটিকে নতুন সংস্করণে আপডেট করুন</string>
     <string name="no_thanks">না, ধন্যবাদ</string>
     <string name="are_you_sure_you_want_to_exit">Are you sure you want to exit?</string>
+    <string name="no_route_exist">কোনও রুট নেই</string>
+    <string name="something_went_wrong_please_check_internet_connection">
+        কিছু ভুল হয়েছে!!! আপনার ইন্টারনেট সংযোগ পরীক্ষা করুন</string>
 </resources>

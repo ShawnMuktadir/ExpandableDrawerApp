@@ -131,17 +131,6 @@ public final class SharedData {
         this.parkingLocation = parkingLocation;
     }
 
-    private BookingSensors bookingSensors;
-
-    public BookingSensors getBookingSensors() {
-        return bookingSensors;
-    }
-
-    public void setBookingSensors(BookingSensors bookingSensors) {
-        Timber.e("BookingSensor Area in SharedData -> %s", new Gson().toJson(bookingSensors));
-        this.bookingSensors = bookingSensors;
-    }
-
     private boolean locationPermission = false;
 
     public boolean getLocationPermission() {
@@ -150,16 +139,6 @@ public final class SharedData {
 
     public void setLocationPermission(boolean locationPermission) {
         this.locationPermission = locationPermission;
-    }
-
-    private MyLatLng myLatLng;
-
-    public MyLatLng getMyLatLng() {
-        return myLatLng;
-    }
-
-    public void setMyLatLng(MyLatLng myLatLng) {
-        this.myLatLng = myLatLng;
     }
 
     private List<LatLng> dangerousArea;
@@ -172,16 +151,6 @@ public final class SharedData {
         this.dangerousArea = dangerousArea;
     }
 
-    private LatLng latLng;
-
-    public LatLng getLatLng() {
-        return latLng;
-    }
-
-    public void setLatLng(LatLng latLng) {
-        this.latLng = latLng;
-    }
-
     private Location lastLocation;
 
     public Location getLastLocation() {
@@ -190,15 +159,5 @@ public final class SharedData {
 
     public void setLastLocation(Location lastLocation) {
         this.lastLocation = lastLocation;
-    }
-
-    private Marker previousAdapterSetMarkerEvent;
-
-    public Marker getPreviousAdapterSetMarkerEvent() {
-        return previousAdapterSetMarkerEvent;
-    }
-
-    public void setPreviousAdapterSetMarkerEvent(Marker previousAdapterSetMarkerEvent) {
-        this.previousAdapterSetMarkerEvent = previousAdapterSetMarkerEvent;
     }
 }

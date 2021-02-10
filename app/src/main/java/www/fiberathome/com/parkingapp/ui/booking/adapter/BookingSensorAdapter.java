@@ -49,7 +49,7 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<RecyclerView.View
         this.homeFragment = homeFragment;
         this.bookingSensorsArrayList = sensors;
         total_types = bookingSensorsArrayList.size();
-//        selectedItem = -1;
+        //selectedItem = -1;
     }
 
     @NonNull
@@ -67,11 +67,11 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
         return null;
 
-//        View itemView;
-//        itemView = LayoutInflater.
-//                from(parent.getContext()).
-//                inflate(R.layout.bottom_sheet_recycler_item, parent, false);
-//        return new BookingViewHolder(itemView);
+        /*View itemView;
+        itemView = LayoutInflater.
+                from(parent.getContext()).
+                inflate(R.layout.bottom_sheet_recycler_item, parent, false);
+        return new BookingViewHolder(itemView);*/
     }
 
     @Override
@@ -124,7 +124,7 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<RecyclerView.View
                                 new LatLng(bookingSensors.getLat(), bookingSensors.getLng()), true);
 
                         homeFragment.bottomSheetBehavior.setHideable(false);
-//            homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
+                        //homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
                         homeFragment.bottomSheetBehavior.setPeekHeight(400);
                     });
                     break;
@@ -132,41 +132,41 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
-//    @SuppressLint("SetTextI18n")
-//    @Override
-//    public void onBindViewHolder(@NonNull BookingViewHolder viewHolder, int position) {
-//        this.viewHolder = viewHolder;
-//
-//        BookingViewHolder bookingViewHolder = (BookingViewHolder) viewHolder;
-//
-//        BookingSensors bookingSensors = bookingSensorsArrayList.get(position);
-//
-//        bookingViewHolder.textViewParkingAreaName.setText(ApplicationUtils.capitalize(bookingSensors.getParkingArea()));
-//        bookingViewHolder.textViewParkingAreaCount.setText(bookingSensors.getCount());
-//
-////        getDestinationDurationInfo(context, new LatLng(bookingSensors.getLat(), bookingSensors.getLng()), bookingViewHolder);
-//
-//        // Here I am just highlighting the background
-//        bookingViewHolder.itemView.setBackgroundColor(selectedItem == position ? Color.LTGRAY : Color.TRANSPARENT);
-//
-//        bookingViewHolder.itemView.setOnClickListener(v -> {
-////            Collections.swap(bookingSensorsArrayList, position, 0);
-////            notifyItemMoved(position, 0);
-////            notifyDataSetChanged();
-//            selectedItem = position;
+    /*    @SuppressLint("SetTextI18n")
+    @Override
+    public void onBindViewHolder(@NonNull BookingViewHolder viewHolder, int position) {
+        this.viewHolder = viewHolder;
+
+        BookingViewHolder bookingViewHolder = (BookingViewHolder) viewHolder;
+
+        BookingSensors bookingSensors = bookingSensorsArrayList.get(position);
+
+        bookingViewHolder.textViewParkingAreaName.setText(ApplicationUtils.capitalize(bookingSensors.getParkingArea()));
+        bookingViewHolder.textViewParkingAreaCount.setText(bookingSensors.getCount());
+
+//        getDestinationDurationInfo(context, new LatLng(bookingSensors.getLat(), bookingSensors.getLng()), bookingViewHolder);
+
+        // Here I am just highlighting the background
+        bookingViewHolder.itemView.setBackgroundColor(selectedItem == position ? Color.LTGRAY : Color.TRANSPARENT);
+
+        bookingViewHolder.itemView.setOnClickListener(v -> {
+//            Collections.swap(bookingSensorsArrayList, position, 0);
+//            notifyItemMoved(position, 0);
 //            notifyDataSetChanged();
-//            getDestinationDurationInfoForSearchLayout(context, new LatLng(bookingSensors.getLat(), bookingSensors.getLng()),
-//                    bookingViewHolder);
-//            homeFragment.layoutBottomSheetVisible(true, bookingSensors.getParkingArea(), bookingSensors.getCount(),
-//                    bookingViewHolder.textViewParkingDistance.getText().toString(),
-//                    bookingViewHolder.textViewParkingTravelTime.getText().toString(),
-//                    new LatLng(bookingSensors.getLat(), bookingSensors.getLng()));
-//
-//            homeFragment.bottomSheetBehavior.setHideable(false);
-////            homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
-//            homeFragment.bottomSheetBehavior.setPeekHeight(300);
-//        });
-//    }
+            selectedItem = position;
+            notifyDataSetChanged();
+            getDestinationDurationInfoForSearchLayout(context, new LatLng(bookingSensors.getLat(), bookingSensors.getLng()),
+                    bookingViewHolder);
+            homeFragment.layoutBottomSheetVisible(true, bookingSensors.getParkingArea(), bookingSensors.getCount(),
+                    bookingViewHolder.textViewParkingDistance.getText().toString(),
+                    bookingViewHolder.textViewParkingTravelTime.getText().toString(),
+                    new LatLng(bookingSensors.getLat(), bookingSensors.getLng()));
+
+            homeFragment.bottomSheetBehavior.setHideable(false);
+//            homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
+            homeFragment.bottomSheetBehavior.setPeekHeight(300);
+        });
+    }*/
 
     @Override
     public int getItemViewType(int position) {

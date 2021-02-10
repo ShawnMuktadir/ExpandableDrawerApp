@@ -110,7 +110,7 @@ public class ApplicationUtils {
     }
 
     public static boolean isProbablyBangla(String s) {
-        for (int i = 0; i < s.length();) {
+        for (int i = 0; i < s.length(); ) {
             int c = s.codePointAt(i);
             if (c >= 0x0980 && c <= 0x09A0)
                 return true;
@@ -128,22 +128,21 @@ public class ApplicationUtils {
         return false;
     }
 
-    public static boolean isEnglish(String str)
-    {
+    public static boolean isEnglish(String str) {
         return ((!str.equals(""))
                 && (str != null)
                 && (str.matches("^[a-zA-Z]*$")));
     }
 
     public static int getToolBarHeight(Context context) {
-        int[] attrs = new int[] {R.attr.actionBarSize};
+        int[] attrs = new int[]{R.attr.actionBarSize};
         TypedArray ta = context.obtainStyledAttributes(attrs);
         int toolBarHeight = ta.getDimensionPixelSize(0, -1);
         ta.recycle();
         return toolBarHeight;
     }
 
-    public static double round (double value, int precision) {
+    public static double round(double value, int precision) {
         int scale = (int) Math.pow(10, precision);
         return (double) Math.round(value * scale) / scale;
     }
@@ -281,11 +280,7 @@ public class ApplicationUtils {
         NetworkInfo wifiInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         NetworkInfo mobileInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 
-        if ((wifiInfo != null && wifiInfo.isConnected()) || (mobileInfo != null && mobileInfo.isConnected())) {
-            return true;
-        } else {
-            return false;
-        }
+        return (wifiInfo != null && wifiInfo.isConnected()) || (mobileInfo != null && mobileInfo.isConnected());
     }
 
     public static void showMessageDialog(String message, Context context) {
@@ -515,7 +510,7 @@ public class ApplicationUtils {
     public static String addCountryPrefix(String number) {
         if (number != null && android.text.TextUtils.isDigitsOnly(number)) {
             if (number.length() > 2) {
-                if (number.substring(0, 2).equals("88")) {
+                if (number.startsWith("88")) {
                     return number;
                 } else
                     return "+88" + number;
@@ -531,7 +526,7 @@ public class ApplicationUtils {
         LayoutInflater inflater = activity.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.exit_alert, null);
         dialogBuilder.setView(dialogView);
-        TextView tv_exit = (TextView) dialogView.findViewById(R.id.tv_exit);
+        TextView tv_exit = dialogView.findViewById(R.id.tv_exit);
         View outside_view = dialogView.findViewById(R.id.outside_view);
         final android.app.AlertDialog alertDialog = dialogBuilder.create();
         alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -588,12 +583,12 @@ public class ApplicationUtils {
     }
 
     public static void refreshFragment(@NonNull FragmentManager fragmentManager,
-                                       @NonNull Fragment fragment, int frameId) {
+                                       @NonNull Fragment fragment) {
         // Reload current fragment
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-        transaction.setCustomAnimations(0, 0);
-        transaction.replace(frameId, fragment);
+        //transaction.setCustomAnimations(0, 0);
+        transaction.replace(R.id.nav_host_fragment, fragment);
         transaction.detach(fragment);
         transaction.attach(fragment);
         transaction.commit();
@@ -608,7 +603,7 @@ public class ApplicationUtils {
             return newInstance;
         } catch (Exception e) // InstantiationException, IllegalAccessException
         {
-            throw new RuntimeException("Cannot reinstantiate fragment " + fragment.getClass().getName(), e);
+            throw new RuntimeException("Cannot reinstated fragment " + fragment.getClass().getName(), e);
         }
     }
 
@@ -679,7 +674,7 @@ public class ApplicationUtils {
         int j = 0;
         int count = 0;  // Number of extra spaces
         int lspaces = 0;// Number of left spaces
-        char ch[] = str.toCharArray();
+        char[] ch = str.toCharArray();
         int len = str.length();
         StringBuffer bchar = new StringBuffer();
         if (ch[0] == ' ') {
@@ -971,9 +966,9 @@ public class ApplicationUtils {
 
         View marker = ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.custom_marker_layout, null);
 
-        ImageView markerImage = (ImageView) marker.findViewById(R.id.user_dp);
+        ImageView markerImage = marker.findViewById(R.id.user_dp);
         markerImage.setImageResource(resource);
-        TextView txt_name = (TextView)marker.findViewById(R.id.name);
+        TextView txt_name = marker.findViewById(R.id.name);
         txt_name.setText(_name);
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
