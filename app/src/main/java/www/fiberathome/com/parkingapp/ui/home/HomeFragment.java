@@ -551,7 +551,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 }
             }
 
-            listener = (FragmentChangeListener) context;
+            listener = context;
 
             /*if (mMap == null) {
                 showLoading(context, context.getResources().getString(R.string.please_wait));
@@ -3097,7 +3097,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     }
                     Timber.e("clickEventJsonArray for loop sesh hoiche");
                 }
-                getDirectionPinMarkerDraw(bottomSheetPlaceLatLng,bottomUid);
+                getDirectionPinMarkerDraw(bottomSheetPlaceLatLng, bottomUid);
 
             }
             linearLayoutBottomSheetBottom.setVisibility(View.VISIBLE);
@@ -3496,11 +3496,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         buttonSearch.setVisibility(View.GONE);
                         bookingSensorsArrayListGlobal.clear();
                         bookingSensorsArrayList.clear();
-                        getDirectionPinMarkerDraw(markerPlaceLatLng,markerUid);
+                        getDirectionPinMarkerDraw(markerPlaceLatLng, markerUid);
 //                        if (markerPlaceLatLng != null) {
 //                            markerOptions = new MarkerOptions();
 //                            markerOptions.position(markerPlaceLatLng).title(markerUid);
-                            coordList.add(new LatLng(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude));
+                        coordList.add(new LatLng(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude));
 //                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin));
 //                        }
 
