@@ -53,14 +53,14 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         this.bookingSensorsArrayList = new ArrayList<>();
     }
 
-    /*public BottomSheetAdapter(Context context, HomeFragment homeFragment, ArrayList<BookingSensors> sensors,
+    public BottomSheetAdapter(Context context, HomeFragment homeFragment, ArrayList<BookingSensors> sensors,
                               Location onConnectedLocation, onItemClickListeners clickListeners) {
         this.context = context;
         this.homeFragment = homeFragment;
         this.bookingSensorsArrayList = sensors;
         this.location = onConnectedLocation;
         this.clickListeners = clickListeners;
-    }*/
+    }
 
     public interface onItemClickListeners {
         void onClick(BookingSensors bookingSensors);
