@@ -54,7 +54,7 @@
 
     //navigation
     <string name="home">হোম</string>
-    <string name="bookings">বুকিং</string>
+    <string name="bookedLists">বুকিং</string>
     <string name="profile">প্রোফাইল</string>
     <string name="logout">লগ আউট</string>
     <string name="law">আইন</string>

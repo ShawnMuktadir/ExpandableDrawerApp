@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.model.law;
+package www.fiberathome.com.parkingapp.model.response.law;
 
 import android.os.Parcel;
 import android.os.Parcelable;

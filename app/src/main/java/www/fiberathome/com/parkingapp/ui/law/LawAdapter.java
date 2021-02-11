@@ -17,8 +17,8 @@ import java.util.List;
 
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.model.law.Law;
-import www.fiberathome.com.parkingapp.model.law.LawItem;
+import www.fiberathome.com.parkingapp.model.response.law.Law;
+import www.fiberathome.com.parkingapp.model.response.law.LawItem;
 
 /*
  * Copyright (C) 2018 Levi Rizki Saputra (levirs565@gmail.com).

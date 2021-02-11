@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.model.searchHistory;
+package www.fiberathome.com.parkingapp.model.response.searchHistory;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

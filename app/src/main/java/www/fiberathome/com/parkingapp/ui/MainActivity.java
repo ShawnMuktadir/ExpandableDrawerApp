@@ -1,11 +1,3 @@
-/*
- * Copyright (c) 2020. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
- * Morbi non lorem porttitor neque feugiat blandit. Ut vitae ipsum eget quam lacinia accumsan.
- * Etiam sed turpis ac ipsum condimentum fringilla. Maecenas magna.
- * Proin dapibus sapien vel ante. Aliquam erat volutpat. Pellentesque sagittis ligula eget metus.
- * Vestibulum commodo. Ut rhoncus gravida arcu.
- */
-
 package www.fiberathome.com.parkingapp.ui;
 
 import android.Manifest;
@@ -107,17 +99,22 @@ import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.LocationHelper;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
+@SuppressLint("NonConstantResourceId")
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener,
         DialogForm.DialogFormListener, FragmentChangeListener, PermissionInterface {
 
     @BindView(R.id.tvTimeToolbar)
     public TextView tvTimeToolbar;
+
     @BindView(R.id.linearLayoutToolbarTime)
     public LinearLayout linearLayoutToolbarTime;
+
     @BindView(R.id.navigationView)
     public NavigationView navigationView;
+
     @BindView(R.id.drawerLayoutMain)
     DrawerLayout drawerLayoutMain;
+
     @BindView(R.id.toolbar)
     public Toolbar toolbar;
 
@@ -278,7 +275,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
             case R.id.nav_booking:
                 if (ApplicationUtils.checkInternet(context)) {
-                    toolbar.setTitle(context.getResources().getString(R.string.bookings));
+                    toolbar.setTitle(context.getResources().getString(R.string.bookedLists));
                     tvTimeToolbar.setVisibility(View.GONE);
                     linearLayoutToolbarTime.setVisibility(View.GONE);
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, BookingFragment.newInstance()).commit();

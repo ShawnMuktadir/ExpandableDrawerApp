@@ -53,7 +53,7 @@
 
     //navigation
     <string name="home">Home</string>
-    <string name="bookings">Bookings</string>
+    <string name="bookedLists">Bookings</string>
     <string name="profile">Profile</string>
     <string name="logout">Logout</string>
     <string name="law">Law</string>

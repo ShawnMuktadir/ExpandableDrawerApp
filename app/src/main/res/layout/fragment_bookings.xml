@@ -39,12 +39,11 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewBooking"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_margin="@dimen/dim3"
             android:background="?android:attr/selectableItemBackground"
             android:clipToPadding="false"
             android:elevation="@dimen/dim3"
-            tools:listitem="@layout/bookings_row"
             android:overScrollMode="never"
             android:padding="@dimen/dim3"
             android:scrollbars="vertical" />

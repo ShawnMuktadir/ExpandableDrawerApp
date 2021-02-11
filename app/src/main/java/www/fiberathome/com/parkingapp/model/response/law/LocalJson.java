@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.model.law;
+package www.fiberathome.com.parkingapp.model.response.law;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

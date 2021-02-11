@@ -7,10 +7,11 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import www.fiberathome.com.parkingapp.model.response.BaseResponse;
+import www.fiberathome.com.parkingapp.model.response.booking.BookedResponse;
 import www.fiberathome.com.parkingapp.model.response.parkingSlot.ParkingSlotResponse;
 import www.fiberathome.com.parkingapp.model.response.search.SearchVisitedPlaceResponse;
 import www.fiberathome.com.parkingapp.model.response.sensors.SensorsResponse;
-import www.fiberathome.com.parkingapp.model.termsCondition.TermsConditionResponse;
+import www.fiberathome.com.parkingapp.model.response.termsCondition.TermsConditionResponse;
 
 public interface ApiService {
 
@@ -69,4 +70,14 @@ public interface ApiService {
 
     @GET("terms_condition.php")
     Call<TermsConditionResponse> getTermCondition();
+
+    @FormUrlEncoded
+    @POST("bookings.php")
+    Call<BookedResponse> storeBookingPlace(
+            @Field("mobile_number") String mobileNo
+    );
+
+    @FormUrlEncoded
+    @POST("bookings.php")
+    Call<BookedResponse> getBookedPlace(@Field("user_id") String mobileNo);
 }

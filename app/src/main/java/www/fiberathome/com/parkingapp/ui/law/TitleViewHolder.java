@@ -8,7 +8,7 @@ import android.widget.TextView;
 import com.thoughtbot.expandablerecyclerview.viewholders.GroupViewHolder;
 
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.model.law.LawItem;
+import www.fiberathome.com.parkingapp.model.response.law.LawItem;
 
 import static android.view.animation.Animation.RELATIVE_TO_SELF;
 

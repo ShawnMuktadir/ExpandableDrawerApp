@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.model.termsCondition;
+package www.fiberathome.com.parkingapp.model.response.termsCondition;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

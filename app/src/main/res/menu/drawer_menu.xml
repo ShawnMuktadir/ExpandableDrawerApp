@@ -23,7 +23,7 @@
             android:id="@+id/nav_booking"
             android:icon="@drawable/ic_your_books"
             android:iconTint="@color/black"
-            android:title="@string/bookings" />
+            android:title="@string/bookedLists" />
 
         <item
             android:id="@+id/nav_law"

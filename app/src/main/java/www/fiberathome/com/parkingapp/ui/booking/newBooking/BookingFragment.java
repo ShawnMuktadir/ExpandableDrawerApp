@@ -5,14 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,38 +13,40 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.toolbox.StringRequest;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
+import www.fiberathome.com.parkingapp.model.api.ApiClient;
+import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
-import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
+import www.fiberathome.com.parkingapp.model.response.booking.BookedList;
+import www.fiberathome.com.parkingapp.model.response.booking.BookedResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingArea;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
+import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
-import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
-import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 
 import static android.content.Context.LOCATION_SERVICE;
-import static com.android.volley.VolleyLog.TAG;
 import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
 
 @SuppressLint("NonConstantResourceId")
@@ -109,12 +103,14 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
 
         String mobileNo = Preferences.getInstance(context).getUser().getMobileNo();
         if (ApplicationUtils.checkInternet(context)) {
-            fetchParkingBookingSpot(mobileNo);
+            //fetchParkingBookingSpot(mobileNo);
+            fetchBookedParkingPlace(mobileNo);
         } else {
             ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
                 Timber.e("Positive Button clicked");
                 if (ApplicationUtils.checkInternet(context)) {
-                    fetchParkingBookingSpot(mobileNo);
+                    //fetchParkingBookingSpot(mobileNo);
+                    fetchBookedParkingPlace(mobileNo);
                 } else {
                     TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                 }
@@ -211,7 +207,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
         return false;
     }
 
-    private void fetchParkingBookingSpot(String mobileNo) {
+    /*private void fetchParkingBookingSpot(String mobileNo) {
 
         //progressDialog = ApplicationUtils.progressDialog(context, "Please wait...");
         if (!context.isFinishing())
@@ -225,19 +221,20 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
             public void onResponse(String response) {
                 //progressDialog.dismiss();
                 hideLoading();
-                Timber.e("booking list response -> %s", response);
+                Timber.e("booking list response -> %s", new Gson().toJson(response));
                 try {
                     JSONObject jsonObject = new JSONObject(response);
+                    Timber.e("booking list jsonObject -> %s", new Gson().toJson(jsonObject));
                     //Log.e("Booking Object: ", jsonObject.toString());
                     if (!jsonObject.getBoolean("error")) {
 
                         JSONArray jsonArray = jsonObject.getJSONArray("bookings");
 
-                        /*stringArrayList = new ArrayList<String>();
+    stringArrayList = new ArrayList<String>();
 
                         numbRows = (Integer) jsonArray.length();
 
-                        Log.e("Number of Bookings: ", String.valueOf(numbRows));*/
+                        Log.e("Number of Bookings: ", String.valueOf(numbRows));
 
                         BookingArea bookingArea = null;
                         for (int i = 0; i < jsonArray.length(); i++) {
@@ -257,9 +254,9 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                         }
                         setFragmentControls(bookingAreas);
                     } else {
-                        /*stringArrayList = new ArrayList<String>();
+                        stringArrayList = new ArrayList<String>();
                         stringArrayList.add(" \n No Booking Found! ");
-                        bookingList(stringArrayList);*/
+                        bookingList(stringArrayList);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -280,13 +277,75 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
             }
         };
         ParkingApp.getInstance().addToRequestQueue(stringRequest, TAG);
+    }*/
+
+    private ArrayList<BookedList> bookedLists;
+    private BookedResponse bookedResponse;
+
+    String address = "";
+    String timeStart = "";
+    String timeEnd = "";
+    String currentBill = "";
+    String penalty = "";
+
+    private void fetchBookedParkingPlace(String mobileNo) {
+
+        Timber.e("fetchBookedParkingPlace mobileNo -> %s,", mobileNo);
+
+        showLoading(context);
+
+        ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+        Call<BookedResponse> bookedResponseCall = service.getBookedPlace(mobileNo);
+
+        // Gathering results.
+        bookedResponseCall.enqueue(new Callback<BookedResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<BookedResponse> call, @NonNull Response<BookedResponse> response) {
+
+                Timber.e("response -> %s", new Gson().toJson(response.body()));
+
+                hideLoading();
+
+                if (response.body() != null && !response.body().getError()) {
+                    if (response.isSuccessful()) {
+                        bookedResponse = response.body();
+
+                        bookedLists = bookedResponse.getBookedLists();
+
+                        Timber.e("bookedLists -> %s", new Gson().toJson(bookedLists));
+
+                        if (bookedLists != null && !bookedLists.isEmpty()) {
+                            setFragmentControls(bookedLists);
+                        } else {
+                            Toast.makeText(context, "bookedLists empty", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Timber.e("response -> %s", new Gson().toJson(response.body()));
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<BookedResponse> call, @NonNull Throwable errors) {
+                Timber.e("Throwable Errors: -> %s", errors.toString());
+            }
+        });
     }
 
-    private void setFragmentControls(ArrayList<BookingArea> bookingAreas) {
+    /*private void setFragmentControls(ArrayList<BookingArea> bookingAreas) {
         this.bookingAreas = bookingAreas;
         recyclerViewBooking.setHasFixedSize(true);
         recyclerViewBooking.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
         bookingAdapter = new BookingAdapter(context, this, bookingAreas);
+        recyclerViewBooking.setAdapter(bookingAdapter);
+    }*/
+
+    private void setFragmentControls(ArrayList<BookedList> bookedLists) {
+        //this.bookedLists = bookedLists;
+        recyclerViewBooking.setHasFixedSize(true);
+        recyclerViewBooking.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
+        bookingAdapter = new BookingAdapter(context);
+        bookingAdapter.setDataList(bookedLists);
         recyclerViewBooking.setAdapter(bookingAdapter);
     }
 

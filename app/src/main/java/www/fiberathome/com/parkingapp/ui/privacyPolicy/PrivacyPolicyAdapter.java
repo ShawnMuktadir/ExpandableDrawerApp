@@ -18,7 +18,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.model.termsCondition.TermsCondition;
+import www.fiberathome.com.parkingapp.model.response.termsCondition.TermsCondition;
 
 public class PrivacyPolicyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
