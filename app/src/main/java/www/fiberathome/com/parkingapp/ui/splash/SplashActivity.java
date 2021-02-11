@@ -8,6 +8,7 @@ import androidx.appcompat.app.AlertDialog;
 
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
+import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
@@ -24,6 +25,9 @@ public class SplashActivity extends BaseActivity {
         setContentView(R.layout.activity_base);
 
         context = this;
+
+        if (Preferences.getInstance(context).getAppLanguage() != null)
+            setAppLocale(Preferences.getInstance(context).getAppLanguage());
 
         //Initialize splash fragment
         ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),

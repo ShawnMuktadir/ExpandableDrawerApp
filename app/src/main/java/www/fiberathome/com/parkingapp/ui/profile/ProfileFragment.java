@@ -66,7 +66,7 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         unbinder = ButterKnife.bind(this, view);
         context = getActivity();
-        User user = Preferences.getInstance(getContext()).getUser();
+        User user = Preferences.getInstance(context).getUser();
         setData(user);
 
         return view;

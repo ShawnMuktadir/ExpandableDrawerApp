@@ -16,7 +16,7 @@ android {
 
     defaultConfig {
         applicationId "www.fiberathome.com.parkingapp"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 30
         versionCode versionMajor + versionMinor + versionPatch
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
@@ -74,13 +74,16 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.core:core:1.3.2'
     implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'com.google.android.material:material:1.3.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-    implementation 'androidx.navigation:navigation-fragment:2.3.1'
-    implementation 'androidx.navigation:navigation-ui:2.3.1'
+    implementation 'androidx.navigation:navigation-fragment:2.3.3'
+    implementation 'androidx.navigation:navigation-ui:2.3.3'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+
+    //security
+    implementation 'androidx.security:security-crypto:1.1.0-alpha03'
 
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
@@ -184,10 +187,6 @@ dependencies {
 
     //geoFence Libraries
     implementation 'com.firebase:geofire-android:3.0.0'
-
-    // rx java
-    implementation "io.reactivex.rxjava2:rxjava:$rootProject.rxjava2Version"
-    implementation "io.reactivex.rxjava2:rxandroid:$rootProject.rxandroidVersion"
 
     //room
     def room_version = "1.1.1"

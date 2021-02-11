@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import www.fiberathome.com.parkingapp.model.user.User;
+import www.fiberathome.com.parkingapp.utils.Constants;
+
+import static www.fiberathome.com.parkingapp.utils.Constants.LANGUAGE_EN;
 
 public class Preferences {
 
@@ -94,16 +97,27 @@ public class Preferences {
         editor.apply();
     }
 
-    public void setLanguage(String language){
+    // String IO
+    private void saveValue(String key, String value) {
+        if (key == null || key.isEmpty()) return;
+
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(KEY_LANGUAGE, language);
+        editor.putString(key, value);
         editor.apply();
     }
 
-    public String getLanguage(){
+    private String getValue(String key, String defaultValue) {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
-        return sharedPreferences.getString(KEY_LANGUAGE, "Choose a Language");
+        return sharedPreferences.getString(key, defaultValue);
+    }
+
+    public String getAppLanguage() {
+        return getValue(Constants.LANGUAGE, LANGUAGE_EN);
+    }
+
+    public void setAppLanguage(String language) {
+        saveValue(Constants.LANGUAGE, language);
     }
 
     public void setIsLocationPermissionGiven(boolean isLocationPermissionGiven){

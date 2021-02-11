@@ -200,7 +200,7 @@ public class PermissionActivity extends BaseActivity implements PermissionInterf
                 .setNegativeButton(android.R.string.no, null)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
-//                        PermissionActivity.super.onBackPressed();
+                        //PermissionActivity.super.onBackPressed();
                         finish();
                         Preferences.getInstance(context).setIsLocationPermissionGiven(false);
                         TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));

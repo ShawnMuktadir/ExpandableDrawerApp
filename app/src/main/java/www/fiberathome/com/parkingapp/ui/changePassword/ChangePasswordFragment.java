@@ -212,7 +212,7 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
     private void changePassword() {
 
         if (checkFields()) {
-            User user = Preferences.getInstance(getContext()).getUser();
+            User user = Preferences.getInstance(context).getUser();
             String oldPassword = editTextOldPassword.getText().toString().trim();
             String newPassword = editTextNewPassword.getText().toString().trim();
             String confirmPassword = editTextConfirmPassword.getText().toString().trim();

@@ -21,16 +21,15 @@ import java.util.Map;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.BuildConfig;
 import www.fiberathome.com.parkingapp.utils.ForceUpdateChecker;
-import www.fiberathome.com.parkingapp.utils.LocaleManager;
 import www.fiberathome.com.parkingapp.utils.internet.ConnectivityReceiver;
 
 public class ParkingApp extends Application {
 
     public static final String TAG = ParkingApp.class.getSimpleName();
-    private static ParkingApp mInstance;
-    private RequestQueue mRequestQueue;
 
-    public static LocaleManager localeManager;
+    private static ParkingApp mInstance;
+
+    private RequestQueue mRequestQueue;
 
     protected FirebaseRemoteConfig firebaseRemoteConfig;
 
@@ -108,19 +107,5 @@ public class ParkingApp extends Application {
 
     public void setConnectivityListener(ConnectivityReceiver.ConnectivityReceiverListener listener) {
         ConnectivityReceiver.listener = listener;
-    }
-
-    @Override
-    protected void attachBaseContext(Context base) {
-        localeManager = new LocaleManager(base);
-        super.attachBaseContext(localeManager.setLocale(base));
-        Timber.e("attachBaseContext");
-    }
-
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        localeManager.setLocale(this);
-        Timber.e("onConfigurationChanged: -> %s", newConfig.locale.getLanguage());
     }
 }

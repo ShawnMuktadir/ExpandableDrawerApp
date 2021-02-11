@@ -45,6 +45,8 @@ import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
 import static android.content.Context.LOCATION_SERVICE;
+import static www.fiberathome.com.parkingapp.utils.Constants.LANGUAGE_BN;
+import static www.fiberathome.com.parkingapp.utils.Constants.LANGUAGE_EN;
 
 @SuppressLint("NonConstantResourceId")
 public class LawFragment extends BaseFragment implements IOnBackPressListener {
@@ -183,15 +185,22 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
         try {
             if (getActivity() != null) {
                 InputStream is;
-                if (Locale.getDefault().getLanguage().equals("en")) {
+                if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_EN)) {
                     is = getActivity().getAssets().open("traficlaw.json");
                     int size = is.available();
                     byte[] buffer = new byte[size];
                     is.read(buffer);
                     is.close();
                     json = new String(buffer, StandardCharsets.UTF_8);
-                } else if (Locale.getDefault().getLanguage().equals("bn")) {
+                } else if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
                     is = getActivity().getAssets().open("traficlaw_bangla.json");
+                    int size = is.available();
+                    byte[] buffer = new byte[size];
+                    is.read(buffer);
+                    is.close();
+                    json = new String(buffer, StandardCharsets.UTF_8);
+                } else {
+                    is = getActivity().getAssets().open("traficlaw.json");
                     int size = is.available();
                     byte[] buffer = new byte[size];
                     is.read(buffer);
@@ -229,11 +238,11 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
                 /*if (s.length() > 0) {
                     filter(s.toString());
                 }*/
-                if (Locale.getDefault().getLanguage().equals("en") && ApplicationUtils.textContainsBangla(s.toString())) {
+                if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_EN) && ApplicationUtils.textContainsBangla(s.toString())) {
                     setNoDataForBangla();
                     recyclerView.setVisibility(View.GONE);
                     editTextSearchLaw.setText("");
-                } else if (Locale.getDefault().getLanguage().equals("bn") && ApplicationUtils.isEnglish(s.toString())) {
+                } else if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN) && ApplicationUtils.isEnglish(s.toString())) {
                     setNoDataForEnglish();
                     recyclerView.setVisibility(View.GONE);
                     editTextSearchLaw.setText("");
@@ -259,11 +268,11 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
                 String contents = editTextSearchLaw.getText().toString().trim();
                 if (contents.length() > 0) {
                     //do search
-                    if (Preferences.getInstance(context).getLanguage().equalsIgnoreCase("English") && ApplicationUtils.textContainsBangla(contents.toString())) {
+                    if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_EN) && ApplicationUtils.textContainsBangla(contents.toString())) {
                         setNoDataForBangla();
                         recyclerView.setVisibility(View.GONE);
                         editTextSearchLaw.setText("");
-                    } else if (Locale.getDefault().getLanguage().equals("bn") && ApplicationUtils.isEnglish(contents.toString())) {
+                    } else if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN) && ApplicationUtils.isEnglish(contents.toString())) {
                         setNoDataForEnglish();
                         recyclerView.setVisibility(View.GONE);
                         editTextSearchLaw.setText("");
@@ -272,7 +281,7 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
                         lawAdapter.getFilter().filter(contents.toString());
                     }
                 } else {
-                    //if something to do for empty edittext
+                    //if something to do for empty edit text
                     ApplicationUtils.hideKeyboard(context, editTextSearchLaw);
                     return true;
                 }
@@ -283,13 +292,13 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
 
     private void setNoDataForBangla() {
         textViewNoData.setVisibility(View.VISIBLE);
-        textViewNoData.setText(context.getResources().getString(R.string.no_nearest_parking_area_found));
+        textViewNoData.setText(context.getResources().getString(R.string.no_data_found));
         ApplicationUtils.showOnlyMessageDialog(context.getResources().getString(R.string.install_bangla_keyboard), context);
     }
 
     private void setNoDataForEnglish() {
         textViewNoData.setVisibility(View.VISIBLE);
-        textViewNoData.setText(context.getResources().getString(R.string.no_nearest_parking_area_found));
+        textViewNoData.setText(context.getResources().getString(R.string.no_data_found));
         ApplicationUtils.showOnlyMessageDialog(context.getResources().getString(R.string.change_app_language_to_english), context);
     }
 
@@ -299,6 +308,6 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
 
     public void setNoData() {
         textViewNoData.setVisibility(View.VISIBLE);
-        textViewNoData.setText(context.getResources().getString(R.string.no_nearest_parking_area_found));
+        textViewNoData.setText(context.getResources().getString(R.string.no_data_found));
     }
 }

@@ -128,7 +128,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
         linearLayoutToolbarTime.setVisibility(View.VISIBLE);
         navigationView.getMenu().getItem(0).setChecked(true);
 
-        if (!Preferences.getInstance(this).isLoggedIn()) {
+        if (!Preferences.getInstance(context).isLoggedIn()) {
             startActivityWithFinish(LoginActivity.class);
             return;
         }

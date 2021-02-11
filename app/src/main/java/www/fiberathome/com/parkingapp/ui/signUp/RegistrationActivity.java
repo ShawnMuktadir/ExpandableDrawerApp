@@ -125,7 +125,7 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
         mCompressor = new FileCompressor(this);
         setListeners();
         // Check user is logged in
-        if (Preferences.getInstance(getApplicationContext()).isLoggedIn()) {
+        if (Preferences.getInstance(context).isLoggedIn()) {
             Intent intent = new Intent(RegistrationActivity.this, HomeActivity.class);
             startActivity(intent);
             finish();

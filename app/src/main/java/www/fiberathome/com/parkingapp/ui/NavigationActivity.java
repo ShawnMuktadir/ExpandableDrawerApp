@@ -5,12 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,6 +38,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
+import java.util.Locale;
 import java.util.Objects;
 
 import butterknife.BindView;
@@ -62,11 +65,12 @@ import www.fiberathome.com.parkingapp.ui.settings.SettingsActivity;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 
-@SuppressLint("Registered")
+@SuppressLint("NonConstantResourceId")
 public class NavigationActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     @BindView(R.id.tvTimeToolbar)
     public TextView tvTimeToolbar;
+
     @BindView(R.id.linearLayoutToolbarTime)
     public LinearLayout linearLayoutToolbarTime;
 
@@ -116,6 +120,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         hideMenuItem(R.id.nav_notification);
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         closeNavDrawer();
@@ -125,39 +130,50 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
             case R.id.nav_home:
                 startActivity(HomeActivity.class);
                 break;
+
             case R.id.nav_parking:
                 startActivity(ParkingActivity.class);
                 // Remove any previous data from SharedData's sensor Data Parking Information
                 SharedData.getInstance().setSensorArea(null);
                 break;
+
             case R.id.nav_booking:
                 startActivity(BookingActivity.class);
                 break;
+
             case R.id.nav_law:
                 startActivity(LawActivity.class);
                 break;
+
             case R.id.nav_profile:
                 startActivity(ProfileActivity.class);
                 break;
+
             case R.id.nav_settings:
                 startActivity(SettingsActivity.class);
                 break;
+
             case R.id.nav_get_discount:
                 startActivity(GetDiscountActivity.class);
                 break;
+
             case R.id.nav_rating_review:
                 startActivity(RatingReviewActivity.class);
                 break;
+
             case R.id.nav_follow_us:
                 startActivity(FollowUsActivity.class);
                 break;
+
             case R.id.nav_privacy_policy:
                 startActivity(PrivacyPolicyActivity.class);
                 break;
+
             case R.id.nav_share:
                 navigationView.getMenu().getItem(0).setChecked(true);
                 shareApp();
                 break;
+
             default:
                 return false;
         }
@@ -185,7 +201,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
             return true;
         } else if (item.getItemId() == R.id.menu_logout) {
             // do your code
-            Preferences.getInstance(this).logout();
+            Preferences.getInstance(context).logout();
             startActivityWithFinish(LoginActivity.class);
             return true;
         }
@@ -269,13 +285,13 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
 
             @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
+            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
                 //Called when a drawer's position changes.
 
             }
 
             @Override
-            public void onDrawerOpened(View drawerView) {
+            public void onDrawerOpened(@NonNull View drawerView) {
                 //Called when a drawer has settled in a completely open state.
                 //The drawer is interactive at this point.
                 // If you have 2 drawers (left and right) you can distinguish
@@ -284,7 +300,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
             }
 
             @Override
-            public void onDrawerClosed(View drawerView) {
+            public void onDrawerClosed(@NonNull View drawerView) {
                 // Called when a drawer has settled in a completely closed state.
             }
 
@@ -335,7 +351,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
     }
 
     private void setupNavigationDrawerHeader() {
-        User user = Preferences.getInstance(this).getUser();
+        User user = Preferences.getInstance(context).getUser();
         View headerView = navigationView.getHeaderView(0);
         TextView tvUserFullName = headerView.findViewById(R.id.header_fullname);
         TextView tvUserVehicleNo = headerView.findViewById(R.id.header_vehicle_no);
@@ -423,10 +439,15 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         startActivity(intent);
     }
 
-    public void startActivityWithFinish(Class activityClass, Bundle bundle) {
+    public void startActivityWithFinishBundle(Class activityClass, Bundle bundle) {
         Intent intent = new Intent(getApplicationContext(), activityClass);
         intent.putExtras(bundle);
         startActivity(intent);
+        finishAffinity();
+    }
+
+    public void startActivityWithFinishAffinity(Class activityClass) {
+        startActivity(new Intent(getApplicationContext(), activityClass));
         finishAffinity();
     }
 
@@ -436,5 +457,17 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         shareIntent.putExtra(Intent.EXTRA_SUBJECT, "LOCC Smart Parking App");
         shareIntent.putExtra(Intent.EXTRA_TEXT, "LOCC Smart Parking App Link\n\n" + "https://163.47.157.195/parkingapp/");
         startActivity(Intent.createChooser(shareIntent, "Share Via:"));
+    }
+
+    public void setAppLocale(String localeCode){
+        Resources resources = getResources();
+        DisplayMetrics dm = resources.getDisplayMetrics();
+        Configuration config = resources.getConfiguration();
+        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.JELLY_BEAN_MR1){
+            config.setLocale(new Locale(localeCode.toLowerCase()));
+        } else {
+            config.locale = new Locale(localeCode.toLowerCase());
+        }
+        resources.updateConfiguration(config, dm);
     }
 }

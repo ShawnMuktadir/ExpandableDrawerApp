@@ -475,7 +475,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                 bundle.putString("areaName", parkingAreaName);
                 bundle.putString("count", count);
 
-                context.startActivityWithFinish(HomeActivity.class, bundle);
+                context.startActivityWithFinishBundle(HomeActivity.class, bundle);
             } else {
                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
             }
@@ -565,33 +565,5 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
 
     private void hideNoData() {
         textViewNoData.setVisibility(View.GONE);
-    }
-
-    public double showDistance(LatLng from, LatLng to) {
-
-        int Radius = 6371;// radius of earth in Km
-        double lat1 = from.latitude;
-        double lat2 = to.latitude;
-        double lon1 = from.longitude;
-        double lon2 = to.longitude;
-        double dLat = Math.toRadians(lat2 - lat1);
-        double dLon = Math.toRadians(lon2 - lon1);
-        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
-                + Math.cos(Math.toRadians(lat1))
-                * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon / 2)
-                * Math.sin(dLon / 2);
-
-        double c = 2.5 * Math.asin(Math.sqrt(a));
-        double valueResult = Radius * c;
-
-        double km = valueResult / 1;
-        DecimalFormat newFormat = new DecimalFormat("####");
-        int kmInDec = Integer.parseInt(newFormat.format(km));
-        double meter = valueResult % 1000;
-        int meterInDec = Integer.parseInt(newFormat.format(meter));
-        Timber.i("showDistance" + valueResult + "   KM  " + kmInDec
-                + " Meter   " + meterInDec);
-
-        return (Radius * c);
     }
 }

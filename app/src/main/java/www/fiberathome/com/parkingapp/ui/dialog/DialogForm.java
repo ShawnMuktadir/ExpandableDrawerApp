@@ -164,7 +164,7 @@ public class DialogForm extends AppCompatDialogFragment {
 
                 Timber.e(endTimestamp.toString());
 
-                User user = Preferences.getInstance(getContext()).getUser();
+                User user = Preferences.getInstance(requireContext()).getUser();
 
                 String mobileNo = user.getMobileNo();
 

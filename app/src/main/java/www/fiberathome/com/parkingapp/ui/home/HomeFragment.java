@@ -429,10 +429,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private String areaName, parkingSlotCount;
 
     public Marker previousGetDestinationMarker;
-    public Marker previousBottomSheetGetDestinationMarker;
-    public Marker previousAdapterDestinationMarker;
-    public Marker previousAdapterGetDirectionMarker;
-    public Marker previousAdapterSetMarkerEvent;
 
     public HomeFragment() {
 
@@ -553,9 +549,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
             listener = (FragmentChangeListener) context;
 
-            /*if (mMap == null) {
+            if (mMap == null) {
                 showLoading(context, context.getResources().getString(R.string.please_wait));
-            }*/
+            }
 
             if (isServicesOk()) {
                 supportMapFragment = SupportMapFragment.newInstance();
@@ -585,7 +581,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         mMap = googleMap;
 
-        //hideLoading();
+        hideLoading();
 
         defaultMapSettings(context, mMap, fusedLocationProviderClient, locationRequest, locationCallback);
 
@@ -1635,7 +1631,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
             boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
-            //showLoading(context, context.getResources().getString(R.string.enabling_gps));
+            showLoading(context, context.getResources().getString(R.string.enabling_gps));
 
             new Handler().postDelayed(() -> {
                 hideLoading();

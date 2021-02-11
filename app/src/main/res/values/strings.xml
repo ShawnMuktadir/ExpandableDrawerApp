@@ -391,8 +391,8 @@
 
     //language
     <string name="language">Language</string>
-    <string name="lang_select_bn">BAN</string>
-    <string name="lang_select_en">ENG</string>
+    <string name="english">English</string>
+    <string name="bangla">Bangla</string>
     <string name="want_change_language">Want to change language?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
@@ -461,4 +461,5 @@
     <string name="are_you_sure_you_want_to_exit">Are you sure you want to exit?</string>
     <string name="no_route_exist">No routes exist</string>
     <string name="something_went_wrong_please_check_internet_connection">Something went wrong!!! Please check your Internet connection</string>
+    <string name="language_settings">Language settings</string>
 </resources>

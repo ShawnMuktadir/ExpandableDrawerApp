@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
@@ -19,6 +21,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,6 +59,9 @@ import www.fiberathome.com.parkingapp.utils.GeofenceConstants;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.internet.Connectivity;
 
+import static www.fiberathome.com.parkingapp.utils.Constants.LANGUAGE_BN;
+import static www.fiberathome.com.parkingapp.utils.Constants.LANGUAGE_EN;
+
 /**
  * Base activity to check GPS disabled and Internet <br/>
  * this activity requires following permission(s) to be added in the AndroidManifest.xml file:
@@ -85,11 +91,11 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
     private Context context;
     private boolean isFastConnection;
 
-    @Override
+    /*@Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(ParkingApp.localeManager.setLocale(base));
         Timber.e("attachBaseContext");
-    }
+    }*/
 
     private BroadcastReceiver mNetworkDetectReceiver = new BroadcastReceiver() {
         @Override
@@ -119,17 +125,6 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             getWindow().setStatusBarColor(context.getResources().getColor(R.color.updatedColorPrimaryDark));
-        }
-
-        if (Locale.getDefault().getLanguage().equals("en")) {
-            Timber.e("en if checked");
-            Preferences.getInstance(context).setLanguage(context.getResources().getString(R.string.english_item));
-        } else if (Locale.getDefault().getLanguage().equals("bn")) {
-            Timber.e("en bn if checked");
-            Preferences.getInstance(context).setLanguage(context.getResources().getString(R.string.bangla_item));
-        } else {
-            Timber.e("en else checked");
-            Preferences.getInstance(context).setLanguage(context.getResources().getString(R.string.english_item));
         }
 
         snackbar = Snackbar.make(this.findViewById(android.R.id.content), context.getResources().getString(R.string.connect_to_internet), 86400000);
@@ -244,8 +239,6 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
-
-
 
     private boolean isConnected = false;
 
@@ -624,5 +617,23 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         } else {
             return false;
         }
+    }
+
+    public void setAppLocale(String localeCode){
+        Resources resources = getResources();
+        DisplayMetrics dm = resources.getDisplayMetrics();
+        Configuration config = resources.getConfiguration();
+        config.setLocale(new Locale(localeCode.toLowerCase()));
+        resources.updateConfiguration(config, dm);
+    }
+
+    protected void setActionBarBackButton() {
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    public void startActivityWithFinishAffinity(Class activityClass) {
+        startActivity(new Intent(getApplicationContext(), activityClass));
+        finishAffinity();
     }
 }

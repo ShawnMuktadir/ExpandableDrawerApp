@@ -1,2 +1,2 @@
+rootProject.name='Parking App'
 include ':app'
-/*':simple-xml-2.7.1'*/

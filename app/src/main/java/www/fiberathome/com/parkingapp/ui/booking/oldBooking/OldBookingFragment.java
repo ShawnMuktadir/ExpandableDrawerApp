@@ -60,7 +60,7 @@ public class OldBookingFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_booking, container, false);
 
-        User user = Preferences.getInstance(getContext()).getUser();
+        User user = Preferences.getInstance(requireContext()).getUser();
 
         if (getActivity() != null) {
             getActivity().setTitle(user.getFullName());

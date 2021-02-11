@@ -49,7 +49,7 @@ public class QRCodeFragment extends Fragment {
 
         QRCode = view.findViewById(R.id.sample_qr_iv);
 
-        User user = Preferences.getInstance(getContext()).getUser();
+        User user = Preferences.getInstance(requireContext()).getUser();
         Objects.requireNonNull(requireActivity()).setTitle(user.getFullName());
 
         //show QR on create

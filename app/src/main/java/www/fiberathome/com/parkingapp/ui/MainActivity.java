@@ -183,7 +183,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             navigationView.setCheckedItem(R.id.nav_home);
             linearLayoutToolbarTime.setVisibility(View.VISIBLE);
             navigationView.getMenu().getItem(0).setChecked(true);
-//            bottomNavigationView.setSelectedItemId(R.id.nav_home);
         } else {
             //  startActivity(new Intent(MainActivity.this, LocationActivity.class));
             Intent intent = new Intent(MainActivity.this, LocationActivity.class);
@@ -200,7 +199,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             //  TastyToastUtils.showTastyInfoToast(context,"Sorry! You can't use Parking App. For use, please enable your GPS!");
         }
 
-        if (!Preferences.getInstance(this).isLoggedIn()) {
+        if (!Preferences.getInstance(context).isLoggedIn()) {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
             finish();
@@ -234,7 +233,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             return true;
         } else if (item.getItemId() == R.id.menu_logout) {
             // do your code
-            Preferences.getInstance(this).logout();
+            Preferences.getInstance(context).logout();
             Intent intentLogout = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intentLogout);
             finishAffinity();
@@ -672,7 +671,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     private void setupNavigationDrawerHeader() {
-        User user = Preferences.getInstance(this).getUser();
+        User user = Preferences.getInstance(context).getUser();
         View headerView = navigationView.getHeaderView(0);
         TextView tvUserFullName = headerView.findViewById(R.id.header_fullname);
         TextView tvUserVehicleNo = headerView.findViewById(R.id.header_vehicle_no);
@@ -819,11 +818,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             Intent intent = new Intent(MainActivity.this, PermissionActivity.class);
             startActivity(intent);
             Preferences.getInstance(context).setIsLocationPermissionGiven(false);
-//            return;
+            //return;
         } else {
             // Write you code here if permission already given.
             Preferences.getInstance(context).setIsLocationPermissionGiven(true);
-
         }
     }
 
