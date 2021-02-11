@@ -16,9 +16,6 @@ public class SplashActivity extends BaseActivity {
 
     private Context context;
 
-    private static final int UPDATE_CODE = 1000;
-    private boolean isUpdateNeeded = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,8 +23,7 @@ public class SplashActivity extends BaseActivity {
 
         context = this;
 
-        if (Preferences.getInstance(context).getAppLanguage() != null)
-            setAppLocale(Preferences.getInstance(context).getAppLanguage());
+        setAppLocale(Preferences.getInstance(context).getAppLanguage());
 
         //Initialize splash fragment
         ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),

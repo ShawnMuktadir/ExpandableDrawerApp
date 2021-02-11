@@ -623,7 +623,11 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         Resources resources = getResources();
         DisplayMetrics dm = resources.getDisplayMetrics();
         Configuration config = resources.getConfiguration();
-        config.setLocale(new Locale(localeCode.toLowerCase()));
+        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.JELLY_BEAN_MR1){
+            config.setLocale(new Locale(localeCode.toLowerCase()));
+        } else {
+            config.locale = new Locale(localeCode.toLowerCase());
+        }
         resources.updateConfiguration(config, dm);
     }
 
