@@ -344,8 +344,8 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
         //this.bookedLists = bookedLists;
         recyclerViewBooking.setHasFixedSize(true);
         recyclerViewBooking.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
-        bookingAdapter = new BookingAdapter(context);
-        bookingAdapter.setDataList(bookedLists);
+        bookingAdapter = new BookingAdapter(context,bookedLists);
+//        bookingAdapter.setDataList(bookedLists);
         recyclerViewBooking.setAdapter(bookingAdapter);
     }
 

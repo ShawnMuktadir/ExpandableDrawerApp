@@ -40,7 +40,7 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private int selectedItem;
     public LatLng location;
     private ArrayList<BookingArea> bookingAreas = new ArrayList<>();
-    private ArrayList<BookedList> bookedLists;
+    private ArrayList<BookedList> bookedLists = new ArrayList<>();
 
     /*public BookingAdapter(Context context, BookingFragment bookingFragment, ArrayList<BookingArea> bookingAreas) {
         this.context = context;
@@ -50,9 +50,13 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }*/
 
     public BookingAdapter(Context context) {
-        this.context = context;
-        this.bookedLists = new ArrayList<>();
+
         //selectedItem = -1;
+    }
+
+    public BookingAdapter(BookingActivity context, ArrayList<BookedList> bookedLists) {
+        this.context = context;
+        this.bookedLists = bookedLists;
     }
 
     @NonNull
@@ -132,7 +136,7 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public int getItemCount() {
-        return bookingAreas.size();
+        return bookedLists.size();
     }
 
     @SuppressLint("NonConstantResourceId")
