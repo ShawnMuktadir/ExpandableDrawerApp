@@ -1,7 +1,6 @@
 package www.fiberathome.com.parkingapp.ui.booking.newBooking;
 
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -11,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -39,7 +37,6 @@ import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.booking.BookedList;
 import www.fiberathome.com.parkingapp.model.response.booking.BookedResponse;
-import www.fiberathome.com.parkingapp.model.response.booking.BookingArea;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
@@ -67,9 +64,9 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
 
     private BookingAdapter bookingAdapter;
 
-    private ArrayList<BookingArea> bookingAreas = new ArrayList<>();
+    private ArrayList<BookedList> bookedLists;
 
-    private ProgressDialog progressDialog;
+    private BookedResponse bookedResponse;
 
     public BookingFragment() {
         // Required empty public constructor
@@ -103,7 +100,6 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
 
         String mobileNo = Preferences.getInstance(context).getUser().getMobileNo();
         if (ApplicationUtils.checkInternet(context)) {
-            //fetchParkingBookingSpot(mobileNo);
             fetchBookedParkingPlace(mobileNo);
         } else {
             ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
@@ -141,7 +137,6 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
     public void onPause() {
         Timber.e("onPause called");
         super.onPause();
-        //dismissProgressDialog();
     }
 
     @Override
@@ -154,7 +149,6 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
     public void onDestroy() {
         Timber.e("onDestroy called");
         super.onDestroy();
-        //dismissProgressDialog();
     }
 
     @Override
@@ -207,87 +201,6 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
         return false;
     }
 
-    /*private void fetchParkingBookingSpot(String mobileNo) {
-
-        //progressDialog = ApplicationUtils.progressDialog(context, "Please wait...");
-        if (!context.isFinishing())
-            showLoading(context);
-
-        HttpsTrustManager.allowAllSSL();
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_FETCH_BOOKINGS, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                //progressDialog.dismiss();
-                hideLoading();
-                Timber.e("booking list response -> %s", new Gson().toJson(response));
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    Timber.e("booking list jsonObject -> %s", new Gson().toJson(jsonObject));
-                    //Log.e("Booking Object: ", jsonObject.toString());
-                    if (!jsonObject.getBoolean("error")) {
-
-                        JSONArray jsonArray = jsonObject.getJSONArray("bookings");
-
-    stringArrayList = new ArrayList<String>();
-
-                        numbRows = (Integer) jsonArray.length();
-
-                        Log.e("Number of Bookings: ", String.valueOf(numbRows));
-
-                        BookingArea bookingArea = null;
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject object = jsonArray.getJSONObject(i);
-                            // Log.e("Booking Info: ", Jasonobject.toString());
-                            String spotName = object.getString("parking_area").toString();
-                            String timeStart = object.getString("time_start").toString();
-                            String timeEnd = object.getString("time_end").toString();
-                            String currentBill = object.getString("current_bill").toString();
-                            String previousDue = object.getString("penalty").toString();
-
-                            bookingArea = new BookingArea(spotName, timeStart, timeEnd);
-                            bookingAreas.add(bookingArea);
-
-                            //Log.e("Spot Info: ", spotName.toString());
-                            //stringArrayList.add(spotName.toString() + "|" + timeStart.toString() + "|" + timeEnd.toString() + "|" + currentBill.toString() + "|" + previousDue.toString());
-                        }
-                        setFragmentControls(bookingAreas);
-                    } else {
-                        stringArrayList = new ArrayList<String>();
-                        stringArrayList.add(" \n No Booking Found! ");
-                        bookingList(stringArrayList);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, error -> {
-            //Log.e("Volley Error", error.getMessage());
-            //ApplicationUtils.showMessageDialog(error.getMessage(), getActivity());
-            Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
-        }) {
-
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("user_id", mobileNo);
-                Timber.e("booking user_id -> %s", params);
-                return params;
-            }
-        };
-        ParkingApp.getInstance().addToRequestQueue(stringRequest, TAG);
-    }*/
-
-    private ArrayList<BookedList> bookedLists;
-    private BookedResponse bookedResponse;
-
-    String address = "";
-    String timeStart = "";
-    String timeEnd = "";
-    String currentBill = "";
-    String penalty = "";
-
     private void fetchBookedParkingPlace(String mobileNo) {
 
         Timber.e("fetchBookedParkingPlace mobileNo -> %s,", mobileNo);
@@ -316,8 +229,9 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
 
                         if (bookedLists != null && !bookedLists.isEmpty()) {
                             setFragmentControls(bookedLists);
+                            hideNoData();
                         } else {
-                            Toast.makeText(context, "bookedLists empty", Toast.LENGTH_SHORT).show();
+                            setNoData();
                         }
                     } else {
                         Timber.e("response -> %s", new Gson().toJson(response.body()));
@@ -332,20 +246,10 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
         });
     }
 
-    /*private void setFragmentControls(ArrayList<BookingArea> bookingAreas) {
-        this.bookingAreas = bookingAreas;
-        recyclerViewBooking.setHasFixedSize(true);
-        recyclerViewBooking.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
-        bookingAdapter = new BookingAdapter(context, this, bookingAreas);
-        recyclerViewBooking.setAdapter(bookingAdapter);
-    }*/
-
     private void setFragmentControls(ArrayList<BookedList> bookedLists) {
-        //this.bookedLists = bookedLists;
         recyclerViewBooking.setHasFixedSize(true);
         recyclerViewBooking.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
-        bookingAdapter = new BookingAdapter(context);
-        bookingAdapter.setDataList(bookedLists);
+        bookingAdapter = new BookingAdapter(context, bookedLists);
         recyclerViewBooking.setAdapter(bookingAdapter);
     }
 
@@ -365,14 +269,9 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
         });
     }
 
-    private void dismissProgressDialog() {
-        if (progressDialog != null && progressDialog.isShowing())
-            progressDialog.dismiss();
-    }
-
     private void setNoData() {
         textViewNoData.setVisibility(View.VISIBLE);
-//        textViewNoData.setText(context.getString(R.string.no_record_found));
+        //textViewNoData.setText(context.getString(R.string.no_record_found));
     }
 
     private void hideNoData() {
