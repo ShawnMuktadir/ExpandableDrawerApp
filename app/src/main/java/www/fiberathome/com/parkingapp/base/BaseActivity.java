@@ -28,7 +28,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -52,15 +51,11 @@ import java.util.Locale;
 
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.GeoFenceBroadcastReceiver;
 import www.fiberathome.com.parkingapp.utils.GeofenceConstants;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.internet.Connectivity;
-
-import static www.fiberathome.com.parkingapp.utils.Constants.LANGUAGE_BN;
-import static www.fiberathome.com.parkingapp.utils.Constants.LANGUAGE_EN;
 
 /**
  * Base activity to check GPS disabled and Internet <br/>
@@ -103,12 +98,13 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
             checkInternetConnection();
         }
     };
-    private BroadcastReceiver mBackgroundLocationReceiver = new BroadcastReceiver() {
+
+    /*private BroadcastReceiver mBackgroundLocationReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Timber.e("mBackgroundLocationReceiver");
         }
-    };
+    };*/
     private AlertDialog mInternetDialog;
     private AlertDialog mGPSDialog;
 
@@ -131,15 +127,15 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
 
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
-        if (isConnectedFast(context)) {
-            registerReceiver(mNetworkDetectReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-        } else {
+        //if (isConnectedFast(context)) {
+            context.registerReceiver(mNetworkDetectReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+        /*} else {
             Toast.makeText(context, context.getResources().getString(R.string.slow_internet_connection), Toast.LENGTH_SHORT).show();
-        }
+        }*/
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             registerReceiver(mBackgroundLocationReceiver, new IntentFilter(Manifest.permission.ACCESS_BACKGROUND_LOCATION));
-        }
+        }*/
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -167,10 +163,13 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
     @Override
     protected void onDestroy() {
         mLocationManager.removeUpdates(this);
-        unregisterReceiver(mNetworkDetectReceiver);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            unregisterReceiver(mBackgroundLocationReceiver);
-        }
+
+        context.unregisterReceiver(mNetworkDetectReceiver);
+
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            context.unregisterReceiver(mBackgroundLocationReceiver);
+        } */
+
         super.onDestroy();
     }
 
@@ -209,7 +208,6 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
             if (!mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                 showGPSDisabledDialog();
             }
-
         }
         else if (requestCode == WIFI_ENABLE_REQUEST) {
             Timber.e("requestCode WIFI_ENABLE_REQUEST");
