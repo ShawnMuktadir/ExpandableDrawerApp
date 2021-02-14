@@ -212,6 +212,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         else if (requestCode == WIFI_ENABLE_REQUEST) {
             Timber.e("requestCode WIFI_ENABLE_REQUEST");
         }
+
         /*else if (requestCode == UPDATE_CODE) {
             if (!BuildConfig.VERSION_NAME.equalsIgnoreCase(ForceUpdateChecker.KEY_CURRENT_VERSION)) {
                 DialogUtil.getInstance().alertDialog(

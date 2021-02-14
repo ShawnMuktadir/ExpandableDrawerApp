@@ -82,7 +82,11 @@ public class LanguageSettingFragment extends Fragment {
         LanguageAdapter languageAdapter = new LanguageAdapter(
                 populateLanguageItem(names, isoCodes, new ArrayList<>()), (language) -> {
 
-            Preferences.getInstance(context).setAppLanguage(language.getIsoCode());
+            if (Preferences.getInstance(context).getAppLanguage() != null) {
+                Preferences.getInstance(context).setAppLanguage(language.getIsoCode());
+            } else {
+                Preferences.getInstance(context).setAppLanguage(LANGUAGE_EN);
+            }
             context.startActivityWithFinishAffinity(SplashActivity.class);
         });
 
