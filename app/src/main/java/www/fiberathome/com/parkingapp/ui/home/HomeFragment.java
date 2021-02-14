@@ -482,13 +482,13 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         Timber.e("onViewCreated called");
         super.onViewCreated(view, savedInstanceState);
 
-        unbinder = ButterKnife.bind(this, view);
-
         context = (HomeActivity) getActivity();
 
         if (context != null) {
             context.changeDefaultActionBarDrawerToogleIcon();
         }
+
+        unbinder = ButterKnife.bind(this, view);
 
         if (isAdded()) {
 
