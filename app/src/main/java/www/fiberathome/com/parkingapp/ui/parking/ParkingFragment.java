@@ -49,6 +49,7 @@ import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
+import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.response.parkingSlot.ParkingSlotResponse;
 import www.fiberathome.com.parkingapp.model.response.sensors.SensorArea;
@@ -61,6 +62,8 @@ import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
+import static www.fiberathome.com.parkingapp.utils.Constants.LANGUAGE_BN;
+import static www.fiberathome.com.parkingapp.utils.Constants.LANGUAGE_EN;
 
 @SuppressLint("NonConstantResourceId")
 public class ParkingFragment extends BaseFragment implements IOnBackPressListener {
@@ -255,11 +258,11 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                 if (contents.length() > 0) {
                     //do search
                     if (ApplicationUtils.checkInternet(context) && isGPSEnabled()) {
-                        if (Locale.getDefault().getLanguage().equals("en") && ApplicationUtils.textContainsBangla(contents)) {
+                        if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_EN) && ApplicationUtils.textContainsBangla(contents)) {
                             setNoDataForBangla();
                             recyclerViewParking.setVisibility(View.GONE);
                             editTextParking.setText("");
-                        } else if (Locale.getDefault().getLanguage().equals("bn") && ApplicationUtils.isEnglish(contents)) {
+                        } else if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN) && ApplicationUtils.isEnglish(contents)) {
                             setNoDataForEnglish();
                             recyclerViewParking.setVisibility(View.VISIBLE);
                             editTextParking.setText("");
@@ -298,11 +301,11 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                 } else {
                     ivClearSearchText.setVisibility(View.GONE);
                 }
-                if (Locale.getDefault().getLanguage().equals("en") && ApplicationUtils.textContainsBangla(s.toString())) {
+                if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_EN) && ApplicationUtils.textContainsBangla(s.toString())) {
                     setNoDataForBangla();
                     recyclerViewParking.setVisibility(View.GONE);
                     editTextParking.setText("");
-                } else if (Locale.getDefault().getLanguage().equals("bn") && ApplicationUtils.isEnglish(s.toString())) {
+                } else if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN) && ApplicationUtils.isEnglish(s.toString())) {
                     setNoDataForEnglish();
                     recyclerViewParking.setVisibility(View.VISIBLE);
                     editTextParking.setText("");

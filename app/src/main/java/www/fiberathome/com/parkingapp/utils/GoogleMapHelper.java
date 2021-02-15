@@ -38,7 +38,7 @@ public class GoogleMapHelper {
 
     public static PolylineOptions getDefaultPolyLines(List<LatLng> points) {
         PolylineOptions polylineOptions = new PolylineOptions()
-                .color(R.color.route_color);
+                .color(R.color.route_color).width(10.0f);
 
         for (LatLng point : points) polylineOptions.add(point);
 

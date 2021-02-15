@@ -81,7 +81,7 @@
     <string name="submit">Submit</string>
     <string name="full_name">Full Name</string>
     <string name="reg_num">Vehicle Registration Number</string>
-    <string name="vehicle_no">Vehicle No</string>
+    <string name="vehicle_no">Vehicle No: </string>
     <string name="user_phone_no">User Phone No</string>
 
     //parking slot

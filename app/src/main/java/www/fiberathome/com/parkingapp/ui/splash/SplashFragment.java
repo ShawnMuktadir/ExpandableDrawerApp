@@ -26,7 +26,7 @@ import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.permission.PermissionActivity;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
-import www.fiberathome.com.parkingapp.utils.DialogUtil;
+import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.ForceUpdateChecker;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
@@ -133,11 +133,11 @@ public class SplashFragment extends BaseFragment implements ForceUpdateChecker.O
 
     @Override
     public void onUpdateNeeded(final String updateUrl) {
-        DialogUtil.getInstance().alertDialog(
+        DialogUtils.getInstance().alertDialog(
                 requireActivity(),
                 context.getResources().getString(R.string.new_version_available), context.getResources().getString(R.string.please_update_the_app),
                 context.getResources().getString(R.string.update), context.getResources().getString(R.string.no_thanks),
-                new DialogUtil.DialogClickListener() {
+                new DialogUtils.DialogClickListener() {
                     @Override
                     public void onPositiveClick() {
                         redirectStore(updateUrl);

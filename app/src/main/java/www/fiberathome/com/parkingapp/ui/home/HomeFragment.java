@@ -366,7 +366,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private int getDirectionMarkerButtonClicked = 0;
     private int getDirectionBottomSheetButtonClicked = 0;
 
-    private ProgressDialog progressDialog;
+    //private ProgressDialog progressDialog;
 
     public int fromMarkerRouteDrawn = 0;
 
@@ -1594,7 +1594,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         Toast.makeText(context, "Enable your Gps Location", Toast.LENGTH_SHORT).show();
                     }
 
-                    progressDialog = ApplicationUtils.progressDialog(context, "Initializing....");
+                    //progressDialog = ApplicationUtils.progressDialog(context, "Initializing....");
+                    showLoading(context);
 
                     new GpsUtils(context).turnGPSOn(new GpsUtils.onGpsListener() {
                         @Override
@@ -1604,7 +1605,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         }
                     });
 
-                    if ((ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+                    if ((ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                            PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context,
+                            Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
                         requestPermissions(new String[]{
                                 Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
                         Timber.d("onViewCreated: in if");
@@ -1640,7 +1643,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         Timber.d("onRequestPermissionsResult");
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        Timber.d("onRequestPermissionsResult: on requestPermission");
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
             Timber.d("onRequestPermissionsResult: First time evoked");
 
@@ -1649,14 +1651,14 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                 // Showing the toast message
                 Timber.d("onRequestPermissionResult: on requestPermission if-if");
-                if (progressDialog != null) {
+                /*if (progressDialog != null) {
                     progressDialog.show();
-                }
+                }*/
                 if (isLocationEnabled(context)) {
                     supportMapFragment.getMapAsync(this);
-                    if (progressDialog != null && progressDialog.isShowing()) {
+                    /*if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
-                    }
+                    }*/
                 }
                 //Toast.makeText(context, "Permission Granted", Toast.LENGTH_SHORT).show();
             } else if (grantResults.length == FIRST_TIME_INSTALLED && context != null) {
@@ -3284,7 +3286,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         btnSearchGetDirection.setOnClickListener(v -> {
             if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
 
-                mMap.setTrafficEnabled(true);
+                mMap.setTrafficEnabled(false);
+
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
                 isRouteDrawn = 1;

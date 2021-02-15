@@ -361,7 +361,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
 
         StringBuilder stringBuilder = new StringBuilder();
         if (user.getVehicleNo() != null) {
-            stringBuilder.append("Vehicle No: ").append(user.getVehicleNo());
+            stringBuilder.append(context.getResources().getString(R.string.vehicle_no)).append(" ").append(user.getVehicleNo());
         }
         tvUserVehicleNo.setText(stringBuilder.toString());
 
