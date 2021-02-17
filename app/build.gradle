@@ -12,13 +12,13 @@ android {
 
     def versionMajor = 1
     def versionMinor = 0
-    def versionPatch = 0
+    def versionPatch = 1
 
     defaultConfig {
         applicationId "www.fiberathome.com.parkingapp"
         minSdkVersion 19
         targetSdkVersion 30
-        versionCode versionMajor + versionMinor + versionPatch
+        versionCode 2
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true

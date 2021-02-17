@@ -48,8 +48,8 @@ import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
-import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
+import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.user.User;
 import www.fiberathome.com.parkingapp.ui.booking.newBooking.BookingActivity;
 import www.fiberathome.com.parkingapp.ui.changePassword.ChangePasswordFragment;
@@ -455,15 +455,16 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_SUBJECT, "LOCC Smart Parking App");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, "LOCC Smart Parking App Link\n\n" + "https://163.47.157.195/parkingapp/");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, "LOCC Smart Parking App Link\n\n" +
+                "https://play.google.com/store/apps/details?id=www.fiberathome.com.parkingapp");
         startActivity(Intent.createChooser(shareIntent, "Share Via:"));
     }
 
-    public void setAppLocale(String localeCode){
+    public void setAppLocale(String localeCode) {
         Resources resources = getResources();
         DisplayMetrics dm = resources.getDisplayMetrics();
         Configuration config = resources.getConfiguration();
-        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.JELLY_BEAN_MR1){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             config.setLocale(new Locale(localeCode.toLowerCase()));
         } else {
             config.locale = new Locale(localeCode.toLowerCase());
