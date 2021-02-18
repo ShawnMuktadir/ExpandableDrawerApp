@@ -384,6 +384,16 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
 
                                 fetchDistance = ApplicationUtils.calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
                                         endLat, endLng);
+                                if (fetchDistance > 1.9) {
+                                    fetchDistance = fetchDistance + 2;
+                                  //  Timber.e("kim 1st if -> %s", kim);
+                                } else if (fetchDistance < 1.9 && fetchDistance > 1) {
+                                    fetchDistance = fetchDistance + 1;
+                                  //  Timber.e("kim 2nd if-> %s", kim);
+                                } else {
+                                    fetchDistance = fetchDistance + 0.5;
+                                  //  Timber.e("kim else-> %s", kim);
+                                }
                             }
                             SensorArea sensorArea = new SensorArea(parkingArea, placeId, endLat, endLng, count, fetchDistance);
 

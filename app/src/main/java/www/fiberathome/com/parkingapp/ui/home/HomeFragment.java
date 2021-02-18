@@ -744,9 +744,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                 uid[0] = sensor.getUid();
                                 markerAreaName = sensor.getParkingArea();
                                 //Timber.e("jsonUid -> %s", uid[0]);
-                                TaskParser taskParser = new TaskParser();
-                                double distanceForCount = taskParser.showDistance(new LatLng(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude),
-                                        new LatLng(ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1)));
+                              //  TaskParser taskParser = new TaskParser();
+                                double distanceForCount = calculateDistance(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude,
+                                       ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1));
 
                                 if (distanceForCount < 0.001) {
                                     parkingNumberOfIndividualMarker = sensor.getNoOfParking();
@@ -764,12 +764,12 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                         String markerPlaceName = markerAreaName;
 
-                        TaskParser taskParser = new TaskParser();
+//                        TaskParser taskParser = new TaskParser();
 
                         double markerDistance = 0;
 
-                        markerDistance = taskParser.showDistance(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
-                                new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
+                        markerDistance = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
+                                marker.getPosition().latitude, marker.getPosition().longitude);
 
                         layoutMarkerVisible(true, markerAreaName, parkingNumberOfIndividualMarker,
                                 String.valueOf(markerDistance), marker.getPosition());
@@ -903,12 +903,12 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                     String markerPlaceName = markerAreaName1[0];
 
-                    TaskParser taskParser = new TaskParser();
+//                    TaskParser taskParser = new TaskParser();
 
                     double markerDistance = 0;
 
-                    markerDistance = taskParser.showDistance(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
-                            new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
+                    markerDistance = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
+                            marker.getPosition().latitude, marker.getPosition().longitude);
 
                     double kim = (markerDistance / 1000) + adjustValue;
                     double markerDoubleDuration = ApplicationUtils.convertToDouble(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(markerDistance * 2.43));
@@ -1010,6 +1010,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         getDirectionPinMarkerDraw(new LatLng(lat, lng), adapterUid);
 
                         /*MarkerOptions markerOptions = new MarkerOptions();
+                        /*MarkerOptions markerOptions = new MarkerOptions();
 
                         markerOptions.position(new LatLng(lat, lng));*/
 
@@ -1065,10 +1066,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                         bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._90sdp));
 
-                        TaskParser taskParser = new TaskParser();
+//                        TaskParser taskParser = new TaskParser();
 
-                        adapterDistance = taskParser.showDistance(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
-                                new LatLng(lat, lng));
+                        adapterDistance = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
+                                lat, lng);
 
                         String finalUid = uid;
 
@@ -1200,12 +1201,20 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     public void onLocationChanged(Location location) {
         //Timber.e("onLocationChanged: ");
         currentLocation = location;
+       if(location != null){
+           onConnectedLocation = location;
+           SharedData.getInstance().setOnConnectedLocation(location);
+       }
+
 
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
         if (currentLocationMarker != null) {
             currentLocationMarker.remove();
         }
+
+
+
 
         currentLocationMarker = mMap.addMarker(new MarkerOptions().position(latLng)
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running))
@@ -1361,9 +1370,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 String searchPlaceName = areaName;
 
                 if (onConnectedLocation != null && searchPlaceLatLng != null) {
-                    TaskParser taskParser = new TaskParser();
-                    searchDistance = taskParser.showDistance(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
-                            new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));
+//                    TaskParser taskParser = new TaskParser();
+                    searchDistance = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
+                            searchPlaceLatLng.latitude, searchPlaceLatLng.longitude);
 
                     Timber.e("searchDistance -> %s", searchDistance);
 
@@ -1481,9 +1490,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 String searchPlaceName = areaName;
 
                 if (onConnectedLocation != null && searchPlaceLatLng != null) {
-                    TaskParser taskParser = new TaskParser();
-                    searchDistance = taskParser.showDistance(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
-                            new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude));
+//                    TaskParser taskParser = new TaskParser();
+                    searchDistance = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
+                            searchPlaceLatLng.latitude, searchPlaceLatLng.longitude);
 
                     Timber.e("searchDistance -> %s", searchDistance);
 
@@ -1935,9 +1944,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                 }
                             }
 
-                            TaskParser taskParser = new TaskParser();
-                            double fetchDistance = taskParser.showDistance(new LatLng(location.getLatitude(), location.getLongitude()),
-                                    new LatLng(latitude, longitude));
+//                            TaskParser taskParser = new TaskParser();
+                            double fetchDistance = calculateDistance(location.getLatitude(), location.getLongitude(),
+                                    latitude, longitude);
                             Timber.e("kim fetchDistance -> %s", fetchDistance);
 
                             double kim = (fetchDistance / 1000) + adjustValue;
@@ -2084,21 +2093,31 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                 String bottomSheetPlaceName = locationName;
 
-                TaskParser taskParser = new TaskParser();
-                double bottomSheetDistance = taskParser.showDistance(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
-                        new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
+//                TaskParser taskParser = new TaskParser();
+                double bottomSheetDistance = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
+                        bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude);
 
                 Timber.e(" searchDistance bottomSheetDistance -> %s", bottomSheetDistance);
                 Timber.e(" bottomSheetDistance -> %s", searchDistance);
 
-                double kim = (bottomSheetDistance / 1000) + adjustValue;
+//                double kim = (bottomSheetDistance / 1000) + adjustValue;
 
-                if (kim > 1.9) {
+              /*  if (kim > 1.9) {
                     kim = kim + 2;
                 } else if (kim == 1.5) {
                     kim = kim + 1;
                 } else {
                     kim = kim + 0.5;
+                }*/
+                if (bottomSheetDistance > 1.9) {
+                    bottomSheetDistance = bottomSheetDistance + 2;
+                    //  Timber.e("kim 1st if -> %s", kim);
+                } else if (bottomSheetDistance < 1.9 && bottomSheetDistance > 1) {
+                    bottomSheetDistance = bottomSheetDistance + 1;
+                    //  Timber.e("kim 2nd if-> %s", kim);
+                } else {
+                    bottomSheetDistance = bottomSheetDistance + 0.5;
+                    //  Timber.e("kim else-> %s", kim);
                 }
 
                 double bottomSheetDoubleDuration = ApplicationUtils.convertToDouble(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(bottomSheetDistance * 2.43));
@@ -2201,10 +2220,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         }
                     }
 
-                    TaskParser taskParser = new TaskParser();
+//                    TaskParser taskParser = new TaskParser();
 
-                    double bottomSheetDistance = taskParser.showDistance(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
-                            new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
+                    double bottomSheetDistance = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
+                            bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude);
 
                     double kim = (bottomSheetDistance / 1000) + adjustValue;
                     double bottomSheetDoubleDuration = ApplicationUtils.convertToDouble(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(bottomSheetDistance * 2.43));
@@ -2250,14 +2269,16 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     }
 
     private double calculateDistance(Double latitude, Double longitude, double e, double f) {
-        double d2r = Math.PI / 180;
 
-        double dlong = (longitude - f) * d2r;
-        double dlat = (latitude - e) * d2r;
-        double a = Math.pow(Math.sin(dlat / 2.0), 2) + Math.cos(e * d2r) * Math.cos(latitude * d2r) * Math.pow(Math.sin(dlong / 2.0), 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        double d = 6367 * c;
-        return d;
+
+//        double d2r = Math.PI / 180;
+//
+//        double dlong = (longitude - f) * d2r;
+//        double dlat = (latitude - e) * d2r;
+//        double a = Math.pow(Math.sin(dlat / 2.0), 2) + Math.cos(e * d2r) * Math.cos(latitude * d2r) * Math.pow(Math.sin(dlong / 2.0), 2);
+//        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+//        double d = 6367 * c;
+        return ApplicationUtils.calculateDistance(latitude,longitude,e,f);
     }
 
     private String getAddress(Context context, double LATITUDE, double LONGITUDE) {
@@ -2984,9 +3005,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                 String bottomSheetPlaceName = locationName;
 
-                TaskParser taskParser = new TaskParser();
-                double bottomSheetDistance = taskParser.showDistance(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
-                        new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
+//                TaskParser taskParser = new TaskParser();
+                double bottomSheetDistance = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
+                        bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude);
 
                 Timber.e(" searchDistance bottomSheetDistance -> %s", bottomSheetDistance);
                 Timber.e(" bottomSheetDistance -> %s", searchDistance);
@@ -3954,7 +3975,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         return responseString;
     }*/
 
-    @SuppressLint("StaticFieldLeak")
+    /*@SuppressLint("StaticFieldLeak")
     public class TaskParser extends AsyncTask<String, Void, List<List<HashMap<String, String>>>> {
 
         @Override
@@ -4003,13 +4024,13 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     double lon = ApplicationUtils.convertToDouble(point.get("lon"));
 
                     //TODO
-                    /*if (j == 0) {    // Get distance from the list
+                    *//*if (j == 0) {    // Get distance from the list
                             distance = (String) point.get("distance");
                             continue;
                         } else if (j == 1) { // Get duration from the list
                             duration = (String) point.get("duration");
                             continue;
-                        }*/
+                        }*//*
 
                     Timber.e("duration -> %s", duration);
 
@@ -4065,5 +4086,5 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
             return (Radius * c);
         }
-    }
+    }*/
 }
