@@ -455,7 +455,8 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_SUBJECT, "LOCC Smart Parking App");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, "LOCC Smart Parking App Link\n\n" + "https://163.47.157.195/parkingapp/");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, "LOCC Smart Parking App Link\n\n" +
+                "https://play.google.com/store/apps/details?id=www.fiberathome.com.parkingapp");
         startActivity(Intent.createChooser(shareIntent, "Share Via:"));
     }
 

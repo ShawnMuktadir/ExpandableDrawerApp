@@ -6,7 +6,6 @@ import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -16,7 +15,6 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -145,7 +143,6 @@ import www.fiberathome.com.parkingapp.model.response.search.SelectedPlace;
 import www.fiberathome.com.parkingapp.model.response.sensors.Sensor;
 import www.fiberathome.com.parkingapp.model.response.sensors.SensorArea;
 import www.fiberathome.com.parkingapp.model.response.sensors.SensorsResponse;
-import www.fiberathome.com.parkingapp.module.GoogleMapWebServiceNDistance.DirectionsParser;
 import www.fiberathome.com.parkingapp.module.GoogleMapWebServiceNDistance.directionModules.DirectionFinder;
 import www.fiberathome.com.parkingapp.module.GoogleMapWebServiceNDistance.directionModules.DirectionFinderListener;
 import www.fiberathome.com.parkingapp.module.eventBus.GetDirectionAfterButtonClickEvent;
@@ -366,12 +363,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private int getDirectionMarkerButtonClicked = 0;
     private int getDirectionBottomSheetButtonClicked = 0;
 
-    //private ProgressDialog progressDialog;
-
     public int fromMarkerRouteDrawn = 0;
 
     //route flag
-    private int flag = 0;
+    private final int flag = 0;
 
     //polyline animate
     private List<LatLng> polyLineList;
@@ -547,7 +542,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 }
             }
 
-            listener = (FragmentChangeListener) context;
+            listener = context;
 
             if (mMap == null) {
                 showLoading(context, context.getResources().getString(R.string.please_wait));
@@ -655,9 +650,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             Timber.e("marker else UID: did not work");
         }
 
-        if (currentLocationMarker != null && ApplicationUtils.calculateDistance(currentLocationMarker.getPosition().latitude, currentLocationMarker.getPosition().longitude,
+        if (currentLocationMarker != null && calculateDistance(currentLocationMarker.getPosition().latitude, currentLocationMarker.getPosition().longitude,
                 marker.getPosition().latitude, marker.getPosition().longitude) <= 0.001) {
-            double distance = ApplicationUtils.calculateDistance(currentLocationMarker.getPosition().latitude, currentLocationMarker.getPosition().longitude,
+            double distance = calculateDistance(currentLocationMarker.getPosition().latitude, currentLocationMarker.getPosition().longitude,
                     marker.getPosition().latitude, marker.getPosition().longitude);
 
             marker.setTitle("My Location");
@@ -744,9 +739,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                 uid[0] = sensor.getUid();
                                 markerAreaName = sensor.getParkingArea();
                                 //Timber.e("jsonUid -> %s", uid[0]);
-                              //  TaskParser taskParser = new TaskParser();
+                                //TaskParser taskParser = new TaskParser();
                                 double distanceForCount = calculateDistance(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude,
-                                       ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1));
+                                        ApplicationUtils.convertToDouble(latitude1), ApplicationUtils.convertToDouble(longitude1));
 
                                 if (distanceForCount < 0.001) {
                                     parkingNumberOfIndividualMarker = sensor.getNoOfParking();
@@ -764,7 +759,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                         String markerPlaceName = markerAreaName;
 
-//                        TaskParser taskParser = new TaskParser();
+                        //TaskParser taskParser = new TaskParser();
 
                         double markerDistance = 0;
 
@@ -903,7 +898,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                     String markerPlaceName = markerAreaName1[0];
 
-//                    TaskParser taskParser = new TaskParser();
+                    //TaskParser taskParser = new TaskParser();
 
                     double markerDistance = 0;
 
@@ -1066,7 +1061,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                         bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._90sdp));
 
-//                        TaskParser taskParser = new TaskParser();
+                        //TaskParser taskParser = new TaskParser();
 
                         adapterDistance = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
                                 lat, lng);
@@ -1201,20 +1196,17 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     public void onLocationChanged(Location location) {
         //Timber.e("onLocationChanged: ");
         currentLocation = location;
-       if(location != null){
-           onConnectedLocation = location;
-           SharedData.getInstance().setOnConnectedLocation(location);
-       }
-
+        if (location != null) {
+            onConnectedLocation = location;
+            Timber.e("onLocationChanged: onConnectedLocation -> %s", onConnectedLocation);
+            SharedData.getInstance().setOnConnectedLocation(location);
+        }
 
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
         if (currentLocationMarker != null) {
             currentLocationMarker.remove();
         }
-
-
-
 
         currentLocationMarker = mMap.addMarker(new MarkerOptions().position(latLng)
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running))
@@ -1243,7 +1235,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     }
 
     private void checkParkingSpotDistance(LatLng car, LatLng spot) {
-        double distanceBetween = ApplicationUtils.calculateDistance(car.latitude, car.longitude, spot.latitude, spot.longitude);
+        double distanceBetween = calculateDistance(car.latitude, car.longitude, spot.latitude, spot.longitude);
 
         if (markerPlaceLatLng != null) {
             setCircleOnLocation(markerPlaceLatLng);
@@ -1370,7 +1362,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 String searchPlaceName = areaName;
 
                 if (onConnectedLocation != null && searchPlaceLatLng != null) {
-//                    TaskParser taskParser = new TaskParser();
+                    //TaskParser taskParser = new TaskParser();
                     searchDistance = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
                             searchPlaceLatLng.latitude, searchPlaceLatLng.longitude);
 
@@ -1490,7 +1482,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 String searchPlaceName = areaName;
 
                 if (onConnectedLocation != null && searchPlaceLatLng != null) {
-//                    TaskParser taskParser = new TaskParser();
+                    //TaskParser taskParser = new TaskParser();
                     searchDistance = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
                             searchPlaceLatLng.latitude, searchPlaceLatLng.longitude);
 
@@ -1944,7 +1936,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                 }
                             }
 
-//                            TaskParser taskParser = new TaskParser();
+                            //TaskParser taskParser = new TaskParser();
                             double fetchDistance = calculateDistance(location.getLatitude(), location.getLongitude(),
                                     latitude, longitude);
                             Timber.e("kim fetchDistance -> %s", fetchDistance);
@@ -2093,22 +2085,12 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                 String bottomSheetPlaceName = locationName;
 
-//                TaskParser taskParser = new TaskParser();
+                //TaskParser taskParser = new TaskParser();
                 double bottomSheetDistance = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
                         bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude);
 
                 Timber.e(" searchDistance bottomSheetDistance -> %s", bottomSheetDistance);
-                Timber.e(" bottomSheetDistance -> %s", searchDistance);
 
-//                double kim = (bottomSheetDistance / 1000) + adjustValue;
-
-              /*  if (kim > 1.9) {
-                    kim = kim + 2;
-                } else if (kim == 1.5) {
-                    kim = kim + 1;
-                } else {
-                    kim = kim + 0.5;
-                }*/
                 if (bottomSheetDistance > 1.9) {
                     bottomSheetDistance = bottomSheetDistance + 2;
                     //  Timber.e("kim 1st if -> %s", kim);
@@ -2220,7 +2202,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         }
                     }
 
-//                    TaskParser taskParser = new TaskParser();
+                    //TaskParser taskParser = new TaskParser();
 
                     double bottomSheetDistance = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
                             bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude);
@@ -2268,17 +2250,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
     }
 
-    private double calculateDistance(Double latitude, Double longitude, double e, double f) {
-
-
-//        double d2r = Math.PI / 180;
-//
-//        double dlong = (longitude - f) * d2r;
-//        double dlat = (latitude - e) * d2r;
-//        double a = Math.pow(Math.sin(dlat / 2.0), 2) + Math.cos(e * d2r) * Math.cos(latitude * d2r) * Math.pow(Math.sin(dlong / 2.0), 2);
-//        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-//        double d = 6367 * c;
-        return ApplicationUtils.calculateDistance(latitude,longitude,e,f);
+    private double calculateDistance(Double startLatitude, Double startLongitude, Double endLatitude, Double endLongitude) {
+        return ApplicationUtils.calculateDistance(startLatitude, startLongitude, endLatitude, endLongitude);
     }
 
     private String getAddress(Context context, double LATITUDE, double LONGITUDE) {
@@ -2288,7 +2261,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         try {
             Geocoder geocoder = new Geocoder(context, Locale.getDefault());
             addresses = geocoder.getFromLocation(LATITUDE, LONGITUDE, 1);
-            Timber.e("addressesAbdur--->%s", addresses.toString());
+            Timber.e("getAddress if--->%s", addresses.toString());
 
             if (addresses.size() > 0) {
                 address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
@@ -2303,7 +2276,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             } else {
                 countadd++;
 
-                Timber.e("addressesAbdur2--->%s", addresses.toString());
+                Timber.e("getAddress else--->%s", addresses.toString());
                 addressTemp = googleApiAddressCall(context, LATITUDE, LONGITUDE, new AddressCallBack() {
                     @Override
                     public void addressCall(String address) {
@@ -2333,7 +2306,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         try {
             Geocoder geocoder = new Geocoder(context, Locale.getDefault());
             addresses = geocoder.getFromLocation(LATITUDE, LONGITUDE, 1);
-            Timber.e("addressesAbdur--->%s", addresses.toString());
+            Timber.e("getAddress try--->%s", addresses.toString());
 
             if (addresses.size() > 0) {
                 address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
@@ -2351,11 +2324,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                 addressCallBack.addressCall(finalAddressTemp);
 
-                Timber.e("addressesAbdur--->%s", addresses.toString());
+                Timber.e("getAddress if size >0--->%s", addresses.toString());
             } else {
                 countadd++;
 
-                Timber.e("addressesAbdurRock2--->%s", addresses.toString());
+                Timber.e("getAddress else--->%s", addresses.toString());
                 addressTemp = googleApiAddressCall(context, LATITUDE, LONGITUDE, new AddressCallBack() {
                     @Override
                     public void addressCall(String address) {
@@ -3005,7 +2978,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                 String bottomSheetPlaceName = locationName;
 
-//                TaskParser taskParser = new TaskParser();
+                //TaskParser taskParser = new TaskParser();
                 double bottomSheetDistance = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
                         bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude);
 
@@ -4024,13 +3997,13 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     double lon = ApplicationUtils.convertToDouble(point.get("lon"));
 
                     //TODO
-                    *//*if (j == 0) {    // Get distance from the list
+                    if (j == 0) {    // Get distance from the list
                             distance = (String) point.get("distance");
                             continue;
                         } else if (j == 1) { // Get duration from the list
                             duration = (String) point.get("duration");
                             continue;
-                        }*//*
+                        }
 
                     Timber.e("duration -> %s", duration);
 

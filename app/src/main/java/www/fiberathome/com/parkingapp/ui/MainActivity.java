@@ -93,7 +93,6 @@ import www.fiberathome.com.parkingapp.ui.privacyPolicy.PrivacyPolicyFragment;
 import www.fiberathome.com.parkingapp.ui.profile.ProfileFragment;
 import www.fiberathome.com.parkingapp.ui.ratingReview.RatingReviewFragment;
 import www.fiberathome.com.parkingapp.ui.settings.SettingsFragment;
-import www.fiberathome.com.parkingapp.ui.share.ShareFragment;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.LocationHelper;
@@ -352,7 +351,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                     toolbar.setTitle(context.getResources().getString(R.string.share));
                     tvTimeToolbar.setVisibility(View.GONE);
                     linearLayoutToolbarTime.setVisibility(View.GONE);
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ShareFragment.newInstance()).commit();
+                    //getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ShareFragment.newInstance()).commit();
                 } else {
                     TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                 }
@@ -498,15 +497,15 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             ApplicationUtils.showAlertDialog(context.getString(R.string.exit_message_main), context, context.getString(R.string.ok), context.getString(R.string.cancel), (dialog, which) -> {
                 Timber.e("Positive Button clicked");
                 dialog.dismiss();
-//                if (context != null) {
+                //if (context != null) {
                 finish();
                 TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
-//                }
-//                if (isGPSEnabled() && ApplicationUtils.checkInternet(context)){
-//                    ApplicationUtils.checkInternet(context)
-//                } else {
-//                    TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
-//                }
+                /*}
+                if (isGPSEnabled() && ApplicationUtils.checkInternet(context)){
+                    ApplicationUtils.checkInternet(context)
+                } else {
+                    TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                }*/
             }, (dialog, which) -> {
                 Timber.e("Negative Button Clicked");
                 dialog.dismiss();
@@ -545,7 +544,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             }
 
         } else {
-//                Toast.makeText(context, "GPS not enabled. Unable to show user location", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, "GPS not enabled. Unable to show user location", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -583,19 +582,19 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
-//        if (menu instanceof MenuBuilder) {
-//            ((MenuBuilder) menu).setOptionalIconsVisible(true);
-//        }
-//
-//        //change menu icon color programmatically & changing a particular icon of one of menus, use break in the for loop
-//        for (int i = 0; i < menu.size(); i++) {
-//            Drawable drawable = menu.getItem(i).getIcon();
-//            if (drawable != null) {
-//                drawable.mutate();
-//                drawable.setColorFilter(context.getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.SRC_ATOP);
-//                break;
-//            }
-//        }
+        /*if (menu instanceof MenuBuilder) {
+            ((MenuBuilder) menu).setOptionalIconsVisible(true);
+        }
+
+        //change menu icon color programmatically & changing a particular icon of one of menus, use break in the for loop
+        for (int i = 0; i < menu.size(); i++) {
+            Drawable drawable = menu.getItem(i).getIcon();
+            if (drawable != null) {
+                drawable.mutate();
+                drawable.setColorFilter(context.getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.SRC_ATOP);
+                break;
+            }
+        }*/
         return true;
     }
 
@@ -684,7 +683,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             stringBuilder.append("Vehicle No: ").append(user.getVehicleNo());
         }
         tvUserVehicleNo.setText(stringBuilder.toString());
-//        tvUserVehicleNo.setText("Vehicle No: " + user.getVehicleNo());
+        //tvUserVehicleNo.setText("Vehicle No: " + user.getVehicleNo());
 
         RequestOptions requestOptions = new RequestOptions()
                 .centerCrop()
@@ -701,14 +700,14 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             BitMatrix bitMatrix = multiFormatWriter.encode(text, BarcodeFormat.QR_CODE, 200, 200);
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
             Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
-//            QRCode.setImageBitmap(bitmap);
+            //QRCode.setImageBitmap(bitmap);
         } catch (WriterException e) {
             e.printStackTrace();
         }
     }
 
     public void setNavMenuItemThemeColors(int color) {
-//        Setting default colors for menu item Text and Icon
+        //Setting default colors for menu item Text and Icon
         int navDefaultTextColor = Color.parseColor("#000000");
 
         //Defining ColorStateList for menu item Text
@@ -777,10 +776,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     private void setListeners() {
-//        btnTimeToolbar.setOnClickListener(v-> {
-//            toolbar.setTitle(context.getResources().getString(R.string.schedule_parking));
-//            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ScheduleFragment()  ).commit();
-//        })
+        /*btnTimeToolbar.setOnClickListener(v-> {
+            toolbar.setTitle(context.getResources().getString(R.string.schedule_parking));
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ScheduleFragment()  ).commit();
+        });*/
         linearLayoutToolbarTime.setOnClickListener(v -> {
             if (isGPSEnabled()) {
                 toolbar.setTitle(context.getResources().getString(R.string.schedule_parking));
@@ -804,8 +803,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         b2.putString("s", s);
 
         oldBookingDetailsFragment.setArguments(b2);
-//        t1.replace(R.id.frame1, bookingDetailsFragment);
-//        t1.commit();
+        /*t1.replace(R.id.frame1, bookingDetailsFragment);
+        t1.commit();*/
 
         // Move the MainActivity with Map Fragement
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, oldBookingDetailsFragment).commit();
@@ -835,16 +834,15 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             return true;
         } else {
 
-//            AlertDialog alertDialog = new AlertDialog.Builder(context)
-//                    .setTitle("GPS Permissions")
-//                    .setMessage("GPS is required for this app to work. Please enable GPS.")
-//                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
-//                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-//                        startActivityForResult(intent, GPS_REQUEST_CODE);
-//                    }))
-//                    .setCancelable(false)
-//                    .show();
-
+            /*AlertDialog alertDialog = new AlertDialog.Builder(context)
+                    .setTitle("GPS Permissions")
+                    .setMessage("GPS is required for this app to work. Please enable GPS.")
+                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivityForResult(intent, GPS_REQUEST_CODE);
+                    }))
+                    .setCancelable(false)
+                    .show();*/
         }
 
         return false;
@@ -859,11 +857,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(final LocationResult locationResult) {
-//                if (mMap != null) {
+                //if (mMap != null) {
                 lastLocation = locationResult.getLastLocation();
                 SharedData.getInstance().setLastLocation(lastLocation);
-//                    addUserMarker();
-//                }
+               /*     addUserMarker();
+                }*/
             }
         };
     }

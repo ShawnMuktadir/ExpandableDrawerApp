@@ -393,6 +393,7 @@
     <string name="language">Language</string>
     <string name="english">English</string>
     <string name="bangla">Bangla</string>
+    <string name="bangla_bn">বাংলা</string>
     <string name="want_change_language">Want to change language?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>

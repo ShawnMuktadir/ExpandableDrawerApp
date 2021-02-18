@@ -80,20 +80,6 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         parkingViewHolder.textViewParkingAreaCount.setText(sensorArea.getCount());
 
-      /*  distance = ApplicationUtils.calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
-                sensorArea.getEndLat(), sensorArea.getEndLng());
-        if (distance > 1.9) {
-            distance = distance + 2;
-            //  Timber.e("kim 1st if -> %s", kim);
-        } else if (distance < 1.9 && distance > 1) {
-            distance = distance + 1;
-            //  Timber.e("kim 2nd if-> %s", kim);
-        } else {
-            distance = distance + 0.5;
-            //  Timber.e("kim else-> %s", kim);
-        }
-        sensorArea.setDistance(distance);*/
-
         parkingViewHolder.textViewParkingDistance.setText(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(sensorArea.getDistance()) + " km");
 
         sensorArea.setDuration(duration);

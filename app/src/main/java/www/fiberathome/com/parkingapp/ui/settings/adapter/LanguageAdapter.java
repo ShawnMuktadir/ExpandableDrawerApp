@@ -42,6 +42,7 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.Settin
         Language data = dataSet.get(position);
 
         viewHolder.textViewLanguageName.setText(data.getName());
+        viewHolder.textViewSubLanguageName.setText(data.getSubName());
         if (!data.isSelected()) viewHolder.imageViewCheckedIcon.setVisibility(View.GONE);
 
         viewHolder.itemView.setOnClickListener(v -> {
@@ -59,6 +60,9 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.Settin
 
         @BindView(R.id.text_view_language_name)
         TextView textViewLanguageName;
+
+        @BindView(R.id.text_view_sub_language_name)
+        TextView textViewSubLanguageName;
 
         @BindView(R.id.image_view_checked_icon)
         ImageView imageViewCheckedIcon;
