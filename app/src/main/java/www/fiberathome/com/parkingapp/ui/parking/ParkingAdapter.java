@@ -22,6 +22,7 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.response.sensors.SensorArea;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
@@ -79,14 +80,10 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         parkingViewHolder.textViewParkingAreaCount.setText(sensorArea.getCount());
 
-        distance = ApplicationUtils.calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
-                sensorArea.getEndLat(), sensorArea.getEndLng());
-
-        sensorArea.setDistance(distance);
-
-        parkingViewHolder.textViewParkingDistance.setText(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(distance) + " km");
+        parkingViewHolder.textViewParkingDistance.setText(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(sensorArea.getDistance()) + " km");
 
         sensorArea.setDuration(duration);
+        Timber.e("parking adapter distance->%s",distance);
 
         parkingViewHolder.textViewParkingTravelTime.setText(sensorArea.getDuration());
 

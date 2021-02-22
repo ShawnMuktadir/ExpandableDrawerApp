@@ -31,12 +31,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -370,12 +368,12 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
 
                                 if (i == 2) {
                                     endLat = Double.parseDouble(baseStringList.get(i).trim());
-                                    Timber.e("endLat -> %s",endLat);
+                                    Timber.e("endLat -> %s", endLat);
                                 }
 
                                 if (i == 3) {
                                     endLng = Double.parseDouble(baseStringList.get(i).trim());
-                                    Timber.e("endLng -> %s",endLng);
+                                    Timber.e("endLng -> %s", endLng);
                                 }
 
                                 if (i == 4) {
@@ -384,6 +382,16 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
 
                                 fetchDistance = ApplicationUtils.calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
                                         endLat, endLng);
+                                if (fetchDistance > 1.9) {
+                                    fetchDistance = fetchDistance + 2;
+                                    //  Timber.e("kim 1st if -> %s", kim);
+                                } else if (fetchDistance < 1.9 && fetchDistance > 1) {
+                                    fetchDistance = fetchDistance + 1;
+                                    //  Timber.e("kim 2nd if-> %s", kim);
+                                } else {
+                                    fetchDistance = fetchDistance + 0.5;
+                                    //  Timber.e("kim else-> %s", kim);
+                                }
                             }
                             SensorArea sensorArea = new SensorArea(parkingArea, placeId, endLat, endLng, count, fetchDistance);
 
@@ -485,10 +493,6 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
         });
 
         recyclerViewParking.setAdapter(parkingAdapter);
-
-        /*bubbleSortArrayList(sensorAreas);
-
-        parkingAdapter.setDataList(sensorAreas);*/
     }
 
     private void setNoDataForEnglish() {

@@ -395,6 +395,7 @@
     <string name="language">ভাষা</string>
     <string name="english">ইংরেজি</string>
     <string name="bangla">বাংলা</string>
+    <string name="bangla_bn">বাংলা</string>
     <string name="want_change_language">ভাষা পরিবর্তন করতে চান?</string>
     <string name="yes">হ্যাঁ</string>
     <string name="no">না</string><!--    <string name="change_language">Choose a Language</string>-->

@@ -77,10 +77,11 @@ public class LanguageSettingFragment extends Fragment {
         unbinder = ButterKnife.bind(this, view);
 
         String[] names = new String[]{context.getResources().getString(R.string.english), context.getResources().getString(R.string.bangla)};
+        String[] subNames = new String[]{context.getResources().getString(R.string.english), context.getResources().getString(R.string.bangla_bn)};
         String[] isoCodes = new String[]{LANGUAGE_EN, LANGUAGE_BN};
 
         LanguageAdapter languageAdapter = new LanguageAdapter(
-                populateLanguageItem(names, isoCodes, new ArrayList<>()), (language) -> {
+                populateLanguageItem(names, subNames, isoCodes, new ArrayList<>()), (language) -> {
 
             if (Preferences.getInstance(context).getAppLanguage() != null) {
                 Preferences.getInstance(context).setAppLanguage(language.getIsoCode());
@@ -95,10 +96,10 @@ public class LanguageSettingFragment extends Fragment {
         recyclerViewLanguages.setAdapter(languageAdapter);
     }
 
-    private List<Language> populateLanguageItem(String[] names, String[] isoCodes, List<Language> languages) {
+    private List<Language> populateLanguageItem(String[] names, String[] subNames, String[] isoCodes, List<Language> languages) {
         for (int i = 0; i < names.length; i++) {
             languages.add(new Language(
-                    names[i], isoCodes[i], isoCodes[i].equalsIgnoreCase(Preferences.getInstance(context).getAppLanguage())
+                    names[i], subNames[i], isoCodes[i], isoCodes[i].equalsIgnoreCase(Preferences.getInstance(context).getAppLanguage())
             ));
         }
 

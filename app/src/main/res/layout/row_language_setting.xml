@@ -13,13 +13,27 @@
         android:layout_height="wrap_content"
         android:padding="@dimen/app_padding">
 
-        <TextView
-            android:id="@+id/text_view_language_name"
-            style="@style/SettingsLabelTextStyle"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="start|center_vertical"
-            android:layout_marginStart="@dimen/app_padding_secondary" />
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/text_view_language_name"
+                style="@style/SettingsLabelTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center_vertical"
+                android:layout_marginStart="@dimen/app_padding_secondary" />
+
+            <TextView
+                android:id="@+id/text_view_sub_language_name"
+                style="@style/SettingsSubLabelTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center_vertical"
+                android:layout_marginStart="@dimen/app_padding_secondary" />
+        </LinearLayout>
 
         <ImageView
             android:id="@+id/image_view_checked_icon"
