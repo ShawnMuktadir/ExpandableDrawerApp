@@ -93,7 +93,6 @@ import www.fiberathome.com.parkingapp.ui.privacyPolicy.PrivacyPolicyFragment;
 import www.fiberathome.com.parkingapp.ui.profile.ProfileFragment;
 import www.fiberathome.com.parkingapp.ui.ratingReview.RatingReviewFragment;
 import www.fiberathome.com.parkingapp.ui.settings.SettingsFragment;
-import www.fiberathome.com.parkingapp.ui.share.ShareFragment;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.LocationHelper;
@@ -342,17 +341,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                     tvTimeToolbar.setVisibility(View.GONE);
                     linearLayoutToolbarTime.setVisibility(View.GONE);
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, PrivacyPolicyFragment.newInstance()).commit();
-                } else {
-                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
-                }
-                break;
-
-            case R.id.nav_share:
-                if (ApplicationUtils.checkInternet(context)) {
-                    toolbar.setTitle(context.getResources().getString(R.string.share));
-                    tvTimeToolbar.setVisibility(View.GONE);
-                    linearLayoutToolbarTime.setVisibility(View.GONE);
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ShareFragment.newInstance()).commit();
                 } else {
                     TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                 }
