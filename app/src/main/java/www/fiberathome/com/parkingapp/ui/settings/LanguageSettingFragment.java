@@ -22,6 +22,7 @@ import butterknife.Unbinder;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.Language;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
+import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.settings.adapter.LanguageAdapter;
 import www.fiberathome.com.parkingapp.ui.splash.SplashActivity;
 
