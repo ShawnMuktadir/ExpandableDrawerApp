@@ -1,12 +1,8 @@
 package www.fiberathome.com.parkingapp.model.response.sensors;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 public class SensorArea {
 
     private String parkingArea;
-
     private double distance;
     private String count;
     private String duration;
@@ -23,7 +19,7 @@ public class SensorArea {
         this.endLat = endLat;
         this.endLng = endLng;
         this.count = count;
-        this.fetchDistance = fetchDistance;
+        this.distance = fetchDistance;
     }
 
     public String getParkingArea() {

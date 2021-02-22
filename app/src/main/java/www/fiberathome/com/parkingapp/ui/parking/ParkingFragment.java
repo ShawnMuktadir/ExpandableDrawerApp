@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -342,7 +343,8 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
         Call<ParkingSlotResponse> call = request.getParkingSlots();
         call.enqueue(new Callback<ParkingSlotResponse>() {
             @Override
-            public void onResponse(@NonNull Call<ParkingSlotResponse> call, @NonNull retrofit2.Response<ParkingSlotResponse> response) {
+            public void onResponse(@NonNull Call<ParkingSlotResponse> call,
+                                   @NonNull retrofit2.Response<ParkingSlotResponse> response) {
                 hideLoading();
                 if (response.body() != null) {
                     list = response.body().getSensors();
@@ -382,20 +384,26 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
 
                                 fetchDistance = ApplicationUtils.calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
                                         endLat, endLng);
+
                                 if (fetchDistance > 1.9) {
                                     fetchDistance = fetchDistance + 2;
-                                    //  Timber.e("kim 1st if -> %s", kim);
                                 } else if (fetchDistance < 1.9 && fetchDistance > 1) {
                                     fetchDistance = fetchDistance + 1;
-                                    //  Timber.e("kim 2nd if-> %s", kim);
                                 } else {
                                     fetchDistance = fetchDistance + 0.5;
-                                    //  Timber.e("kim else-> %s", kim);
                                 }
                             }
-                            SensorArea sensorArea = new SensorArea(parkingArea, placeId, endLat, endLng, count, fetchDistance);
 
-                            sensorArea.setDistance(fetchDistance);
+                            Log.e("distanceAbdur ", " before adjust:" + fetchDistance + parkingArea +
+                                    "  mine lat " + onConnectedLocation.getLatitude() + " lon " + onConnectedLocation.getLongitude()
+                                    + " area lat " + endLat + " lon " + endLng);
+
+                            SensorArea sensorArea = new SensorArea(parkingArea, placeId, endLat, endLng, count,
+                                    fetchDistance);
+
+                            //sensorArea.setDistance(adjustDistance(fetchDistance));
+
+                            Log.e("DistanceAbdur", " after adjust:" + sensorArea.getDistance() + parkingArea);
 
                             sensorAreaArrayList.add(sensorArea);
                         }
@@ -493,6 +501,19 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
         });
 
         recyclerViewParking.setAdapter(parkingAdapter);
+    }
+
+    private double adjustDistance(double distance) {
+
+        if (distance > 1.9) {
+            distance = distance + 2;
+        } else if (distance < 1.9 && distance > 1) {
+            distance = distance + 1;
+        } else {
+            distance = distance + 0.5;
+        }
+
+        return distance;
     }
 
     private void setNoDataForEnglish() {

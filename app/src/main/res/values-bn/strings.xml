@@ -393,12 +393,13 @@
 
     //language
     <string name="language">ভাষা</string>
-    <string name="english">ইংরেজি</string>
-    <string name="bangla">বাংলা</string>
+    <string name="english">English</string>
+    <string name="bangla">Bangla</string>
     <string name="bangla_bn">বাংলা</string>
     <string name="want_change_language">ভাষা পরিবর্তন করতে চান?</string>
     <string name="yes">হ্যাঁ</string>
-    <string name="no">না</string><!--    <string name="change_language">Choose a Language</string>-->
+    <string name="no">না</string>
+    <!--    <string name="change_language">Choose a Language</string>-->
     <string name="where_to">কোথায় যাবেন?</string>
     <string name="search">খুঁজুন…</string>
     <string name="connect_to_internet_splash">দয়া করে ইন্টারনেট সংযোগ করে আবার চেষ্টা করুন</string>
@@ -427,8 +428,8 @@
     <string name="you_have_to_exit_from_current_destination">আপনি কি পার্কিং এর স্থানটি পরিবর্তন করতে চান?</string>
     <string name="please_try_again"> অনুগ্রহপুর্বক আবার চেষ্টা করুন</string>
     <string name="search_law">খুঁজুন…</string>
-    <string name="english_item">ইংরেজি</string>
-    <string name="bangla_item">বাংলা</string>
+    <string name="english_item">English</string>
+    <string name="bangla_item">Bangla</string>
     <string name="select_language">ভাষা নির্বাচন করুন</string>
     <string name="gps_disabled">জিপিএস নিষ্ক্রিয়</string>
     <string name="rules_for_using_app_through_gps">জিপিএস টি নিষ্ক্রিয়,অ্যাপটি যথাযথ ভাবে ব্যবহার করার জন্য আপনাকে জিপিএস সক্রিয় করতে হবে</string>

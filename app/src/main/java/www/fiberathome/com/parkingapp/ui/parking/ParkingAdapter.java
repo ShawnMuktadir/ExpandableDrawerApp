@@ -22,7 +22,6 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.response.sensors.SensorArea;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
@@ -80,20 +79,18 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         parkingViewHolder.textViewParkingAreaCount.setText(sensorArea.getCount());
 
-        parkingViewHolder.textViewParkingDistance.setText(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(sensorArea.getDistance()) + " km");
+        parkingViewHolder.textViewParkingDistance.setText(new DecimalFormat("##.#",
+                new DecimalFormatSymbols(Locale.US)).format(sensorArea.getDistance()) + " km");
 
-        sensorArea.setDuration(duration);
-        Timber.e("parking adapter distance->%s",distance);
+        /*sensorArea.setDuration(duration);
+        Timber.e("parking adapter distance->%s",distance);*/
 
         parkingViewHolder.textViewParkingTravelTime.setText(sensorArea.getDuration());
 
-        parkingViewHolder.relativeLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                selectedPosition = position;
-                notifyDataSetChanged();
-                mListener.onItemClick(position, sensorArea.getEndLat(), sensorArea.getEndLng(), sensorArea.getParkingArea(), sensorArea.getCount());
-            }
+        parkingViewHolder.relativeLayout.setOnClickListener(view -> {
+            selectedPosition = position;
+            notifyDataSetChanged();
+            mListener.onItemClick(position, sensorArea.getEndLat(), sensorArea.getEndLng(), sensorArea.getParkingArea(), sensorArea.getCount());
         });
 
         if (selectedPosition == position) {

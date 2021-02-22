@@ -40,6 +40,7 @@
     <dimen name="font_size_18">18sp</dimen>
     <dimen name="font_size_13">13sp</dimen>
 
+    <dimen name="dim1">1dp</dimen>
     <dimen name="dim2">2dp</dimen>
     <dimen name="dim3">3dp</dimen>
     <dimen name="dim4">4dp</dimen>

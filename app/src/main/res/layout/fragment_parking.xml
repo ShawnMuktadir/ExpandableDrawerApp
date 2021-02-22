@@ -20,6 +20,7 @@
             android:layout_margin="@dimen/_7sdp"
             android:padding="@dimen/dim3"
             android:text="@string/welcome_to_locc_parking"
+            android:visibility="gone"
             android:textColor="@color/blackColor"
             android:textSize="@dimen/_12ssp"
             android:textStyle="normal" />

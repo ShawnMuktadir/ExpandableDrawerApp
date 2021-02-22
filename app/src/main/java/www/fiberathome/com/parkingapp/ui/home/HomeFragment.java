@@ -481,6 +481,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         if (context != null) {
             context.changeDefaultActionBarDrawerToogleIcon();
+            listener = context;
         }
 
         unbinder = ButterKnife.bind(this, view);
@@ -491,7 +492,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
             setListeners();
 
-            bottomSheet = view.findViewById(R.id.layout_bottom_sheet);
             bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
             bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._90sdp));
             bottomSheetBehavior.setHideable(false);
@@ -541,8 +541,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     Timber.d("onCreateView: difference: -> %s", difference);
                 }
             }
-
-            listener = context;
 
             if (mMap == null) {
                 showLoading(context, context.getResources().getString(R.string.please_wait));
@@ -758,8 +756,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         Timber.e("jsonUid finalUid -> %s", finalUid);
 
                         String markerPlaceName = markerAreaName;
-
-                        //TaskParser taskParser = new TaskParser();
 
                         double markerDistance = 0;
 
@@ -980,7 +976,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         onConnectedLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
 
         if (onConnectedLocation != null) {
-            Timber.e("onConnected not null called");
+            //Timber.e("onConnected not null called");
 
             SharedData.getInstance().setOnConnectedLocation(onConnectedLocation);
 
@@ -1004,22 +1000,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                         getDirectionPinMarkerDraw(new LatLng(lat, lng), adapterUid);
 
-                        /*MarkerOptions markerOptions = new MarkerOptions();
-                        /*MarkerOptions markerOptions = new MarkerOptions();
-
-                        markerOptions.position(new LatLng(lat, lng));*/
-
                         coordList.add(new LatLng(lat, lng));
-
-                        /*markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_destination_pin)).title(adapterUid);
-
-                        previousAdapterSetMarkerEvent = mMap.addMarker(markerOptions);*/
 
                         //move map camera
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 13.5f), 500, null);
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 13.5f));
-
-                        /*SharedData.getInstance().setPreviousAdapterSetMarkerEvent(previousAdapterSetMarkerEvent);*/
 
                         String uid = "";
 
@@ -1061,8 +1046,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                         bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._90sdp));
 
-                        //TaskParser taskParser = new TaskParser();
-
                         adapterDistance = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
                                 lat, lng);
 
@@ -1070,11 +1053,12 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                         String adapterPlaceName = adapterAreaName;
 
-                        if (adapterDistance < 3000) {
+                        /*if (adapterDistance < 3000) {
                             adjustValue = 1;
                         }
 
-                        double kim = (adapterDistance / 1000) + adjustValue;
+                        double kim = (adapterDistance / 1000) + adjustValue;*/
+
                         double adapterDoubleDuration = ApplicationUtils.convertToDouble(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(adapterDistance * 2.43));
                         String adapterStringDuration = String.valueOf(adapterDoubleDuration);
 
@@ -1082,7 +1066,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                 String.valueOf(adapterDistance), new LatLng(lat, lng));
 
                         bookingSensorsAdapterArrayList.add(new BookingSensors(ApplicationUtils.capitalizeFirstLetter(areaName), lat, lng,
-                                adapterDistance, parkingSlotCount, adapterStringDuration,
+                                adjustDistance(adapterDistance), parkingSlotCount, adapterStringDuration,
                                 context.getResources().getString(R.string.nearest_parking_from_your_destination),
                                 BookingSensors.TEXT_INFO_TYPE, 0));
 
@@ -1180,6 +1164,19 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         initArea();
 
         settingGeoFire();
+    }
+
+    private double adjustDistance(double distance) {
+
+        if (distance > 1.9) {
+            distance = distance + 2;
+        } else if (distance < 1.9 && distance > 1) {
+            distance = distance + 1;
+        } else {
+            distance = distance + 0.5;
+        }
+
+        return distance;
     }
 
     @Override
@@ -1402,7 +1399,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                                 String parkingNumberOfNearbyDistanceLoc = sensor.getNoOfParking();
 
-                                int adjustNearbyValue = 2;
+                                /*int adjustNearbyValue = 2;
 
                                 double km = (distanceForNearbyLoc / 1000) + adjustNearbyValue;
 
@@ -1412,14 +1409,14 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                     distanceForNearbyLoc = distanceForNearbyLoc + 1;
                                 } else {
                                     distanceForNearbyLoc = distanceForNearbyLoc + 0.5;
-                                }
+                                }*/
 
                                 double nearbySearchDoubleDuration = ApplicationUtils.convertToDouble(new DecimalFormat("##.##", new DecimalFormatSymbols(Locale.US)).format(distanceForNearbyLoc * 2.43));
 
                                 String nearbySearchStringDuration = String.valueOf(nearbySearchDoubleDuration);
 
                                 bookingSensorsArrayList.add(new BookingSensors(nearestSearchAreaName, ApplicationUtils.convertToDouble(latitude1),
-                                        ApplicationUtils.convertToDouble(longitude1), distanceForNearbyLoc, parkingNumberOfNearbyDistanceLoc,
+                                        ApplicationUtils.convertToDouble(longitude1), adjustDistance(distanceForNearbyLoc), parkingNumberOfNearbyDistanceLoc,
                                         nearbySearchStringDuration,
                                         BookingSensors.INFO_TYPE, 1));
 
@@ -1523,7 +1520,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                 String parkingNumberOfNearbyDistanceLoc = null;
                                 parkingNumberOfNearbyDistanceLoc = sensor.getNoOfParking();
 
-                                int adjustNearbyValue = 2;
+                                /*int adjustNearbyValue = 2;
 
                                 double km = (distanceForNearbyLoc / 1000) + adjustNearbyValue;
 
@@ -1533,14 +1530,14 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                     distanceForNearbyLoc = distanceForNearbyLoc + 1;
                                 } else {
                                     distanceForNearbyLoc = distanceForNearbyLoc + 0.5;
-                                }
+                                }*/
 
                                 double nearbySearchDoubleDuration = ApplicationUtils.convertToDouble(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(distanceForNearbyLoc * 2.43));
 
                                 String nearbySearchStringDuration = String.valueOf(nearbySearchDoubleDuration);
 
                                 bookingSensorsArrayList.add(new BookingSensors(nearbyAreaName, ApplicationUtils.convertToDouble(latitude1),
-                                        ApplicationUtils.convertToDouble(longitude1), distanceForNearbyLoc, parkingNumberOfNearbyDistanceLoc,
+                                        ApplicationUtils.convertToDouble(longitude1), adjustDistance(distanceForNearbyLoc), parkingNumberOfNearbyDistanceLoc,
                                         nearbySearchStringDuration,
                                         BookingSensors.INFO_TYPE, 1));
 
@@ -1721,6 +1718,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     private void initUI(View view) {
         view.findViewById(R.id.currentLocationImageButton).setOnClickListener(clickListener);
+        bottomSheet = view.findViewById(R.id.layout_bottom_sheet);
         bottomSheetRecyclerView = view.findViewById(R.id.bottomsheet_recyclerview);
         //for booking
         arrivedTimeTV = view.findViewById(R.id.arrivedtimeTV);
@@ -1778,24 +1776,25 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         e.printStackTrace();
                     }
                     count[0]++;
-                    int adjustNearbyValue = 2;
 
-                    double kim = (distanceForNearbyLoc / 1000) + adjustNearbyValue;
+                    /*int adjustNearbyValue = 2;
 
-                    if (distanceForNearbyLoc > 1.9) {
+                    double kim = (distanceForNearbyLoc / 1000) + adjustNearbyValue;*/
+
+                    /*if (distanceForNearbyLoc > 1.9) {
                         distanceForNearbyLoc = distanceForNearbyLoc + 2;
                     } else if (distanceForNearbyLoc > 1.9 && distanceForNearbyLoc < 1) {
                         distanceForNearbyLoc = distanceForNearbyLoc + 1;
                     } else {
                         distanceForNearbyLoc = distanceForNearbyLoc + 0.5;
-                    }
+                    }*/
 
                     double nearbySearchDoubleDuration = ApplicationUtils.convertToDouble(new DecimalFormat("##.##", new DecimalFormatSymbols(Locale.US)).format(distanceForNearbyLoc * 2.43));
 
                     String nearbySearchStringDuration = String.valueOf(nearbySearchDoubleDuration);
 
                     bookingSensorsArrayList.add(new BookingSensors(nearbyAreaName[0], ApplicationUtils.convertToDouble(latitude1),
-                            ApplicationUtils.convertToDouble(longitude1), distanceForNearbyLoc, parkingNumberOfNearbyDistanceLoc,
+                            ApplicationUtils.convertToDouble(longitude1), adjustDistance(distanceForNearbyLoc), parkingNumberOfNearbyDistanceLoc,
                             nearbySearchStringDuration,
                             BookingSensors.INFO_TYPE, 1));
 
@@ -1939,12 +1938,12 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             //TaskParser taskParser = new TaskParser();
                             double fetchDistance = calculateDistance(location.getLatitude(), location.getLongitude(),
                                     latitude, longitude);
-                            Timber.e("kim fetchDistance -> %s", fetchDistance);
+                            /*Timber.e("kim fetchDistance -> %s", fetchDistance);
 
                             double kim = (fetchDistance / 1000) + adjustValue;
-                            Timber.e("kim fetchBottomSheetSensors -> %s", kim);
+                            Timber.e("kim fetchBottomSheetSensors -> %s", kim);*/
 
-                            if (fetchDistance > 1.9) {
+                            /*if (fetchDistance > 1.9) {
                                 fetchDistance = fetchDistance + 2;
                                 Timber.e("kim 1st if -> %s", kim);
                             } else if (fetchDistance < 1.9 && fetchDistance > 1) {
@@ -1953,7 +1952,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             } else {
                                 fetchDistance = fetchDistance + 0.5;
                                 Timber.e("kim else-> %s", kim);
-                            }
+                            }*/
 
                             double doubleDuration = ApplicationUtils.convertToDouble(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(fetchDistance * 2.43));
                             Timber.e("kim doubleDuration -> %s", doubleDuration);
@@ -1969,7 +1968,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                 Timber.e("nearestCurrentAreaName -> %s", nearestCurrentAreaName);
 
                                 bookingSensorsArrayListGlobal.add(new BookingSensors(nearestCurrentAreaName, latitude, longitude,
-                                        fetchDistance, parkingCount, initialNearestDuration,
+                                        adjustDistance(fetchDistance), parkingCount, initialNearestDuration,
                                         BookingSensors.INFO_TYPE, 1));
 
                                 //fetch distance in ascending order
@@ -2089,7 +2088,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 double bottomSheetDistance = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
                         bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude);
 
-                Timber.e(" searchDistance bottomSheetDistance -> %s", bottomSheetDistance);
+                /*Timber.e(" searchDistance bottomSheetDistance -> %s", bottomSheetDistance);
 
                 if (bottomSheetDistance > 1.9) {
                     bottomSheetDistance = bottomSheetDistance + 2;
@@ -2100,18 +2099,18 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 } else {
                     bottomSheetDistance = bottomSheetDistance + 0.5;
                     //  Timber.e("kim else-> %s", kim);
-                }
+                }*/
 
                 double bottomSheetDoubleDuration = ApplicationUtils.convertToDouble(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(bottomSheetDistance * 2.43));
 
                 String bottomSheetStringDuration = String.valueOf(bottomSheetDoubleDuration);
 
                 layoutBottomSheetVisible(true, sensors.getParkingArea(), sensors.getCount(),
-                        String.valueOf(bottomSheetDistance), bottomSheetStringDuration,
+                        String.valueOf(adjustDistance(bottomSheetDistance)), bottomSheetStringDuration,
                         new LatLng(sensors.getLat(), sensors.getLng()), false);
 
                 bookingSensorsBottomSheetArrayList.add(new BookingSensors(bottomSheetPlaceName, bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude,
-                        bottomSheetDistance, textViewBottomSheetParkingAreaCount.getText().toString(), bottomSheetStringDuration,
+                        adjustDistance(bottomSheetDistance), textViewBottomSheetParkingAreaCount.getText().toString(), bottomSheetStringDuration,
                         context.getResources().getString(R.string.nearest_parking_from_your_destination),
                         BookingSensors.TEXT_INFO_TYPE, 0));
 
@@ -2967,7 +2966,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             linearLayoutBottomSheetBottom.setVisibility(View.GONE);
         }
 
-        if (isClicked) {
+        /*if (isClicked) {
             Timber.e("isClicked called");
             if (bottomSheetPlaceLatLng != null && bottomSheetAdapter != null) {
 
@@ -3020,7 +3019,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     Toast.makeText(context, "Something went wrong!!! Please check your Internet connection", Toast.LENGTH_SHORT).show();
                 }
             }
-        }
+        }*/
     }
 
     public void commonBackOperation() {

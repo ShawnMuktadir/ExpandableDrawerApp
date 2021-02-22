@@ -17,6 +17,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -36,6 +37,7 @@ import android.text.style.RelativeSizeSpan;
 import android.text.style.TextAppearanceSpan;
 import android.text.style.UnderlineSpan;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -629,7 +631,7 @@ public class ApplicationUtils {
     }
 
     public static double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
-        double theta = lon1 - lon2;
+        /*double theta = lon1 - lon2;
         double mile = Math.sin(deg2rad(lat1))
                 * Math.sin(deg2rad(lat2))
                 + Math.cos(deg2rad(lat1))
@@ -639,8 +641,23 @@ public class ApplicationUtils {
         mile = rad2deg(mile);
         mile = mile * 60 * 1.1515;
         double km = mile / 0.62137;
-        //Timber.e("distance -> %s", km);
-        return (km);
+        return (km);*/
+
+
+        /*Log.e("DistanceAbdur"," lat1 : lon1= "+lat1+" "+lon1);
+        Log.e("DistanceAbdur"," lat2 : lon2= "+lat2+" "+lon2);*/
+
+        Location startPoint=new Location("locationA");
+        startPoint.setLatitude(lat1);
+        startPoint.setLongitude(lon1);
+
+        Location endPoint=new Location("locationB");
+        endPoint.setLatitude(lat2);
+        endPoint.setLongitude(lon2);
+
+        double distance=startPoint.distanceTo(endPoint);
+
+        return (distance / 1000);
     }
 
     public static String capitalize(String str) {
