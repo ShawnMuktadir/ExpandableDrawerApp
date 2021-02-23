@@ -27,7 +27,6 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,9 +51,6 @@ import static www.fiberathome.com.parkingapp.utils.Constants.LANGUAGE_EN;
 public class LawFragment extends BaseFragment implements IOnBackPressListener {
 
     private final String TAG = getClass().getSimpleName();
-
-    //@BindView(R.id.pdfView)
-    //PDFView pdfView;
 
     @BindView(R.id.editTextSearchLaw)
     EditText editTextSearchLaw;
@@ -104,32 +100,11 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
 
         context = (LawActivity) getActivity();
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(context));
-
-        //loadPDF();
         setListeners();
 
         String jsonResult = fetchJSONFromAsset();
 
-        LocalJson localJson = new Gson().fromJson(jsonResult, LocalJson.class);
-        if (localJson != null) {
-            //Toast.makeText(context, "Data", Toast.LENGTH_SHORT).show();
-            List<Result> resultList = localJson.getResult();
-            List<LawItem> lawItems = new ArrayList<>();
-
-            for (Result r : resultList) {
-                Timber.d("onViewCreated Result: -> %s", r.getTitle());
-                LawItem item = new LawItem(r.getTitle(), r.getLaws());
-                lawItems.add(item);
-            }
-            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-            recyclerView.setLayoutManager(mLayoutManager);
-            recyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
-            recyclerView.setItemAnimator(new DefaultItemAnimator());
-            recyclerView.setMotionEventSplittingEnabled(false);
-            lawAdapter = new LawAdapter(lawItems, this);
-            recyclerView.setAdapter(lawAdapter);
-        }
+        loadLocalJsonRecyclerView(jsonResult);
     }
 
     @Override
@@ -156,28 +131,26 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
         return false;
     }
 
-    private boolean isGPSEnabled() {
+    private void loadLocalJsonRecyclerView(String jsonResult) {
+        LocalJson localJson = new Gson().fromJson(jsonResult, LocalJson.class);
+        if (localJson != null) {
+            List<Result> resultList = localJson.getResult();
+            List<LawItem> lawItems = new ArrayList<>();
 
-        LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
+            for (Result r : resultList) {
+                Timber.d("onViewCreated Result: -> %s", r.getTitle());
+                LawItem item = new LawItem(r.getTitle(), r.getLaws());
+                lawItems.add(item);
+            }
 
-        boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-        if (providerEnabled) {
-            return true;
-        } else {
-
-            /*AlertDialog alertDialog = new AlertDialog.Builder(context)
-                    .setTitle("GPS Permissions")
-                    .setMessage("GPS is required for this app to work. Please enable GPS.")
-                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
-                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        startActivityForResult(intent, GPS_REQUEST_CODE);
-                    }))
-                    .setCancelable(false)
-                    .show();*/
-
+            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(context);
+            recyclerView.setLayoutManager(mLayoutManager);
+            recyclerView.addItemDecoration(new DividerItemDecoration(context, LinearLayoutManager.VERTICAL));
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
+            recyclerView.setMotionEventSplittingEnabled(false);
+            lawAdapter = new LawAdapter(lawItems, this);
+            recyclerView.setAdapter(lawAdapter);
         }
-        return false;
     }
 
     private String fetchJSONFromAsset() {
@@ -235,14 +208,13 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
 
             @Override
             public void afterTextChanged(Editable s) {
-                /*if (s.length() > 0) {
-                    filter(s.toString());
-                }*/
-                if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_EN) && ApplicationUtils.textContainsBangla(s.toString())) {
+                if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_EN) &&
+                        ApplicationUtils.textContainsBangla(s.toString())) {
                     setNoDataForBangla();
                     recyclerView.setVisibility(View.GONE);
                     editTextSearchLaw.setText("");
-                } else if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN) && ApplicationUtils.isEnglish(s.toString())) {
+                } else if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN) &&
+                        ApplicationUtils.textContainsEnglish(s.toString())) {
                     setNoDataForEnglish();
                     recyclerView.setVisibility(View.GONE);
                     editTextSearchLaw.setText("");
@@ -268,11 +240,13 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
                 String contents = editTextSearchLaw.getText().toString().trim();
                 if (contents.length() > 0) {
                     //do search
-                    if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_EN) && ApplicationUtils.textContainsBangla(contents.toString())) {
+                    if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_EN)
+                            && ApplicationUtils.textContainsBangla(contents.toString())) {
                         setNoDataForBangla();
                         recyclerView.setVisibility(View.GONE);
                         editTextSearchLaw.setText("");
-                    } else if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN) && ApplicationUtils.isEnglish(contents.toString())) {
+                    } else if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN)
+                            && ApplicationUtils.textContainsEnglish(contents.toString())) {
                         setNoDataForEnglish();
                         recyclerView.setVisibility(View.GONE);
                         editTextSearchLaw.setText("");
@@ -309,5 +283,28 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
     public void setNoData() {
         textViewNoData.setVisibility(View.VISIBLE);
         textViewNoData.setText(context.getResources().getString(R.string.no_data_found));
+    }
+
+    private boolean isGPSEnabled() {
+
+        LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
+
+        boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+        if (providerEnabled) {
+            return true;
+        } else {
+            /*AlertDialog alertDialog = new AlertDialog.Builder(context)
+                    .setTitle("GPS Permissions")
+                    .setMessage("GPS is required for this app to work. Please enable GPS.")
+                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivityForResult(intent, GPS_REQUEST_CODE);
+                    }))
+                    .setCancelable(false)
+                    .show();*/
+
+        }
+        return false;
     }
 }

@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,7 +33,6 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -248,6 +246,50 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
             }
         });
 
+        editTextParking.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() > 0) {
+                    ivClearSearchText.setVisibility(View.VISIBLE);
+                } else {
+                    ivClearSearchText.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_EN) &&
+                        ApplicationUtils.textContainsBangla(s.toString())) {
+                    setNoDataForBangla();
+                    recyclerViewParking.setVisibility(View.GONE);
+                    editTextParking.setText("");
+                } else if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN) &&
+                        ApplicationUtils.textContainsEnglish(s.toString())) {
+                    setNoDataForEnglish();
+                    recyclerViewParking.setVisibility(View.VISIBLE);
+                    editTextParking.setText("");
+                } else {
+                    recyclerViewParking.setVisibility(View.VISIBLE);
+                    filter(s.toString().trim());
+                    parkingAdapter.notifyDataSetChanged();
+                }
+
+                if (s.length() == 0) {
+                    Timber.e("length 0 called");
+                    if (ApplicationUtils.checkInternet(context)) {
+                        updateAdapter();
+                    } else {
+                        //TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                    }
+                }
+            }
+        });
+
         editTextParking.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH
                     || actionId == EditorInfo.IME_ACTION_DONE
@@ -261,7 +303,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                             setNoDataForBangla();
                             recyclerViewParking.setVisibility(View.GONE);
                             editTextParking.setText("");
-                        } else if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN) && ApplicationUtils.isEnglish(contents)) {
+                        } else if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN) && ApplicationUtils.textContainsEnglish(contents)) {
                             setNoDataForEnglish();
                             recyclerViewParking.setVisibility(View.VISIBLE);
                             editTextParking.setText("");
@@ -285,47 +327,6 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                 }
             }
             return false;
-        });
-
-        editTextParking.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() > 0) {
-                    ivClearSearchText.setVisibility(View.VISIBLE);
-                } else {
-                    ivClearSearchText.setVisibility(View.GONE);
-                }
-                if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_EN) && ApplicationUtils.textContainsBangla(s.toString())) {
-                    setNoDataForBangla();
-                    recyclerViewParking.setVisibility(View.GONE);
-                    editTextParking.setText("");
-                } else if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN) && ApplicationUtils.isEnglish(s.toString())) {
-                    setNoDataForEnglish();
-                    recyclerViewParking.setVisibility(View.VISIBLE);
-                    editTextParking.setText("");
-                } else {
-                    recyclerViewParking.setVisibility(View.VISIBLE);
-                    filter(s.toString());
-                    parkingAdapter.notifyDataSetChanged();
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (s.length() == 0) {
-                    Timber.e("length 0 called");
-                    if (ApplicationUtils.checkInternet(context)) {
-                        updateAdapter();
-                    } else {
-                        //TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
-                    }
-                }
-            }
         });
     }
 
@@ -394,26 +395,19 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                                 }
                             }
 
-                            Log.e("distanceAbdur ", " before adjust:" + fetchDistance + parkingArea +
+                            Timber.e("distance before adjust:" + fetchDistance + parkingArea +
                                     "  mine lat " + onConnectedLocation.getLatitude() + " lon " + onConnectedLocation.getLongitude()
                                     + " area lat " + endLat + " lon " + endLng);
 
                             SensorArea sensorArea = new SensorArea(parkingArea, placeId, endLat, endLng, count,
                                     fetchDistance);
 
-                            //sensorArea.setDistance(adjustDistance(fetchDistance));
-
-                            Log.e("DistanceAbdur", " after adjust:" + sensorArea.getDistance() + parkingArea);
+                            Timber.e("distanceAbdur after adjust:" + sensorArea.getDistance() + parkingArea);
 
                             sensorAreaArrayList.add(sensorArea);
                         }
 
-                        Collections.sort(sensorAreaArrayList, new Comparator<SensorArea>() {
-                            @Override
-                            public int compare(SensorArea c1, SensorArea c2) {
-                                return Double.compare(c1.getDistance(), c2.getDistance());
-                            }
-                        });
+                        Collections.sort(sensorAreaArrayList, (c1, c2) -> Double.compare(c1.getDistance(), c2.getDistance()));
 
                         setFragmentControls(sensorAreaArrayList);
                     }
@@ -518,17 +512,15 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
 
     private void setNoDataForEnglish() {
         textViewNoData.setVisibility(View.VISIBLE);
-        textViewNoData.setText(context.getResources().getString(R.string.no_nearest_parking_area_found));
+        textViewNoData.setText(context.getResources().getString(R.string.no_parking_spot_found));
         ApplicationUtils.showOnlyMessageDialog(context.getResources().getString(R.string.change_app_language_to_english), context);
     }
 
     private void setNoDataForBangla() {
         textViewNoData.setVisibility(View.VISIBLE);
-        textViewNoData.setText(context.getResources().getString(R.string.no_nearest_parking_area_found));
+        textViewNoData.setText(context.getResources().getString(R.string.no_parking_spot_found));
         ApplicationUtils.showOnlyMessageDialog(context.getResources().getString(R.string.not_available_at_bangla_search), context);
     }
-
-    ArrayList<SensorArea> filteredList = new ArrayList<>();
 
     private void filter(String text) {
         ArrayList<SensorArea> filteredList = new ArrayList<>();
@@ -551,7 +543,8 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                 parkingAdapter.filterList(filteredList);
             }
         } else {
-            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
+            TastyToastUtils.showTastyWarningToast(context,
+                    context.getResources().getString(R.string.connect_to_internet_gps));
         }
     }
 
@@ -588,7 +581,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
 
     private void setNoData() {
         textViewNoData.setVisibility(View.VISIBLE);
-        textViewNoData.setText(context.getString(R.string.no_nearest_parking_area_found));
+        textViewNoData.setText(context.getString(R.string.no_parking_spot_found));
     }
 
     private void hideNoData() {

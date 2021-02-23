@@ -465,5 +465,6 @@
     <string name="no_route_exist">কোন পথ নেই</string>
     <string name="something_went_wrong_please_check_internet_connection">কিছু সমস্যা হয়েছে! দয়া করে আপনার ইন্টারনেট সংযোগ পরীক্ষা করুন</string>
     <string name="language_settings">ভাষা সেটিংস</string>
+    <string name="no_parking_spot_found">দুঃখিত, কোন পার্কিং স্পট পাওয়া যায় নি</string>
 </resources>
 

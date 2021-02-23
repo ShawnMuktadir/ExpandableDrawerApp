@@ -130,7 +130,7 @@ public class ApplicationUtils {
         return false;
     }
 
-    public static boolean isEnglish(String str) {
+    public static boolean textContainsEnglish(String str) {
         return ((!str.equals(""))
                 && (str != null)
                 && (str.matches("^[a-zA-Z]*$")));
