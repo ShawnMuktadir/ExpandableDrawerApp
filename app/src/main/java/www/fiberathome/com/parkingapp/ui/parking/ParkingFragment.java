@@ -162,12 +162,14 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
             Timber.e("check internet method called");
             fetchParkingSlotSensors();
         } else {
-            ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet_gps), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
+            ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet_gps), context,
+                    context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
                 Timber.e("Positive Button clicked");
                 if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
                     fetchParkingSlotSensors();
                 } else {
-                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
+                    TastyToastUtils.showTastyWarningToast(context,
+                            context.getResources().getString(R.string.connect_to_internet_gps));
                 }
             }, (dialog, which) -> {
                 Timber.e("Negative Button Clicked");
@@ -299,11 +301,13 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                 if (contents.length() > 0) {
                     //do search
                     if (ApplicationUtils.checkInternet(context) && isGPSEnabled()) {
-                        if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_EN) && ApplicationUtils.textContainsBangla(contents)) {
+                        if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_EN) &&
+                                ApplicationUtils.textContainsBangla(contents)) {
                             setNoDataForBangla();
                             recyclerViewParking.setVisibility(View.GONE);
                             editTextParking.setText("");
-                        } else if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN) && ApplicationUtils.textContainsEnglish(contents)) {
+                        } else if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN) &&
+                                ApplicationUtils.textContainsEnglish(contents)) {
                             setNoDataForEnglish();
                             recyclerViewParking.setVisibility(View.VISIBLE);
                             editTextParking.setText("");
@@ -321,7 +325,8 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                         updateAdapter();
                         ApplicationUtils.hideKeyboard(context, editTextParking);
                     } else {
-                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
+                        TastyToastUtils.showTastyWarningToast(context,
+                                context.getResources().getString(R.string.connect_to_internet_gps));
                     }
                     return true;
                 }

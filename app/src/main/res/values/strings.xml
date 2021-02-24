@@ -44,6 +44,7 @@
     <string name="err_msg_vehicle">Enter vehicle no</string>
     <string name="err_old_password">Enter valid old password</string>
     <string name="err_msg_password">Enter valid password</string>
+    <string name="err_msg_password_signup">Password must be 4 characters</string>
     <string name="err_msg_pin">Enter valid pin</string>
     <string name="find_nearest">Find Nearest</string>
     <string name="err_new_password">Enter valid new password</string>

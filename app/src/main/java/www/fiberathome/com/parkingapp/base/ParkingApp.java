@@ -2,11 +2,10 @@ package www.fiberathome.com.parkingapp.base;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.multidex.MultiDex;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -49,24 +48,27 @@ public class ParkingApp extends Application {
         setAppDefaults();
     }
 
+    @Override
+    protected void attachBaseContext(Context context) {
+        super.attachBaseContext(context);
+        MultiDex.install(this);
+    }
+
     private void setAppDefaults() {
         // set in-app defaults
-        Map<String, Object> remoteConfigDefaults = new HashMap();
+        Map<String, Object> remoteConfigDefaults = new HashMap<>();
         remoteConfigDefaults.put(ForceUpdateChecker.KEY_UPDATE_REQUIRED, false);
         remoteConfigDefaults.put(ForceUpdateChecker.KEY_CURRENT_VERSION, BuildConfig.VERSION_NAME);
         remoteConfigDefaults.put(ForceUpdateChecker.KEY_UPDATE_URL,
-                ""); //ToDo set playstore url
+                "https://play.google.com/store/apps/details?id=www.fiberathome.com.parkingapp"); //play store url
 
         firebaseRemoteConfig.setDefaultsAsync(remoteConfigDefaults);
 
         firebaseRemoteConfig.fetch(60) // fetch every minutes
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Timber.e("remote config is fetched.");
-                            firebaseRemoteConfig.activate();
-                        }
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Timber.e("remote config is fetched.");
+                        firebaseRemoteConfig.activate();
                     }
                 });
     }
@@ -82,7 +84,7 @@ public class ParkingApp extends Application {
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree() {
                 @Override
-                protected String createStackElementTag(StackTraceElement element) {
+                protected String createStackElementTag(@NonNull StackTraceElement element) {
                     return super.createStackElementTag(element) + ": " + element.getLineNumber();
                 }
             });

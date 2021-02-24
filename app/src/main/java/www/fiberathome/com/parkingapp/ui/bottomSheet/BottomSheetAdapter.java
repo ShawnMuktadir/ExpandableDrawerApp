@@ -32,7 +32,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
     public Context context;
 
-    private HomeFragment homeFragment;
+    private final HomeFragment homeFragment;
 
     private ArrayList<BookingSensors> bookingSensorsArrayList;
 
@@ -42,7 +42,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
     private int count = 0;
 
-    private onItemClickListeners clickListeners;
+    private final onItemClickListeners clickListeners;
 
     public BottomSheetAdapter(Context context, HomeFragment homeFragment,
                               Location onConnectedLocation, onItemClickListeners clickListeners) {

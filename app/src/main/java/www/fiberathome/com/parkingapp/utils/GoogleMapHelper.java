@@ -51,7 +51,9 @@ public class GoogleMapHelper {
         return polylineOptions;
     }
 
-    public static void defaultMapSettings(Context context, GoogleMap googleMap, FusedLocationProviderClient fusedLocationProviderClient, LocationRequest locationRequest, LocationCallback locationCallback) {
+    public static void defaultMapSettings(Context context, GoogleMap googleMap,
+                                          FusedLocationProviderClient fusedLocationProviderClient, LocationRequest locationRequest,
+                                          LocationCallback locationCallback) {
 
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
