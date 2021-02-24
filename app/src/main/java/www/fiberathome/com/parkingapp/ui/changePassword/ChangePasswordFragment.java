@@ -50,16 +50,22 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
 
     @BindView(R.id.textInputLayoutOldPassword)
     TextInputLayout textInputLayoutOldPassword;
+
     @BindView(R.id.editTextOldPassword)
     EditText editTextOldPassword;
+
     @BindView(R.id.textInputLayoutNewPassword)
     TextInputLayout textInputLayoutNewPassword;
+
     @BindView(R.id.editTextNewPassword)
     EditText editTextNewPassword;
+
     @BindView(R.id.textInputLayoutConfirmPassword)
     TextInputLayout textInputLayoutConfirmPassword;
+
     @BindView(R.id.editTextConfirmPassword)
     EditText editTextConfirmPassword;
+
     @BindView(R.id.changePasswordBtn)
     Button changePasswordBtn;
 

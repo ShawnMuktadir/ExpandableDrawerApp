@@ -34,10 +34,10 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.android.volley.AuthFailureError;
-import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -54,19 +54,24 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
+import www.fiberathome.com.parkingapp.model.api.ApiClient;
+import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
-import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
+import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 import www.fiberathome.com.parkingapp.ui.helper.ProgressView;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.privacyPolicy.PrivacyPolicyActivity;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
-import www.fiberathome.com.parkingapp.ui.verifyPhone.VerifyPhoneActivity;
 import www.fiberathome.com.parkingapp.ui.termsConditions.TermsConditionsActivity;
+import www.fiberathome.com.parkingapp.ui.verifyPhone.VerifyPhoneActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
@@ -625,7 +630,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         }
     }
 
-    private void registerUser(final String fullName, final String mobileNo, final String vehicleNo, final String password) {
+    /*private void registerUser(final String fullName, final String mobileNo, final String vehicleNo, final String password) {
 
         showLoading(context);
 
@@ -649,28 +654,34 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                     Timber.e("jsonObject if called");
 
                     showMessage(jsonObject.getString("message"));
-                    /*showMessage("Mobile Number/Vehicle Registration Number already exists or Image Size is too large");
+                    */
+    /*showMessage("Mobile Number/Vehicle Registration Number already exists or Image Size is too large");
                     if (jsonObject.getString("message").equals("Sorry! mobile number is not valid or missing mate")){
                         showMessage("Mobile Number/Vehicle Registration Number already exists or Image Size is too large");
                     }
                      boolean flag saying device is waiting for sms
                     SharedPreManager.getInstance(getApplicationContext()).setIsWaitingForSMS(true);*/
+    /*
 
                     // Moving the screen to next pager item i.e otp screen
                     Intent intent = new Intent(context, VerifyPhoneActivity.class);
-                    /*intent.putExtra("fullname",fullname);
+                    */
+    /*intent.putExtra("fullname",fullname);
                     intent.putExtra("password",passw
                     ord);
                     intent.putExtra("mobile_no",mobileNo);
                     intent.putExtra("vehicle_no",vehicleNo);
                     intent.putExtra("image", imageToString(bitmap));
                     intent.putExtra("image_name", mobileNo);*/
+    /*
                     startActivity(intent);
 
 
                 } else {
-                    /*showMessage(jsonObject.getString("message"));
+                    */
+    /*showMessage(jsonObject.getString("message"));
                     showMessage("Mobile Number/Vehicle Registration Number already exists or Image Size is too large");*/
+    /*
                     Timber.e("jsonObject else called");
                     if (jsonObject.getString("message").equals("Sorry! mobile number is not valid or missing mate")) {
                         showMessage("Mobile Number/Vehicle Registration Number already exists or Image Size is too large");
@@ -704,6 +715,55 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         ParkingApp.getInstance().addToRequestQueue(stringRequest, TAG);
+    }*/
+
+    private void registerUser(final String fullName, final String mobileNo,
+                              final String vehicleNo, final String password) {
+
+        showLoading(context);
+
+        showProgress();
+
+        ApiService service = ApiClient.getRetrofitInstance(AppConfig.URL_REGISTER).create(ApiService.class);
+        Call<BaseResponse> call = service.createUser(fullName, password, mobileNo, vehicleNo, imageToString(bitmap));
+
+        call.enqueue(new Callback<BaseResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<BaseResponse> call, @NonNull Response<BaseResponse> response) {
+
+                Timber.e("registration response body-> %s", new Gson().toJson(response.body()));
+
+                hideLoading();
+
+                hideProgress();
+
+                if (response.body() != null) {
+                    if (!response.body().getError()) {
+                        showMessage(response.body().getMessage());
+
+                        // Moving the screen to next pager item i.e otp screen
+                        Intent intent = new Intent(context, VerifyPhoneActivity.class);
+
+                        startActivity(intent);
+
+                    } else {
+                        Timber.e("jsonObject else called");
+                        if (response.body().getMessage().equalsIgnoreCase("Sorry! mobile number is not valid or missing mate")) {
+                            showMessage("Mobile Number/Vehicle Registration Number already exists or Image Size is too large");
+                        } else if (!response.body().getMessage().equalsIgnoreCase("Sorry! mobile number is not valid or missing mate")) {
+                            showMessage(response.body().getMessage());
+                        }
+                    }
+                } else {
+                    showMessage(response.body().getMessage());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<BaseResponse> call, @NonNull Throwable errors) {
+                Timber.e("Throwable Errors: -> %s", errors.toString());
+            }
+        });
     }
 
     private boolean checkFields() {

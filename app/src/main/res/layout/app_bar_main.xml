@@ -36,7 +36,7 @@
                 android:layout_marginEnd="@dimen/_5sdp"
                 android:paddingStart="@dimen/dim5"
                 android:paddingEnd="@dimen/dim5"
-                android:visibility="visible"
+                android:visibility="gone"
                 android:background="@drawable/border"
                 android:orientation="horizontal">
 
