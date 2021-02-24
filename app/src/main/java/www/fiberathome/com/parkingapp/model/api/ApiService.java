@@ -39,7 +39,8 @@ public interface ApiService {
             @Field("password") String password,
             @Field("mobile_no") String mobileNo,
             @Field("vehicle_no") String vehicleNo,
-            @Field("image") String image
+            @Field("image") String image,
+            @Field("image_name") String imageName
     );
 
     @FormUrlEncoded

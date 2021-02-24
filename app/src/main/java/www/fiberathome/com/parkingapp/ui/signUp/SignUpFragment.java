@@ -65,6 +65,7 @@ import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
+import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 import www.fiberathome.com.parkingapp.ui.helper.ProgressView;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
@@ -622,7 +623,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             String password = editTextPassword.getText().toString().trim();
 
             if (bitmap != null) {
-                registerUser(fullName, mobileNo, vehicleNo, password);
+                registerUser(fullName, password, mobileNo, vehicleNo);
             } else {
                 //showMessage("Try Again. Please Upload Profile Photo!");
                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.upload_profile_photo));
@@ -717,15 +718,14 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         ParkingApp.getInstance().addToRequestQueue(stringRequest, TAG);
     }*/
 
-    private void registerUser(final String fullName, final String mobileNo,
-                              final String vehicleNo, final String password) {
+    private void registerUser(final String fullName, final String password, final String mobileNo, final String vehicleNo) {
 
         showLoading(context);
 
         showProgress();
 
         ApiService service = ApiClient.getRetrofitInstance(AppConfig.URL_REGISTER).create(ApiService.class);
-        Call<BaseResponse> call = service.createUser(fullName, password, mobileNo, vehicleNo, imageToString(bitmap));
+        Call<BaseResponse> call = service.createUser(fullName, password, mobileNo, vehicleNo, imageToString(bitmap), mobileNo);
 
         call.enqueue(new Callback<BaseResponse>() {
             @Override
@@ -743,8 +743,8 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
                         // Moving the screen to next pager item i.e otp screen
                         Intent intent = new Intent(context, VerifyPhoneActivity.class);
-
                         startActivity(intent);
+                        SharedData.getInstance().setPassword(password);
 
                     } else {
                         Timber.e("jsonObject else called");
