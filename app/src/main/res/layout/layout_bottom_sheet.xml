@@ -11,11 +11,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
+        android:elevation="@dimen/design_appbar_elevation"
         android:orientation="vertical"
         android:overScrollMode="never"
         app:behavior_hideable="true"
-        app:behavior_peekHeight="@dimen/dim80"
-        app:layout_behavior="@string/bottom_sheet_behavior">
+        app:behavior_peekHeight="@dimen/_90sdp"
+        app:layout_behavior="@string/bottom_sheet_behavior"
+        tools:targetApi="lollipop">
 
         <View
             android:id="@+id/view"
@@ -113,7 +115,7 @@
         <View
             android:id="@+id/spaccer"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dim300"
+            android:layout_height="@dimen/_500sdp"
             android:alpha="0.6"
             android:background="@android:color/transparent" />
     </LinearLayout>
