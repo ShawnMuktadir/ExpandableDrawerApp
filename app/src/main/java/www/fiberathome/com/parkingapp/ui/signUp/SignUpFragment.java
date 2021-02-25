@@ -483,61 +483,6 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         });
     }
 
-    private void submitOTPVerification(final String otp) {
-        showLoading(context);
-
-        HttpsTrustManager.allowAllSSL();
-        if (!otp.isEmpty()) {
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_VERIFY_OTP, response -> {
-                Timber.e("URL -> %s", AppConfig.URL_VERIFY_OTP);
-
-                hideLoading();
-
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    Timber.e("jsonObject login -> %s", jsonObject.toString());
-
-
-                    if (!jsonObject.getBoolean("error")) {
-
-                        // FETCHING USER INFORMATION FROM DATABASE
-                        JSONObject userJson = jsonObject.getJSONObject("user");
-
-                        if (Preferences.getInstance(context).isWaitingForSMS()) {
-                            Preferences.getInstance(context).setIsWaitingForSMS(false);
-
-                            // MOVE TO ANOTHER ACTIVITY
-                            showMessage("Dear " + userJson.getString("fullname") + ", Your registration completed successfully.");
-                            Intent intent = new Intent(context, LoginActivity.class);
-                            startActivity(intent);
-                            context.finish();
-                        }
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }, error -> {
-
-            }) {
-                @Override
-                protected Map<String, String> getParams() throws AuthFailureError {
-                    Map<String, String> params = new HashMap<>();
-                    params.put("otp", otp);
-                    return params;
-                }
-            };
-
-            ParkingApp.getInstance().addToRequestQueue(stringRequest, TAG);
-        } else {
-            // OTP IS EMPTY.
-            hideLoading();
-            showMessage("Please enter valid OTP.");
-        }
-
-    }
-
     private void showPictureDialog() {
         AlertDialog.Builder pictureDialog = new AlertDialog.Builder(context);
         pictureDialog.setTitle("Select Image");
