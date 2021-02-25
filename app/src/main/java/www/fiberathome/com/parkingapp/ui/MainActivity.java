@@ -678,7 +678,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 .centerCrop()
                 .placeholder(R.drawable.blank_profile)
                 .error(R.drawable.blank_profile);
-        String url = AppConfig.IMAGES_URL + user.getProfilePic() + ".jpg";
+        String url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
         Timber.e("user profile photo url -> %s", url);
         Glide.with(this).load(url).apply(requestOptions).override(200, 200).into(ivUserProfile);
 

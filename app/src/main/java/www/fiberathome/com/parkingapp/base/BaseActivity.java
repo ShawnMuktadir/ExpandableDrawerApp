@@ -3,6 +3,7 @@ package www.fiberathome.com.parkingapp.base;
 import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -52,6 +53,7 @@ import java.util.Locale;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.GeoFenceBroadcastReceiver;
 import www.fiberathome.com.parkingapp.utils.GeofenceConstants;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
@@ -638,5 +640,22 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
     public void startActivityWithFinishAffinity(Class activityClass) {
         startActivity(new Intent(getApplicationContext(), activityClass));
         finishAffinity();
+    }
+
+    private ProgressDialog progressDialog;
+
+    protected void showLoading(Context context) {
+        progressDialog = DialogUtils.getInstance().progressDialog(context, context.getResources().getString(R.string.please_wait));
+    }
+
+    protected void showLoading(Context context, String message) {
+        progressDialog = DialogUtils.getInstance().progressDialog(context, message);
+    }
+
+    protected void hideLoading() {
+        if (progressDialog == null) return;
+
+        progressDialog.dismiss();
+        progressDialog.cancel();
     }
 }

@@ -1,6 +1,5 @@
 package www.fiberathome.com.parkingapp.model.api;
 
-
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -8,6 +7,7 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.BookedResponse;
+import www.fiberathome.com.parkingapp.model.response.login.LoginResponse;
 import www.fiberathome.com.parkingapp.model.response.parkingSlot.ParkingSlotResponse;
 import www.fiberathome.com.parkingapp.model.response.search.SearchVisitedPlaceResponse;
 import www.fiberathome.com.parkingapp.model.response.sensors.SensorsResponse;
@@ -26,7 +26,7 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("change_password_otp.php")
-    Call<BaseResponse> forgetPassword(
+    Call<BaseResponse> setPasswordForForgetPassword(
             @Field("new_password") String new_password,
             @Field("confirm_password") String confirm_password,
             @Field("mobile_no") String mobile_no
@@ -44,8 +44,19 @@ public interface ApiService {
     );
 
     @FormUrlEncoded
+    @POST("verify_user.php")
+    Call<LoginResponse> loginUser(
+            @Field("mobile_no") String mobileNo,
+            @Field("password") String password
+    );
+
+    @FormUrlEncoded
     @POST("verify_otp.php")
-    Call<BaseResponse> verifyOtp(@Field("otp") String otp);
+    Call<LoginResponse> verifyOtp(@Field("otp") String otp);
+
+    @FormUrlEncoded
+    @POST("verify_user_otp.php")
+    Call<BaseResponse> checkForgetPassword(@Field("mobile_no") String mobileNumber);
 
     @FormUrlEncoded
     @POST("visitor_place_history.php")

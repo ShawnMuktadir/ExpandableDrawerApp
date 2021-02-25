@@ -55,7 +55,7 @@ public class Preferences {
         editor.putString(KEY_FULLNAME, user.getFullName());
         editor.putString(KEY_MOBILE_NO, user.getMobileNo());
         editor.putString(KEY_VEHICLE_NO, user.getVehicleNo());
-        editor.putString(KEY_PROFILE_PIC, user.getProfilePic());
+        editor.putString(KEY_PROFILE_PIC, user.getImage());
         editor.apply();
     }
 
@@ -148,7 +148,7 @@ public class Preferences {
         user.setFullName(sharedPreferences.getString(KEY_FULLNAME, null));
         user.setMobileNo(sharedPreferences.getString(KEY_MOBILE_NO, null));
         user.setVehicleNo(sharedPreferences.getString(KEY_VEHICLE_NO, null));
-        user.setProfilePic(sharedPreferences.getString(KEY_PROFILE_PIC, null));
+        user.setImage(sharedPreferences.getString(KEY_PROFILE_PIC, null));
 
         return user;
     }

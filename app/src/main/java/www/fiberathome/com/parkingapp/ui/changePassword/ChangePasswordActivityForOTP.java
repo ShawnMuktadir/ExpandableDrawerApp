@@ -1,8 +1,5 @@
 package www.fiberathome.com.parkingapp.ui.changePassword;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
-
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.app.Service;
@@ -29,11 +26,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 
@@ -46,36 +45,42 @@ import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
-import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
+import www.fiberathome.com.parkingapp.model.api.ApiClient;
+import www.fiberathome.com.parkingapp.model.api.ApiService;
+import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
+import www.fiberathome.com.parkingapp.model.response.BaseResponse;
+import www.fiberathome.com.parkingapp.model.response.login.LoginResponse;
+import www.fiberathome.com.parkingapp.ui.signUp.SignUpActivity;
+import www.fiberathome.com.parkingapp.ui.verifyPhone.VerifyPhoneActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
-import www.fiberathome.com.parkingapp.ui.signUp.SignUpActivity;
-import www.fiberathome.com.parkingapp.ui.verifyPhone.VerifyPhoneActivity;
 
+@SuppressLint("NonConstantResourceId")
 public class ChangePasswordActivityForOTP extends BaseActivity implements View.OnFocusChangeListener, View.OnKeyListener, TextWatcher {
+
+    @BindView(R.id.layout_otp)
+    LinearLayout layout_otp;
 
     private static final String TAG = VerifyPhoneActivity.class.getSimpleName();
     private EditText mPinFirstDigitEditText;
     private EditText mPinSecondDigitEditText;
     private EditText mPinThirdDigitEditText;
     private EditText mPinForthDigitEditText;
-    //private EditText mPinFifthDigitEditText;
     private EditText mPinHiddenEditText;
-    private Button btnVerifyOtp, btnChangePhoneNumber, btnResendOTP;
+    private Button btnVerifyOtp,  btnResendOTP;
     private TextView countdown;
-    private ProgressDialog progressDialog;
-    private Context context;
-    private String mobileNumber, mobileNumberLogin = "";
 
-    @BindView(R.id.layout_otp)
-    LinearLayout layout_otp;
+    private Context context;
 
     @SuppressLint("UseCompatLoadingForDrawables")
     @Override
@@ -140,21 +145,22 @@ public class ChangePasswordActivityForOTP extends BaseActivity implements View.O
             if (ApplicationUtils.checkInternet(context)) {
                 checkForgetPassword(mobileNo);
             } else {
-                ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
-                    Timber.e("Positive Button clicked");
-                    if (ApplicationUtils.checkInternet(context)) {
-                        checkForgetPassword(mobileNo);
-                    } else {
-                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
-                    }
-                }, (dialog, which) -> {
-                    Timber.e("Negative Button Clicked");
-                    dialog.dismiss();
-                    if (context != null) {
-                        finish();
-                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
-                    }
-                });
+                ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context,
+                        context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
+                            Timber.e("Positive Button clicked");
+                            if (ApplicationUtils.checkInternet(context)) {
+                                checkForgetPassword(mobileNo);
+                            } else {
+                                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                            }
+                        }, (dialog, which) -> {
+                            Timber.e("Negative Button Clicked");
+                            dialog.dismiss();
+                            if (context != null) {
+                                finish();
+                                TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                            }
+                        });
             }
             btnVerifyOtp.setVisibility(View.VISIBLE);
             btnResendOTP.setVisibility(View.INVISIBLE);
@@ -218,16 +224,9 @@ public class ChangePasswordActivityForOTP extends BaseActivity implements View.O
     @Override
     protected void onPause() {
         super.onPause();
-        dismissProgressDialog();
-
     }
 
-    private void dismissProgressDialog() {
-        if (progressDialog != null && progressDialog.isShowing())
-            progressDialog.dismiss();
-    }
-
-    private void checkForgetPassword(final String mobileNo) {
+    /*private void checkForgetPassword(final String mobileNo) {
 
         progressDialog = ApplicationUtils.progressDialog(context, context.getResources().getString(R.string.please_wait));
 
@@ -250,10 +249,11 @@ public class ChangePasswordActivityForOTP extends BaseActivity implements View.O
                         progressDialog.dismiss();
                         showMessage(jsonObject.getString("message"));
 
-                        /*Intent intent = new Intent(ChangePasswordActivityForOTP.this, ChangePasswordActivityForOTP.class);
-                        intent.putExtra("mobile_no", mobileNo);
-                        startActivity(intent);
-                        finish();*/
+                        //Intent intent = new Intent(ChangePasswordActivityForOTP.this, ChangePasswordActivityForOTP.class);
+                        //intent.putExtra("mobile_no", mobileNo);
+                        //startActivity(intent);
+                        //finish();
+
                     } else {
                         showMessage(jsonObject.getString("message"));
                     }
@@ -280,6 +280,46 @@ public class ChangePasswordActivityForOTP extends BaseActivity implements View.O
         };
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         ParkingApp.getInstance().addToRequestQueue(stringRequest, TAG);
+    }*/
+
+    private void checkForgetPassword(final String mobileNo) {
+
+        showLoading(context);
+
+        ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+        Call<BaseResponse> call = service.checkForgetPassword(mobileNo);
+
+        // Gathering results.
+        call.enqueue(new Callback<BaseResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<BaseResponse> call, @NonNull retrofit2.Response<BaseResponse> response) {
+
+                Timber.e("response body-> %s", new Gson().toJson(response.body()));
+
+                hideLoading();
+
+                if (response.body() != null) {
+                    if (!response.body().getError()) {
+                        showMessage(response.body().getMessage());
+                    } else {
+                        if (response.body().getMessage().equalsIgnoreCase("Try Again! Invalid Mobile Number.")) {
+                            TastyToastUtils.showTastyErrorToast(context,
+                                    context.getResources().getString(R.string.mobile_number_not_exist));
+                        } else {
+                            showMessage(response.body().getMessage());
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<BaseResponse> call, @NonNull Throwable errors) {
+                Timber.e("Throwable Errors: -> %s", errors.toString());
+                hideLoading();
+                TastyToastUtils.showTastyErrorToast(context,
+                        context.getResources().getString(R.string.mobile_number_not_exist));
+            }
+        });
     }
 
     /**
@@ -529,10 +569,7 @@ public class ChangePasswordActivityForOTP extends BaseActivity implements View.O
 
     }
 
-    private JSONObject jsonObject;
-    private JSONObject userJson;
-
-    private void submitOTPVerification(final String otp) {
+    /*private void submitOTPVerification(final String otp) {
 
         progressDialog = ApplicationUtils.progressDialog(context, context.getResources().getString(R.string.please_wait));
 
@@ -560,29 +597,15 @@ public class ChangePasswordActivityForOTP extends BaseActivity implements View.O
                         // FETCHING USER INFORMATION FROM DATABASE
                         userJson = jsonObject.getJSONObject("user");
 
-                        /*if (SharedPreManager.getInstance(getApplicationContext()).isWaitingForSMS()) {
-                            SharedPreManager.getInstance(getApplicationContext()).setIsWaitingForSMS(false);*/
-
                         try {
-                            /*mobileNumber = getIntent().getStringExtra("fromLoginPage");
-                            //Timber.e("mobileNumber -> %s", mobileNumber);
-                            if (mobileNumber.equals("fromLoginPage")) {
-                                Timber.e("if e dhukche");
-                                //Toast.makeText(context, "if e dhukche", Toast.LENGTH_LONG).show();
-                                context.startActivity(new Intent(context, LoginActivity.class));
-                                finish();
-                                showMessage("Dear " + userJson.getString("fullname") + ", Your Mobile Number is Verified...");
-                            } else {
-                                Timber.e("if else e dhukche");
-                                Toast.makeText(context, "if else e dhukche", Toast.LENGTH_LONG).show();*/
+
                             Intent intent = new Intent(ChangePasswordActivityForOTP.this, ChangePasswordActivity.class);
                             startActivity(intent);
                             finish();
-                            //}
+
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        //}
                     }
 
                 } catch (JSONException e) {
@@ -606,6 +629,57 @@ public class ChangePasswordActivityForOTP extends BaseActivity implements View.O
             showMessage("Please Enter Valid OTP...");
         }
 
+    }*/
+
+    private void submitOTPVerification(final String otp) {
+        if (!otp.isEmpty()) {
+            showLoading(context);
+
+            ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+            Call<LoginResponse> call = service.verifyOtp(otp);
+
+            call.enqueue(new Callback<LoginResponse>() {
+                @Override
+                public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
+
+                    Timber.e("response body-> %s", new Gson().toJson(response.body()));
+
+                    hideLoading();
+
+                    if (response.body() != null) {
+                        Timber.e("response body not null -> %s", new Gson().toJson(response.body()));
+
+                        if (response.body().getError() && response.body().getMessage().equalsIgnoreCase("Sorry! Failed to Verify Your Account by OYP.")) {
+                            showMessage("Sorry! Failed to Verify Your Account by OTP.");
+                            mPinFirstDigitEditText.setText("");
+                            mPinSecondDigitEditText.setText("");
+                            mPinThirdDigitEditText.setText("");
+                            mPinForthDigitEditText.setText("");
+                            mPinHiddenEditText.setText("");
+                        } else if (!response.body().getError()) {
+
+                            showMessage(response.body().getMessage());
+
+                            SharedData.getInstance().setOtp(otp);
+
+                            Intent intent = new Intent(ChangePasswordActivityForOTP.this, ChangePasswordActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }
+                    } else {
+                        showMessage(response.body().getMessage());
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable errors) {
+                    Timber.e("Throwable Errors: -> %s", errors.toString());
+                }
+            });
+        } else {
+            hideLoading();
+            showMessage(context.getResources().getString(R.string.enter_valid_otp));
+        }
     }
 
     private void showMessage(String message) {

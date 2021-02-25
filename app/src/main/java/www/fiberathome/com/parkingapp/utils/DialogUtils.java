@@ -7,6 +7,8 @@ import android.view.View;
 
 import androidx.appcompat.app.AlertDialog;
 
+import www.fiberathome.com.parkingapp.R;
+
 public class DialogUtils {
     private static DialogUtils dialogUtils;
 

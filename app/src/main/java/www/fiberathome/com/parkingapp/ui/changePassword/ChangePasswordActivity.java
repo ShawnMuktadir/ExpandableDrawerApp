@@ -51,7 +51,6 @@ public class ChangePasswordActivity extends BaseActivity implements View.OnClick
 
     private Button changePasswordBtn;
     private Context context;
-    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,17 +109,7 @@ public class ChangePasswordActivity extends BaseActivity implements View.OnClick
 
     private void changePassword() {
 
-        /**
-         * TODO : CHECK WHETHER PASSWORD MATCH WITH SERVER PASSWORD
-         * 1. if matched, then check the new password and confirmation password
-         * 2. if not matched, then show error the status
-         * 3. check number of times user tried to change password.
-         * ================================================================================
-         */
         if (checkFields()) {
-            // IF PASSWORD IS VALID, MOVE TO SERVER WITH user request.
-
-            // COLLECT OLD PASSWORD | NEW PASSWORD | CONFIRMATION PASSWORD
 
             User user = Preferences.getInstance(context).getUser();
 
@@ -170,13 +159,11 @@ public class ChangePasswordActivity extends BaseActivity implements View.OnClick
 
     private void updatePassword(String newPassword, String confirmPassword, String mobileNo) {
 
-        progressDialog = ApplicationUtils.progressDialog(context, context.getResources().getString(R.string.please_wait));
-
-        HttpsTrustManager.allowAllSSL();
+        showLoading(context);
 
         // Changing Password through UI Service.
-        ApiService service = ApiClient.getRetrofitInstance(AppConfig.URL_CHANGE_PASSWORD_OTP).create(ApiService.class);
-        Call<BaseResponse> passwordUpgradeCall = service.forgetPassword(newPassword, confirmPassword, mobileNo);
+        ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+        Call<BaseResponse> passwordUpgradeCall = service.setPasswordForForgetPassword(newPassword, confirmPassword, mobileNo);
 
         // Gathering results.
         passwordUpgradeCall.enqueue(new Callback<BaseResponse>() {
@@ -184,7 +171,7 @@ public class ChangePasswordActivity extends BaseActivity implements View.OnClick
             public void onResponse(@NonNull Call<BaseResponse> call, @NonNull Response<BaseResponse> response) {
                 Timber.e("response -> %s", response.message());
 
-                progressDialog.dismiss();
+                hideLoading();
                 if (response.body() != null) {
                     if (!response.body().getError()) {
                         showMessage(response.body().getMessage());

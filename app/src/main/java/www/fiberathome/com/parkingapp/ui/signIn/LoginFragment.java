@@ -28,30 +28,26 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Request;
-import com.android.volley.toolbox.StringRequest;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
-import www.fiberathome.com.parkingapp.base.ParkingApp;
+import www.fiberathome.com.parkingapp.model.api.ApiClient;
+import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
+import www.fiberathome.com.parkingapp.model.response.login.LoginResponse;
 import www.fiberathome.com.parkingapp.model.user.User;
 import www.fiberathome.com.parkingapp.ui.forgetPassword.ForgetPasswordActivity;
 import www.fiberathome.com.parkingapp.ui.helper.ProgressView;
@@ -60,7 +56,6 @@ import www.fiberathome.com.parkingapp.ui.permission.PermissionActivity;
 import www.fiberathome.com.parkingapp.ui.signUp.SignUpActivity;
 import www.fiberathome.com.parkingapp.ui.verifyPhone.VerifyPhoneActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
-import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
 
@@ -130,7 +125,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
 
         context = (LoginActivity) getActivity();
 
-        deviceOs  = android.os.Build.VERSION.RELEASE; // e.g. myVersion := "10"
+        deviceOs = android.os.Build.VERSION.RELEASE; // e.g. myVersion := "10"
         sdkVersion = android.os.Build.VERSION.SDK_INT; // e.g. sdkVersion := 29;
 
         Timber.e("device OS -> %s", deviceOs);
@@ -214,21 +209,22 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                 if (ApplicationUtils.checkInternet(context)) {
                     submitLogin();
                 } else {
-                    ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
-                        Timber.e("Positive Button clicked");
-                        if (ApplicationUtils.checkInternet(context)) {
-                            submitLogin();
-                        } else {
-                            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
-                        }
-                    }, (dialog, which) -> {
-                        Timber.e("Negative Button Clicked");
-                        dialog.dismiss();
-                        if (context != null) {
-                            TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
-                            context.finish();
-                        }
-                    });
+                    ApplicationUtils.showAlertDialog(context.getResources().getString(R.string.connect_to_internet), context,
+                            context.getResources().getString(R.string.retry), context.getResources().getString(R.string.close_app), (dialog, which) -> {
+                                Timber.e("Positive Button clicked");
+                                if (ApplicationUtils.checkInternet(context)) {
+                                    submitLogin();
+                                } else {
+                                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                                }
+                            }, (dialog, which) -> {
+                                Timber.e("Negative Button Clicked");
+                                dialog.dismiss();
+                                if (context != null) {
+                                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                                    context.finish();
+                                }
+                            });
                 }
                 break;
 
@@ -278,21 +274,22 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                         if (ApplicationUtils.checkInternet(context)) {
                             submitLogin();
                         } else {
-                            ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
-                                Timber.e("Positive Button clicked");
-                                if (ApplicationUtils.checkInternet(context)) {
-                                    submitLogin();
-                                } else {
-                                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
-                                }
-                            }, (dialog, which) -> {
-                                Timber.e("Negative Button Clicked");
-                                dialog.dismiss();
-                                if (context != null) {
-                                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
-                                    context.finish();
-                                }
-                            });
+                            ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context,
+                                    context.getResources().getString(R.string.retry), context.getResources().getString(R.string.close_app), (dialog, which) -> {
+                                        Timber.e("Positive Button clicked");
+                                        if (ApplicationUtils.checkInternet(context)) {
+                                            submitLogin();
+                                        } else {
+                                            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                                        }
+                                    }, (dialog, which) -> {
+                                        Timber.e("Negative Button Clicked");
+                                        dialog.dismiss();
+                                        if (context != null) {
+                                            TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                                            context.finish();
+                                        }
+                                    });
                         }
                         return true;
                     }
@@ -369,7 +366,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
 
     }
 
-    private void checkLogin(final String mobileNo, final String password) {
+    /*private void checkLogin(final String mobileNo, final String password) {
 
         showLoading(context);
 
@@ -403,7 +400,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                     user.setFullName(userJson.getString("fullname"));
                     user.setMobileNo(userJson.getString("mobile_no"));
                     user.setVehicleNo(userJson.getString("vehicle_no"));
-                    user.setProfilePic(userJson.getString("image"));
+                    user.setImage(userJson.getString("image"));
 
                     // storing the user in sharedPreference
                     Preferences.getInstance(context).userLogin(user);
@@ -417,24 +414,18 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                         startActivity(verifyPhoneIntent);
                         context.finish();
                     } else {
-                        // Move to another Activity
-
                         if ((ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
                             Timber.e("activity login if -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
                             Intent intent = new Intent(context, PermissionActivity.class);
-                            //Intent intent = new Intent(context, LocationPermissionActivity.class);
                             startActivity(intent);
                             context.finish();
-                            //Toast.makeText(context, "nai ami", Toast.LENGTH_SHORT).show();
                         } else if (!Preferences.getInstance(context).isWaitingForLocationPermission()) {
                             Timber.e("activity login else if -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
                             Intent intent = new Intent(context, PermissionActivity.class);
-                            //Intent intent = new Intent(context, LocationPermissionActivity.class);
                             startActivity(intent);
                             context.finish();
                         } else {
                             Timber.e("activity login else -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
-                            //Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             Intent intent = new Intent(context, HomeActivity.class);
                             startActivity(intent);
                             context.finish();
@@ -480,6 +471,95 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
         };
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         ParkingApp.getInstance().addToRequestQueue(stringRequest, TAG);
+    }*/
+
+    private void checkLogin(final String mobileNo, final String password) {
+
+        showLoading(context);
+
+        showProgress();
+
+        ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+        Call<LoginResponse> call = service.loginUser(mobileNo, password);
+
+        call.enqueue(new Callback<LoginResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
+
+                Timber.e("login response body-> %s", new Gson().toJson(response.body()));
+
+                hideLoading();
+
+                hideProgress();
+
+                if (response.body() != null) {
+                    if (!response.body().getError()) {
+                        //showMessage(response.body().getMessage());
+
+                        // creating a new user object
+                        User user = new User();
+                        user.setId(response.body().getUser().getId());
+                        user.setFullName(response.body().getUser().getFullName());
+                        user.setMobileNo(response.body().getUser().getMobileNo());
+                        user.setVehicleNo(response.body().getUser().getVehicleNo());
+                        user.setImage(response.body().getUser().getImage());
+
+                        // storing the user in sharedPreference
+                        Preferences.getInstance(context).userLogin(user);
+                        Timber.e("user after login -> %s", new Gson().toJson(user));
+
+                        if (response.body().getMessage().equalsIgnoreCase("Please verify Your Account by OTP")) {
+                            Intent verifyPhoneIntent = new Intent(context, VerifyPhoneActivity.class);
+                            if (checkFields()) {
+                                verifyPhoneIntent.putExtra("mobile_no", mobileNo);
+                            }
+                            startActivity(verifyPhoneIntent);
+                            context.finish();
+                        } else {
+                            if ((ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                                    ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+                                Timber.e("activity login if -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
+                                Intent intent = new Intent(context, PermissionActivity.class);
+                                startActivity(intent);
+                                context.finish();
+                            } else if (!Preferences.getInstance(context).isWaitingForLocationPermission()) {
+                                Timber.e("activity login else if -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
+                                Intent intent = new Intent(context, PermissionActivity.class);
+                                startActivity(intent);
+                                context.finish();
+                            } else {
+                                Timber.e("activity login else -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
+                                Intent intent = new Intent(context, HomeActivity.class);
+                                startActivity(intent);
+                                context.finish();
+                            }
+                        }
+                    } else if (response.body().getAuthentication() != null) {
+                        if (response.body().getError() && !response.body().getAuthentication()) {
+                            // IF ERROR OCCURS AND AUTHENTICATION IS INVALID
+                            if (response.body().getMessage().equalsIgnoreCase("Please verify Your Account by OTP")) {
+                                showMessage(response.body().getMessage());
+                                btnOTP.setVisibility(View.GONE);
+                                Intent verifyPhoneIntent = new Intent(context, VerifyPhoneActivity.class);
+                                verifyPhoneIntent.putExtra("mobile_no", mobileNo);
+                                verifyPhoneIntent.putExtra("password", password);
+                                startActivity(verifyPhoneIntent);
+                                context.finish();
+                            }
+                        }
+                    } else {
+                        showMessage(response.body().getMessage());
+                    }
+                } else {
+                    showMessage(response.body().getMessage());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable errors) {
+                Timber.e("Throwable Errors: -> %s", errors.toString());
+            }
+        });
     }
 
     private void showMessage(String message) {

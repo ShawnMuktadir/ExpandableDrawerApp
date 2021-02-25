@@ -101,6 +101,42 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
         setListeners();
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Timber.e("onDestroyView called ");
+        if (unbinder != null) {
+            unbinder.unbind();
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.changePasswordBtn:
+                if (ApplicationUtils.checkInternet(context)) {
+                    changePassword();
+                } else {
+                    ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
+                        Timber.e("Positive Button clicked");
+                        if (ApplicationUtils.checkInternet(context)) {
+                            changePassword();
+                        } else {
+                            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                        }
+                    }, (dialog, which) -> {
+                        Timber.e("Negative Button Clicked");
+                        dialog.dismiss();
+                        if (getActivity() != null) {
+                            getActivity().finish();
+                            TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                        }
+                    });
+                }
+                break;
+        }
+    }
+
     private void setListeners() {
         Objects.requireNonNull(textInputLayoutOldPassword.getEditText()).addTextChangedListener(new TextWatcher() {
             @Override
@@ -179,42 +215,6 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
         });
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        Timber.e("onDestroyView called ");
-        if (unbinder != null) {
-            unbinder.unbind();
-        }
-    }
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.changePasswordBtn:
-                if (ApplicationUtils.checkInternet(context)) {
-                    changePassword();
-                } else {
-                    ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
-                        Timber.e("Positive Button clicked");
-                        if (ApplicationUtils.checkInternet(context)) {
-                            changePassword();
-                        } else {
-                            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
-                        }
-                    }, (dialog, which) -> {
-                        Timber.e("Negative Button Clicked");
-                        dialog.dismiss();
-                        if (getActivity() != null) {
-                            getActivity().finish();
-                            TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
-                        }
-                    });
-                }
-                break;
-        }
-    }
-
     private void changePassword() {
 
         if (checkFields()) {
@@ -263,7 +263,7 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
         showLoading(context);
 
         // Changing Password through UI Service.
-        ApiService service = ApiClient.getRetrofitInstance(AppConfig.URL_CHANGE_PASSWORD).create(ApiService.class);
+        ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
         Call<BaseResponse> passwordUpgradeCall = service.updatePassword(oldPassword, newPassword, confirmPassword, mobileNo);
 
         // Gathering results.

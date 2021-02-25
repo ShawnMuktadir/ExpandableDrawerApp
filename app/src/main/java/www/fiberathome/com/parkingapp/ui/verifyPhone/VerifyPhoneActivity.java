@@ -33,30 +33,27 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Request;
-import com.android.volley.toolbox.StringRequest;
+import com.google.gson.Gson;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
+import www.fiberathome.com.parkingapp.model.api.ApiClient;
+import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
-import www.fiberathome.com.parkingapp.base.ParkingApp;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
-import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
-import www.fiberathome.com.parkingapp.utils.Validator;
+import www.fiberathome.com.parkingapp.model.response.login.LoginResponse;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.ui.signUp.SignUpActivity;
+import www.fiberathome.com.parkingapp.utils.Validator;
 
 /**
  * This activity holds view with a custom 4-digit PIN EditText.
@@ -70,11 +67,10 @@ public class VerifyPhoneActivity extends BaseActivity implements View.OnFocusCha
     private EditText mPinForthDigitEditText;
     //private EditText mPinFifthDigitEditText;
     private EditText mPinHiddenEditText;
-    private Button btnVerifyOtp, btnChangePhoneNumber, btnResendOTP;
+    private Button btnVerifyOtp, btnResendOTP;
     private TextView countdown;
     private ProgressDialog progressDialog;
     private Context context;
-    private String mobileNumber, mobileNumberLogin = "";
 
     @SuppressLint("UseCompatLoadingForDrawables")
     @Override
@@ -120,7 +116,7 @@ public class VerifyPhoneActivity extends BaseActivity implements View.OnFocusCha
         startCountDown();
     }
 
-    private void checkLogin(final String mobileNo, final String password) {
+    /*private void checkLogin(final String mobileNo, final String password) {
 
         progressDialog = ApplicationUtils.progressDialog(context, "Please wait...");
 
@@ -138,21 +134,6 @@ public class VerifyPhoneActivity extends BaseActivity implements View.OnFocusCha
                 if (!jsonObject.getBoolean("error")) {
                     Timber.e("error not -> %s", jsonObject.getString("message"));
                     showMessage(jsonObject.getString("message"));
-
-                        /*//getting the user from the response
-                        JSONObject userJson = jsonObject.getJSONObject("user");
-
-                        // creating a new user object
-                        User user = new User();
-                        user.setId(userJson.getInt("id"));
-                        user.setFullName(userJson.getString("fullname"));
-                        user.setMobileNo(userJson.getString("mobile_no"));
-                        user.setVehicleNo(userJson.getString("vehicle_no"));
-                        user.setProfilePic(userJson.getString("image"));
-
-                        // storing the user in sharedPreference
-                        SharedPreManager.getInstance(getApplicationContext()).userLogin(user);*/
-
                 } else if (jsonObject.getBoolean("error") && jsonObject.has("authentication")) {
                     // IF ERROR OCCURS AND AUTHENTICATION IS INVALID
                     showMessage(jsonObject.getString("message"));
@@ -186,6 +167,43 @@ public class VerifyPhoneActivity extends BaseActivity implements View.OnFocusCha
         };
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         ParkingApp.getInstance().addToRequestQueue(stringRequest, TAG);
+    }*/
+
+    private void checkLogin(final String mobileNo, final String password) {
+
+        showLoading(context);
+
+        ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+        Call<LoginResponse> call = service.loginUser(mobileNo, password);
+
+        call.enqueue(new Callback<LoginResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
+
+                Timber.e("login response body-> %s", new Gson().toJson(response.body()));
+
+                hideLoading();
+
+                if (!response.body().getError()) {
+                    showMessage(response.body().getMessage());
+                } else if (response.body().getError() && !response.body().getAuthentication()) {
+                    // IF ERROR OCCURS AND AUTHENTICATION IS INVALID
+                    showMessage(response.body().getMessage());
+                    mPinFirstDigitEditText.setText("");
+                    mPinSecondDigitEditText.setText("");
+                    mPinThirdDigitEditText.setText("");
+                    mPinForthDigitEditText.setText("");
+                    Timber.e("error & authentication response -> %s", response.body().getMessage());
+                } else {
+                    Timber.e("error -> %s", response.body().getMessage());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable errors) {
+                Timber.e("Throwable Errors: -> %s", errors.toString());
+            }
+        });
     }
 
     @Override
@@ -239,7 +257,6 @@ public class VerifyPhoneActivity extends BaseActivity implements View.OnFocusCha
         mPinHiddenEditText = (EditText) findViewById(R.id.inputOtp);
 
         btnVerifyOtp = findViewById(R.id.btn_verify_otp);
-        //btnChangePhoneNumber = findViewById(R.id.btn_change_phone_number);
         btnResendOTP = findViewById(R.id.btnResendOTP);
         countdown = findViewById(R.id.countdown);
     }
@@ -478,76 +495,49 @@ public class VerifyPhoneActivity extends BaseActivity implements View.OnFocusCha
 
     }
 
-    private JSONObject jsonObject;
-    private JSONObject userJson;
-
     private void submitOTPVerification(final String otp) {
-        progressDialog = ApplicationUtils.progressDialog(context, "Verifying OTP...");
-
-        HttpsTrustManager.allowAllSSL();
         if (!otp.isEmpty()) {
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_VERIFY_OTP, response -> {
-                Timber.e("URL -> %s", AppConfig.URL_VERIFY_OTP);
-                progressDialog.dismiss();
+            showLoading(context);
 
-                try {
-                    jsonObject = new JSONObject(response);
-                    Timber.e("object -> %s", jsonObject.toString());
-                    if (jsonObject.getString("message").equals("Sorry! Failed to Verify Your Account by OYP.")) {
-                        showMessage("Sorry! Failed to Verify Your Account by OTP.");
-                    } else if (!jsonObject.getBoolean("error")) {
-                        showMessage(jsonObject.getString("message"));
+            ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+            Call<LoginResponse> call = service.verifyOtp(otp);
 
-                        // FETCHING USER INFORMATION FROM DATABASE
-                        userJson = jsonObject.getJSONObject("user");
+            call.enqueue(new Callback<LoginResponse>() {
+                @Override
+                public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
 
-                        /*if (SharedPreManager.getInstance(getApplicationContext()).isWaitingForSMS()) {
-                            SharedPreManager.getInstance(getApplicationContext()).setIsWaitingForSMS(false);*/
+                    Timber.e("response body-> %s", new Gson().toJson(response.body()));
 
-                        try {
-                            /*mobileNumber = getIntent().getStringExtra("fromLoginPage");
-                            //Timber.e("mobileNumber -> %s", mobileNumber);
-                            if (mobileNumber.equals("fromLoginPage")) {
-                                Timber.e("if e dhukche");
-                                //Toast.makeText(context, "if e dhukche", Toast.LENGTH_LONG).show();
-                                context.startActivity(new Intent(context, LoginActivity.class));
-                                finish();
-                                showMessage("Dear " + userJson.getString("fullname") + ", Your Mobile Number is Verified...");
-                            } else {
-                                Timber.e("if else e dhukche");
-                                Toast.makeText(context, "if else e dhukche", Toast.LENGTH_LONG).show();*/
+                    hideLoading();
+
+                    if (response.body() != null) {
+                        Timber.e("response body not null -> %s", new Gson().toJson(response.body()));
+
+                        if (response.body().getError() && response.body().getMessage().equalsIgnoreCase("Sorry! Failed to Verify Your Account by OYP.")) {
+                            showMessage("Sorry! Failed to Verify Your Account by OTP.");
+                        } else if (!response.body().getError()) {
+
+                            showMessage(response.body().getMessage());
+
                             Intent intent = new Intent(VerifyPhoneActivity.this, LoginActivity.class);
                             startActivity(intent);
                             finish();
-                            showMessage("Dear " + userJson.getString("fullname") + ", Your Registration Completed Successfully...");
-                            //}
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                            showMessage("Dear " + response.body().getUser().getFullName() + ", Your Registration Completed Successfully...");
                         }
-                        //}
+                    } else {
+                        showMessage(response.body().getMessage());
                     }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
 
-            }, error -> showMessage(error.getMessage())) {
                 @Override
-                protected Map<String, String> getParams() throws AuthFailureError {
-                    Map<String, String> params = new HashMap<>();
-                    params.put("otp", otp);
-                    return params;
+                public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable errors) {
+                    Timber.e("Throwable Errors: -> %s", errors.toString());
                 }
-            };
-            stringRequest.setRetryPolicy(new DefaultRetryPolicy(50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            ParkingApp.getInstance().addToRequestQueue(stringRequest, TAG);
-        } else {
-            // OTP IS EMPTY.
-            progressDialog.dismiss();
-            //TastyToastUtils.showTastyWarningToast(context, "Please Enter Valid OTP...");
-            showMessage("Please Enter Valid OTP...");
+            });
+        }else {
+            hideLoading();
+            showMessage(context.getResources().getString(R.string.enter_valid_otp));
         }
-
     }
 
     private void showMessage(String message) {
@@ -571,7 +561,7 @@ public class VerifyPhoneActivity extends BaseActivity implements View.OnFocusCha
             final int proposedHeight = MeasureSpec.getSize(heightMeasureSpec);
             final int actualHeight = getHeight();
 
-            Log.d("TAG", "proposed: " + proposedHeight + ", actual: " + actualHeight);
+            Timber.d("TAG proposed: " + proposedHeight + ", actual: " + actualHeight);
 
             if (actualHeight >= proposedHeight) {
                 // Keyboard is shown
@@ -583,17 +573,13 @@ public class VerifyPhoneActivity extends BaseActivity implements View.OnFocusCha
 
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         }
+
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        dismissProgressDialog();
-    }
-
-    private void dismissProgressDialog() {
-        if (progressDialog != null && progressDialog.isShowing())
-            progressDialog.dismiss();
+        hideLoading();
     }
 
     @Override

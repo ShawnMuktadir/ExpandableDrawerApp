@@ -199,11 +199,6 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         tvLogin.setOnClickListener(this);
         imageViewUploadProfileImage.setOnClickListener(this);
         imageViewCaptureImage.setOnClickListener(this);
-
-        /*editTextFullName.addTextChangedListener(new SignUpActivity.MyTextWatcher(editTextFullName));
-        editTextMobileNumber.addTextChangedListener(new SignUpActivity.MyTextWatcher(editTextMobileNumber));
-        editTextVehicleRegNumber.addTextChangedListener(new SignUpActivity.MyTextWatcher(editTextVehicleRegNumber));
-        editTextPassword.addTextChangedListener(new SignUpActivity.MyTextWatcher(editTextPassword));*/
     }
 
     @Override
@@ -271,12 +266,12 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             }
 
         } else if (requestCode == REQUEST_PICK_CAMERA && resultCode == RESULT_OK && data != null) {
-            // IF CAMERA SELECTED
+
             try {
                 bitmap = (Bitmap) data.getExtras().get("data");
                 imageViewUploadProfileImage.setImageBitmap(bitmap);
-                    /*saveImage(thumbnail);
-                    Toast.makeText(SignUpActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();*/
+                /*saveImage(thumbnail);
+                  Toast.makeText(SignUpActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();*/
             } catch (Exception e) {
                 e.printStackTrace();
                 Toast.makeText(context, "Image Capture Failed!", Toast.LENGTH_SHORT).show();
@@ -401,7 +396,6 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                     textInputLayoutFullName.setError(null);
                     textInputLayoutFullName.setErrorEnabled(false);
                 }
-
             }
 
             @Override
@@ -655,35 +649,34 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                     Timber.e("jsonObject if called");
 
                     showMessage(jsonObject.getString("message"));
-                    */
-    /*showMessage("Mobile Number/Vehicle Registration Number already exists or Image Size is too large");
+
+                    showMessage("Mobile Number/Vehicle Registration Number already exists or Image Size is too large");
                     if (jsonObject.getString("message").equals("Sorry! mobile number is not valid or missing mate")){
                         showMessage("Mobile Number/Vehicle Registration Number already exists or Image Size is too large");
                     }
                      boolean flag saying device is waiting for sms
-                    SharedPreManager.getInstance(getApplicationContext()).setIsWaitingForSMS(true);*/
-    /*
+                    SharedPreManager.getInstance(getApplicationContext()).setIsWaitingForSMS(true);
+
 
                     // Moving the screen to next pager item i.e otp screen
                     Intent intent = new Intent(context, VerifyPhoneActivity.class);
-                    */
-    /*intent.putExtra("fullname",fullname);
-                    intent.putExtra("password",passw
-                    ord);
+
+                    intent.putExtra("fullname",fullname);
+                    intent.putExtra("password",password);
                     intent.putExtra("mobile_no",mobileNo);
                     intent.putExtra("vehicle_no",vehicleNo);
                     intent.putExtra("image", imageToString(bitmap));
-                    intent.putExtra("image_name", mobileNo);*/
-    /*
+                    intent.putExtra("image_name", mobileNo);
+
                     startActivity(intent);
 
 
                 } else {
-                    */
-    /*showMessage(jsonObject.getString("message"));
-                    showMessage("Mobile Number/Vehicle Registration Number already exists or Image Size is too large");*/
-    /*
-                    Timber.e("jsonObject else called");
+
+                    showMessage(jsonObject.getString("message"));
+                    showMessage("Mobile Number/Vehicle Registration Number already exists or Image Size is too large");
+
+                    //Timber.e("jsonObject else called");
                     if (jsonObject.getString("message").equals("Sorry! mobile number is not valid or missing mate")) {
                         showMessage("Mobile Number/Vehicle Registration Number already exists or Image Size is too large");
                     } else if (!jsonObject.getString("message").equals("Sorry! mobile number is not valid or missing mate")) {
@@ -724,7 +717,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
         showProgress();
 
-        ApiService service = ApiClient.getRetrofitInstance(AppConfig.URL_REGISTER).create(ApiService.class);
+        ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
         Call<BaseResponse> call = service.createUser(fullName, password, mobileNo, vehicleNo, imageToString(bitmap), mobileNo);
 
         call.enqueue(new Callback<BaseResponse>() {

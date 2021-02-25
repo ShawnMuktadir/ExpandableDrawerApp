@@ -2,16 +2,8 @@ package www.fiberathome.com.parkingapp.ui.forgetPassword;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
-
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -23,34 +15,30 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
-import www.fiberathome.com.parkingapp.base.ParkingApp;
+import www.fiberathome.com.parkingapp.model.api.ApiClient;
+import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
+import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 import www.fiberathome.com.parkingapp.ui.changePassword.ChangePasswordActivityForOTP;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
-import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
 
@@ -61,8 +49,10 @@ public class ForgetPasswordFragment extends BaseFragment {
 
     @BindView(R.id.textInputLayoutMobile)
     TextInputLayout textInputLayoutMobile;
+
     @BindView(R.id.editTextMobileNumber)
     EditText editTextMobileNumber;
+
     @BindView(R.id.btnForgetPassword)
     Button btnForgetPassword;
 
@@ -146,21 +136,21 @@ public class ForgetPasswordFragment extends BaseFragment {
                         } else {
                             ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app),
                                     (dialog, which) -> {
-                                Timber.e("Positive Button clicked");
-                                if (ApplicationUtils.checkInternet(context)) {
-                                    submitLogin();
-                                } else {
-                                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
-                                }
-                            },
+                                        Timber.e("Positive Button clicked");
+                                        if (ApplicationUtils.checkInternet(context)) {
+                                            submitLogin();
+                                        } else {
+                                            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                                        }
+                                    },
                                     (dialog, which) -> {
-                                Timber.e("Negative Button Clicked");
-                                dialog.dismiss();
-                                if (context != null) {
-                                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
-                                    context.finish();
-                                }
-                            });
+                                        Timber.e("Negative Button Clicked");
+                                        dialog.dismiss();
+                                        if (context != null) {
+                                            TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                                            context.finish();
+                                        }
+                                    });
                         }
                         return true;
                     }
@@ -203,15 +193,15 @@ public class ForgetPasswordFragment extends BaseFragment {
         }
     }
 
-    private void checkForgetPassword(final String mobileNo) {
+    /*private void checkForgetPassword(final String mobileNo) {
 
-        //progressDialog = ApplicationUtils.progressDialog(context, "Please wait...");
         showLoading(context);
+
         HttpsTrustManager.allowAllSSL();
         StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_FORGET_PASSWORD, response -> {
             // remove the progress bar
             Timber.e("URL -> %s", new Gson().toJson(AppConfig.URL_FORGET_PASSWORD));
-            //progressDialog.dismiss();
+
             hideLoading();
             if (response.equals("[]")) {
                 TastyToastUtils.showTastyErrorToast(context, context.getResources().getString(R.string.mobile_number_not_exist));
@@ -223,7 +213,6 @@ public class ForgetPasswordFragment extends BaseFragment {
 
                     if (jsonObject.getBoolean("error")) {
 
-                        //progressDialog.dismiss();
                         showMessage(jsonObject.getString("message"));
 
                         Intent intent = new Intent(context, ChangePasswordActivityForOTP.class);
@@ -244,7 +233,6 @@ public class ForgetPasswordFragment extends BaseFragment {
             //if (progressDialog != null) progressDialog.dismiss();
             showMessage(error.getMessage());
         }) {
-
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
@@ -255,31 +243,61 @@ public class ForgetPasswordFragment extends BaseFragment {
         };
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         ParkingApp.getInstance().addToRequestQueue(stringRequest, TAG);
+    }*/
+
+    private void checkForgetPassword(final String mobileNo) {
+
+        showLoading(context);
+
+        ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+        Call<BaseResponse> call = service.checkForgetPassword(mobileNo);
+
+        // Gathering results.
+        call.enqueue(new Callback<BaseResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<BaseResponse> call, @NonNull Response<BaseResponse> response) {
+
+                Timber.e("response body-> %s", new Gson().toJson(response.body()));
+
+                hideLoading();
+
+                if (response.body() != null) {
+                    if (!response.body().getError()) {
+                        showMessage(response.body().getMessage());
+                    } else {
+                        if (response.body().getMessage().equalsIgnoreCase("Try Again! Invalid Mobile Number.")) {
+                            TastyToastUtils.showTastyErrorToast(context,
+                                    context.getResources().getString(R.string.mobile_number_not_exist));
+                        } else {
+                            showMessage(response.body().getMessage());
+                            if (response.body().getError()) {
+
+                                showMessage(response.body().getMessage());
+
+                                Intent intent = new Intent(context, ChangePasswordActivityForOTP.class);
+                                intent.putExtra("mobile_no", mobileNo);
+                                startActivity(intent);
+                                SharedData.getInstance().setForgetPasswordMobile(mobileNo);
+                                context.finish();
+                            } else {
+                                showMessage(response.body().getMessage());
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<BaseResponse> call, @NonNull Throwable errors) {
+                Timber.e("Throwable Errors: -> %s", errors.toString());
+                hideLoading();
+                TastyToastUtils.showTastyErrorToast(context,
+                        context.getResources().getString(R.string.mobile_number_not_exist));
+            }
+        });
     }
 
     private void showMessage(String message) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
-
-    /*@Override
-    public void onBackPressed() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setMessage("Are you sure you want to exit?")
-                .setNegativeButton(android.R.string.no, null)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        ForgetPasswordActivity.super.onBackPressed();
-                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
-                    }
-                }).create();
-        AlertDialog dialog = builder.create();
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface arg0) {
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.black));
-                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.red));
-            }
-        });
-        dialog.show();
-    }*/
 }

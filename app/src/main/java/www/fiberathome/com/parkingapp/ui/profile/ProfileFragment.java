@@ -135,7 +135,7 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
 
         tvUserVehicleNo.setText(user.getVehicleNo());
 
-        String url = AppConfig.IMAGES_URL + user.getProfilePic() + ".jpg";
+        String url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
         Timber.e("Image URL -> %s", url);
         Glide.with(getActivity()).load(url).placeholder(R.drawable.blank_profile).dontAnimate().into(ivUserProfilePic);
     }
