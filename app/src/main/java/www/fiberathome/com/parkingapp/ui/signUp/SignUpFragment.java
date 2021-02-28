@@ -564,97 +564,10 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             if (bitmap != null) {
                 registerUser(fullName, password, mobileNo, vehicleNo);
             } else {
-                //showMessage("Try Again. Please Upload Profile Photo!");
                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.upload_profile_photo));
             }
         }
     }
-
-    /*private void registerUser(final String fullName, final String mobileNo, final String vehicleNo, final String password) {
-
-        showLoading(context);
-
-        showProgress();
-
-        HttpsTrustManager.allowAllSSL();
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_REGISTER, response -> {
-
-            hideLoading();
-
-            hideProgress();
-
-            try {
-                //converting response to json object
-                JSONObject jsonObject = new JSONObject(response);
-                Timber.e("jsonObject -> %s", jsonObject.toString());
-
-                // if no error response
-                if (!jsonObject.getBoolean("error")) {
-                    Timber.e("jsonObject if called");
-
-                    showMessage(jsonObject.getString("message"));
-
-                    showMessage("Mobile Number/Vehicle Registration Number already exists or Image Size is too large");
-                    if (jsonObject.getString("message").equals("Sorry! mobile number is not valid or missing mate")){
-                        showMessage("Mobile Number/Vehicle Registration Number already exists or Image Size is too large");
-                    }
-                     boolean flag saying device is waiting for sms
-                    SharedPreManager.getInstance(getApplicationContext()).setIsWaitingForSMS(true);
-
-
-                    // Moving the screen to next pager item i.e otp screen
-                    Intent intent = new Intent(context, VerifyPhoneActivity.class);
-
-                    intent.putExtra("fullname",fullname);
-                    intent.putExtra("password",password);
-                    intent.putExtra("mobile_no",mobileNo);
-                    intent.putExtra("vehicle_no",vehicleNo);
-                    intent.putExtra("image", imageToString(bitmap));
-                    intent.putExtra("image_name", mobileNo);
-
-                    startActivity(intent);
-
-
-                } else {
-
-                    showMessage(jsonObject.getString("message"));
-                    showMessage("Mobile Number/Vehicle Registration Number already exists or Image Size is too large");
-
-                    //Timber.e("jsonObject else called");
-                    if (jsonObject.getString("message").equals("Sorry! mobile number is not valid or missing mate")) {
-                        showMessage("Mobile Number/Vehicle Registration Number already exists or Image Size is too large");
-                    } else if (!jsonObject.getString("message").equals("Sorry! mobile number is not valid or missing mate")) {
-                        showMessage(jsonObject.getString("message"));
-                    }
-                }
-            } catch (JSONException e) {
-                Timber.e("jsonObject catch -> %s", e.getMessage());
-                e.printStackTrace();
-            }
-
-        }, error -> {
-            Timber.e("jsonObject onErrorResponse -> %s", error.getMessage());
-            showMessage(error.getMessage());
-        }) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("fullname", fullName);
-                params.put("password", password);
-                SharedData.getInstance().setPassword(password);
-                params.put("mobile_no", mobileNo);
-                params.put("vehicle_no", vehicleNo);
-                params.put("image", imageToString(bitmap));
-                params.put("image_name", mobileNo);
-
-                return params;
-            }
-        };
-
-        stringRequest.setRetryPolicy(new DefaultRetryPolicy(50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        ParkingApp.getInstance().addToRequestQueue(stringRequest, TAG);
-    }*/
 
     private void registerUser(final String fullName, final String password, final String mobileNo, final String vehicleNo) {
 

@@ -9,7 +9,6 @@
 package www.fiberathome.com.parkingapp.ui.verifyPhone;
 
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -21,7 +20,6 @@ import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -38,7 +36,6 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.google.gson.Gson;
 
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import retrofit2.Call;
@@ -69,7 +66,6 @@ public class VerifyPhoneActivity extends BaseActivity implements View.OnFocusCha
     private EditText mPinHiddenEditText;
     private Button btnVerifyOtp, btnResendOTP;
     private TextView countdown;
-    private ProgressDialog progressDialog;
     private Context context;
 
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -261,8 +257,7 @@ public class VerifyPhoneActivity extends BaseActivity implements View.OnFocusCha
     }
 
     private boolean checkFields() {
-        boolean isOTPValid = Validator.checkValidity(mPinHiddenEditText, context.getString(R.string.err_msg_pin), "text");
-        return isOTPValid;
+        return Validator.checkValidity(mPinHiddenEditText, context.getString(R.string.err_msg_pin), "text");
 
     }
 
@@ -272,25 +267,10 @@ public class VerifyPhoneActivity extends BaseActivity implements View.OnFocusCha
         final int id = v.getId();
         switch (id) {
             case R.id.pin_first_edittext:
-                if (hasFocus) {
-                    setFocus(mPinHiddenEditText);
-                    showSoftKeyboard(mPinHiddenEditText);
-                }
-                break;
 
             case R.id.pin_second_edittext:
-                if (hasFocus) {
-                    setFocus(mPinHiddenEditText);
-                    showSoftKeyboard(mPinHiddenEditText);
-                }
-                break;
 
             case R.id.pin_third_edittext:
-                if (hasFocus) {
-                    setFocus(mPinHiddenEditText);
-                    showSoftKeyboard(mPinHiddenEditText);
-                }
-                break;
 
             case R.id.pin_forth_edittext:
                 if (hasFocus) {
@@ -534,7 +514,7 @@ public class VerifyPhoneActivity extends BaseActivity implements View.OnFocusCha
                     Timber.e("Throwable Errors: -> %s", errors.toString());
                 }
             });
-        }else {
+        } else {
             hideLoading();
             showMessage(context.getResources().getString(R.string.enter_valid_otp));
         }
