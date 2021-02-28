@@ -1,6 +1,7 @@
 package www.fiberathome.com.parkingapp.ui.parking;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
@@ -164,21 +165,21 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
         } else {
             ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet_gps), context,
                     context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
-                Timber.e("Positive Button clicked");
-                if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
-                    fetchParkingSlotSensors();
-                } else {
-                    TastyToastUtils.showTastyWarningToast(context,
-                            context.getResources().getString(R.string.connect_to_internet_gps));
-                }
-            }, (dialog, which) -> {
-                Timber.e("Negative Button Clicked");
-                dialog.dismiss();
-                if (context != null) {
-                    context.finish();
-                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
-                }
-            });
+                        Timber.e("Positive Button clicked");
+                        if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
+                            fetchParkingSlotSensors();
+                        } else {
+                            TastyToastUtils.showTastyWarningToast(context,
+                                    context.getResources().getString(R.string.connect_to_internet_gps));
+                        }
+                    }, (dialog, which) -> {
+                        Timber.e("Negative Button Clicked");
+                        dialog.dismiss();
+                        if (context != null) {
+                            context.finish();
+                            TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                        }
+                    });
         }
     }
 
@@ -546,6 +547,8 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                 }
 
                 parkingAdapter.filterList(filteredList);
+            } else {
+                Timber.e("sensorAreas is empty");
             }
         } else {
             TastyToastUtils.showTastyWarningToast(context,
@@ -582,6 +585,15 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
 
         }
         return false;
+    }
+
+    public boolean checkGpsStatus() {
+
+        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+
+        boolean GpsStatus = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+        return GpsStatus;
     }
 
     private void setNoData() {

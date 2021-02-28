@@ -64,6 +64,7 @@ import www.fiberathome.com.parkingapp.ui.ratingReview.RatingReviewActivity;
 import www.fiberathome.com.parkingapp.ui.settings.SettingsActivity;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
 @SuppressLint("NonConstantResourceId")
 public class NavigationActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -126,15 +127,20 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         closeNavDrawer();
 
         int id = item.getItemId();
+
         switch (id) {
             case R.id.nav_home:
                 startActivity(HomeActivity.class);
                 break;
 
             case R.id.nav_parking:
-                startActivity(ParkingActivity.class);
-                // Remove any previous data from SharedData's sensor Data Parking Information
-                SharedData.getInstance().setSensorArea(null);
+                if (ApplicationUtils.checkInternet(context) && isGPSEnabled()) {
+                    startActivity(ParkingActivity.class);
+                    // Remove any previous data from SharedData's sensor Data Parking Information
+                    SharedData.getInstance().setSensorArea(null);
+                } else {
+                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
+                }
                 break;
 
             case R.id.nav_booking:

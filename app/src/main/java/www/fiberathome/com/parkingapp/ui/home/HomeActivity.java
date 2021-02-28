@@ -363,7 +363,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
         }
     }
 
-    private boolean isGPSEnabled() {
+    public boolean isGPSEnabled() {
 
         LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
 

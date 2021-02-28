@@ -75,7 +75,7 @@ public class LocationActivity extends BaseActivity {
     }
 */
 
-    private boolean isGPSEnabled() {
+    public boolean isGPSEnabled() {
 
         LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
 

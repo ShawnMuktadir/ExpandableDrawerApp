@@ -59,6 +59,8 @@ import www.fiberathome.com.parkingapp.utils.GeofenceConstants;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.internet.Connectivity;
 
+import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
+
 /**
  * Base activity to check GPS disabled and Internet <br/>
  * this activity requires following permission(s) to be added in the AndroidManifest.xml file:
@@ -130,7 +132,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         //if (isConnectedFast(context)) {
-            context.registerReceiver(mNetworkDetectReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+        context.registerReceiver(mNetworkDetectReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         /*} else {
             Toast.makeText(context, context.getResources().getString(R.string.slow_internet_connection), Toast.LENGTH_SHORT).show();
         }*/
@@ -210,8 +212,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
             if (!mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                 showGPSDisabledDialog();
             }
-        }
-        else if (requestCode == WIFI_ENABLE_REQUEST) {
+        } else if (requestCode == WIFI_ENABLE_REQUEST) {
             Timber.e("requestCode WIFI_ENABLE_REQUEST");
         }
 
@@ -260,6 +261,30 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
             //showInternetConnectionSnackBar(context.getResources().getString(R.string.connect_to_internet), isConnected, Snackbar.LENGTH_INDEFINITE);
             //overlay.setVisibility(View.VISIBLE);
         }
+    }
+
+    public boolean isGPSEnabled() {
+
+        LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
+
+        boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+        if (providerEnabled) {
+            return true;
+        } else {
+
+            AlertDialog alertDialog = new AlertDialog.Builder(context)
+                    .setTitle("GPS Permissions")
+                    .setMessage("GPS is required for this app to work. Please enable GPS.")
+                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivityForResult(intent, GPS_REQUEST_CODE);
+                    }))
+                    .setCancelable(false)
+                    .show();
+
+        }
+        return false;
     }
 
     private void showInternetConnectionSnackBar(String message, boolean isConnected, int duration) {
@@ -620,11 +645,11 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         }
     }
 
-    public void setAppLocale(String localeCode){
+    public void setAppLocale(String localeCode) {
         Resources resources = getResources();
         DisplayMetrics dm = resources.getDisplayMetrics();
         Configuration config = resources.getConfiguration();
-        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.JELLY_BEAN_MR1){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             config.setLocale(new Locale(localeCode.toLowerCase()));
         } else {
             config.locale = new Locale(localeCode.toLowerCase());
