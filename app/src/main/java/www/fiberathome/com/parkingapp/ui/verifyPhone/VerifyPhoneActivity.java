@@ -1,11 +1,3 @@
-/*
- * Copyright (c) 2020. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
- * Morbi non lorem porttitor neque feugiat blandit. Ut vitae ipsum eget quam lacinia accumsan.
- * Etiam sed turpis ac ipsum condimentum fringilla. Maecenas magna.
- * Proin dapibus sapien vel ante. Aliquam erat volutpat. Pellentesque sagittis ligula eget metus.
- * Vestibulum commodo. Ut rhoncus gravida arcu.
- */
-
 package www.fiberathome.com.parkingapp.ui.verifyPhone;
 
 import android.annotation.SuppressLint;
@@ -87,7 +79,7 @@ public class VerifyPhoneActivity extends BaseActivity implements View.OnFocusCha
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setTitle("Verify OTP");
+        getSupportActionBar().setTitle(context.getResources().getString(R.string.verify_otp));
         mToolbar.setTitleTextColor(context.getResources().getColor(R.color.black));
         if (mToolbar.getNavigationIcon() != null) {
             mToolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.black), PorterDuff.Mode.SRC_ATOP);

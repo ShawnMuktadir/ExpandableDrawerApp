@@ -469,5 +469,6 @@
     <string name="language_settings">ভাষা সেটিংস</string>
     <string name="no_parking_spot_found">দুঃখিত, কোন পার্কিং স্পট পাওয়া যায় নি</string>
     <string name="enter_valid_otp">সঠিক ওটিপি প্রবেশ করুন…</string>
+    <string name="verify_otp">Verify OTP</string>
 </resources>
 
