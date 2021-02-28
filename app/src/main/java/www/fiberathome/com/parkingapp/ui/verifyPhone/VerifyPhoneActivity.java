@@ -221,7 +221,6 @@ public class VerifyPhoneActivity extends BaseActivity implements View.OnFocusCha
                 // todo: goto back activity from here
 
                 Intent intent = new Intent(VerifyPhoneActivity.this, SignUpActivity.class);
-                // Intent intent = new Intent(VerifyPhoneActivity.this, RegistrationActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 finish();
@@ -267,6 +266,7 @@ public class VerifyPhoneActivity extends BaseActivity implements View.OnFocusCha
 
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
         final int id = v.getId();
@@ -486,7 +486,7 @@ public class VerifyPhoneActivity extends BaseActivity implements View.OnFocusCha
             }
 
             public void onFinish() {
-                countdown.setText("Please wait...");
+                countdown.setText(context.getResources().getString(R.string.please_wait));
                 btnResendOTP.setVisibility(View.VISIBLE);
                 btnVerifyOtp.setVisibility(View.INVISIBLE);
                 // enable the edit alert dialog
@@ -573,7 +573,6 @@ public class VerifyPhoneActivity extends BaseActivity implements View.OnFocusCha
 
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         }
-
     }
 
     @Override
