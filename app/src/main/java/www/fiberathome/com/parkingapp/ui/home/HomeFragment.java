@@ -1,6 +1,9 @@
 package www.fiberathome.com.parkingapp.ui.home;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.Notification;
@@ -33,7 +36,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.view.ViewCompat;
@@ -41,6 +44,9 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.transition.Fade;
+import androidx.transition.Transition;
+import androidx.transition.TransitionManager;
 
 import com.akexorcist.googledirection.DirectionCallback;
 import com.akexorcist.googledirection.GoogleDirection;
@@ -491,7 +497,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             initUI(view);
 
             setListeners();
-
+            Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
             bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
             bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._92sdp));
             bottomSheetBehavior.setHideable(false);
@@ -502,12 +508,17 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         case BottomSheetBehavior.STATE_HIDDEN:
                             break;
                         case BottomSheetBehavior.STATE_EXPANDED:
-                            //btn.setText("Close Sheet");
+                            toolbarAnimVisibility(view, false);
+                            //fadeOutAnimation(toolbar);
+                            break;
                         case BottomSheetBehavior.STATE_COLLAPSED:
                             bottomSheetRecyclerView.smoothScrollToPosition(0);
-                            //btn.setText("Expand Sheet");
+                            toolbarAnimVisibility(view, true);
+                            //fadeInAnimation(toolbar);
                             break;
                         case BottomSheetBehavior.STATE_DRAGGING:
+                            toolbarAnimVisibility(view, true);
+                            //fadeInAnimation(toolbar);
                             break;
                         case BottomSheetBehavior.STATE_SETTLING:
                             break;
@@ -604,8 +615,48 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, width, height, padding));
         },500);*/
 
-        //mMap.setOnInfoWindowClickListener(this);
         mMap.setOnMarkerClickListener(this);
+    }
+
+    private void toolbarAnimVisibility(View view, boolean show) {
+        Transition transition = new Fade();
+        transition.setDuration(600);
+        transition.addTarget(R.id.image);
+        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        TransitionManager.beginDelayedTransition((ViewGroup) view, transition);
+        toolbar.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
+    void fadeOutAnimation(View viewToFadeOut) {
+        ObjectAnimator fadeOut = ObjectAnimator.ofFloat(viewToFadeOut, "alpha", 1f, 0f);
+
+        fadeOut.setDuration(500);
+        fadeOut.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                // We wanna set the view to GONE, after it's fade out. so it actually disappear from the layout & don't take up space.
+                super.onAnimationEnd(animation);
+                viewToFadeOut.setVisibility(View.GONE);
+            }
+        });
+
+        fadeOut.start();
+    }
+
+    void fadeInAnimation(View viewToFadeIn) {
+        ObjectAnimator fadeIn = ObjectAnimator.ofFloat(viewToFadeIn, "alpha", 0f, 1f);
+        fadeIn.setDuration(500);
+
+        fadeIn.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                super.onAnimationStart(animation);
+                viewToFadeIn.setVisibility(View.VISIBLE);
+                viewToFadeIn.setAlpha(0);
+            }
+        });
+
+        fadeIn.start();
     }
 
     public static MarkerOptions markerOptionsPin;

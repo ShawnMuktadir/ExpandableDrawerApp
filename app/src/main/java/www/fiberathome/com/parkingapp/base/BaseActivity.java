@@ -2,6 +2,7 @@ package www.fiberathome.com.parkingapp.base;
 
 import android.Manifest;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -34,6 +35,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -131,11 +133,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
 
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
-        //if (isConnectedFast(context)) {
         context.registerReceiver(mNetworkDetectReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-        /*} else {
-            Toast.makeText(context, context.getResources().getString(R.string.slow_internet_connection), Toast.LENGTH_SHORT).show();
-        }*/
 
         /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             registerReceiver(mBackgroundLocationReceiver, new IntentFilter(Manifest.permission.ACCESS_BACKGROUND_LOCATION));
@@ -242,6 +240,23 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         }
     }
 
+    private ProgressDialog progressDialog;
+
+    protected void showLoading(Context context) {
+        progressDialog = DialogUtils.getInstance().progressDialog(context, context.getResources().getString(R.string.please_wait));
+    }
+
+    protected void showLoading(Context context, String message) {
+        progressDialog = DialogUtils.getInstance().progressDialog(context, message);
+    }
+
+    protected void hideLoading() {
+        if (progressDialog == null) return;
+
+        progressDialog.dismiss();
+        progressDialog.cancel();
+    }
+
     private boolean isConnected = false;
 
     private void checkInternetConnection() {
@@ -256,7 +271,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
 
         } else {
             isConnected = false;
-            //showNoConnectionSnackBar("No active Internet connection found.sea", isConnected, 6000);
+            //showNoConnectionSnackBar("No active Internet connection found.", isConnected, 6000);
             showInternetConnectionSnackBar(context.getResources().getString(R.string.connect_to_internet), isConnected, 86400000);
             //showInternetConnectionSnackBar(context.getResources().getString(R.string.connect_to_internet), isConnected, Snackbar.LENGTH_INDEFINITE);
             //overlay.setVisibility(View.VISIBLE);
@@ -287,6 +302,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         return false;
     }
 
+    @SuppressLint("InflateParams")
     private void showInternetConnectionSnackBar(String message, boolean isConnected, int duration) {
         // Inflate our custom view
         View snackView = getLayoutInflater().inflate(R.layout.snackbar_internet, null);
@@ -303,13 +319,13 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
             sbView.setBackgroundColor(getResources().getColor(R.color.transparent_white));
             snackView.setVisibility(View.GONE);
             overlay.setVisibility(View.GONE);
-            return;
         } else {
             sbView.setBackgroundColor(getResources().getColor(R.color.transparent_white));
             overlay.setVisibility(View.VISIBLE);
             snackView.setVisibility(View.VISIBLE);
             // Create the Snackbar
-            LinearLayout.LayoutParams objLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            LinearLayout.LayoutParams objLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT);
             //Snackbar snackbar = Snackbar.make(this.findViewById(android.R.id.content), message, Snackbar.LENGTH_INDEFINITE);
 
             // Get the Snackbar layout view
@@ -320,7 +336,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
             FrameLayout.LayoutParams parentParams = (FrameLayout.LayoutParams) layout.getLayoutParams();
             parentParams.gravity = Gravity.TOP;
             //parentParams.setMargins(0, 0, 0, 0 - navbarHeight + 50); //from bottom
-            parentParams.setMargins(0, navbarHeight - 150, 0, 0); //from top
+            //parentParams.setMargins(0, navbarHeight - 150, 0, 0); //from top
             layout.setLayoutParams(parentParams);
             layout.setPadding(0, 0, 0, 0);
             layout.setLayoutParams(parentParams);
@@ -335,14 +351,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
                 Timber.d("showTwoButtonSnackbar() : allow clicked");
                 //snackbar.dismiss();
                 if (ApplicationUtils.checkInternet(context)) {
-                    /*Intent intent = getIntent();
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    finish();
-                    overridePendingTransition(0, 0);
-                    startActivity(intent);
-                    overridePendingTransition(0, 0);*/
                     snackbar.dismiss();
-                    return;
                 } else {
                     snackbar.show();
                     TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
@@ -665,22 +674,5 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
     public void startActivityWithFinishAffinity(Class activityClass) {
         startActivity(new Intent(getApplicationContext(), activityClass));
         finishAffinity();
-    }
-
-    private ProgressDialog progressDialog;
-
-    protected void showLoading(Context context) {
-        progressDialog = DialogUtils.getInstance().progressDialog(context, context.getResources().getString(R.string.please_wait));
-    }
-
-    protected void showLoading(Context context, String message) {
-        progressDialog = DialogUtils.getInstance().progressDialog(context, message);
-    }
-
-    protected void hideLoading() {
-        if (progressDialog == null) return;
-
-        progressDialog.dismiss();
-        progressDialog.cancel();
     }
 }
