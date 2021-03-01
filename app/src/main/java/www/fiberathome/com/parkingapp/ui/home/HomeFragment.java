@@ -1259,7 +1259,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running))
                     .title("My Location")
                     .rotation(location.getBearing() - 45).flat(true).anchor(0.5f, 0.5f));
-            //currentLocationMarker.setRotation(location.getBearing() - 45);
 
             if (markerClicked != null) {
                 checkParkingSpotDistance(latLng, markerClicked.getPosition());
