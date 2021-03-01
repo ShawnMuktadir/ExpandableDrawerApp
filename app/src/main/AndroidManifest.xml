@@ -146,6 +146,11 @@
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
         <activity
+            android:name=".ui.verifyPhone.VerifyPhoneActivityNew"
+            android:parentActivityName=".ui.signIn.LoginActivity"
+            android:screenOrientation="unspecified"
+            android:theme="@style/AppTheme.DefaultActionBar" />
+        <activity
             android:name=".ui.signIn.LoginActivity"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />

@@ -55,6 +55,7 @@ import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.permission.PermissionActivity;
 import www.fiberathome.com.parkingapp.ui.signUp.SignUpActivity;
 import www.fiberathome.com.parkingapp.ui.verifyPhone.VerifyPhoneActivity;
+import www.fiberathome.com.parkingapp.ui.verifyPhone.VerifyPhoneActivityNew;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
@@ -229,7 +230,8 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                 break;
 
             case R.id.btnOTP:
-                Intent otpIntent = new Intent(context, VerifyPhoneActivity.class);
+                //Intent otpIntent = new Intent(context, VerifyPhoneActivity.class);
+                Intent otpIntent = new Intent(context, VerifyPhoneActivityNew.class);
                 startActivity(otpIntent);
                 break;
 
@@ -509,7 +511,8 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                         Timber.e("user after login -> %s", new Gson().toJson(user));
 
                         if (response.body().getMessage().equalsIgnoreCase("Please verify Your Account by OTP")) {
-                            Intent verifyPhoneIntent = new Intent(context, VerifyPhoneActivity.class);
+                            //Intent verifyPhoneIntent = new Intent(context, VerifyPhoneActivity.class);
+                            Intent verifyPhoneIntent = new Intent(context, VerifyPhoneActivityNew.class);
                             if (checkFields()) {
                                 verifyPhoneIntent.putExtra("mobile_no", mobileNo);
                             }
@@ -540,7 +543,8 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                             if (response.body().getMessage().equalsIgnoreCase("Please verify Your Account by OTP")) {
                                 showMessage(response.body().getMessage());
                                 btnOTP.setVisibility(View.GONE);
-                                Intent verifyPhoneIntent = new Intent(context, VerifyPhoneActivity.class);
+                                //Intent verifyPhoneIntent = new Intent(context, VerifyPhoneActivity.class);
+                                Intent verifyPhoneIntent = new Intent(context, VerifyPhoneActivityNew.class);
                                 verifyPhoneIntent.putExtra("mobile_no", mobileNo);
                                 verifyPhoneIntent.putExtra("password", password);
                                 startActivity(verifyPhoneIntent);

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout_otp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar xmlns:local="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:minHeight="?attr/actionBarSize"
+        local:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        local:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/dim20">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/dim15"
+                android:gravity="center_horizontal"
+                android:text="@string/verify_your_phone_number"
+                android:visibility="visible"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/_15ssp" />
+
+            <ImageView
+                android:layout_width="@dimen/dim150"
+                android:layout_height="@dimen/dim150"
+                android:layout_gravity="center"
+                android:layout_marginBottom="@dimen/dim15"
+                android:src="@drawable/ic_logo_original"
+                android:visibility="gone" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/dim15"
+                android:gravity="center_horizontal"
+                android:text="@string/msg_sit_back"
+                android:visibility="gone"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/dimTex15" />
+
+            <TextView
+                android:id="@+id/countdown"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/dim15"
+                android:gravity="center_horizontal"
+                android:text="02:03"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/dimTex15" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/dim15"
+                android:gravity="center_horizontal"
+                android:text="@string/msg_manual_otp"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/dimTex12" />
+
+            <com.goodiebag.pinview.Pinview
+                android:id="@+id/pinView"
+                app:pinBackground="@drawable/rect_white_bg_gray_border_rounded"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:pinWidth="40dp"
+                app:pinHeight="40dp"
+                app:pinLength="4"
+                app:cursorVisible="true"
+                app:forceKeyboard="true"
+                app:hint="0"
+                app:inputType="text"
+                app:password="false"/>
+
+            <Button
+                android:id="@+id/btn_verify_otp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/dim25"
+                android:background="@color/gray"
+                android:padding="@dimen/dim10"
+                android:text="@string/submit"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="@dimen/dimTex14" />
+
+            <Button
+                android:id="@+id/btnResendOTP"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/dim5"
+                android:background="@color/black"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:text="@string/resend_otp"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="@dimen/dimTex12"
+                android:visibility="invisible" />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

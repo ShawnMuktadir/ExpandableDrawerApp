@@ -194,8 +194,11 @@ dependencies {
     //implementation 'org.apache.commons:commons-lang3:3.6'
 
     // lib for SMS verification (Phone Auth)
-    implementation 'com.google.android.gms:play-services-auth:18.1.0'
-    implementation 'com.google.android.gms:play-services-auth-api-phone:17.4.0'
+    implementation 'com.google.android.gms:play-services-auth:19.0.0'
+    implementation 'com.google.android.gms:play-services-auth-api-phone:17.5.0'
+
+    //pinview
+    implementation 'com.github.GoodieBag:Pinview:v1.3'
 }
 
 task javadoc(type: Javadoc) {
