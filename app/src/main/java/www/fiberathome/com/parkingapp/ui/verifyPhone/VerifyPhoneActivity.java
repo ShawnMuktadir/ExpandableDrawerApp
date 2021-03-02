@@ -208,6 +208,7 @@ public class VerifyPhoneActivity extends BaseActivity implements View.OnFocusCha
             case android.R.id.home:
                 // todo: goto back activity from here
 
+                //Intent intent = new Intent(VerifyPhoneActivity.this, SignUpActivity.class);
                 Intent intent = new Intent(VerifyPhoneActivity.this, SignUpActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);

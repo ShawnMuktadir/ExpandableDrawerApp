@@ -73,6 +73,7 @@ import www.fiberathome.com.parkingapp.ui.privacyPolicy.PrivacyPolicyActivity;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.ui.termsConditions.TermsConditionsActivity;
 import www.fiberathome.com.parkingapp.ui.verifyPhone.VerifyPhoneActivity;
+import www.fiberathome.com.parkingapp.ui.verifyPhone.VerifyPhoneActivityNew;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
@@ -593,7 +594,8 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                         showMessage(response.body().getMessage());
 
                         // Moving the screen to next pager item i.e otp screen
-                        Intent intent = new Intent(context, VerifyPhoneActivity.class);
+                        //Intent intent = new Intent(context, VerifyPhoneActivity.class);
+                        Intent intent = new Intent(context, VerifyPhoneActivityNew.class);
                         startActivity(intent);
                         SharedData.getInstance().setPassword(password);
 

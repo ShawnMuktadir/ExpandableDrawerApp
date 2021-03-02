@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -18,7 +20,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 
-import com.goodiebag.pinview.Pinview;
 import com.google.gson.Gson;
 
 import java.util.concurrent.TimeUnit;
@@ -35,6 +36,10 @@ import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.response.login.LoginResponse;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.ui.signUp.SignUpActivity;
+import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+import www.fiberathome.com.parkingapp.utils.Validator;
+import www.fiberathome.com.parkingapp.utils.customEdittext.PinEntryEditText;
 
 /**
  * This activity holds view with a custom 4-digit PIN EditText.
@@ -45,7 +50,7 @@ public class VerifyPhoneActivityNew extends BaseActivity {
     private Button btnVerifyOtp, btnResendOTP;
     private TextView countdown;
     private Context context;
-    private Pinview pinView;
+    private PinEntryEditText txtPinEntry;
 
     @SuppressLint("UseCompatLoadingForDrawables")
     @Override
@@ -66,30 +71,38 @@ public class VerifyPhoneActivityNew extends BaseActivity {
             mToolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.black), PorterDuff.Mode.SRC_ATOP);
         }
 
-        pinView = findViewById(R.id.pinView);
-        pinView.setPinViewEventListener((Pinview pinview, boolean fromUser) -> {
-            //Make api calls here or what not
-            if (pinView.getValue().length() < 4) {
-                btnVerifyOtp.setEnabled(false);
-                btnVerifyOtp.setBackgroundColor(context.getResources().getColor(R.color.gray));
-            } else {
-                btnVerifyOtp.setEnabled(true);
-                btnVerifyOtp.setBackgroundColor(context.getResources().getColor(R.color.black));
-            }
-            //Toast.makeText(context, pinview.getValue(), Toast.LENGTH_SHORT).show();
-        });
+        txtPinEntry = (PinEntryEditText) findViewById(R.id.txt_pin_entry);
 
-        pinView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        txtPinEntry.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                /*if (s.toString().equals("1234")) {
+                    Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show();
+                } else if (s.length() == "1234".length()) {
+                    Toast.makeText(context, "Incorrect", Toast.LENGTH_SHORT).show();
+                    txtPinEntry.setText(null);
+                }*/
             }
         });
 
 
         btnVerifyOtp.setOnClickListener(v -> {
-            String otp = pinView.getValue();
-            submitOTPVerification(otp);
+            if (txtPinEntry.getText().length() == 4) {
+                String otp = txtPinEntry.getText().toString();
+                submitOTPVerification(otp);
+            } else {
+                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.enter_valid_otp));
+            }
         });
 
         btnResendOTP.setOnClickListener(v -> {
@@ -124,10 +137,7 @@ public class VerifyPhoneActivityNew extends BaseActivity {
                 } else if (response.body().getError() && !response.body().getAuthentication()) {
                     // IF ERROR OCCURS AND AUTHENTICATION IS INVALID
                     showMessage(response.body().getMessage());
-                    /*mPinFirstDigitEditText.setText("");
-                    mPinSecondDigitEditText.setText("");
-                    mPinThirdDigitEditText.setText("");
-                    mPinForthDigitEditText.setText("");*/
+
                     Timber.e("error & authentication response -> %s", response.body().getMessage());
                 } else {
                     Timber.e("error -> %s", response.body().getMessage());
@@ -182,11 +192,9 @@ public class VerifyPhoneActivityNew extends BaseActivity {
     }
 
     private boolean checkFields() {
-        /*if (Validator.checkValidity(mPinHiddenEditText, context.getString(R.string.err_msg_pin), "text"))
+        if (Validator.checkValidity(txtPinEntry, context.getString(R.string.err_msg_pin), "text"))
             return true;
-        else return false;*/
-        return false;
-
+        else return false;
     }
 
     private void startCountDown() {

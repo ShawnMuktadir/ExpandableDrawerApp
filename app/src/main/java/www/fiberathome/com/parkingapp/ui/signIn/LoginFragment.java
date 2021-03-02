@@ -562,6 +562,8 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
             @Override
             public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable errors) {
                 Timber.e("Throwable Errors: -> %s", errors.toString());
+                hideProgress();
+                showMessage(context.getResources().getString(R.string.something_went_wrong));
             }
         });
     }
