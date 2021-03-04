@@ -1,10 +1,6 @@
 package www.fiberathome.com.parkingapp.ui.changePassword;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,8 +13,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+
 import com.google.android.material.textfield.TextInputLayout;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -28,36 +30,50 @@ import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
-import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
-import www.fiberathome.com.parkingapp.model.user.User;
+import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.response.BaseResponse;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
-import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
+import www.fiberathome.com.parkingapp.model.user.User;
+import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
-import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 
+@SuppressLint("NonConstantResourceId")
 public class ChangePasswordActivity extends BaseActivity implements View.OnClickListener {
 
-    private static final String TAG = ChangePasswordActivity.class.getSimpleName();
-    private TextInputLayout textInputLayoutOldPassword;
-    private TextInputLayout textInputLayoutNewPassword;
-    private TextInputLayout textInputLayoutConfirmPassword;
+    @BindView(R.id.textInputLayoutOldPassword)
+    TextInputLayout textInputLayoutOldPassword;
 
-    private EditText editTextOldPassword;
-    private EditText editTextNewPassword;
-    private EditText editTextConfirmPassword;
+    @BindView(R.id.editTextOldPassword)
+    EditText editTextOldPassword;
 
-    private Button changePasswordBtn;
+    @BindView(R.id.textInputLayoutNewPassword)
+    TextInputLayout textInputLayoutNewPassword;
+
+    @BindView(R.id.editTextNewPassword)
+    EditText editTextNewPassword;
+
+    @BindView(R.id.textInputLayoutConfirmPassword)
+    TextInputLayout textInputLayoutConfirmPassword;
+
+    @BindView(R.id.editTextConfirmPassword)
+    EditText editTextConfirmPassword;
+
+    @BindView(R.id.changePasswordBtn)
+    Button changePasswordBtn;
+
     private Context context;
+
+    private Unbinder unbinder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_password);
+
         context = this;
-        initUI();
+
+        unbinder = ButterKnife.bind(this);
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -92,19 +108,12 @@ public class ChangePasswordActivity extends BaseActivity implements View.OnClick
         dialog.show();
     }
 
-    private void initUI() {
-        editTextOldPassword = findViewById(R.id.editTextOldPassword);
-        editTextNewPassword = findViewById(R.id.editTextNewPassword);
-        editTextConfirmPassword = findViewById(R.id.editTextConfirmPassword);
-        changePasswordBtn = findViewById(R.id.changePasswordBtn);
-
-        textInputLayoutOldPassword = findViewById(R.id.textInputLayoutOldPassword);
-        textInputLayoutNewPassword = findViewById(R.id.textInputLayoutNewPassword);
-        textInputLayoutConfirmPassword = findViewById(R.id.textInputLayoutConfirmPassword);
-
-        changePasswordBtn.setOnClickListener(this);
-        editTextOldPassword.addTextChangedListener(new MyTextWatcher(editTextOldPassword));
-
+    @Override
+    protected void onDestroy() {
+        if (unbinder != null) {
+            unbinder.unbind();
+        }
+        super.onDestroy();
     }
 
     private void changePassword() {
@@ -125,9 +134,7 @@ public class ChangePasswordActivity extends BaseActivity implements View.OnClick
             if (validatePassword()) {
                 updatePassword(newPassword, confirmPassword, mobileNo);
             }
-
         }
-
     }
 
     private boolean checkFields() {
@@ -139,17 +146,10 @@ public class ChangePasswordActivity extends BaseActivity implements View.OnClick
     private boolean validatePassword() {
         String userPassword;
         String newPassword;
-        /*User user = SharedPreManager.getInstance(getContext()).getUser();
-        if (SharedData.getInstance().getPassword() != null) {
-            userPassword = SharedData.getInstance().getPassword();
-            Timber.e("userPassword -> %s", userPassword);
-            String oldPassword = editTextOldPassword.getText().toString().trim();
-            checkUserPasswordAndOldPasswordField(userPassword, oldPassword);
-        }*/
 
         newPassword = editTextNewPassword.getText().toString().trim();
         String confirmPassword = editTextConfirmPassword.getText().toString().trim();
-        if (SharedData.getInstance().getPassword()!=null){
+        if (SharedData.getInstance().getPassword() != null) {
             SharedData.getInstance().setPassword(newPassword);
         }
 
@@ -161,12 +161,10 @@ public class ChangePasswordActivity extends BaseActivity implements View.OnClick
 
         showLoading(context);
 
-        // Changing Password through UI Service.
         ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<BaseResponse> passwordUpgradeCall = service.setPasswordForForgetPassword(newPassword, confirmPassword, mobileNo);
+        Call<BaseResponse> call = service.setPasswordForForgetPassword(newPassword, confirmPassword, mobileNo);
 
-        // Gathering results.
-        passwordUpgradeCall.enqueue(new Callback<BaseResponse>() {
+        call.enqueue(new Callback<BaseResponse>() {
             @Override
             public void onResponse(@NonNull Call<BaseResponse> call, @NonNull Response<BaseResponse> response) {
                 Timber.e("response -> %s", response.message());
@@ -175,8 +173,7 @@ public class ChangePasswordActivity extends BaseActivity implements View.OnClick
                 if (response.body() != null) {
                     if (!response.body().getError()) {
                         showMessage(response.body().getMessage());
-                        Timber.e("response -> %s",response.body().getMessage());
-                        //editTextOldPassword.setText("");
+                        Timber.e("response -> %s", response.body().getMessage());
                         editTextNewPassword.setText("");
                         editTextConfirmPassword.setText("");
                         Preferences.getInstance(context).logout();
@@ -198,63 +195,6 @@ public class ChangePasswordActivity extends BaseActivity implements View.OnClick
 
     private void showMessage(String message) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-    }
-
-    private static class MyTextWatcher implements TextWatcher {
-
-        private View view;
-
-        public MyTextWatcher(View view) {
-            this.view = view;
-        }
-
-        @Override
-        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable editable) {
-            switch (view.getId()) {
-                case R.id.editTextOldPassword:
-                    //validateEditText(editTextOldPassword, textInputLayoutOldPassword, R.string.err_old_password);
-                    break;
-
-                case R.id.editTextNewPassword:
-                    //validateEditText(editTextNewPassword, textInputLayoutNewPassword, R.string.err_new_password);
-                    break;
-
-                case R.id.editTextConfirmPassword:
-                    //validateEditText(editTextConfirmPassword, textInputLayoutConfirmPassword, R.string.err_confirm_password);
-                    break;
-
-            }
-        }
-    }
-
-    private boolean validateEditText(EditText editText, TextInputLayout textInputLayout, int errorResource) {
-        String value = editText.getText().toString().trim();
-        if (value.isEmpty()) {
-            textInputLayout.setError(getResources().getString(errorResource));
-            requestFocus(editText);
-            return false;
-        } else {
-            textInputLayout.setErrorEnabled(false);
-        }
-
-        return true;
-    }
-
-    private void requestFocus(EditText view) {
-        if (view.requestFocus()) {
-            if (context != null)
-                ChangePasswordActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-        }
     }
 
     private boolean checkPassWordAndConfirmPassword(String password, String confirmPassword) {

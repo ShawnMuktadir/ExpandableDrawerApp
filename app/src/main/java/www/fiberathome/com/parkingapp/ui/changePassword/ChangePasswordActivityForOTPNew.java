@@ -1,8 +1,8 @@
-package www.fiberathome.com.parkingapp.ui.verifyPhone;
+package www.fiberathome.com.parkingapp.ui.changePassword;
 
 import android.annotation.SuppressLint;
-import android.app.Service;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -11,13 +11,12 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.gson.Gson;
@@ -26,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -35,16 +35,16 @@ import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
+import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
+import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 import www.fiberathome.com.parkingapp.model.response.login.LoginResponse;
-import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.ui.signUp.SignUpActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
-import www.fiberathome.com.parkingapp.utils.Validator;
 import www.fiberathome.com.parkingapp.utils.customEdittext.PinEntryEditText;
 
 @SuppressLint("NonConstantResourceId")
-public class VerifyPhoneActivityNew extends BaseActivity {
+public class ChangePasswordActivityForOTPNew extends BaseActivity {
 
     @BindView(R.id.btn_verify_otp)
     Button btnVerifyOtp;
@@ -63,7 +63,8 @@ public class VerifyPhoneActivityNew extends BaseActivity {
 
     private Context context;
 
-    @SuppressLint("UseCompatLoadingForDrawables")
+    private Unbinder unbinder;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,7 +72,7 @@ public class VerifyPhoneActivityNew extends BaseActivity {
 
         context = this;
 
-        ButterKnife.bind(this);
+        unbinder = ButterKnife.bind(this);
 
         setToolbar();
 
@@ -80,47 +81,13 @@ public class VerifyPhoneActivityNew extends BaseActivity {
         startCountDown();
     }
 
-    private void checkLogin(final String mobileNo, final String password) {
-
-        showLoading(context);
-
-        ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<LoginResponse> call = service.loginUser(mobileNo, password);
-
-        call.enqueue(new Callback<LoginResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
-
-                Timber.e("login response body-> %s", new Gson().toJson(response.body()));
-
-                hideLoading();
-
-                if (!response.body().getError()) {
-                    showMessage(response.body().getMessage());
-                } else if (response.body().getError() && !response.body().getAuthentication()) {
-                    // IF ERROR OCCURS AND AUTHENTICATION IS INVALID
-                    showMessage(response.body().getMessage());
-
-                    Timber.e("error & authentication response -> %s", response.body().getMessage());
-                } else {
-                    Timber.e("error -> %s", response.body().getMessage());
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable errors) {
-                Timber.e("Throwable Errors: -> %s", errors.toString());
-            }
-        });
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 // todo: goto back activity from here
 
-                Intent intent = new Intent(VerifyPhoneActivityNew.this, SignUpActivity.class);
+                Intent intent = new Intent(ChangePasswordActivityForOTPNew.this, SignUpActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 finish();
@@ -128,6 +95,55 @@ public class VerifyPhoneActivityNew extends BaseActivity {
 
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        // super.onBackPressed();
+        // Not calling **super**, disables back button in current screen.
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage("Are you sure you want to exit?")
+                .setNegativeButton(android.R.string.no, null)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        ChangePasswordActivityForOTPNew.super.onBackPressed();
+                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                    }
+                }).create();
+        AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface arg0) {
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.black));
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.red));
+            }
+        });
+        dialog.show();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (unbinder != null) {
+            unbinder.unbind();
+        }
+        super.onDestroy();
+    }
+
+    private void setToolbar() {
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle(context.getResources().getString(R.string.verify_otp));
+        mToolbar.setTitleTextColor(context.getResources().getColor(R.color.black));
+        if (mToolbar.getNavigationIcon() != null) {
+            mToolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.black), PorterDuff.Mode.SRC_ATOP);
         }
     }
 
@@ -165,23 +181,54 @@ public class VerifyPhoneActivityNew extends BaseActivity {
 
         btnResendOTP.setOnClickListener(v -> {
             String mobileNo = getIntent().getStringExtra("mobile_no");
-            String password = getIntent().getStringExtra("password");
-            checkLogin(mobileNo, password);
+            if (ApplicationUtils.checkInternet(context)) {
+                checkForgetPassword(mobileNo);
+            }
+
             btnVerifyOtp.setVisibility(View.VISIBLE);
             btnResendOTP.setVisibility(View.INVISIBLE);
             startCountDown();
         });
     }
 
-    private void setToolbar() {
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setTitle(context.getResources().getString(R.string.verify_otp));
-        mToolbar.setTitleTextColor(context.getResources().getColor(R.color.black));
-        if (mToolbar.getNavigationIcon() != null) {
-            mToolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.black), PorterDuff.Mode.SRC_ATOP);
-        }
+    private void checkForgetPassword(final String mobileNo) {
+
+        showLoading(context);
+
+        ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+        Call<BaseResponse> call = service.checkForgetPassword(mobileNo);
+
+        // Gathering results.
+        call.enqueue(new Callback<BaseResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<BaseResponse> call, @NonNull Response<BaseResponse> response) {
+
+                Timber.e("response body-> %s", new Gson().toJson(response.body()));
+
+                hideLoading();
+
+                if (response.body() != null) {
+                    if (!response.body().getError()) {
+                        showMessage(response.body().getMessage());
+                    } else {
+                        if (response.body().getMessage().equalsIgnoreCase("Try Again! Invalid Mobile Number.")) {
+                            TastyToastUtils.showTastyErrorToast(context,
+                                    context.getResources().getString(R.string.mobile_number_not_exist));
+                        } else {
+                            showMessage(response.body().getMessage());
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<BaseResponse> call, @NonNull Throwable errors) {
+                Timber.e("Throwable Errors: -> %s", errors.toString());
+                hideLoading();
+                TastyToastUtils.showTastyErrorToast(context,
+                        context.getResources().getString(R.string.mobile_number_not_exist));
+            }
+        });
     }
 
     private void startCountDown() {
@@ -204,9 +251,10 @@ public class VerifyPhoneActivityNew extends BaseActivity {
                 // enable the edit alert dialog
             }
         }.start();
+
     }
 
-    private void submitOTPVerification(String otp) {
+    private void submitOTPVerification(final String otp) {
         if (!otp.isEmpty()) {
             showLoading(context);
 
@@ -226,14 +274,16 @@ public class VerifyPhoneActivityNew extends BaseActivity {
 
                         if (response.body().getError() && response.body().getMessage().equalsIgnoreCase("Sorry! Failed to Verify Your Account by OYP.")) {
                             showMessage("Sorry! Failed to Verify Your Account by OTP.");
+
                         } else if (!response.body().getError()) {
 
                             showMessage(response.body().getMessage());
 
-                            Intent intent = new Intent(VerifyPhoneActivityNew.this, LoginActivity.class);
+                            SharedData.getInstance().setOtp(otp);
+
+                            Intent intent = new Intent(ChangePasswordActivityForOTPNew.this, ChangePasswordActivity.class);
                             startActivity(intent);
                             finish();
-                            showMessage("Dear " + response.body().getUser().getFullName() + ", Your Registration Completed Successfully...");
                         }
                     } else {
                         showMessage(response.body().getMessage());
@@ -252,7 +302,6 @@ public class VerifyPhoneActivityNew extends BaseActivity {
     }
 
     private void showMessage(String message) {
-        Toast.makeText(VerifyPhoneActivityNew.this, message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(ChangePasswordActivityForOTPNew.this, message, Toast.LENGTH_SHORT).show();
     }
 }
-

@@ -37,7 +37,7 @@ import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.response.BaseResponse;
-import www.fiberathome.com.parkingapp.ui.changePassword.ChangePasswordActivityForOTP;
+import www.fiberathome.com.parkingapp.ui.changePassword.ChangePasswordActivityForOTPNew;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
@@ -45,7 +45,7 @@ import www.fiberathome.com.parkingapp.utils.Validator;
 @SuppressLint("NonConstantResourceId")
 public class ForgetPasswordFragment extends BaseFragment {
 
-    private static String TAG = ForgetPasswordActivity.class.getSimpleName();
+    private static final String TAG = ForgetPasswordActivity.class.getSimpleName();
 
     @BindView(R.id.textInputLayoutMobile)
     TextInputLayout textInputLayoutMobile;
@@ -59,7 +59,6 @@ public class ForgetPasswordFragment extends BaseFragment {
     private Unbinder unbinder;
 
     private ForgetPasswordActivity context;
-    private ProgressDialog progressDialog;
 
     public ForgetPasswordFragment() {
         // Required empty public constructor
@@ -193,58 +192,6 @@ public class ForgetPasswordFragment extends BaseFragment {
         }
     }
 
-    /*private void checkForgetPassword(final String mobileNo) {
-
-        showLoading(context);
-
-        HttpsTrustManager.allowAllSSL();
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_FORGET_PASSWORD, response -> {
-            // remove the progress bar
-            Timber.e("URL -> %s", new Gson().toJson(AppConfig.URL_FORGET_PASSWORD));
-
-            hideLoading();
-            if (response.equals("[]")) {
-                TastyToastUtils.showTastyErrorToast(context, context.getResources().getString(R.string.mobile_number_not_exist));
-            } else {
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-
-                    Timber.e("jsonObject -> %s", jsonObject.toString());
-
-                    if (jsonObject.getBoolean("error")) {
-
-                        showMessage(jsonObject.getString("message"));
-
-                        Intent intent = new Intent(context, ChangePasswordActivityForOTP.class);
-                        intent.putExtra("mobile_no", mobileNo);
-                        startActivity(intent);
-                        context.finish();
-                    } else {
-                        showMessage(jsonObject.getString("message"));
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        }, error -> {
-            Timber.e("Error Message -> %s ", error.getMessage());
-            //if (progressDialog != null) progressDialog.dismiss();
-            showMessage(error.getMessage());
-        }) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("mobile_no", mobileNo);
-                SharedData.getInstance().setForgetPasswordMobile(mobileNo);
-                return params;
-            }
-        };
-        stringRequest.setRetryPolicy(new DefaultRetryPolicy(50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        ParkingApp.getInstance().addToRequestQueue(stringRequest, TAG);
-    }*/
-
     private void checkForgetPassword(final String mobileNo) {
 
         showLoading(context);
@@ -274,7 +221,7 @@ public class ForgetPasswordFragment extends BaseFragment {
 
                                 showMessage(response.body().getMessage());
 
-                                Intent intent = new Intent(context, ChangePasswordActivityForOTP.class);
+                                Intent intent = new Intent(context, ChangePasswordActivityForOTPNew.class);
                                 intent.putExtra("mobile_no", mobileNo);
                                 startActivity(intent);
                                 SharedData.getInstance().setForgetPasswordMobile(mobileNo);

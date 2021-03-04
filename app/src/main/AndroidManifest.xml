@@ -57,10 +57,6 @@
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar"/>
 
-        <activity android:name=".ui.share.ShareActivity"
-            android:screenOrientation="unspecified"
-            android:theme="@style/AppTheme.DefaultActionBar"/>
-
         <activity android:name=".ui.profile.ProfileActivity"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar"/>
@@ -96,6 +92,10 @@
             android:theme="@style/AppTheme.DefaultActionBar" />
         <activity
             android:name=".ui.changePassword.ChangePasswordActivityForOTP"
+            android:screenOrientation="unspecified"
+            android:theme="@style/AppTheme.DefaultActionBar" />
+        <activity
+            android:name=".ui.changePassword.ChangePasswordActivityForOTPNew"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
         <activity
@@ -137,9 +137,6 @@
             
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
-        <!-- <activity android:name=".view.activity.registration.RegistrationActivity" -->
-        <!-- android:screenOrientation="unspecified" -->
-        <!-- android:theme="@style/AppTheme.DefaultActionBar" /> -->
         <activity
             android:name=".ui.verifyPhone.VerifyPhoneActivity"
             android:parentActivityName=".ui.signIn.LoginActivity"
