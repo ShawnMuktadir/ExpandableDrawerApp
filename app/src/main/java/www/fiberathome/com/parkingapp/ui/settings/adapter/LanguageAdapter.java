@@ -16,6 +16,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.Language;
+import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 
 public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.SettingsViewHolder> {
 
@@ -43,6 +44,7 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.Settin
 
         viewHolder.textViewLanguageName.setText(data.getName());
         viewHolder.textViewSubLanguageName.setText(data.getSubName());
+
         if (!data.isSelected()) viewHolder.imageViewCheckedIcon.setVisibility(View.GONE);
 
         viewHolder.itemView.setOnClickListener(v -> {

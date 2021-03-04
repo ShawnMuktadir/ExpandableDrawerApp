@@ -34,10 +34,13 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
 
     @BindView(R.id.tvUserName)
     TextView tvUserName;
+
     @BindView(R.id.tvUserMobileNo)
     TextView tvUserMobileNo;
+
     @BindView(R.id.tvUserVehicleNo)
     TextView tvUserVehicleNo;
+
     @BindView(R.id.ivUserProfilePic)
     ImageView ivUserProfilePic;
 
@@ -74,11 +77,10 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
-        Timber.e("onDestroyView called ");
         if (unbinder != null) {
             unbinder.unbind();
         }
+        super.onDestroyView();
     }
 
     @Override
@@ -106,15 +108,15 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
             return true;
         } else {
 
-//            AlertDialog alertDialog = new AlertDialog.Builder(context)
-//                    .setTitle("GPS Permissions")
-//                    .setMessage("GPS is required for this app to work. Please enable GPS.")
-//                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
-//                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-//                        startActivityForResult(intent, GPS_REQUEST_CODE);
-//                    }))
-//                    .setCancelable(false)
-//                    .show();
+            /*AlertDialog alertDialog = new AlertDialog.Builder(context)
+                    .setTitle("GPS Permissions")
+                    .setMessage("GPS is required for this app to work. Please enable GPS.")
+                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivityForResult(intent, GPS_REQUEST_CODE);
+                    }))
+                    .setCancelable(false)
+                    .show();*/
 
         }
         return false;

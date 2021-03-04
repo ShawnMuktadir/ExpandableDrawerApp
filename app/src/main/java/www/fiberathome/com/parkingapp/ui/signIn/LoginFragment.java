@@ -60,6 +60,9 @@ import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
 
+import static www.fiberathome.com.parkingapp.utils.Constants.LANGUAGE_BN;
+import static www.fiberathome.com.parkingapp.utils.Constants.LANGUAGE_EN;
+
 @SuppressLint("NonConstantResourceId")
 public class LoginFragment extends BaseFragment implements View.OnClickListener, ProgressView {
 
@@ -136,7 +139,6 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
 
         if (Preferences.getInstance(context).isLoggedIn() && Preferences.getInstance(context) != null && Preferences.getInstance(context).isWaitingForLocationPermission()) {
             Timber.e("isWaitingForLocationPermission -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
-            //Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             Intent intent = new Intent(context, HomeActivity.class);
             startActivity(intent);
             context.finish();
@@ -145,7 +147,6 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
             //Timber.e("location check else method called");
             Timber.e("isWaitingForLocationPermission else -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
             Intent intent = new Intent(context, PermissionActivity.class);
-            //Intent intent = new Intent(context, LocationPermissionActivity.class);
             startActivity(intent);
             context.finish();
         }
@@ -192,7 +193,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
             tvForgetPassword.setMovementMethod(LinkMovementMethod.getInstance());
         } else if (Locale.getDefault().getLanguage().equals("bn")) {
             //spannableString.setSpan(clickableSpan, 50, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            ss.setSpan(span, 18, 29, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            ss.setSpan(span, 20, 34, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             tvForgetPassword.setText(ss);
             tvForgetPassword.setMovementMethod(LinkMovementMethod.getInstance());
         }

@@ -1246,7 +1246,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         currentLocation = location;
         if (location != null) {
             onConnectedLocation = location;
-            Timber.e("onLocationChanged: onConnectedLocation -> %s", onConnectedLocation);
+            //Timber.e("onLocationChanged: onConnectedLocation -> %s", onConnectedLocation);
             SharedData.getInstance().setOnConnectedLocation(location);
 
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());

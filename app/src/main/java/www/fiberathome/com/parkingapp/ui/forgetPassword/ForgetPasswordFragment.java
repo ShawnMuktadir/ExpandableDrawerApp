@@ -45,7 +45,7 @@ import www.fiberathome.com.parkingapp.utils.Validator;
 @SuppressLint("NonConstantResourceId")
 public class ForgetPasswordFragment extends BaseFragment {
 
-    private static final String TAG = ForgetPasswordActivity.class.getSimpleName();
+    private static String TAG = ForgetPasswordActivity.class.getSimpleName();
 
     @BindView(R.id.textInputLayoutMobile)
     TextInputLayout textInputLayoutMobile;

@@ -1,20 +1,20 @@
 package www.fiberathome.com.parkingapp.ui.verifyPhone;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.gson.Gson;
@@ -23,23 +23,23 @@ import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.base.BaseActivity;
+import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.response.login.LoginResponse;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
-import www.fiberathome.com.parkingapp.ui.signUp.SignUpActivity;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.customEdittext.PinEntryEditText;
 
 @SuppressLint("NonConstantResourceId")
-public class VerifyPhoneActivityNew extends BaseActivity {
+public class VerifyPhoneFragment extends BaseFragment {
 
     @BindView(R.id.btn_verify_otp)
     Button btnVerifyOtp;
@@ -50,29 +50,55 @@ public class VerifyPhoneActivityNew extends BaseActivity {
     @BindView(R.id.countdown)
     TextView countdown;
 
-    @BindView(R.id.txt_pin_entry)
-    PinEntryEditText txtPinEntry;
-
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
-    private Context context;
+    @BindView(R.id.txt_pin_entry)
+    PinEntryEditText txtPinEntry;
 
-    @SuppressLint("UseCompatLoadingForDrawables")
+    private Unbinder unbinder;
+
+    private VerifyPhoneActivity context;
+
+    public VerifyPhoneFragment() {
+        // Required empty public constructor
+    }
+
+    public static VerifyPhoneFragment newInstance() {
+        return new VerifyPhoneFragment();
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_verify_phone_otp);
+    }
 
-        context = this;
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.layout_verify_phone_otp, container, false);
+    }
 
-        ButterKnife.bind(this);
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        setToolbar();
+        unbinder = ButterKnife.bind(this, view);
+
+        context = (VerifyPhoneActivity) getActivity();
 
         setListeners();
 
         startCountDown();
+    }
+
+    @Override
+    public void onDestroyView() {
+        if (unbinder != null) {
+            unbinder.unbind();
+        }
+        super.onDestroyView();
     }
 
     private void checkLogin(final String mobileNo, final String password) {
@@ -105,28 +131,8 @@ public class VerifyPhoneActivityNew extends BaseActivity {
             @Override
             public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable errors) {
                 Timber.e("Throwable Errors: -> %s", errors.toString());
-                hideLoading();
-                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.something_went_wrong));
             }
         });
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                // todo: goto back activity from here
-
-                startActivityWithFinish(SignUpActivity.class);
-                /*Intent intent = new Intent(VerifyPhoneActivityNew.this, SignUpActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                finish();*/
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
     private void setListeners() {
@@ -162,24 +168,13 @@ public class VerifyPhoneActivityNew extends BaseActivity {
         });
 
         btnResendOTP.setOnClickListener(v -> {
-            String mobileNo = getIntent().getStringExtra("mobile_no");
-            String password = getIntent().getStringExtra("password");
+            String mobileNo = context.getIntent().getStringExtra("mobile_no");
+            String password = context.getIntent().getStringExtra("password");
             checkLogin(mobileNo, password);
             btnVerifyOtp.setVisibility(View.VISIBLE);
             btnResendOTP.setVisibility(View.INVISIBLE);
             startCountDown();
         });
-    }
-
-    private void setToolbar() {
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setTitle(context.getResources().getString(R.string.verify_otp));
-        mToolbar.setTitleTextColor(context.getResources().getColor(R.color.black));
-        if (mToolbar.getNavigationIcon() != null) {
-            mToolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.black), PorterDuff.Mode.SRC_ATOP);
-        }
     }
 
     private void startCountDown() {
@@ -188,11 +183,14 @@ public class VerifyPhoneActivityNew extends BaseActivity {
 
             public void onTick(long millisUntilFinished) {
                 //countdown.setText("seconds remaining: " + millisUntilFinished / 1000);
-                countdown.setText("" + String.format("%d min, %d sec remaining",
-                        TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
-                        TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
-                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))));
-                //here you can have your logic to set text to edittext
+                if (countdown != null) {
+                    countdown.setText("" + String.format("%d min, %d sec remaining",
+                            TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
+                            TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
+                                    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))));
+                } else {
+                    Toast.makeText(context, "NPE", Toast.LENGTH_SHORT).show();
+                }
             }
 
             public void onFinish() {
@@ -228,9 +226,9 @@ public class VerifyPhoneActivityNew extends BaseActivity {
 
                             showMessage(response.body().getMessage());
 
-                            Intent intent = new Intent(VerifyPhoneActivityNew.this, LoginActivity.class);
+                            Intent intent = new Intent(context, LoginActivity.class);
                             startActivity(intent);
-                            finish();
+                            context.finish();
                             showMessage("Dear " + response.body().getUser().getFullName() + ", Your Registration Completed Successfully...");
                         }
                     } else {
@@ -250,7 +248,6 @@ public class VerifyPhoneActivityNew extends BaseActivity {
     }
 
     private void showMessage(String message) {
-        Toast.makeText(VerifyPhoneActivityNew.this, message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 }
-

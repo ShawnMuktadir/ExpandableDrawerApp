@@ -73,54 +73,51 @@
             android:screenOrientation="unspecified"
             android:windowSoftInputMode="stateAlwaysHidden"
             android:theme="@style/AppTheme.DefaultActionBar"/>
-        <!--
-             The API key for Google Maps-based APIs is defined as a string resource.
-             (See the file "res/values/google_maps_api.xml").
-             Note that the API key is linked to the encryption key used to sign the APK.
-             You need a different API key for each encryption key, including the release key that is used to
-             sign the APK for publishing.
-             You can define the keys for the debug and release targets in src/debug/ and src/release/.
-        -->
+
         <activity
             android:name=".ui.home.HomeActivity"
             android:screenOrientation="unspecified"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.DefaultActionBar" />
+
         <activity
             android:name=".ui.changePassword.ChangePasswordActivity"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
-        <activity
-            android:name=".ui.changePassword.ChangePasswordActivityForOTP"
-            android:screenOrientation="unspecified"
-            android:theme="@style/AppTheme.DefaultActionBar" />
+
         <activity
             android:name=".ui.changePassword.ChangePasswordActivityForOTPNew"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
+
         <activity
             android:name=".ui.permission.PermissionActivity"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
+
         <activity
             android:name=".ui.permission.LocationPermissionActivity"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
+
         <activity
             android:name=".ui.location.LocationActivity"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
+
         <activity
             android:name=".ui.search.SearchActivity"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar"
             android:windowSoftInputMode="adjustResize" />
+
         <activity
             android:name=".ui.start.StartActivity"
             android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar">
         </activity>
+
         <activity
             android:name=".ui.splash.SplashActivity"
             android:label="@string/app_name"
@@ -132,49 +129,59 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".ui.signUp.SignUpActivity"
-            
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
+
         <activity
             android:name=".ui.verifyPhone.VerifyPhoneActivity"
             android:parentActivityName=".ui.signIn.LoginActivity"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
+
         <activity
             android:name=".ui.verifyPhone.VerifyPhoneActivityNew"
             android:parentActivityName=".ui.signIn.LoginActivity"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
+
         <activity
             android:name=".ui.signIn.LoginActivity"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
+
         <activity
             android:name=".ui.forgetPassword.ForgetPasswordActivity"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
+
         <activity
             android:name=".ui.reserveSpot.ReserveSpotActivity"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
+
         <activity
             android:name=".ui.privacyPolicy.PrivacyPolicyActivity"
             android:launchMode="singleTop"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
+
         <activity
             android:name=".ui.termsConditions.TermsConditionsActivity"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
+
         <activity
             android:name=".ui.settings.SettingsActivity"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
+
         <activity
             android:name=".ui.settings.LanguageSettingActivity"
             android:label="@string/language_settings" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
