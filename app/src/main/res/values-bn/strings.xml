@@ -54,6 +54,8 @@
     <string name="no_account_yet_click_here">অ্যাকাউন্ট নেই? ক্লিক করুন</string>
     <string name="forget_password_click_here">পাসওয়ার্ড ভুলেছেন? ক্লিক করুন</string>
 
+
+
     //navigation
     <string name="home">হোম</string>
     <string name="bookedLists">বুকিংস</string>

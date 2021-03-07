@@ -173,6 +173,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
             spannableString.setSpan(clickableSpan, 16, 26, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             textViewSignUp.setText(spannableString);
             textViewSignUp.setMovementMethod(LinkMovementMethod.getInstance());
+
         }
 
         //makes an underline on Forgot Password Click Here
@@ -186,18 +187,31 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
             }
         };
 
-        if (Preferences.getInstance(context).getAppLanguage().equals("en")) {
-            //spannableString.setSpan(clickableSpan, 87, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            ss.setSpan(span, 17, 27, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            tvForgetPassword.setText(ss);
-            tvForgetPassword.setMovementMethod(LinkMovementMethod.getInstance());
-        } else if (Preferences.getInstance(context).getAppLanguage().equals("bn")) {
-            //spannableString.setSpan(clickableSpan, 50, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        int d = ss.toString().codePointAt(0);
+
+        if (d >= 0x0980 && d <= 0x09E0){
 
             ss.setSpan(span, 21, ss.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            tvForgetPassword.setText(ss);
-            tvForgetPassword.setMovementMethod(LinkMovementMethod.getInstance());
+        }else{
+            //spannableString.setSpan(clickableSpan, 87, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            ss.setSpan(span, 17, 27, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
+        tvForgetPassword.setText(ss);
+        tvForgetPassword.setMovementMethod(LinkMovementMethod.getInstance());
+
+//        if (Locale.getDefault().getLanguage().contentEquals("en")) {
+//            //spannableString.setSpan(clickableSpan, 87, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//            ss.setSpan(span, 17, 27, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//            tvForgetPassword.setText(ss);
+//            tvForgetPassword.setMovementMethod(LinkMovementMethod.getInstance());
+//        }
+//        else if (Locale.getDefault().getLanguage().contentEquals("bn")) {
+//            //spannableString.setSpan(clickableSpan, 50, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//
+//            ss.setSpan(span, 21, ss.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//            tvForgetPassword.setText(ss);
+//            tvForgetPassword.setMovementMethod(LinkMovementMethod.getInstance());
+//        }
 
         btnSignIn.setOnClickListener(this);
         textViewSignUp.setOnClickListener(this);
