@@ -16,7 +16,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:context=".ui.MapActivity"
-            tools:ignore="FragmentTagUsage">
+            tools:ignore="FragmentTagUsage"
+            tools:layout="@layout/fragment_home">
 
             <Button
                 android:id="@+id/nearest"

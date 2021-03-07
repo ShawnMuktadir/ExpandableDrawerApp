@@ -186,14 +186,15 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
             }
         };
 
-        if (Locale.getDefault().getLanguage().equals("en")) {
+        if (Preferences.getInstance(context).getAppLanguage().equals("en")) {
             //spannableString.setSpan(clickableSpan, 87, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             ss.setSpan(span, 17, 27, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             tvForgetPassword.setText(ss);
             tvForgetPassword.setMovementMethod(LinkMovementMethod.getInstance());
-        } else if (Locale.getDefault().getLanguage().equals("bn")) {
+        } else if (Preferences.getInstance(context).getAppLanguage().equals("bn")) {
             //spannableString.setSpan(clickableSpan, 50, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            ss.setSpan(span, 20, 34, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            ss.setSpan(span, 21, ss.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             tvForgetPassword.setText(ss);
             tvForgetPassword.setMovementMethod(LinkMovementMethod.getInstance());
         }

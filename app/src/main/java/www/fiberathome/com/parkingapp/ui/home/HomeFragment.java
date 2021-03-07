@@ -738,7 +738,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             previousMarker = marker;
                             removeCircle();
                             marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_gray));
-                            getDirectionPinMarkerDraw(marker.getPosition(), markerUid);
+//                            getDirectionPinMarkerDraw(marker.getPosition(), markerUid);
 
                             coordList.add(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
 
