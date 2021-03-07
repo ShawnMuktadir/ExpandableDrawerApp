@@ -57,6 +57,7 @@ import www.fiberathome.com.parkingapp.ui.signUp.SignUpActivity;
 import www.fiberathome.com.parkingapp.ui.verifyPhone.VerifyPhoneActivity;
 import www.fiberathome.com.parkingapp.ui.verifyPhone.VerifyPhoneActivityNew;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.Constants;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
 
@@ -163,12 +164,12 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
             }
         };
 
-        if (Locale.getDefault().getLanguage().equals("en")) {
+        if (Locale.getDefault().getLanguage().equalsIgnoreCase(LANGUAGE_EN)) {
             //spannableString.setSpan(clickableSpan, 87, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             spannableString.setSpan(clickableSpan, 16, 26, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             textViewSignUp.setText(spannableString);
             textViewSignUp.setMovementMethod(LinkMovementMethod.getInstance());
-        } else if (Locale.getDefault().getLanguage().equals("bn")) {
+        } else if (Locale.getDefault().getLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
             //spannableString.setSpan(clickableSpan, 50, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             spannableString.setSpan(clickableSpan, 16, 26, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             textViewSignUp.setText(spannableString);
@@ -186,14 +187,14 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
             }
         };
 
-        if (Locale.getDefault().getLanguage().equals("en")) {
+        if (Locale.getDefault().getLanguage().equalsIgnoreCase(LANGUAGE_EN)) {
             //spannableString.setSpan(clickableSpan, 87, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             ss.setSpan(span, 17, 27, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             tvForgetPassword.setText(ss);
             tvForgetPassword.setMovementMethod(LinkMovementMethod.getInstance());
-        } else if (Locale.getDefault().getLanguage().equals("bn")) {
+        } else if (Locale.getDefault().getLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
             //spannableString.setSpan(clickableSpan, 50, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            ss.setSpan(span, 20, 34, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            ss.setSpan(span, 21, ss.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             tvForgetPassword.setText(ss);
             tvForgetPassword.setMovementMethod(LinkMovementMethod.getInstance());
         }

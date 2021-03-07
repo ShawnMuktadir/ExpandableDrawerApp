@@ -6,11 +6,16 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AlertDialog;
 
+import java.util.Locale;
+
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
+import www.fiberathome.com.parkingapp.model.data.preference.LanguagePreferences;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+
+import static www.fiberathome.com.parkingapp.utils.Constants.LANGUAGE_BN;
 
 public class SplashActivity extends BaseActivity {
 
@@ -23,7 +28,11 @@ public class SplashActivity extends BaseActivity {
 
         context = this;
 
-        setAppLocale(Preferences.getInstance(context).getAppLanguage());
+        if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
+            setAppLocale(LANGUAGE_BN);
+        } else {
+            setAppLocale(Preferences.getInstance(context).getAppLanguage());
+        }
 
         //Initialize splash fragment
         ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),

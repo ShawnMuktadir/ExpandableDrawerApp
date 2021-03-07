@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -28,6 +29,7 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.Settings
         this.listener = listener;
     }
 
+    @NonNull
     @Override
     public SettingsViewHolder onCreateViewHolder(ViewGroup parent,
                                                  int viewType) {

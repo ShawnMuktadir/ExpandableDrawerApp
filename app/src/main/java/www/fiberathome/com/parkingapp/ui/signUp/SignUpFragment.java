@@ -263,7 +263,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                 bitmap = (Bitmap) data.getExtras().get("data");
                 imageViewUploadProfileImage.setImageBitmap(bitmap);
                 /*saveImage(thumbnail);
-                  Toast.makeText(SignUpActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();*/
+                  `Toast.makeText(SignUpActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();*/
             } catch (Exception e) {
                 e.printStackTrace();
                 Toast.makeText(context, "Image Capture Failed!", Toast.LENGTH_SHORT).show();

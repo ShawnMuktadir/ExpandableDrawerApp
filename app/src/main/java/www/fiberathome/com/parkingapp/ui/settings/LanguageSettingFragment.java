@@ -21,8 +21,8 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.Language;
+import www.fiberathome.com.parkingapp.model.data.preference.LanguagePreferences;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
-import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.settings.adapter.LanguageAdapter;
 import www.fiberathome.com.parkingapp.ui.splash.SplashActivity;
 
@@ -81,13 +81,31 @@ public class LanguageSettingFragment extends Fragment {
         String[] subNames = new String[]{context.getResources().getString(R.string.english), context.getResources().getString(R.string.bangla_bn)};
         String[] isoCodes = new String[]{LANGUAGE_EN, LANGUAGE_BN};
 
+        int s1 = context.getResources().getString(R.string.language_settings).toString().codePointAt(0);
+        if (s1 >= 0x0980 && s1 <= 0x09E0) {
+            Preferences.getInstance(context).setAppLanguage(LANGUAGE_BN);
+            LanguagePreferences.getInstance(context).setAppLanguage(LANGUAGE_BN);
+        } else {
+            Preferences.getInstance(context).setAppLanguage(LANGUAGE_EN);
+            LanguagePreferences.getInstance(context).setAppLanguage(LANGUAGE_EN);
+        }
+
         LanguageAdapter languageAdapter = new LanguageAdapter(
                 populateLanguageItem(names, subNames, isoCodes, new ArrayList<>()), (language) -> {
 
-            if (Preferences.getInstance(context).getAppLanguage() != null) {
+            if (Preferences.getInstance(context).getAppLanguage() != null &&
+                    LanguagePreferences.getInstance(context).getAppLanguage() != null) {
                 Preferences.getInstance(context).setAppLanguage(language.getIsoCode());
+                LanguagePreferences.getInstance(context).setAppLanguage(language.getIsoCode());
             } else {
-                Preferences.getInstance(context).setAppLanguage(LANGUAGE_EN);
+                int s = context.getResources().getString(R.string.language_settings).toString().codePointAt(0);
+                if (s >= 0x0980 && s <= 0x09E0) {
+                    Preferences.getInstance(context).setAppLanguage(LANGUAGE_BN);
+                    LanguagePreferences.getInstance(context).setAppLanguage(LANGUAGE_BN);
+                } else {
+                    Preferences.getInstance(context).setAppLanguage(LANGUAGE_EN);
+                    LanguagePreferences.getInstance(context).setAppLanguage(LANGUAGE_EN);
+                }
             }
             context.startActivityWithFinishAffinity(SplashActivity.class);
         });
@@ -100,7 +118,8 @@ public class LanguageSettingFragment extends Fragment {
     private List<Language> populateLanguageItem(String[] names, String[] subNames, String[] isoCodes, List<Language> languages) {
         for (int i = 0; i < names.length; i++) {
             languages.add(new Language(
-                    names[i], subNames[i], isoCodes[i], isoCodes[i].equalsIgnoreCase(Preferences.getInstance(context).getAppLanguage())
+                    names[i], subNames[i], isoCodes[i], isoCodes[i].equalsIgnoreCase(Preferences.getInstance(context).getAppLanguage()),
+                    isoCodes[i].equalsIgnoreCase(LanguagePreferences.getInstance(context).getAppLanguage())
             ));
         }
 
