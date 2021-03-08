@@ -50,6 +50,9 @@ public class ChangePasswordActivityForOTPNew extends BaseActivity {
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
+    @BindView(R.id.view)
+    View view;
+
     private Context context;
 
     private Unbinder unbinder;
@@ -57,7 +60,7 @@ public class ChangePasswordActivityForOTPNew extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_verify_phone_otp_2);
+        setContentView(R.layout.activity_base);
 
         context = this;
 
@@ -74,9 +77,7 @@ public class ChangePasswordActivityForOTPNew extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                // todo: goto back activity from here
-
-                startActivityWithFinish(SignUpActivity.class);
+                startActivityWithFinishAffinity(SignUpActivity.class);
                 return true;
 
             default:
@@ -123,6 +124,8 @@ public class ChangePasswordActivityForOTPNew extends BaseActivity {
     }
 
     private void setToolbar() {
+        mToolbar.setVisibility(View.VISIBLE);
+        view.setVisibility(View.VISIBLE);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);

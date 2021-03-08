@@ -40,7 +40,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Locale;
 import java.util.Objects;
 
 import butterknife.BindView;
@@ -65,7 +64,6 @@ import www.fiberathome.com.parkingapp.ui.privacyPolicy.PrivacyPolicyActivity;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.ui.termsConditions.TermsConditionsActivity;
 import www.fiberathome.com.parkingapp.ui.verifyPhone.VerifyPhoneActivity;
-import www.fiberathome.com.parkingapp.ui.verifyPhone.VerifyPhoneActivityNew;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
@@ -172,17 +170,16 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             }
         };
 
-        if (Locale.getDefault().getLanguage().equals("en")) {
-            //spannableString.setSpan(clickableSpan, 87, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            spannableString.setSpan(clickableSpan, 16, 26, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            tvLogin.setText(spannableString);
-            tvLogin.setMovementMethod(LinkMovementMethod.getInstance());
-        } else if (Locale.getDefault().getLanguage().equals("bn")) {
-            //spannableString.setSpan(clickableSpan, 50, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            spannableString.setSpan(clickableSpan, 16, 26, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            tvLogin.setText(spannableString);
-            tvLogin.setMovementMethod(LinkMovementMethod.getInstance());
+        int s1 = spannableString.toString().codePointAt(0);
+        if (s1 >= 0x0980 && s1 <= 0x09E0) {
+            spannableString.setSpan(clickableSpan, 16, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        } else {
+            spannableString.setSpan(clickableSpan, 18, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
         }
+
+        tvLogin.setText(spannableString);
+        tvLogin.setMovementMethod(LinkMovementMethod.getInstance());
 
         textViewTermsConditions.setMovementMethod(LinkMovementMethod.getInstance());
         textViewTermsConditions.setText(addMultipleClickablePart(context.getResources().getString(R.string.by_using_this_app_you_agree_to_our_terms_and_conditions_amp_privacy_policy)));
@@ -568,7 +565,8 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         showProgress();
 
         ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<BaseResponse> call = service.createUser(fullName, password, mobileNo, vehicleNo, imageToString(bitmap), mobileNo);
+        Call<BaseResponse> call = service.createUser(fullName, password, mobileNo, vehicleNo, imageToString(bitmap),
+                mobileNo + "_" + ApplicationUtils.getCurrentTimeStamp());
 
         call.enqueue(new Callback<BaseResponse>() {
             @Override
@@ -585,8 +583,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                         showMessage(response.body().getMessage());
 
                         // Moving the screen to next pager item i.e otp screen
-                        //Intent intent = new Intent(context, VerifyPhoneActivity.class);
-                        Intent intent = new Intent(context, VerifyPhoneActivityNew.class);
+                        Intent intent = new Intent(context, VerifyPhoneActivity.class);
                         startActivity(intent);
                         SharedData.getInstance().setPassword(password);
 
@@ -606,6 +603,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             @Override
             public void onFailure(@NonNull Call<BaseResponse> call, @NonNull Throwable errors) {
                 Timber.e("Throwable Errors: -> %s", errors.toString());
+                showMessage(context.getResources().getString(R.string.something_went_wrong));
                 hideLoading();
                 hideProgress();
             }

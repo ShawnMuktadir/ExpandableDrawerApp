@@ -1,5 +1,6 @@
 package www.fiberathome.com.parkingapp.utils;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -1007,5 +1008,16 @@ public class ApplicationUtils {
         marker.draw(canvas);
 
         return bitmap;
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    public static String getCurrentTimeStamp(){
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            return dateFormat.format(new Date());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

@@ -49,7 +49,7 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
     Button btnResendOTP;
 
     @BindView(R.id.countdown)
-    TextView countdown;
+    TextView tvCountdown;
 
     @BindView(R.id.txt_pin_entry)
     PinEntryEditText txtPinEntry;
@@ -180,19 +180,16 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
 
     private void startCountDown() {
         new CountDownTimer(150000, 1000) {
-            //CountDownTimer(edittext1.getText()+edittext2.getText()) also parse it to long
 
             public void onTick(long millisUntilFinished) {
-                //countdown.setText("seconds remaining: " + millisUntilFinished / 1000);
-                countdown.setText("" + String.format("%d min, %d sec remaining",
+                tvCountdown.setText("" + String.format("%d min, %d sec remaining",
                         TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
                         TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
                                 TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))));
-                //here you can have your logic to set text to edittext
             }
 
             public void onFinish() {
-                countdown.setText(context.getResources().getString(R.string.please_wait));
+                tvCountdown.setText(context.getResources().getString(R.string.please_wait));
                 btnResendOTP.setVisibility(View.VISIBLE);
                 btnVerifyOtp.setVisibility(View.INVISIBLE);
                 // enable the edit alert dialog

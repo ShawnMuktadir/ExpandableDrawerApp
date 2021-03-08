@@ -55,9 +55,7 @@ import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.permission.PermissionActivity;
 import www.fiberathome.com.parkingapp.ui.signUp.SignUpActivity;
 import www.fiberathome.com.parkingapp.ui.verifyPhone.VerifyPhoneActivity;
-import www.fiberathome.com.parkingapp.ui.verifyPhone.VerifyPhoneActivityNew;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
-import www.fiberathome.com.parkingapp.utils.Constants;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
 
@@ -160,18 +158,17 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                 // do some thing
                 startActivity(new Intent(context, SignUpActivity.class));
                 context.finish();
-                //startActivity(new Intent(LoginActivity.this, RegistrationActivity.class));
             }
         };
 
         if (Locale.getDefault().getLanguage().equalsIgnoreCase(LANGUAGE_EN)) {
             //spannableString.setSpan(clickableSpan, 87, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            spannableString.setSpan(clickableSpan, 16, 26, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spannableString.setSpan(clickableSpan, 16, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             textViewSignUp.setText(spannableString);
             textViewSignUp.setMovementMethod(LinkMovementMethod.getInstance());
         } else if (Locale.getDefault().getLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
             //spannableString.setSpan(clickableSpan, 50, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            spannableString.setSpan(clickableSpan, 16, 26, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spannableString.setSpan(clickableSpan, 16, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             textViewSignUp.setText(spannableString);
             textViewSignUp.setMovementMethod(LinkMovementMethod.getInstance());
         }
@@ -183,22 +180,31 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
             public void onClick(@NonNull View textView) {
                 // do some thing
                 startActivity(new Intent(context, ForgetPasswordActivity.class));
-                //finish();
             }
         };
 
-        if (Preferences.getInstance(context).getAppLanguage().equals("en")) {
-            //spannableString.setSpan(clickableSpan, 87, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            ss.setSpan(span, 17, 27, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            tvForgetPassword.setText(ss);
-            tvForgetPassword.setMovementMethod(LinkMovementMethod.getInstance());
-        } else if (Preferences.getInstance(context).getAppLanguage().equals("bn")) {
-            //spannableString.setSpan(clickableSpan, 50, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
+        int s1 = ss.toString().codePointAt(0);
+        if (s1 >= 0x0980 && s1 <= 0x09E0) {
             ss.setSpan(span, 21, ss.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        } else {
+            ss.setSpan(span, 17, ss.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        }
+        tvForgetPassword.setText(ss);
+        tvForgetPassword.setMovementMethod(LinkMovementMethod.getInstance());
+
+        /*if (Locale.getDefault().getLanguage().equalsIgnoreCase(LANGUAGE_EN)) {
+            //spannableString.setSpan(clickableSpan, 87, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            ss.setSpan(span, 17, ss.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             tvForgetPassword.setText(ss);
             tvForgetPassword.setMovementMethod(LinkMovementMethod.getInstance());
         }
+        else if (Locale.getDefault().getLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
+            //spannableString.setSpan(clickableSpan, 50, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            ss.setSpan(span, 10, ss.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            tvForgetPassword.setText(ss);
+            tvForgetPassword.setMovementMethod(LinkMovementMethod.getInstance());
+        }*/
 
         btnSignIn.setOnClickListener(this);
         textViewSignUp.setOnClickListener(this);
@@ -233,8 +239,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                 break;
 
             case R.id.btnOTP:
-                //Intent otpIntent = new Intent(context, VerifyPhoneActivity.class);
-                Intent otpIntent = new Intent(context, VerifyPhoneActivityNew.class);
+                Intent otpIntent = new Intent(context, VerifyPhoneActivity.class);
                 startActivity(otpIntent);
                 break;
 
@@ -515,7 +520,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
 
                         if (response.body().getMessage().equalsIgnoreCase("Please verify Your Account by OTP")) {
                             //Intent verifyPhoneIntent = new Intent(context, VerifyPhoneActivity.class);
-                            Intent verifyPhoneIntent = new Intent(context, VerifyPhoneActivityNew.class);
+                            Intent verifyPhoneIntent = new Intent(context, VerifyPhoneActivity.class);
                             if (checkFields()) {
                                 verifyPhoneIntent.putExtra("mobile_no", mobileNo);
                             }
@@ -547,7 +552,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                                 showMessage(response.body().getMessage());
                                 btnOTP.setVisibility(View.GONE);
                                 //Intent verifyPhoneIntent = new Intent(context, VerifyPhoneActivity.class);
-                                Intent verifyPhoneIntent = new Intent(context, VerifyPhoneActivityNew.class);
+                                Intent verifyPhoneIntent = new Intent(context, VerifyPhoneActivity.class);
                                 verifyPhoneIntent.putExtra("mobile_no", mobileNo);
                                 verifyPhoneIntent.putExtra("password", password);
                                 startActivity(verifyPhoneIntent);
@@ -565,6 +570,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
             @Override
             public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable errors) {
                 Timber.e("Throwable Errors: -> %s", errors.toString());
+                hideLoading();
                 hideProgress();
                 showMessage(context.getResources().getString(R.string.something_went_wrong));
             }

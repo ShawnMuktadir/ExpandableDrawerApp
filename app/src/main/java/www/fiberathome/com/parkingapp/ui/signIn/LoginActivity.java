@@ -27,12 +27,6 @@ public class LoginActivity extends BaseActivity {
 
         context = this;
 
-        /*if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
-            setAppLocale(LANGUAGE_BN);
-        } else {
-            setAppLocale(Preferences.getInstance(context).getAppLanguage());
-        }*/
-
         //Initialize login fragment
         ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
                 LoginFragment.newInstance(), R.id.frameLayout);

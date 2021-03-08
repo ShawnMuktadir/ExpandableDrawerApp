@@ -97,16 +97,8 @@ public class LanguageSettingFragment extends Fragment {
                     LanguagePreferences.getInstance(context).getAppLanguage() != null) {
                 Preferences.getInstance(context).setAppLanguage(language.getIsoCode());
                 LanguagePreferences.getInstance(context).setAppLanguage(language.getIsoCode());
-            } else {
-                int s = context.getResources().getString(R.string.language_settings).toString().codePointAt(0);
-                if (s >= 0x0980 && s <= 0x09E0) {
-                    Preferences.getInstance(context).setAppLanguage(LANGUAGE_BN);
-                    LanguagePreferences.getInstance(context).setAppLanguage(LANGUAGE_BN);
-                } else {
-                    Preferences.getInstance(context).setAppLanguage(LANGUAGE_EN);
-                    LanguagePreferences.getInstance(context).setAppLanguage(LANGUAGE_EN);
-                }
             }
+
             context.startActivityWithFinishAffinity(SplashActivity.class);
         });
 

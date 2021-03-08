@@ -48,7 +48,7 @@ public class VerifyPhoneFragment extends BaseFragment {
     Button btnResendOTP;
 
     @BindView(R.id.countdown)
-    TextView countdown;
+    TextView tvCountdown;
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -179,22 +179,15 @@ public class VerifyPhoneFragment extends BaseFragment {
 
     private void startCountDown() {
         new CountDownTimer(150000, 1000) {
-            //CountDownTimer(edittext1.getText()+edittext2.getText()) also parse it to long
-
             public void onTick(long millisUntilFinished) {
-                //countdown.setText("seconds remaining: " + millisUntilFinished / 1000);
-                if (countdown != null) {
-                    countdown.setText("" + String.format("%d min, %d sec remaining",
+                    tvCountdown.setText("" + String.format("%d min, %d sec remaining",
                             TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
                             TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
                                     TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))));
-                } else {
-                    Toast.makeText(context, "NPE", Toast.LENGTH_SHORT).show();
-                }
             }
 
             public void onFinish() {
-                countdown.setText(context.getResources().getString(R.string.please_wait));
+                tvCountdown.setText(context.getResources().getString(R.string.please_wait));
                 btnResendOTP.setVisibility(View.VISIBLE);
                 btnVerifyOtp.setVisibility(View.INVISIBLE);
                 // enable the edit alert dialog
@@ -225,10 +218,7 @@ public class VerifyPhoneFragment extends BaseFragment {
                         } else if (!response.body().getError()) {
 
                             showMessage(response.body().getMessage());
-
-                            Intent intent = new Intent(context, LoginActivity.class);
-                            startActivity(intent);
-                            context.finish();
+                            context.startActivityWithFinishAffinity(LoginActivity.class);
                             showMessage("Dear " + response.body().getUser().getFullName() + ", Your Registration Completed Successfully...");
                         }
                     } else {

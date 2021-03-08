@@ -129,7 +129,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
         navigationView.getMenu().getItem(0).setChecked(true);
 
         if (!Preferences.getInstance(context).isLoggedIn()) {
-            startActivityWithFinish(LoginActivity.class);
+            startActivityWithFinishAffinity(LoginActivity.class);
             return;
         }
 
