@@ -388,7 +388,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
 
     public void startActivityWithFinish(Class activityClass) {
         startActivity(new Intent(getApplicationContext(), activityClass));
-        finishAffinity();
+        finish();
     }
 
     public void startActivity(Class activityClass) {

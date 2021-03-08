@@ -1,5 +1,6 @@
 package www.fiberathome.com.parkingapp.utils;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -37,7 +38,6 @@ import android.text.style.RelativeSizeSpan;
 import android.text.style.TextAppearanceSpan;
 import android.text.style.UnderlineSpan;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -85,7 +85,7 @@ import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.model.data.preference.StaticData;
+import www.fiberathome.com.parkingapp.model.data.StaticData;
 import www.fiberathome.com.parkingapp.utils.internet.ConnectivityInterceptor;
 
 public class ApplicationUtils {
@@ -1008,5 +1008,16 @@ public class ApplicationUtils {
         marker.draw(canvas);
 
         return bitmap;
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    public static String getCurrentTimeStamp(){
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            return dateFormat.format(new Date());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

@@ -32,7 +32,7 @@
                 android:id="@+id/linearLayoutToolbarTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
+                android:gravity="end"
                 android:layout_gravity="end"
                 android:layout_marginEnd="@dimen/_5sdp"
                 android:paddingStart="@dimen/dim5"
@@ -47,16 +47,17 @@
                     android:layout_height="wrap_content"
                     android:background="@color/transparent"
                     android:text="@string/time_toolbar"
+                    android:layout_gravity="center_vertical"
                     android:textAllCaps="false"
                     android:textColor="#000"
-                    android:textSize="@dimen/_14ssp" />
+                    android:textSize="@dimen/_12ssp" />
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/_10sdp"
+                    android:layout_height="@dimen/_10sdp"
                     android:gravity="center"
                     android:layout_gravity="center"
-                    android:layout_marginStart="@dimen/dim5"
+                    android:layout_marginStart="@dimen/_2sdp"
                     android:src="@drawable/ic_time_clock"
                     app:tint="@color/gray" />
 

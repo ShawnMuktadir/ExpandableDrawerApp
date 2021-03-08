@@ -52,7 +52,7 @@
     <string name="err_confirm_password">যথাযথ পাসওয়ার্ড নিশ্চিত করুন</string>
 
     <string name="no_account_yet_click_here">অ্যাকাউন্ট নেই? ক্লিক করুন</string>
-    <string name="forget_password_click_here">পাসওয়ার্ড ভুলেছেন? ক্লিক করুন</string>
+    <string name="forget_password_click_here">পাসওয়ার্ড ভুলে গেছেন? ক্লিক করুন</string>
 
 
 
@@ -105,7 +105,7 @@
     <string name="demo_number">৭০</string>
     <string name="subject_to_availability">প্রাপ্যতা সাপেক্ষে</string>
     <string name="get_direction">দিক নির্দেশনা</string>
-    <string name="welcome_to_locc_parking">এলওসিসি স্মার্ট পার্কিং এ আপনাকে স্বাগতম</string>
+    <string name="welcome_to_locc_parking">এলওসিসি স্মার্ট পার্কিং এ স্বাগতম</string>
     <string name="exit_message">বাহির হবার জন্য এখানে চাপুন!</string>
     <string name="exit_message_main">বাহির হবার জন্য অকে চাপুন!</string>
     <string name="distance">%1$s</string>
@@ -404,7 +404,6 @@
     <string name="want_change_language">ভাষা পরিবর্তন করতে চান?</string>
     <string name="yes">হ্যাঁ</string>
     <string name="no">না</string>
-    <!--    <string name="change_language">Choose a Language</string>-->
     <string name="where_to">কোথায় যাবেন?</string>
     <string name="search">খুঁজুন…</string>
     <string name="connect_to_internet_splash">দয়া করে ইন্টারনেট সংযোগ করে আবার চেষ্টা করুন</string>
@@ -472,8 +471,8 @@
     <string name="language_settings">ভাষা সেটিংস</string>
     <string name="no_parking_spot_found">দুঃখিত, কোন পার্কিং স্পট পাওয়া যায় নি</string>
     <string name="enter_valid_otp">সঠিক ওটিপি প্রবেশ করুন…</string>
-    <string name="verify_otp">Verify OTP</string>
-    <string name="verify_your_phone_number">Verify your phone number</string>
+    <string name="verify_otp">ওটিপি যাচাই করুন</string>
+    <string name="verify_your_phone_number">আপনার ফোন নম্বর যাচাই করুন</string>
     <string name="something_went_wrong">কিছু ভুল হয়েছে আবার চেষ্টা করুন</string>
 </resources>
 

@@ -1,22 +1,27 @@
 package www.fiberathome.com.parkingapp.ui.settings.adapter;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.Language;
-import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
+import www.fiberathome.com.parkingapp.model.data.preference.LanguagePreferences;
+
+import static www.fiberathome.com.parkingapp.utils.Constants.LANGUAGE_BN;
 
 public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.SettingsViewHolder> {
 
@@ -24,17 +29,20 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.Settin
 
     private final OnItemClickListener listener;
 
+    private Context context;
+
     public LanguageAdapter(List<Language> dataSet, OnItemClickListener listener) {
         this.dataSet = dataSet;
         this.listener = listener;
     }
 
+    @NonNull
     @Override
     public SettingsViewHolder onCreateViewHolder(ViewGroup parent,
                                                  int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.row_language_setting, parent, false);
-
+        context = parent.getContext();
         return new SettingsViewHolder(view);
     }
 
@@ -45,7 +53,20 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.Settin
         viewHolder.textViewLanguageName.setText(data.getName());
         viewHolder.textViewSubLanguageName.setText(data.getSubName());
 
-        if (!data.isSelected()) viewHolder.imageViewCheckedIcon.setVisibility(View.GONE);
+        if (!data.isSelected()) {
+            viewHolder.imageViewCheckedIcon.setVisibility(View.GONE);
+        } else {
+            viewHolder.imageViewCheckedIcon.setVisibility(View.VISIBLE);
+        }
+
+        if (position == 1) {
+            Timber.e("language  position -> %s %s",LanguagePreferences.getInstance(context).getAppLanguage(), position);
+            if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
+                viewHolder.imageViewCheckedIcon.setVisibility(View.VISIBLE);
+            } else {
+                viewHolder.imageViewCheckedIcon.setVisibility(View.GONE);
+            }
+        }
 
         viewHolder.itemView.setOnClickListener(v -> {
             listener.onItemClick(data);

@@ -41,12 +41,6 @@ public class Preferences {
         return instance;
     }
 
-
-    /**
-     * Store User Information after User Login with
-     * ID, FULLNAME, MOBILE_NO, VEHICLE_NO
-     * @param user
-     */
     public void userLogin(User user){
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -56,44 +50,6 @@ public class Preferences {
         editor.putString(KEY_MOBILE_NO, user.getMobileNo());
         editor.putString(KEY_VEHICLE_NO, user.getVehicleNo());
         editor.putString(KEY_PROFILE_PIC, user.getImage());
-        editor.apply();
-    }
-
-    public void setIsWaitingForSMS(boolean isWaiting){
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(KEY_IS_WAITING_FOR_SMS, isWaiting);
-        editor.apply();
-    }
-
-    public boolean isWaitingForSMS(){
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
-        return sharedPreferences.getBoolean(KEY_IS_WAITING_FOR_SMS, false);
-    }
-
-    public void setIsUpdateRequired(boolean isUpdateRequired){
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(KEY_IS_UPDATE_REQUIRED, isUpdateRequired);
-        editor.apply();
-    }
-
-    public boolean isUpdateRequired(){
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
-        return sharedPreferences.getBoolean(KEY_IS_UPDATE_REQUIRED, false);
-    }
-
-    private int checkedItem;
-
-    public int getCheckedItem() {
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
-        return sharedPreferences.getInt(KEY_CHECKED_ITEM, 0);
-    }
-
-    public void setCheckedItem(int checkedItem) {
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt(KEY_CHECKED_ITEM, checkedItem);
         editor.apply();
     }
 
@@ -157,6 +113,44 @@ public class Preferences {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.clear();
+        editor.apply();
+    }
+
+    public void setIsWaitingForSMS(boolean isWaiting){
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(KEY_IS_WAITING_FOR_SMS, isWaiting);
+        editor.apply();
+    }
+
+    public boolean isWaitingForSMS(){
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getBoolean(KEY_IS_WAITING_FOR_SMS, false);
+    }
+
+    public void setIsUpdateRequired(boolean isUpdateRequired){
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(KEY_IS_UPDATE_REQUIRED, isUpdateRequired);
+        editor.apply();
+    }
+
+    public boolean isUpdateRequired(){
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getBoolean(KEY_IS_UPDATE_REQUIRED, false);
+    }
+
+    private int checkedItem;
+
+    public int getCheckedItem() {
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getInt(KEY_CHECKED_ITEM, 0);
+    }
+
+    public void setCheckedItem(int checkedItem) {
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(KEY_CHECKED_ITEM, checkedItem);
         editor.apply();
     }
 }

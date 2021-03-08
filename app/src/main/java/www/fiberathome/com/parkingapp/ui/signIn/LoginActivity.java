@@ -9,8 +9,12 @@ import android.os.Bundle;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
 
+import www.fiberathome.com.parkingapp.model.data.preference.LanguagePreferences;
+import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+
+import static www.fiberathome.com.parkingapp.utils.Constants.LANGUAGE_BN;
 
 public class LoginActivity extends BaseActivity {
 

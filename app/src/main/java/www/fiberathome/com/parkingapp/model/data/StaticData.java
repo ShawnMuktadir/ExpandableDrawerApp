@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.model.data.preference;
+package www.fiberathome.com.parkingapp.model.data;
 
 /**
  * Created by Md. Muktadir on 03-March-2020.
