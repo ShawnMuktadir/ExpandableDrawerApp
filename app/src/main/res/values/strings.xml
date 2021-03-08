@@ -36,7 +36,7 @@
     //password
     <string name="title_change_password">Change Password</string>
     <string name="title_forget_password">Forget Password</string>
-    <string name="retreive_password">Retrieve Password</string>
+    <string name="retrieve_password">Retrieve Password</string>
 
     //error message
     <string name="err_msg_mobile">Enter valid mobile number</string>
