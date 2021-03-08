@@ -1330,7 +1330,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     public void onPause() {
         Timber.e("onPause called");
         super.onPause();
-        hideLoading();
     }
 
     @Override
@@ -1345,10 +1344,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     @Override
     public void onDestroy() {
         Timber.e("onDestroy called");
-
         super.onDestroy();
-
-        hideLoading();
     }
 
     @Override
@@ -3012,10 +3008,14 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 }
 
                 bookingSensorsArrayListGlobal.clear();
-                bookingSensorsArrayList.clear();
                 bookingSensorsMarkerArrayList.clear();
+                bookingSensorsBottomSheetArrayList.clear();
 
                 fetchSensorRetrofit(onConnectedLocation);
+
+                animateCamera(onConnectedLocation);
+
+                bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._92sdp));
 
                 buttonSearch.setText(null);
                 linearLayoutBottom.setVisibility(View.GONE);
