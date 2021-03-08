@@ -19,6 +19,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.google.gson.Gson;
 
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -177,8 +178,12 @@ public class VerifyPhoneFragment extends BaseFragment {
         });
     }
 
+    private CountDownTimer countDownTimer;
+
+    @SuppressLint("SetTextI18n")
     private void startCountDown() {
-        new CountDownTimer(150000, 1000) {
+        countDownTimer = new CountDownTimer(150000, 1000) {
+            @SuppressLint("DefaultLocale")
             public void onTick(long millisUntilFinished) {
                     tvCountdown.setText("" + String.format("%d min, %d sec remaining",
                             TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
@@ -190,7 +195,6 @@ public class VerifyPhoneFragment extends BaseFragment {
                 tvCountdown.setText(context.getResources().getString(R.string.please_wait));
                 btnResendOTP.setVisibility(View.VISIBLE);
                 btnVerifyOtp.setVisibility(View.INVISIBLE);
-                // enable the edit alert dialog
             }
         }.start();
     }
@@ -216,9 +220,9 @@ public class VerifyPhoneFragment extends BaseFragment {
                         if (response.body().getError() && response.body().getMessage().equalsIgnoreCase("Sorry! Failed to Verify Your Account by OYP.")) {
                             showMessage("Sorry! Failed to Verify Your Account by OTP.");
                         } else if (!response.body().getError()) {
-
                             showMessage(response.body().getMessage());
                             context.startActivityWithFinishAffinity(LoginActivity.class);
+                            countDownTimer.cancel();
                             showMessage("Dear " + response.body().getUser().getFullName() + ", Your Registration Completed Successfully...");
                         }
                     } else {

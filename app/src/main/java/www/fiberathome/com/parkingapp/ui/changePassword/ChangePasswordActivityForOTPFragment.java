@@ -94,6 +94,11 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
         super.onDestroyView();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
     private void setListeners() {
         txtPinEntry.addTextChangedListener(new TextWatcher() {
             @Override
@@ -178,9 +183,13 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
         });
     }
 
-    private void startCountDown() {
-        new CountDownTimer(150000, 1000) {
+    CountDownTimer countDownTimer;
 
+    @SuppressLint("SetTextI18n")
+    private void startCountDown() {
+        countDownTimer = new CountDownTimer(150000, 1000) {
+
+            @SuppressLint("DefaultLocale")
             public void onTick(long millisUntilFinished) {
                 tvCountdown.setText("" + String.format("%d min, %d sec remaining",
                         TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
@@ -192,7 +201,6 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
                 tvCountdown.setText(context.getResources().getString(R.string.please_wait));
                 btnResendOTP.setVisibility(View.VISIBLE);
                 btnVerifyOtp.setVisibility(View.INVISIBLE);
-                // enable the edit alert dialog
             }
         }.start();
 
@@ -225,9 +233,10 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
 
                             SharedData.getInstance().setOtp(otp);
 
-                            Intent intent = new Intent(context, ChangePasswordActivity.class);
+                            Intent intent = new Intent(context, ChangeNewPasswordActivity.class);
                             startActivity(intent);
                             context.finish();
+                            countDownTimer.cancel();
                         }
                     } else {
                         showMessage(response.body().getMessage());

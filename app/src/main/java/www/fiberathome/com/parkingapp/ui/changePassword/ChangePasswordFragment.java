@@ -70,6 +70,7 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
     Button changePasswordBtn;
 
     private Context context;
+
     private Unbinder unbinder;
 
     public ChangePasswordFragment() {

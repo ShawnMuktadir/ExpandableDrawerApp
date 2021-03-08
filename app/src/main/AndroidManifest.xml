@@ -81,7 +81,7 @@
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
-            android:name=".ui.changePassword.ChangePasswordActivity"
+            android:name=".ui.changePassword.ChangeNewPasswordActivity"
             android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.DefaultActionBar" />
 

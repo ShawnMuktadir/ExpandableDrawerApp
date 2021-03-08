@@ -60,8 +60,6 @@
                 android:textIsSelectable="true"
                 android:textSize="20sp" />
 
-<!--            android:digits="1234567890"-->
-
             <Button
                 android:id="@+id/btn_verify_otp"
                 android:layout_width="wrap_content"

@@ -5,16 +5,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
-import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatButton;
 
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -39,7 +36,7 @@ import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
 
 @SuppressLint("NonConstantResourceId")
-public class ChangePasswordActivity extends BaseActivity implements View.OnClickListener {
+public class ChangeNewPasswordActivity extends BaseActivity {
 
     @BindView(R.id.textInputLayoutOldPassword)
     TextInputLayout textInputLayoutOldPassword;
@@ -60,7 +57,7 @@ public class ChangePasswordActivity extends BaseActivity implements View.OnClick
     EditText editTextConfirmPassword;
 
     @BindView(R.id.changePasswordBtn)
-    Button changePasswordBtn;
+    AppCompatButton changePasswordBtn;
 
     private Context context;
 
@@ -74,16 +71,17 @@ public class ChangePasswordActivity extends BaseActivity implements View.OnClick
         context = this;
 
         unbinder = ButterKnife.bind(this);
+
+        setListeners();
     }
 
-    @SuppressLint("NonConstantResourceId")
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.changePasswordBtn:
+    private void setListeners() {
+        changePasswordBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 changePassword();
-                break;
-        }
+            }
+        });
     }
 
     @Override
@@ -93,7 +91,7 @@ public class ChangePasswordActivity extends BaseActivity implements View.OnClick
                 .setNegativeButton(android.R.string.no, null)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
-                        ChangePasswordActivity.super.onBackPressed();
+                        ChangeNewPasswordActivity.super.onBackPressed();
                         TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                     }
                 }).create();
@@ -127,7 +125,6 @@ public class ChangePasswordActivity extends BaseActivity implements View.OnClick
             String newPassword = editTextNewPassword.getText().toString().trim();
 
             String confirmPassword = editTextConfirmPassword.getText().toString().trim();
-            //String mobileNo = user.getMobileNo().trim();
 
             String mobileNo = SharedData.getInstance().getForgetPasswordMobile();
 
