@@ -210,16 +210,16 @@ public class ForgetPasswordFragment extends BaseFragment {
 
                 if (response.body() != null) {
                     if (!response.body().getError()) {
-                        showMessage(response.body().getMessage());
+                        ApplicationUtils.showToastMessage(context, response.body().getMessage());
                     } else {
                         if (response.body().getMessage().equalsIgnoreCase("Try Again! Invalid Mobile Number.")) {
                             TastyToastUtils.showTastyErrorToast(context,
                                     context.getResources().getString(R.string.mobile_number_not_exist));
                         } else {
-                            showMessage(response.body().getMessage());
+                            ApplicationUtils.showToastMessage(context, response.body().getMessage());
                             if (response.body().getError()) {
 
-                                showMessage(response.body().getMessage());
+                                ApplicationUtils.showToastMessage(context, response.body().getMessage());
 
                                 Intent intent = new Intent(context, ChangePasswordActivityForOTPNew.class);
                                 intent.putExtra("mobile_no", mobileNo);
@@ -227,7 +227,7 @@ public class ForgetPasswordFragment extends BaseFragment {
                                 SharedData.getInstance().setForgetPasswordMobile(mobileNo);
                                 context.finish();
                             } else {
-                                showMessage(response.body().getMessage());
+                                ApplicationUtils.showToastMessage(context, response.body().getMessage());
                             }
                         }
                     }
@@ -238,13 +238,8 @@ public class ForgetPasswordFragment extends BaseFragment {
             public void onFailure(@NonNull Call<BaseResponse> call, @NonNull Throwable errors) {
                 Timber.e("Throwable Errors: -> %s", errors.toString());
                 hideLoading();
-                TastyToastUtils.showTastyErrorToast(context,
-                        context.getResources().getString(R.string.mobile_number_not_exist));
+                ApplicationUtils.showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
         });
-    }
-
-    private void showMessage(String message) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 }

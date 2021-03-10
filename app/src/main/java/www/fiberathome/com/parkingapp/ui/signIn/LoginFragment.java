@@ -193,19 +193,6 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
         tvForgetPassword.setText(ss);
         tvForgetPassword.setMovementMethod(LinkMovementMethod.getInstance());
 
-        /*if (Locale.getDefault().getLanguage().equalsIgnoreCase(LANGUAGE_EN)) {
-            //spannableString.setSpan(clickableSpan, 87, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            ss.setSpan(span, 17, ss.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            tvForgetPassword.setText(ss);
-            tvForgetPassword.setMovementMethod(LinkMovementMethod.getInstance());
-        }
-        else if (Locale.getDefault().getLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
-            //spannableString.setSpan(clickableSpan, 50, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            ss.setSpan(span, 10, ss.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            tvForgetPassword.setText(ss);
-            tvForgetPassword.setMovementMethod(LinkMovementMethod.getInstance());
-        }*/
-
         btnSignIn.setOnClickListener(this);
         textViewSignUp.setOnClickListener(this);
         btnOTP.setOnClickListener(this);
@@ -376,113 +363,6 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
 
     }
 
-    /*private void checkLogin(final String mobileNo, final String password) {
-
-        showLoading(context);
-
-        showProgress();
-
-        btnOTP.setVisibility(View.GONE);
-
-        HttpsTrustManager.allowAllSSL();
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_LOGIN, response -> {
-            // remove the progress bar
-            Timber.e("URL -> %s", AppConfig.URL_LOGIN);
-
-            hideLoading();
-
-            hideProgress();
-
-            try {
-                JSONObject jsonObject = new JSONObject(response);
-
-                Timber.e("jsonObject login-> %s", jsonObject.toString());
-
-                if (!jsonObject.getBoolean("error")) {
-
-                    // getting the user from the response
-                    JSONObject userJson = jsonObject.getJSONObject("user");
-
-                    // creating a new user object
-                    User user = new User();
-                    user.setId(userJson.getInt("id"));
-                    user.setFullName(userJson.getString("fullname"));
-                    user.setMobileNo(userJson.getString("mobile_no"));
-                    user.setVehicleNo(userJson.getString("vehicle_no"));
-                    user.setImage(userJson.getString("image"));
-
-                    // storing the user in sharedPreference
-                    Preferences.getInstance(context).userLogin(user);
-                    Timber.e("user after login -> %s", new Gson().toJson(user));
-
-                    if (response.equals("Please verify Your Account by OTP")) {
-                        Intent verifyPhoneIntent = new Intent(context, VerifyPhoneActivity.class);
-                        if (checkFields()) {
-                            verifyPhoneIntent.putExtra("mobile_no", mobileNo);
-                        }
-                        startActivity(verifyPhoneIntent);
-                        context.finish();
-                    } else {
-                        if ((ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
-                            Timber.e("activity login if -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
-                            Intent intent = new Intent(context, PermissionActivity.class);
-                            startActivity(intent);
-                            context.finish();
-                        } else if (!Preferences.getInstance(context).isWaitingForLocationPermission()) {
-                            Timber.e("activity login else if -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
-                            Intent intent = new Intent(context, PermissionActivity.class);
-                            startActivity(intent);
-                            context.finish();
-                        } else {
-                            Timber.e("activity login else -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
-                            Intent intent = new Intent(context, HomeActivity.class);
-                            startActivity(intent);
-                            context.finish();
-                        }
-                    }
-
-                } else if (jsonObject.getBoolean("error") && jsonObject.has("authentication")) {
-                    // IF ERROR OCCURS AND AUTHENTICATION IS INVALID
-                    if (jsonObject.getString("message").equals("Please verify Your Account by OTP")) {
-                        showMessage("Please verify Your Account by OTP");
-                        btnOTP.setVisibility(View.GONE);
-                        Intent verifyPhoneIntent = new Intent(context, VerifyPhoneActivity.class);
-                        verifyPhoneIntent.putExtra("mobile_no", mobileNo);
-                        verifyPhoneIntent.putExtra("password", password);
-                        startActivity(verifyPhoneIntent);
-                        context.finish();
-                    }
-                } else {
-                    Timber.e("LoginActivity error message -> %s", jsonObject.getString("message"));
-                    showMessage(jsonObject.getString("message"));
-                }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-        }, error -> {
-            Timber.e("Error Message -> %s ", error.getMessage());
-            hideProgress();
-            if (Objects.requireNonNull(error.getMessage()).equals("java.net.ConnectException: failed to connect to /163.47.157.195 (port 80) after 50000ms: connect failed: ENETUNREACH (Network is unreachable)") || Objects.requireNonNull(error.getMessage()).equals("")) {
-                //showMessage(error.getMessage());
-                showMessage(context.getResources().getString(R.string.connect_to_internet));
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("mobile_no", mobileNo);
-                params.put("password", password);
-                Timber.e("LoginActivity params -> %s", params);
-                return params;
-            }
-        };
-        stringRequest.setRetryPolicy(new DefaultRetryPolicy(50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        ParkingApp.getInstance().addToRequestQueue(stringRequest, TAG);
-    }*/
-
     private void checkLogin(final String mobileNo, final String password) {
 
         showLoading(context);
@@ -549,7 +429,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                         if (response.body().getError() && !response.body().getAuthentication()) {
                             // IF ERROR OCCURS AND AUTHENTICATION IS INVALID
                             if (response.body().getMessage().equalsIgnoreCase("Please verify Your Account by OTP")) {
-                                showMessage(response.body().getMessage());
+                                ApplicationUtils.showToastMessage(context, response.body().getMessage());
                                 btnOTP.setVisibility(View.GONE);
                                 //Intent verifyPhoneIntent = new Intent(context, VerifyPhoneActivity.class);
                                 Intent verifyPhoneIntent = new Intent(context, VerifyPhoneActivity.class);
@@ -560,10 +440,10 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                             }
                         }
                     } else {
-                        showMessage(response.body().getMessage());
+                        ApplicationUtils.showToastMessage(context, response.body().getMessage());
                     }
                 } else {
-                    showMessage(response.body().getMessage());
+                    ApplicationUtils.showToastMessage(context, response.body().getMessage());
                 }
             }
 
@@ -572,22 +452,8 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                 Timber.e("Throwable Errors: -> %s", errors.toString());
                 hideLoading();
                 hideProgress();
-                showMessage(context.getResources().getString(R.string.something_went_wrong));
+                ApplicationUtils.showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
         });
-    }
-
-    private void showMessage(String message) {
-        //Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
-        final Toast toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
-        toast.show();
-
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                toast.cancel();
-            }
-        }, 2000);
     }
 }

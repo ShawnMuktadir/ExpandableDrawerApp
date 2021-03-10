@@ -440,7 +440,7 @@ public class ApplicationUtils {
         return longValue;
     }
 
-    public static void createToastMessage(Context context, String message) {
+    public static void showToastMessage(Context context, String message) {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show();
     }
 
@@ -1020,4 +1020,6 @@ public class ApplicationUtils {
             return null;
         }
     }
+
+
 }

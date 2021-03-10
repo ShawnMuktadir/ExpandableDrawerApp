@@ -4,13 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-
-import com.google.android.material.textfield.TextInputLayout;
-import com.google.gson.Gson;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -18,7 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.google.android.material.textfield.TextInputLayout;
+import com.google.gson.Gson;
 
 import java.util.Objects;
 
@@ -34,14 +32,14 @@ import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
-import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
-import www.fiberathome.com.parkingapp.model.user.User;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
+import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.response.BaseResponse;
+import www.fiberathome.com.parkingapp.model.user.User;
+import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
-import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 
 @SuppressLint("NonConstantResourceId")
 public class ChangePasswordFragment extends BaseFragment implements View.OnClickListener {
@@ -93,7 +91,7 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         unbinder = ButterKnife.bind(this, view);
-        context =  getActivity();
+        context = getActivity();
         if (getActivity() != null)
             getActivity().setTitle(R.string.title_change_password);
 
@@ -278,16 +276,16 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
 
                 if (response.body() != null) {
                     if (!response.body().getError()) {
-                        showMessage(response.body().getMessage());
+                        ApplicationUtils.showToastMessage(context, response.body().getMessage());
 
                         Preferences.getInstance(context).logout();
                         Intent intentLogout = new Intent(context, LoginActivity.class);
                         startActivity(intentLogout);
-                        if (getActivity()!= null) {
+                        if (getActivity() != null) {
                             getActivity().finishAffinity();
                         }
                     } else {
-                        showMessage(response.body().getMessage());
+                        ApplicationUtils.showToastMessage(context, response.body().getMessage());
                     }
                 }
             }
@@ -299,17 +297,13 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
         });
     }
 
-    private void showMessage(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-    }
-
     private boolean checkPassWordAndConfirmPassword(String password, String confirmPassword) {
         boolean passStatus = false;
         if (confirmPassword != null && password != null) {
             if (password.equals(confirmPassword)) {
                 passStatus = true;
             } else {
-                Toast.makeText(context, context.getString(R.string.err_confirm_password), Toast.LENGTH_SHORT).show();
+                ApplicationUtils.showToastMessage(context, context.getString(R.string.err_confirm_password));
             }
         }
         return passStatus;
@@ -322,7 +316,7 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
             if (password.equals(oldPassword)) {
                 passStatus = true;
             } else {
-                Toast.makeText(context, context.getString(R.string.err_old_password), Toast.LENGTH_SHORT).show();
+                ApplicationUtils.showToastMessage(context, context.getString(R.string.err_old_password));
             }
         }
         return passStatus;

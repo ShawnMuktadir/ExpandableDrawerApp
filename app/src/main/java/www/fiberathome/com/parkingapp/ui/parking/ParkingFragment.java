@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -19,6 +20,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -423,7 +425,8 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
             @Override
             public void onFailure(Call<ParkingSlotResponse> call, Throwable t) {
                 Timber.e("onFailure -> %s", t.getMessage());
-                ApplicationUtils.showMessageDialog("Something went wrong...Please try later!", context);
+                hideLoading();
+                ApplicationUtils.showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
         });
     }
@@ -469,7 +472,6 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
         this.sensorAreas = sensorAreas;
 
         parkingAdapter = new ParkingAdapter(context, sensorAreas, onConnectedLocation, (position, lat, lng, parkingAreaName, count) -> {
-            //Toast.makeText(context, "Clicked", Toast.LENGTH_SHORT).show();
 
             long now = System.currentTimeMillis();
 

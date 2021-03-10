@@ -1,8 +1,7 @@
-package www.fiberathome.com.parkingapp.ui.changePassword;
+package www.fiberathome.com.parkingapp.ui.changePassword.newPassword;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -16,9 +15,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
-import www.fiberathome.com.parkingapp.ui.forgetPassword.ForgetPasswordFragment;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
-import www.fiberathome.com.parkingapp.ui.signUp.SignUpActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 

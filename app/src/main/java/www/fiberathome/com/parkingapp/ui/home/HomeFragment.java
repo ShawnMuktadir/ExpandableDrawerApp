@@ -496,8 +496,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
             initUI(view);
 
-            setListeners();
-            Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+
             bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
             bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._92sdp));
             bottomSheetBehavior.setHideable(false);
@@ -566,11 +565,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     ft.commit();
                     supportMapFragment.getMapAsync(this);
                 } else {
-                    Toast.makeText(requireActivity(), "Unable to load map", Toast.LENGTH_SHORT).show();
+                    ApplicationUtils.showToastMessage(context, "Unable to load map");
                 }
 
             } else {
-                Toast.makeText(context, "Play services are required by this application", Toast.LENGTH_SHORT).show();
+                ApplicationUtils.showToastMessage(context, "Play services are required by this application");
             }
 
             polyLineList = new ArrayList<>();
@@ -728,9 +727,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                     previousSecondMarkerDestinationMarker.remove();
                                     previousSecondMarkerDestinationMarker = null;
                                 }
-                                /*else {
-                                    previousSecondMarkerDestinationMarker = mMap.addMarker(markerOptions);
-                                }*/
                                 //Toast.makeText(context, "previous", Toast.LENGTH_SHORT).show();
                             } else {
                                 //Toast.makeText(context, "previous null", Toast.LENGTH_SHORT).show();
@@ -860,7 +856,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             }
 
                         } else {
-                            Toast.makeText(context, "Something went wrong!!! Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                            ApplicationUtils.showToastMessage(context, "Something went wrong!!! Please check your Internet connection");
                         }
                     }
                 }
@@ -1324,6 +1320,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     public void onResume() {
         Timber.e("onResume called");
         super.onResume();
+        setListeners();
     }
 
     @Override
@@ -1471,10 +1468,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             }
                         }
                     } else {
-                        Toast.makeText(context, "Something went wrong!!! Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                        ApplicationUtils.showToastMessage(context, "Something went wrong!!! Please check your Internet connection");
                     }
                 } else {
-                    Toast.makeText(context, "Location cannot be identified!!!", Toast.LENGTH_SHORT).show();
+                    ApplicationUtils.showToastMessage(context,"Location cannot be identified!!!");
                 }
             }
 
@@ -1572,10 +1569,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             }
                         }
                     } else {
-                        Toast.makeText(context, "Something went wrong!!! Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                        ApplicationUtils.showToastMessage(context,context.getResources().getString(R.string.something_went_wrong));
                     }
                 } else {
-                    Toast.makeText(context, "Location cannot be identified!!!", Toast.LENGTH_SHORT).show();
+                    ApplicationUtils.showToastMessage(context,"Location cannot be identified!!!");
                 }
             }
         } else {
@@ -1596,7 +1593,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 hideLoading();
 
                 if (providerEnabled) {
-                    Toast.makeText(context, "GPS is enabled", Toast.LENGTH_SHORT).show();
+                    ApplicationUtils.showToastMessage(context, "GPS is enabled");
                     Timber.e("providerEnabled HomeFragment check called");
 
                     supportMapFragment = SupportMapFragment.newInstance();
@@ -1608,7 +1605,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         supportMapFragment.getMapAsync(HomeFragment.this);
                         ApplicationUtils.reLoadFragment(getParentFragmentManager(), HomeFragment.this);
                     } else {
-                        Toast.makeText(context, "Enable your Gps Location", Toast.LENGTH_SHORT).show();
+                        ApplicationUtils.showToastMessage(context, "Enable your Gps Location");
                     }
 
                     //progressDialog = ApplicationUtils.progressDialog(context, "Initializing....");
@@ -1644,12 +1641,12 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     } else {
                         linearLayoutParkingAdapterBackBottom.setOnClickListener(v -> {
                             //ApplicationUtils.showMessageDialog("Hey Shawn!!!", getContext());
-                            Toast.makeText(context, "", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(context, "", Toast.LENGTH_SHORT).show();
                         });
                     }
 
                 } else {
-                    Toast.makeText(context, "GPS not enabled. Unable to show user location", Toast.LENGTH_SHORT).show();
+                    ApplicationUtils.showToastMessage(context, "GPS not enabled. Unable to show user location");
                 }
 
             }, 6000);
@@ -2100,8 +2097,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         }
                     }, sensorArrayList, bottomSheetPlaceLatLng, bookingSensorsBottomSheetArrayList, finalUid);
                 } else {
-                    Toast.makeText(context, context.getResources().getString(R.string.something_went_wrong_please_check_internet_connection),
-                            Toast.LENGTH_SHORT).show();
+                    ApplicationUtils.showToastMessage(context, context.getResources().getString(R.string.something_went_wrong_please_check_internet_connection));
                 }
             } else {
                 ApplicationUtils.showAlertDialog(context.getString(R.string.you_have_to_exit_from_current_destination), context, context.getString(R.string.yes), context.getString(R.string.no), (dialog, which) -> {
@@ -2461,7 +2457,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                 String message = "Total Distance is " + distance + " and Estimated Time is " + duration;
                                 Timber.e("duration message -> %s", message);
                             } else if (status.equals(RequestResult.NOT_FOUND)) {
-                                Toast.makeText(context, context.getResources().getString(R.string.no_route_exist), Toast.LENGTH_SHORT).show();
+                                ApplicationUtils.showToastMessage(context,context.getResources().getString(R.string.no_route_exist));
                             }
                         }
 
@@ -2553,7 +2549,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
-                        Toast.makeText(context, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        ApplicationUtils.showToastMessage(context, "Error: " + t.getMessage());
                     }
                 });
 
@@ -3143,7 +3139,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             btnGetDirection.setEnabled(true);
                             btnGetDirection.setFocusable(true);
                             btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
-                            Toast.makeText(context, context.getResources().getString(R.string.you_can_book_parking_slot), Toast.LENGTH_LONG).show();
+                            ApplicationUtils.showToastMessage(context, context.getResources().getString(R.string.you_can_book_parking_slot));
                         } else {
                             btnGetDirection.setEnabled(true);
                             btnGetDirection.setFocusable(true);
@@ -3306,7 +3302,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                 btnMarkerGetDirection.setEnabled(true);
                                 btnMarkerGetDirection.setFocusable(true);
                                 btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
-                                Toast.makeText(context, context.getResources().getString(R.string.you_can_book_parking_slot), Toast.LENGTH_LONG).show();
+                                ApplicationUtils.showToastMessage(context, context.getResources().getString(R.string.you_can_book_parking_slot));
                             }
                         } else {
                             btnMarkerGetDirection.setEnabled(true);
@@ -3395,7 +3391,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                 btnBottomSheetGetDirection.setEnabled(true);
                                 btnBottomSheetGetDirection.setFocusable(true);
                                 btnBottomSheetGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
-                                Toast.makeText(context, context.getResources().getString(R.string.you_can_book_parking_slot), Toast.LENGTH_LONG).show();
+                                ApplicationUtils.showToastMessage(context, context.getResources().getString(R.string.you_can_book_parking_slot));
                             }
                         } else {
                             btnBottomSheetGetDirection.setEnabled(true);
@@ -3438,9 +3434,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             listener.fragmentChange(scheduleFragment);
         });
 
-        btnLiveParking.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
+        btnLiveParking.setOnClickListener(v -> ApplicationUtils.showToastMessage(context, "Coming Soon..."));
 
-        textViewTermsCondition.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
+        textViewTermsCondition.setOnClickListener(v -> ApplicationUtils.showToastMessage(context, "Coming Soon..."));
     }
 
     private void setTimer(long difference) {
@@ -3555,7 +3551,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     @Override
     public void onLoadLocationFailed(String message) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+        ApplicationUtils.showToastMessage(context, message);
     }
 
     private void initArea() {
@@ -3581,7 +3577,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(context, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        ApplicationUtils.showToastMessage(context, "" + e.getMessage());
                     }
                 });
     }
@@ -3684,7 +3680,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             return true;
         } else if (googleApi.isUserResolvableError(result)) {
             Dialog dialog = googleApi.getErrorDialog(context, result, PLAY_SERVICES_ERROR_CODE, task ->
-                    Toast.makeText(context, "Dialog is cancelled by User", Toast.LENGTH_SHORT).show());
+                    ApplicationUtils.showToastMessage(context,"Dialog is cancelled by User"));
             dialog.show();
         }
 
@@ -3729,12 +3725,12 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         polyline = mMap.addPolyline(getDefaultPolyLines(points));
 
         if (origin.isEmpty() || destination.isEmpty()) {
-            Toast.makeText(context, "Please first fill all the fields!", Toast.LENGTH_SHORT).show();
+            ApplicationUtils.showToastMessage(context, "Please first fill all the fields!");
             return;
         }
 
         if (!origin.contains(",") || !destination.contains(",")) {
-            Toast.makeText(context, "Invalid data fill in fields!", Toast.LENGTH_SHORT).show();
+            ApplicationUtils.showToastMessage(context, "Invalid data fill in fields!");
             return;
         }
 
@@ -3775,177 +3771,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 polyline = mMap.addPolyline(polylineOptions);
             }
         } catch (Exception e) {
-            Toast.makeText(context, "Error occurred on finding the directions...", Toast.LENGTH_SHORT).show();
+            ApplicationUtils.showToastMessage(context, "Error occurred on finding the directions...");
         }
     }
-
-    /*@SuppressLint("StaticFieldLeak")
-    public class TaskRequestDirections extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... strings) {
-            String responseString = "";
-            responseString = requestDirection(strings[0]);
-            return responseString;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            //Parse json here
-            TaskParser taskParser = new TaskParser();
-            taskParser.execute(s);
-        }
-    }
-
-    private String requestDirection(String reqUrl) {
-        String responseString = "";
-        InputStream inputStream = null;
-        HttpURLConnection httpURLConnection = null;
-        try {
-            URL url = new URL(reqUrl);
-            httpURLConnection = (HttpURLConnection) url.openConnection();
-            httpURLConnection.connect();
-
-            //Get the response result
-            inputStream = httpURLConnection.getInputStream();
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-
-            StringBuilder stringBuilder = new StringBuilder();
-            String line = "";
-            while ((line = bufferedReader.readLine()) != null) {
-                stringBuilder.append(line);
-            }
-            responseString = stringBuilder.toString();
-            bufferedReader.close();
-            inputStreamReader.close();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            httpURLConnection.disconnect();
-        }
-        return responseString;
-    }*/
-
-    /*@SuppressLint("StaticFieldLeak")
-    public class TaskParser extends AsyncTask<String, Void, List<List<HashMap<String, String>>>> {
-
-        @Override
-        protected List<List<HashMap<String, String>>> doInBackground(String... strings) {
-            JSONObject jsonObject = null;
-            List<List<HashMap<String, String>>> routes = null;
-            try {
-                jsonObject = new JSONObject(strings[0]);
-                DirectionsParser directionsParser = new DirectionsParser();
-                routes = directionsParser.parse(jsonObject);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return routes;
-        }
-
-        @Override
-        protected void onPostExecute(List<List<HashMap<String, String>>> lists) {
-            //Get list route and display it into the map
-
-            ArrayList points = null;
-            PolylineOptions polylineOptions = null;
-            MarkerOptions markerOptions = new MarkerOptions();
-            String distance = "";
-
-            try {
-                if (lists != null && lists.size() < 1) {
-                    Timber.e("lists size -> %s", lists.size());
-                    //Toast.makeText(context, "No Points", Toast.LENGTH_SHORT).show();
-                    return;
-                } else {
-                    Timber.e("lists size -> %s", lists.size());
-                }
-            } catch (Exception e) {
-                e.getCause();
-            }
-            String duration = "";
-
-
-            for (List<HashMap<String, String>> path : lists) {
-                points = new ArrayList();
-                polylineOptions = new PolylineOptions();
-                //for (int j = 0; j < path.size(); j++) {
-                for (HashMap<String, String> point : path) {
-                    double lat = ApplicationUtils.convertToDouble(point.get("lat"));
-                    double lon = ApplicationUtils.convertToDouble(point.get("lon"));
-
-                    //TODO
-                    if (j == 0) {    // Get distance from the list
-                            distance = (String) point.get("distance");
-                            continue;
-                        } else if (j == 1) { // Get duration from the list
-                            duration = (String) point.get("duration");
-                            continue;
-                        }
-
-                    Timber.e("duration -> %s", duration);
-
-                    points.add(new LatLng(lat, lon));
-                }
-            }
-            polylineOptions.addAll(points);
-            polylineOptions.width(5);
-            if (flag == 1) {
-                //polylineOptions.color(Color.BLACK);
-                polylineOptions.color(context.getResources().getColor(R.color.route_color));
-                polylineOptions.width(5);
-            } else if (flag == 2) {
-                if (mMap != null)
-                    mMap.clear();
-                polylineOptions.color(Color.TRANSPARENT);
-                polylineOptions.width(5);
-            }
-            flag++;
-
-            polylineOptions.geodesic(true);
-            if (polylineOptions != null) {
-                mMap.addPolyline(polylineOptions);
-            } else {
-                Toast.makeText(context, "Direction not found!", Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        public double showDistance(LatLng from, LatLng to) {
-
-            int Radius = 6371;// radius of earth in Km
-            double lat1 = from.latitude;
-            double lat2 = to.latitude;
-            double lon1 = from.longitude;
-            double lon2 = to.longitude;
-            double dLat = Math.toRadians(lat2 - lat1);
-            double dLon = Math.toRadians(lon2 - lon1);
-            double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
-                    + Math.cos(Math.toRadians(lat1))
-                    * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon / 2)
-                    * Math.sin(dLon / 2);
-
-            double c = 2.5 * Math.asin(Math.sqrt(a));
-            double valueResult = Radius * c;
-
-            double km = valueResult / 1;
-            DecimalFormat newFormat = new DecimalFormat("####");
-            int kmInDec = Integer.parseInt(newFormat.format(km));
-            double meter = valueResult % 1000;
-            int meterInDec = Integer.parseInt(newFormat.format(meter));
-            Timber.i("showDistance" + valueResult + "   KM  " + kmInDec
-                    + " Meter   " + meterInDec);
-
-            return (Radius * c);
-        }
-    }*/
 }

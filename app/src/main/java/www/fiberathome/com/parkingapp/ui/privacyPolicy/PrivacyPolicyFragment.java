@@ -182,7 +182,6 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
                             termsConditionTemp.setTitle(array2.getString(6).trim());
                             termsConditionTemp.setDescription(array2.getString(2).trim());
                         } else {
-
                             termsCondition.setTitle(array.getString(6).trim());
                             termsCondition.setDescription(array.getString(2).trim());
 
@@ -204,6 +203,8 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
             @Override
             public void onErrorResponse(VolleyError e) {
                 e.printStackTrace();
+                hideLoading();
+                ApplicationUtils.showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
         }) {
 

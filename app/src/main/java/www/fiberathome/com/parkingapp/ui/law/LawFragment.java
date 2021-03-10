@@ -241,18 +241,18 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
                 if (contents.length() > 0) {
                     //do search
                     if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_EN)
-                            && ApplicationUtils.textContainsBangla(contents.toString())) {
+                            && ApplicationUtils.textContainsBangla(contents)) {
                         setNoDataForBangla();
                         recyclerView.setVisibility(View.GONE);
                         editTextSearchLaw.setText("");
                     } else if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN)
-                            && ApplicationUtils.textContainsEnglish(contents.toString())) {
+                            && ApplicationUtils.textContainsEnglish(contents)) {
                         setNoDataForEnglish();
                         recyclerView.setVisibility(View.GONE);
                         editTextSearchLaw.setText("");
                     } else {
                         recyclerView.setVisibility(View.VISIBLE);
-                        lawAdapter.getFilter().filter(contents.toString());
+                        lawAdapter.getFilter().filter(contents);
                     }
                 } else {
                     //if something to do for empty edit text

@@ -580,7 +580,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
                 if (response.body() != null) {
                     if (!response.body().getError()) {
-                        showMessage(response.body().getMessage());
+                        ApplicationUtils.showToastMessage(context, response.body().getMessage());
 
                         // Moving the screen to next pager item i.e otp screen
                         Intent intent = new Intent(context, VerifyPhoneActivity.class);
@@ -590,20 +590,20 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                     } else {
                         Timber.e("jsonObject else called");
                         if (response.body().getMessage().equalsIgnoreCase("Sorry! mobile number is not valid or missing mate")) {
-                            showMessage("Mobile Number/Vehicle Registration Number already exists or Image Size is too large");
+                            ApplicationUtils.showToastMessage(context, "Mobile Number/Vehicle Registration Number already exists or Image Size is too large");
                         } else if (!response.body().getMessage().equalsIgnoreCase("Sorry! mobile number is not valid or missing mate")) {
-                            showMessage(response.body().getMessage());
+                            ApplicationUtils.showToastMessage(context, response.body().getMessage());
                         }
                     }
                 } else {
-                    showMessage(response.body().getMessage());
+                    ApplicationUtils.showToastMessage(context, response.body().getMessage());
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<BaseResponse> call, @NonNull Throwable errors) {
                 Timber.e("Throwable Errors: -> %s", errors.toString());
-                showMessage(context.getResources().getString(R.string.something_went_wrong));
+                ApplicationUtils.showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
                 hideLoading();
                 hideProgress();
             }
@@ -617,9 +617,5 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         boolean isPasswordValid = Validator.checkValidity(textInputLayoutPassword, editTextPassword.getText().toString(), context.getString(R.string.err_msg_password_signup), "textPassword");
 
         return isNameValid && isPhoneValid && isVehicleRegValid && isPasswordValid;
-    }
-
-    private void showMessage(String message) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 }

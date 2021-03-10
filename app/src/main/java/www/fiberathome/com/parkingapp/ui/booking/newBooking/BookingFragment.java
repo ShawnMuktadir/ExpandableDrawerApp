@@ -242,6 +242,8 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
             @Override
             public void onFailure(@NonNull Call<BookedResponse> call, @NonNull Throwable errors) {
                 Timber.e("Throwable Errors: -> %s", errors.toString());
+                hideLoading();
+                ApplicationUtils.showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
         });
     }

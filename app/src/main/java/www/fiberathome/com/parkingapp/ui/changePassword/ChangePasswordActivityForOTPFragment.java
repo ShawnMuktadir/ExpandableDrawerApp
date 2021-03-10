@@ -11,12 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
+import com.poovam.pinedittextfield.SquarePinField;
 
 import java.util.concurrent.TimeUnit;
 
@@ -35,9 +35,9 @@ import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 import www.fiberathome.com.parkingapp.model.response.login.LoginResponse;
+import www.fiberathome.com.parkingapp.ui.changePassword.newPassword.ChangeNewPasswordActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
-import www.fiberathome.com.parkingapp.utils.customEdittext.PinEntryEditText;
 
 @SuppressLint("NonConstantResourceId")
 public class ChangePasswordActivityForOTPFragment extends BaseFragment {
@@ -51,8 +51,11 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
     @BindView(R.id.countdown)
     TextView tvCountdown;
 
+    /*@BindView(R.id.txt_pin_entry)
+    PinEntryEditText txtPinEntry;*/
+
     @BindView(R.id.txt_pin_entry)
-    PinEntryEditText txtPinEntry;
+    SquarePinField txtPinEntry;
 
     private Unbinder unbinder;
 
@@ -97,6 +100,7 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        countDownTimer.cancel();
     }
 
     private void setListeners() {
@@ -161,13 +165,13 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
 
                 if (response.body() != null) {
                     if (!response.body().getError()) {
-                        showMessage(response.body().getMessage());
+                        ApplicationUtils.showToastMessage(context, response.body().getMessage());
                     } else {
                         if (response.body().getMessage().equalsIgnoreCase("Try Again! Invalid Mobile Number.")) {
                             TastyToastUtils.showTastyErrorToast(context,
                                     context.getResources().getString(R.string.mobile_number_not_exist));
                         } else {
-                            showMessage(response.body().getMessage());
+                            ApplicationUtils.showToastMessage(context, response.body().getMessage());
                         }
                     }
                 }
@@ -225,11 +229,11 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
                         Timber.e("response body not null -> %s", new Gson().toJson(response.body()));
 
                         if (response.body().getError() && response.body().getMessage().equalsIgnoreCase("Sorry! Failed to Verify Your Account by OYP.")) {
-                            showMessage("Sorry! Failed to Verify Your Account by OTP.");
+                            ApplicationUtils.showToastMessage(context, "Sorry! Failed to Verify Your Account by OTP.");
 
                         } else if (!response.body().getError()) {
 
-                            showMessage(response.body().getMessage());
+                            ApplicationUtils.showToastMessage(context, response.body().getMessage());
 
                             SharedData.getInstance().setOtp(otp);
 
@@ -239,7 +243,7 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
                             countDownTimer.cancel();
                         }
                     } else {
-                        showMessage(response.body().getMessage());
+                        ApplicationUtils.showToastMessage(context, response.body().getMessage());
                     }
                 }
 
@@ -247,16 +251,12 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
                 public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable errors) {
                     Timber.e("Throwable Errors: -> %s", errors.toString());
                     hideLoading();
-                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.something_went_wrong));
+                    ApplicationUtils.showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
                 }
             });
         } else {
             hideLoading();
             TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.enter_valid_otp));
         }
-    }
-
-    private void showMessage(String message) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 }

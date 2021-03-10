@@ -49,7 +49,7 @@
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/dimTex15" />
 
-            <www.fiberathome.com.parkingapp.utils.customEdittext.PinEntryEditText
+            <!--<www.fiberathome.com.parkingapp.utils.customEdittext.PinEntryEditTextNew
                 android:id="@+id/txt_pin_entry"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -58,7 +58,21 @@
                 android:inputType="textPassword"
                 android:maxLength="4"
                 android:textIsSelectable="true"
-                android:textSize="20sp" />
+                android:textSize="20sp" />-->
+
+            <com.poovam.pinedittextfield.SquarePinField
+                android:id="@+id/txt_pin_entry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:textSize="16sp"
+                app:cornerRadius="10dp"
+                app:highlightColor="@color/black"
+                android:layout_gravity="center"
+                app:fieldBgColor="#ddd"
+                app:noOfFields="4"
+                android:textSelectHandle="@drawable/text_handle"
+                android:layout_marginTop="15dp"/>
 
             <Button
                 android:id="@+id/btn_verify_otp"

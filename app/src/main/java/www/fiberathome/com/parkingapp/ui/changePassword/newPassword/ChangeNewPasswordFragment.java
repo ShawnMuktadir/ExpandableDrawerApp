@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.ui.changePassword;
+package www.fiberathome.com.parkingapp.ui.changePassword.newPassword;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,6 +31,7 @@ import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 import www.fiberathome.com.parkingapp.model.user.User;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
+import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
 
 @SuppressLint("NonConstantResourceId")
@@ -158,7 +158,7 @@ public class ChangeNewPasswordFragment extends BaseFragment {
                 hideLoading();
                 if (response.body() != null) {
                     if (!response.body().getError()) {
-                        showMessage(response.body().getMessage());
+                        ApplicationUtils.showToastMessage(context, response.body().getMessage());
                         Timber.e("response -> %s", response.body().getMessage());
                         editTextNewPassword.setText("");
                         editTextConfirmPassword.setText("");
@@ -167,7 +167,7 @@ public class ChangeNewPasswordFragment extends BaseFragment {
                         startActivity(intentLogout);
                         context.finish();
                     } else {
-                        showMessage(response.body().getMessage());
+                        ApplicationUtils.showToastMessage(context, response.body().getMessage());
                     }
                 }
             }
@@ -175,12 +175,10 @@ public class ChangeNewPasswordFragment extends BaseFragment {
             @Override
             public void onFailure(@NonNull Call<BaseResponse> call, @NonNull Throwable errors) {
                 Timber.e("Throwable Errors: -> %s", errors.toString());
+                hideLoading();
+                ApplicationUtils.showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
         });
-    }
-
-    private void showMessage(String message) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 
     private boolean checkPassWordAndConfirmPassword(String password, String confirmPassword) {
@@ -189,7 +187,7 @@ public class ChangeNewPasswordFragment extends BaseFragment {
             if (password.equals(confirmPassword)) {
                 passStatus = true;
             } else {
-                Toast.makeText(context, context.getString(R.string.err_confirm_password), Toast.LENGTH_SHORT).show();
+                ApplicationUtils.showToastMessage(context, context.getString(R.string.err_confirm_password));
             }
         }
         return passStatus;
@@ -202,7 +200,7 @@ public class ChangeNewPasswordFragment extends BaseFragment {
             if (password.equals(oldPassword)) {
                 passStatus = true;
             } else {
-                Toast.makeText(context, context.getString(R.string.err_old_password), Toast.LENGTH_SHORT).show();
+                ApplicationUtils.showToastMessage(context, context.getString(R.string.err_old_password));
             }
         }
         return passStatus;
