@@ -1270,6 +1270,75 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 checkParkingSpotDistance(latLng, searchPlaceLatLng);
             }
         }
+        String origin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
+       if(isRouteDrawn==1) {
+           String[] latlong = oldDestination.split(",");
+           double lat = Double.parseDouble(latlong[0]);
+           double lon = Double.parseDouble(latlong[1]);
+           double  _TotaldistanceInMeters = ApplicationUtils.calculateDistance(onConnectedLocation.getLatitude(),onConnectedLocation.getLongitude(),lat,lon);
+
+           if( _TotaldistanceInMeters < 500) {
+                    reDrawRoute(origin);
+
+           }
+                else if (_TotaldistanceInMeters < 1500) {
+               reDrawRoute(origin);
+
+           }
+                else if (_TotaldistanceInMeters < 3000) {
+               reDrawRoute(origin);
+
+           }
+                else if (_TotaldistanceInMeters < 6000)  {
+               reDrawRoute(origin);
+           }
+                else if (_TotaldistanceInMeters < 10000)  {
+               reDrawRoute(origin);
+           }
+                else if(_TotaldistanceInMeters < 15000)  {
+               reDrawRoute(origin);
+           }else if (_TotaldistanceInMeters < 25000)  {
+               reDrawRoute(origin);
+           }
+                else {
+               reDrawRoute(origin);
+           }
+
+       }
+    }
+
+    private void reDrawRoute(String origin) {
+        polyline = mMap.addPolyline(getDefaultPolyLines(points));
+
+
+        if (origin.isEmpty() || oldDestination.isEmpty()) {
+            Toast.makeText(context, "Please first fill all the fields!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (!origin.contains(",") || !oldDestination.contains(",")) {
+            Toast.makeText(context, "Invalid data fill in fields!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (!polyline.isVisible())
+            return;
+
+        points = polyline.getPoints();
+
+        polyline.remove();
+
+        try {
+            if (polyline == null || !polyline.isVisible())
+                return;
+
+            points = polyline.getPoints();
+
+            polyline.remove();
+            new DirectionFinder(this, origin, oldDestination).execute();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 
     private void setCircleOnLocation(LatLng latLng) {
@@ -3723,10 +3792,13 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     public interface AddressCallBack {
         void addressCall(String address);
     }
-
+    String oldDestination="";
     public void fetchDirections(String origin, String destination) {
 
         polyline = mMap.addPolyline(getDefaultPolyLines(points));
+        if(!oldDestination.equalsIgnoreCase(destination))
+             oldDestination = destination;
+
 
         if (origin.isEmpty() || destination.isEmpty()) {
             Toast.makeText(context, "Please first fill all the fields!", Toast.LENGTH_SHORT).show();

@@ -177,9 +177,9 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
             }
         });
     }
-
+    CountDownTimer countDownTimer;
     private void startCountDown() {
-        new CountDownTimer(150000, 1000) {
+        countDownTimer = new CountDownTimer(150000, 1000) {
 
             public void onTick(long millisUntilFinished) {
                 tvCountdown.setText("" + String.format("%d min, %d sec remaining",
@@ -196,6 +196,13 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
             }
         }.start();
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(countDownTimer!=null)
+            countDownTimer.onFinish();
     }
 
     private void submitOTPVerification(final String otp) {
