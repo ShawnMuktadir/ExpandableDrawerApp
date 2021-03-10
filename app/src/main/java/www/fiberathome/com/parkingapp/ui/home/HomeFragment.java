@@ -102,6 +102,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
+import com.google.maps.android.PolyUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -1239,13 +1240,19 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
+   int temp ;
+    double  myLocationChangedDistance;
 
     @Override
     public void onLocationChanged(Location location) {
         //Timber.e("onLocationChanged: ");
         currentLocation = location;
         if (location != null) {
+
+
+              myLocationChangedDistance = ApplicationUtils.calculateDistance(onConnectedLocation.getLatitude(),onConnectedLocation.getLongitude(),location.getLatitude(),location.getLongitude());
             onConnectedLocation = location;
+
             //Timber.e("onLocationChanged: onConnectedLocation -> %s", onConnectedLocation);
             SharedData.getInstance().setOnConnectedLocation(location);
 
@@ -1271,36 +1278,41 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             }
         }
         String origin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
-       if(isRouteDrawn==1) {
+       if(isRouteDrawn==1 && myLocationChangedDistance>=0.001) {
            String[] latlong = oldDestination.split(",");
            double lat = Double.parseDouble(latlong[0]);
            double lon = Double.parseDouble(latlong[1]);
            double  _TotaldistanceInMeters = ApplicationUtils.calculateDistance(onConnectedLocation.getLatitude(),onConnectedLocation.getLongitude(),lat,lon);
-
-           if( _TotaldistanceInMeters < 500) {
+           _TotaldistanceInMeters = _TotaldistanceInMeters*1000;
+           if( _TotaldistanceInMeters < 500 && temp!=0) {
+               temp = 0;
                     reDrawRoute(origin);
 
            }
-                else if (_TotaldistanceInMeters < 1500) {
+                else if (_TotaldistanceInMeters < 1500 && temp!=1) {
+               temp = 1;
                reDrawRoute(origin);
 
            }
-                else if (_TotaldistanceInMeters < 3000) {
+                else if (_TotaldistanceInMeters < 3000 && temp!=2) {
+
+               temp = 2;
                reDrawRoute(origin);
 
            }
-                else if (_TotaldistanceInMeters < 6000)  {
+                else if (_TotaldistanceInMeters < 6000 && temp!=3)  {
+               temp = 3;
                reDrawRoute(origin);
            }
-                else if (_TotaldistanceInMeters < 10000)  {
+                else if (_TotaldistanceInMeters < 10000 && temp!=4)  {
+               temp = 4;
                reDrawRoute(origin);
            }
-                else if(_TotaldistanceInMeters < 15000)  {
+                else if(_TotaldistanceInMeters < 15000 && temp!=5)  {
+               temp = 5;
                reDrawRoute(origin);
-           }else if (_TotaldistanceInMeters < 25000)  {
-               reDrawRoute(origin);
-           }
-                else {
+           }else if (_TotaldistanceInMeters < 25000 && temp!=6)  {
+               temp = 6;
                reDrawRoute(origin);
            }
 
@@ -1308,37 +1320,47 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     }
 
     private void reDrawRoute(String origin) {
-        polyline = mMap.addPolyline(getDefaultPolyLines(points));
+        String[] latlong = origin.split(",");
+        double lat = Double.parseDouble(latlong[0]);
+        double lon = Double.parseDouble(latlong[1]);
+        if(polyline.getPoints()!=null) {
+            if (PolyUtil.isLocationOnPath(new LatLng(lat, lon), polyline.getPoints(), false, 60.0f)) {
+                System.out.println("===tolarance===" + true);
+            } else {
+                polyline = mMap.addPolyline(getDefaultPolyLines(points));
 
 
-        if (origin.isEmpty() || oldDestination.isEmpty()) {
-            Toast.makeText(context, "Please first fill all the fields!", Toast.LENGTH_SHORT).show();
-            return;
+                if (origin.isEmpty() || oldDestination.isEmpty()) {
+                    Toast.makeText(context, "Please first fill all the fields!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (!origin.contains(",") || !oldDestination.contains(",")) {
+                    Toast.makeText(context, "Invalid data fill in fields!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (!polyline.isVisible())
+                    return;
+
+                points = polyline.getPoints();
+
+                polyline.remove();
+
+                try {
+                    if (polyline == null || !polyline.isVisible())
+                        return;
+
+                    points = polyline.getPoints();
+
+                    polyline.remove();
+                    new DirectionFinder(this, origin, oldDestination).execute();
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
-        if (!origin.contains(",") || !oldDestination.contains(",")) {
-            Toast.makeText(context, "Invalid data fill in fields!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if (!polyline.isVisible())
-            return;
-
-        points = polyline.getPoints();
-
-        polyline.remove();
-
-        try {
-            if (polyline == null || !polyline.isVisible())
-                return;
-
-            points = polyline.getPoints();
-
-            polyline.remove();
-            new DirectionFinder(this, origin, oldDestination).execute();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
     }
 
     private void setCircleOnLocation(LatLng latLng) {
@@ -3835,11 +3857,14 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         showLoading(context);
     }
 
+    List<www.fiberathome.com.parkingapp.module.GoogleMapWebServiceNDistance.directionModules.Route> updatedRoute ;
     @Override
     public void onDirectionFinderSuccess(List<www.fiberathome.com.parkingapp.module.GoogleMapWebServiceNDistance.directionModules.Route> route) {
         hideLoading();
+
         if (!route.isEmpty() && polyline != null) polyline.remove();
         try {
+            updatedRoute = route;
             for (www.fiberathome.com.parkingapp.module.GoogleMapWebServiceNDistance.directionModules.Route mRoute : route) {
                 PolylineOptions polylineOptions = getDefaultPolyLines(mRoute.points);
                 /*if (polylineStyle == PolylineStyle.DOTTED)
