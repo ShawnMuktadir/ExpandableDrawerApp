@@ -26,9 +26,9 @@ public class DirectionFinder {
 
     private static final String DISTANCE_MATRIX_DIRECTION_URL = "https://maps.googleapis.com/maps/api/directions/json?";
     private static final String GOOGLE_DIRECTION_API_KEY = "AIzaSyCsEedODXq-mkA1JYedp-Y-QARH0x4h0kI";  // replace with your google direction api
-    private DirectionFinderListener listener;
-    private String origin;
-    private String destination;
+    private final DirectionFinderListener listener;
+    private final String origin;
+    private final String destination;
 
     public DirectionFinder(DirectionFinderListener listener, String origin, String destination) {
         this.listener = listener;

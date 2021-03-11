@@ -1281,11 +1281,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
 
         String origin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
-       if(!oldDestination.isEmpty()) {
-           String[] latlong2 = oldDestination.split(",");
-           double lat2 = Double.parseDouble(latlong2[0].trim());
-           double lon2 = Double.parseDouble(latlong2[1].trim());
-       }
+        if (!oldDestination.isEmpty()) {
+            String[] latlong2 = oldDestination.split(",");
+            double lat2 = Double.parseDouble(latlong2[0].trim());
+            double lon2 = Double.parseDouble(latlong2[1].trim());
+        }
         if (polyline == null) {
             polyline = mMap.addPolyline(getDefaultPolyLines(points));
             Timber.e("polyline null -> %s", polyline);
@@ -1333,36 +1333,32 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         double lat = Double.parseDouble(latlong[0]);
         double lon = Double.parseDouble(latlong[1]);
 
-                if (origin.isEmpty() || oldDestination.isEmpty()) {
-                    Toast.makeText(context, "Please first fill all the fields!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+        if (origin.isEmpty() || oldDestination.isEmpty()) {
+            Toast.makeText(context, "Please first fill all the fields!", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-                if (!origin.contains(",") || !oldDestination.contains(",")) {
-                    Toast.makeText(context, "Invalid data fill in fields!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-
-
-                try {
-                    if (polyline == null || !polyline.isVisible())
-                        return;
+        if (!origin.contains(",") || !oldDestination.contains(",")) {
+            Toast.makeText(context, "Invalid data fill in fields!", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
 
-
-                   if(polyline!=null)
-                       polyline.remove();
-
-                    ApplicationUtils.showToastMessage(context," Route re-drawn");
-                    new DirectionFinder(this, origin, oldDestination).execute();
-                    hideLoading();
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                    hideLoading();
-                }
+        try {
+            if (polyline == null || !polyline.isVisible())
+                return;
 
 
+            if (polyline != null)
+                polyline.remove();
+
+            ApplicationUtils.showToastMessage(context, "Route re-drawn");
+            new DirectionFinder(this, origin, oldDestination).execute();
+            hideLoading();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            hideLoading();
+        }
     }
 
     private void setCircleOnLocation(LatLng latLng) {
