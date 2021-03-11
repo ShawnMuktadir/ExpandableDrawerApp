@@ -1333,13 +1333,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         double lat = Double.parseDouble(latlong[0]);
         double lon = Double.parseDouble(latlong[1]);
 
-        if (polyline.getPoints() != null) {
-            if (PolyUtil.isLocationOnPath(new LatLng(lat, lon), polyline.getPoints(), false, 60.0f)) {
-                System.out.println("===tolarance===" + true);
-            } else {
-                polyline = mMap.addPolyline(getDefaultPolyLines(points));
-
-
                 if (origin.isEmpty() || oldDestination.isEmpty()) {
                     Toast.makeText(context, "Please first fill all the fields!", Toast.LENGTH_SHORT).show();
                     return;
@@ -1350,28 +1343,26 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     return;
                 }
 
-                if (!polyline.isVisible())
-                    return;
 
-                points = polyline.getPoints();
-
-                polyline.remove();
 
                 try {
                     if (polyline == null || !polyline.isVisible())
                         return;
 
-                    points = polyline.getPoints();
 
-                    polyline.remove();
+
+                   if(polyline!=null)
+                       polyline.remove();
 
                     ApplicationUtils.showToastMessage(context," Route re-drawn");
                     new DirectionFinder(this, origin, oldDestination).execute();
+                    hideLoading();
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
+                    hideLoading();
                 }
-            }
-        }
+
+
     }
 
     private void setCircleOnLocation(LatLng latLng) {
