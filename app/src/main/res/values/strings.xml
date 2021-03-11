@@ -468,4 +468,5 @@
     <string name="verify_otp">Verify OTP</string>
     <string name="verify_your_phone_number">Verify your phone number</string>
     <string name="something_went_wrong">Something went wrong please try again</string>
+    <string name="are_you_sure_exit_without_giving_permission">Are you sure you want to exit without giving permission?</string>
 </resources>

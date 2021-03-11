@@ -196,15 +196,13 @@ public class PermissionActivity extends BaseActivity implements PermissionInterf
     @Override
     public void onBackPressed() {
         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context);
-        builder.setMessage("Are you sure you want to exit without giving permission?")
+        builder.setMessage(context.getResources().getString(R.string.are_you_sure_exit_without_giving_permission))
                 .setNegativeButton(android.R.string.no, null)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        //PermissionActivity.super.onBackPressed();
-                        finish();
-                        Preferences.getInstance(context).setIsLocationPermissionGiven(false);
-                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
-                    }
+                .setPositiveButton(android.R.string.yes, (arg0, arg1) -> {
+                    //PermissionActivity.super.onBackPressed();
+                    finishAffinity();
+                    Preferences.getInstance(context).setIsLocationPermissionGiven(false);
+                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                 }).create();
         androidx.appcompat.app.AlertDialog dialog = builder.create();
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
