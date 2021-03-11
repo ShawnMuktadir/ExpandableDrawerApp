@@ -1240,17 +1240,19 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
-   int temp ;
-    double  myLocationChangedDistance;
+
+    int temp;
+    double myLocationChangedDistance;
 
     @Override
     public void onLocationChanged(Location location) {
         //Timber.e("onLocationChanged: ");
         currentLocation = location;
+
         if (location != null) {
 
+            myLocationChangedDistance = ApplicationUtils.calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), location.getLatitude(), location.getLongitude());
 
-              myLocationChangedDistance = ApplicationUtils.calculateDistance(onConnectedLocation.getLatitude(),onConnectedLocation.getLongitude(),location.getLatitude(),location.getLongitude());
             onConnectedLocation = location;
 
             //Timber.e("onLocationChanged: onConnectedLocation -> %s", onConnectedLocation);
@@ -1277,53 +1279,61 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 checkParkingSpotDistance(latLng, searchPlaceLatLng);
             }
         }
+
         String origin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
-       if(isRouteDrawn==1 && myLocationChangedDistance>=0.001) {
-           String[] latlong = oldDestination.split(",");
-           double lat = Double.parseDouble(latlong[0]);
-           double lon = Double.parseDouble(latlong[1]);
-           double  _TotaldistanceInMeters = ApplicationUtils.calculateDistance(onConnectedLocation.getLatitude(),onConnectedLocation.getLongitude(),lat,lon);
-           _TotaldistanceInMeters = _TotaldistanceInMeters*1000;
-           if( _TotaldistanceInMeters < 500 && temp!=0) {
-               temp = 0;
-                    reDrawRoute(origin);
-
-           }
-                else if (_TotaldistanceInMeters < 1500 && temp!=1) {
-               temp = 1;
-               reDrawRoute(origin);
-
-           }
-                else if (_TotaldistanceInMeters < 3000 && temp!=2) {
-
-               temp = 2;
-               reDrawRoute(origin);
-
-           }
-                else if (_TotaldistanceInMeters < 6000 && temp!=3)  {
-               temp = 3;
-               reDrawRoute(origin);
-           }
-                else if (_TotaldistanceInMeters < 10000 && temp!=4)  {
-               temp = 4;
-               reDrawRoute(origin);
-           }
-                else if(_TotaldistanceInMeters < 15000 && temp!=5)  {
-               temp = 5;
-               reDrawRoute(origin);
-           }else if (_TotaldistanceInMeters < 25000 && temp!=6)  {
-               temp = 6;
-               reDrawRoute(origin);
-           }
-
+       if(!oldDestination.isEmpty()) {
+           String[] latlong2 = oldDestination.split(",");
+           double lat2 = Double.parseDouble(latlong2[0].trim());
+           double lon2 = Double.parseDouble(latlong2[1].trim());
        }
+        if (polyline == null) {
+            polyline = mMap.addPolyline(getDefaultPolyLines(points));
+            Timber.e("polyline null -> %s", polyline);
+        } else {
+            Timber.e("polyline not null-> %s", polyline);
+            boolean isUserOnRoute = PolyUtil.isLocationOnPath(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
+                    polyline.getPoints(), false, 60.0f);
+
+            if (!isUserOnRoute) {
+
+                if (isRouteDrawn == 1 && myLocationChangedDistance >= 0.001) {
+                    String[] latlong = oldDestination.split(",");
+                    double lat = Double.parseDouble(latlong[0].trim());
+                    double lon = Double.parseDouble(latlong[1].trim());
+
+                    double totalDistanceInKm = ApplicationUtils.
+                            calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), lat, lon);
+
+                    double totalDistanceInMeters = totalDistanceInKm * 1000;
+
+                    if (totalDistanceInMeters < 500) {
+                        reDrawRoute(origin);
+                    } else if (totalDistanceInMeters < 1500) {
+                        reDrawRoute(origin);
+                    } else if (totalDistanceInMeters < 3000) {
+                        reDrawRoute(origin);
+                    } else if (totalDistanceInMeters < 6000) {
+                        reDrawRoute(origin);
+                    } else if (totalDistanceInMeters < 10000) {
+                        reDrawRoute(origin);
+                    } else if (totalDistanceInMeters < 15000) {
+                        reDrawRoute(origin);
+                    } else if (totalDistanceInMeters < 25000) {
+                        reDrawRoute(origin);
+                    }
+                }
+            }
+        }
     }
 
     private void reDrawRoute(String origin) {
+        Timber.e("reDrawRoute called");
+
         String[] latlong = origin.split(",");
         double lat = Double.parseDouble(latlong[0]);
         double lon = Double.parseDouble(latlong[1]);
-        if(polyline.getPoints()!=null) {
+
+        if (polyline.getPoints() != null) {
             if (PolyUtil.isLocationOnPath(new LatLng(lat, lon), polyline.getPoints(), false, 60.0f)) {
                 System.out.println("===tolarance===" + true);
             } else {
@@ -1354,13 +1364,14 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     points = polyline.getPoints();
 
                     polyline.remove();
+
+                    ApplicationUtils.showToastMessage(context," Route re-drawn");
                     new DirectionFinder(this, origin, oldDestination).execute();
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
             }
         }
-
     }
 
     private void setCircleOnLocation(LatLng latLng) {
@@ -3814,13 +3825,15 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     public interface AddressCallBack {
         void addressCall(String address);
     }
-    String oldDestination="";
+
+    String oldDestination = "";
+
     public void fetchDirections(String origin, String destination) {
 
         polyline = mMap.addPolyline(getDefaultPolyLines(points));
-        if(!oldDestination.equalsIgnoreCase(destination))
-             oldDestination = destination;
 
+        if (!oldDestination.equalsIgnoreCase(destination))
+            oldDestination = destination;
 
         if (origin.isEmpty() || destination.isEmpty()) {
             Toast.makeText(context, "Please first fill all the fields!", Toast.LENGTH_SHORT).show();
@@ -3857,7 +3870,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         showLoading(context);
     }
 
-    List<www.fiberathome.com.parkingapp.module.GoogleMapWebServiceNDistance.directionModules.Route> updatedRoute ;
+    List<www.fiberathome.com.parkingapp.module.GoogleMapWebServiceNDistance.directionModules.Route> updatedRoute;
+
     @Override
     public void onDirectionFinderSuccess(List<www.fiberathome.com.parkingapp.module.GoogleMapWebServiceNDistance.directionModules.Route> route) {
         hideLoading();

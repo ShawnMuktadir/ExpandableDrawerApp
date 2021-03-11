@@ -44,23 +44,20 @@
     <string name="err_msg_vehicle">বাহনের নাম্বার প্রবেশ করুন</string>
     <string name="err_old_password">যথাযথ পুরাতন পাসওয়ার্ড টি প্রবেশ করুন</string>
     <string name="err_msg_password">যথাযথ পাসওয়ার্ড প্রবেশ করুন</string>
-    <string name="err_msg_password_signup">পাসওয়ার্ড ন্যূনতম 4 টি অক্ষর হতে হবে
-    </string>
+    <string name="err_msg_password_signup">পাসওয়ার্ড ন্যূনতম 4 টি অক্ষর হতে হবে</string>
     <string name="err_msg_pin">যথাযথ পিন প্রবেশ করুন</string>
     <string name="find_nearest">নিকটতম খুঁজে বের করুন</string>
     <string name="err_new_password">যথাযথ নতুন পাসওয়ার্ড প্রবেশ করুন</string>
     <string name="err_confirm_password">যথাযথ পাসওয়ার্ড নিশ্চিত করুন</string>
-
     <string name="no_account_yet_click_here">অ্যাকাউন্ট নেই? ক্লিক করুন</string>
     <string name="forget_password_click_here">পাসওয়ার্ড ভুলে গেছেন? ক্লিক করুন</string>
-
 
 
     //navigation
     <string name="home">হোম</string>
     <string name="bookedLists">বুকিংস</string>
     <string name="profile">প্রোফাইল</string>
-    <string name="logout">লগ আউট</string>>
+    <string name="logout">লগ আউট</string>
     <string name="law">আইন</string>
     <string name="get_discount">ডিস্কাউন্ট পান</string>
     <string name="give_review_rating">মতামত দিন</string>
@@ -86,7 +83,7 @@
     <string name="submit">জমা দিন</string>
     <string name="full_name">সম্পুর্ণ নাম</string>
     <string name="reg_num">বাহন নিবন্ধন নাম্বার</string>
-    <string name="vehicle_no">বাহন নাম্বারঃ </string>
+    <string name="vehicle_no">বাহন নাম্বার</string>
     <string name="user_phone_no">ব্যাবহারকারীর মোবাইল নাম্বার</string>
 
     //parking slot
@@ -105,7 +102,7 @@
     <string name="demo_number">৭০</string>
     <string name="subject_to_availability">প্রাপ্যতা সাপেক্ষে</string>
     <string name="get_direction">দিক নির্দেশনা</string>
-    <string name="welcome_to_locc_parking">এলওসিসি স্মার্ট পার্কিং এ স্বাগতম</string>
+    <string name="welcome_to_locc_parking">এলওসিসি স্মার্ট পার্কিং এ আপনাকে স্বাগতম</string>
     <string name="exit_message">বাহির হবার জন্য এখানে চাপুন!</string>
     <string name="exit_message_main">বাহির হবার জন্য অকে চাপুন!</string>
     <string name="distance">%1$s</string>
@@ -114,40 +111,39 @@
     <string name="unavailable_parking_spot">পার্কিং এর স্থান পাওয়া যায়নি</string>
     <string name="no_parking_spot_message">আপনি পার্কিং এর জন্য এই স্থানটি সংরক্ষণ করতে পারবেন না কারণ এখানে পার্কিং এর স্থান নেই</string>
     <string name="confirm_booking_message">
-
-       আপনি পার্কিং এর স্থান এ পৌছানোর আগে আমরা পার্কিং এর স্থানটি আপনার জন্য সংরক্ষণ করি না।
-</string>
+           আপনি পার্কিং এর স্থান এ পৌছানোর আগে আমরা পার্কিং এর স্থানটি আপনার জন্য সংরক্ষণ করি না।
+    </string>
 
     //bottom sheet
     <string name="bottom_Sheet_text"> একটি স্থান পছন্দ করুন অথবা আরো স্থান এর জন্য সোয়াইপ করুন</string>
     <string name="nearest_parking_from_your_destination">আপনার গন্তব্যের নিকটতম পার্কিং</string>
 
-    <string name="lorum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-       incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-       laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit
-       esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-       sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
+        <string name="lorum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+               incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+               laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit
+               esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+               sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
 
-    <string name="loream_ipsum">is simply dummy text of the printing and typesetting industry.
-       Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s.</string>
+        <string name="loream_ipsum">is simply dummy text of the printing and typesetting industry.
+               Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s.</string>
 
-    <string name="date">বুধবার,৫ ফেব্রুয়ারি</string>
-    <string name="schedule_heading">পরিকল্পনা</string>
-    <string name="arrived">পার্কিং এর স্থানে পৌঁছেছেঃ</string>
-    <string name="departure">পার্কিং এর স্থান প্রস্থান করেছেঃ</string>
-    <string name="book">আপনার বুকিং</string>
-    <string name="gps_network_not_enabled">জিপিএস নেটওয়ার্ক সক্রিয় করুন!</string>
-    <string name="open_location_settings">লোকেশান সেটিং ওপেন করুন</string>
-    <string name="locc_smart_parking_app_needs_permission_to_access_all_time_device_location_to_provide_required_services_please_allow_the_permission">
-       এলওসিসি স্মার্ট পার্কিং অ্যাপটি আপনাকে পরিষেবা সরবরাহ করার জন্য সবসময় আপনার অবস্থান জানতে চাইবার অনুমতি চাচ্ছে। অনুগ্রহপুর্বক অনুমতি দিবেন।</string>
-    <string name="locc_smart_parking_app_needs_permission_to_access_device_location_to_provide_required_services_please_allow_the_permission">
-       এলওসিসি স্মার্ট পার্কিং অ্যাপটি আপনাকে পরিষেবা সরবরাহ করার জন্য সবসময় আপনার অবস্থান জানতে চাইবার অনুমতি চাচ্ছে। অনুগ্রহপুর্বক অনুমতি দিবেন।</string>
-    <string name="permission_request">অনুমতির অনুরোধ</string>
-    <string name="grant_permission">অনুমতি প্রদান</string>
-    <string name="no_data_available">পার্কিং অ্যাপ্লিকেশনে স্থান অনুসন্ধান করার জন্য একটি যথাযথ স্থানের নাম প্রবেশ করুন</string>
-    <string name="schedule_parking">পরিকল্পনামাফিক পার্কিং বুকিং</string>
-    <string name="by_using_this_app_you_agree_to_our_terms_and_conditions_amp_privacy_policy">
-       <![CDATA[এই অ্যাপটি ব্যবহার এর মাধ্যমে আপনি আমাদের সকল শর্তাবলী,গোপনীয়তা এবং নীতি তে সম্মতি প্রদান করছেন]]></string>
+        <string name="date">বুধবার,৫ ফেব্রুয়ারি</string>
+        <string name="schedule_heading">পরিকল্পনা</string>
+        <string name="arrived">পার্কিং এর স্থানে পৌঁছেছে:</string>
+        <string name="departure">পার্কিং এর স্থান প্রস্থান করেছে:</string>
+        <string name="book">আপনার বুকিং</string>
+        <string name="gps_network_not_enabled">জিপিএস নেটওয়ার্ক সক্রিয় করুন!</string>
+        <string name="open_location_settings">লোকেশান সেটিং ওপেন করুন</string>
+        <string name="locc_smart_parking_app_needs_permission_to_access_all_time_device_location_to_provide_required_services_please_allow_the_permission">
+               এলওসিসি স্মার্ট পার্কিং অ্যাপটি আপনাকে পরিষেবা সরবরাহ করার জন্য সবসময় আপনার অবস্থান জানতে চাইবার অনুমতি চাচ্ছে। অনুগ্রহপুর্বক অনুমতি দিবেন।</string>
+        <string name="locc_smart_parking_app_needs_permission_to_access_device_location_to_provide_required_services_please_allow_the_permission">
+               এলওসিসি স্মার্ট পার্কিং অ্যাপটি আপনাকে পরিষেবা সরবরাহ করার জন্য সবসময় আপনার অবস্থান জানতে চাইবার অনুমতি চাচ্ছে। অনুগ্রহপুর্বক অনুমতি দিবেন।</string>
+        <string name="permission_request">অনুমতির অনুরোধ</string>
+        <string name="grant_permission">অনুমতি প্রদান</string>
+        <string name="no_data_available">পার্কিং অ্যাপ্লিকেশনে স্থান অনুসন্ধান করার জন্য একটি যথাযথ স্থানের নাম প্রবেশ করুন</string>
+        <string name="schedule_parking">পরিকল্পনামাফিক পার্কিং বুকিং</string>
+        <string name="by_using_this_app_you_agree_to_our_terms_and_conditions_amp_privacy_policy">
+               <![CDATA[এই অ্যাপটি ব্যবহার এর মাধ্যমে আপনি আমাদের সকল শর্তাবলী,গোপনীয়তা এবং নীতি তে সম্মতি প্রদান করছেন]]></string>
 
     <string-array name="CountryCodes">
         <item>93,AF</item>
@@ -386,11 +382,11 @@
     <string name="spinner_title">বাহন নিবন্ধন</string>
     <string name="edit_profile">প্রোফাইল সম্পাদনা করুন</string>
     <string name="your_books">আপনার বুকিং</string>
-    <string name="developed_by">Developed Byঃ</string>
+    <string name="developed_by">Developed By:</string>
     <string name="locc">LOCC</string>
     <string name="parking_slot">পার্কিং এর স্থান ১৭</string>h
     <string name="total_time">২.৩০ ঘন্টা</string>
-    <string name="total_fair">সর্বমোট ঃ ৭২৬.০০টাকা</string>
+    <string name="total_fair">সর্বমোট : ৭২৬.০০টাকা</string>
     <string name="rate_tip"> মুল্য এবং বখশিশ</string>
     <string name="view_receipt">রশিদ দেখুন</string>
     <string name="get_help">সাহায্য</string>
@@ -398,8 +394,8 @@
 
     //language
     <string name="language">ভাষা</string>
-    <string name="english">English</string>
-    <string name="bangla">Bangla</string>
+    <string name="english">ইংরেজি</string>
+    <string name="bangla">বাংলা</string>
     <string name="bangla_bn">বাংলা</string>
     <string name="want_change_language">ভাষা পরিবর্তন করতে চান?</string>
     <string name="yes">হ্যাঁ</string>
@@ -416,14 +412,14 @@
     <string name="time_toolbar">সময়</string>
     <string name="when_user_can_book"> আপনি আপনার গন্তব্যে পৌছানোর পরে বুকিং স্থানটি সংরক্ষণ করতে পারবেন</string>
     <string name="fiber_home">ফাইবার@হোম</string>
-    <string name="vehicle_no_d_13456">বাহন নংঃ ডি-১৩৪৫৬</string>
+    <string name="vehicle_no_d_13456">বাহন নং: ডি-১৩৪৫৬</string>
     <string name="enable_gps">জিপিএস সক্রিয় করুন</string>
 
     <string name="set">সেট</string>
-    <string name="you_can_book_parking_slot"> আপন এখনি আপনার পছন্দের পার্কিং এর এলাকা বুকিং করতে পারেন</string>
+    <string name="you_can_book_parking_slot">এখন আপনি আপনার পছন্দের পার্কিং এর এলাকা বুকিং করতে পারেন</string>
     <string name="parking_spot_selection_rules">নতুন পার্কিং স্পট এ যাওয়ার আগে আপনাকে বর্তমান গন্তব্য পরিবর্তন করতে হবে। আপনি কি পার্কিং এর স্থানটি পরিবর্তন করতে চান?</string>
-    <string name="schedule_fragment_title">00ঃ00–00ঃ00pm</string>
-    <string name="parking_total_time">00ঃ00min</string>
+    <string name="schedule_fragment_title">00:00–00:00pm</string>
+    <string name="parking_total_time">00:00min</string>
     <string name="please_wait">অনুগ্রহপুর্বক অপেক্ষা করুন</string>
     <string name="are_you_sure"> আপনি কি বের হয়ে যাওয়ার ব্যাপারে নিশ্চিত?</string>
     <string name="get_support">সাহায্য</string>
@@ -432,8 +428,8 @@
     <string name="you_have_to_exit_from_current_destination">আপনি কি পার্কিং এর স্থানটি পরিবর্তন করতে চান?</string>
     <string name="please_try_again"> অনুগ্রহপুর্বক আবার চেষ্টা করুন</string>
     <string name="search_law">খুঁজুন…</string>
-    <string name="english_item">English</string>
-    <string name="bangla_item">Bangla</string>
+    <string name="english_item">ইংরেজি</string>
+    <string name="bangla_item">বাংলা</string>
     <string name="select_language">ভাষা নির্বাচন করুন</string>
     <string name="gps_disabled">জিপিএস নিষ্ক্রিয়</string>
     <string name="rules_for_using_app_through_gps">জিপিএস টি নিষ্ক্রিয়,অ্যাপটি যথাযথ ভাবে ব্যবহার করার জন্য আপনাকে জিপিএস সক্রিয় করতে হবে</string>
@@ -448,7 +444,7 @@
     <string name="foreground_location_permission_allowed">ফোরগ্রাউন্ড অবস্থানের অনুমতি দেওয়া হয়েছে</string>
     <string name="start_foreground_background_updates">ফোরগ্রাউন্ড এবং ব্যাকগ্রাউন্ড অবস্থানের আপডেট নেওয়া শুরু হয়েছে</string>
     <string name="start_foreground_location_updates_please_click_allow_all_the_time_for_using_parking_app">
-       ফোরগ্রাউন্ড অবস্থানের আপডেট নেওয়া শুরু হয়েছে,দয়া করে পার্কিং অ্যাপ ব্যবহার এর জন্য সর্বদা অনুমতি দিন</string>
+           ফোরগ্রাউন্ড অবস্থানের আপডেট নেওয়া শুরু হয়েছে,দয়া করে পার্কিং অ্যাপ ব্যবহার এর জন্য সর্বদা অনুমতি দিন</string>
     <string name="background_location_permission_denied_allow_all_the_time_for_using_parking_time"> ব্যাকগ্রাউন্ড অবস্থানের অনুমতি পাওয়া যায় নি,দয়া করে পার্কিং অ্যাপ ব্যবহার এর জন্য সর্বদা অনুমতি দিন</string>
 
     <string name="location_permission_denied_please_click_allow">অবস্থানের অনুমতি পাওয়া যায় নি,দয়া করে পার্কিং অ্যাপ ব্যবহার এর জন্য সর্বদা অনুমতি দিন</string>
@@ -457,7 +453,7 @@
     <string name="not_available_at_bangla_search"> বাংলায় খোঁজ করা এখন পাওয়া যাবে না,অনুগ্রহপুর্বক পরবর্তি ভার্সনের জন্য অপেক্ষা করুন</string>
     <string name="change_app_language_to_english">অ্যাপ এর ভাষা ইংরেজিতে পরিবর্তন করুন</string>
     <string name="permission_denied_u_cant_search_nearest_parking_location_from_you">
-       অনুমতি দেওয়া হয় নি, আপনি আপনার নিকটতম পার্কিং এর স্থান খুঁজে পাবেন না.পরবর্তি ব্যবহার এর জন্য অবস্থান এর অনুমতি দিন</string>
+           অনুমতি দেওয়া হয় নি, আপনি আপনার নিকটতম পার্কিং এর স্থান খুঁজে পাবেন না.পরবর্তি ব্যবহার এর জন্য অবস্থান এর অনুমতি দিন</string>
     <string name="enabling_gps">জিপিএস সক্রিয় করা হচ্ছে</string>
     <string name="slow_internet_connection">ইন্টারনেট সংযোগ অত্যন্ত ধীর</string>
     <string name="no_data_found">কোন তথ্য পাওয়া যায়নি</string>
@@ -469,10 +465,12 @@
     <string name="no_route_exist">কোন পথ নেই</string>
     <string name="something_went_wrong_please_check_internet_connection">কিছু সমস্যা হয়েছে! দয়া করে আপনার ইন্টারনেট সংযোগ পরীক্ষা করুন</string>
     <string name="language_settings">ভাষা সেটিংস</string>
-    <string name="no_parking_spot_found">দুঃখিত, কোন পার্কিং স্পট পাওয়া যায় নি</string>
-    <string name="enter_valid_otp">সঠিক ওটিপি প্রবেশ করুন…</string>
-    <string name="verify_otp">ওটিপি যাচাই করুন</string>
-    <string name="verify_your_phone_number">আপনার ফোন নম্বর যাচাই করুন</string>
-    <string name="something_went_wrong">কিছু ভুল হয়েছে আবার চেষ্টা করুন</string>
+        <string name="no_parking_spot_found">দুঃখিত, কোন পার্কিং স্পট পাওয়া যায় নি</string>
+        <string name="enter_valid_otp">সঠিক ওটিপি প্রবেশ করুন…</string>
+        <string name="verify_otp">ওটিপি যাচাই করুন</string>
+        <string name="verify_your_phone_number">আপনার ফোন নম্বর যাচাই করুন</string>
+        <string name="something_went_wrong">কিছু ভুল হয়েছে আবার চেষ্টা করুন</string>
+
 </resources>
+
 

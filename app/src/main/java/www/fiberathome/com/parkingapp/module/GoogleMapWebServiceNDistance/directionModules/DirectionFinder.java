@@ -2,6 +2,7 @@ package www.fiberathome.com.parkingapp.module.GoogleMapWebServiceNDistance.direc
 
 import android.annotation.SuppressLint;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -18,6 +19,8 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+
+import timber.log.Timber;
 
 public class DirectionFinder {
 
@@ -41,6 +44,7 @@ public class DirectionFinder {
     private String createUrl() throws UnsupportedEncodingException {
         String urlOrigin = URLEncoder.encode(origin, "utf-8");
         String urlDestination = URLEncoder.encode(destination, "utf-8");
+        Timber.e("direction url -> %s", DISTANCE_MATRIX_DIRECTION_URL + "origin=" + urlOrigin + "&destination=" + urlDestination + "&key=" + GOOGLE_DIRECTION_API_KEY);
         return DISTANCE_MATRIX_DIRECTION_URL + "origin=" + urlOrigin + "&destination=" + urlDestination + "&key=" + GOOGLE_DIRECTION_API_KEY;
     }
 

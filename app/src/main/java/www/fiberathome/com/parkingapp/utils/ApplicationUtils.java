@@ -90,7 +90,7 @@ import www.fiberathome.com.parkingapp.utils.internet.ConnectivityInterceptor;
 
 public class ApplicationUtils {
 
-    public static void showToast(Context context, String message, long countDown) {
+    public static void showToastWithDelay(Context context, String message, long countDown) {
         // Set the toast and duration
         final Toast mToastToShow = Toast.makeText(context, message, Toast.LENGTH_LONG);
 
@@ -109,6 +109,10 @@ public class ApplicationUtils {
         // Show the toast and starts the countdown
         mToastToShow.show();
         toastCountDown.start();
+    }
+
+    public static void showToastMessage(Context context, String message) {
+        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
     }
 
     public static boolean isProbablyBangla(String s) {
@@ -438,10 +442,6 @@ public class ApplicationUtils {
             longValue = 0;
         }
         return longValue;
-    }
-
-    public static void createToastMessage(Context context, String message) {
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
     }
 
     public static void hideKeyboard(Context mContext) {
