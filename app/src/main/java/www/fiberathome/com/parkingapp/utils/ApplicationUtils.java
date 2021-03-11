@@ -498,6 +498,25 @@ public class ApplicationUtils {
         return formattedDate;
     }
 
+    public static String getGreetingsMessage() {
+
+        String message = "";
+
+        Calendar c = Calendar.getInstance();
+        int timeOfDay = c.get(Calendar.HOUR_OF_DAY);
+
+        if (timeOfDay >= 0 && timeOfDay < 12) {
+            return "Good Morning";
+        } else if (timeOfDay >= 12 && timeOfDay < 16) {
+            message = "Good Afternoon";
+        } else if (timeOfDay >= 16 && timeOfDay < 21) {
+            message = "Good Evening";
+        } else if (timeOfDay >= 21 && timeOfDay < 24) {
+            message = "Good Night";
+        }
+        return message;
+    }
+
     public static String getPSTTimeZoneCurrentDate() {
         //Output: ex: Wednesday, July 20, 2011
         DateFormat df = DateFormat.getDateInstance(DateFormat.FULL);
@@ -656,15 +675,15 @@ public class ApplicationUtils {
         /*Log.e("DistanceAbdur"," lat1 : lon1= "+lat1+" "+lon1);
         Log.e("DistanceAbdur"," lat2 : lon2= "+lat2+" "+lon2);*/
 
-        Location startPoint=new Location("locationA");
+        Location startPoint = new Location("locationA");
         startPoint.setLatitude(lat1);
         startPoint.setLongitude(lon1);
 
-        Location endPoint=new Location("locationB");
+        Location endPoint = new Location("locationB");
         endPoint.setLatitude(lat2);
         endPoint.setLongitude(lon2);
 
-        double distance=startPoint.distanceTo(endPoint);
+        double distance = startPoint.distanceTo(endPoint);
 
         return (distance / 1000);
     }
@@ -1011,7 +1030,7 @@ public class ApplicationUtils {
     }
 
     @SuppressLint("SimpleDateFormat")
-    public static String getCurrentTimeStamp(){
+    public static String getCurrentTimeStamp() {
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             return dateFormat.format(new Date());
