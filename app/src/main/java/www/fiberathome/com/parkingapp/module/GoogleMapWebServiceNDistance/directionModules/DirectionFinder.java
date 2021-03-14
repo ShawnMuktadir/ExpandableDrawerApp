@@ -69,6 +69,9 @@ public class DirectionFinder {
             route.duration = new Duration(jsonDuration.getString("text"), jsonDuration.getInt("value"));
             route.startLocation = new LatLng(jsonStartLocation.getDouble("lat"), jsonStartLocation.getDouble("lng"));
             route.endLocation = new LatLng(jsonEndLocation.getDouble("lat"), jsonEndLocation.getDouble("lng"));
+          if(route.points!=null){
+              route.points.clear();
+          }
             route.points = decodePolyLine(overview_polylineJson.getString("points"));
 
             routes.add(route);

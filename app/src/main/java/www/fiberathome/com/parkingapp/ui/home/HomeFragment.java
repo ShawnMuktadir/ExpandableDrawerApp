@@ -431,6 +431,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private String areaName, parkingSlotCount;
 
     public Marker previousGetDestinationMarker;
+    private Location myPreviousLocation;
 
     public HomeFragment() {
 
@@ -1243,7 +1244,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     int temp;
     double myLocationChangedDistance;
-
+    double oldTotalDistanceInKm,totalDistanceInKm;
     @Override
     public void onLocationChanged(Location location) {
         //Timber.e("onLocationChanged: ");
@@ -1297,30 +1298,74 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             if (!isUserOnRoute) {
 
                 if (isRouteDrawn == 1 && myLocationChangedDistance >= 0.001) {
+//                    polylineOptions.addAll(polyline.getPoints());
+
+
                     String[] latlong = oldDestination.split(",");
                     double lat = Double.parseDouble(latlong[0].trim());
                     double lon = Double.parseDouble(latlong[1].trim());
-
-                    double totalDistanceInKm = ApplicationUtils.
+                    totalDistanceInKm = ApplicationUtils.
                             calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), lat, lon);
+                    if(totalDistanceInKm<oldTotalDistanceInKm){
+                        reDrawRoute(origin);
+                    }
+                    else{
+                        if(myPreviousLocation!=null) {
+                            double distanceTravledLast = ApplicationUtils.
+                                    calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), myPreviousLocation.getLatitude(), myPreviousLocation.getLongitude())*1000;
+
+                            if (distanceTravledLast > 500) {
+                                myPreviousLocation = onConnectedLocation;
+                                reDrawRoute(origin);
+                            } else {
+                                points.add(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()));
+                                points.addAll(polyline.getPoints());
+                                polyline.remove();
+                                polyline = mMap.addPolyline(getDefaultPolyLines(points));
+                            }
+                        }
+                        else{
+                            points.add(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()));
+                            points.addAll(polyline.getPoints());
+                            polyline.remove();
+                            polyline = mMap.addPolyline(getDefaultPolyLines(points));
+                            myPreviousLocation = onConnectedLocation;
+                        }
+
+                    }
+                    oldTotalDistanceInKm = totalDistanceInKm;
+
 
                     double totalDistanceInMeters = totalDistanceInKm * 1000;
 
-                    if (totalDistanceInMeters < 500) {
-                        reDrawRoute(origin);
-                    } else if (totalDistanceInMeters < 1500) {
-                        reDrawRoute(origin);
-                    } else if (totalDistanceInMeters < 3000) {
-                        reDrawRoute(origin);
-                    } else if (totalDistanceInMeters < 6000) {
-                        reDrawRoute(origin);
-                    } else if (totalDistanceInMeters < 10000) {
-                        reDrawRoute(origin);
-                    } else if (totalDistanceInMeters < 15000) {
-                        reDrawRoute(origin);
-                    } else if (totalDistanceInMeters < 25000) {
+//                    if (totalDistanceInMeters < 500) {
+//                        reDrawRoute(origin);
+//                    } else if (totalDistanceInMeters < 1500) {
+//                        reDrawRoute(origin);
+//                    } else if (totalDistanceInMeters < 3000) {
+//                        reDrawRoute(origin);
+//                    } else if (totalDistanceInMeters < 6000) {
+//                        reDrawRoute(origin);
+//                    } else if (totalDistanceInMeters < 10000) {
+//                        reDrawRoute(origin);
+//                    } else if (totalDistanceInMeters < 15000) {
+//                        reDrawRoute(origin);
+//                    } else if (totalDistanceInMeters < 25000) {
+//                        reDrawRoute(origin);
+//                    }
+                }
+            }
+            else{
+                if(myPreviousLocation!=null) {
+                    double distanceTravledLast = ApplicationUtils.
+                            calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), myPreviousLocation.getLatitude(), myPreviousLocation.getLongitude())*1000;
+                    if (distanceTravledLast> 500) {
+                        myPreviousLocation = onConnectedLocation;
                         reDrawRoute(origin);
                     }
+                }
+                else{
+                    myPreviousLocation = onConnectedLocation;
                 }
             }
         }
