@@ -1,13 +1,10 @@
 package www.fiberathome.com.parkingapp.ui.law;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.os.Bundle;
 
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.ui.NavigationActivity;
-import www.fiberathome.com.parkingapp.ui.booking.newBooking.BookingFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 
 public class LawActivity extends NavigationActivity {
@@ -18,7 +15,7 @@ public class LawActivity extends NavigationActivity {
 
         Context context = this;
 
-        setTitle(context.getResources().getString(R.string.law));
+        setTitle(context.getResources().getString(R.string.learn_law));
 
         //Initialize Law fragment
         ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
