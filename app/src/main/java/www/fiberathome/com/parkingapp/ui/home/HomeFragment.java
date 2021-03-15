@@ -1244,7 +1244,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     int temp;
     double myLocationChangedDistance;
-    double oldTotalDistanceInKm,totalDistanceInKm;
+    double oldTotalDistanceInKm, totalDistanceInKm;
+
     @Override
     public void onLocationChanged(Location location) {
         //Timber.e("onLocationChanged: ");
@@ -1296,75 +1297,72 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     polyline.getPoints(), false, 60.0f);
 
             if (!isUserOnRoute) {
-
+                ApplicationUtils.showToastMessage(context, "!isUserOnRoute called");
                 if (isRouteDrawn == 1 && myLocationChangedDistance >= 0.001) {
-//                    polylineOptions.addAll(polyline.getPoints());
+                    //polylineOptions.addAll(polyline.getPoints());
 
+                    String[] latlng = oldDestination.split(",");
+                    double lat = Double.parseDouble(latlng[0].trim());
+                    double lon = Double.parseDouble(latlng[1].trim());
 
-                    String[] latlong = oldDestination.split(",");
-                    double lat = Double.parseDouble(latlong[0].trim());
-                    double lon = Double.parseDouble(latlong[1].trim());
                     totalDistanceInKm = ApplicationUtils.
                             calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), lat, lon);
-                    if(totalDistanceInKm<oldTotalDistanceInKm){
-                        reDrawRoute(origin);
-                    }
-                    else{
-                        if(myPreviousLocation!=null) {
-                            double distanceTravledLast = ApplicationUtils.
-                                    calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), myPreviousLocation.getLatitude(), myPreviousLocation.getLongitude())*1000;
 
-                            if (distanceTravledLast > 500) {
-                                myPreviousLocation = onConnectedLocation;
+                    if (totalDistanceInKm < oldTotalDistanceInKm) {
+                        reDrawRoute(origin);
+                    } else {
+                        if (myPreviousLocation != null) {
+                            double distanceTraveledLast = ApplicationUtils.
+                                    calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), myPreviousLocation.getLatitude(), myPreviousLocation.getLongitude()) * 1000;
+
+                            if (distanceTraveledLast > 500) {
                                 reDrawRoute(origin);
+                                myPreviousLocation = onConnectedLocation;
                             } else {
                                 points.add(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()));
                                 points.addAll(polyline.getPoints());
                                 polyline.remove();
                                 polyline = mMap.addPolyline(getDefaultPolyLines(points));
                             }
-                        }
-                        else{
+                        } else {
                             points.add(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()));
                             points.addAll(polyline.getPoints());
                             polyline.remove();
                             polyline = mMap.addPolyline(getDefaultPolyLines(points));
                             myPreviousLocation = onConnectedLocation;
                         }
-
                     }
                     oldTotalDistanceInKm = totalDistanceInKm;
 
 
                     double totalDistanceInMeters = totalDistanceInKm * 1000;
 
-//                    if (totalDistanceInMeters < 500) {
-//                        reDrawRoute(origin);
-//                    } else if (totalDistanceInMeters < 1500) {
-//                        reDrawRoute(origin);
-//                    } else if (totalDistanceInMeters < 3000) {
-//                        reDrawRoute(origin);
-//                    } else if (totalDistanceInMeters < 6000) {
-//                        reDrawRoute(origin);
-//                    } else if (totalDistanceInMeters < 10000) {
-//                        reDrawRoute(origin);
-//                    } else if (totalDistanceInMeters < 15000) {
-//                        reDrawRoute(origin);
-//                    } else if (totalDistanceInMeters < 25000) {
-//                        reDrawRoute(origin);
-//                    }
+                    /*if (totalDistanceInMeters < 500) {
+                        reDrawRoute(origin);
+                    } else if (totalDistanceInMeters < 1500) {
+                        reDrawRoute(origin);
+                    } else if (totalDistanceInMeters < 3000) {
+                        reDrawRoute(origin);
+                    } else if (totalDistanceInMeters < 6000) {
+                        reDrawRoute(origin);
+                    } else if (totalDistanceInMeters < 10000) {
+                        reDrawRoute(origin);
+                    } else if (totalDistanceInMeters < 15000) {
+                        reDrawRoute(origin);
+                    } else if (totalDistanceInMeters < 25000) {
+                        reDrawRoute(origin);
+                    }*/
                 }
-            }
-            else{
-                if(myPreviousLocation!=null) {
-                    double distanceTravledLast = ApplicationUtils.
-                            calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), myPreviousLocation.getLatitude(), myPreviousLocation.getLongitude())*1000;
-                    if (distanceTravledLast> 500) {
+            } else {
+                ApplicationUtils.showToastMessage(context, "isUserOnRoute called");
+                if (myPreviousLocation != null) {
+                    double distanceTraveledLast = ApplicationUtils.
+                            calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), myPreviousLocation.getLatitude(), myPreviousLocation.getLongitude()) * 1000;
+                    if (distanceTraveledLast > 500) {
                         myPreviousLocation = onConnectedLocation;
                         reDrawRoute(origin);
                     }
-                }
-                else{
+                } else {
                     myPreviousLocation = onConnectedLocation;
                 }
             }
