@@ -23,6 +23,7 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
+import www.fiberathome.com.parkingapp.ui.location.LocationActivity;
 import www.fiberathome.com.parkingapp.ui.permission.PermissionActivity;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
@@ -91,9 +92,13 @@ public class SplashFragment extends BaseFragment implements ForceUpdateChecker.O
     private void openActivity(Intent intent) {
         new Handler().postDelayed(() -> {
             if (ApplicationUtils.checkInternet(context)) {
-                context.startActivity(intent);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.finish();
+                if (ApplicationUtils.isGPSEnabled(context)){
+                    context.startActivity(intent);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.finish();
+                } else {
+                    context.startActivityWithFinishAffinity(LocationActivity.class);
+                }
             } else {
                 ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
                     Timber.e("Positive Button clicked");
@@ -117,11 +122,14 @@ public class SplashFragment extends BaseFragment implements ForceUpdateChecker.O
 
     private void checkUserLogin() {
         // Check user is logged in
-        if (Preferences.getInstance(context).isLoggedIn() && Preferences.getInstance(context) != null && Preferences.getInstance(context).isWaitingForLocationPermission()) {
+        if (Preferences.getInstance(context).isLoggedIn() &&
+                Preferences.getInstance(context) != null &&
+                Preferences.getInstance(context).isWaitingForLocationPermission()) {
             Timber.e("activity start if -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
             //openActivity(new Intent(context, MainActivity.class));
             openActivity(new Intent(context, HomeActivity.class));
-        } else if (Preferences.getInstance(context).isLoggedIn() && !Preferences.getInstance(context).isWaitingForLocationPermission()) {
+        } else if (Preferences.getInstance(context).isLoggedIn() &&
+                !Preferences.getInstance(context).isWaitingForLocationPermission()) {
             Timber.e("activity start else if -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
             openActivity(new Intent(context, PermissionActivity.class));
             //openActivity(new Intent(context, LocationPermissionActivity.class));

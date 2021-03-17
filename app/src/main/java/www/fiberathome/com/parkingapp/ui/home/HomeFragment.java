@@ -95,6 +95,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.SquareCap;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.firebase.FirebaseApp;
@@ -184,13 +185,17 @@ import static www.fiberathome.com.parkingapp.utils.GoogleMapHelper.getDefaultPol
 public class HomeFragment extends BaseFragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener, GoogleMap.OnMarkerClickListener,
         IOnLoadLocationListener, GeoQueryEventListener,
-        IOnBackPressListener, DirectionFinderListener {
+        IOnBackPressListener, DirectionFinderListener,
+        GoogleMap.OnCameraMoveStartedListener,
+        GoogleMap.OnCameraMoveListener,
+        GoogleMap.OnCameraMoveCanceledListener,
+        GoogleMap.OnCameraIdleListener {
 
     private final String TAG = getClass().getSimpleName();
 
     public static final int GPS_REQUEST_CODE = 9003;
     private static final int PLAY_SERVICES_ERROR_CODE = 9002;
-    private final int LOCATION_PERMISSION_REQUEST_CODE = 100;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 100;
 
     @BindView(R.id.linearLayoutBottom)
     public LinearLayout linearLayoutBottom;
@@ -361,7 +366,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private String distance;
     private String duration;
     private boolean isGPS;
-    private GoogleApiClient googleApiClient;
+    private static GoogleApiClient mGoogleApiClient;
     private String sensorStatus = "Occupied";
 
     //flags
@@ -383,13 +388,13 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private String searchPlaceCount = "0";
 
     //geoFence
-    private LocationRequest locationRequest;
-    private LocationCallback locationCallback;
+    private LocationRequest mLocationRequest;
+    private LocationCallback mLocationCallback;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private Marker currentUser;
     private GeoFire geoFire;
     private List<LatLng> dangerousArea = new ArrayList<>();
-    private Location lastLocation;
+    private Location mLastLocation;
     private GeoQuery geoQuery;
     private boolean isInAreaEnabled = false;
 
@@ -432,6 +437,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     public Marker previousGetDestinationMarker;
     private Location myPreviousLocation;
+    private LocationManager mLocationManager;
 
     public HomeFragment() {
 
@@ -490,6 +496,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         if (context != null) {
             context.changeDefaultActionBarDrawerToogleIcon();
             listener = context;
+            mLocationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
         }
 
         unbinder = ButterKnife.bind(this, view);
@@ -538,7 +545,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             });
 
             buildLocationRequest();
+
             buildLocationCallBack();
+
             fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
 
             if (getArguments() != null) {
@@ -589,7 +598,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         hideLoading();
 
-        defaultMapSettings(context, mMap, fusedLocationProviderClient, locationRequest, locationCallback);
+        defaultMapSettings(context, mMap, fusedLocationProviderClient, mLocationRequest, mLocationCallback);
 
         buildGoogleApiClient();
 
@@ -618,6 +627,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         },500);*/
 
         mMap.setOnMarkerClickListener(this);
+
+        mMap.setOnCameraIdleListener(this);
+        mMap.setOnCameraMoveStartedListener(this);
+        mMap.setOnCameraMoveListener(this);
+        mMap.setOnCameraMoveCanceledListener(this);
     }
 
     private void toolbarAnimVisibility(View view, boolean show) {
@@ -1004,12 +1018,17 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
     }
 
+    private double latitude, longitude;
+
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        locationRequest = new LocationRequest();
-        locationRequest.setInterval(1000);
-        locationRequest.setFastestInterval(1000);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.connect();
+        }
+
+        buildLocationRequest();
+
+        buildLocationCallBack();
 
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context,
@@ -1024,12 +1043,12 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             return;
         }
 
-        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
 
-        onConnectedLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+        onConnectedLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
         if (onConnectedLocation != null) {
-            //Timber.e("onConnected not null called");
+            Timber.e("onConnected not null called");
 
             SharedData.getInstance().setOnConnectedLocation(onConnectedLocation);
 
@@ -1153,15 +1172,26 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     }
                 }, 1000);
 
+                settingGeoFire();
             }
         } else {
             Timber.e("onConnected null called");
 
             previousMarker = null;
 
-            LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+
+            buildLocationRequest();
+
+            buildLocationCallBack();
+
+            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
 
             onConnectedLocation = new Location(LocationManager.NETWORK_PROVIDER);
+
+            initArea();
+
+            settingGeoFire();
 
             if (SharedData.getInstance().getLastLocation() != null) {
                 Timber.e("getLastLocation not null called");
@@ -1173,11 +1203,33 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 onConnectedLocation.setLongitude(90.415730);
             }
 
-            Timber.e("onConnectedLocation null else-> %s", onConnectedLocation);
+            //mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
+            /*if (onConnectedLocation == null) {
+                startLocationUpdates(); // bind interface if your are not getting the lastlocation. or bind as per your requirement.
+            }
+
+            if (onConnectedLocation != null) {
+                while (latitude == 0 || longitude == 0) {
+                    showLoading(context, "Getting Location");
+
+                    latitude = onConnectedLocation.getLatitude();
+                    longitude = onConnectedLocation.getLongitude();
+
+                    if (latitude != 0 && longitude != 0) {
+                        stopLocationUpdates(); // unbind the locationlistner here or wherever you want as per your requirement.
+                        hideLoading();// location data received, dismiss dialog, call your method or perform your task.
+                        onConnectedLocation.setLatitude(latitude);
+                        onConnectedLocation.setLongitude(longitude);
+                    }
+                }
+            }*/
+
+            Timber.e("onConnectedLocation null else-> %s", onConnectedLocation);
             LatLng latLng = new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude());
             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-            animateCamera(onConnectedLocation);
+            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(getCameraPositionWithBearing(latLng)));
+            //showCurrentLocationButton(true);
 
             bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._92sdp));
 
@@ -1207,16 +1259,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 });
             }
         }
-
-        buildLocationRequest();
-
-        buildLocationCallBack();
-
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
-
-        initArea();
-
-        settingGeoFire();
     }
 
     private double adjustDistance(double distance) {
@@ -1244,11 +1286,20 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     int temp;
     double myLocationChangedDistance;
-    double oldTotalDistanceInKm,totalDistanceInKm;
+    double oldTotalDistanceInKm, totalDistanceInKm;
+
     @Override
     public void onLocationChanged(Location location) {
         //Timber.e("onLocationChanged: ");
         currentLocation = location;
+
+        /*if (mGoogleApiClient != null)
+            if (mGoogleApiClient.isConnected() || mGoogleApiClient.isConnecting()) {
+                mGoogleApiClient.disconnect();
+                mGoogleApiClient.connect();
+            } else if (!mGoogleApiClient.isConnected()) {
+                mGoogleApiClient.connect();
+            }*/
 
         if (location != null) {
 
@@ -1287,6 +1338,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             double lat2 = Double.parseDouble(latlong2[0].trim());
             double lon2 = Double.parseDouble(latlong2[1].trim());
         }
+
         if (polyline == null) {
             polyline = mMap.addPolyline(getDefaultPolyLines(points));
             Timber.e("polyline null -> %s", polyline);
@@ -1298,23 +1350,24 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             if (!isUserOnRoute) {
 
                 if (isRouteDrawn == 1 && myLocationChangedDistance >= 0.001) {
-//                    polylineOptions.addAll(polyline.getPoints());
-
+                    //polylineOptions.addAll(polyline.getPoints());
 
                     String[] latlong = oldDestination.split(",");
                     double lat = Double.parseDouble(latlong[0].trim());
                     double lon = Double.parseDouble(latlong[1].trim());
+
                     totalDistanceInKm = ApplicationUtils.
                             calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), lat, lon);
-                    if(totalDistanceInKm<oldTotalDistanceInKm){
-                        reDrawRoute(origin);
-                    }
-                    else{
-                        if(myPreviousLocation!=null) {
-                            double distanceTravledLast = ApplicationUtils.
-                                    calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), myPreviousLocation.getLatitude(), myPreviousLocation.getLongitude())*1000;
 
-                            if (distanceTravledLast > 500) {
+                    if (totalDistanceInKm < oldTotalDistanceInKm) {
+                        reDrawRoute(origin);
+                    } else {
+                        if (myPreviousLocation != null) {
+                            double distanceTraveledLast = ApplicationUtils.
+                                    calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
+                                            myPreviousLocation.getLatitude(), myPreviousLocation.getLongitude()) * 1000;
+
+                            if (distanceTraveledLast > 500) {
                                 myPreviousLocation = onConnectedLocation;
                                 reDrawRoute(origin);
                             } else {
@@ -1323,48 +1376,43 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                 polyline.remove();
                                 polyline = mMap.addPolyline(getDefaultPolyLines(points));
                             }
-                        }
-                        else{
+                        } else {
                             points.add(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()));
                             points.addAll(polyline.getPoints());
                             polyline.remove();
                             polyline = mMap.addPolyline(getDefaultPolyLines(points));
                             myPreviousLocation = onConnectedLocation;
                         }
-
                     }
                     oldTotalDistanceInKm = totalDistanceInKm;
 
-
                     double totalDistanceInMeters = totalDistanceInKm * 1000;
 
-//                    if (totalDistanceInMeters < 500) {
-//                        reDrawRoute(origin);
-//                    } else if (totalDistanceInMeters < 1500) {
-//                        reDrawRoute(origin);
-//                    } else if (totalDistanceInMeters < 3000) {
-//                        reDrawRoute(origin);
-//                    } else if (totalDistanceInMeters < 6000) {
-//                        reDrawRoute(origin);
-//                    } else if (totalDistanceInMeters < 10000) {
-//                        reDrawRoute(origin);
-//                    } else if (totalDistanceInMeters < 15000) {
-//                        reDrawRoute(origin);
-//                    } else if (totalDistanceInMeters < 25000) {
-//                        reDrawRoute(origin);
-//                    }
+                    /*if (totalDistanceInMeters < 500) {
+                        reDrawRoute(origin);
+                    } else if (totalDistanceInMeters < 1500) {
+                        reDrawRoute(origin);
+                    } else if (totalDistanceInMeters < 3000) {
+                        reDrawRoute(origin);
+                    } else if (totalDistanceInMeters < 6000) {
+                        reDrawRoute(origin);
+                    } else if (totalDistanceInMeters < 10000) {
+                        reDrawRoute(origin);
+                    } else if (totalDistanceInMeters < 15000) {
+                        reDrawRoute(origin);
+                    } else if (totalDistanceInMeters < 25000) {
+                        reDrawRoute(origin);
+                    }*/
                 }
-            }
-            else{
-                if(myPreviousLocation!=null) {
+            } else {
+                if (myPreviousLocation != null) {
                     double distanceTravledLast = ApplicationUtils.
-                            calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), myPreviousLocation.getLatitude(), myPreviousLocation.getLongitude())*1000;
-                    if (distanceTravledLast> 500) {
+                            calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), myPreviousLocation.getLatitude(), myPreviousLocation.getLongitude()) * 1000;
+                    if (distanceTravledLast > 500) {
                         myPreviousLocation = onConnectedLocation;
                         reDrawRoute(origin);
                     }
-                }
-                else{
+                } else {
                     myPreviousLocation = onConnectedLocation;
                 }
             }
@@ -1447,32 +1495,80 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
     }
 
+    protected void startLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
+                mLocationRequest, this);
+    }
+
+    protected void stopLocationUpdates() {
+        if (mGoogleApiClient != null)
+            LocationServices.FusedLocationApi.removeLocationUpdates(
+                    mGoogleApiClient, this);
+    }
+
     @Override
     public void onStart() {
         Timber.e("onStart called");
         super.onStart();
         EventBus.getDefault().register(this);
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        LocationServices.getFusedLocationProviderClient(context).getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                //TODO: UI updates.
+                onConnectedLocation = location;
+            }
+        });
     }
 
     @Override
     public void onResume() {
         Timber.e("onResume called");
+        if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            if (mGoogleApiClient != null) {
+                mGoogleApiClient.connect();
+            }
+        } else {
+            ApplicationUtils.showToastMessage(context, context.getResources().getString(R.string.gps_network_not_enabled));
+        }
         super.onResume();
     }
 
     @Override
     public void onPause() {
         Timber.e("onPause called");
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.disconnect();
+        }
         super.onPause();
-        hideLoading();
     }
 
     @Override
     public void onStop() {
         Timber.e("onStop called");
         EventBus.getDefault().unregister(this);
+        stopLocationUpdates();
         if (fusedLocationProviderClient != null)
-            fusedLocationProviderClient.removeLocationUpdates(locationCallback);
+            fusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
         super.onStop();
     }
 
@@ -1481,8 +1577,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         Timber.e("onDestroy called");
 
         super.onDestroy();
-
-        hideLoading();
     }
 
     @Override
@@ -1839,6 +1933,41 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         return new CameraPosition.Builder().target(latLng).zoom(13.8f).build();
     }
 
+    @Override
+    public void onCameraMoveStarted(int reason) {
+
+        if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
+            /*Toast.makeText(context, "The user gestured on the map.",
+                    Toast.LENGTH_SHORT).show();*/
+        } else if (reason == GoogleMap.OnCameraMoveStartedListener
+                .REASON_API_ANIMATION) {
+            /*Toast.makeText(context, "The user tapped something on the map.",
+                    Toast.LENGTH_SHORT).show();*/
+        } else if (reason == GoogleMap.OnCameraMoveStartedListener
+                .REASON_DEVELOPER_ANIMATION) {
+            /*Toast.makeText(context, "The app moved the camera.",
+                    Toast.LENGTH_SHORT).show();*/
+        }
+    }
+
+    @Override
+    public void onCameraMove() {
+        /*Toast.makeText(context, "The camera is moving.",
+                Toast.LENGTH_SHORT).show();*/
+    }
+
+    @Override
+    public void onCameraMoveCanceled() {
+        /*Toast.makeText(context, "Camera movement canceled.",
+                Toast.LENGTH_SHORT).show();*/
+    }
+
+    @Override
+    public void onCameraIdle() {
+        /*Toast.makeText(context, "The camera has stopped moving.",
+                Toast.LENGTH_SHORT).show();*/
+    }
+
     private static Boolean isLocationEnabled(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             // This is new method provided in API 28
@@ -1856,20 +1985,15 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private final View.OnClickListener clickListener = view -> {
         if (view.getId() == R.id.currentLocationImageButton && mMap != null && onConnectedLocation != null)
             animateCamera(onConnectedLocation);
-        currentLocationButton = 0;
     };
 
     private final boolean isCameraChange = false;
 
-    private int currentLocationButton = 1;
-
-    private void showCurrentLocationButton() {
-        if (currentLocationButton == 1) {
+    private void showCurrentLocationButton(boolean isVisible) {
+        if (isVisible) {
             currentLocationImageButton.setVisibility(View.VISIBLE);
-            currentLocationButton--;
-        } else if (currentLocationButton == 0) {
+        } else {
             currentLocationImageButton.setVisibility(View.GONE);
-            currentLocationButton++;
         }
     }
 
@@ -1891,8 +2015,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     public void animateCamera(@NonNull Location location) {
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        if (mMap != null)
+        if (mMap != null) {
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(getCameraPositionWithBearing(latLng)));
+            //currentLocationImageButton.setVisibility(View.GONE);
+        }
     }
 
     public void removeCircle() {
@@ -1966,13 +2092,13 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     }
 
     private synchronized void buildGoogleApiClient() {
-        googleApiClient = new GoogleApiClient.Builder(context)
+        mGoogleApiClient = new GoogleApiClient.Builder(context)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
 
-        googleApiClient.connect();
+        mGoogleApiClient.connect();
     }
 
     private final ArrayList<MarkerOptions> mMarkerArrayList = new ArrayList<>();
@@ -3722,8 +3848,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     private void addUserMarker() {
         if (geoFire != null) {
-            geoFire.setLocation("You", new GeoLocation(lastLocation.getLatitude(),
-                    lastLocation.getLongitude()), new GeoFire.CompletionListener() {
+            geoFire.setLocation("You", new GeoLocation(mLastLocation.getLatitude(),
+                    mLastLocation.getLongitude()), new GeoFire.CompletionListener() {
                 @Override
                 public void onComplete(String key, DatabaseError error) {
                     if (currentUser != null) currentUser.remove();
@@ -3743,24 +3869,43 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     }
 
     private void buildLocationCallBack() {
-        locationCallback = new LocationCallback() {
+        mLocationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(final LocationResult locationResult) {
-                if (mMap != null) {
-                    lastLocation = locationResult.getLastLocation();
-                    SharedData.getInstance().setLastLocation(lastLocation);
-                    addUserMarker();
+                if (locationResult == null) {
+                    return;
+                }
+                for (Location location : locationResult.getLocations()) {
+                    if (location != null) {
+                        //TODO: UI updates.
+                        if (mMap != null) {
+                            mLastLocation = locationResult.getLastLocation();
+                            SharedData.getInstance().setLastLocation(mLastLocation);
+                            addUserMarker();
+                        }
+                    }
                 }
             }
         };
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        LocationServices.getFusedLocationProviderClient(context).requestLocationUpdates(mLocationRequest, mLocationCallback, null);
     }
 
     private void buildLocationRequest() {
-        locationRequest = new LocationRequest();
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(5000);
-        locationRequest.setFastestInterval(3000);
-        locationRequest.setSmallestDisplacement(10f);
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setInterval(5000);
+        mLocationRequest.setFastestInterval(3000);
+        mLocationRequest.setSmallestDisplacement(10f);
     }
 
     private void addCircleArea() {

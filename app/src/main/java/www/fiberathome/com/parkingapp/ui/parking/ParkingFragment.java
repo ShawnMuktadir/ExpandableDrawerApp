@@ -575,7 +575,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
 
             AlertDialog alertDialog = new AlertDialog.Builder(context)
                     .setTitle("GPS Permissions")
-                    .setMessage("GPS is required for this app to work. Please enable GPS.")
+                    .setMessage(context.getResources().getString(R.string.please_enable_gps))
                     .setPositiveButton("Yes", ((dialogInterface, i) -> {
                         Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                         startActivityForResult(intent, GPS_REQUEST_CODE);

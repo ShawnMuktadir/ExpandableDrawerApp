@@ -6,18 +6,17 @@ import android.provider.Settings;
 import android.text.TextUtils;
 
 public class LocationHelper {
-    private static Context context;
+    private final Context context;
 
     public LocationHelper(Context context) {
         this.context = context;
     }
 
-
-    public  boolean isLocationEnabled() {
+    public boolean isLocationEnabled() {
         int locationMode = 0;
         String locationProviders;
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             try {
                 locationMode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
 
@@ -28,11 +27,9 @@ public class LocationHelper {
 
             return locationMode != Settings.Secure.LOCATION_MODE_OFF;
 
-        }else{
+        } else {
             locationProviders = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
             return !TextUtils.isEmpty(locationProviders);
         }
-
     }
-
 }

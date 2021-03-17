@@ -136,14 +136,16 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
 
         setListeners();
 
-        if (Preferences.getInstance(context).isLoggedIn() && Preferences.getInstance(context) != null && Preferences.getInstance(context).isWaitingForLocationPermission()) {
+        if (Preferences.getInstance(context).isLoggedIn() &&
+                Preferences.getInstance(context) != null &&
+                Preferences.getInstance(context).isWaitingForLocationPermission()) {
             Timber.e("isWaitingForLocationPermission -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
             Intent intent = new Intent(context, HomeActivity.class);
             startActivity(intent);
             context.finish();
             return;
-        } else if (Preferences.getInstance(context).isLoggedIn() && !Preferences.getInstance(context).isWaitingForLocationPermission()) {
-            //Timber.e("location check else method called");
+        } else if (Preferences.getInstance(context).isLoggedIn() &&
+                !Preferences.getInstance(context).isWaitingForLocationPermission()) {
             Timber.e("isWaitingForLocationPermission else -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
             Intent intent = new Intent(context, PermissionActivity.class);
             startActivity(intent);
@@ -578,7 +580,6 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
     }
 
     private void showMessage(String message) {
-        //Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
         final Toast toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
         toast.show();
 
