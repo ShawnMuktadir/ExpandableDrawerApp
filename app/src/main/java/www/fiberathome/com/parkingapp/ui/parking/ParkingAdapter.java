@@ -34,10 +34,6 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     private ArrayList<SensorArea> sensorAreas;
 
-    private double distance;
-
-    private String duration;
-
     public LatLng location;
 
     private final Location onConnectedLocation;
@@ -81,9 +77,6 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         parkingViewHolder.textViewParkingDistance.setText(new DecimalFormat("##.#",
                 new DecimalFormatSymbols(Locale.US)).format(sensorArea.getDistance()) + " km");
-
-        /*sensorArea.setDuration(duration);
-        Timber.e("parking adapter distance->%s",distance);*/
 
         parkingViewHolder.textViewParkingTravelTime.setText(sensorArea.getDuration());
 

@@ -344,6 +344,8 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
         if (SharedData.getInstance().getOnConnectedLocation() != null) {
             onConnectedLocation = SharedData.getInstance().getOnConnectedLocation();
             Timber.e("onConnectedLocation -> %s", onConnectedLocation);
+        } else {
+            return;
         }
 
         ApiService request = ApiClient.getRetrofitInstance(AppConfig.URL_FETCH_SENSOR_AREA).create(ApiService.class);
@@ -389,7 +391,8 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                                     count = baseStringList.get(i);
                                 }
 
-                                fetchDistance = ApplicationUtils.calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
+                                fetchDistance = ApplicationUtils.
+                                        calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
                                         endLat, endLng);
 
                                 if (fetchDistance > 1.9) {
@@ -408,7 +411,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                             SensorArea sensorArea = new SensorArea(parkingArea, placeId, endLat, endLng, count,
                                     fetchDistance);
 
-                            Timber.e("distanceAbdur after adjust:" + sensorArea.getDistance() + parkingArea);
+                            Timber.e("distance after adjust:" + sensorArea.getDistance() + parkingArea);
 
                             sensorAreaArrayList.add(sensorArea);
                         }
@@ -468,7 +471,8 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
     private void setAdapter(ArrayList<SensorArea> sensorAreas) {
         this.sensorAreas = sensorAreas;
 
-        parkingAdapter = new ParkingAdapter(context, sensorAreas, onConnectedLocation, (position, lat, lng, parkingAreaName, count) -> {
+        parkingAdapter = new ParkingAdapter(context, sensorAreas, onConnectedLocation,
+                             (position, lat, lng, parkingAreaName, count) -> {
             //Toast.makeText(context, "Clicked", Toast.LENGTH_SHORT).show();
 
             long now = System.currentTimeMillis();

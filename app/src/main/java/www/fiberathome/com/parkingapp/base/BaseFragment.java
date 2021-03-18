@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 
-
 public class BaseFragment extends Fragment {
 
     private ProgressDialog progressDialog;
