@@ -476,9 +476,7 @@
     <string name="please_enable_gps">এই অ্যাপ্লিকেশনটির কাজ করার জন্য জিপিএস প্রয়োজন। দয়া করে জিপিএস সক্রিয় করুন।</string>
     <string name="initialize_location">অবস্থান  সক্রিয় করা হচ্ছে</string>
     <string name="gps_not_enabled_unable_to_show_user_location">জিপিএস সক্রিয় নয়। ব্যবহারকারীর অবস্থান প্রদর্শন করতে অক্ষম</string>
-   <!-- <string name="if_i_do_not_received_any_otp_code_within_3_minute_then_resent">
-        যদি আপনি ২.৩০ মিনিটের মধ্যে কোনও ওটিপি কোড না পেয়ে থাকেন তবে তা আবার প্রেরণ করুন</string>-->
     <string name="if_you_have_not_received_any_otp_code_within_3_minute_then_resend">
-        If you do not received any OTP code within 2.30 minute then resend</string>
+        যদি আপনি ২.৩০ মিনিটের মধ্যে কোনও ওটিপি কোড না পেয়ে থাকেন তবে তা আবার প্রেরণ করুন</string>
 </resources>
 

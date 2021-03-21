@@ -40,6 +40,7 @@ import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 import www.fiberathome.com.parkingapp.model.response.login.LoginResponse;
 import www.fiberathome.com.parkingapp.ui.forgetPassword.ForgetPasswordFragment;
+import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.ui.signUp.SignUpActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
@@ -79,7 +80,7 @@ public class ChangePasswordActivityForOTPNew extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                startActivityWithFinishAffinity(SignUpActivity.class);
+                startActivityWithFinishAffinity(LoginActivity.class);
                 return true;
 
             default:
