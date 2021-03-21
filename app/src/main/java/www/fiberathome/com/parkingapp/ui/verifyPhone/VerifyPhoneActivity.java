@@ -39,9 +39,11 @@ public class VerifyPhoneActivity extends BaseActivity {
 
         ButterKnife.bind(this);
 
-        setToolbar();
+        //setToolbar();
 
-        //Initialize login fragment
+        setTitle(context.getResources().getString(R.string.verify_otp));
+
+        //Initialize VerifyPhoneFragment
         ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
                 VerifyPhoneFragment.newInstance(), R.id.frameLayout);
     }
@@ -70,7 +72,7 @@ public class VerifyPhoneActivity extends BaseActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setTitle(context.getResources().getString(R.string.verify_otp));
+        //getSupportActionBar().setTitle(context.getResources().getString(R.string.verify_otp));
         toolbar.setTitleTextColor(context.getResources().getColor(R.color.black));
         if (toolbar.getNavigationIcon() != null) {
             toolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.black), PorterDuff.Mode.SRC_ATOP);

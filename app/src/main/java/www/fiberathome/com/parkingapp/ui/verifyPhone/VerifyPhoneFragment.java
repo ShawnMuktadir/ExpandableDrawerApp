@@ -1,12 +1,17 @@
 package www.fiberathome.com.parkingapp.ui.verifyPhone;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.text.Editable;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.TextWatcher;
+import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +30,7 @@ import com.poovam.pinedittextfield.SquarePinField;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -39,10 +45,15 @@ import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
+import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.login.LoginResponse;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
+import www.fiberathome.com.parkingapp.ui.signUp.SignUpActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+
+import static www.fiberathome.com.parkingapp.utils.Constants.LANGUAGE_BN;
+import static www.fiberathome.com.parkingapp.utils.Constants.LANGUAGE_EN;
 
 @SuppressLint("NonConstantResourceId")
 public class VerifyPhoneFragment extends BaseFragment {
@@ -53,14 +64,14 @@ public class VerifyPhoneFragment extends BaseFragment {
     /*@BindView(R.id.btnResendOTP)
     Button btnResendOTP;*/
 
-    @BindView(R.id.countdown)
+    @BindView(R.id.tv_count_down)
     TextView tvCountdown;
 
     @BindView(R.id.textViewResentOtp)
     TextView textViewResentOtp;
 
-    @BindView(R.id.toolbar)
-    Toolbar mToolbar;
+    /*@BindView(R.id.toolbar)
+    Toolbar mToolbar;*/
 
     /*@BindView(R.id.txt_pin_entry)
     PinEntryEditTextNew txtPinEntry;*/
@@ -103,6 +114,30 @@ public class VerifyPhoneFragment extends BaseFragment {
         setListeners();
 
         startCountDown();
+
+        btnVerifyOtp.setVisibility(View.VISIBLE);
+        //makes an underline on for Resend OTP Here
+        SpannableString spannableString = new SpannableString(context.getResources().getString(R.string.if_you_have_not_received_any_otp_code_within_3_minute_then_resend));
+        ClickableSpan clickableSpan = new ClickableSpan() {
+            @Override
+            public void onClick(@NonNull View textView) {
+                // do some thing
+                String mobileNo = context.getIntent().getStringExtra("mobile_no");
+                String password = context.getIntent().getStringExtra("password");
+                checkLogin(mobileNo, password);
+                startCountDown();
+            }
+        };
+
+        if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_EN)) {
+            spannableString.setSpan(clickableSpan, 61, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            textViewResentOtp.setText(spannableString);
+            textViewResentOtp.setMovementMethod(LinkMovementMethod.getInstance());
+        } else if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
+            spannableString.setSpan(clickableSpan, 16, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            textViewResentOtp.setText(spannableString);
+            textViewResentOtp.setMovementMethod(LinkMovementMethod.getInstance());
+        }
     }
 
     @Override
@@ -205,19 +240,14 @@ public class VerifyPhoneFragment extends BaseFragment {
         countDownTimer = new CountDownTimer(150000, 1000) {
             @SuppressLint("DefaultLocale")
             public void onTick(long millisUntilFinished) {
-                    tvCountdown.setText("" + String.format("%d min, %d sec remaining",
-                            TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
-                            TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
-                                    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))));
+                tvCountdown.setText("" + String.format("%d min, %d sec remaining",
+                        TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
+                        TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
+                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))));
             }
 
             public void onFinish() {
-                clickableSpanResendOTP();
                 tvCountdown.setText(context.getResources().getString(R.string.please_wait));
-                //btnResendOTP.setVisibility(View.GONE);
-                btnVerifyOtp.setVisibility(View.VISIBLE);
-                btnVerifyOtp.setBackgroundColor(context.getResources().getColor(R.color.gray));
-                btnVerifyOtp.setTextColor(context.getResources().getColor(R.color.black));
             }
         }.start();
     }
@@ -242,11 +272,11 @@ public class VerifyPhoneFragment extends BaseFragment {
                     if (response.body() != null) {
                         Timber.e("response body not null -> %s", new Gson().toJson(response.body()));
                         if (response.body().getError() && response.body().getMessage().equalsIgnoreCase("Sorry! Failed to Verify Your Account by OYP.")) {
-                            ApplicationUtils.showToastMessage(context,"Sorry! Failed to Verify Your Account by OTP.");
+                            ApplicationUtils.showToastMessage(context, "Sorry! Failed to Verify Your Account by OTP.");
                         } else if (!response.body().getError()) {
                             ApplicationUtils.showToastMessage(context, response.body().getMessage());
                             context.startActivityWithFinishAffinity(LoginActivity.class);
-                            ApplicationUtils.showToastMessage(context,"Dear " + response.body().getUser().getFullName() + ", Your Registration Completed Successfully...");
+                            ApplicationUtils.showToastMessage(context, "Dear " + response.body().getUser().getFullName() + ", Your Registration Completed Successfully...");
                         }
                     } else {
                         ApplicationUtils.showToastMessage(context, response.body().getMessage());
@@ -271,10 +301,11 @@ public class VerifyPhoneFragment extends BaseFragment {
     public boolean shouldHighlightWord = false;
 
     private void clickableSpanResendOTP() {
-        String completeString = context.getResources().getString(R.string.if_i_do_not_received_any_otp_code_within_3_minute_then_resend);
+        Timber.e("clickableSpanResendOTP called");
+        String completeString = context.getResources().getString(R.string.if_you_have_not_received_any_otp_code_within_3_minute_then_resend);
         String partToClick = "resend";
         ApplicationUtils.setSubTextColor(textViewResentOtp, completeString,
-                partToClick, ContextCompat.getColor(context, R.color.light_blue));
+                partToClick, context.getResources().getColor(R.color.light_blue));
         ApplicationUtils.createLink(textViewResentOtp, completeString, partToClick,
                 new ClickableSpan() {
                     @Override
@@ -284,8 +315,6 @@ public class VerifyPhoneFragment extends BaseFragment {
                         String mobileNo = context.getIntent().getStringExtra("mobile_no");
                         String password = context.getIntent().getStringExtra("password");
                         checkLogin(mobileNo, password);
-                        btnVerifyOtp.setVisibility(View.VISIBLE);
-                        //btnResendOTP.setVisibility(View.GONE);
                         startCountDown();
                     }
 
@@ -299,11 +328,10 @@ public class VerifyPhoneFragment extends BaseFragment {
                         ds.setUnderlineText(false);
 
                         textpaint = ds;
-                        if(shouldHighlightWord){
+                        if (shouldHighlightWord) {
                             textpaint.bgColor = Color.TRANSPARENT;
                             //textpaint.setARGB(255, 255, 255, 255);
                             textpaint.setColor(context.getResources().getColor(R.color.transparent));
-
                         }
                     }
                 });

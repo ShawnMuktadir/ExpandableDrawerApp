@@ -55,7 +55,7 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
     /*@BindView(R.id.btnResendOTP)
     Button btnResendOTP;*/
 
-    @BindView(R.id.countdown)
+    @BindView(R.id.tv_count_down)
     TextView tvCountdown;
 
     /*@BindView(R.id.txt_pin_entry)
@@ -275,7 +275,7 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
     public boolean shouldHighlightWord = false;
 
     private void clickableSpanResendOTP() {
-        String completeString = context.getResources().getString(R.string.if_i_do_not_received_any_otp_code_within_3_minute_then_resend);
+        String completeString = context.getResources().getString(R.string.if_you_have_not_received_any_otp_code_within_3_minute_then_resend);
         String partToClick = "resend";
         ApplicationUtils.createLink(textViewResentOtp, completeString, partToClick,
                 new ClickableSpan() {

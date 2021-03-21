@@ -43,7 +43,7 @@
                 android:textSize="@dimen/dimTex15" />
 
             <TextView
-                android:id="@+id/countdown"
+                android:id="@+id/tv_count_down"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/dim15"
