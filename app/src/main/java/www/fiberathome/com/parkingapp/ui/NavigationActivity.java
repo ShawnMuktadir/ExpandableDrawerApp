@@ -50,7 +50,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import timber.log.Timber;
-import www.fiberathome.com.parkingapp.BuildConfig;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
@@ -130,6 +129,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         closeNavDrawer();
+        navigationView.setCheckedItem(item.getItemId());
 
         int id = item.getItemId();
 

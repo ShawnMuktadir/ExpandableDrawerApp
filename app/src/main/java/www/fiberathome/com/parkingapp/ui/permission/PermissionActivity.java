@@ -25,6 +25,7 @@ import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.permission.listener.DexterPermissionListener;
 import www.fiberathome.com.parkingapp.ui.permission.listener.PermissionInterface;
+import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
 public class PermissionActivity extends BaseActivity implements PermissionInterface {
@@ -95,21 +96,20 @@ public class PermissionActivity extends BaseActivity implements PermissionInterf
     public void showPermissionGranted(String permissionName) {
         switch (permissionName) {
             case Manifest.permission.ACCESS_FINE_LOCATION:
-                //Intent intent = new Intent(PermissionActivity.this, MainActivity.class);
-                Intent intent = new Intent(PermissionActivity.this, HomeActivity.class);
-                Preferences.getInstance(context).setIsLocationPermissionGiven(true);
-                startActivity(intent);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        finish();
-                    }
-                }, 1000);
+                if (ApplicationUtils.isGPSEnabled(context)) {
+                    Intent intent = new Intent(PermissionActivity.this, HomeActivity.class);
+                    Preferences.getInstance(context).setIsLocationPermissionGiven(true);
+                    startActivity(intent);
+                    new Handler().postDelayed(this::finish, 1000);
+                }
 
                 break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + permissionName);
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     public void handlePermanentDeniedPermission(String permissionName) {
 
@@ -123,22 +123,11 @@ public class PermissionActivity extends BaseActivity implements PermissionInterf
 
         new AlertDialog.Builder(this).setTitle(context.getResources().getString(R.string.u_cant_use_this_app_anymore)).
                 setMessage(context.getResources().getString(R.string.allow_this_permission_from_settings)).
-                setPositiveButton(context.getResources().getString(R.string.allow), new DialogInterface.OnClickListener() {
-
-                    @RequiresApi(api = Build.VERSION_CODES.Q)
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        openSettings();
-                        dialog.dismiss();
-                    }
+                setPositiveButton(context.getResources().getString(R.string.allow), (dialog, which) -> {
+                    openSettings();
+                    dialog.dismiss();
                 }).
-                setNegativeButton(context.getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                }).show();
-
+                setNegativeButton(context.getResources().getString(R.string.cancel), (dialog, which) -> dialog.dismiss()).show();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -164,25 +153,14 @@ public class PermissionActivity extends BaseActivity implements PermissionInterf
     public void showPermissionRational(PermissionToken token) {
         new AlertDialog.Builder(this).setTitle("We need this permission for find nearest parking places").
                 setMessage("Please allow this permission to further use this app").
-                setPositiveButton("Allow", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        token.continuePermissionRequest();
-                        dialog.dismiss();
-                    }
+                setPositiveButton("Allow", (dialog, which) -> {
+                    token.continuePermissionRequest();
+                    dialog.dismiss();
                 }).
-                setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        token.cancelPermissionRequest();
-                        dialog.dismiss();
-                    }
-                }).setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                token.cancelPermissionRequest();
-            }
-        }).show();
+                setNegativeButton("Cancel", (dialog, which) -> {
+                    token.cancelPermissionRequest();
+                    dialog.dismiss();
+                }).setOnDismissListener(dialog -> token.cancelPermissionRequest()).show();
     }
 
     @Override
@@ -198,22 +176,17 @@ public class PermissionActivity extends BaseActivity implements PermissionInterf
         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context);
         builder.setMessage("Are you sure you want to exit without giving permission?")
                 .setNegativeButton(android.R.string.no, null)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        //PermissionActivity.super.onBackPressed();
-                        finish();
-                        Preferences.getInstance(context).setIsLocationPermissionGiven(false);
-                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
-                    }
+                .setPositiveButton(android.R.string.yes, (arg0, arg1) -> {
+                    //PermissionActivity.super.onBackPressed();
+                    finish();
+                    Preferences.getInstance(context).setIsLocationPermissionGiven(false);
+                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                 }).create();
         androidx.appcompat.app.AlertDialog dialog = builder.create();
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface arg0) {
-                dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.black));
-                dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.red));
-                //dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(getResources().getColor(R.color.black));
-            }
+        dialog.setOnShowListener(arg0 -> {
+            dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.black));
+            dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.red));
+            //dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(getResources().getColor(R.color.black));
         });
         dialog.show();
     }

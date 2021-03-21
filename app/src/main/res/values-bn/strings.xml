@@ -470,6 +470,8 @@
         <string name="verify_otp">ওটিপি যাচাই করুন</string>
         <string name="verify_your_phone_number">আপনার ফোন নম্বর যাচাই করুন</string>
         <string name="something_went_wrong">কিছু ভুল হয়েছে আবার চেষ্টা করুন</string>
+    <string name="please_enable_gps">এই অ্যাপ্লিকেশনটির কাজ করার জন্য জিপিএস প্রয়োজন। দয়া করে জিপিএস সক্রিয় করুন।</string>
+    <string name="initialize_location">অবস্থান  সক্রিয় করা হচ্ছে</string>
 
 </resources>
 

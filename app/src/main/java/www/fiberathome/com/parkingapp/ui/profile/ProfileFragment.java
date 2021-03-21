@@ -127,7 +127,7 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
             getActivity().setTitle(user.getFullName());
         }
 
-        String name = user.getFullName().trim();
+        String name = user.getFullName();
         //name = name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
         name = ApplicationUtils.capitalizeFirstLetter(name);
         tvUserName.setText(name);
