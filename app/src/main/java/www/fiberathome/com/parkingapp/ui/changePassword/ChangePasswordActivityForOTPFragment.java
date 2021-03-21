@@ -189,7 +189,7 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
             }
 
             public void onFinish() {
-                tvCountdown.setText(context.getResources().getString(R.string.please_wait));
+                 tvCountdown.setText(context.getResources().getString(R.string.please_wait));
                 btnResendOTP.setVisibility(View.VISIBLE);
                 btnVerifyOtp.setVisibility(View.INVISIBLE);
                 // enable the edit alert dialog

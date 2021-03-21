@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.ui.home;
+        package www.fiberathome.com.parkingapp.ui.home;
 
 import android.Manifest;
 import android.animation.Animator;
@@ -1359,6 +1359,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             Timber.e("polyline null -> %s", polyline);
         } else {
             Timber.e("polyline not null-> %s", polyline);
+
             boolean isUserOnRoute = PolyUtil.isLocationOnPath(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
                     polyline.getPoints(), false, 60.0f);
 
@@ -1384,14 +1385,20 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                             if (distanceTraveledLast > 500) {
                                 myPreviousLocation = onConnectedLocation;
-                                reDrawRoute(origin);
+                                reDrawRoute( origin);
                             } else {
+                                if(points!=null){
+                                    points.clear();
+                                }
                                 points.add(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()));
                                 points.addAll(polyline.getPoints());
                                 polyline.remove();
                                 polyline = mMap.addPolyline(getDefaultPolyLines(points));
                             }
                         } else {
+                            if(points!=null){
+                                points.clear();
+                            }
                             points.add(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()));
                             points.addAll(polyline.getPoints());
                             polyline.remove();
@@ -1426,6 +1433,14 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     if (distanceTravledLast > 500) {
                         myPreviousLocation = onConnectedLocation;
                         reDrawRoute(origin);
+                    }else {
+                        if (points != null) {
+                            points.clear();
+                        }
+                        points.add(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()));
+                        points.addAll(polyline.getPoints());
+                        polyline.remove();
+                        polyline = mMap.addPolyline(getDefaultPolyLines(points));
                     }
                 } else {
                     myPreviousLocation = onConnectedLocation;
