@@ -5,6 +5,7 @@ import android.content.Context;
 
 import androidx.fragment.app.Fragment;
 
+import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 
@@ -24,7 +25,23 @@ public class BaseFragment extends Fragment {
     protected void hideLoading() {
         if (progressDialog == null) return;
 
-        progressDialog.dismiss();
-        progressDialog.cancel();
+        try {
+            if ((progressDialog != null) && progressDialog.isShowing()) {
+                progressDialog.dismiss();
+                progressDialog.cancel();
+            }
+        } catch (final IllegalArgumentException e) {
+            // Handle or log or ignore
+            e.getCause();
+        } catch (final Exception e) {
+            // Handle or log or ignore
+            e.getCause();
+        } finally {
+            progressDialog = null;
+            Timber.e("progressDialog finally block called");
+        }
+
+        /*progressDialog.dismiss();
+        progressDialog.cancel();*/
     }
 }
