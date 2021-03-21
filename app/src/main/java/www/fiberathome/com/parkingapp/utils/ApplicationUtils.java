@@ -88,6 +88,8 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.data.StaticData;
 import www.fiberathome.com.parkingapp.utils.internet.ConnectivityInterceptor;
 
+import static android.content.Context.LOCATION_SERVICE;
+
 public class ApplicationUtils {
 
     public static void showToast(Context context, String message, long countDown) {
@@ -1040,5 +1042,17 @@ public class ApplicationUtils {
         }
     }
 
+    public static boolean isGPSEnabled(Context context) {
 
+        LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
+
+        boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+        if (providerEnabled) {
+            return true;
+        } else {
+            //showToastMessage(context, context.getResources().getString(R.string.please_enable_gps));
+        }
+        return false;
+    }
 }
