@@ -27,6 +27,6 @@ public class BookingActivity extends NavigationActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        setNavDrawerItem(R.id.nav_parking);
+        setNavDrawerItem(R.id.nav_booking);
     }
 }

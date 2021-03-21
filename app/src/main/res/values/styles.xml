@@ -141,4 +141,8 @@
         <item name="android:textColor">@color/transparent_black</item>
     </style>
 
+    <style name="MyAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
 </resources>

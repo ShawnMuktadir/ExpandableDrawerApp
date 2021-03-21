@@ -1,6 +1,7 @@
 package www.fiberathome.com.parkingapp.ui.changePassword.newPassword;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
 @SuppressLint("NonConstantResourceId")
@@ -58,19 +60,22 @@ public class ChangeNewPasswordActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setMessage("Are you sure you want to exit?")
-                .setNegativeButton(android.R.string.no, null)
-                .setPositiveButton(android.R.string.yes, (arg0, arg1) -> {
-                    ChangeNewPasswordActivity.super.onBackPressed();
-                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
-                }).create();
-        AlertDialog dialog = builder.create();
-        dialog.setOnShowListener(arg0 -> {
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.black));
-            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.red));
-        });
-        dialog.show();
+        DialogUtils.getInstance().alertDialog(context,
+                (Activity) context,
+                context.getResources().getString(R.string.are_you_sure_you_want_to_exit),
+                context.getResources().getString(R.string.yes), context.getResources().getString(R.string.no),
+                new DialogUtils.DialogClickListener() {
+                    @Override
+                    public void onPositiveClick() {
+                        finishAffinity();
+                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                    }
+
+                    @Override
+                    public void onNegativeClick() {
+                        //null for this
+                    }
+                }).show();
     }
 
     @Override

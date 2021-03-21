@@ -1,11 +1,13 @@
 package www.fiberathome.com.parkingapp.ui.verifyPhone;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.Editable;
+import android.text.TextPaint;
 import android.text.TextWatcher;
+import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,11 +18,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 
 import com.google.gson.Gson;
 import com.poovam.pinedittextfield.SquarePinField;
 
-import java.util.Locale;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -39,8 +43,6 @@ import www.fiberathome.com.parkingapp.model.response.login.LoginResponse;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
-import www.fiberathome.com.parkingapp.utils.customEdittext.PinEntryEditText;
-import www.fiberathome.com.parkingapp.utils.customEdittext.PinEntryEditTextNew;
 
 @SuppressLint("NonConstantResourceId")
 public class VerifyPhoneFragment extends BaseFragment {
@@ -48,11 +50,14 @@ public class VerifyPhoneFragment extends BaseFragment {
     @BindView(R.id.btn_verify_otp)
     Button btnVerifyOtp;
 
-    @BindView(R.id.btnResendOTP)
-    Button btnResendOTP;
+    /*@BindView(R.id.btnResendOTP)
+    Button btnResendOTP;*/
 
     @BindView(R.id.countdown)
     TextView tvCountdown;
+
+    @BindView(R.id.textViewResentOtp)
+    TextView textViewResentOtp;
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -183,14 +188,14 @@ public class VerifyPhoneFragment extends BaseFragment {
             }
         });
 
-        btnResendOTP.setOnClickListener(v -> {
+        /*btnResendOTP.setOnClickListener(v -> {
             String mobileNo = context.getIntent().getStringExtra("mobile_no");
             String password = context.getIntent().getStringExtra("password");
             checkLogin(mobileNo, password);
             btnVerifyOtp.setVisibility(View.VISIBLE);
-            btnResendOTP.setVisibility(View.INVISIBLE);
+            btnResendOTP.setVisibility(View.GONE);
             startCountDown();
-        });
+        });*/
     }
 
     private CountDownTimer countDownTimer;
@@ -207,9 +212,12 @@ public class VerifyPhoneFragment extends BaseFragment {
             }
 
             public void onFinish() {
+                clickableSpanResendOTP();
                 tvCountdown.setText(context.getResources().getString(R.string.please_wait));
-                btnResendOTP.setVisibility(View.VISIBLE);
-                btnVerifyOtp.setVisibility(View.INVISIBLE);
+                //btnResendOTP.setVisibility(View.GONE);
+                btnVerifyOtp.setVisibility(View.VISIBLE);
+                btnVerifyOtp.setBackgroundColor(context.getResources().getColor(R.color.gray));
+                btnVerifyOtp.setTextColor(context.getResources().getColor(R.color.black));
             }
         }.start();
     }
@@ -256,5 +264,48 @@ public class VerifyPhoneFragment extends BaseFragment {
             hideLoading();
             ApplicationUtils.showToastMessage(context, context.getResources().getString(R.string.enter_valid_otp));
         }
+    }
+
+    private TextPaint textpaint;
+
+    public boolean shouldHighlightWord = false;
+
+    private void clickableSpanResendOTP() {
+        String completeString = context.getResources().getString(R.string.if_i_do_not_received_any_otp_code_within_3_minute_then_resend);
+        String partToClick = "resend";
+        ApplicationUtils.setSubTextColor(textViewResentOtp, completeString,
+                partToClick, ContextCompat.getColor(context, R.color.light_blue));
+        ApplicationUtils.createLink(textViewResentOtp, completeString, partToClick,
+                new ClickableSpan() {
+                    @Override
+                    public void onClick(@NotNull View widget) {
+                        // your action
+                        Toast.makeText(context, "Clicked", Toast.LENGTH_SHORT).show();
+                        String mobileNo = context.getIntent().getStringExtra("mobile_no");
+                        String password = context.getIntent().getStringExtra("password");
+                        checkLogin(mobileNo, password);
+                        btnVerifyOtp.setVisibility(View.VISIBLE);
+                        //btnResendOTP.setVisibility(View.GONE);
+                        startCountDown();
+                    }
+
+                    @Override
+                    public void updateDrawState(@NotNull TextPaint ds) {
+                        super.updateDrawState(ds);
+                        // this is where you set link color, underline, typeface etc.
+                        int linkColor = ContextCompat.getColor(context, R.color.light_blue);
+                        ds.setColor(linkColor);
+                        ds.clearShadowLayer();
+                        ds.setUnderlineText(false);
+
+                        textpaint = ds;
+                        if(shouldHighlightWord){
+                            textpaint.bgColor = Color.TRANSPARENT;
+                            //textpaint.setARGB(255, 255, 255, 255);
+                            textpaint.setColor(context.getResources().getColor(R.color.transparent));
+
+                        }
+                    }
+                });
     }
 }

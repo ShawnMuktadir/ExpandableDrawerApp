@@ -189,7 +189,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     public static final int GPS_REQUEST_CODE = 9003;
     private static final int PLAY_SERVICES_ERROR_CODE = 9002;
-    private final int LOCATION_PERMISSION_REQUEST_CODE = 100;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 100;
 
     @BindView(R.id.linearLayoutBottom)
     public LinearLayout linearLayoutBottom;

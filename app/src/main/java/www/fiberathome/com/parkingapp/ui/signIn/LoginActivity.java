@@ -1,5 +1,6 @@
 package www.fiberathome.com.parkingapp.ui.signIn;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 
@@ -11,7 +12,9 @@ import www.fiberathome.com.parkingapp.base.BaseActivity;
 
 import www.fiberathome.com.parkingapp.model.data.preference.LanguagePreferences;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
+import www.fiberathome.com.parkingapp.ui.splash.SplashActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
 import static www.fiberathome.com.parkingapp.utils.Constants.LANGUAGE_BN;
@@ -44,22 +47,21 @@ public class LoginActivity extends BaseActivity {
     
     @Override
     public void onBackPressed() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setMessage(context.getResources().getString(R.string.are_you_sure))
-                .setNegativeButton(android.R.string.no, null)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        //LoginActivity.super.onBackPressed();
+        DialogUtils.getInstance().alertDialog(context,
+                (Activity) context,
+                context.getResources().getString(R.string.are_you_sure_you_want_to_exit),
+                context.getResources().getString(R.string.yes), context.getResources().getString(R.string.no),
+                new DialogUtils.DialogClickListener() {
+                    @Override
+                    public void onPositiveClick() {
                         finishAffinity();
                         TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                     }
-                }).create();
-        AlertDialog dialog = builder.create();
-        dialog.setOnShowListener(arg0 -> {
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.black));
-            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.red));
-            //dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(getResources().getColor(R.color.black));
-        });
-        dialog.show();
+
+                    @Override
+                    public void onNegativeClick() {
+                        //null for this
+                    }
+                }).show();
     }
 }

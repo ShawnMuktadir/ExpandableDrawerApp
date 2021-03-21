@@ -1,6 +1,7 @@
 package www.fiberathome.com.parkingapp.ui.permission;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -25,6 +26,7 @@ import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.permission.listener.DexterPermissionListener;
 import www.fiberathome.com.parkingapp.ui.permission.listener.PermissionInterface;
+import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
 public class PermissionActivity extends BaseActivity implements PermissionInterface {
@@ -195,21 +197,22 @@ public class PermissionActivity extends BaseActivity implements PermissionInterf
 
     @Override
     public void onBackPressed() {
-        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context);
-        builder.setMessage(context.getResources().getString(R.string.are_you_sure_exit_without_giving_permission))
-                .setNegativeButton(android.R.string.no, null)
-                .setPositiveButton(android.R.string.yes, (arg0, arg1) -> {
-                    //PermissionActivity.super.onBackPressed();
-                    finishAffinity();
-                    Preferences.getInstance(context).setIsLocationPermissionGiven(false);
-                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
-                }).create();
-        androidx.appcompat.app.AlertDialog dialog = builder.create();
-        dialog.setOnShowListener(arg0 -> {
-            dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.black));
-            dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.red));
-            //dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(getResources().getColor(R.color.black));
-        });
-        dialog.show();
+        DialogUtils.getInstance().alertDialog(context,
+                (Activity) context,
+                context.getResources().getString(R.string.are_you_sure_exit_without_giving_permission),
+                context.getResources().getString(R.string.yes), context.getResources().getString(R.string.no),
+                new DialogUtils.DialogClickListener() {
+                    @Override
+                    public void onPositiveClick() {
+                        finishAffinity();
+                        Preferences.getInstance(context).setIsLocationPermissionGiven(false);
+                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                    }
+
+                    @Override
+                    public void onNegativeClick() {
+                        //null for this
+                    }
+                }).show();
     }
 }

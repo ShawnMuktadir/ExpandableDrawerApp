@@ -32,8 +32,12 @@ import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
 import android.text.style.BackgroundColorSpan;
+import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.TextAppearanceSpan;
 import android.text.style.UnderlineSpan;
@@ -1054,5 +1058,31 @@ public class ApplicationUtils {
             //showToastMessage(context, context.getResources().getString(R.string.please_enable_gps));
         }
         return false;
+    }
+
+    public static void setSubTextColor(TextView view, String fulltext, String subtext, int color) {
+        view.setText(fulltext, TextView.BufferType.SPANNABLE);
+        Spannable str = (Spannable) view.getText();
+        int i = fulltext.indexOf(subtext);
+        str.setSpan(new ForegroundColorSpan(color), i, i + subtext.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+    }
+
+    public static TextView createLink(TextView targetTextView, String completeString,
+                                      String partToClick, ClickableSpan clickableAction) {
+
+        SpannableString spannableString = new SpannableString(completeString);
+
+        // make sure the String is exist, if it doesn't exist
+        // it will throw IndexOutOfBoundException
+        int startPosition = completeString.indexOf(partToClick);
+        int endPosition = completeString.lastIndexOf(partToClick) + partToClick.length();
+
+        spannableString.setSpan(clickableAction, startPosition, endPosition,
+                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+
+        targetTextView.setText(spannableString);
+        targetTextView.setMovementMethod(LinkMovementMethod.getInstance());
+
+        return targetTextView;
     }
 }

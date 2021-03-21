@@ -471,4 +471,6 @@
     <string name="are_you_sure_exit_without_giving_permission">Are you sure you want to exit without giving permission?</string>
     <string name="please_enable_gps">GPS is required for this app to work. Please enable GPS.</string>
     <string name="initialize_location">Initializing location</string>
+    <string name="gps_not_enabled_unable_to_show_user_location">GPS not enabled. Unable to show user location</string>
+    <string name="if_i_do_not_received_any_otp_code_within_3_minute_then_resend">If you have not received any OTP code within 2.30 minute then resend</string>
 </resources>

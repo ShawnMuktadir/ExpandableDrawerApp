@@ -133,7 +133,7 @@ public class SplashFragment extends BaseFragment implements ForceUpdateChecker.O
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.finish();
                 } else {
-                    DialogUtils.getInstance().alertDialog(
+                    DialogUtils.getInstance().alertDialog(context,
                             requireActivity(),
                             context.getResources().getString(R.string.enable_gps), context.getResources().getString(R.string.locc_smart_parking_app_needs_permission_to_access_device_location_to_provide_required_services_please_allow_the_permission),
                             context.getResources().getString(R.string.allow), "",
@@ -177,12 +177,10 @@ public class SplashFragment extends BaseFragment implements ForceUpdateChecker.O
         // Check user is logged in
         if (Preferences.getInstance(context).isLoggedIn() && Preferences.getInstance(context) != null && Preferences.getInstance(context).isWaitingForLocationPermission()) {
             Timber.e("activity start if -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
-            //openActivity(new Intent(context, MainActivity.class));
             openActivity(new Intent(context, HomeActivity.class));
         } else if (Preferences.getInstance(context).isLoggedIn() && !Preferences.getInstance(context).isWaitingForLocationPermission()) {
             Timber.e("activity start else if -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
             openActivity(new Intent(context, PermissionActivity.class));
-            //openActivity(new Intent(context, LocationPermissionActivity.class));
         } else {
             Timber.e("activity start else -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
             openActivity(new Intent(context, LoginActivity.class));
@@ -210,18 +208,17 @@ public class SplashFragment extends BaseFragment implements ForceUpdateChecker.O
                 }, 6000);
 
             } else {
-                ApplicationUtils.showToastMessage(context, "GPS not enabled.");
+                ApplicationUtils.showToastMessage(context, context.getResources().getString(R.string.gps_network_not_enabled));
             }
-
         } else {
-            ApplicationUtils.showToastMessage(context, "GPS not enabled. Unable to show user location");
+            ApplicationUtils.showToastMessage(context, context.getResources().getString(R.string.gps_not_enabled_unable_to_show_user_location));
         }
     }
 
     @Override
     public void onUpdateNeeded(final String updateUrl) {
-        DialogUtils.getInstance().alertDialog(
-                requireActivity(),
+        DialogUtils.getInstance().alertDialog(context,
+                context,
                 context.getResources().getString(R.string.new_version_available), context.getResources().getString(R.string.please_update_the_app),
                 context.getResources().getString(R.string.update), context.getResources().getString(R.string.no_thanks),
                 new DialogUtils.DialogClickListener() {
@@ -250,7 +247,7 @@ public class SplashFragment extends BaseFragment implements ForceUpdateChecker.O
             startActivity(intent);
         } catch (ActivityNotFoundException e) {
             e.getCause();
-            Toast.makeText(context, "Please try again", Toast.LENGTH_SHORT).show();
+            TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.places_try_again));
         }
     }
 }

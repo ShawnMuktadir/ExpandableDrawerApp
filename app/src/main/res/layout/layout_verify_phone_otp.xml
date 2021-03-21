@@ -44,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/dim15"
                 android:gravity="center_horizontal"
-                android:text="02:03"
+                android:text="02:30"
                 android:layout_margin="@dimen/_10sdp"
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/dimTex15" />
@@ -89,7 +89,19 @@
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/dimTex14" />
 
-            <Button
+            <TextView
+                android:id="@+id/textViewResentOtp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="@dimen/app_radius"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:text="@string/if_i_do_not_received_any_otp_code_within_3_minute_then_resend"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_12ssp"/>
+
+            <!--<Button
                 android:id="@+id/btnResendOTP"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -102,7 +114,7 @@
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:textSize="@dimen/dimTex12"
-                android:visibility="invisible" />
+                android:visibility="gone" />-->
 
         </LinearLayout>
     </ScrollView>

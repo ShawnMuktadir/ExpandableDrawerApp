@@ -88,8 +88,8 @@ public class TermsConditionsActivity extends AppCompatActivity {
         public void onPageFinished(WebView view, String url) {
             // TODO Auto-generated method stub
             super.onPageFinished(view, url);
-//            view.loadUrl("javascript:(function() { " +
-//                    "document.getElementsByClassName('ndfHFb-c4YZDc-GSQQnc-LgbsSe ndfHFb-c4YZDc-to915-LgbsSe VIpgJd-TzA9Ye-eEGnhe ndfHFb-c4YZDc-LgbsSe')[0].style.display='none'; })()");
+            //view.loadUrl("javascript:(function() { " +
+            //"document.getElementsByClassName('ndfHFb-c4YZDc-GSQQnc-LgbsSe ndfHFb-c4YZDc-to915-LgbsSe VIpgJd-TzA9Ye-eEGnhe ndfHFb-c4YZDc-LgbsSe')[0].style.display='none'; })()");
         }
     }
 

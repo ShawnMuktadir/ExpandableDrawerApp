@@ -2,21 +2,28 @@ package www.fiberathome.com.parkingapp.ui.changePassword;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.Editable;
+import android.text.TextPaint;
 import android.text.TextWatcher;
+import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import com.google.gson.Gson;
 import com.poovam.pinedittextfield.SquarePinField;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.TimeUnit;
 
@@ -45,14 +52,17 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
     @BindView(R.id.btn_verify_otp)
     Button btnVerifyOtp;
 
-    @BindView(R.id.btnResendOTP)
-    Button btnResendOTP;
+    /*@BindView(R.id.btnResendOTP)
+    Button btnResendOTP;*/
 
     @BindView(R.id.countdown)
     TextView tvCountdown;
 
     /*@BindView(R.id.txt_pin_entry)
     PinEntryEditText txtPinEntry;*/
+
+    @BindView(R.id.textViewResentOtp)
+    TextView textViewResentOtp;
 
     @BindView(R.id.txt_pin_entry)
     SquarePinField txtPinEntry;
@@ -135,7 +145,7 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
             }
         });
 
-        btnResendOTP.setOnClickListener(v -> {
+        /*btnResendOTP.setOnClickListener(v -> {
             String mobileNo = context.getIntent().getStringExtra("mobile_no");
             if (ApplicationUtils.checkInternet(context)) {
                 checkForgetPassword(mobileNo);
@@ -144,7 +154,7 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
             btnVerifyOtp.setVisibility(View.VISIBLE);
             btnResendOTP.setVisibility(View.INVISIBLE);
             startCountDown();
-        });
+        });*/
     }
 
     private void checkForgetPassword(final String mobileNo) {
@@ -203,7 +213,7 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
 
             public void onFinish() {
                 tvCountdown.setText(context.getResources().getString(R.string.please_wait));
-                btnResendOTP.setVisibility(View.VISIBLE);
+                //btnResendOTP.setVisibility(View.VISIBLE);
                 btnVerifyOtp.setVisibility(View.INVISIBLE);
             }
         }.start();
@@ -258,5 +268,48 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
             hideLoading();
             TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.enter_valid_otp));
         }
+    }
+
+    private TextPaint textpaint;
+
+    public boolean shouldHighlightWord = false;
+
+    private void clickableSpanResendOTP() {
+        String completeString = context.getResources().getString(R.string.if_i_do_not_received_any_otp_code_within_3_minute_then_resend);
+        String partToClick = "resend";
+        ApplicationUtils.createLink(textViewResentOtp, completeString, partToClick,
+                new ClickableSpan() {
+                    @Override
+                    public void onClick(@NotNull View widget) {
+                        // your action
+                        Toast.makeText(context, "Clicked", Toast.LENGTH_SHORT).show();
+                        String mobileNo = context.getIntent().getStringExtra("mobile_no");
+                        if (ApplicationUtils.checkInternet(context)) {
+                            checkForgetPassword(mobileNo);
+                        }
+
+                        btnVerifyOtp.setVisibility(View.VISIBLE);
+                        //btnResendOTP.setVisibility(View.INVISIBLE);
+                        startCountDown();
+                    }
+
+                    @Override
+                    public void updateDrawState(@NotNull TextPaint ds) {
+                        super.updateDrawState(ds);
+                        // this is where you set link color, underline, typeface etc.
+                        int linkColor = ContextCompat.getColor(context, R.color.light_blue);
+                        ds.setColor(linkColor);
+                        ds.clearShadowLayer();
+                        ds.setUnderlineText(false);
+
+                        textpaint = ds;
+                        if(shouldHighlightWord){
+                            textpaint.bgColor = Color.TRANSPARENT;
+                            //textpaint.setARGB(255, 255, 255, 255);
+                            textpaint.setColor(context.getResources().getColor(R.color.transparent));
+
+                        }
+                    }
+                });
     }
 }
