@@ -473,5 +473,5 @@
     <string name="initialize_location">Initializing location</string>
     <string name="gps_not_enabled_unable_to_show_user_location">GPS not enabled. Unable to show user location</string>
     <string name="if_you_have_not_received_any_otp_code_within_3_minute_then_resend">
-        If you have not received any OTP code within 2.30 minute then resend</string>
+        If you have not received any OTP code within 2.30 minutes then resend</string>
 </resources>

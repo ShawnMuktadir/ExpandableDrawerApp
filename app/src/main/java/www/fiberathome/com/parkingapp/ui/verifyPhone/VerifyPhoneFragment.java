@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.text.Editable;
+import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -50,6 +51,7 @@ import www.fiberathome.com.parkingapp.model.response.login.LoginResponse;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.ui.signUp.SignUpActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.NoUnderlineSpan;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
 import static www.fiberathome.com.parkingapp.utils.Constants.LANGUAGE_BN;
@@ -255,59 +257,53 @@ public class VerifyPhoneFragment extends BaseFragment {
         }
     }
 
-    private TextPaint textpaint;
-
-    public boolean shouldHighlightWord = false;
-
-    private String completeString;
-    private String partToClick;
-    private int setColor = 0;
-
     private void clickableSpanResendOTP() {
-        if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_EN)) {
-            completeString = context.getResources().getString(R.string.if_you_have_not_received_any_otp_code_within_3_minute_then_resend);
-            partToClick = "resend";
-        } else if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
-            completeString = context.getResources().getString(R.string.if_you_have_not_received_any_otp_code_within_3_minute_then_resend);
-            partToClick = "?????? ????";
+
+        //makes an underline on for Resend OTP Click Here
+        SpannableString spannableString = new SpannableString(context.getResources().getString(R.string.if_you_have_not_received_any_otp_code_within_3_minute_then_resend));
+
+        int s1 = spannableString.toString().codePointAt(0);
+
+        ClickableSpan clickableSpan = new ClickableSpan() {
+            @Override
+            public void onClick(@NonNull View textView) {
+                // do some thing
+                String mobileNo = context.getIntent().getStringExtra("mobile_no");
+                String password = context.getIntent().getStringExtra("password");
+                checkLogin(mobileNo, password);
+                startCountDown();
+                textViewResentOtp.setMovementMethod(null);
+                textViewResentOtp.setClickable(false);
+
+                NoUnderlineSpan mNoUnderlineSpan = new NoUnderlineSpan();
+                if (textViewResentOtp.getText() instanceof Spannable) {
+                    Spannable s = (Spannable) textViewResentOtp.getText();
+                    if (s1 >= 0x0980 && s1 <= 0x09E0) {
+                        s.setSpan(mNoUnderlineSpan, 70, s.length(), Spanned.SPAN_MARK_MARK);
+                    } else {
+                        s.setSpan(mNoUnderlineSpan, 63, s.length(), Spanned.SPAN_MARK_MARK);
+                    }
+                }
+
+                if (s1 >= 0x0980 && s1 <= 0x09E0) {
+                    spannableString.setSpan(new NoUnderlineSpan(context.getResources().getString(R.string.if_you_have_not_received_any_otp_code_within_3_minute_then_resend)),
+                            70, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                } else {
+
+                    spannableString.setSpan(new NoUnderlineSpan(context.getResources().getString(R.string.if_you_have_not_received_any_otp_code_within_3_minute_then_resend)),
+                            63, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
+            }
+        };
+
+        if (s1 >= 0x0980 && s1 <= 0x09E0) {
+            spannableString.setSpan(clickableSpan, 70, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            textViewResentOtp.setText(spannableString);
+            textViewResentOtp.setMovementMethod(LinkMovementMethod.getInstance());
+        } else {
+            spannableString.setSpan(clickableSpan, 63, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            textViewResentOtp.setText(spannableString);
+            textViewResentOtp.setMovementMethod(LinkMovementMethod.getInstance());
         }
-        ApplicationUtils.createLink(textViewResentOtp, completeString, partToClick,
-                new ClickableSpan() {
-                    @Override
-                    public void onClick(@NotNull View widget) {
-                        // your action
-                        //Toast.makeText(context, "Clicked", Toast.LENGTH_SHORT).show();
-                        String mobileNo = context.getIntent().getStringExtra("mobile_no");
-                        String password = context.getIntent().getStringExtra("password");
-                        checkLogin(mobileNo, password);
-                        startCountDown();
-                        setColor = 1;
-                    }
-
-                    @Override
-                    public void updateDrawState(@NotNull TextPaint ds) {
-                        super.updateDrawState(ds);
-                        if (setColor == 0) {
-                            // this is where you set link color, underline, typeface etc.
-                            int linkColor = ContextCompat.getColor(context, R.color.light_blue);
-                            ds.setColor(linkColor);
-                            ds.clearShadowLayer();
-                            ds.setUnderlineText(false);
-                        } else {
-                            int linkColor = ContextCompat.getColor(context, R.color.black);
-                            ds.setColor(linkColor);
-                            ds.clearShadowLayer();
-                            ds.setUnderlineText(false);
-                            shouldHighlightWord = false;
-                        }
-
-                        textpaint = ds;
-                        if (shouldHighlightWord) {
-                            textpaint.bgColor = Color.TRANSPARENT;
-                            //textpaint.setARGB(255, 255, 255, 255);
-                            textpaint.setColor(context.getResources().getColor(R.color.transparent));
-                        }
-                    }
-                });
     }
 }

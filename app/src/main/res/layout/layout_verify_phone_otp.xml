@@ -98,22 +98,8 @@
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
                 android:text="@string/if_you_have_not_received_any_otp_code_within_3_minute_then_resend"
+                android:textColor="@color/black"
                 android:textSize="@dimen/_12ssp"/>
-
-            <!--<Button
-                android:id="@+id/btnResendOTP"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/dim5"
-                android:background="@color/black"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:text="@string/resend_otp"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:textSize="@dimen/dimTex12"
-                android:visibility="gone" />-->
 
         </LinearLayout>
     </ScrollView>

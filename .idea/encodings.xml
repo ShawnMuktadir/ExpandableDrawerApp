@@ -10,6 +10,8 @@
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/module/GoogleMapWebServiceNDistance/directionModules/Duration.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/module/GoogleMapWebServiceNDistance/directionModules/Route.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/ui/NavigationActivity.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/ui/changePassword/ChangePasswordActivityForOTPFragment.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/ui/changePassword/URLSpanNoUnderline.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/ui/law/LawFragment.java" charset="ISO-8859-1" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/ui/settings/LanguageSettingActivity.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/ui/settings/LanguageSettingFragment.java" charset="UTF-8" />

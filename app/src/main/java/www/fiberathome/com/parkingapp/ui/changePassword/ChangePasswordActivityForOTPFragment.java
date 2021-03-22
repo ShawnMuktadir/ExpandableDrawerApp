@@ -2,12 +2,14 @@ package www.fiberathome.com.parkingapp.ui.changePassword;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.Editable;
-import android.text.TextPaint;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextWatcher;
+import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,12 +19,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 
 import com.google.gson.Gson;
 import com.poovam.pinedittextfield.SquarePinField;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.TimeUnit;
 
@@ -38,16 +37,13 @@ import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
-import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 import www.fiberathome.com.parkingapp.model.response.login.LoginResponse;
 import www.fiberathome.com.parkingapp.ui.changePassword.newPassword.ChangeNewPasswordActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.NoUnderlineSpan;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
-
-import static www.fiberathome.com.parkingapp.utils.Constants.LANGUAGE_BN;
-import static www.fiberathome.com.parkingapp.utils.Constants.LANGUAGE_EN;
 
 @SuppressLint("NonConstantResourceId")
 public class ChangePasswordActivityForOTPFragment extends BaseFragment {
@@ -55,14 +51,8 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
     @BindView(R.id.btn_verify_otp)
     Button btnVerifyOtp;
 
-    /*@BindView(R.id.btnResendOTP)
-    Button btnResendOTP;*/
-
     @BindView(R.id.tv_count_down)
     TextView tvCountdown;
-
-    /*@BindView(R.id.txt_pin_entry)
-    PinEntryEditText txtPinEntry;*/
 
     @BindView(R.id.textViewResentOtp)
     TextView textViewResentOtp;
@@ -261,62 +251,56 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
         }
     }
 
-    private TextPaint textpaint;
-
-    public boolean shouldHighlightWord = false;
-
-    private String completeString;
-    private String partToClick;
-    private int setColor = 0;
-
     private void clickableSpanResendOTP() {
-        if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_EN)) {
-            completeString = context.getResources().getString(R.string.if_you_have_not_received_any_otp_code_within_3_minute_then_resend);
-            partToClick = "resend";
-        } else if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
-            completeString = context.getResources().getString(R.string.if_you_have_not_received_any_otp_code_within_3_minute_then_resend);
-            partToClick = "?????? ????";
+
+        //makes an underline on for Resend OTP Click Here
+        SpannableString spannableString = new SpannableString(context.getResources().getString(R.string.if_you_have_not_received_any_otp_code_within_3_minute_then_resend));
+
+        int s1 = spannableString.toString().codePointAt(0);
+
+        ClickableSpan clickableSpan = new ClickableSpan() {
+            @Override
+            public void onClick(@NonNull View textView) {
+                // do some thing
+                String mobileNo = context.getIntent().getStringExtra("mobile_no");
+                if (ApplicationUtils.checkInternet(context)) {
+                    checkForgetPassword(mobileNo);
+                }
+
+                btnVerifyOtp.setVisibility(View.VISIBLE);
+                startCountDown();
+                textViewResentOtp.setMovementMethod(null);
+                textViewResentOtp.setClickable(false);
+
+                NoUnderlineSpan mNoUnderlineSpan = new NoUnderlineSpan();
+                if (textViewResentOtp.getText() instanceof Spannable) {
+                    Spannable s = (Spannable) textViewResentOtp.getText();
+                    if (s1 >= 0x0980 && s1 <= 0x09E0) {
+                        s.setSpan(mNoUnderlineSpan, 70, s.length(), Spanned.SPAN_MARK_MARK);
+                    } else {
+                        s.setSpan(mNoUnderlineSpan, 63, s.length(), Spanned.SPAN_MARK_MARK);
+                    }
+                }
+
+                if (s1 >= 0x0980 && s1 <= 0x09E0) {
+                    spannableString.setSpan(new NoUnderlineSpan(context.getResources().getString(R.string.if_you_have_not_received_any_otp_code_within_3_minute_then_resend)),
+                            70, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                } else {
+
+                    spannableString.setSpan(new NoUnderlineSpan(context.getResources().getString(R.string.if_you_have_not_received_any_otp_code_within_3_minute_then_resend)),
+                            63, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
+            }
+        };
+
+        if (s1 >= 0x0980 && s1 <= 0x09E0) {
+            spannableString.setSpan(clickableSpan, 70, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            textViewResentOtp.setText(spannableString);
+            textViewResentOtp.setMovementMethod(LinkMovementMethod.getInstance());
+        } else {
+            spannableString.setSpan(clickableSpan, 63, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            textViewResentOtp.setText(spannableString);
+            textViewResentOtp.setMovementMethod(LinkMovementMethod.getInstance());
         }
-        ApplicationUtils.createLink(textViewResentOtp, completeString, partToClick,
-                new ClickableSpan() {
-                    @Override
-                    public void onClick(@NotNull View widget) {
-                        // your action
-                        //Toast.makeText(context, "Clicked", Toast.LENGTH_SHORT).show();
-                        String mobileNo = context.getIntent().getStringExtra("mobile_no");
-                        if (ApplicationUtils.checkInternet(context)) {
-                            checkForgetPassword(mobileNo);
-                        }
-
-                        btnVerifyOtp.setVisibility(View.VISIBLE);
-                        startCountDown();
-                        setColor = 1;
-                    }
-
-                    @Override
-                    public void updateDrawState(@NotNull TextPaint ds) {
-                        super.updateDrawState(ds);
-                        if (setColor == 0) {
-                            // this is where you set link color, underline, typeface etc.
-                            int linkColor = ContextCompat.getColor(context, R.color.light_blue);
-                            ds.setColor(linkColor);
-                            ds.clearShadowLayer();
-                            ds.setUnderlineText(false);
-                        } else {
-                            int linkColor = ContextCompat.getColor(context, R.color.black);
-                            ds.setColor(linkColor);
-                            ds.clearShadowLayer();
-                            ds.setUnderlineText(false);
-                            shouldHighlightWord = false;
-                        }
-
-                        textpaint = ds;
-                        if (shouldHighlightWord) {
-                            textpaint.bgColor = Color.TRANSPARENT;
-                            //textpaint.setARGB(255, 255, 255, 255);
-                            textpaint.setColor(context.getResources().getColor(R.color.transparent));
-                        }
-                    }
-                });
     }
 }
