@@ -97,7 +97,7 @@ public class SplashFragment extends BaseFragment implements ForceUpdateChecker.O
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.finish();
                 } else {
-                    context.startActivityWithFinishAffinity(LocationActivity.class);
+                   // context.startActivityWithFinishAffinity(LocationActivity.class);
                 }
             } else {
                 ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
