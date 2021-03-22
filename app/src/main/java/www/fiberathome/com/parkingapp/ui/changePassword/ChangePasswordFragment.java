@@ -321,4 +321,9 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
         }
         return passStatus;
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
 }

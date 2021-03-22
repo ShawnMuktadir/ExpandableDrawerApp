@@ -386,13 +386,18 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         return result;
     }
 
+    public void startActivity(Class activityClass) {
+        startActivity(new Intent(getApplicationContext(), activityClass));
+    }
+
     public void startActivityWithFinish(Class activityClass) {
         startActivity(new Intent(getApplicationContext(), activityClass));
         finish();
     }
 
-    public void startActivity(Class activityClass) {
+    public void startActivityWithFinishAffinity(Class activityClass) {
         startActivity(new Intent(getApplicationContext(), activityClass));
+        finishAffinity();
     }
 
     public void setStatusBarColor(Context context) {
@@ -578,8 +583,8 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         builder.addGeofences(geofenceList);
         return builder.build();
     }
-
     //geoFencing
+
     private PendingIntent geoFencePendingIntent;
 
     private PendingIntent getGeoFencePendingIntent() {
@@ -669,10 +674,5 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
     protected void setActionBarBackButton() {
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
-
-    public void startActivityWithFinishAffinity(Class activityClass) {
-        startActivity(new Intent(getApplicationContext(), activityClass));
-        finishAffinity();
     }
 }

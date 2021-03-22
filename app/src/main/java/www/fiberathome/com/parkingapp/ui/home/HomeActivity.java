@@ -123,11 +123,13 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
         String areaName = getIntent().getStringExtra("areaName");
         String count = getIntent().getStringExtra("count");
 
-        //initialize home fragment
-        ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
-                HomeFragment.newInstance(lat, lng, areaName, count), R.id.nav_host_fragment);
-        linearLayoutToolbarTime.setVisibility(View.VISIBLE);
-        navigationView.getMenu().getItem(0).setChecked(true);
+        if (ApplicationUtils.isGPSEnabled(context)) {
+            //initialize home fragment
+            ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
+                    HomeFragment.newInstance(lat, lng, areaName, count), R.id.nav_host_fragment);
+            linearLayoutToolbarTime.setVisibility(View.VISIBLE);
+            navigationView.getMenu().getItem(0).setChecked(true);
+        }
 
         if (!Preferences.getInstance(context).isLoggedIn()) {
             startActivityWithFinishAffinity(LoginActivity.class);
@@ -194,7 +196,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                                 ApplicationUtils.showExitDialog(this);
                             } else {
                                 Timber.e("onBackPressed exitCounter else");
-                                ApplicationUtils.showToast(context, "Press Back again to exit", 200);
+                                ApplicationUtils.showToastWithDelay(context, "Press Back again to exit", 200);
                             }
                         } else {
                             Timber.e("onBackPressed exit else");

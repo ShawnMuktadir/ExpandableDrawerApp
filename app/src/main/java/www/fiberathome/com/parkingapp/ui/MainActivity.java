@@ -413,7 +413,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                                 ApplicationUtils.showExitDialog(this);
                             } else {
                                 Timber.e("onBackPressed exitCounter else");
-                                ApplicationUtils.showToast(context, "Press Back again to exit", 200);
+                                ApplicationUtils.showToastWithDelay(context, "Press Back again to exit", 200);
                             }
                         } else {
                             Timber.e("onBackPressed exit else");
