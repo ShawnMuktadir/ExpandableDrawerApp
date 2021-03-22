@@ -120,8 +120,8 @@ public class PermissionActivity extends BaseActivity implements PermissionInterf
 
                                 @Override
                                 public void onNegativeClick() {
-                                    context.finishAffinity();
-                                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                                    /*context.finishAffinity();
+                                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));*/
                                 }
                             }).show();
                     TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.please_enable_gps));
