@@ -19,13 +19,15 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
+
 public class DirectionFinder {
 
     private static final String DISTANCE_MATRIX_DIRECTION_URL = "https://maps.googleapis.com/maps/api/directions/json?";
     private static final String GOOGLE_DIRECTION_API_KEY = "AIzaSyCsEedODXq-mkA1JYedp-Y-QARH0x4h0kI";  // replace with your google direction api
-    private DirectionFinderListener listener;
-    private String origin;
-    private String destination;
+    private final DirectionFinderListener listener;
+    private final String origin;
+    private final String destination;
 
     public DirectionFinder(DirectionFinderListener listener, String origin, String destination) {
         this.listener = listener;
@@ -41,6 +43,7 @@ public class DirectionFinder {
     private String createUrl() throws UnsupportedEncodingException {
         String urlOrigin = URLEncoder.encode(origin, "utf-8");
         String urlDestination = URLEncoder.encode(destination, "utf-8");
+        Timber.e("direction url -> %s", DISTANCE_MATRIX_DIRECTION_URL + "origin=" + urlOrigin + "&destination=" + urlDestination + "&key=" + GOOGLE_DIRECTION_API_KEY);
         return DISTANCE_MATRIX_DIRECTION_URL + "origin=" + urlOrigin + "&destination=" + urlDestination + "&key=" + GOOGLE_DIRECTION_API_KEY;
     }
 
@@ -65,6 +68,9 @@ public class DirectionFinder {
             route.duration = new Duration(jsonDuration.getString("text"), jsonDuration.getInt("value"));
             route.startLocation = new LatLng(jsonStartLocation.getDouble("lat"), jsonStartLocation.getDouble("lng"));
             route.endLocation = new LatLng(jsonEndLocation.getDouble("lat"), jsonEndLocation.getDouble("lng"));
+            if (route.points != null) {
+                route.points.clear();
+            }
             route.points = decodePolyLine(overview_polylineJson.getString("points"));
 
             routes.add(route);
