@@ -1348,67 +1348,66 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
 
         String origin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
-        if (!oldDestination.isEmpty()) {
-            String[] latlong2 = oldDestination.split(",");
-            double lat2 = Double.parseDouble(latlong2[0].trim());
-            double lon2 = Double.parseDouble(latlong2[1].trim());
-        }
 
-        if (polyline == null) {
-            polyline = mMap.addPolyline(getDefaultPolyLines(points));
-            Timber.e("polyline null -> %s", polyline);
-        } else {
-            Timber.e("polyline not null-> %s", polyline);
+       if(isRouteDrawn == 1) {
+           if (polyline == null && !points.isEmpty()) {
+               polyline = mMap.addPolyline(getDefaultPolyLines(points));
+               Timber.e("polyline null -> %s", polyline);
+           }
+           else if(polyline != null) {
 
-            boolean isUserOnRoute = PolyUtil.isLocationOnPath(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
-                    polyline.getPoints(), false, 60.0f);
+               Timber.e("polyline not null-> %s", polyline);
 
-            if (!isUserOnRoute) {
+               boolean isUserOnRoute = PolyUtil.isLocationOnPath(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
+                       polyline.getPoints(), false, 60.0f);
 
-                if (isRouteDrawn == 1 && myLocationChangedDistance >= 0.001) {
-                    //polylineOptions.addAll(polyline.getPoints());
 
-                    String[] latlong = oldDestination.split(",");
-                    double lat = Double.parseDouble(latlong[0].trim());
-                    double lon = Double.parseDouble(latlong[1].trim());
+               if (!isUserOnRoute) {
 
-                    totalDistanceInKm = ApplicationUtils.
-                            calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), lat, lon);
+                   if (myLocationChangedDistance >= 0.001) {
+                       //polylineOptions.addAll(polyline.getPoints());
 
-                    if (totalDistanceInKm < oldTotalDistanceInKm) {
-                        reDrawRoute(origin);
-                    } else {
-                        if (myPreviousLocation != null) {
-                            double distanceTraveledLast = ApplicationUtils.
-                                    calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
-                                            myPreviousLocation.getLatitude(), myPreviousLocation.getLongitude()) * 1000;
+                       String[] latlong = oldDestination.split(",");
+                       double lat = Double.parseDouble(latlong[0].trim());
+                       double lon = Double.parseDouble(latlong[1].trim());
 
-                            if (distanceTraveledLast > 500) {
-                                myPreviousLocation = onConnectedLocation;
-                                reDrawRoute( origin);
-                            } else {
-                                if(points!=null){
-                                    points.clear();
-                                }
-                                points.add(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()));
-                                points.addAll(polyline.getPoints());
-                                polyline.remove();
-                                polyline = mMap.addPolyline(getDefaultPolyLines(points));
-                            }
-                        } else {
-                            if(points!=null){
-                                points.clear();
-                            }
-                            points.add(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()));
-                            points.addAll(polyline.getPoints());
-                            polyline.remove();
-                            polyline = mMap.addPolyline(getDefaultPolyLines(points));
-                            myPreviousLocation = onConnectedLocation;
-                        }
-                    }
-                    oldTotalDistanceInKm = totalDistanceInKm;
+                       totalDistanceInKm = ApplicationUtils.
+                               calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), lat, lon);
 
-                    double totalDistanceInMeters = totalDistanceInKm * 1000;
+                       if (totalDistanceInKm < oldTotalDistanceInKm) {
+                           reDrawRoute(origin);
+                       } else {
+                           if (myPreviousLocation != null) {
+                               double distanceTraveledLast = ApplicationUtils.
+                                       calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
+                                               myPreviousLocation.getLatitude(), myPreviousLocation.getLongitude()) * 1000;
+
+                               if (distanceTraveledLast > 500) {
+                                   myPreviousLocation = onConnectedLocation;
+                                   reDrawRoute(origin);
+                               } else {
+                                   if (points != null) {
+                                       points.clear();
+                                   }
+                                   points.add(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()));
+                                   points.addAll(polyline.getPoints());
+                                   polyline.remove();
+                                   polyline = mMap.addPolyline(getDefaultPolyLines(points));
+                               }
+                           } else {
+                               if (points != null) {
+                                   points.clear();
+                               }
+                               points.add(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()));
+                               points.addAll(polyline.getPoints());
+                               polyline.remove();
+                               polyline = mMap.addPolyline(getDefaultPolyLines(points));
+                               myPreviousLocation = onConnectedLocation;
+                           }
+                       }
+                       oldTotalDistanceInKm = totalDistanceInKm;
+
+                       double totalDistanceInMeters = totalDistanceInKm * 1000;
 
                     /*if (totalDistanceInMeters < 500) {
                         reDrawRoute(origin);
@@ -1425,28 +1424,21 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     } else if (totalDistanceInMeters < 25000) {
                         reDrawRoute(origin);
                     }*/
-                }
-            } else {
-                if (myPreviousLocation != null) {
-                    double distanceTravledLast = ApplicationUtils.
-                            calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), myPreviousLocation.getLatitude(), myPreviousLocation.getLongitude()) * 1000;
-                    if (distanceTravledLast > 500) {
-                        myPreviousLocation = onConnectedLocation;
-                        reDrawRoute(origin);
-                    }else {
-                        if (points != null) {
-                            points.clear();
-                        }
-                        points.add(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()));
-                        points.addAll(polyline.getPoints());
-                        polyline.remove();
-                        polyline = mMap.addPolyline(getDefaultPolyLines(points));
-                    }
-                } else {
-                    myPreviousLocation = onConnectedLocation;
-                }
-            }
-        }
+                   }
+               } else {
+                   if (myPreviousLocation != null) {
+                       double distanceTravledLast = ApplicationUtils.
+                               calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), myPreviousLocation.getLatitude(), myPreviousLocation.getLongitude()) * 1000;
+                       if (distanceTravledLast > 500) {
+                           myPreviousLocation = onConnectedLocation;
+                           reDrawRoute(origin);
+                       }
+                   } else {
+                       myPreviousLocation = onConnectedLocation;
+                   }
+               }
+           }
+       }
     }
 
     private void reDrawRoute(String origin) {
@@ -3280,8 +3272,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         return;
 
                     points = polyline.getPoints();
-
                     polyline.remove();
+
                 } catch (Exception e) {
                     e.getCause();
                 }
@@ -3581,6 +3573,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         fetchDirections(origin, destination);
 
                         fromMarkerRouteDrawn = 1;
+                        getDirectionPinMarkerDraw(markerPlaceLatLng,markerUid);
 
                         linearLayoutNameCount.setVisibility(View.GONE);
                         linearLayoutSearchBottom.setVisibility(View.GONE);
