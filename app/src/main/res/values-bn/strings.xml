@@ -438,6 +438,9 @@
     <string name="permission_denied_permanently">অনুমতি স্থায়ীভাবে অস্বীকৃত</string>
     <string name="allow">Allow</string>
     <string name="allow_this_permission_from_settings">অনুগ্রহপূর্বক সেটিংস থেকে অনুমতি দিন</string>
+    <string name="allow_this_permission_to_further_use_of_this_app">দয়া করে এই অ্যাপ্লিকেশনটির আরও ব্যবহারের জন্য অবস্থানের অনুমতি দিন</string>
+    <string name="we_need_this_permission_for_find_nearest_parking_places">
+        নিকটস্থ পার্কিংয়ের জায়গাগুলি খুঁজতে আমাদের এই অনুমতি দরকার</string>
     <string name="u_cant_use_this_app_anymore">Permission Denied permanently,Please allow location for all the time from settings  অনুমতি স্থায়ীভাবে নিষেধ করা আছে, দয়া করে সেটিংস থেকে সর্বক্ষণের লোকেশান জন্য এর অনুমতি দিন </string>
     <string name="in_order_to_use_this_app">অ্যাপ থেকে সকল পরিষেবা পেতে অনুগ্রহপুর্বক সেটিংস থেকে সর্বক্ষণের লোকেশান জন্য এর অনুমতি দিন</string>
     <string name="permission_all_time">অনুগ্রহপুর্বক সর্বক্ষণের অবস্থানের জন্য এর অনুমতি দিন</string>

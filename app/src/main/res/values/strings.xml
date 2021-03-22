@@ -435,6 +435,9 @@
     <string name="permission_denied_permanently">Permission Denied permanently</string>
     <string name="allow">Allow</string>
     <string name="allow_this_permission_from_settings">Please allow this permission from settings</string>
+    <string name="allow_this_permission_to_further_use_of_this_app">Please allow this Location permission to further use of this app</string>
+    <string name="we_need_this_permission_for_find_nearest_parking_places">
+        We need Location permission for find nearest parking places</string>
     <string name="u_cant_use_this_app_anymore">Permission Denied permanently,Please allow location for all the time from settings</string>
     <string name="in_order_to_use_this_app">In order to get all services from this app, Please allow location for all the time from settings</string>
     <string name="permission_all_time">Please allow All Time Location</string>

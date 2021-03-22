@@ -270,7 +270,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                 Timber.e("Positive Button clicked");
                 dialog.dismiss();
                 //if (context != null) {
-                finish();
+                finishAffinity();
                 TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                 /*}
                 if (isGPSEnabled() && ApplicationUtils.checkInternet(context)){

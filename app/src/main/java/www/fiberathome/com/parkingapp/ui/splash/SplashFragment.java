@@ -110,6 +110,8 @@ public class SplashFragment extends BaseFragment implements ForceUpdateChecker.O
                     hideLoading();
                     context.startActivityWithFinish(HomeActivity.class);
                 }, 4000);
+            } else {
+                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.rules_for_using_app_through_gps));
             }
         } catch (Exception e) {
             e.getCause();

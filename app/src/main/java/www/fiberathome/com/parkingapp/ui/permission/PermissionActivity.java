@@ -3,9 +3,9 @@ package www.fiberathome.com.parkingapp.ui.permission;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,20 +20,24 @@ import androidx.core.content.ContextCompat;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
 
+import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.permission.listener.DexterPermissionListener;
 import www.fiberathome.com.parkingapp.ui.permission.listener.PermissionInterface;
+import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+
+import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
 
 public class PermissionActivity extends BaseActivity implements PermissionInterface {
 
     private DexterPermissionListener permissionListener;
     private TextView permissionTV;
-    private Context context;
+    private BaseActivity context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,17 +101,31 @@ public class PermissionActivity extends BaseActivity implements PermissionInterf
     public void showPermissionGranted(String permissionName) {
         switch (permissionName) {
             case Manifest.permission.ACCESS_FINE_LOCATION:
-                //Intent intent = new Intent(PermissionActivity.this, MainActivity.class);
+                if (ApplicationUtils.isGPSEnabled(context)) {
                 Intent intent = new Intent(PermissionActivity.this, HomeActivity.class);
                 Preferences.getInstance(context).setIsLocationPermissionGiven(true);
                 startActivity(intent);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        finish();
-                    }
-                }, 1000);
+                new Handler().postDelayed(this::finishAffinity, 1000);
+                } else {
+                    DialogUtils.getInstance().alertDialog(context,
+                            (Activity) context,
+                            context.getResources().getString(R.string.enable_gps), context.getResources().getString(R.string.locc_smart_parking_app_needs_permission_to_access_device_location_to_provide_required_services_please_allow_the_permission),
+                            context.getResources().getString(R.string.allow), "",
+                            new DialogUtils.DialogClickListener() {
+                                @Override
+                                public void onPositiveClick() {
+                                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                                    startActivityForResult(intent, GPS_REQUEST_CODE);
+                                }
 
+                                @Override
+                                public void onNegativeClick() {
+                                    context.finishAffinity();
+                                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                                }
+                            }).show();
+                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.please_enable_gps));
+                }
                 break;
         }
     }
@@ -143,6 +161,34 @@ public class PermissionActivity extends BaseActivity implements PermissionInterf
 
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Timber.e("onActivityResult SplashFragment called");
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == GPS_REQUEST_CODE) {
+
+            LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
+
+            assert locationManager != null;
+            boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+            if (providerEnabled) {
+                showLoading(context);
+                new Handler().postDelayed(() -> {
+                    hideLoading();
+                    //Toast.makeText(context, "GPS is enabled", Toast.LENGTH_SHORT).show();
+                    context.startActivityWithFinish(HomeActivity.class);
+                }, 6000);
+
+            } else {
+                ApplicationUtils.showToastMessage(context, context.getResources().getString(R.string.gps_network_not_enabled));
+            }
+        } else {
+            ApplicationUtils.showToastMessage(context, context.getResources().getString(R.string.gps_not_enabled_unable_to_show_user_location));
+        }
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.Q)
     private void openSettings() {
         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
@@ -164,27 +210,21 @@ public class PermissionActivity extends BaseActivity implements PermissionInterf
 
     @Override
     public void showPermissionRational(PermissionToken token) {
-        new AlertDialog.Builder(this).setTitle("We need this permission for find nearest parking places").
-                setMessage("Please allow this permission to further use this app").
-                setPositiveButton("Allow", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        token.continuePermissionRequest();
-                        dialog.dismiss();
-                    }
+        new AlertDialog.Builder(this).setTitle(context.getResources().getString(R.string.we_need_this_permission_for_find_nearest_parking_places)).
+                setMessage(context.getResources().getString(R.string.allow_this_permission_to_further_use_of_this_app)).
+                setPositiveButton(context.getResources().getString(R.string.allow), (dialog, which) -> {
+                    token.continuePermissionRequest();
+                    dialog.dismiss();
                 }).
-                setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        token.cancelPermissionRequest();
-                        dialog.dismiss();
-                    }
-                }).setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                token.cancelPermissionRequest();
-            }
-        }).show();
+                setNegativeButton(context.getResources().getString(R.string.cancel), (dialog, which) -> {
+                    token.cancelPermissionRequest();
+                    dialog.dismiss();
+                }).setOnDismissListener(dialog -> token.cancelPermissionRequest()).show();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     @Override
