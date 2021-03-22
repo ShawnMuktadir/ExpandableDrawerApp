@@ -117,6 +117,27 @@ public class ApplicationUtils {
         toastCountDown.start();
     }
 
+    public static void showToastWithDelay(Context context, String message, long countDown) {
+        // Set the toast and duration
+        final Toast mToastToShow = Toast.makeText(context, message, Toast.LENGTH_LONG);
+
+        // Set the countdown to display the toast
+        CountDownTimer toastCountDown;
+        toastCountDown = new CountDownTimer(countDown, countDown /*Tick duration*/) {
+            public void onTick(long millisUntilFinished) {
+                mToastToShow.show();
+            }
+
+            public void onFinish() {
+                mToastToShow.cancel();
+            }
+        };
+
+        // Show the toast and starts the countdown
+        mToastToShow.show();
+        toastCountDown.start();
+    }
+
     public static boolean isProbablyBangla(String s) {
         for (int i = 0; i < s.length(); ) {
             int c = s.codePointAt(i);
