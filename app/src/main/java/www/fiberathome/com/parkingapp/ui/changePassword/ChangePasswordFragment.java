@@ -1,6 +1,7 @@
 package www.fiberathome.com.parkingapp.ui.changePassword;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -38,6 +39,7 @@ import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 import www.fiberathome.com.parkingapp.model.user.User;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
 
@@ -101,6 +103,11 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
         Timber.e("onDestroyView called ");
@@ -116,21 +123,26 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
                 if (ApplicationUtils.checkInternet(context)) {
                     changePassword();
                 } else {
-                    ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
-                        Timber.e("Positive Button clicked");
-                        if (ApplicationUtils.checkInternet(context)) {
-                            changePassword();
-                        } else {
-                            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
-                        }
-                    }, (dialog, which) -> {
-                        Timber.e("Negative Button Clicked");
-                        dialog.dismiss();
-                        if (getActivity() != null) {
-                            getActivity().finish();
-                            TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
-                        }
-                    });
+                    DialogUtils.getInstance().alertDialog(context,
+                            (Activity) context, context.getString(R.string.connect_to_internet), context.getString(R.string.retry), context.getString(R.string.close_app),
+                            new DialogUtils.DialogClickListener() {
+                                @Override
+                                public void onPositiveClick() {
+                                    if (ApplicationUtils.checkInternet(context)) {
+                                        changePassword();
+                                    } else {
+                                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                                    }
+                                }
+
+                                @Override
+                                public void onNegativeClick() {
+                                    if (getActivity() != null) {
+                                        getActivity().finish();
+                                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                                    }
+                                }
+                            }).show();
                 }
                 break;
         }
@@ -320,10 +332,5 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
             }
         }
         return passStatus;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
     }
 }

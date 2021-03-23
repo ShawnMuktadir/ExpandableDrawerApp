@@ -1,6 +1,7 @@
 package www.fiberathome.com.parkingapp.ui.parking;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -56,9 +57,12 @@ import www.fiberathome.com.parkingapp.model.response.sensors.SensorArea;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
+import www.fiberathome.com.parkingapp.utils.MathUtils;
 import www.fiberathome.com.parkingapp.utils.RecyclerTouchListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+import www.fiberathome.com.parkingapp.utils.TextUtils;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
@@ -165,23 +169,32 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
             Timber.e("check internet method called");
             fetchParkingSlotSensors();
         } else {
-            ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet_gps), context,
-                    context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
-                        Timber.e("Positive Button clicked");
-                        if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
-                            fetchParkingSlotSensors();
-                        } else {
-                            TastyToastUtils.showTastyWarningToast(context,
-                                    context.getResources().getString(R.string.connect_to_internet_gps));
+            DialogUtils.getInstance().alertDialog(context,
+                    (Activity) context,
+                    context.getString(R.string.connect_to_internet_gps),
+                    context.getString(R.string.retry),
+                    context.getString(R.string.close_app),
+                    new DialogUtils.DialogClickListener() {
+                        @Override
+                        public void onPositiveClick() {
+                            Timber.e("Positive Button clicked");
+                            if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
+                                fetchParkingSlotSensors();
+                            } else {
+                                TastyToastUtils.showTastyWarningToast(context,
+                                        context.getResources().getString(R.string.connect_to_internet_gps));
+                            }
                         }
-                    }, (dialog, which) -> {
-                        Timber.e("Negative Button Clicked");
-                        dialog.dismiss();
-                        if (context != null) {
-                            context.finish();
-                            TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+
+                        @Override
+                        public void onNegativeClick() {
+                            Timber.e("Negative Button Clicked");
+                            if (context != null) {
+                                context.finish();
+                                TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                            }
                         }
-                    });
+                    }).show();
         }
     }
 
@@ -269,12 +282,12 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
             @Override
             public void afterTextChanged(Editable s) {
                 if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_EN) &&
-                        ApplicationUtils.textContainsBangla(s.toString())) {
+                        TextUtils.getInstance().textContainsBangla(s.toString())) {
                     setNoDataForBangla();
                     recyclerViewParking.setVisibility(View.GONE);
                     editTextParking.setText("");
                 } else if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN) &&
-                        ApplicationUtils.textContainsEnglish(s.toString())) {
+                        TextUtils.getInstance().textContainsEnglish(s.toString())) {
                     setNoDataForEnglish();
                     recyclerViewParking.setVisibility(View.VISIBLE);
                     editTextParking.setText("");
@@ -305,12 +318,12 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                     //do search
                     if (ApplicationUtils.checkInternet(context) && isGPSEnabled()) {
                         if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_EN) &&
-                                ApplicationUtils.textContainsBangla(contents)) {
+                                TextUtils.getInstance().textContainsBangla(contents)) {
                             setNoDataForBangla();
                             recyclerViewParking.setVisibility(View.GONE);
                             editTextParking.setText("");
                         } else if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN) &&
-                                ApplicationUtils.textContainsEnglish(contents)) {
+                                TextUtils.getInstance().textContainsEnglish(contents)) {
                             setNoDataForEnglish();
                             recyclerViewParking.setVisibility(View.VISIBLE);
                             editTextParking.setText("");
@@ -391,7 +404,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                                     count = baseStringList.get(i);
                                 }
 
-                                fetchDistance = ApplicationUtils.calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
+                                fetchDistance =  MathUtils.getInstance().calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
                                         endLat, endLng);
 
                                 if (fetchDistance > 1.9) {

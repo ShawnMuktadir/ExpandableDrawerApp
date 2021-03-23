@@ -1,30 +1,42 @@
 package www.fiberathome.com.parkingapp.utils;
 
 import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.DisplayMetrics;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
-import android.view.animation.RotateAnimation;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import androidx.annotation.DrawableRes;
+
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import www.fiberathome.com.parkingapp.R;
 
 import static java.lang.StrictMath.abs;
-import static java.lang.StrictMath.atan;
 
 public class MapUtils {
 
-    public static Bitmap getOriginDestinationMarkerBitmap() {
+    private static MapUtils mapUtils;
+
+    public static MapUtils getInstance() {
+        if (mapUtils == null) {
+            mapUtils = new MapUtils();
+        }
+
+        return mapUtils;
+    }
+
+    public Bitmap getOriginDestinationMarkerBitmap() {
         int height = 20;
         int width = 20;
         Bitmap bitmap = Bitmap.createBitmap(height, width, Bitmap.Config.RGB_565);
@@ -38,7 +50,7 @@ public class MapUtils {
     }
 
     //for Uber like car bearing
-    public static float getBearing(LatLng startPosition, LatLng newPos) {
+    public float getBearing(LatLng startPosition, LatLng newPos) {
 
         //Source
         double lat1 = startPosition.latitude;
@@ -65,20 +77,20 @@ public class MapUtils {
         }
     }
 
-    private static double degreeToRadians(double latLong) {
+    private double degreeToRadians(double latLong) {
         return (Math.PI * latLong / 180.0);
     }
 
-    private static double radiansToDegree(double latLong) {
+    private double radiansToDegree(double latLong) {
         return (latLong * 180.0 / Math.PI);
     }
 
-    public static Bitmap getCarBitmap(Context context) {
+    public Bitmap getCarBitmap(Context context) {
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.map_car_running);
         return Bitmap.createScaledBitmap(bitmap, 50, 50, false);
     }
 
-    public static ValueAnimator carAnimator() {
+    public ValueAnimator carAnimator() {
         ValueAnimator valueAnimator = ValueAnimator.ofFloat(0f, 1f);
         valueAnimator.setDuration(3000);
         valueAnimator.setInterpolator(new LinearInterpolator());
@@ -98,5 +110,27 @@ public class MapUtils {
         else if ((startPosition.latitude < newPos.latitude && startPosition.longitude >= newPos.longitude))
             return (float) ((90 - Math.toDegrees(Math.atan(lng / lat)) + 270));
         return -1;
+    }
+
+    public Bitmap createCustomMarker(Context context, @DrawableRes int resource, String _name) {
+
+        View marker = ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.custom_marker_layout, null);
+
+        ImageView markerImage = marker.findViewById(R.id.user_dp);
+        markerImage.setImageResource(resource);
+        TextView txt_name = marker.findViewById(R.id.name);
+        txt_name.setText(_name);
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        marker.setLayoutParams(new ViewGroup.LayoutParams(52, ViewGroup.LayoutParams.WRAP_CONTENT));
+        marker.measure(displayMetrics.widthPixels, displayMetrics.heightPixels);
+        marker.layout(0, 0, displayMetrics.widthPixels, displayMetrics.heightPixels);
+        marker.buildDrawingCache();
+        Bitmap bitmap = Bitmap.createBitmap(marker.getMeasuredWidth(), marker.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        marker.draw(canvas);
+
+        return bitmap;
     }
 }

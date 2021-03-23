@@ -1,0 +1,72 @@
+package www.fiberathome.com.parkingapp.utils;
+
+import android.annotation.SuppressLint;
+import android.location.Location;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
+
+import timber.log.Timber;
+
+public class DateTimeUtils {
+    private static DateTimeUtils dateTimeUtils;
+
+    public static DateTimeUtils getInstance() {
+        if (dateTimeUtils == null) {
+            dateTimeUtils = new DateTimeUtils();
+        }
+
+        return dateTimeUtils;
+    }
+
+    public String getCurrentDate() {
+        Date c = Calendar.getInstance().getTime();
+        Timber.e("Current time => %s", c);
+
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        String formattedDate = df.format(c);
+        return formattedDate;
+    }
+
+    public String getPSTTimeZoneCurrentDate() {
+        //Output: ex: Wednesday, July 20, 2011
+        DateFormat df = DateFormat.getDateInstance(DateFormat.FULL);
+        df.setTimeZone(TimeZone.getTimeZone("PST"));
+        final String dateString = df.format(new Date());
+        return dateString;
+    }
+
+    public String getTime(String dateTime) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.US);
+        SimpleDateFormat expectedFormat = new SimpleDateFormat("hh:mm a", Locale.US);
+        try {
+            Date dT = dateFormat.parse(dateTime);
+            return expectedFormat.format(dT);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+    public String getDateNow() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.US);
+        String dateNow = dateFormat.format(System.currentTimeMillis());
+        return dateNow;
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    public String getCurrentTimeStamp() {
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            return dateFormat.format(new Date());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+}

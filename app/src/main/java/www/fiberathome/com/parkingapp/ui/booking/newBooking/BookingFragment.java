@@ -1,6 +1,7 @@
 package www.fiberathome.com.parkingapp.ui.booking.newBooking;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -40,6 +41,7 @@ import www.fiberathome.com.parkingapp.model.response.booking.BookedResponse;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
@@ -102,22 +104,27 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
         if (ApplicationUtils.checkInternet(context)) {
             fetchBookedParkingPlace(mobileNo);
         } else {
-            ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
-                Timber.e("Positive Button clicked");
-                if (ApplicationUtils.checkInternet(context)) {
-                    //fetchParkingBookingSpot(mobileNo);
-                    fetchBookedParkingPlace(mobileNo);
-                } else {
-                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
-                }
-            }, (dialog, which) -> {
-                Timber.e("Negative Button Clicked");
-                dialog.dismiss();
-                if (context != null) {
-                    context.finish();
-                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
-                }
-            });
+            DialogUtils.getInstance().alertDialog(context,
+                    (Activity) context,
+                    context.getString(R.string.connect_to_internet), context.getString(R.string.retry), context.getString(R.string.close_app),
+                    new DialogUtils.DialogClickListener() {
+                        @Override
+                        public void onPositiveClick() {
+                            if (ApplicationUtils.checkInternet(context)) {
+                                fetchBookedParkingPlace(mobileNo);
+                            } else {
+                                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                            }
+                        }
+
+                        @Override
+                        public void onNegativeClick() {
+                            if (context != null) {
+                                context.finish();
+                                TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                            }
+                        }
+                    }).show();
         }
     }
 

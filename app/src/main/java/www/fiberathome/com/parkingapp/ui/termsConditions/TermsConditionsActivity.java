@@ -17,6 +17,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
 public class TermsConditionsActivity extends AppCompatActivity {
@@ -35,7 +36,7 @@ public class TermsConditionsActivity extends AppCompatActivity {
         context = this;
         ButterKnife.bind(this);
 
-        progressDialog = ApplicationUtils.progressDialog(context, context.getResources().getString(R.string.please_wait));
+        progressDialog = DialogUtils.getInstance().progressDialog(context, context.getResources().getString(R.string.please_wait));
 
         if (ApplicationUtils.checkInternet(context)) {
             webView.setWebViewClient(new WebViewClient() {

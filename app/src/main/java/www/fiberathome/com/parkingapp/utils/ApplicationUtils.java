@@ -138,31 +138,6 @@ public class ApplicationUtils {
         toastCountDown.start();
     }
 
-    public static boolean isProbablyBangla(String s) {
-        for (int i = 0; i < s.length(); ) {
-            int c = s.codePointAt(i);
-            if (c >= 0x0980 && c <= 0x09A0)
-                return true;
-            i += Character.charCount(c);
-        }
-        return false;
-    }
-
-    public static boolean textContainsBangla(String text) {
-        for (char c : text.toCharArray()) {
-            if (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.BENGALI) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static boolean textContainsEnglish(String str) {
-        return ((!str.equals(""))
-                && (str != null)
-                && (str.matches("^[a-zA-Z]*$")));
-    }
-
     public static int getToolBarHeight(Context context) {
         int[] attrs = new int[]{R.attr.actionBarSize};
         TypedArray ta = context.obtainStyledAttributes(attrs);
@@ -174,46 +149,6 @@ public class ApplicationUtils {
     public static double round(double value, int precision) {
         int scale = (int) Math.pow(10, precision);
         return (double) Math.round(value * scale) / scale;
-    }
-
-    public static void setTextColor(TextView tvText, Context context, int resId) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            tvText.setTextColor(context.getColor(resId));
-        } else {
-            tvText.setTextColor(context.getResources().getColor(resId));
-        }
-    }
-
-    public static void setTextColor(TextInputEditText textInputEditText, Context context, int resId) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            textInputEditText.setTextColor(context.getColor(resId));
-        } else {
-            textInputEditText.setTextColor(context.getResources().getColor(resId));
-        }
-    }
-
-    public static void setSeparateTextColor(TextView tvText, String color, String text, String coloredText) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            tvText.setText(Html.fromHtml(text + "<font color='" + color + "'>" + coloredText + "</font>", 0));
-        } else {
-            tvText.setText(Html.fromHtml(text + "<font color='" + color + "'>" + coloredText + "</font>"));
-        }
-    }
-
-    public static void setHintTextColor(TextView tvText, Context context, int resId) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            tvText.setHintTextColor(context.getColor(resId));
-        } else {
-            tvText.setHintTextColor(context.getResources().getColor(resId));
-        }
-    }
-
-    public static void setHintTextColor(TextInputEditText tvText, Context context, int resId) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            tvText.setHintTextColor(context.getColor(resId));
-        } else {
-            tvText.setHintTextColor(context.getResources().getColor(resId));
-        }
     }
 
     public static void setBackground(Context context, View source, int resId) {
@@ -318,7 +253,9 @@ public class ApplicationUtils {
             builder.setMessage(message);
             builder.setCancelable(true);
             builder.setPositiveButton(context.getResources().getString(R.string.get_support), (dialog, which) -> {
-                showAlertDialog(context.getString(R.string.number), context, context.getString(R.string.call), context.getString(R.string.cancel),
+                showAlertDialog(context.getString(R.string.number),
+                        context, context.getString(R.string.call),
+                        context.getString(R.string.cancel),
                         (dialog1, which1) -> {
                             Timber.e("Positive Button clicked");
                             String number = context.getString(R.string.number);
@@ -420,53 +357,6 @@ public class ApplicationUtils {
         }
     }
 
-
-    public static double convertToDouble(String value) {
-        double intValue;
-        try {
-            intValue = Double.parseDouble(value);
-        } catch (NumberFormatException | NullPointerException ex) {
-            intValue = 0.00;
-        }
-        return intValue;
-    }
-
-    public static float convertToFloat(String value) {
-        float intValue;
-        try {
-            intValue = Float.parseFloat(value);
-        } catch (NumberFormatException ex) {
-            intValue = 0.0f;
-        } catch (NullPointerException ex) {
-            intValue = 0.0f;
-        }
-        return intValue;
-    }
-
-    public static int convertToInt(String value) {
-        int intValue = 0;
-        try {
-            intValue = Integer.parseInt(value);
-        } catch (NumberFormatException ex) {
-            intValue = 0;
-        } catch (NullPointerException ex) {
-            intValue = 0;
-        }
-        return intValue;
-    }
-
-    public static long convertToLong(String value) {
-        long longValue = 0;
-        try {
-            longValue = Long.parseLong(value);
-        } catch (NumberFormatException ex) {
-            longValue = 0;
-        } catch (NullPointerException ex) {
-            longValue = 0;
-        }
-        return longValue;
-    }
-
     public static void showToastMessage(Context context, String message) {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show();
     }
@@ -516,13 +406,18 @@ public class ApplicationUtils {
         }
     }
 
-    public static String getCurrentDate() {
-        Date c = Calendar.getInstance().getTime();
-        Timber.e("Current time => %s", c);
+    public static boolean isGPSEnabled(Context context) {
 
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-        String formattedDate = df.format(c);
-        return formattedDate;
+        LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
+
+        boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+        if (providerEnabled) {
+            return true;
+        } else {
+            //showToastMessage(context, context.getResources().getString(R.string.please_enable_gps));
+        }
+        return false;
     }
 
     public static String getGreetingsMessage() {
@@ -542,26 +437,6 @@ public class ApplicationUtils {
             message = "Good Night";
         }
         return message;
-    }
-
-    public static String getPSTTimeZoneCurrentDate() {
-        //Output: ex: Wednesday, July 20, 2011
-        DateFormat df = DateFormat.getDateInstance(DateFormat.FULL);
-        df.setTimeZone(TimeZone.getTimeZone("PST"));
-        final String dateString = df.format(new Date());
-        return dateString;
-    }
-
-    public static String getTime(String dateTime) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.US);
-        SimpleDateFormat expectedFormat = new SimpleDateFormat("hh:mm a", Locale.US);
-        try {
-            Date dT = dateFormat.parse(dateTime);
-            return expectedFormat.format(dT);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return "";
-        }
     }
 
     public static String addCountryPrefix(String number) {
@@ -677,98 +552,6 @@ public class ApplicationUtils {
                 .commit();
     }
 
-    private static double deg2rad(double deg) {
-        return (deg * Math.PI / 180.0);
-    }
-
-    private static double rad2deg(double rad) {
-        return (rad * 180.0 / Math.PI);
-    }
-
-    public static double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
-        /*double theta = lon1 - lon2;
-        double mile = Math.sin(deg2rad(lat1))
-                * Math.sin(deg2rad(lat2))
-                + Math.cos(deg2rad(lat1))
-                * Math.cos(deg2rad(lat2))
-                * Math.cos(deg2rad(theta));
-        mile = Math.acos(mile);
-        mile = rad2deg(mile);
-        mile = mile * 60 * 1.1515;
-        double km = mile / 0.62137;
-        return (km);*/
-
-
-        /*Log.e("DistanceAbdur"," lat1 : lon1= "+lat1+" "+lon1);
-        Log.e("DistanceAbdur"," lat2 : lon2= "+lat2+" "+lon2);*/
-
-        Location startPoint = new Location("locationA");
-        startPoint.setLatitude(lat1);
-        startPoint.setLongitude(lon1);
-
-        Location endPoint = new Location("locationB");
-        endPoint.setLatitude(lat2);
-        endPoint.setLongitude(lon2);
-
-        double distance = startPoint.distanceTo(endPoint);
-
-        return (distance / 1000);
-    }
-
-    public static String capitalize(String str) {
-        if (str == null || str.isEmpty() || str.equals("")) {
-            return str;
-        }
-
-        return str.substring(0, 1).toUpperCase() + str.substring(1);
-    }
-
-    public static String capitalizeFirstLetter(final String str) {
-        int strLen;
-        if (str == null || (strLen = str.length()) == 0) {
-            return str;
-        }
-
-        final char firstChar = str.charAt(0);
-        final char newChar = Character.toTitleCase(firstChar);
-        if (firstChar == newChar) {
-            // already capitalized
-            return str;
-        }
-
-        char[] newChars = new char[strLen];
-        newChars[0] = newChar;
-        str.getChars(1, strLen, newChars, 1);
-        return String.valueOf(newChars);
-    }
-
-    public static String allTrim(String str) {
-        int j = 0;
-        int count = 0;  // Number of extra spaces
-        int lspaces = 0;// Number of left spaces
-        char[] ch = str.toCharArray();
-        int len = str.length();
-        StringBuffer bchar = new StringBuffer();
-        if (ch[0] == ' ') {
-            while (ch[j] == ' ') {
-                lspaces++;
-                j++;
-            }
-        }
-        for (int i = lspaces; i < len; i++) {
-            if (ch[i] != ' ') {
-                if (count > 1 || count == 1) {
-                    bchar.append(' ');
-                    count = 0;
-                }
-                bchar.append(ch[i]);
-            } else if (ch[i] == ' ') {
-                count++;
-            }
-        }
-        return bchar.toString();
-    }
-
     public static String getCompleteAddressString(Context context, double LATITUDE, double LONGITUDE) {
 
         String strAdd = "";
@@ -792,113 +575,6 @@ public class ApplicationUtils {
 //          Timber.e("My Current loction address -> ", e.getMessage() + "Canont get Address!");
         }
         return strAdd;
-    }
-
-    public static SpannableString getUnderlinedString(String text) {
-        SpannableString content = new SpannableString(text);
-        content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
-        return content;
-    }
-
-    public static CharSequence highlight(String search, String originalText) {
-        // ignore case and accents
-        // the same thing should have been done for the search text
-        String normalizedText = Normalizer.normalize(originalText, Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
-
-        int start = normalizedText.indexOf(search);
-        if (start < 0) {
-            // not found, nothing to to
-            return originalText;
-        } else {
-            // highlight each appearance in the original text
-            // while searching in normalized text
-            Spannable highlighted = new SpannableString(originalText);
-            while (start >= 0) {
-                int spanStart = Math.min(start, originalText.length());
-                int spanEnd = Math.min(start + search.length(), originalText.length());
-
-                highlighted.setSpan(new BackgroundColorSpan(0xFFFCFF48), spanStart, spanEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-                start = normalizedText.indexOf(search, spanEnd);
-            }
-
-            return highlighted;
-        }
-    }
-
-    public static SpannableStringBuilder highlightSearchText(SpannableStringBuilder fullText, String searchText) {
-
-        if (searchText.length() == 0) return fullText;
-
-        SpannableStringBuilder wordSpan = new SpannableStringBuilder(fullText);
-        Pattern p = Pattern.compile(searchText, Pattern.CASE_INSENSITIVE);
-        Matcher m = p.matcher(fullText);
-        while (m.find()) {
-
-            int wordStart = m.start();
-            int wordEnd = m.end();
-
-            setWordSpan(wordSpan, wordStart, wordEnd);
-
-        }
-
-        return wordSpan;
-    }
-
-    private static void setWordSpan(SpannableStringBuilder wordSpan, int wordStart, int wordEnd) {
-        // Now highlight based on the word boundaries
-        ColorStateList redColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{0xffa10901});
-        TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.BOLD, -1, redColor, null);
-
-        wordSpan.setSpan(highlightSpan, wordStart, wordEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        wordSpan.setSpan(new BackgroundColorSpan(0xFFFCFF48), wordStart, wordEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        wordSpan.setSpan(new RelativeSizeSpan(1.25f), wordStart, wordEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-    }
-
-    public static Spannable highlightSearchKey(String title) {
-        Spannable highlight;
-        Pattern pattern;
-        Matcher matcher;
-        int word_index;
-        String title_str;
-        String[] words = new String[20];
-
-        word_index = words.length;
-        title_str = Html.fromHtml(title).toString();
-        highlight = (Spannable) Html.fromHtml(title);
-        for (int index = 0; index < word_index; index++) {
-            pattern = Pattern.compile("(?i)" + words[index]);
-            matcher = pattern.matcher(title_str);
-            while (matcher.find()) {
-                highlight.setSpan(
-                        new BackgroundColorSpan(0x44444444),
-                        matcher.start(),
-                        matcher.end(),
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-        }
-        return highlight;
-    }
-
-    public static String getUserCountry(Context context) {
-        try {
-            final TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-            assert tm != null;
-            final String simCountry = tm.getSimCountryIso();
-            if (simCountry != null && simCountry.length() == 2) { // SIM country code is available
-                Timber.e("simcountry -> %s", simCountry.toLowerCase(Locale.US));
-                return simCountry.toLowerCase(Locale.US);
-            } else if (tm.getPhoneType() != TelephonyManager.PHONE_TYPE_CDMA) { // device is not 3G (would be unreliable)
-                String networkCountry = tm.getNetworkCountryIso();
-                if (networkCountry != null && networkCountry.length() == 2) { // network country code is available
-                    Timber.e("networkCountry -> %s", networkCountry.toLowerCase(Locale.US));
-                    return networkCountry.toLowerCase(Locale.US);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     public static boolean checkLocationPermission(Context context) {
@@ -944,12 +620,6 @@ public class ApplicationUtils {
         return gps_enabled && network_enabled;
     }
 
-    public static String getDateNow() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.US);
-        String dateNow = dateFormat.format(System.currentTimeMillis());
-        return dateNow;
-    }
-
     public static Drawable changeDrawableColor(Drawable drawable, int color) {
         drawable = DrawableCompat.wrap(drawable);
         DrawableCompat.setTint(drawable, color);
@@ -984,35 +654,6 @@ public class ApplicationUtils {
         return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
 
-    public static boolean getSpecialCharacter(Context context, String str) {
-        if (str == null || str.trim().isEmpty()) {
-            System.out.println("format of string is Incorrect ");
-//            Toast.makeText(context, "Format of string is Incorrect", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-        Pattern pattern = Pattern.compile("[^A-Za-z0-9]");
-        Matcher matcher = pattern.matcher(str);
-
-        boolean b = matcher.find();
-        if (b == true) {
-            System.out.println("There is a special character in my string:- " + str);
-//            Toast.makeText(context, "Sorry, no places found!", Toast.LENGTH_SHORT).show();
-        } else {
-            System.out.println("There is no special character in my String :-  " + str);
-        }
-        return true;
-    }
-
-    public static ProgressDialog progressDialog(Context context, String message) {
-        ProgressDialog progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage(message);
-        progressDialog.setCancelable(false);
-        progressDialog.show();
-
-        return progressDialog;
-    }
-
     private String getCountryZipCode(Context context) {
 
         String CountryID = "";
@@ -1032,80 +673,5 @@ public class ApplicationUtils {
             }
         }
         return CountryZipCode;
-    }
-
-    public static Bitmap createCustomMarker(Context context, @DrawableRes int resource, String _name) {
-
-        View marker = ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.custom_marker_layout, null);
-
-        ImageView markerImage = marker.findViewById(R.id.user_dp);
-        markerImage.setImageResource(resource);
-        TextView txt_name = marker.findViewById(R.id.name);
-        txt_name.setText(_name);
-
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        marker.setLayoutParams(new ViewGroup.LayoutParams(52, ViewGroup.LayoutParams.WRAP_CONTENT));
-        marker.measure(displayMetrics.widthPixels, displayMetrics.heightPixels);
-        marker.layout(0, 0, displayMetrics.widthPixels, displayMetrics.heightPixels);
-        marker.buildDrawingCache();
-        Bitmap bitmap = Bitmap.createBitmap(marker.getMeasuredWidth(), marker.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        marker.draw(canvas);
-
-        return bitmap;
-    }
-
-    @SuppressLint("SimpleDateFormat")
-    public static String getCurrentTimeStamp() {
-        try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            return dateFormat.format(new Date());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public static boolean isGPSEnabled(Context context) {
-
-        LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-
-        boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-        if (providerEnabled) {
-            return true;
-        } else {
-            //showToastMessage(context, context.getResources().getString(R.string.please_enable_gps));
-        }
-        return false;
-    }
-
-    public static void setSubTextColor(TextView view, String fulltext, String subtext, int color, ClickableSpan clickableAction) {
-        view.setText(fulltext, TextView.BufferType.SPANNABLE);
-        Spannable str = (Spannable) view.getText();
-        int i = fulltext.indexOf(subtext);
-        str.setSpan(new ForegroundColorSpan(color), i, i + subtext.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        if (view.isClickable())
-            str.removeSpan(clickableAction);
-    }
-
-    public static TextView createLink(TextView targetTextView, String completeString,
-                                      String partToClick, ClickableSpan clickableAction) {
-
-        SpannableString spannableString = new SpannableString(completeString);
-
-        // make sure the String is exist, if it doesn't exist
-        // it will throw IndexOutOfBoundException
-        int startPosition = completeString.indexOf(partToClick);
-        int endPosition = completeString.lastIndexOf(partToClick) + partToClick.length();
-
-        spannableString.setSpan(clickableAction, startPosition, endPosition,
-                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-
-        targetTextView.setText(spannableString);
-        targetTextView.setMovementMethod(LinkMovementMethod.getInstance());
-
-        return targetTextView;
     }
 }

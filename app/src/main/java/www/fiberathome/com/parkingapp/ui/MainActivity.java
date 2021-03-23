@@ -2,6 +2,7 @@ package www.fiberathome.com.parkingapp.ui;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -95,8 +96,10 @@ import www.fiberathome.com.parkingapp.ui.ratingReview.RatingReviewFragment;
 import www.fiberathome.com.parkingapp.ui.settings.SettingsFragment;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.LocationHelper;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+import www.fiberathome.com.parkingapp.utils.TextUtils;
 
 @SuppressLint("NonConstantResourceId")
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener,
@@ -483,22 +486,24 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             }
         } else {
             TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_parking_app));
-            ApplicationUtils.showAlertDialog(context.getString(R.string.exit_message_main), context, context.getString(R.string.ok), context.getString(R.string.cancel), (dialog, which) -> {
-                Timber.e("Positive Button clicked");
-                dialog.dismiss();
-//                if (context != null) {
-                finish();
-                TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
-//                }
-//                if (isGPSEnabled() && ApplicationUtils.checkInternet(context)){
-//                    ApplicationUtils.checkInternet(context)
-//                } else {
-//                    TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
-//                }
-            }, (dialog, which) -> {
-                Timber.e("Negative Button Clicked");
-                dialog.dismiss();
-            });
+            DialogUtils.getInstance().alertDialog(context,
+                    (Activity) context,
+                    context.getString(R.string.exit_message_main),
+                    context.getString(R.string.ok),
+                    context.getString(R.string.cancel),
+                    new DialogUtils.DialogClickListener() {
+                        @Override
+                        public void onPositiveClick() {
+                            Timber.e("Positive Button clicked");
+                            finish();
+                            TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                        }
+
+                        @Override
+                        public void onNegativeClick() {
+                            Timber.e("Negative Button Clicked");
+                        }
+                    }).show();
         }
     }
 
@@ -594,7 +599,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
         tvTimeToolbar.setVisibility(View.VISIBLE);
         linearLayoutToolbarTime.setVisibility(View.VISIBLE);
-        ProgressDialog progressDialog = ApplicationUtils.progressDialog(context, context.getResources().getString(R.string.please_wait));
+        ProgressDialog progressDialog = DialogUtils.getInstance().progressDialog(context, context.getResources().getString(R.string.please_wait));
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, HomeFragment.newInstance()).commit();
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -665,14 +670,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         TextView tvUserVehicleNo = headerView.findViewById(R.id.header_vehicle_no);
         ImageView ivUserProfile = headerView.findViewById(R.id.header_profile_pic);
 
-        tvUserFullName.setText(ApplicationUtils.capitalizeFirstLetter(user.getFullName()));
+        tvUserFullName.setText(TextUtils.getInstance().capitalizeFirstLetter(user.getFullName()));
 
         StringBuilder stringBuilder = new StringBuilder();
         if (user.getVehicleNo() != null) {
             stringBuilder.append("Vehicle No: ").append(user.getVehicleNo());
         }
         tvUserVehicleNo.setText(stringBuilder.toString());
-//        tvUserVehicleNo.setText("Vehicle No: " + user.getVehicleNo());
 
         RequestOptions requestOptions = new RequestOptions()
                 .centerCrop()

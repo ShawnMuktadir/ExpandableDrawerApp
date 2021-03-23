@@ -4,11 +4,13 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.text.TextUtils;
 import android.view.View;
 
 import androidx.appcompat.app.AlertDialog;
 
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.ui.booking.newBooking.BookingActivity;
 
 public class DialogUtils {
     private static DialogUtils dialogUtils;
@@ -19,6 +21,9 @@ public class DialogUtils {
         }
 
         return dialogUtils;
+    }
+
+    public void alertDialog(BookingActivity context, Activity context1, String string, BookingActivity context2, String string1, String string2, Object positive_button_clicked, Object negative_button_clicked) {
     }
 
     public interface DialogClickListener {

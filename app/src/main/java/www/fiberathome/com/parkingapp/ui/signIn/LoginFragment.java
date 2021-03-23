@@ -2,6 +2,7 @@ package www.fiberathome.com.parkingapp.ui.signIn;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -56,6 +57,7 @@ import www.fiberathome.com.parkingapp.ui.permission.PermissionActivity;
 import www.fiberathome.com.parkingapp.ui.signUp.SignUpActivity;
 import www.fiberathome.com.parkingapp.ui.verifyPhone.VerifyPhoneActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
 
@@ -206,22 +208,31 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                 if (ApplicationUtils.checkInternet(context)) {
                     submitLogin();
                 } else {
-                    ApplicationUtils.showAlertDialog(context.getResources().getString(R.string.connect_to_internet), context,
-                            context.getResources().getString(R.string.retry), context.getResources().getString(R.string.close_app), (dialog, which) -> {
-                                Timber.e("Positive Button clicked");
-                                if (ApplicationUtils.checkInternet(context)) {
-                                    submitLogin();
-                                } else {
-                                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                    DialogUtils.getInstance().alertDialog(context,
+                            (Activity) context,
+                            context.getResources().getString(R.string.connect_to_internet),
+                            context.getResources().getString(R.string.retry),
+                            context.getResources().getString(R.string.close_app),
+                            new DialogUtils.DialogClickListener() {
+                                @Override
+                                public void onPositiveClick() {
+                                    Timber.e("Positive Button clicked");
+                                    if (ApplicationUtils.checkInternet(context)) {
+                                        submitLogin();
+                                    } else {
+                                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                                    }
                                 }
-                            }, (dialog, which) -> {
-                                Timber.e("Negative Button Clicked");
-                                dialog.dismiss();
-                                if (context != null) {
-                                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
-                                    context.finish();
+
+                                @Override
+                                public void onNegativeClick() {
+                                    Timber.e("Negative Button Clicked");
+                                    if (context != null) {
+                                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                                        context.finish();
+                                    }
                                 }
-                            });
+                            }).show();
                 }
                 break;
 
@@ -271,22 +282,31 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                         if (ApplicationUtils.checkInternet(context)) {
                             submitLogin();
                         } else {
-                            ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context,
-                                    context.getResources().getString(R.string.retry), context.getResources().getString(R.string.close_app), (dialog, which) -> {
-                                        Timber.e("Positive Button clicked");
-                                        if (ApplicationUtils.checkInternet(context)) {
-                                            submitLogin();
-                                        } else {
-                                            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                            DialogUtils.getInstance().alertDialog(context,
+                                    (Activity) context,
+                                    context.getString(R.string.connect_to_internet),
+                                    context.getResources().getString(R.string.retry),
+                                    context.getResources().getString(R.string.close_app),
+                                    new DialogUtils.DialogClickListener() {
+                                        @Override
+                                        public void onPositiveClick() {
+                                            Timber.e("Positive Button clicked");
+                                            if (ApplicationUtils.checkInternet(context)) {
+                                                submitLogin();
+                                            } else {
+                                                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                                            }
                                         }
-                                    }, (dialog, which) -> {
-                                        Timber.e("Negative Button Clicked");
-                                        dialog.dismiss();
-                                        if (context != null) {
-                                            TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
-                                            context.finish();
+
+                                        @Override
+                                        public void onNegativeClick() {
+                                            Timber.e("Negative Button Clicked");
+                                            if (context != null) {
+                                                TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                                                context.finish();
+                                            }
                                         }
-                                    });
+                                    }).show();
                         }
                         return true;
                     }

@@ -1,6 +1,7 @@
 package www.fiberathome.com.parkingapp.ui.signUp;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -65,6 +66,8 @@ import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.ui.termsConditions.TermsConditionsActivity;
 import www.fiberathome.com.parkingapp.ui.verifyPhone.VerifyPhoneActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.DateTimeUtils;
+import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
 
@@ -205,21 +208,31 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                 if (ApplicationUtils.checkInternet(context)) {
                     submitRegistration();
                 } else {
-                    ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
-                        Timber.e("Positive Button clicked");
-                        if (ApplicationUtils.checkInternet(context)) {
-                            submitRegistration();
-                        } else {
-                            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
-                        }
-                    }, (dialog, which) -> {
-                        Timber.e("Negative Button Clicked");
-                        dialog.dismiss();
-                        if (context != null) {
-                            context.finish();
-                            TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
-                        }
-                    });
+                    DialogUtils.getInstance().alertDialog(context,
+                            (Activity) context,
+                            context.getString(R.string.connect_to_internet),
+                            context.getString(R.string.retry),
+                            context.getString(R.string.close_app),
+                            new DialogUtils.DialogClickListener() {
+                                @Override
+                                public void onPositiveClick() {
+                                    Timber.e("Positive Button clicked");
+                                    if (ApplicationUtils.checkInternet(context)) {
+                                        submitRegistration();
+                                    } else {
+                                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                                    }
+                                }
+
+                                @Override
+                                public void onNegativeClick() {
+                                    Timber.e("Negative Button Clicked");
+                                    if (context != null) {
+                                        context.finish();
+                                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                                    }
+                                }
+                            }).show();
                 }
                 break;
 
@@ -347,21 +360,31 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                         if (ApplicationUtils.checkInternet(context)) {
                             submitRegistration();
                         } else {
-                            ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
-                                Timber.e("Positive Button clicked");
-                                if (ApplicationUtils.checkInternet(context)) {
-                                    submitRegistration();
-                                } else {
-                                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
-                                }
-                            }, (dialog, which) -> {
-                                Timber.e("Negative Button Clicked");
-                                dialog.dismiss();
-                                if (context != null) {
-                                    context.finish();
-                                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
-                                }
-                            });
+                            DialogUtils.getInstance().alertDialog(context,
+                                    (Activity) context,
+                                    context.getString(R.string.connect_to_internet),
+                                    context.getString(R.string.retry),
+                                    context.getString(R.string.close_app),
+                                    new DialogUtils.DialogClickListener() {
+                                        @Override
+                                        public void onPositiveClick() {
+                                            Timber.e("Positive Button clicked");
+                                            if (ApplicationUtils.checkInternet(context)) {
+                                                submitRegistration();
+                                            } else {
+                                                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onNegativeClick() {
+                                            Timber.e("Negative Button Clicked");
+                                            if (context != null) {
+                                                context.finish();
+                                                TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                                            }
+                                        }
+                                    }).show();
                         }
                         return true;
                     }
@@ -566,7 +589,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
         ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
         Call<BaseResponse> call = service.createUser(fullName, password, mobileNo, vehicleNo, imageToString(bitmap),
-                mobileNo + "_" + ApplicationUtils.getCurrentTimeStamp());
+                mobileNo + "_" + DateTimeUtils.getInstance().getCurrentTimeStamp());
 
         call.enqueue(new Callback<BaseResponse>() {
             @Override

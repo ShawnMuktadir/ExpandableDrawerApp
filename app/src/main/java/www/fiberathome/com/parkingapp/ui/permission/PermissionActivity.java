@@ -102,10 +102,10 @@ public class PermissionActivity extends BaseActivity implements PermissionInterf
         switch (permissionName) {
             case Manifest.permission.ACCESS_FINE_LOCATION:
                 if (ApplicationUtils.isGPSEnabled(context)) {
-                Intent intent = new Intent(PermissionActivity.this, HomeActivity.class);
-                Preferences.getInstance(context).setIsLocationPermissionGiven(true);
-                startActivity(intent);
-                new Handler().postDelayed(this::finishAffinity, 1000);
+                    Intent intent = new Intent(PermissionActivity.this, HomeActivity.class);
+                    Preferences.getInstance(context).setIsLocationPermissionGiven(true);
+                    startActivity(intent);
+                    new Handler().postDelayed(this::finishAffinity, 1000);
                 } else {
                     DialogUtils.getInstance().alertDialog(context,
                             (Activity) context,
@@ -130,6 +130,7 @@ public class PermissionActivity extends BaseActivity implements PermissionInterf
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     public void handlePermanentDeniedPermission(String permissionName) {
 
@@ -141,24 +142,23 @@ public class PermissionActivity extends BaseActivity implements PermissionInterf
                 break;
         }
 
-        new AlertDialog.Builder(this).setTitle(context.getResources().getString(R.string.u_cant_use_this_app_anymore)).
-                setMessage(context.getResources().getString(R.string.allow_this_permission_from_settings)).
-                setPositiveButton(context.getResources().getString(R.string.allow), new DialogInterface.OnClickListener() {
-
-                    @RequiresApi(api = Build.VERSION_CODES.Q)
+        DialogUtils.getInstance().alertDialog(context,
+                (Activity) context,
+                context.getResources().getString(R.string.u_cant_use_this_app_anymore),
+                context.getResources().getString(R.string.allow_this_permission_from_settings),
+                context.getResources().getString(R.string.allow), context.getResources().getString(R.string.cancel),
+                new DialogUtils.DialogClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onPositiveClick() {
+                        Timber.e("Positive Button clicked");
                         openSettings();
-                        dialog.dismiss();
                     }
-                }).
-                setNegativeButton(context.getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
+                    public void onNegativeClick() {
+                        Timber.e("Negative Button Clicked");
                     }
                 }).show();
-
     }
 
     @Override
@@ -210,16 +210,24 @@ public class PermissionActivity extends BaseActivity implements PermissionInterf
 
     @Override
     public void showPermissionRational(PermissionToken token) {
-        new AlertDialog.Builder(this).setTitle(context.getResources().getString(R.string.we_need_this_permission_for_find_nearest_parking_places)).
-                setMessage(context.getResources().getString(R.string.allow_this_permission_to_further_use_of_this_app)).
-                setPositiveButton(context.getResources().getString(R.string.allow), (dialog, which) -> {
-                    token.continuePermissionRequest();
-                    dialog.dismiss();
-                }).
-                setNegativeButton(context.getResources().getString(R.string.cancel), (dialog, which) -> {
-                    token.cancelPermissionRequest();
-                    dialog.dismiss();
-                }).setOnDismissListener(dialog -> token.cancelPermissionRequest()).show();
+
+        DialogUtils.getInstance().alertDialog(context,
+                (Activity) context,
+                context.getResources().getString(R.string.we_need_this_permission_for_find_nearest_parking_places),
+                context.getString(R.string.allow_this_permission_to_further_use_of_this_app),
+                context.getString(R.string.allow),
+                context.getString(R.string.cancel),
+                new DialogUtils.DialogClickListener() {
+                    @Override
+                    public void onPositiveClick() {
+                        token.continuePermissionRequest();
+                    }
+
+                    @Override
+                    public void onNegativeClick() {
+                        token.cancelPermissionRequest();
+                    }
+                }).show();
     }
 
     @Override

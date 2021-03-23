@@ -2,6 +2,7 @@ package www.fiberathome.com.parkingapp.ui.home;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -53,6 +54,7 @@ import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
 import www.fiberathome.com.parkingapp.ui.settings.SettingsFragment;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
 @SuppressLint("NonConstantResourceId")
@@ -78,7 +80,6 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
     public static final int GPS_REQUEST_CODE = 9003;
 
     private Context context;
-    private PendingIntent pendingIntent;
     private GeofencingRequest geofencingRequest;
 
     @Override
@@ -196,14 +197,14 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                                 ApplicationUtils.showExitDialog(this);
                             } else {
                                 Timber.e("onBackPressed exitCounter else");
-                                ApplicationUtils.showToastWithDelay(context, "Press Back again to exit", 200);
+                                ApplicationUtils.showToastWithDelay(context, context.getResources().getString(R.string.press_back_again_to_exit), 200);
                             }
                         } else {
                             Timber.e("onBackPressed exit else");
                             if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
                                 Timber.e("onBackPressed exit else if");
                                 if (exitToast == null || exitToast.getView() == null || exitToast.getView().getWindowToken() == null) {
-                                    exitToast = Toast.makeText(this, "Press Back Button again to exit", Toast.LENGTH_LONG);
+                                    exitToast = Toast.makeText(context, context.getResources().getString(R.string.press_back_again_to_exit), Toast.LENGTH_LONG);
                                     exitToast.show();
                                 } else {
                                     Timber.e("onBackPressed exit else else");
@@ -260,28 +261,26 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                 navigationView.getMenu().getItem(8).setChecked(false);
                 navigationView.getMenu().getItem(9).setChecked(false);
                 navigationView.getMenu().getItem(10).setChecked(false);
-                /*if (SharedData.getInstance().getOnConnectedLocation() != null) {
-                    HomeFragment.newInstance(lat, lng).animateCamera(SharedData.getInstance().getOnConnectedLocation());
-                }*/
             }
         } else {
             TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_parking_app));
-            ApplicationUtils.showAlertDialog(context.getString(R.string.exit_message_main), context, context.getString(R.string.ok), context.getString(R.string.cancel), (dialog, which) -> {
-                Timber.e("Positive Button clicked");
-                dialog.dismiss();
-                //if (context != null) {
-                finishAffinity();
-                TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
-                /*}
-                if (isGPSEnabled() && ApplicationUtils.checkInternet(context)){
-                    ApplicationUtils.checkInternet(context)
-                } else {
-                    TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
-                }*/
-            }, (dialog, which) -> {
-                Timber.e("Negative Button Clicked");
-                dialog.dismiss();
-            });
+            DialogUtils.getInstance().alertDialog(context,
+                    (Activity) context,
+                    context.getResources().getString(R.string.exit_message_main),
+                    context.getString(R.string.ok), context.getString(R.string.cancel),
+                    new DialogUtils.DialogClickListener() {
+                        @Override
+                        public void onPositiveClick() {
+                            Timber.e("Positive Button clicked");
+                            finishAffinity();
+                            TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                        }
+
+                        @Override
+                        public void onNegativeClick() {
+                            Timber.e("Negative Button Clicked");
+                        }
+                    }).show();
         }
     }
 
@@ -307,7 +306,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Timber.e("onActivityResult MainActivity called");
+        Timber.e("onActivityResult HomeActivity called");
         super.onActivityResult(requestCode, resultCode, data);
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
             fragment.onActivityResult(requestCode, resultCode, data);
@@ -323,11 +322,12 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
             }
 
             if (providerEnabled) {
-                Timber.e("providerEnabled MainActivity called");
-                Toast.makeText(context, "GPS is enabled", Toast.LENGTH_SHORT).show();
+                Timber.e("providerEnabled HomeActivity called");
+                ApplicationUtils.showToastMessage(context, context.getResources().getString(R.string.enable_gps));
             }
         } else {
             //Toast.makeText(context, "GPS not enabled. Unable to show user location", Toast.LENGTH_SHORT).show();
+            Timber.e("requestCode else called");
         }
     }
 
@@ -345,7 +345,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                 ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
                         ScheduleFragment.newInstance(), R.id.nav_host_fragment);
             } else {
-                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
+                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.please_enable_gps));
             }
         });
     }
@@ -375,6 +375,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
         if (providerEnabled) {
             return true;
         } else {
+            Timber.e("provider not Enabled");
 
             /*AlertDialog alertDialog = new AlertDialog.Builder(context)
                     .setTitle("GPS Permissions")
@@ -385,14 +386,13 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                     }))
                     .setCancelable(false)
                     .show();*/
-
         }
 
         return false;
     }
 
     private void buildLocationCallBack() {
-        Timber.e("buildLocationCallBack MainActivity call hoiche");
+        Timber.e("buildLocationCallBack HomeActivity call hoiche");
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(final LocationResult locationResult) {

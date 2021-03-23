@@ -26,6 +26,7 @@ import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
+import www.fiberathome.com.parkingapp.utils.TextUtils;
 
 import static android.content.Context.LOCATION_SERVICE;
 
@@ -129,7 +130,7 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
 
         String name = user.getFullName();
         //name = name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
-        name = ApplicationUtils.capitalizeFirstLetter(name);
+        name = TextUtils.getInstance().capitalizeFirstLetter(name);
         tvUserName.setText(name);
 
         tvUserMobileNo.setText(ApplicationUtils.addCountryPrefix(user.getMobileNo()));

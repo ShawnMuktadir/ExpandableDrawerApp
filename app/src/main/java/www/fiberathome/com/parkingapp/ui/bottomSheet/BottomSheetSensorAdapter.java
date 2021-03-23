@@ -37,6 +37,7 @@ import www.fiberathome.com.parkingapp.model.response.booking.BookingSensors;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
+import www.fiberathome.com.parkingapp.utils.TextUtils;
 
 public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final String TAG = getClass().getSimpleName();
@@ -86,7 +87,7 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
         if (bookingSensors != null) {
             switch (bookingSensors.type) {
                 case BookingSensors.INFO_TYPE:
-                    ((BookingViewHolder) holder).textViewParkingAreaName.setText(ApplicationUtils.capitalizeFirstLetter(bookingSensors.getParkingArea().trim()));
+                    ((BookingViewHolder) holder).textViewParkingAreaName.setText(TextUtils.getInstance().capitalizeFirstLetter(bookingSensors.getParkingArea().trim()));
                     ((BookingViewHolder) holder).textViewParkingAreaCount.setText(bookingSensors.getCount());
                     ((BookingViewHolder) holder).textViewParkingDistance.setText(new DecimalFormat("##.##").format(bookingSensors.getDistance()) + " km");
                     ((BookingViewHolder) holder).textViewParkingTravelTime.setText(bookingSensors.getDuration());
@@ -137,7 +138,7 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
                         //this.textViewItem=holder.itemView;
                         ((TextBookingViewHolder) holder).relativeLayoutxt.setBackgroundColor(Color.LTGRAY);
                         //textItemViewColorGray=true;
-                        ((TextBookingViewHolder) holder).textViewParkingAreaName.setText(ApplicationUtils.capitalizeFirstLetter(bookingSensors.getParkingArea().trim()));
+                        ((TextBookingViewHolder) holder).textViewParkingAreaName.setText(TextUtils.getInstance().capitalizeFirstLetter(bookingSensors.getParkingArea().trim()));
                         ((TextBookingViewHolder) holder).textViewParkingAreaCount.setText(bookingSensors.getCount());
                        /* ((TextBookingViewHolder) holder).textViewParkingDistance.setText(
                                 new DecimalFormat("##.##").format(bookingSensors.getDistance()) + " km");*/

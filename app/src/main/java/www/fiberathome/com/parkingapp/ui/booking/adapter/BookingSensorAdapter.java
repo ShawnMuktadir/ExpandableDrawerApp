@@ -33,6 +33,7 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingSensors;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.TextUtils;
 
 public class BookingSensorAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 //public class BookingSensorAdapter extends RecyclerView.Adapter<BookingSensorAdapter.BookingViewHolder> {
@@ -81,7 +82,7 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<RecyclerView.View
         if (bookingSensors != null) {
             switch (bookingSensors.type) {
                 case BookingSensors.INFO_TYPE:
-                    ((BookingViewHolder) holder).textViewParkingAreaName.setText(ApplicationUtils.capitalizeFirstLetter(bookingSensors.getParkingArea()));
+                    ((BookingViewHolder) holder).textViewParkingAreaName.setText(TextUtils.getInstance().capitalizeFirstLetter(bookingSensors.getParkingArea()));
                     ((BookingViewHolder) holder).textViewParkingAreaCount.setText(bookingSensors.getCount());
                     ((BookingViewHolder) holder).textViewParkingDistance.setText(
                             new DecimalFormat("##.##").format(bookingSensors.getDistance()) + " km");
@@ -105,7 +106,7 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<RecyclerView.View
                     break;
 
                 case BookingSensors.TEXT_INFO_TYPE:
-                    ((TextBookingViewHolder) holder).textViewParkingAreaName.setText(ApplicationUtils.capitalizeFirstLetter(bookingSensors.getParkingArea()));
+                    ((TextBookingViewHolder) holder).textViewParkingAreaName.setText(TextUtils.getInstance().capitalizeFirstLetter(bookingSensors.getParkingArea()));
                     ((TextBookingViewHolder) holder).textViewParkingAreaCount.setText(bookingSensors.getCount());
                     ((TextBookingViewHolder) holder).textViewParkingDistance.setText(
                             new DecimalFormat("##.##").format(bookingSensors.getDistance()) + " km");

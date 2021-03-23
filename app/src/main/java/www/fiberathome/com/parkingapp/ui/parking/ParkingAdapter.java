@@ -25,6 +25,7 @@ import butterknife.ButterKnife;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.response.sensors.SensorArea;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.TextUtils;
 
 import static android.content.Context.LOCATION_SERVICE;
 
@@ -71,7 +72,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         SensorArea sensorArea = sensorAreas.get(position);
 
-        parkingViewHolder.textViewParkingAreaName.setText(ApplicationUtils.capitalizeFirstLetter(sensorArea.getParkingArea()));
+        parkingViewHolder.textViewParkingAreaName.setText(TextUtils.getInstance().capitalizeFirstLetter(sensorArea.getParkingArea()));
 
         parkingViewHolder.textViewParkingAreaCount.setText(sensorArea.getCount());
 

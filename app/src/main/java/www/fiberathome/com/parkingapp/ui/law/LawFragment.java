@@ -42,6 +42,7 @@ import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+import www.fiberathome.com.parkingapp.utils.TextUtils;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static www.fiberathome.com.parkingapp.utils.Constants.LANGUAGE_BN;
@@ -209,12 +210,12 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
             @Override
             public void afterTextChanged(Editable s) {
                 if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_EN) &&
-                        ApplicationUtils.textContainsBangla(s.toString())) {
+                        TextUtils.getInstance().textContainsBangla(s.toString())) {
                     setNoDataForBangla();
                     recyclerView.setVisibility(View.GONE);
                     editTextSearchLaw.setText("");
                 } else if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN) &&
-                        ApplicationUtils.textContainsEnglish(s.toString())) {
+                        TextUtils.getInstance().textContainsEnglish(s.toString())) {
                     setNoDataForEnglish();
                     recyclerView.setVisibility(View.GONE);
                     editTextSearchLaw.setText("");
@@ -241,12 +242,12 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
                 if (contents.length() > 0) {
                     //do search
                     if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_EN)
-                            && ApplicationUtils.textContainsBangla(contents)) {
+                            && TextUtils.getInstance().textContainsBangla(contents)) {
                         setNoDataForBangla();
                         recyclerView.setVisibility(View.GONE);
                         editTextSearchLaw.setText("");
                     } else if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN)
-                            && ApplicationUtils.textContainsEnglish(contents)) {
+                            && TextUtils.getInstance().textContainsEnglish(contents)) {
                         setNoDataForEnglish();
                         recyclerView.setVisibility(View.GONE);
                         editTextSearchLaw.setText("");

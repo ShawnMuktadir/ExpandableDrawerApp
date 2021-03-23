@@ -1,5 +1,6 @@
 package www.fiberathome.com.parkingapp.ui.start;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,6 +24,7 @@ import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.ui.permission.PermissionActivity;
@@ -127,41 +129,46 @@ public class StartActivity extends BaseActivity implements View.OnClickListener 
                     startActivity(intent);
                     finish();
                 } else {
-                    ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
-                        Timber.e("Positive Button clicked");
-                        /*if (userManager.isLoggedIn())
-                            openActivity(new Intent(context, MainActivity.class));
-                        else
-                            openActivity(new Intent(context, LoginActivity.class));*/
-                        if (ApplicationUtils.checkInternet(context)) {
-                            if (Preferences.getInstance(context).isLoggedIn() && Preferences.getInstance(context) != null && Preferences.getInstance(context).isWaitingForLocationPermission()) {
-                                Timber.e("activity start if -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
-                                Intent intent = new Intent(StartActivity.this, HomeActivity.class);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(intent);
-                                finish();
-                            } else if (Preferences.getInstance(context).isLoggedIn() && !Preferences.getInstance(context).isWaitingForLocationPermission()) {
-                                Timber.e("activity start else if -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
-                                Intent intent = new Intent(StartActivity.this, PermissionActivity.class);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(intent);
-                                finish();
-                            } else {
-                                Timber.e("activity start else -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
-                                Intent intent = new Intent(StartActivity.this, LoginActivity.class);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(intent);
-                                finish();
-                            }
-                        } else{
-                            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
-                        }
-                    }, (dialog, which) -> {
-                        Timber.e("Negative Button Clicked");
-                        dialog.dismiss();
-                        finish();
-                    });
-//            ApplicationUtils.showMessageDialog(getString(R.string.open_error), context);
+                    DialogUtils.getInstance().alertDialog(context,
+                            (Activity) context,
+                            context.getString(R.string.connect_to_internet),
+                            context.getString(R.string.retry),
+                            context.getString(R.string.close_app),
+                            new DialogUtils.DialogClickListener() {
+                                @Override
+                                public void onPositiveClick() {
+                                    Timber.e("Positive Button clicked");
+                                    if (ApplicationUtils.checkInternet(context)) {
+                                        if (Preferences.getInstance(context).isLoggedIn() && Preferences.getInstance(context) != null && Preferences.getInstance(context).isWaitingForLocationPermission()) {
+                                            Timber.e("activity start if -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
+                                            Intent intent = new Intent(StartActivity.this, HomeActivity.class);
+                                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            startActivity(intent);
+                                            finish();
+                                        } else if (Preferences.getInstance(context).isLoggedIn() && !Preferences.getInstance(context).isWaitingForLocationPermission()) {
+                                            Timber.e("activity start else if -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
+                                            Intent intent = new Intent(StartActivity.this, PermissionActivity.class);
+                                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            startActivity(intent);
+                                            finish();
+                                        } else {
+                                            Timber.e("activity start else -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
+                                            Intent intent = new Intent(StartActivity.this, LoginActivity.class);
+                                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            startActivity(intent);
+                                            finish();
+                                        }
+                                    } else{
+                                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                                    }
+                                }
+
+                                @Override
+                                public void onNegativeClick() {
+                                    Timber.e("Negative Button Clicked");
+                                    finish();
+                                }
+                            }).show();
                 }
             }
         }, 1000);

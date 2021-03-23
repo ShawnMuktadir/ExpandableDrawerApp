@@ -1,6 +1,7 @@
 package www.fiberathome.com.parkingapp.ui.forgetPassword;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -39,6 +40,7 @@ import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 import www.fiberathome.com.parkingapp.ui.changePassword.ChangePasswordActivityForOTPNew;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
 
@@ -133,23 +135,30 @@ public class ForgetPasswordFragment extends BaseFragment {
                         if (ApplicationUtils.checkInternet(context)) {
                             submitLogin();
                         } else {
-                            ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app),
-                                    (dialog, which) -> {
-                                        Timber.e("Positive Button clicked");
-                                        if (ApplicationUtils.checkInternet(context)) {
-                                            submitLogin();
-                                        } else {
-                                            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                            DialogUtils.getInstance().alertDialog(context,
+                                    (Activity) context, context.getString(R.string.connect_to_internet),
+                                    context.getString(R.string.retry),
+                                    context.getString(R.string.close_app),
+                                    new DialogUtils.DialogClickListener() {
+                                        @Override
+                                        public void onPositiveClick() {
+                                            Timber.e("Positive Button clicked");
+                                            if (ApplicationUtils.checkInternet(context)) {
+                                                submitLogin();
+                                            } else {
+                                                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                                            }
                                         }
-                                    },
-                                    (dialog, which) -> {
-                                        Timber.e("Negative Button Clicked");
-                                        dialog.dismiss();
-                                        if (context != null) {
-                                            TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
-                                            context.finish();
+
+                                        @Override
+                                        public void onNegativeClick() {
+                                            Timber.e("Negative Button Clicked");
+                                            if (context != null) {
+                                                TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                                                context.finish();
+                                            }
                                         }
-                                    });
+                                    }).show();
                         }
                         return true;
                     }
@@ -160,21 +169,29 @@ public class ForgetPasswordFragment extends BaseFragment {
             if (ApplicationUtils.checkInternet(context)) {
                 submitLogin();
             } else {
-                ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
-                    Timber.e("Positive Button clicked");
-                    if (ApplicationUtils.checkInternet(context)) {
-                        submitLogin();
-                    } else {
-                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
-                    }
-                }, (dialog, which) -> {
-                    Timber.e("Negative Button Clicked");
-                    dialog.dismiss();
-                    if (context != null) {
-                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
-                        context.finish();
-                    }
-                });
+                DialogUtils.getInstance().alertDialog(context,
+                        (Activity) context, context.getString(R.string.connect_to_internet),
+                        context.getString(R.string.retry), context.getString(R.string.close_app),
+                        new DialogUtils.DialogClickListener() {
+                            @Override
+                            public void onPositiveClick() {
+                                Timber.e("Positive Button clicked");
+                                if (ApplicationUtils.checkInternet(context)) {
+                                    submitLogin();
+                                } else {
+                                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                                }
+                            }
+
+                            @Override
+                            public void onNegativeClick() {
+                                Timber.e("Negative Button Clicked");
+                                if (context != null) {
+                                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                                    context.finish();
+                                }
+                            }
+                        }).show();
             }
         });
     }

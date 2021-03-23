@@ -2,6 +2,7 @@ package www.fiberathome.com.parkingapp.ui.splash;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -15,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,7 +29,6 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
-import www.fiberathome.com.parkingapp.ui.location.LocationActivity;
 import www.fiberathome.com.parkingapp.ui.permission.PermissionActivity;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
@@ -130,7 +129,7 @@ public class SplashFragment extends BaseFragment implements ForceUpdateChecker.O
     private void openActivity(Intent intent) {
         new Handler().postDelayed(() -> {
             if (ApplicationUtils.checkInternet(context)) {
-                if (ApplicationUtils.isGPSEnabled(context)){
+                if (ApplicationUtils.isGPSEnabled(context)) {
                     context.startActivity(intent);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.finish();
@@ -148,29 +147,37 @@ public class SplashFragment extends BaseFragment implements ForceUpdateChecker.O
 
                                 @Override
                                 public void onNegativeClick() {
-                                    /*context.finishAffinity();
-                                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));*/
+                                    Timber.e("Negative Button Clicked");
                                 }
                             }).show();
                     TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.please_enable_gps));
                 }
             } else {
-                ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
-                    Timber.e("Positive Button clicked");
-                    if (ApplicationUtils.checkInternet(context)) {
-                        checkUserLogin();
-                    } else {
-                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_splash));
-                        new Handler().postDelayed(() -> {
-                            dialog.dismiss();
-                            context.finish();
-                        }, 700);
-                    }
-                }, (dialog, which) -> {
-                    Timber.e("Negative Button Clicked");
-                    dialog.dismiss();
-                    context.finish();
-                });
+                DialogUtils.getInstance().alertDialog(context,
+                        (Activity) context,
+                        context.getString(R.string.connect_to_internet),
+                        context.getString(R.string.retry),
+                        context.getString(R.string.close_app),
+                        new DialogUtils.DialogClickListener() {
+                            @Override
+                            public void onPositiveClick() {
+                                Timber.e("Positive Button clicked");
+                                if (ApplicationUtils.checkInternet(context)) {
+                                    checkUserLogin();
+                                } else {
+                                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_splash));
+                                    new Handler().postDelayed(() -> {
+                                        context.finish();
+                                    }, 700);
+                                }
+                            }
+
+                            @Override
+                            public void onNegativeClick() {
+                                Timber.e("Negative Button Clicked");
+                                context.finish();
+                            }
+                        }).show();
             }
         }, 1000);
     }

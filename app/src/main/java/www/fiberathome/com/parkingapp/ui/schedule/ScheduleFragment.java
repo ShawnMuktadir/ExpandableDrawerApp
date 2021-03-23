@@ -65,6 +65,7 @@ import www.fiberathome.com.parkingapp.model.response.booking.Reservation;
 import www.fiberathome.com.parkingapp.module.notification.NotificationPublisher;
 import www.fiberathome.com.parkingapp.ui.booking.PaymentFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.DateTimeUtils;
 import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
@@ -148,31 +149,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
 
         context = getActivity();
 
-            /*if (context != null) {
-            context.changeDefaultActionBarDrawerToogleIconWithBackButton();*/
-
-            /*String scheduleFragmentTitle = context.getResources().getString(R.string.schedule_fragment_title);
-            String scheduleFragmentSubTitle = context.getResources().getString(R.string.subject_to_availability);
-            context.setTitle(scheduleFragmentTitle);
-            context.setSubtitle(scheduleFragmentSubTitle);*/
-
-            /*ActionBar actionBar = context.getSupportActionBar();
-            if (actionBar != null) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                    actionBar.setDisplayShowCustomEnabled(true);
-                    actionBar.setCustomView(R.layout.action_bar_title_layout);
-                    ((TextView) view.findViewById(R.id.action_bar_title)).
-                            setText(context.getResources().getString(R.string.schedule_fragment_title));
-                    ((TextView) view.findViewById(R.id.action_bar_sub_title)).
-                            setText(context.getResources().getString(R.string.subject_to_availability));
-                }
-            }*/
-
-            /*((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(context.getResources().getString(R.string.schedule_fragment_title));
-            ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(context.getResources().getString(R.string.subject_to_availability));
-        }*/
-
-        textViewCurrentDate.setText(ApplicationUtils.getPSTTimeZoneCurrentDate());
+        textViewCurrentDate.setText(DateTimeUtils.getInstance().getPSTTimeZoneCurrentDate());
 
         listener = (FragmentChangeListener) getActivity();
         payBtnClickListener = this;
