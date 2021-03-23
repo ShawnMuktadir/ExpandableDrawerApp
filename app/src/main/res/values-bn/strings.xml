@@ -44,7 +44,7 @@
     <string name="err_msg_vehicle">বাহনের নাম্বার প্রবেশ করুন</string>
     <string name="err_old_password">যথাযথ পুরাতন পাসওয়ার্ড টি প্রবেশ করুন</string>
     <string name="err_msg_password">যথাযথ পাসওয়ার্ড প্রবেশ করুন</string>
-    <string name="err_msg_password_signup">পাসওয়ার্ড ন্যূনতম 4 টি অক্ষর হতে হবে</string>
+    <string name="err_msg_password_signup">পাসওয়ার্ড ন্যূনতম ৪ টি অক্ষর হতে হবে</string>
     <string name="err_msg_pin">যথাযথ পিন প্রবেশ করুন</string>
     <string name="find_nearest">নিকটতম খুঁজে বের করুন</string>
     <string name="err_new_password">যথাযথ নতুন পাসওয়ার্ড প্রবেশ করুন</string>

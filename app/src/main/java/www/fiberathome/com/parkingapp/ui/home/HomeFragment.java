@@ -1185,7 +1185,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                 settingGeoFire();
             }
-        } else {
+        }
+        else {
             Timber.e("onConnected null called");
 
             previousMarker = null;
@@ -1334,7 +1335,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             currentLocationMarker = mMap.addMarker(new MarkerOptions().position(latLng)
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running))
                     .title("My Location")
-                    .rotation(location.getBearing() - 45).flat(true).anchor(0.5f, 0.5f));
+                    .rotation(location.getBearing())
+                    .flat(false)
+                    .anchor(0.5f, 0.5f));
 
             if (markerClicked != null) {
                 checkParkingSpotDistance(latLng, markerClicked.getPosition());
@@ -1425,7 +1428,14 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         reDrawRoute(origin);
                     }*/
                    }
-               } else {
+               }
+               else {
+                   Polyline polyline2 = polyline;
+                   polyline.remove();
+                   polyline = mMap.addPolyline(getDefaultPolyLines(ApplicationUtils.getUpdatedPolyline(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
+                           polyline2.getPoints(),false, false, 60.0f)));
+                   points.clear();
+                   points.addAll(polyline.getPoints());
                    if (myPreviousLocation != null) {
                        double distanceTravledLast = ApplicationUtils.
                                calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), myPreviousLocation.getLatitude(), myPreviousLocation.getLongitude()) * 1000;

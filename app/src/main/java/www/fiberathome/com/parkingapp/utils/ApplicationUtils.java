@@ -62,6 +62,8 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.material.math.MathUtils;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.IOException;
@@ -71,6 +73,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -1037,4 +1040,128 @@ public class ApplicationUtils {
         }
         return false;
     }
+
+    public static List<LatLng> getUpdatedPolyline(LatLng point, List<LatLng> poly, boolean closed, boolean geodesic, double toleranceEarth){
+
+            int size = poly.size();
+            if (size == 0) {
+                return poly;
+            } else {
+                double tolerance = toleranceEarth / 6371009.0D;
+                double havTolerance = MathUtilsDP.hav(tolerance);
+                double lat3 = Math.toRadians(point.latitude);
+                double lng3 = Math.toRadians(point.longitude);
+                LatLng prev = (LatLng)poly.get(closed ? size - 1 : 0);
+                double lat1 = Math.toRadians(prev.latitude);
+                double lng1 = Math.toRadians(prev.longitude);
+                double lat2;
+                double y1;
+                if (geodesic) {
+                    for(Iterator var20 = poly.iterator(); var20.hasNext(); lng1 = y1) {
+                        LatLng point2 = (LatLng)var20.next();
+                        lat2 = Math.toRadians(point2.latitude);
+                        y1 = Math.toRadians(point2.longitude);
+                        if (isOnSegmentGC(lat1, lng1, lat2, y1, lat3, lng3, havTolerance)) {
+                            poly.remove(prev);
+                            return poly;
+                        }
+
+                        lat1 = lat2;
+                    }
+                } else {
+                    double minAcceptable = lat3 - tolerance;
+                    lat2 = lat3 + tolerance;
+                    y1 = MathUtilsDP.mercator(lat1);
+                    double y3 = MathUtilsDP.mercator(lat3);
+                    double[] xTry = new double[3];
+
+                    double y2;
+                    for(Iterator var29 = poly.iterator(); var29.hasNext(); y1 = y2) {
+                        LatLng point2 = (LatLng)var29.next();
+                         lat2 = Math.toRadians(point2.latitude);
+                        y2 = MathUtilsDP.mercator(lat2);
+                        double lng2 = Math.toRadians(point2.longitude);
+                        if (Math.max(lat1, lat2) >= minAcceptable && Math.min(lat1, lat2) <= lat2) {
+                            double x2 = MathUtilsDP.wrap(lng2 - lng1, -3.141592653589793D, 3.141592653589793D);
+                            double x3Base = MathUtilsDP.wrap(lng3 - lng1, -3.141592653589793D, 3.141592653589793D);
+                            xTry[0] = x3Base;
+                            xTry[1] = x3Base + 6.283185307179586D;
+                            xTry[2] = x3Base - 6.283185307179586D;
+                            double[] var41 = xTry;
+                            int var42 = xTry.length;
+
+                            for(int var43 = 0; var43 < var42; ++var43) {
+                                double x3 = var41[var43];
+                                double dy = y2 - y1;
+                                double len2 = x2 * x2 + dy * dy;
+                                double t = len2 <= 0.0D ? 0.0D : MathUtilsDP.clamp((x3 * x2 + (y3 - y1) * dy) / len2, 0.0D, 1.0D);
+                                double xClosest = t * x2;
+                                double yClosest = y1 + t * dy;
+                                double latClosest = MathUtilsDP.inverseMercator(yClosest);
+                                double havDist = MathUtilsDP.havDistance(lat3, latClosest, x3 - xClosest);
+                                if (havDist < havTolerance) {
+                                    poly.remove(point2);
+                                    return poly;
+                                }
+                            }
+                        }
+
+                        lat1 = lat2;
+                        lng1 = lng2;
+                    }
+                }
+
+                return poly;
+            }
+        }
+    private static boolean isOnSegmentGC(double lat1, double lng1, double lat2, double lng2, double lat3, double lng3, double havTolerance) {
+        double havDist13 = MathUtilsDP.havDistance(lat1, lat3, lng1 - lng3);
+        if (havDist13 <= havTolerance) {
+            return true;
+        } else {
+            double havDist23 = MathUtilsDP.havDistance(lat2, lat3, lng2 - lng3);
+            if (havDist23 <= havTolerance) {
+                return true;
+            } else {
+                double sinBearing = sinDeltaBearing(lat1, lng1, lat2, lng2, lat3, lng3);
+                double sinDist13 = MathUtilsDP.sinFromHav(havDist13);
+                double havCrossTrack = MathUtilsDP.havFromSin(sinDist13 * sinBearing);
+                if (havCrossTrack > havTolerance) {
+                    return false;
+                } else {
+                    double havDist12 = MathUtilsDP.havDistance(lat1, lat2, lng1 - lng2);
+                    double term = havDist12 + havCrossTrack * (1.0D - 2.0D * havDist12);
+                    if (havDist13 <= term && havDist23 <= term) {
+                        if (havDist12 < 0.74D) {
+                            return true;
+                        } else {
+                            double cosCrossTrack = 1.0D - 2.0D * havCrossTrack;
+                            double havAlongTrack13 = (havDist13 - havCrossTrack) / cosCrossTrack;
+                            double havAlongTrack23 = (havDist23 - havCrossTrack) / cosCrossTrack;
+                            double sinSumAlongTrack = MathUtilsDP.sinSumFromHav(havAlongTrack13, havAlongTrack23);
+                            return sinSumAlongTrack > 0.0D;
+                        }
+                    } else {
+                        return false;
+                    }
+                }
+            }
+        }
+    }
+    private static double sinDeltaBearing(double lat1, double lng1, double lat2, double lng2, double lat3, double lng3) {
+        double sinLat1 = Math.sin(lat1);
+        double cosLat2 = Math.cos(lat2);
+        double cosLat3 = Math.cos(lat3);
+        double lat31 = lat3 - lat1;
+        double lng31 = lng3 - lng1;
+        double lat21 = lat2 - lat1;
+        double lng21 = lng2 - lng1;
+        double a = Math.sin(lng31) * cosLat3;
+        double c = Math.sin(lng21) * cosLat2;
+        double b = Math.sin(lat31) + 2.0D * sinLat1 * cosLat3 * MathUtilsDP.hav(lng31);
+        double d = Math.sin(lat21) + 2.0D * sinLat1 * cosLat2 * MathUtilsDP.hav(lng21);
+        double denom = (a * a + b * b) * (c * c + d * d);
+        return denom <= 0.0D ? 1.0D : (a * d - b * c) / Math.sqrt(denom);
+    }
+
 }
