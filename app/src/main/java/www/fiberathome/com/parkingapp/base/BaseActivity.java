@@ -35,7 +35,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -54,7 +53,7 @@ import java.util.Locale;
 
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.GeoFenceBroadcastReceiver;
 import www.fiberathome.com.parkingapp.utils.GeofenceConstants;
@@ -83,7 +82,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
     private View overlay;
     private Snackbar snackbar;
 
-    private List<Geofence> geofenceList = new ArrayList<>();
+    private final List<Geofence> geofenceList = new ArrayList<>();
     private Geofence geoFence;
     private GeofencingClient geofencingClient;
 
@@ -98,7 +97,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         Timber.e("attachBaseContext");
     }*/
 
-    private BroadcastReceiver mNetworkDetectReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mNetworkDetectReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             checkInternetConnection();
@@ -350,7 +349,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
             textViewOne.setOnClickListener(v -> {
                 Timber.d("showTwoButtonSnackbar() : allow clicked");
                 //snackbar.dismiss();
-                if (ApplicationUtils.checkInternet(context)) {
+                if (ConnectivityUtils.getInstance().checkInternet(context)) {
                     snackbar.dismiss();
                 } else {
                     snackbar.show();
@@ -444,7 +443,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
             snackbar.setAction(context.getString(R.string.retry), view -> {
                 /*Intent internetOptionsIntent = new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS);
                 startActivityForResult(internetOptionsIntent, WIFI_ENABLE_REQUEST);*/
-                if (ApplicationUtils.checkInternet(context)) {
+                if (ConnectivityUtils.getInstance().checkInternet(context)) {
                     return;
                 } else {
                     TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
@@ -487,7 +486,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         builder.setPositiveButton(context.getString(R.string.retry), (dialog, which) -> {
             /*Intent gpsOptionsIntent = new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS);
             startActivityForResult(gpsOptionsIntent, WIFI_ENABLE_REQUEST);*/
-            if (ApplicationUtils.checkInternet(context)) {
+            if (ConnectivityUtils.getInstance().checkInternet(context)) {
                 return;
             } else {
                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));

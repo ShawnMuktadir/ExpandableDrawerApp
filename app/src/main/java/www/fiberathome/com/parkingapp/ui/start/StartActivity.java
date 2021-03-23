@@ -1,5 +1,6 @@
 package www.fiberathome.com.parkingapp.ui.start;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,11 +11,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-//import com.iotsens.sdk.IoTSensApiClient;
-//import com.iotsens.sdk.IoTSensApiClientBuilder;
-//import com.iotsens.sdk.sensors.SensorsRequest;
-//import com.iotsens.sdk.sensors.SensorsRequestBuilder;
-
 import androidx.appcompat.app.AlertDialog;
 
 import butterknife.BindView;
@@ -22,20 +18,22 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
-import www.fiberathome.com.parkingapp.utils.DialogUtils;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
-import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
-import www.fiberathome.com.parkingapp.ui.permission.PermissionActivity;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
+import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
+import www.fiberathome.com.parkingapp.ui.permission.PermissionActivity;
+import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.ui.signUp.SignUpActivity;
+import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
+import www.fiberathome.com.parkingapp.utils.DialogUtils;
+import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
+@SuppressLint("NonConstantResourceId")
 public class StartActivity extends BaseActivity implements View.OnClickListener {
 
     @BindView(R.id.button_login)
     Button btnLogin;
+
     @BindView(R.id.button_signup)
     Button btnSignup;
 
@@ -125,7 +123,7 @@ public class StartActivity extends BaseActivity implements View.OnClickListener 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (ApplicationUtils.checkInternet(context)) {
+                if (ConnectivityUtils.getInstance().checkInternet(context)) {
                     startActivity(intent);
                     finish();
                 } else {
@@ -138,7 +136,7 @@ public class StartActivity extends BaseActivity implements View.OnClickListener 
                                 @Override
                                 public void onPositiveClick() {
                                     Timber.e("Positive Button clicked");
-                                    if (ApplicationUtils.checkInternet(context)) {
+                                    if (ConnectivityUtils.getInstance().checkInternet(context)) {
                                         if (Preferences.getInstance(context).isLoggedIn() && Preferences.getInstance(context) != null && Preferences.getInstance(context).isWaitingForLocationPermission()) {
                                             Timber.e("activity start if -> %s", Preferences.getInstance(context).isWaitingForLocationPermission());
                                             Intent intent = new Intent(StartActivity.this, HomeActivity.class);

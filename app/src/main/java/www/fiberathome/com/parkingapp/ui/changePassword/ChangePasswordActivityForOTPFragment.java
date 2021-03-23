@@ -42,6 +42,7 @@ import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 import www.fiberathome.com.parkingapp.model.response.login.LoginResponse;
 import www.fiberathome.com.parkingapp.ui.changePassword.newPassword.ChangeNewPasswordActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.NoUnderlineSpan;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
@@ -263,7 +264,7 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
             public void onClick(@NonNull View textView) {
                 // do some thing
                 String mobileNo = context.getIntent().getStringExtra("mobile_no");
-                if (ApplicationUtils.checkInternet(context)) {
+                if (ConnectivityUtils.getInstance().checkInternet(context)) {
                     checkForgetPassword(mobileNo);
                 }
 

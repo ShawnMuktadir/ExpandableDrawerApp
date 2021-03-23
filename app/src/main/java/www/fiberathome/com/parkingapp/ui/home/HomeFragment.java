@@ -166,15 +166,16 @@ import www.fiberathome.com.parkingapp.ui.bottomSheet.CustomLinearLayoutManager;
 import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
 import www.fiberathome.com.parkingapp.ui.search.SearchActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.GpsUtils;
 import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
-import www.fiberathome.com.parkingapp.utils.MapUtils;
 import www.fiberathome.com.parkingapp.utils.MathUtils;
 import www.fiberathome.com.parkingapp.utils.RecyclerTouchListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
+import www.fiberathome.com.parkingapp.utils.ViewUtils;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.LOCATION_SERVICE;
@@ -729,7 +730,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             isMyCurrentLocation = false;
         }
 
-        if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
+        if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
 
             bookingSensorsArrayList.clear();
             bookingSensorsMarkerArrayList.clear();
@@ -1063,14 +1064,14 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                 bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._92sdp));
 
-                if (ApplicationUtils.checkInternet(context) && isGPSEnabled()) {
+                if (ConnectivityUtils.getInstance().checkInternet(context) && isGPSEnabled()) {
                     fetchSensorRetrofit(onConnectedLocation);
                 } else {
                     ApplicationUtils.showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_gps));
                 }
 
                 new Handler().postDelayed(() -> {
-                    if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
+                    if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
                         if (lat != null && lng != null && areaName != null && parkingSlotCount != null) {
 
                             hideNoData();
@@ -1208,7 +1209,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 e.getCause();
             }
 
-            if (ApplicationUtils.checkInternet(context)) {
+            if (ConnectivityUtils.getInstance().checkInternet(context)) {
                 fetchSensorRetrofit(onConnectedLocation);
             } else {
                 DialogUtils.getInstance().alertDialog(context,
@@ -1220,7 +1221,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             @Override
                             public void onPositiveClick() {
                                 Timber.e("Positive Button clicked");
-                                if (ApplicationUtils.checkInternet(context)) {
+                                if (ConnectivityUtils.getInstance().checkInternet(context)) {
                                     fetchSensorRetrofit(onConnectedLocation);
                                 } else {
                                     TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
@@ -1814,7 +1815,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     //dekhte hobee eta koi boshbe
                     if (getDirectionButtonClicked == 0) {
                         linearLayoutParkingAdapterBackBottom.setOnClickListener(v -> {
-                            ApplicationUtils.showOnlyMessageDialog(context.getResources().getString(R.string.when_user_can_book), context);
+                            DialogUtils.getInstance().showOnlyMessageDialog(context.getResources().getString(R.string.when_user_can_book), context);
                         });
                     } else {
                         linearLayoutParkingAdapterBackBottom.setOnClickListener(v -> {
@@ -2644,7 +2645,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         String serverKey = context.getResources().getString(R.string.google_maps_key); // Api Key For Google Direction API \\
 
-        if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
+        if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
 
             if (onConnectedLocation != null) {
                 origin = new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude());
@@ -2808,7 +2809,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         int routePadding = 250;
         int left = 50;
         int right = 50;
-        int top = ApplicationUtils.getToolBarHeight(context);
+        int top = ViewUtils.getInstance().getToolBarHeight(context);
         int bottom = (int) context.getResources().getDimension(R.dimen._200sdp);
 
         LatLngBounds latLngBounds = boundsBuilder.build();
@@ -3144,7 +3145,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     }
 
     public void commonBackOperation() {
-        if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
+        if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
             if (mMap != null) {
                 mMap.clear();
                 mMap.setTrafficEnabled(true);
@@ -3213,7 +3214,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         @Override
                         public void onPositiveClick() {
                             Timber.e("Positive Button clicked");
-                            if (ApplicationUtils.checkInternet(context)) {
+                            if (ConnectivityUtils.getInstance().checkInternet(context)) {
                                 fetchSensorRetrofit(onConnectedLocation);
                             } else {
                                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
@@ -3235,7 +3236,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private void setListeners() {
 
         buttonSearch.setOnClickListener(v -> {
-            if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
+            if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
                 Intent intent = new Intent(context, SearchActivity.class);
 
                 startActivityForResult(intent, NEW_SEARCH_ACTIVITY_REQUEST_CODE);
@@ -3272,7 +3273,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             @Override
                             public void onPositiveClick() {
                                 Timber.e("Positive Button clicked");
-                                if (ApplicationUtils.checkInternet(context)) {
+                                if (ConnectivityUtils.getInstance().checkInternet(context)) {
                                     fetchSensorRetrofit(onConnectedLocation);
                                 } else {
                                     TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
@@ -3362,7 +3363,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         });
 
         btnGetDirection.setOnClickListener(v -> {
-            if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
+            if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
 
                 mMap.setTrafficEnabled(false);
 
@@ -3401,7 +3402,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         }
                     }
                 } else if (getDirectionButtonClicked == 1) {
-                    ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
+                    DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
                     //getDirectionButtonClicked--;
                     if (isInAreaEnabled) {
                         Bundle bundle = new Bundle();
@@ -3420,7 +3421,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         });
 
         btnSearchGetDirection.setOnClickListener(v -> {
-            if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
+            if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
 
                 mMap.setTrafficEnabled(false);
 
@@ -3451,9 +3452,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                 } else if (getDirectionSearchButtonClicked == 1) {
                     if (fromSearchMultipleRouteDrawn == 0) {
-                        ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.no_parking_spot_message), context);
+                        DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.no_parking_spot_message), context);
                     } else {
-                        ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
+                        DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
                     }
 
                     if (isInAreaEnabled) {
@@ -3484,9 +3485,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         btnMarkerGetDirection.setOnClickListener(v -> {
 
-            if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
+            if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
                 if (parkingNumberOfIndividualMarker.equals("0")) {
-                    ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.no_parking_spot_message), context);
+                    DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.no_parking_spot_message), context);
                 } else {
                     //ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
                 }
@@ -3570,9 +3571,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                 } else if (getDirectionMarkerButtonClicked == 1) {
                     if (parkingNumberOfIndividualMarker.equals("0")) {
-                        ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.no_parking_spot_message), context);
+                        DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.no_parking_spot_message), context);
                     } else {
-                        ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
+                        DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
                         if (isInAreaEnabled) {
                             Bundle bundle = new Bundle();
                             bundle.putBoolean("m", false); //m for more
@@ -3590,7 +3591,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         });
 
         btnBottomSheetGetDirection.setOnClickListener(v -> {
-            if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
+            if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
 
                 mMap.setTrafficEnabled(false);
 
@@ -3599,7 +3600,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 if (getDirectionBottomSheetButtonClicked == 0) {
                     getDirectionBottomSheetButtonClicked++;
                     if (count.equals("0")) {
-                        ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.no_parking_spot_message), context);
+                        DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.no_parking_spot_message), context);
                     } else {
                         //ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
                     }
@@ -3658,7 +3659,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     }
                 } else if (getDirectionBottomSheetButtonClicked == 1) {
                     //getDirectionBottomSheetButtonClicked--;
-                    ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
+                    DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
                     if (isInAreaEnabled) {
                         Bundle bundle = new Bundle();
                         bundle.putBoolean("m", false); //m for more

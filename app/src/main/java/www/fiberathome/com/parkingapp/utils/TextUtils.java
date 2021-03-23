@@ -1,10 +1,10 @@
 package www.fiberathome.com.parkingapp.utils;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Typeface;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Build;
 import android.telephony.TelephonyManager;
 import android.text.Html;
@@ -21,18 +21,17 @@ import android.text.style.TextAppearanceSpan;
 import android.text.style.UnderlineSpan;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AlertDialog;
-
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.text.Normalizer;
+import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.ui.booking.newBooking.BookingActivity;
 
 public class TextUtils {
     private static TextUtils textUtils;
@@ -154,6 +153,20 @@ public class TextUtils {
         return bchar.toString();
     }
 
+    public String addCountryPrefix(String number) {
+        if (number != null && android.text.TextUtils.isDigitsOnly(number)) {
+            if (number.length() > 2) {
+                if (number.startsWith("88")) {
+                    return number;
+                } else
+                    return "+88" + number;
+            } else
+                return "88";
+        } else
+            return "88";
+
+    }
+
     public boolean getSpecialCharacter(Context context, String str) {
         if (str == null || str.trim().isEmpty()) {
             System.out.println("format of string is Incorrect ");
@@ -182,6 +195,71 @@ public class TextUtils {
             i += Character.charCount(c);
         }
         return false;
+    }
+
+    public String getGreetingsMessage() {
+
+        String message = "";
+
+        Calendar c = Calendar.getInstance();
+        int timeOfDay = c.get(Calendar.HOUR_OF_DAY);
+
+        if (timeOfDay >= 0 && timeOfDay < 12) {
+            return "Good Morning";
+        } else if (timeOfDay >= 12 && timeOfDay < 16) {
+            message = "Good Afternoon";
+        } else if (timeOfDay >= 16 && timeOfDay < 21) {
+            message = "Good Evening";
+        } else if (timeOfDay >= 21 && timeOfDay < 24) {
+            message = "Good Night";
+        }
+        return message;
+    }
+
+    public String getCountryZipCode(Context context) {
+
+        String CountryID = "";
+        String CountryZipCode = "";
+
+        TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        //getNetworkCountryIso
+        assert manager != null;
+        CountryID = manager.getSimCountryIso().toUpperCase();
+        String[] rl = context.getResources().getStringArray(R.array.CountryCodes);
+        for (int i = 0; i < rl.length; i++) {
+            String[] g = rl[i].split(",");
+            if (g[1].trim().equals(CountryID.trim())) {
+                CountryZipCode = g[0];
+                Timber.e("CountryZipCode -> %s", CountryZipCode);
+                break;
+            }
+        }
+        return CountryZipCode;
+    }
+
+    public String getCompleteAddressString(Context context, double LATITUDE, double LONGITUDE) {
+
+        String strAdd = "";
+        Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(LATITUDE, LONGITUDE, 1);
+            if (addresses != null) {
+                Address returnedAddress = addresses.get(0);
+                StringBuilder strReturnedAddress = new StringBuilder();
+
+                for (int i = 0; i <= returnedAddress.getMaxAddressLineIndex(); i++) {
+                    strReturnedAddress.append(returnedAddress.getAddressLine(i)).append("\n");
+                }
+                strAdd = strReturnedAddress.toString();
+                Timber.e("My Current loction address -> %s", strReturnedAddress.toString());
+            } else {
+                Timber.e("My Current loction address -> %s", "No Address returned!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+//          Timber.e("My Current loction address -> ", e.getMessage() + "Canont get Address!");
+        }
+        return strAdd;
     }
 
     public SpannableString getUnderlinedString(String text) {
@@ -294,7 +372,7 @@ public class TextUtils {
         return targetTextView;
     }
 
-    public static Spannable highlightSearchKey(String title) {
+    public Spannable highlightSearchKey(String title) {
         Spannable highlight;
         Pattern pattern;
         Matcher matcher;
@@ -317,5 +395,18 @@ public class TextUtils {
             }
         }
         return highlight;
+    }
+
+    public Typeface getTypeface(int style, Context context) {
+        switch (style) {
+            case Typeface.BOLD:
+                return Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Bold.ttf");
+            case Typeface.ITALIC:
+                return Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Italic.ttf");
+            case Typeface.NORMAL:
+                return Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Medium.ttf");
+            default:
+                return Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Regular.ttf");
+        }
     }
 }

@@ -56,7 +56,7 @@ import www.fiberathome.com.parkingapp.model.response.search.SelectedPlace;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.search.placesadapter.PlacesAutoCompleteAdapter;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
-import www.fiberathome.com.parkingapp.utils.RecyclerTouchListener;
+import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
 import static android.app.Activity.RESULT_CANCELED;
@@ -114,6 +114,43 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
         return inflater.inflate(R.layout.fragment_search, container, false);
     }
 
+    private final TextWatcher filterTextWatcher = new TextWatcher() {
+
+        public void afterTextChanged(Editable s) {
+            /*if (!s.toString().equals("")) {
+                mAutoCompleteAdapter.getFilter().filter(s.toString());
+            }*/
+
+            mAutoCompleteAdapter.notifyDataSetChanged();
+
+            if (!ConnectivityUtils.getInstance().checkInternet(context)) {
+                ApplicationUtils.hideKeyboard(context, editTextSearch);
+            }
+        }
+
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            if (!ConnectivityUtils.getInstance().checkInternet(context)) {
+                ApplicationUtils.hideKeyboard(context, editTextSearch);
+            }
+        }
+
+        //!s.toString().equals("")
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (s.toString().length() > 0) {
+                mAutoCompleteAdapter.getFilter().filter(s.toString());
+                mAutoCompleteAdapter.notifyDataSetChanged();
+                if (!ConnectivityUtils.getInstance().checkInternet(context)) {
+                    ApplicationUtils.hideKeyboard(context, editTextSearch);
+                }
+            } else {
+                mAutoCompleteAdapter.clearList();
+                if (!ConnectivityUtils.getInstance().checkInternet(context)) {
+                    ApplicationUtils.hideKeyboard(context, editTextSearch);
+                }
+            }
+        }
+    };
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -129,7 +166,7 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
         Places.initialize(context, context.getResources().getString(R.string.google_maps_key));
         placesClient = Places.createClient(context);
 
-        if (ApplicationUtils.checkInternet(context)) {
+        if (ConnectivityUtils.getInstance().checkInternet(context)) {
 
             fetchSearchedDestinationPlace(Preferences.getInstance(context).getUser().getMobileNo());
 
@@ -175,7 +212,7 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
         editTextSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                if (!ApplicationUtils.checkInternet(context)) {
+                if (!ConnectivityUtils.getInstance().checkInternet(context)) {
                     ApplicationUtils.hideKeyboard(context, editTextSearch);
                 }
             }
@@ -184,11 +221,11 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
                 if (charSequence.length() > 0) {
                     ivClearSearchText.setVisibility(View.VISIBLE);
-                    if (!ApplicationUtils.checkInternet(context)) {
+                    if (!ConnectivityUtils.getInstance().checkInternet(context)) {
                         ApplicationUtils.hideKeyboard(context, editTextSearch);
                     }
                 } else {
-                    if (!ApplicationUtils.checkInternet(context)) {
+                    if (!ConnectivityUtils.getInstance().checkInternet(context)) {
                         ApplicationUtils.hideKeyboard(context, editTextSearch);
                     }
                     ivClearSearchText.setVisibility(View.GONE);
@@ -198,7 +235,7 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
             @Override
             public void afterTextChanged(Editable s) {
                 if (s.length() == 0) {
-                    if (!ApplicationUtils.checkInternet(context)) {
+                    if (!ConnectivityUtils.getInstance().checkInternet(context)) {
                         ApplicationUtils.hideKeyboard(context, editTextSearch);
                     }
                     if (searchVisitorDataList != null) {
@@ -210,7 +247,7 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
                         setNoData();
                     }
                 } else {
-                    if (!ApplicationUtils.checkInternet(context)) {
+                    if (!ConnectivityUtils.getInstance().checkInternet(context)) {
                         ApplicationUtils.hideKeyboard(context, editTextSearch);
                     }
                 }
@@ -247,7 +284,7 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
 
     @Override
     public void onClick(Place place) {
-        if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
+        if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
             Intent resultIntent = new Intent();
             if (place == null) {
                 Timber.e("place null");
@@ -291,32 +328,6 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
     }
 
     @Override
-    public void onClick(SearchVisitorData visitorData) {
-        if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
-            Intent resultIntent = new Intent();
-            LatLng endLatLng = new LatLng(visitorData.getEndLat(), visitorData.getEndLng());
-            String areaName = visitorData.getVisitedArea();
-            String placeId = visitorData.getPlaceId();
-            if (areaName != null) {
-                double latitude = endLatLng.latitude;
-                double longitude = endLatLng.longitude;
-                SearchVisitorData searchVisitorData = new SearchVisitorData(areaName, placeId, latitude, longitude, latitude, longitude);
-                // resultIntent.putExtra(NEW_PLACE_SELECTED,place);
-                //String result=new Gson().toJson(place);
-                resultIntent.putExtra(HISTORY_PLACE_SELECTED, searchVisitorData);
-                context.setResult(RESULT_OK, resultIntent);
-                //Log.d("ShawnClick", "click: ");
-                /*new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {*/
-                context.finish();
-            }
-        } else {
-            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
-        }
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
     }
@@ -349,42 +360,31 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
         super.onDestroyView();
     }
 
-    private TextWatcher filterTextWatcher = new TextWatcher() {
-
-        public void afterTextChanged(Editable s) {
-            /*if (!s.toString().equals("")) {
-                mAutoCompleteAdapter.getFilter().filter(s.toString());
-            }*/
-
-            mAutoCompleteAdapter.notifyDataSetChanged();
-
-            if (!ApplicationUtils.checkInternet(context)) {
-                ApplicationUtils.hideKeyboard(context, editTextSearch);
+    @Override
+    public void onClick(SearchVisitorData visitorData) {
+        if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
+            Intent resultIntent = new Intent();
+            LatLng endLatLng = new LatLng(visitorData.getEndLat(), visitorData.getEndLng());
+            String areaName = visitorData.getVisitedArea();
+            String placeId = visitorData.getPlaceId();
+            if (areaName != null) {
+                double latitude = endLatLng.latitude;
+                double longitude = endLatLng.longitude;
+                SearchVisitorData searchVisitorData = new SearchVisitorData(areaName, placeId, latitude, longitude, latitude, longitude);
+                // resultIntent.putExtra(NEW_PLACE_SELECTED,place);
+                //String result=new Gson().toJson(place);
+                resultIntent.putExtra(HISTORY_PLACE_SELECTED, searchVisitorData);
+                context.setResult(RESULT_OK, resultIntent);
+                //Log.d("ShawnClick", "click: ");
+                /*new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {*/
+                context.finish();
             }
+        } else {
+            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
         }
-
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            if (!ApplicationUtils.checkInternet(context)) {
-                ApplicationUtils.hideKeyboard(context, editTextSearch);
-            }
-        }
-
-        //!s.toString().equals("")
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if (s.toString().length() > 0) {
-                mAutoCompleteAdapter.getFilter().filter(s.toString());
-                mAutoCompleteAdapter.notifyDataSetChanged();
-                if (!ApplicationUtils.checkInternet(context)) {
-                    ApplicationUtils.hideKeyboard(context, editTextSearch);
-                }
-            } else {
-                mAutoCompleteAdapter.clearList();
-                if (!ApplicationUtils.checkInternet(context)) {
-                    ApplicationUtils.hideKeyboard(context, editTextSearch);
-                }
-            }
-        }
-    };
+    }
 
     private ArrayList<SearchVisitorData> searchVisitorDataList = new ArrayList<>();
 

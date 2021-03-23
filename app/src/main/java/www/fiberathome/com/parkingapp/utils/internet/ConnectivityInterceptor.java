@@ -6,10 +6,10 @@ import java.io.IOException;
 
 import okhttp3.Interceptor;
 import okhttp3.Response;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 
 public class ConnectivityInterceptor implements Interceptor {
-    private Context context;
+    private final Context context;
 
     public ConnectivityInterceptor(Context context){
         this.context = context;
@@ -17,10 +17,9 @@ public class ConnectivityInterceptor implements Interceptor {
 
     @Override
     public Response intercept(Chain chain) throws IOException {
-        if (!ApplicationUtils.checkInternet(context)) {
+        if (!ConnectivityUtils.getInstance().checkInternet(context)) {
             throw new NoConnectivityException();
-        }
-        else {
+        } else {
             Response response = chain.proceed(chain.request());
             return response;
         }

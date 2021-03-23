@@ -40,6 +40,7 @@ import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.response.termsCondition.TermsCondition;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
@@ -73,20 +74,7 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
         return inflater.inflate(R.layout.fragment_privacy_policy, container, false);
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        unbinder = ButterKnife.bind(this, view);
-
-        context = (PrivacyPolicyActivity) getActivity();
-
-        if (ApplicationUtils.checkInternet(context)) {
-            fetchPrivacyPolicy();
-        } else {
-            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
-        }
-    }
+    private final ArrayList<TermsCondition> termsConditionsGlobal = new ArrayList<>();
 
     @Override
     public void onDestroyView() {
@@ -134,9 +122,24 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
         return false;
     }
 
-    private ArrayList<TermsCondition> termsConditionsGlobal = new ArrayList<>();
+    private final List<List<String>> termConditionList = null;
     private final ArrayList<TermsCondition> termsConditionArrayList = new ArrayList<>();
-    private List<List<String>> termConditionList = null;
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        unbinder = ButterKnife.bind(this, view);
+
+        context = (PrivacyPolicyActivity) getActivity();
+
+        if (ConnectivityUtils.getInstance().checkInternet(context)) {
+            fetchPrivacyPolicy();
+        } else {
+            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+        }
+    }
+
     private List<List<String>> list;
 
     private void fetchPrivacyPolicy() {

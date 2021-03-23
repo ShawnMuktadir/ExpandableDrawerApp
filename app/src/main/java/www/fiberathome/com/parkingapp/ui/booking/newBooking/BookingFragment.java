@@ -41,6 +41,7 @@ import www.fiberathome.com.parkingapp.model.response.booking.BookedResponse;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
@@ -101,7 +102,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
         setListeners();
 
         String mobileNo = Preferences.getInstance(context).getUser().getMobileNo();
-        if (ApplicationUtils.checkInternet(context)) {
+        if (ConnectivityUtils.getInstance().checkInternet(context)) {
             fetchBookedParkingPlace(mobileNo);
         } else {
             DialogUtils.getInstance().alertDialog(context,
@@ -110,7 +111,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                     new DialogUtils.DialogClickListener() {
                         @Override
                         public void onPositiveClick() {
-                            if (ApplicationUtils.checkInternet(context)) {
+                            if (ConnectivityUtils.getInstance().checkInternet(context)) {
                                 fetchBookedParkingPlace(mobileNo);
                             } else {
                                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));

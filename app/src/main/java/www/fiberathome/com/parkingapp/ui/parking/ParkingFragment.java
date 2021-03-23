@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -21,7 +20,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -57,6 +55,7 @@ import www.fiberathome.com.parkingapp.model.response.sensors.SensorArea;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.MathUtils;
@@ -165,7 +164,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
 
         setListeners();
 
-        if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
+        if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
             Timber.e("check internet method called");
             fetchParkingSlotSensors();
         } else {
@@ -178,7 +177,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                         @Override
                         public void onPositiveClick() {
                             Timber.e("Positive Button clicked");
-                            if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
+                            if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
                                 fetchParkingSlotSensors();
                             } else {
                                 TastyToastUtils.showTastyWarningToast(context,
@@ -257,7 +256,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
         ivClearSearchText.setOnClickListener(view -> {
             editTextParking.setText("");
             hideNoData();
-            if (ApplicationUtils.checkInternet(context)) {
+            if (ConnectivityUtils.getInstance().checkInternet(context)) {
                 updateAdapter();
             } else {
                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
@@ -299,7 +298,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
 
                 if (s.length() == 0) {
                     Timber.e("length 0 called");
-                    if (ApplicationUtils.checkInternet(context)) {
+                    if (ConnectivityUtils.getInstance().checkInternet(context)) {
                         updateAdapter();
                     } else {
                         //TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
@@ -316,7 +315,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                 String contents = editTextParking.getText().toString().trim();
                 if (contents.length() > 0) {
                     //do search
-                    if (ApplicationUtils.checkInternet(context) && isGPSEnabled()) {
+                    if (ConnectivityUtils.getInstance().checkInternet(context) && isGPSEnabled()) {
                         if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_EN) &&
                                 TextUtils.getInstance().textContainsBangla(contents)) {
                             setNoDataForBangla();
@@ -337,7 +336,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                     }
                 } else {
                     //if something to do for empty edittext
-                    if (ApplicationUtils.checkInternet(context) && isGPSEnabled()) {
+                    if (ConnectivityUtils.getInstance().checkInternet(context) && isGPSEnabled()) {
                         updateAdapter();
                         ApplicationUtils.hideKeyboard(context, editTextParking);
                     } else {
@@ -494,7 +493,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
 
             mLastClickTime = now;
 
-            if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
+            if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
                 try {
                     Timber.e("try called");
                     SharedData.getInstance().setSensorArea(this.sensorAreas.get(position));
@@ -534,18 +533,18 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
     private void setNoDataForEnglish() {
         textViewNoData.setVisibility(View.VISIBLE);
         textViewNoData.setText(context.getResources().getString(R.string.no_parking_spot_found));
-        ApplicationUtils.showOnlyMessageDialog(context.getResources().getString(R.string.change_app_language_to_english), context);
+        DialogUtils.getInstance().showOnlyMessageDialog(context.getResources().getString(R.string.change_app_language_to_english), context);
     }
 
     private void setNoDataForBangla() {
         textViewNoData.setVisibility(View.VISIBLE);
         textViewNoData.setText(context.getResources().getString(R.string.no_parking_spot_found));
-        ApplicationUtils.showOnlyMessageDialog(context.getResources().getString(R.string.not_available_at_bangla_search), context);
+        DialogUtils.getInstance().showOnlyMessageDialog(context.getResources().getString(R.string.not_available_at_bangla_search), context);
     }
 
     private void filter(String text) {
         ArrayList<SensorArea> filteredList = new ArrayList<>();
-        if (ApplicationUtils.checkInternet(context) && isGPSEnabled()) {
+        if (ConnectivityUtils.getInstance().checkInternet(context) && isGPSEnabled()) {
 
             if (!sensorAreas.isEmpty()) {
                 for (SensorArea item : sensorAreas) {

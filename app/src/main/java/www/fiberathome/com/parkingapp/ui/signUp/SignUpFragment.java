@@ -66,6 +66,7 @@ import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.ui.termsConditions.TermsConditionsActivity;
 import www.fiberathome.com.parkingapp.ui.verifyPhone.VerifyPhoneActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DateTimeUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
@@ -205,7 +206,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btnSignup:
-                if (ApplicationUtils.checkInternet(context)) {
+                if (ConnectivityUtils.getInstance().checkInternet(context)) {
                     submitRegistration();
                 } else {
                     DialogUtils.getInstance().alertDialog(context,
@@ -217,7 +218,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                                 @Override
                                 public void onPositiveClick() {
                                     Timber.e("Positive Button clicked");
-                                    if (ApplicationUtils.checkInternet(context)) {
+                                    if (ConnectivityUtils.getInstance().checkInternet(context)) {
                                         submitRegistration();
                                     } else {
                                         TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
@@ -312,7 +313,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
             @Override
             public void onClick(@NotNull View widget) {
-                if (ApplicationUtils.checkInternet(context)) {
+                if (ConnectivityUtils.getInstance().checkInternet(context)) {
                     context.startActivity(new Intent(context, TermsConditionsActivity.class));
                 } else {
                     TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
@@ -332,7 +333,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
             @Override
             public void onClick(@NotNull View widget) {
-                if (ApplicationUtils.checkInternet(context)) {
+                if (ConnectivityUtils.getInstance().checkInternet(context)) {
                     context.startActivity(new Intent(context, PrivacyPolicyActivity.class));
                 } else {
                     TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
@@ -357,7 +358,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                             || actionId == EditorInfo.IME_ACTION_DONE
                             || event.getAction() == KeyEvent.ACTION_DOWN
                             && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-                        if (ApplicationUtils.checkInternet(context)) {
+                        if (ConnectivityUtils.getInstance().checkInternet(context)) {
                             submitRegistration();
                         } else {
                             DialogUtils.getInstance().alertDialog(context,
@@ -369,7 +370,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                                         @Override
                                         public void onPositiveClick() {
                                             Timber.e("Positive Button clicked");
-                                            if (ApplicationUtils.checkInternet(context)) {
+                                            if (ConnectivityUtils.getInstance().checkInternet(context)) {
                                                 submitRegistration();
                                             } else {
                                                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));

@@ -32,6 +32,7 @@ import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.permission.PermissionActivity;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.ForceUpdateChecker;
 import www.fiberathome.com.parkingapp.utils.LocationHelper;
@@ -128,8 +129,8 @@ public class SplashFragment extends BaseFragment implements ForceUpdateChecker.O
 
     private void openActivity(Intent intent) {
         new Handler().postDelayed(() -> {
-            if (ApplicationUtils.checkInternet(context)) {
-                if (ApplicationUtils.isGPSEnabled(context)) {
+            if (ConnectivityUtils.getInstance().checkInternet(context)) {
+                if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
                     context.startActivity(intent);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.finish();
@@ -162,7 +163,7 @@ public class SplashFragment extends BaseFragment implements ForceUpdateChecker.O
                             @Override
                             public void onPositiveClick() {
                                 Timber.e("Positive Button clicked");
-                                if (ApplicationUtils.checkInternet(context)) {
+                                if (ConnectivityUtils.getInstance().checkInternet(context)) {
                                     checkUserLogin();
                                 } else {
                                     TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_splash));

@@ -67,7 +67,7 @@ import www.fiberathome.com.parkingapp.ui.privacyPolicy.PrivacyPolicyActivity;
 import www.fiberathome.com.parkingapp.ui.profile.ProfileActivity;
 import www.fiberathome.com.parkingapp.ui.settings.SettingsActivity;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
 
@@ -140,7 +140,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
                 break;
 
             case R.id.nav_parking:
-                if (ApplicationUtils.checkInternet(context) && isGPSEnabled()) {
+                if (ConnectivityUtils.getInstance().checkInternet(context) && isGPSEnabled()) {
                     startActivity(ParkingActivity.class);
                     // Remove any previous data from SharedData's sensor Data Parking Information
                     SharedData.getInstance().setSensorArea(null);

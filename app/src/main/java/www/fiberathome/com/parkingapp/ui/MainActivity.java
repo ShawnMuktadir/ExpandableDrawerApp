@@ -69,12 +69,11 @@ import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
-import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
+import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
+import www.fiberathome.com.parkingapp.model.user.User;
 import www.fiberathome.com.parkingapp.module.eventBus.GetDirectionEvent;
 import www.fiberathome.com.parkingapp.module.eventBus.SetMarkerEvent;
-import www.fiberathome.com.parkingapp.model.user.User;
-import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
 import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.ui.booking.newBooking.BookingFragment;
 import www.fiberathome.com.parkingapp.ui.booking.oldBooking.OldBookingDetailsFragment;
@@ -93,9 +92,11 @@ import www.fiberathome.com.parkingapp.ui.permission.listener.PermissionInterface
 import www.fiberathome.com.parkingapp.ui.privacyPolicy.PrivacyPolicyFragment;
 import www.fiberathome.com.parkingapp.ui.profile.ProfileFragment;
 import www.fiberathome.com.parkingapp.ui.ratingReview.RatingReviewFragment;
+import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
 import www.fiberathome.com.parkingapp.ui.settings.SettingsFragment;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.LocationHelper;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
@@ -124,7 +125,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private Context context;
     private ActionBarDrawerToggle actionBarDrawerToggle;
 
-    private boolean exit = true;
+    private final boolean exit = true;
     private Toast exitToast;
     private int exitCounter = 1;
 
@@ -250,7 +251,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         navigationView.setCheckedItem(item.getItemId());
         switch (item.getItemId()) {
             case R.id.nav_home:
-                if (ApplicationUtils.checkInternet(context)) {
+                if (ConnectivityUtils.getInstance().checkInternet(context)) {
                     toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
                     tvTimeToolbar.setVisibility(View.VISIBLE);
                     linearLayoutToolbarTime.setVisibility(View.VISIBLE);
@@ -262,7 +263,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 break;
 
             case R.id.nav_parking:
-                if (ApplicationUtils.checkInternet(context)) {
+                if (ConnectivityUtils.getInstance().checkInternet(context)) {
                     toolbar.setTitle(context.getResources().getString(R.string.parking));
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ParkingFragment.newInstance()).commit();
                     tvTimeToolbar.setVisibility(View.GONE);
@@ -275,7 +276,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 break;
 
             case R.id.nav_booking:
-                if (ApplicationUtils.checkInternet(context)) {
+                if (ConnectivityUtils.getInstance().checkInternet(context)) {
                     toolbar.setTitle(context.getResources().getString(R.string.bookedLists));
                     tvTimeToolbar.setVisibility(View.GONE);
                     linearLayoutToolbarTime.setVisibility(View.GONE);
@@ -299,7 +300,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 break;
 
             case R.id.nav_profile:
-                if (ApplicationUtils.checkInternet(context)) {
+                if (ConnectivityUtils.getInstance().checkInternet(context)) {
                     toolbar.setTitle(context.getResources().getString(R.string.profile));
                     tvTimeToolbar.setVisibility(View.GONE);
                     linearLayoutToolbarTime.setVisibility(View.GONE);
@@ -339,7 +340,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 break;
 
             case R.id.nav_privacy_policy:
-                if (ApplicationUtils.checkInternet(context)) {
+                if (ConnectivityUtils.getInstance().checkInternet(context)) {
                     toolbar.setTitle(context.getResources().getString(R.string.privacy_policy));
                     tvTimeToolbar.setVisibility(View.GONE);
                     linearLayoutToolbarTime.setVisibility(View.GONE);
@@ -388,7 +389,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     @Override
     public void onBackPressed() {
-        if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
+        if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
             navigationView.getMenu().getItem(0).setChecked(true);
             drawerLayoutMain.closeDrawers();
             //super.onBackPressed(); delete this line
@@ -413,7 +414,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                                 Timber.e("onBackPressed exitCounter if");
                                 exitCounter = 1;
                                 drawerLayoutMain.closeDrawers();
-                                ApplicationUtils.showExitDialog(this);
+                                DialogUtils.getInstance().showExitDialog(this);
                             } else {
                                 Timber.e("onBackPressed exitCounter else");
                                 ApplicationUtils.showToastWithDelay(context, "Press Back again to exit", 200);

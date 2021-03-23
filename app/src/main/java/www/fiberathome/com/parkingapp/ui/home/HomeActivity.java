@@ -3,7 +3,6 @@ package www.fiberathome.com.parkingapp.ui.home;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -36,8 +35,8 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
+import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.ui.NavigationActivity;
 import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.ui.booking.newBooking.BookingFragment;
@@ -54,6 +53,7 @@ import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
 import www.fiberathome.com.parkingapp.ui.settings.SettingsFragment;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
@@ -73,7 +73,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
     private Location lastLocation;
     private FusedLocationProviderClient fusedLocationProviderClient;
 
-    private boolean exit = true;
+    private final boolean exit = true;
     private Toast exitToast;
     private int exitCounter = 1;
 
@@ -124,7 +124,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
         String areaName = getIntent().getStringExtra("areaName");
         String count = getIntent().getStringExtra("count");
 
-        if (ApplicationUtils.isGPSEnabled(context)) {
+        if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
             //initialize home fragment
             ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
                     HomeFragment.newInstance(lat, lng, areaName, count), R.id.nav_host_fragment);
@@ -168,7 +168,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
 
     @Override
     public void onBackPressed() {
-        if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
+        if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
             navigationView.getMenu().getItem(0).setChecked(true);
             drawerLayout.closeDrawers();
             //toolbar.setSubtitle("");
@@ -194,7 +194,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                                 Timber.e("onBackPressed exitCounter if");
                                 exitCounter = 1;
                                 drawerLayout.closeDrawers();
-                                ApplicationUtils.showExitDialog(this);
+                                DialogUtils.getInstance().showExitDialog(this);
                             } else {
                                 Timber.e("onBackPressed exitCounter else");
                                 ApplicationUtils.showToastWithDelay(context, context.getResources().getString(R.string.press_back_again_to_exit), 200);

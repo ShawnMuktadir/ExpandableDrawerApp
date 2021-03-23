@@ -1,14 +1,6 @@
 package www.fiberathome.com.parkingapp.utils;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.location.Location;
-
-import androidx.appcompat.app.AlertDialog;
-
-import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.ui.booking.newBooking.BookingActivity;
 
 public class MathUtils {
     private static MathUtils mathUtils;

@@ -8,7 +8,6 @@ import android.location.LocationManager;
 import android.os.Handler;
 import android.text.style.CharacterStyle;
 import android.text.style.StyleSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,9 +45,10 @@ import butterknife.ButterKnife;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.response.search.SearchVisitorData;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.ui.parking.EmptyViewHolder;
+import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
+import www.fiberathome.com.parkingapp.utils.DialogUtils;
+import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
 import static android.content.Context.LOCATION_SERVICE;
 
@@ -60,15 +60,15 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
 
     private final Context mContext;
 
-    private CharacterStyle STYLE_BOLD;
+    private final CharacterStyle STYLE_BOLD;
 
-    private CharacterStyle STYLE_NORMAL;
+    private final CharacterStyle STYLE_NORMAL;
 
-    private PlacesClient placesClient;
+    private final PlacesClient placesClient;
 
     private ClickListener clickListener;
 
-    private AutocompleteSessionToken token;
+    private final AutocompleteSessionToken token;
 
     public ArrayList<SearchVisitorData> searchVisitorDataList = new ArrayList<>();
 
@@ -229,7 +229,7 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
                     mContext.getResources().getColor(R.color.selectedColor) : Color.TRANSPARENT);
 
             mSearchPredictionViewHolder.itemView.setOnClickListener(v -> {
-                if (isGPSEnabled(position) && ApplicationUtils.checkInternet(mContext)) {
+                if (isGPSEnabled(position) && ConnectivityUtils.getInstance().checkInternet(mContext)) {
                     long now = System.currentTimeMillis();
                     if (now - mLastClickTime < CLICK_TIME_INTERVAL) {
                         return;
@@ -276,7 +276,7 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
                         }
                     } catch (IndexOutOfBoundsException e) {
                         //Toast.makeText(mContext, "Please try again", Toast.LENGTH_SHORT).show();
-                        ApplicationUtils.showOnlyMessageDialog(mContext.getResources().getString(R.string.please_try_again), mContext);
+                        DialogUtils.getInstance().showOnlyMessageDialog(mContext.getResources().getString(R.string.please_try_again), mContext);
                         Timber.d("exception: -> %s", e.getMessage());
                         //throw new RuntimeException("Test Crash");
                     }
@@ -293,7 +293,7 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
                 searchHistoryViewHolder.itemView.setBackgroundColor(selectedPosition == position ?
                         mContext.getResources().getColor(R.color.selectedColor) : Color.TRANSPARENT);
                 searchHistoryViewHolder.itemView.setOnClickListener(v -> {
-                    if (isGPSEnabled(position) && ApplicationUtils.checkInternet(mContext)) {
+                    if (isGPSEnabled(position) && ConnectivityUtils.getInstance().checkInternet(mContext)) {
                         long now = System.currentTimeMillis();
                         if (now - mLastClickTime < CLICK_TIME_INTERVAL) {
                             return;

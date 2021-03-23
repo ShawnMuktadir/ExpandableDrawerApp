@@ -2,11 +2,9 @@ package www.fiberathome.com.parkingapp.ui.bottomSheet;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
-import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,10 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.google.android.gms.maps.model.LatLng;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -29,14 +24,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingSensors;
-import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.MathUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
 import static android.content.Context.LOCATION_SERVICE;
-import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
 
 public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.TextBookingViewHolder> {
 
@@ -50,7 +43,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
     private int selectedItem = -1;
 
-    private int count = 0;
+    private final int count = 0;
 
     private final onItemClickListeners clickListeners;
 
@@ -103,7 +96,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         holder.textViewParkingDistance.setText(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(bookingSensors.getDistance()) + " km");
 
         holder.rowFG.setOnClickListener(view -> {
-            if (isGPSEnabled() && ApplicationUtils.checkInternet(context)) {
+            if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
                 clickListeners.onClick(bookingSensors);
             } else {
                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
@@ -115,7 +108,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         double tmp = MathUtils.getInstance().convertToDouble(decimalFormat.format(Double
                 .parseDouble(bookingSensors.getDuration())));
 
-        holder.textViewParkingTravelTime.setText(String.valueOf(tmp) + " mins");
+        holder.textViewParkingTravelTime.setText(tmp + " mins");
 
         if (selectedItem == position) {
             holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.selectedColor));

@@ -2,8 +2,6 @@ package www.fiberathome.com.parkingapp.ui.permission;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -28,6 +26,7 @@ import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.permission.listener.DexterPermissionListener;
 import www.fiberathome.com.parkingapp.ui.permission.listener.PermissionInterface;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
@@ -101,7 +100,7 @@ public class PermissionActivity extends BaseActivity implements PermissionInterf
     public void showPermissionGranted(String permissionName) {
         switch (permissionName) {
             case Manifest.permission.ACCESS_FINE_LOCATION:
-                if (ApplicationUtils.isGPSEnabled(context)) {
+                if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
                     Intent intent = new Intent(PermissionActivity.this, HomeActivity.class);
                     Preferences.getInstance(context).setIsLocationPermissionGiven(true);
                     startActivity(intent);

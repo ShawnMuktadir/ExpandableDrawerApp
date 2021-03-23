@@ -6,7 +6,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Editable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -22,7 +21,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -57,6 +55,7 @@ import www.fiberathome.com.parkingapp.ui.permission.PermissionActivity;
 import www.fiberathome.com.parkingapp.ui.signUp.SignUpActivity;
 import www.fiberathome.com.parkingapp.ui.verifyPhone.VerifyPhoneActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
@@ -205,7 +204,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btnSignIn:
-                if (ApplicationUtils.checkInternet(context)) {
+                if (ConnectivityUtils.getInstance().checkInternet(context)) {
                     submitLogin();
                 } else {
                     DialogUtils.getInstance().alertDialog(context,
@@ -217,7 +216,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                                 @Override
                                 public void onPositiveClick() {
                                     Timber.e("Positive Button clicked");
-                                    if (ApplicationUtils.checkInternet(context)) {
+                                    if (ConnectivityUtils.getInstance().checkInternet(context)) {
                                         submitLogin();
                                     } else {
                                         TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
@@ -279,7 +278,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                             || actionId == EditorInfo.IME_ACTION_DONE
                             || event.getAction() == KeyEvent.ACTION_DOWN
                             && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-                        if (ApplicationUtils.checkInternet(context)) {
+                        if (ConnectivityUtils.getInstance().checkInternet(context)) {
                             submitLogin();
                         } else {
                             DialogUtils.getInstance().alertDialog(context,
@@ -291,7 +290,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                                         @Override
                                         public void onPositiveClick() {
                                             Timber.e("Positive Button clicked");
-                                            if (ApplicationUtils.checkInternet(context)) {
+                                            if (ConnectivityUtils.getInstance().checkInternet(context)) {
                                                 submitLogin();
                                             } else {
                                                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));

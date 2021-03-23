@@ -39,6 +39,7 @@ import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 import www.fiberathome.com.parkingapp.model.user.User;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
@@ -120,7 +121,7 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.changePasswordBtn:
-                if (ApplicationUtils.checkInternet(context)) {
+                if (ConnectivityUtils.getInstance().checkInternet(context)) {
                     changePassword();
                 } else {
                     DialogUtils.getInstance().alertDialog(context,
@@ -128,7 +129,7 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
                             new DialogUtils.DialogClickListener() {
                                 @Override
                                 public void onPositiveClick() {
-                                    if (ApplicationUtils.checkInternet(context)) {
+                                    if (ConnectivityUtils.getInstance().checkInternet(context)) {
                                         changePassword();
                                     } else {
                                         TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));

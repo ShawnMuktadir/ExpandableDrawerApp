@@ -58,20 +58,21 @@ import butterknife.Unbinder;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
-import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
+import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.booking.Reservation;
 import www.fiberathome.com.parkingapp.module.notification.NotificationPublisher;
 import www.fiberathome.com.parkingapp.ui.booking.PaymentFragment;
+import www.fiberathome.com.parkingapp.ui.booking.helper.DialogHelper;
+import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener;
+import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DateTimeUtils;
 import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
-import www.fiberathome.com.parkingapp.ui.booking.helper.DialogHelper;
-import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener;
-import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
@@ -317,7 +318,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                         dialogHelper.initDialog();
                         dialog.show();*/
 
-                    if (ApplicationUtils.checkInternet(context)) {
+                    if (ConnectivityUtils.getInstance().checkInternet(context)) {
                         long diff = departedDate.getTime() - arrivedDate.getTime();
                         long seconds = diff / 1000;
                         long minutes = seconds / 60;
@@ -356,11 +357,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
         if (getArguments() != null) {
             more = getArguments().getBoolean("m");
         }
-        if (more) {
-            setArrivedDate = true;
-        } else {
-            setArrivedDate = false;
-        }
+        setArrivedDate = more;
         super.onStart();
         Timber.e("onStart called ");
     }

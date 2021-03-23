@@ -56,12 +56,12 @@ public class FileCompressor {
     }
 
     public File compressToFile(File imageFile, String compressedFileName) throws IOException {
-        return ImageUtil.compressImage(imageFile, maxWidth, maxHeight, compressFormat, quality,
+        return ImageUtils.compressImage(imageFile, maxWidth, maxHeight, compressFormat, quality,
                 destinationDirectoryPath + File.separator + compressedFileName);
     }
 
     public Bitmap compressToBitmap(File imageFile) throws IOException {
-        return ImageUtil.decodeSampledBitmapFromFile(imageFile, maxWidth, maxHeight);
+        return ImageUtils.decodeSampledBitmapFromFile(imageFile, maxWidth, maxHeight);
     }
 
     public Flowable<File> compressToFileAsFlowable(final File imageFile) {

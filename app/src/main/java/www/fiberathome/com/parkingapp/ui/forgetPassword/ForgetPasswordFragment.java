@@ -2,7 +2,6 @@ package www.fiberathome.com.parkingapp.ui.forgetPassword;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -14,7 +13,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -40,6 +38,7 @@ import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 import www.fiberathome.com.parkingapp.ui.changePassword.ChangePasswordActivityForOTPNew;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
@@ -47,7 +46,7 @@ import www.fiberathome.com.parkingapp.utils.Validator;
 @SuppressLint("NonConstantResourceId")
 public class ForgetPasswordFragment extends BaseFragment {
 
-    private static String TAG = ForgetPasswordActivity.class.getSimpleName();
+    private static final String TAG = ForgetPasswordActivity.class.getSimpleName();
 
     @BindView(R.id.textInputLayoutMobile)
     TextInputLayout textInputLayoutMobile;
@@ -132,7 +131,7 @@ public class ForgetPasswordFragment extends BaseFragment {
                             || actionId == EditorInfo.IME_ACTION_DONE
                             || event.getAction() == KeyEvent.ACTION_DOWN
                             && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-                        if (ApplicationUtils.checkInternet(context)) {
+                        if (ConnectivityUtils.getInstance().checkInternet(context)) {
                             submitLogin();
                         } else {
                             DialogUtils.getInstance().alertDialog(context,
@@ -143,7 +142,7 @@ public class ForgetPasswordFragment extends BaseFragment {
                                         @Override
                                         public void onPositiveClick() {
                                             Timber.e("Positive Button clicked");
-                                            if (ApplicationUtils.checkInternet(context)) {
+                                            if (ConnectivityUtils.getInstance().checkInternet(context)) {
                                                 submitLogin();
                                             } else {
                                                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
@@ -166,7 +165,7 @@ public class ForgetPasswordFragment extends BaseFragment {
                 });
 
         btnForgetPassword.setOnClickListener(v -> {
-            if (ApplicationUtils.checkInternet(context)) {
+            if (ConnectivityUtils.getInstance().checkInternet(context)) {
                 submitLogin();
             } else {
                 DialogUtils.getInstance().alertDialog(context,
@@ -176,7 +175,7 @@ public class ForgetPasswordFragment extends BaseFragment {
                             @Override
                             public void onPositiveClick() {
                                 Timber.e("Positive Button clicked");
-                                if (ApplicationUtils.checkInternet(context)) {
+                                if (ConnectivityUtils.getInstance().checkInternet(context)) {
                                     submitLogin();
                                 } else {
                                     TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));

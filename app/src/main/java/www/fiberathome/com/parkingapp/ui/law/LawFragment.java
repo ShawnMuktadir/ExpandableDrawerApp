@@ -40,6 +40,7 @@ import www.fiberathome.com.parkingapp.model.response.law.LocalJson;
 import www.fiberathome.com.parkingapp.model.response.law.Result;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
@@ -71,7 +72,7 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
 
     private LawAdapter lawAdapter;
 
-    private ArrayList<Result> resultArrayList = new ArrayList<>();
+    private final ArrayList<Result> resultArrayList = new ArrayList<>();
 
     public LawFragment() {
         // Required empty public constructor
@@ -268,13 +269,13 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
     private void setNoDataForBangla() {
         textViewNoData.setVisibility(View.VISIBLE);
         textViewNoData.setText(context.getResources().getString(R.string.no_data_found));
-        ApplicationUtils.showOnlyMessageDialog(context.getResources().getString(R.string.install_bangla_keyboard), context);
+        DialogUtils.getInstance().showOnlyMessageDialog(context.getResources().getString(R.string.install_bangla_keyboard), context);
     }
 
     private void setNoDataForEnglish() {
         textViewNoData.setVisibility(View.VISIBLE);
         textViewNoData.setText(context.getResources().getString(R.string.no_data_found));
-        ApplicationUtils.showOnlyMessageDialog(context.getResources().getString(R.string.change_app_language_to_english), context);
+        DialogUtils.getInstance().showOnlyMessageDialog(context.getResources().getString(R.string.change_app_language_to_english), context);
     }
 
     public void hideNoData() {
