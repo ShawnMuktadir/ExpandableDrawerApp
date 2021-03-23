@@ -67,6 +67,11 @@ public class MathUtils {
         return longValue;
     }
 
+    public double round(double value, int precision) {
+        int scale = (int) Math.pow(10, precision);
+        return (double) Math.round(value * scale) / scale;
+    }
+
     private double deg2rad(double deg) {
         return (deg * Math.PI / 180.0);
     }

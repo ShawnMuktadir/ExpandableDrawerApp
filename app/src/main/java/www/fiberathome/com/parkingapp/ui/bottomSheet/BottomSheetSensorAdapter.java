@@ -37,6 +37,7 @@ import www.fiberathome.com.parkingapp.model.response.booking.BookingSensors;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
+import www.fiberathome.com.parkingapp.utils.MathUtils;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
 
 public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -143,7 +144,7 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
                        /* ((TextBookingViewHolder) holder).textViewParkingDistance.setText(
                                 new DecimalFormat("##.##").format(bookingSensors.getDistance()) + " km");*/
                         ((TextBookingViewHolder) holder).textViewParkingDistance.setText(
-                                ApplicationUtils.round(bookingSensors.getDistance(),1) + " km");
+                                MathUtils.getInstance().round(bookingSensors.getDistance(),1) + " km");
                         ((TextBookingViewHolder) holder).textViewParkingTravelTime.setText(bookingSensors.getDuration());
                         ((TextBookingViewHolder) holder).textViewStatic.setText(bookingSensors.getText());
 

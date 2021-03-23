@@ -847,7 +847,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             String markerStringDuration = String.valueOf(markerDoubleDuration);
 
                             bookingSensorsMarker = new BookingSensors(markerPlaceName, marker.getPosition().latitude, marker.getPosition().longitude,
-                                    ApplicationUtils.round(markerDistance, 1), parkingNumberOfIndividualMarker, markerStringDuration,
+                                    MathUtils.getInstance().round(markerDistance, 1), parkingNumberOfIndividualMarker, markerStringDuration,
                                     context.getResources().getString(R.string.nearest_parking_from_your_destination),
                                     BookingSensors.TEXT_INFO_TYPE, 0);
 

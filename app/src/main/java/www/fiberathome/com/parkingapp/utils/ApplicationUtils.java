@@ -146,11 +146,6 @@ public class ApplicationUtils {
         return toolBarHeight;
     }
 
-    public static double round(double value, int precision) {
-        int scale = (int) Math.pow(10, precision);
-        return (double) Math.round(value * scale) / scale;
-    }
-
     public static void setBackground(Context context, View source, int resId) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             source.setBackground(context.getDrawable(resId));
