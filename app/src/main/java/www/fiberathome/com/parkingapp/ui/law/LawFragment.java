@@ -39,15 +39,15 @@ import www.fiberathome.com.parkingapp.model.response.law.LawItem;
 import www.fiberathome.com.parkingapp.model.response.law.LocalJson;
 import www.fiberathome.com.parkingapp.model.response.law.Result;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
+import www.fiberathome.com.parkingapp.utils.KeyboardUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
 
 import static android.content.Context.LOCATION_SERVICE;
-import static www.fiberathome.com.parkingapp.utils.Constants.LANGUAGE_BN;
-import static www.fiberathome.com.parkingapp.utils.Constants.LANGUAGE_EN;
+import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_BN;
+import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
 
 @SuppressLint("NonConstantResourceId")
 public class LawFragment extends BaseFragment implements IOnBackPressListener {
@@ -258,7 +258,7 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
                     }
                 } else {
                     //if something to do for empty edit text
-                    ApplicationUtils.hideKeyboard(context, editTextSearchLaw);
+                    KeyboardUtils.getInstance().hideKeyboard(context, editTextSearchLaw);
                     return true;
                 }
             }
@@ -296,6 +296,7 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
         if (providerEnabled) {
             return true;
         } else {
+            Timber.e("isGPSEnabled else called");
             /*AlertDialog alertDialog = new AlertDialog.Builder(context)
                     .setTitle("GPS Permissions")
                     .setMessage("GPS is required for this app to work. Please enable GPS.")

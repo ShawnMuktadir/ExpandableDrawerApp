@@ -2,7 +2,6 @@ package www.fiberathome.com.parkingapp.ui.signIn;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -54,14 +53,14 @@ import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.permission.PermissionActivity;
 import www.fiberathome.com.parkingapp.ui.signUp.SignUpActivity;
 import www.fiberathome.com.parkingapp.ui.verifyPhone.VerifyPhoneActivity;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+import www.fiberathome.com.parkingapp.utils.ToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
 
-import static www.fiberathome.com.parkingapp.utils.Constants.LANGUAGE_BN;
-import static www.fiberathome.com.parkingapp.utils.Constants.LANGUAGE_EN;
+import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_BN;
+import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
 
 @SuppressLint("NonConstantResourceId")
 public class LoginFragment extends BaseFragment implements View.OnClickListener, ProgressView {
@@ -102,9 +101,6 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
 
     private LoginActivity context;
 
-    private String deviceOs = "";
-    private int sdkVersion = 0;
-
     public LoginFragment() {
         // Required empty public constructor
     }
@@ -129,8 +125,8 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
 
         context = (LoginActivity) getActivity();
 
-        deviceOs = android.os.Build.VERSION.RELEASE; // e.g. myVersion := "10"
-        sdkVersion = android.os.Build.VERSION.SDK_INT; // e.g. sdkVersion := 29;
+        String deviceOs = android.os.Build.VERSION.RELEASE; // e.g. myVersion := "10"
+        int sdkVersion = android.os.Build.VERSION.SDK_INT; // e.g. sdkVersion := 29;
 
         Timber.e("device OS -> %s", deviceOs);
         Timber.e("device sdkVersion -> %s", sdkVersion);
@@ -208,7 +204,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                     submitLogin();
                 } else {
                     DialogUtils.getInstance().alertDialog(context,
-                            (Activity) context,
+                            context,
                             context.getResources().getString(R.string.connect_to_internet),
                             context.getResources().getString(R.string.retry),
                             context.getResources().getString(R.string.close_app),
@@ -282,7 +278,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                             submitLogin();
                         } else {
                             DialogUtils.getInstance().alertDialog(context,
-                                    (Activity) context,
+                                    context,
                                     context.getString(R.string.connect_to_internet),
                                     context.getResources().getString(R.string.retry),
                                     context.getResources().getString(R.string.close_app),
@@ -448,7 +444,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                         if (response.body().getError() && !response.body().getAuthentication()) {
                             // IF ERROR OCCURS AND AUTHENTICATION IS INVALID
                             if (response.body().getMessage().equalsIgnoreCase("Please verify Your Account by OTP")) {
-                                ApplicationUtils.showToastMessage(context, response.body().getMessage());
+                                ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                                 btnOTP.setVisibility(View.GONE);
                                 //Intent verifyPhoneIntent = new Intent(context, VerifyPhoneActivity.class);
                                 Intent verifyPhoneIntent = new Intent(context, VerifyPhoneActivity.class);
@@ -459,10 +455,10 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                             }
                         }
                     } else {
-                        ApplicationUtils.showToastMessage(context, response.body().getMessage());
+                        ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                     }
                 } else {
-                    ApplicationUtils.showToastMessage(context, response.body().getMessage());
+                    ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                 }
             }
 
@@ -471,7 +467,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                 Timber.e("Throwable Errors: -> %s", errors.toString());
                 hideLoading();
                 hideProgress();
-                ApplicationUtils.showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
         });
     }

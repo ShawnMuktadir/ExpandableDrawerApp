@@ -56,6 +56,7 @@ import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressLint("NonConstantResourceId")
 public class HomeActivity extends NavigationActivity implements FragmentChangeListener, PermissionInterface {
@@ -197,7 +198,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                                 DialogUtils.getInstance().showExitDialog(this);
                             } else {
                                 Timber.e("onBackPressed exitCounter else");
-                                ApplicationUtils.showToastWithDelay(context, context.getResources().getString(R.string.press_back_again_to_exit), 200);
+                                ToastUtils.getInstance().showToastWithDelay(context, context.getResources().getString(R.string.press_back_again_to_exit), 200);
                             }
                         } else {
                             Timber.e("onBackPressed exit else");
@@ -323,7 +324,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
 
             if (providerEnabled) {
                 Timber.e("providerEnabled HomeActivity called");
-                ApplicationUtils.showToastMessage(context, context.getResources().getString(R.string.enable_gps));
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.enable_gps));
             }
         } else {
             //Toast.makeText(context, "GPS not enabled. Unable to show user location", Toast.LENGTH_SHORT).show();

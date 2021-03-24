@@ -15,8 +15,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
+import www.fiberathome.com.parkingapp.model.api.AppConfig;
 
 
 public class SensorList {

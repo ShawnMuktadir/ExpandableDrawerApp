@@ -1,7 +1,6 @@
 package www.fiberathome.com.parkingapp.ui.booking.newBooking;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -40,11 +39,11 @@ import www.fiberathome.com.parkingapp.model.response.booking.BookedList;
 import www.fiberathome.com.parkingapp.model.response.booking.BookedResponse;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
@@ -106,7 +105,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
             fetchBookedParkingPlace(mobileNo);
         } else {
             DialogUtils.getInstance().alertDialog(context,
-                    (Activity) context,
+                    context,
                     context.getString(R.string.connect_to_internet), context.getString(R.string.retry), context.getString(R.string.close_app),
                     new DialogUtils.DialogClickListener() {
                         @Override
@@ -251,7 +250,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
             public void onFailure(@NonNull Call<BookedResponse> call, @NonNull Throwable errors) {
                 Timber.e("Throwable Errors: -> %s", errors.toString());
                 hideLoading();
-                ApplicationUtils.showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
         });
     }

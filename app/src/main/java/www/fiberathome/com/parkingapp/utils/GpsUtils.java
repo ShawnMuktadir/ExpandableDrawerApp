@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.IntentSender;
 import android.location.LocationManager;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,16 +20,15 @@ import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import timber.log.Timber;
 import www.fiberathome.com.parkingapp.model.data.AppConstants;
-
-import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class GpsUtils {
 
-    private Context context;
-    private SettingsClient mSettingsClient;
-    private LocationSettingsRequest mLocationSettingsRequest;
-    private LocationManager locationManager;
+    private final Context context;
+    private final SettingsClient mSettingsClient;
+    private final LocationSettingsRequest mLocationSettingsRequest;
+    private final LocationManager locationManager;
     private LocationRequest locationRequest;
 
     public GpsUtils(Context context) {
@@ -77,13 +75,13 @@ public class GpsUtils {
                                         ResolvableApiException rae = (ResolvableApiException) e;
                                         rae.startResolutionForResult((Activity) context, AppConstants.GPS_REQUEST);
                                     } catch (IntentSender.SendIntentException sie) {
-                                        Log.i(TAG, "PendingIntent unable to execute request.");
+                                        Timber.i("PendingIntent unable to execute request.");
                                     }
                                     break;
                                 case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
                                     String errorMessage = "Location settings are inadequate, and cannot be " +
                                             "fixed here. Fix in Settings.";
-                                    Log.e(TAG, errorMessage);
+                                    Timber.e(errorMessage);
                                     Toast.makeText((Activity) context, errorMessage, Toast.LENGTH_LONG).show();
                             }
                         }

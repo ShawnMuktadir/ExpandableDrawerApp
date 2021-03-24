@@ -31,7 +31,6 @@ import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.response.booking.BookedList;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingArea;
-import www.fiberathome.com.parkingapp.model.response.sensors.SensorArea;
 
 public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 

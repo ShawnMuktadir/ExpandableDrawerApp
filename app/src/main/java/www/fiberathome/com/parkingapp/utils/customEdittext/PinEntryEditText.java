@@ -1,13 +1,11 @@
 package www.fiberathome.com.parkingapp.utils.customEdittext;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.os.Build;
 import android.text.Editable;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -15,10 +13,8 @@ import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 
 import androidx.appcompat.widget.AppCompatEditText;
-import androidx.core.content.ContextCompat;
 
 import www.fiberathome.com.parkingapp.R;
 

@@ -18,7 +18,7 @@ public class Validator {
     public static int PASSWORD_COUNT_MAX = 20;
     public static int PASSWORD_COUNT_MIN = 6;
     public static String PASSWORD_MATCH_ERROR = "Password is incorrect";
-    public static String PASSWORD_COUNT_ERROR = "Please input password between 4-20 characters";
+    public static String PASSWORD_COUNT_ERROR = "Please input password between 6-20 characters";
     public static String NUMBER_ERROR = "Please type only numbers";
     public static String PHONE_ERROR = "Please type 11 digit phone number. Ex: 01*11******";
 
@@ -36,7 +36,7 @@ public class Validator {
                     return false;
                 }
             } else if (textType.equalsIgnoreCase("password")) {
-                if (text.length() < 6) {
+                if (text.length() < PASSWORD_COUNT_MIN) {
                     editText.setError(errorText);
                     return false;
                 } else {
@@ -51,7 +51,7 @@ public class Validator {
                     return false;
                 }
             } else if (textType.equalsIgnoreCase("text")) {
-//                if (!TextUtils.isEmpty(text)) {
+                //if (!TextUtils.isEmpty(text)) {
                 if (!TextUtils.isEmpty(text)) {
                     editText.setError(null);
                     return true;
@@ -109,18 +109,18 @@ public class Validator {
                 }
             } else if (textType.equalsIgnoreCase("phone")) {
                 if (input.matches(StaticData.PHONE_REGEX)) {
-//                if (input.length() >= 11) {
+                    //if (input.length() >= 11) {
                     textInputLayout.setError(null);
                     textInputLayout.setErrorEnabled(false);
                     return true;
                 } else {
                     textInputLayout.setErrorEnabled(true);
                     textInputLayout.setError(PHONE_ERROR);
-//                    textInputLayout.setError("Enter valid mobile number!");
+                    //textInputLayout.setError("Enter valid mobile number!");
                     return false;
                 }
             } else if (textType.equalsIgnoreCase("textPassword")) {
-                if (input.length() > PASSWORD_COUNT_MAX || input.length() < 4) {
+                if (input.length() > PASSWORD_COUNT_MAX || input.length() < PASSWORD_COUNT_MIN) {
                     textInputLayout.setErrorEnabled(true);
                     textInputLayout.setError(PASSWORD_COUNT_ERROR);
                     return false;
@@ -172,7 +172,7 @@ public class Validator {
                     textInputLayout.setError(null);
                     return true;
                 } else {
-//                    textInputLayout.setError(WEB_ERROR);
+                    //textInputLayout.setError(WEB_ERROR);
                     return true;
                 }
             } else {
@@ -201,19 +201,19 @@ public class Validator {
     }
 
     public static boolean isValidTextFormat(TextInputLayout textInputLayout, TextInputEditText editText, String input, String errorText, String regex) {
-//        final Pattern licensePlatePattern
-//                = Pattern.compile(regex);
+        //final Pattern licensePlatePattern = Pattern.compile(regex);
 
         if (TextUtils.isEmpty(input)) {
-//            editText.setError(errorText);
+            //editText.setError(errorText);
             textInputLayout.requestFocus();
             textInputLayout.setError(errorText);
             return false;
         } else {
-            if (input.matches(regex)) {   //licensePlatePattern.matcher(input).matches()||
+            if (input.matches(regex)) {
+                //licensePlatePattern.matcher(input).matches()||
                 return true;
             } else {
-//                editText.setError(errorText);
+                //editText.setError(errorText);
                 textInputLayout.requestFocus();
                 textInputLayout.setError(errorText);
                 return false;

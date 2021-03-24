@@ -41,10 +41,10 @@ import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 import www.fiberathome.com.parkingapp.model.response.login.LoginResponse;
 import www.fiberathome.com.parkingapp.ui.changePassword.newPassword.ChangeNewPasswordActivity;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.NoUnderlineSpan;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressLint("NonConstantResourceId")
 public class ChangePasswordActivityForOTPFragment extends BaseFragment {
@@ -131,9 +131,11 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
         });
 
         btnVerifyOtp.setOnClickListener(v -> {
-            if (txtPinEntry.getText().length() == 4) {
-                String otp = txtPinEntry.getText().toString();
-                submitOTPVerification(otp);
+            if (txtPinEntry.getText() != null) {
+                if (txtPinEntry.getText().length() == 4) {
+                    String otp = txtPinEntry.getText().toString();
+                    submitOTPVerification(otp);
+                }
             } else {
                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.enter_valid_otp));
             }
@@ -158,13 +160,13 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
 
                 if (response.body() != null) {
                     if (!response.body().getError()) {
-                        ApplicationUtils.showToastMessage(context, response.body().getMessage());
+                        ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                     } else {
                         if (response.body().getMessage().equalsIgnoreCase("Try Again! Invalid Mobile Number.")) {
                             TastyToastUtils.showTastyErrorToast(context,
                                     context.getResources().getString(R.string.mobile_number_not_exist));
                         } else {
-                            ApplicationUtils.showToastMessage(context, response.body().getMessage());
+                            ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                         }
                     }
                 }
@@ -221,11 +223,11 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
                         Timber.e("response body not null -> %s", new Gson().toJson(response.body()));
 
                         if (response.body().getError() && response.body().getMessage().equalsIgnoreCase("Sorry! Failed to Verify Your Account by OYP.")) {
-                            ApplicationUtils.showToastMessage(context, "Sorry! Failed to Verify Your Account by OTP.");
+                            ToastUtils.getInstance().showToastMessage(context, "Sorry! Failed to Verify Your Account by OTP.");
 
                         } else if (!response.body().getError()) {
 
-                            ApplicationUtils.showToastMessage(context, response.body().getMessage());
+                            ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
 
                             SharedData.getInstance().setOtp(otp);
 
@@ -235,7 +237,7 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
                             countDownTimer.cancel();
                         }
                     } else {
-                        ApplicationUtils.showToastMessage(context, response.body().getMessage());
+                        ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                     }
                 }
 
@@ -243,7 +245,7 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
                 public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable errors) {
                     Timber.e("Throwable Errors: -> %s", errors.toString());
                     hideLoading();
-                    ApplicationUtils.showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
                 }
             });
         } else {
@@ -296,12 +298,10 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
 
         if (s1 >= 0x0980 && s1 <= 0x09E0) {
             spannableString.setSpan(clickableSpan, 70, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            textViewResentOtp.setText(spannableString);
-            textViewResentOtp.setMovementMethod(LinkMovementMethod.getInstance());
         } else {
             spannableString.setSpan(clickableSpan, 63, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            textViewResentOtp.setText(spannableString);
-            textViewResentOtp.setMovementMethod(LinkMovementMethod.getInstance());
         }
+        textViewResentOtp.setText(spannableString);
+        textViewResentOtp.setMovementMethod(LinkMovementMethod.getInstance());
     }
 }

@@ -1,13 +1,6 @@
 package www.fiberathome.com.parkingapp.utils;
 
-import android.app.Activity;
 import android.content.Context;
-import android.os.CountDownTimer;
-import android.os.IBinder;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -22,37 +15,11 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
-import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.data.StaticData;
 import www.fiberathome.com.parkingapp.utils.internet.ConnectivityInterceptor;
 
 public class ApplicationUtils {
-
-    public static void showToastMessage(Context context, String message) {
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
-    }
-
-    public static void showToastWithDelay(Context context, String message, long countDown) {
-        // Set the toast and duration
-        final Toast mToastToShow = Toast.makeText(context, message, Toast.LENGTH_LONG);
-
-        // Set the countdown to display the toast
-        CountDownTimer toastCountDown;
-        toastCountDown = new CountDownTimer(countDown, countDown /*Tick duration*/) {
-            public void onTick(long millisUntilFinished) {
-                mToastToShow.show();
-            }
-
-            public void onFinish() {
-                mToastToShow.cancel();
-            }
-        };
-
-        // Show the toast and starts the countdown
-        mToastToShow.show();
-        toastCountDown.start();
-    }
 
     public static OkHttpClient getClient(final Context context) {
 
@@ -84,51 +51,6 @@ public class ApplicationUtils {
                 .readTimeout(50, TimeUnit.SECONDS)
                 .build();
         return client;
-    }
-
-    public static void hideKeyboard(Context mContext) {
-        InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(((Activity) mContext).getWindow().getCurrentFocus().getWindowToken(), 0);
-    }
-
-    public static void hideKeyboard(final Activity activity) {
-        Timber.e("hideKeyboard -> ");
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            if (activity != null) {
-                                final InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-                                final View view = activity.getCurrentFocus();
-                                if (view != null) {
-                                    final IBinder binder = view.getWindowToken();
-                                    imm.hideSoftInputFromWindow(binder, 0);
-                                    imm.showSoftInputFromInputMethod(binder, 0);
-                                }
-                            }
-                        } catch (final Exception e) {
-                            Timber.d(e, "-> %s Exception to hide keyboard", ApplicationUtils.class.getSimpleName());
-                        }
-                    }
-                });
-            }
-        }).start();
-    }
-
-    public static void hideKeyboard(Context context, EditText editText) {
-        editText.clearFocus();
-        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null) {
-            imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
-        }
     }
 
     public static void addFragmentToActivity(@NonNull FragmentManager fragmentManager,

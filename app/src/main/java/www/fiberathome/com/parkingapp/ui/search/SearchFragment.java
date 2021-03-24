@@ -55,8 +55,8 @@ import www.fiberathome.com.parkingapp.model.response.search.SearchVisitorData;
 import www.fiberathome.com.parkingapp.model.response.search.SelectedPlace;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.search.placesadapter.PlacesAutoCompleteAdapter;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
+import www.fiberathome.com.parkingapp.utils.KeyboardUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
 import static android.app.Activity.RESULT_CANCELED;
@@ -124,13 +124,13 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
             mAutoCompleteAdapter.notifyDataSetChanged();
 
             if (!ConnectivityUtils.getInstance().checkInternet(context)) {
-                ApplicationUtils.hideKeyboard(context, editTextSearch);
+                KeyboardUtils.getInstance().hideKeyboard(context, editTextSearch);
             }
         }
 
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             if (!ConnectivityUtils.getInstance().checkInternet(context)) {
-                ApplicationUtils.hideKeyboard(context, editTextSearch);
+                KeyboardUtils.getInstance().hideKeyboard(context, editTextSearch);
             }
         }
 
@@ -140,12 +140,12 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
                 mAutoCompleteAdapter.getFilter().filter(s.toString());
                 mAutoCompleteAdapter.notifyDataSetChanged();
                 if (!ConnectivityUtils.getInstance().checkInternet(context)) {
-                    ApplicationUtils.hideKeyboard(context, editTextSearch);
+                    KeyboardUtils.getInstance().hideKeyboard(context, editTextSearch);
                 }
             } else {
                 mAutoCompleteAdapter.clearList();
                 if (!ConnectivityUtils.getInstance().checkInternet(context)) {
-                    ApplicationUtils.hideKeyboard(context, editTextSearch);
+                    KeyboardUtils.getInstance().hideKeyboard(context, editTextSearch);
                 }
             }
         }
@@ -213,7 +213,7 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 if (!ConnectivityUtils.getInstance().checkInternet(context)) {
-                    ApplicationUtils.hideKeyboard(context, editTextSearch);
+                    KeyboardUtils.getInstance().hideKeyboard(context, editTextSearch);
                 }
             }
 
@@ -222,11 +222,11 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
                 if (charSequence.length() > 0) {
                     ivClearSearchText.setVisibility(View.VISIBLE);
                     if (!ConnectivityUtils.getInstance().checkInternet(context)) {
-                        ApplicationUtils.hideKeyboard(context, editTextSearch);
+                        KeyboardUtils.getInstance().hideKeyboard(context, editTextSearch);
                     }
                 } else {
                     if (!ConnectivityUtils.getInstance().checkInternet(context)) {
-                        ApplicationUtils.hideKeyboard(context, editTextSearch);
+                        KeyboardUtils.getInstance().hideKeyboard(context, editTextSearch);
                     }
                     ivClearSearchText.setVisibility(View.GONE);
                 }
@@ -236,7 +236,7 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
             public void afterTextChanged(Editable s) {
                 if (s.length() == 0) {
                     if (!ConnectivityUtils.getInstance().checkInternet(context)) {
-                        ApplicationUtils.hideKeyboard(context, editTextSearch);
+                        KeyboardUtils.getInstance().hideKeyboard(context, editTextSearch);
                     }
                     if (searchVisitorDataList != null) {
                         hideNoData();
@@ -248,7 +248,7 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
                     }
                 } else {
                     if (!ConnectivityUtils.getInstance().checkInternet(context)) {
-                        ApplicationUtils.hideKeyboard(context, editTextSearch);
+                        KeyboardUtils.getInstance().hideKeyboard(context, editTextSearch);
                     }
                 }
                 /*if (s.length() >= 0) {
@@ -272,10 +272,10 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
                     //do search
                     mAutoCompleteAdapter.getFilter().filter(contents);
                     mAutoCompleteAdapter.notifyDataSetChanged();
-                    ApplicationUtils.hideKeyboard(context);
+                    KeyboardUtils.getInstance().hideKeyboard(context);
                 } else
                     //if something to do for empty edittext
-                    ApplicationUtils.hideKeyboard(context);
+                    KeyboardUtils.getInstance().hideKeyboard(context);
                 return true;
             }
             return false;
@@ -562,11 +562,13 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
             locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
         }
 
+        assert locationManager != null;
         boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
         if (providerEnabled) {
             return true;
         } else {
+            Timber.e("else called");
             /*AlertDialog alertDialog = new AlertDialog.Builder(context)
                     .setTitle("GPS Permissions")
                     .setMessage("GPS is required for this app to work. Please enable GPS.")
@@ -582,7 +584,6 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
     }
 
     public boolean checkIfAlreadyExist(SearchVisitorData searchVisitorData) {
-        //return searchVisitorDataList.contains(searchVisitorData);
         if (!searchVisitorDataList.contains(searchVisitorData)) {
             searchVisitorDataList.add(searchVisitorData);
             mAutoCompleteAdapter.setDataList(searchVisitorDataList);
@@ -630,22 +631,20 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
             }
         });
         set.addAll(list);
-        final ArrayList<SearchVisitorData> newList = new ArrayList<SearchVisitorData>(set);
-        return newList;
+        return new ArrayList<>(set);
     }
 
     private ArrayList<SearchVisitorData> clearListFromDuplicateVisitedArea(ArrayList<SearchVisitorData> visitedList) {
 
-        Map<String, SearchVisitorData> cleanMap = new LinkedHashMap<String, SearchVisitorData>();
+        Map<String, SearchVisitorData> cleanMap = new LinkedHashMap<>();
         for (int i = 0; i < visitedList.size(); i++) {
             cleanMap.put(visitedList.get(i).getVisitedArea(), visitedList.get(i));
         }
-        ArrayList<SearchVisitorData> list = new ArrayList<SearchVisitorData>(cleanMap.values());
-        return list;
+        return new ArrayList<>(cleanMap.values());
     }
 
     public ArrayList<SearchVisitorData> getUniqueList(ArrayList<SearchVisitorData> alertList) {
-        ArrayList<SearchVisitorData> uniqueAlerts = new ArrayList<SearchVisitorData>();
+        ArrayList<SearchVisitorData> uniqueAlerts = new ArrayList<>();
         for (SearchVisitorData alert : alertList) {
             if (!uniqueAlerts.contains(alert)) {
                 uniqueAlerts.add(alert);

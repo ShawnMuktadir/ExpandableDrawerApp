@@ -33,10 +33,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingSensors;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
-import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.utils.MathUtils;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
 
@@ -123,7 +122,7 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
                         homeFragment.layoutBottomSheetVisible(true, bookingSensors.getParkingArea(), bookingSensors.getCount(),
                                 ((BookingViewHolder) holder).textViewParkingDistance.getText().toString(),
                                 ((BookingViewHolder) holder).textViewParkingTravelTime.getText().toString(),
-                                new LatLng(bookingSensors.getLat(), bookingSensors.getLng()), true);
+                                new LatLng(bookingSensors.getLat(), bookingSensors.getLng()));
 
                         homeFragment.bottomSheetBehavior.setHideable(false);
                         homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -171,7 +170,7 @@ public class BottomSheetSensorAdapter extends RecyclerView.Adapter<RecyclerView.
                             homeFragment.layoutBottomSheetVisible(true, bookingSensors.getParkingArea(), bookingSensors.getCount(),
                                     ((TextBookingViewHolder) holder).textViewParkingDistance.getText().toString(),
                                     ((TextBookingViewHolder) holder).textViewParkingTravelTime.getText().toString(),
-                                    new LatLng(bookingSensors.getLat(), bookingSensors.getLng()), true);
+                                    new LatLng(bookingSensors.getLat(), bookingSensors.getLng()));
 
                             homeFragment.bottomSheetBehavior.setHideable(false);
                             homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);

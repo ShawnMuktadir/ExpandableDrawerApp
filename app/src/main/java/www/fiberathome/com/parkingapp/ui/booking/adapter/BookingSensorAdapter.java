@@ -32,7 +32,6 @@ import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingSensors;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
 
 public class BookingSensorAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -98,7 +97,7 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<RecyclerView.View
                         homeFragment.layoutBottomSheetVisible(true, bookingSensors.getParkingArea(), bookingSensors.getCount(),
                                 ((BookingViewHolder) holder).textViewParkingDistance.getText().toString(),
                                 ((BookingViewHolder) holder).textViewParkingTravelTime.getText().toString(),
-                                new LatLng(bookingSensors.getLat(), bookingSensors.getLng()), true);
+                                new LatLng(bookingSensors.getLat(), bookingSensors.getLng()));
 
                         homeFragment.bottomSheetBehavior.setHideable(false);
                         homeFragment.bottomSheetBehavior.setPeekHeight(400);
@@ -122,7 +121,7 @@ public class BookingSensorAdapter extends RecyclerView.Adapter<RecyclerView.View
                         homeFragment.layoutBottomSheetVisible(true, bookingSensors.getParkingArea(), bookingSensors.getCount(),
                                 ((TextBookingViewHolder) holder).textViewParkingDistance.getText().toString(),
                                 ((TextBookingViewHolder) holder).textViewParkingTravelTime.getText().toString(),
-                                new LatLng(bookingSensors.getLat(), bookingSensors.getLng()), true);
+                                new LatLng(bookingSensors.getLat(), bookingSensors.getLng()));
 
                         homeFragment.bottomSheetBehavior.setHideable(false);
                         //homeFragment.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);

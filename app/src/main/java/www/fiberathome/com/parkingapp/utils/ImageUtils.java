@@ -37,8 +37,13 @@ public class ImageUtils {
     public static File compressImage(File imageFile, int reqWidth, int reqHeight, Bitmap.CompressFormat compressFormat, int quality, String destinationPath) throws IOException {
         FileOutputStream fileOutputStream = null;
         File file = new File(destinationPath).getParentFile();
-        if (!file.exists()) {
-            file.mkdirs();
+        assert file != null;
+        try {
+            if (!file.exists()) {
+                file.mkdirs();
+            }
+        } catch (Exception e) {
+            e.getCause();
         }
         try {
             fileOutputStream = new FileOutputStream(destinationPath);
@@ -135,7 +140,7 @@ public class ImageUtils {
         Drawable vectorDrawable = ResourcesCompat.getDrawable(
                 context.getResources(), vectorResourceId, null);
         if (vectorDrawable == null) {
-//            Log.e(TAG, "Requested vector resource was not found");
+            //Log.e(TAG, "Requested vector resource was not found");
             return BitmapDescriptorFactory.defaultMarker();
         }
         Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(),
@@ -149,6 +154,7 @@ public class ImageUtils {
 
     private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
         Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
+        assert vectorDrawable != null;
         vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
         Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);

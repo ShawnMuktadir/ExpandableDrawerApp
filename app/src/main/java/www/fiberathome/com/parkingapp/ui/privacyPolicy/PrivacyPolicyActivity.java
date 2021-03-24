@@ -1,23 +1,14 @@
 package www.fiberathome.com.parkingapp.ui.privacyPolicy;
 
-import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.ui.NavigationActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
 public class PrivacyPolicyActivity extends NavigationActivity {
 

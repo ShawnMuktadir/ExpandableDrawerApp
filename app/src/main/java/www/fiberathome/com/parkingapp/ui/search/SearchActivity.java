@@ -3,18 +3,14 @@ package www.fiberathome.com.parkingapp.ui.search;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.Toolbar;
 
 import www.fiberathome.com.parkingapp.R;
-
 import www.fiberathome.com.parkingapp.ui.NavigationActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 

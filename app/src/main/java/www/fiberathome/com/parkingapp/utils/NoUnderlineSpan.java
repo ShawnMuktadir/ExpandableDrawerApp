@@ -1,13 +1,12 @@
 package www.fiberathome.com.parkingapp.utils;
 
-import android.os.Parcel;
 import android.text.TextPaint;
 import android.text.style.ClickableSpan;
-import android.text.style.UnderlineSpan;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+
 public class NoUnderlineSpan extends ClickableSpan {
-    // extend ClickableSpan
 
     String clicked;
 
@@ -21,7 +20,7 @@ public class NoUnderlineSpan extends ClickableSpan {
     }
 
     @Override
-    public void onClick(View tv) {
+    public void onClick(@NonNull View tv) {
         //Toast.makeText(MainActivity.this,clicked , Toast.LENGTH_SHORT).show();
     }
 

@@ -3,10 +3,10 @@ package www.fiberathome.com.parkingapp.model.data.preference;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import www.fiberathome.com.parkingapp.model.data.Constants;
 import www.fiberathome.com.parkingapp.model.user.User;
-import www.fiberathome.com.parkingapp.utils.Constants;
 
-import static www.fiberathome.com.parkingapp.utils.Constants.LANGUAGE_EN;
+import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
 
 public class Preferences {
 

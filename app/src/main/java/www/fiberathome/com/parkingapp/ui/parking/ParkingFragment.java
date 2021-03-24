@@ -1,7 +1,6 @@
 package www.fiberathome.com.parkingapp.ui.parking;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -54,19 +53,20 @@ import www.fiberathome.com.parkingapp.model.response.parkingSlot.ParkingSlotResp
 import www.fiberathome.com.parkingapp.model.response.sensors.SensorArea;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
+import www.fiberathome.com.parkingapp.utils.KeyboardUtils;
 import www.fiberathome.com.parkingapp.utils.MathUtils;
 import www.fiberathome.com.parkingapp.utils.RecyclerTouchListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
+import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 import static android.content.Context.LOCATION_SERVICE;
+import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_BN;
+import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
 import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
-import static www.fiberathome.com.parkingapp.utils.Constants.LANGUAGE_BN;
-import static www.fiberathome.com.parkingapp.utils.Constants.LANGUAGE_EN;
 
 @SuppressLint("NonConstantResourceId")
 public class ParkingFragment extends BaseFragment implements IOnBackPressListener {
@@ -169,7 +169,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
             fetchParkingSlotSensors();
         } else {
             DialogUtils.getInstance().alertDialog(context,
-                    (Activity) context,
+                    context,
                     context.getString(R.string.connect_to_internet_gps),
                     context.getString(R.string.retry),
                     context.getString(R.string.close_app),
@@ -301,6 +301,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                     if (ConnectivityUtils.getInstance().checkInternet(context)) {
                         updateAdapter();
                     } else {
+                        Timber.e("else length 0 called");
                         //TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
                     }
                 }
@@ -329,7 +330,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                         } else {
                             filter(contents);
                             parkingAdapter.notifyDataSetChanged();
-                            ApplicationUtils.hideKeyboard(context, editTextParking);
+                            KeyboardUtils.getInstance().hideKeyboard(context, editTextParking);
                         }
                     } else {
                         TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
@@ -338,7 +339,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                     //if something to do for empty edittext
                     if (ConnectivityUtils.getInstance().checkInternet(context) && isGPSEnabled()) {
                         updateAdapter();
-                        ApplicationUtils.hideKeyboard(context, editTextParking);
+                        KeyboardUtils.getInstance().hideKeyboard(context, editTextParking);
                     } else {
                         TastyToastUtils.showTastyWarningToast(context,
                                 context.getResources().getString(R.string.connect_to_internet_gps));
@@ -435,10 +436,10 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
             }
 
             @Override
-            public void onFailure(Call<ParkingSlotResponse> call, Throwable t) {
+            public void onFailure(@NonNull Call<ParkingSlotResponse> call, @NonNull Throwable t) {
                 Timber.e("onFailure -> %s", t.getMessage());
                 hideLoading();
-                ApplicationUtils.showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
         });
     }
@@ -461,7 +462,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
 
                     context.navigationView.getMenu().getItem(1).setChecked(false);
 
-                    ApplicationUtils.hideKeyboard(context, editTextParking);
+                    KeyboardUtils.getInstance().hideKeyboard(context, editTextParking);
                 }
             }
 
@@ -605,14 +606,12 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
 
         LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
-        boolean GpsStatus = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-        return GpsStatus;
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 
     private void setNoData() {
         textViewNoData.setVisibility(View.VISIBLE);
-        textViewNoData.setText(context.getString(R.string.no_parking_spot_found));
+        textViewNoData.setText(context.getResources().getString(R.string.no_parking_spot_found));
     }
 
     private void hideNoData() {

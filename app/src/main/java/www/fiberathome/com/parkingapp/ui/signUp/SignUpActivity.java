@@ -4,11 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 
-import androidx.appcompat.app.AlertDialog;
-
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
-
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;

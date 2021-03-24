@@ -1,10 +1,11 @@
 package www.fiberathome.com.parkingapp.ui.reserveSpot;
 
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import www.fiberathome.com.parkingapp.R;
 

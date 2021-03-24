@@ -1,14 +1,14 @@
 package www.fiberathome.com.parkingapp.model.data.preference;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import www.fiberathome.com.parkingapp.model.user.User;
-import www.fiberathome.com.parkingapp.utils.Constants;
+import www.fiberathome.com.parkingapp.model.data.Constants;
 
-import static www.fiberathome.com.parkingapp.utils.Constants.LANGUAGE_BN;
-import static www.fiberathome.com.parkingapp.utils.Constants.LANGUAGE_EN;
+import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
 
+@SuppressLint("StaticFieldLeak")
 public class LanguagePreferences {
 
     private static final String SHARED_PREF_NAME = "PARKINGAPP";

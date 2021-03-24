@@ -2,7 +2,6 @@ package www.fiberathome.com.parkingapp.ui.splash;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -31,12 +30,12 @@ import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.permission.PermissionActivity;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.ForceUpdateChecker;
 import www.fiberathome.com.parkingapp.utils.LocationHelper;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
@@ -155,7 +154,7 @@ public class SplashFragment extends BaseFragment implements ForceUpdateChecker.O
                 }
             } else {
                 DialogUtils.getInstance().alertDialog(context,
-                        (Activity) context,
+                        context,
                         context.getString(R.string.connect_to_internet),
                         context.getString(R.string.retry),
                         context.getString(R.string.close_app),
@@ -167,9 +166,7 @@ public class SplashFragment extends BaseFragment implements ForceUpdateChecker.O
                                     checkUserLogin();
                                 } else {
                                     TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_splash));
-                                    new Handler().postDelayed(() -> {
-                                        context.finish();
-                                    }, 700);
+                                    new Handler().postDelayed(() -> context.finish(), 700);
                                 }
                             }
 
@@ -218,10 +215,10 @@ public class SplashFragment extends BaseFragment implements ForceUpdateChecker.O
                 }, 6000);
 
             } else {
-                ApplicationUtils.showToastMessage(context, context.getResources().getString(R.string.gps_network_not_enabled));
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.gps_network_not_enabled));
             }
         } else {
-            ApplicationUtils.showToastMessage(context, context.getResources().getString(R.string.gps_not_enabled_unable_to_show_user_location));
+            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.gps_not_enabled_unable_to_show_user_location));
         }
     }
 

@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.utils;
+package www.fiberathome.com.parkingapp.model.data;
 
 public class Constants {
 

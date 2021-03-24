@@ -1,7 +1,6 @@
 package www.fiberathome.com.parkingapp.utils;
 
 import android.annotation.SuppressLint;
-import android.location.Location;
 
 import java.text.DateFormat;
 import java.text.ParseException;

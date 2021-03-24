@@ -38,10 +38,10 @@ import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 import www.fiberathome.com.parkingapp.model.user.User;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+import www.fiberathome.com.parkingapp.utils.ToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
 
 @SuppressLint("NonConstantResourceId")
@@ -119,33 +119,31 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.changePasswordBtn:
-                if (ConnectivityUtils.getInstance().checkInternet(context)) {
-                    changePassword();
-                } else {
-                    DialogUtils.getInstance().alertDialog(context,
-                            (Activity) context, context.getString(R.string.connect_to_internet), context.getString(R.string.retry), context.getString(R.string.close_app),
-                            new DialogUtils.DialogClickListener() {
-                                @Override
-                                public void onPositiveClick() {
-                                    if (ConnectivityUtils.getInstance().checkInternet(context)) {
-                                        changePassword();
-                                    } else {
-                                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
-                                    }
+        if (view.getId() == R.id.changePasswordBtn) {
+            if (ConnectivityUtils.getInstance().checkInternet(context)) {
+                changePassword();
+            } else {
+                DialogUtils.getInstance().alertDialog(context,
+                        (Activity) context, context.getString(R.string.connect_to_internet), context.getString(R.string.retry), context.getString(R.string.close_app),
+                        new DialogUtils.DialogClickListener() {
+                            @Override
+                            public void onPositiveClick() {
+                                if (ConnectivityUtils.getInstance().checkInternet(context)) {
+                                    changePassword();
+                                } else {
+                                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                                 }
+                            }
 
-                                @Override
-                                public void onNegativeClick() {
-                                    if (getActivity() != null) {
-                                        getActivity().finish();
-                                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
-                                    }
+                            @Override
+                            public void onNegativeClick() {
+                                if (getActivity() != null) {
+                                    getActivity().finish();
+                                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                                 }
-                            }).show();
-                }
-                break;
+                            }
+                        }).show();
+            }
         }
     }
 
@@ -289,7 +287,7 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
 
                 if (response.body() != null) {
                     if (!response.body().getError()) {
-                        ApplicationUtils.showToastMessage(context, response.body().getMessage());
+                        ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
 
                         Preferences.getInstance(context).logout();
                         Intent intentLogout = new Intent(context, LoginActivity.class);
@@ -298,13 +296,13 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
                             getActivity().finishAffinity();
                         }
                     } else {
-                        ApplicationUtils.showToastMessage(context, response.body().getMessage());
+                        ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                     }
                 }
             }
 
             @Override
-            public void onFailure(Call<BaseResponse> call, Throwable errors) {
+            public void onFailure(@NonNull Call<BaseResponse> call, @NonNull Throwable errors) {
                 Timber.e("Throwable Errors: -> %s", errors.toString());
             }
         });
@@ -316,7 +314,7 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
             if (password.equals(confirmPassword)) {
                 passStatus = true;
             } else {
-                ApplicationUtils.showToastMessage(context, context.getString(R.string.err_confirm_password));
+                ToastUtils.getInstance().showToastMessage(context, context.getString(R.string.err_confirm_password));
             }
         }
         return passStatus;
@@ -329,7 +327,7 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
             if (password.equals(oldPassword)) {
                 passStatus = true;
             } else {
-                ApplicationUtils.showToastMessage(context, context.getString(R.string.err_old_password));
+                ToastUtils.getInstance().showToastMessage(context, context.getString(R.string.err_old_password));
             }
         }
         return passStatus;

@@ -95,12 +95,12 @@ import www.fiberathome.com.parkingapp.ui.ratingReview.RatingReviewFragment;
 import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
 import www.fiberathome.com.parkingapp.ui.settings.SettingsFragment;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.LocationHelper;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
+import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressLint("NonConstantResourceId")
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener,
@@ -133,9 +133,17 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     public static final int GPS_REQUEST_CODE = 9003;
 
-    private static final int PLAY_SERVICES_ERROR_CODE = 9002;
+    //toolbar menu overflow icon change method
+    public static void colorizeToolbarOverflowButton(@NonNull Toolbar toolbar, @ColorInt int color) {
+        final Drawable overflowIcon = toolbar.getOverflowIcon();
+        if (overflowIcon == null) return;
+        toolbar.setOverflowIcon(getTintedDrawable(toolbar.getContext(), overflowIcon, color));
+    }
 
-    private LocationRequest locationRequest;
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,9 +168,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         //location permission check
         handleLocationPermissionCheck(context);
 
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
+        FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
         buildLocationCallBack();
-        locationRequest = new LocationRequest();
+        LocationRequest locationRequest = new LocationRequest();
         locationRequest.setInterval(1000);
         locationRequest.setFastestInterval(1000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -191,15 +199,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             Intent intent = new Intent(MainActivity.this, LocationActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    finish();
-                }
-            }, 2000);
+            new Handler().postDelayed(this::finish, 2000);
 
             return;
-            //  TastyToastUtils.showTastyInfoToast(context,"Sorry! You can't use Parking App. For use, please enable your GPS!");
         }
 
         if (!Preferences.getInstance(context).isLoggedIn()) {
@@ -210,17 +212,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         }
 
         setListeners();
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        actionBarDrawerToggle.onConfigurationChanged(newConfig);
     }
 
     @Override
@@ -388,6 +379,20 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        actionBarDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public void applyTexts(String username, String password, String mobile) {
+
+        Timber.e(username);
+        Timber.e(password);
+        Timber.e(mobile);
+    }
+
+    @Override
     public void onBackPressed() {
         if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
             navigationView.getMenu().getItem(0).setChecked(true);
@@ -417,7 +422,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                                 DialogUtils.getInstance().showExitDialog(this);
                             } else {
                                 Timber.e("onBackPressed exitCounter else");
-                                ApplicationUtils.showToastWithDelay(context, "Press Back again to exit", 200);
+                                ToastUtils.getInstance().showToastWithDelay(context, "Press Back again to exit", 200);
                             }
                         } else {
                             Timber.e("onBackPressed exit else");
@@ -509,41 +514,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     @Override
-    public void applyTexts(String username, String password, String mobile) {
-
-        Timber.e(username);
-        Timber.e(password);
-        Timber.e(mobile);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Timber.e("onActivityResult MainActivity called");
-        super.onActivityResult(requestCode, resultCode, data);
-        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
-            fragment.onActivityResult(requestCode, resultCode, data);
-        }
-
-        if (requestCode == GPS_REQUEST_CODE) {
-
-            LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-
-            boolean providerEnabled = false;
-            if (locationManager != null) {
-                providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-            }
-
-            if (providerEnabled) {
-                Timber.e("providerEnabled MainActivity called");
-                Toast.makeText(context, "GPS is enabled", Toast.LENGTH_SHORT).show();
-            }
-
-        } else {
-//                Toast.makeText(context, "GPS not enabled. Unable to show user location", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
     public void fragmentChange(Fragment fragment) {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_container, fragment);
@@ -571,26 +541,32 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     }
 
-    @SuppressLint("RestrictedApi")
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Timber.e("onActivityResult MainActivity called");
+        super.onActivityResult(requestCode, resultCode, data);
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            fragment.onActivityResult(requestCode, resultCode, data);
+        }
 
-//        if (menu instanceof MenuBuilder) {
-//            ((MenuBuilder) menu).setOptionalIconsVisible(true);
-//        }
-//
-//        //change menu icon color programmatically & changing a particular icon of one of menus, use break in the for loop
-//        for (int i = 0; i < menu.size(); i++) {
-//            Drawable drawable = menu.getItem(i).getIcon();
-//            if (drawable != null) {
-//                drawable.mutate();
-//                drawable.setColorFilter(context.getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.SRC_ATOP);
-//                break;
-//            }
-//        }
-        return true;
+        if (requestCode == GPS_REQUEST_CODE) {
+
+            LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
+
+            boolean providerEnabled = false;
+            if (locationManager != null) {
+                providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            }
+
+            if (providerEnabled) {
+                Timber.e("providerEnabled MainActivity called");
+                Toast.makeText(context, "GPS is enabled", Toast.LENGTH_SHORT).show();
+            }
+
+        } else {
+            Timber.e("requestCode else called");
+            //Toast.makeText(context, "GPS not enabled. Unable to show user location", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -618,19 +594,41 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         }, 4000);
     }
 
+    @SuppressLint("RestrictedApi")
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        /*if (menu instanceof MenuBuilder) {
+            ((MenuBuilder) menu).setOptionalIconsVisible(true);
+        }
+
+        //change menu icon color programmatically & changing a particular icon of one of menus, use break in the for loop
+        for (int i = 0; i < menu.size(); i++) {
+            Drawable drawable = menu.getItem(i).getIcon();
+            if (drawable != null) {
+                drawable.mutate();
+                drawable.setColorFilter(context.getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.SRC_ATOP);
+                break;
+            }
+        }*/
+        return true;
+    }
+
     private void setupNavigationDrawer() {
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayoutMain, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayoutMain.addDrawerListener(actionBarDrawerToggle);
         drawerLayoutMain.addDrawerListener(new DrawerLayout.DrawerListener() {
 
             @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
+            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
                 //Called when a drawer's position changes.
 
             }
 
             @Override
-            public void onDrawerOpened(View drawerView) {
+            public void onDrawerOpened(@NonNull View drawerView) {
                 //Called when a drawer has settled in a completely open state.
                 //The drawer is interactive at this point.
                 // If you have 2 drawers (left and right) you can distinguish
@@ -639,7 +637,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             }
 
             @Override
-            public void onDrawerClosed(View drawerView) {
+            public void onDrawerClosed(@NonNull View drawerView) {
                 // Called when a drawer has settled in a completely closed state.
             }
 
@@ -694,35 +692,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             BitMatrix bitMatrix = multiFormatWriter.encode(text, BarcodeFormat.QR_CODE, 200, 200);
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
             Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
-//            QRCode.setImageBitmap(bitmap);
+            //QRCode.setImageBitmap(bitmap);
         } catch (WriterException e) {
             e.printStackTrace();
         }
-    }
-
-    public void setNavMenuItemThemeColors(int color) {
-//        Setting default colors for menu item Text and Icon
-        int navDefaultTextColor = Color.parseColor("#000000");
-
-        //Defining ColorStateList for menu item Text
-        ColorStateList navMenuTextList = new ColorStateList(
-                new int[][]{
-                        new int[]{android.R.attr.state_checked},
-                        new int[]{android.R.attr.state_enabled},
-                        new int[]{android.R.attr.state_pressed},
-                        new int[]{android.R.attr.state_focused},
-                        new int[]{android.R.attr.state_pressed}
-                },
-                new int[]{
-                        color,
-                        navDefaultTextColor,
-                        navDefaultTextColor,
-                        navDefaultTextColor,
-                        navDefaultTextColor
-                }
-        );
-
-        navigationView.setItemTextColor(navMenuTextList);
     }
 
     public void setDrawerState(boolean isEnabled) {
@@ -754,12 +727,29 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         });
     }
 
-    //toolbar menu overflow icon change method
-    public static boolean colorizeToolbarOverflowButton(@NonNull Toolbar toolbar, @ColorInt int color) {
-        final Drawable overflowIcon = toolbar.getOverflowIcon();
-        if (overflowIcon == null) return false;
-        toolbar.setOverflowIcon(getTintedDrawable(toolbar.getContext(), overflowIcon, color));
-        return true;//
+    public void setNavMenuItemThemeColors(int color) {
+        //Setting default colors for menu item Text and Icon
+        int navDefaultTextColor = Color.parseColor("#000000");
+
+        //Defining ColorStateList for menu item Text
+        ColorStateList navMenuTextList = new ColorStateList(
+                new int[][]{
+                        new int[]{android.R.attr.state_checked},
+                        new int[]{android.R.attr.state_enabled},
+                        new int[]{android.R.attr.state_pressed},
+                        new int[]{android.R.attr.state_focused},
+                        new int[]{android.R.attr.state_pressed}
+                },
+                new int[]{
+                        color,
+                        navDefaultTextColor,
+                        navDefaultTextColor,
+                        navDefaultTextColor,
+                        navDefaultTextColor
+                }
+        );
+
+        navigationView.setItemTextColor(navMenuTextList);
     }
 
     public static Drawable getTintedDrawable(@NonNull Context context, @NonNull Drawable inputDrawable, @ColorInt int color) {
@@ -770,10 +760,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     private void setListeners() {
-//        btnTimeToolbar.setOnClickListener(v-> {
-//            toolbar.setTitle(context.getResources().getString(R.string.schedule_parking));
-//            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ScheduleFragment()  ).commit();
-//        })
+        /*btnTimeToolbar.setOnClickListener(v-> {
+            toolbar.setTitle(context.getResources().getString(R.string.schedule_parking));
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ScheduleFragment()  ).commit();
+        })*/
         linearLayoutToolbarTime.setOnClickListener(v -> {
             if (isGPSEnabled()) {
                 toolbar.setTitle(context.getResources().getString(R.string.schedule_parking));
@@ -782,10 +772,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
             }
         });
-    }
-
-    private void showMessage(String message) {
-        Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
     }
 
     public void replaceFragmentWithBundle(String s) {
@@ -797,10 +783,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         b2.putString("s", s);
 
         oldBookingDetailsFragment.setArguments(b2);
-//        t1.replace(R.id.frame1, bookingDetailsFragment);
-//        t1.commit();
+        /*t1.replace(R.id.frame1, bookingDetailsFragment);
+        t1.commit();*/
 
-        // Move the MainActivity with Map Fragement
+        // Move the MainActivity with Map Fragment
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, oldBookingDetailsFragment).commit();
     }
 
@@ -827,16 +813,16 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         if (providerEnabled) {
             return true;
         } else {
-
-//            AlertDialog alertDialog = new AlertDialog.Builder(context)
-//                    .setTitle("GPS Permissions")
-//                    .setMessage("GPS is required for this app to work. Please enable GPS.")
-//                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
-//                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-//                        startActivityForResult(intent, GPS_REQUEST_CODE);
-//                    }))
-//                    .setCancelable(false)
-//                    .show();
+            Timber.e("isGPSEnabled else called");
+            /*AlertDialog alertDialog = new AlertDialog.Builder(context)
+                    .setTitle("GPS Permissions")
+                    .setMessage("GPS is required for this app to work. Please enable GPS.")
+                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivityForResult(intent, GPS_REQUEST_CODE);
+                    }))
+                    .setCancelable(false)
+                    .show();*/
 
         }
 
@@ -845,18 +831,14 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     private LocationCallback locationCallback;
     private Location lastLocation;
-    private FusedLocationProviderClient fusedLocationProviderClient;
 
     private void buildLocationCallBack() {
         Timber.e("buildLocationCallBack MainActivity call hoiche");
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(final LocationResult locationResult) {
-//                if (mMap != null) {
                 lastLocation = locationResult.getLastLocation();
                 SharedData.getInstance().setLastLocation(lastLocation);
-//                    addUserMarker();
-//                }
             }
         };
     }

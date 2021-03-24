@@ -99,7 +99,7 @@ public class TextUtils {
                 && (str.matches("^[a-zA-Z]*$")));
     }
 
-    public static String capitalize(String str) {
+    public String capitalize(String str) {
         if (str == null || str.isEmpty() || str.equals("")) {
             return str;
         }
@@ -107,7 +107,7 @@ public class TextUtils {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 
-    public static String capitalizeFirstLetter(final String str) {
+    public String capitalizeFirstLetter(final String str) {
         int strLen;
         if (str == null || (strLen = str.length()) == 0) {
             return str;
@@ -126,7 +126,7 @@ public class TextUtils {
         return String.valueOf(newChars);
     }
 
-    public static String allTrim(String str) {
+    public String allTrim(String str) {
         int j = 0;
         int count = 0;  // Number of extra spaces
         int lspaces = 0;// Number of left spaces

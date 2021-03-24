@@ -43,8 +43,6 @@ public class NotificationClass extends Application {
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(heighpriority);
             manager.createNotificationChannel(defaultpriority);
-
         }
-
     }
 }

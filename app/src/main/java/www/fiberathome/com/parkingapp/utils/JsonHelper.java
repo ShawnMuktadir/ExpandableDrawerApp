@@ -4,10 +4,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-public class JsonHelper
-{
+public class JsonHelper {
+
     public static Object toJSON(Object object) throws JSONException {
         if (object instanceof Map) {
             JSONObject json = new JSONObject();
@@ -18,7 +22,7 @@ public class JsonHelper
             return json;
         } else if (object instanceof Iterable) {
             JSONArray json = new JSONArray();
-            for (Object value : ((Iterable)object)) {
+            for (Object value : ((Iterable) object)) {
                 json.put(value);
             }
             return json;

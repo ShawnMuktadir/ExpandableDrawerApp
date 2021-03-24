@@ -3,7 +3,6 @@ package www.fiberathome.com.parkingapp.ui.schedule;
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
@@ -73,6 +72,7 @@ import www.fiberathome.com.parkingapp.utils.DateTimeUtils;
 import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
@@ -131,8 +131,6 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
     private String markerUid = "";
     private long arrived, departure, difference;
 
-    private ProgressDialog progressDialog;
-
     public ScheduleFragment() {
         // Required empty public constructor
     }
@@ -168,7 +166,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
         categories.add("Item 6");
 
         // Creating adapter for spinner
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, categories);
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, categories);
 
         // Drop down layout style - list view with radio button
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -186,13 +184,10 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
         Timber.e("onViewCreated called ");
         Date currentTime = Calendar.getInstance().getTime();
 
-        //assert getArguments() != null;
-        /*if(getArguments()!=null)
-        {*/
+
         if (getArguments() != null) {
             more = getArguments().getBoolean("m");
         }
-        //}
 
         if (getArguments() != null) {
             markerUid = getArguments().getString("markerUid");
@@ -327,7 +322,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                         Timber.e("hours -> %s", hours);
                         Timber.e("minutes -> %s", minutes);
                         if (minutes > 120) {
-                            Toast.makeText(requireActivity(), "You can't set Booking time more than 2 hours", Toast.LENGTH_SHORT).show();
+                            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.booking_time_rules));
                         } else {
                             storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
                                     getDate(arrivedDate.getTime()), getDate(departedDate.getTime()), markerUid);
@@ -347,7 +342,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                 if (getActivity() != null)
                     getActivity().getFragmentManager().popBackStack();
             } else {
-
+                Timber.e("else called");
             }
         });
     }
@@ -365,13 +360,13 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
     @Override
     public void onResume() {
         super.onResume();
-        ((AppCompatActivity) requireActivity()).getSupportActionBar().hide();
+        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).hide();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        ((AppCompatActivity) requireActivity()).getSupportActionBar().show();
+        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).show();
     }
 
     @Override
@@ -423,7 +418,6 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
 
     private void storeReservation(String mobileNo, String arrivalTime, String departureTime, String markerUid) {
         Timber.e("storeReservation post method e dhukche");
-        //progressDialog = ApplicationUtils.progressDialog(context, "Please wait...");
         showLoading(context);
         HttpsTrustManager.allowAllSSL();
         StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_STORE_RESERVATION, new Response.Listener<String>() {
@@ -468,19 +462,16 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                             TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
                         }
                     } else {
-                        //progressDialog.dismiss();
                         hideLoading();
                         Toast.makeText(getContext(), "Reservation Failed! Please Try Again. ", Toast.LENGTH_SHORT).show();
                     }
 
                 } catch (JSONException e) {
-                    //progressDialog.dismiss();
                     hideLoading();
                     e.printStackTrace();
                 }
             }
         }, error -> {
-            //progressDialog.dismiss();
             hideLoading();
             Timber.e("Volley Error -> %s", error.getMessage());
         }) {
@@ -526,6 +517,8 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
             Date date1 = simpleDateFormat.parse(String.valueOf(arrived));
             Date date2 = simpleDateFormat.parse(String.valueOf(departure));
 
+            assert date1 != null;
+            assert date2 != null;
             difference = (date2.getTime() - date1.getTime()) / 1000;
             long hours = difference % (24 * 3600) / 3600; // Calculating Hours
             long minute = difference % 3600 / 60; // Calculating minutes if there is any minutes difference

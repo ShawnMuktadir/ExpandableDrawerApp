@@ -1,11 +1,3 @@
-/*
- * Copyright (c) 2020. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
- * Morbi non lorem porttitor neque feugiat blandit. Ut vitae ipsum eget quam lacinia accumsan.
- * Etiam sed turpis ac ipsum condimentum fringilla. Maecenas magna.
- * Proin dapibus sapien vel ante. Aliquam erat volutpat. Pellentesque sagittis ligula eget metus.
- * Vestibulum commodo. Ut rhoncus gravida arcu.
- */
-
 package www.fiberathome.com.parkingapp.utils;
 
 import android.app.Activity;
@@ -13,7 +5,6 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.os.Build;
-import android.util.Log;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
@@ -59,8 +50,10 @@ public class Utility {
                     null);
             Method setHiddenApiExemptions = (Method) getDeclaredMethod.invoke(vmRuntimeClass,
                     "setHiddenApiExemptions", new Class[]{ String[].class });
+            assert getRuntime != null;
             Object sVmRuntime = getRuntime.invoke(null);
 
+            assert setHiddenApiExemptions != null;
             setHiddenApiExemptions.invoke(sVmRuntime, new Object[]{ new String[]{ "L" } });
         } catch (Throwable e) {
             Timber.e(e, "Reflect bootstrap failed:");

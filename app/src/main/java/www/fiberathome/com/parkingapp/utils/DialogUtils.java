@@ -1,5 +1,6 @@
 package www.fiberathome.com.parkingapp.utils;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -14,6 +15,8 @@ import android.view.Window;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
+
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
@@ -112,29 +115,26 @@ public class DialogUtils {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             builder.setMessage(message);
             builder.setCancelable(true);
-            builder.setPositiveButton(context.getResources().getString(R.string.get_support), (dialog, which) -> {
-                DialogUtils.getInstance().showAlertDialog(context.getString(R.string.number),
-                        context, context.getString(R.string.call),
-                        context.getString(R.string.cancel),
-                        (dialog1, which1) -> {
-                            Timber.e("Positive Button clicked");
-                            String number = context.getString(R.string.number);
-                            Intent intent = new Intent();
-                            intent.setAction(Intent.ACTION_DIAL); // Action for what intent called for
-                            intent.setData(Uri.parse("tel: " + number)); // Datum with intent respective action on intent
-                            context.startActivity(intent);
-                            dialog1.dismiss();
-                        },
+            builder.setPositiveButton(context.getResources().getString(R.string.get_support),
+                    (dialog, which) -> DialogUtils.getInstance().showAlertDialog(context.getString(R.string.number),
+                    context, context.getString(R.string.call),
+                    context.getString(R.string.cancel),
+                    (dialog1, which1) -> {
+                        Timber.e("Positive Button clicked");
+                        String number = context.getString(R.string.number);
+                        Intent intent = new Intent();
+                        intent.setAction(Intent.ACTION_DIAL); // Action for what intent called for
+                        intent.setData(Uri.parse("tel: " + number)); // Datum with intent respective action on intent
+                        context.startActivity(intent);
+                        dialog1.dismiss();
+                    },
 
-                        (dialog1, which1) -> {
-                            Timber.e("Negative Button Clicked");
-                            dialog1.dismiss();
-                        });
-            });
+                    (dialog1, which1) -> {
+                        Timber.e("Negative Button Clicked");
+                        dialog1.dismiss();
+                    }));
             builder.setNegativeButton(context.getResources().getString(R.string.ok), (dialog, which) -> {
-                if (context != null) {
-                    dialog.dismiss();
-                }
+                dialog.dismiss();
             });
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
@@ -152,9 +152,7 @@ public class DialogUtils {
             builder.setMessage(message);
             builder.setCancelable(true);
             builder.setPositiveButton(context.getResources().getString(R.string.ok), (dialog, which) -> {
-                if (context != null) {
-                    dialog.dismiss();
-                }
+                dialog.dismiss();
             });
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
@@ -186,6 +184,7 @@ public class DialogUtils {
         alertDialog.getWindow().setAttributes(lp);
         alertDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);*/
         outside_view.setOnTouchListener(new View.OnTouchListener() {
+            @SuppressLint("ClickableViewAccessibility")
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 alertDialog.dismiss();
@@ -200,6 +199,14 @@ public class DialogUtils {
             TastyToastUtils.showTastySuccessToast(activity, activity.getResources().getString(R.string.thanks_message));
         });
 
+    }
+
+    public MaterialDialog showMaterialCircularProgressDialog(Context callingClassContext, String content) {
+        return new MaterialDialog.Builder(callingClassContext)
+                .content(content)
+                .progress(true, 100)
+                .cancelable(false)
+                .show();
     }
 
     public void showAlertDialog(String message, Context context, String positiveText, String negativeText,

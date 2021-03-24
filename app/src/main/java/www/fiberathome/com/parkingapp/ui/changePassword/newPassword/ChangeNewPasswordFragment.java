@@ -31,7 +31,7 @@ import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 import www.fiberathome.com.parkingapp.model.user.User;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.ToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
 
 @SuppressLint("NonConstantResourceId")
@@ -158,7 +158,7 @@ public class ChangeNewPasswordFragment extends BaseFragment {
                 hideLoading();
                 if (response.body() != null) {
                     if (!response.body().getError()) {
-                        ApplicationUtils.showToastMessage(context, response.body().getMessage());
+                        ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                         Timber.e("response -> %s", response.body().getMessage());
                         editTextNewPassword.setText("");
                         editTextConfirmPassword.setText("");
@@ -167,7 +167,7 @@ public class ChangeNewPasswordFragment extends BaseFragment {
                         startActivity(intentLogout);
                         context.finish();
                     } else {
-                        ApplicationUtils.showToastMessage(context, response.body().getMessage());
+                        ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                     }
                 }
             }
@@ -176,7 +176,7 @@ public class ChangeNewPasswordFragment extends BaseFragment {
             public void onFailure(@NonNull Call<BaseResponse> call, @NonNull Throwable errors) {
                 Timber.e("Throwable Errors: -> %s", errors.toString());
                 hideLoading();
-                ApplicationUtils.showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
         });
     }
@@ -187,7 +187,7 @@ public class ChangeNewPasswordFragment extends BaseFragment {
             if (password.equals(confirmPassword)) {
                 passStatus = true;
             } else {
-                ApplicationUtils.showToastMessage(context, context.getString(R.string.err_confirm_password));
+                ToastUtils.getInstance().showToastMessage(context, context.getString(R.string.err_confirm_password));
             }
         }
         return passStatus;
@@ -200,7 +200,7 @@ public class ChangeNewPasswordFragment extends BaseFragment {
             if (password.equals(oldPassword)) {
                 passStatus = true;
             } else {
-                ApplicationUtils.showToastMessage(context, context.getString(R.string.err_old_password));
+                ToastUtils.getInstance().showToastMessage(context, context.getString(R.string.err_old_password));
             }
         }
         return passStatus;

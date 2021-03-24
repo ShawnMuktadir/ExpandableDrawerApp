@@ -3,15 +3,14 @@ package www.fiberathome.com.parkingapp.ui.qrCode;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
@@ -22,8 +21,8 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 import java.util.Objects;
 
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.model.user.User;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
+import www.fiberathome.com.parkingapp.model.user.User;
 
 /**
  * A simple {@link Fragment} subclass.

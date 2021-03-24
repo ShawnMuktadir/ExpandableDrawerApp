@@ -1,7 +1,6 @@
 package www.fiberathome.com.parkingapp.ui.signUp;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -65,11 +64,11 @@ import www.fiberathome.com.parkingapp.ui.privacyPolicy.PrivacyPolicyActivity;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.ui.termsConditions.TermsConditionsActivity;
 import www.fiberathome.com.parkingapp.ui.verifyPhone.VerifyPhoneActivity;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DateTimeUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+import www.fiberathome.com.parkingapp.utils.ToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
 
 import static android.app.Activity.RESULT_CANCELED;
@@ -210,7 +209,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                     submitRegistration();
                 } else {
                     DialogUtils.getInstance().alertDialog(context,
-                            (Activity) context,
+                            context,
                             context.getString(R.string.connect_to_internet),
                             context.getString(R.string.retry),
                             context.getString(R.string.close_app),
@@ -265,19 +264,21 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
             } catch (IOException e) {
                 e.printStackTrace();
-                Toast.makeText(context, "Something went wrong! File size not exceed 3 MB", Toast.LENGTH_SHORT).show();
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
 
         } else if (requestCode == REQUEST_PICK_CAMERA && resultCode == RESULT_OK && data != null) {
 
             try {
-                bitmap = (Bitmap) data.getExtras().get("data");
-                imageViewUploadProfileImage.setImageBitmap(bitmap);
+                if (data.getExtras() != null) {
+                    bitmap = (Bitmap) data.getExtras().get("data");
+                    imageViewUploadProfileImage.setImageBitmap(bitmap);
+                }
                 /*saveImage(thumbnail);
-                  `Toast.makeText(SignUpActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();*/
+                 Toast.makeText(SignUpActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();*/
             } catch (Exception e) {
                 e.printStackTrace();
-                Toast.makeText(context, "Image Capture Failed!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, context.getResources().getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -362,7 +363,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                             submitRegistration();
                         } else {
                             DialogUtils.getInstance().alertDialog(context,
-                                    (Activity) context,
+                                    context,
                                     context.getString(R.string.connect_to_internet),
                                     context.getString(R.string.retry),
                                     context.getString(R.string.close_app),
@@ -604,7 +605,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
                 if (response.body() != null) {
                     if (!response.body().getError()) {
-                        ApplicationUtils.showToastMessage(context, response.body().getMessage());
+                        ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
 
                         // Moving the screen to next pager item i.e otp screen
                         Intent intent = new Intent(context, VerifyPhoneActivity.class);
@@ -614,20 +615,20 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                     } else {
                         Timber.e("jsonObject else called");
                         if (response.body().getMessage().equalsIgnoreCase("Sorry! mobile number is not valid or missing mate")) {
-                            ApplicationUtils.showToastMessage(context, "Mobile Number/Vehicle Registration Number already exists or Image Size is too large");
+                            ToastUtils.getInstance().showToastMessage(context, "Mobile Number/Vehicle Registration Number already exists or Image Size is too large");
                         } else if (!response.body().getMessage().equalsIgnoreCase("Sorry! mobile number is not valid or missing mate")) {
-                            ApplicationUtils.showToastMessage(context, response.body().getMessage());
+                            ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                         }
                     }
                 } else {
-                    ApplicationUtils.showToastMessage(context, response.body().getMessage());
+                    ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<BaseResponse> call, @NonNull Throwable errors) {
                 Timber.e("Throwable Errors: -> %s", errors.toString());
-                ApplicationUtils.showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
                 hideLoading();
                 hideProgress();
             }

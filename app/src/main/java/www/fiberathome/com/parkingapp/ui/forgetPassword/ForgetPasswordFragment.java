@@ -1,7 +1,6 @@
 package www.fiberathome.com.parkingapp.ui.forgetPassword;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -37,16 +36,14 @@ import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 import www.fiberathome.com.parkingapp.ui.changePassword.ChangePasswordActivityForOTPNew;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+import www.fiberathome.com.parkingapp.utils.ToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
 
 @SuppressLint("NonConstantResourceId")
 public class ForgetPasswordFragment extends BaseFragment {
-
-    private static final String TAG = ForgetPasswordActivity.class.getSimpleName();
 
     @BindView(R.id.textInputLayoutMobile)
     TextInputLayout textInputLayoutMobile;
@@ -135,7 +132,7 @@ public class ForgetPasswordFragment extends BaseFragment {
                             submitLogin();
                         } else {
                             DialogUtils.getInstance().alertDialog(context,
-                                    (Activity) context, context.getString(R.string.connect_to_internet),
+                                    context, context.getString(R.string.connect_to_internet),
                                     context.getString(R.string.retry),
                                     context.getString(R.string.close_app),
                                     new DialogUtils.DialogClickListener() {
@@ -169,7 +166,7 @@ public class ForgetPasswordFragment extends BaseFragment {
                 submitLogin();
             } else {
                 DialogUtils.getInstance().alertDialog(context,
-                        (Activity) context, context.getString(R.string.connect_to_internet),
+                        context, context.getString(R.string.connect_to_internet),
                         context.getString(R.string.retry), context.getString(R.string.close_app),
                         new DialogUtils.DialogClickListener() {
                             @Override
@@ -196,8 +193,7 @@ public class ForgetPasswordFragment extends BaseFragment {
     }
 
     private boolean checkFields() {
-        boolean isPhoneValid = Validator.checkValidity(textInputLayoutMobile, editTextMobileNumber.getText().toString(), context.getString(R.string.err_msg_mobile), "phone");
-        return isPhoneValid;
+        return Validator.checkValidity(textInputLayoutMobile, editTextMobileNumber.getText().toString(), context.getString(R.string.err_msg_mobile), "phone");
 
     }
 
@@ -226,16 +222,16 @@ public class ForgetPasswordFragment extends BaseFragment {
 
                 if (response.body() != null) {
                     if (!response.body().getError()) {
-                        ApplicationUtils.showToastMessage(context, response.body().getMessage());
+                        ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                     } else {
                         if (response.body().getMessage().equalsIgnoreCase("Try Again! Invalid Mobile Number.")) {
                             TastyToastUtils.showTastyErrorToast(context,
                                     context.getResources().getString(R.string.mobile_number_not_exist));
                         } else {
-                            ApplicationUtils.showToastMessage(context, response.body().getMessage());
+                            ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                             if (response.body().getError()) {
 
-                                ApplicationUtils.showToastMessage(context, response.body().getMessage());
+                                ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
 
                                 Intent intent = new Intent(context, ChangePasswordActivityForOTPNew.class);
                                 intent.putExtra("mobile_no", mobileNo);
@@ -243,7 +239,7 @@ public class ForgetPasswordFragment extends BaseFragment {
                                 SharedData.getInstance().setForgetPasswordMobile(mobileNo);
                                 context.finish();
                             } else {
-                                ApplicationUtils.showToastMessage(context, response.body().getMessage());
+                                ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                             }
                         }
                     }
@@ -254,7 +250,7 @@ public class ForgetPasswordFragment extends BaseFragment {
             public void onFailure(@NonNull Call<BaseResponse> call, @NonNull Throwable errors) {
                 Timber.e("Throwable Errors: -> %s", errors.toString());
                 hideLoading();
-                ApplicationUtils.showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
         });
     }

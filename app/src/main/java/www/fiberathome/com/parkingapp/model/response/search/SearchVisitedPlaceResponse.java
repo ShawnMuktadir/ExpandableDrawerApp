@@ -1,8 +1,9 @@
 package www.fiberathome.com.parkingapp.model.response.search;
 
-import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 

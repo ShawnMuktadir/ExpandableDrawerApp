@@ -1,19 +1,20 @@
 package www.fiberathome.com.parkingapp.utils;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Environment;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.Environment;
-import android.util.Log;
+import timber.log.Timber;
 
 public class ImageCompress {
-    public static  File createImageFile() throws IOException {
+    public static File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
@@ -24,7 +25,8 @@ public class ImageCompress {
         );
         return image;
     }
-    public static File scal(Uri fileUri){
+
+    public static File scal(Uri fileUri) {
         String path = fileUri.getPath();
         File outputFile = new File(path);
         long fileSize = outputFile.length();
@@ -53,10 +55,10 @@ public class ImageCompress {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            Log.d("", "sss ok " + outputFile.length());
+            Timber.e("sss ok -> %s", outputFile.length());
             if (!bitmap.isRecycled()) {
                 bitmap.recycle();
-            }else{
+            } else {
                 File tempFile = outputFile;
                 outputFile = new File(PhotoUtil.createImageFile().getPath());
                 PhotoUtil.copyFileUsingFileChannels(tempFile, outputFile);

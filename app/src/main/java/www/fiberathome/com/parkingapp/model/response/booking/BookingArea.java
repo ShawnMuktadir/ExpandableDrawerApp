@@ -1,8 +1,5 @@
 package www.fiberathome.com.parkingapp.model.response.booking;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 public class BookingArea {
 
     private String spotName;

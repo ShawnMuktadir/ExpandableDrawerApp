@@ -22,8 +22,6 @@ import com.google.android.gms.maps.model.LatLng;
 
 import www.fiberathome.com.parkingapp.R;
 
-import static java.lang.StrictMath.abs;
-
 public class MapUtils {
 
     private static MapUtils mapUtils;

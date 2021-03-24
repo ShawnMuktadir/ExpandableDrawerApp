@@ -1,16 +1,12 @@
 package www.fiberathome.com.parkingapp.ui.verifyPhone;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.Handler;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
-import android.text.TextPaint;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
@@ -19,19 +15,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
 
 import com.google.gson.Gson;
 import com.poovam.pinedittextfield.SquarePinField;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -46,16 +36,11 @@ import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
-import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.login.LoginResponse;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
-import www.fiberathome.com.parkingapp.ui.signUp.SignUpActivity;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.NoUnderlineSpan;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
-
-import static www.fiberathome.com.parkingapp.utils.Constants.LANGUAGE_BN;
-import static www.fiberathome.com.parkingapp.utils.Constants.LANGUAGE_EN;
+import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressLint("NonConstantResourceId")
 public class VerifyPhoneFragment extends BaseFragment {
@@ -140,11 +125,11 @@ public class VerifyPhoneFragment extends BaseFragment {
 
                 if (response.body() != null) {
                     if (!response.body().getError()) {
-                        ApplicationUtils.showToastMessage(context, response.body().getMessage());
+                        ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                     } else if (response.body().getError() && !response.body().getAuthentication()) {
                         // IF ERROR OCCURS AND AUTHENTICATION IS INVALID
                         Timber.e("error & authentication response -> %s", response.body().getMessage());
-                        ApplicationUtils.showToastMessage(context, response.body().getMessage());
+                        ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                     } else {
                         Timber.e("error -> %s", response.body().getMessage());
                     }
@@ -184,9 +169,11 @@ public class VerifyPhoneFragment extends BaseFragment {
         });
 
         btnVerifyOtp.setOnClickListener(v -> {
-            if (txtPinEntry.getText().length() == 4) {
-                String otp = txtPinEntry.getText().toString();
-                submitOTPVerification(otp);
+            if (txtPinEntry.getText() != null) {
+                if (txtPinEntry.getText().length() == 4) {
+                    String otp = txtPinEntry.getText().toString();
+                    submitOTPVerification(otp);
+                }
             } else {
                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.enter_valid_otp));
             }
@@ -233,14 +220,14 @@ public class VerifyPhoneFragment extends BaseFragment {
                     if (response.body() != null) {
                         Timber.e("response body not null -> %s", new Gson().toJson(response.body()));
                         if (response.body().getError() && response.body().getMessage().equalsIgnoreCase("Sorry! Failed to Verify Your Account by OYP.")) {
-                            ApplicationUtils.showToastMessage(context, "Sorry! Failed to Verify Your Account by OTP.");
+                            ToastUtils.getInstance().showToastMessage(context, "Sorry! Failed to Verify Your Account by OTP.");
                         } else if (!response.body().getError()) {
-                            ApplicationUtils.showToastMessage(context, response.body().getMessage());
+                            ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                             context.startActivityWithFinishAffinity(LoginActivity.class);
-                            ApplicationUtils.showToastMessage(context, "Dear " + response.body().getUser().getFullName() + ", Your Registration Completed Successfully...");
+                            ToastUtils.getInstance().showToastMessage(context, "Dear " + response.body().getUser().getFullName() + ", Your Registration Completed Successfully...");
                         }
                     } else {
-                        ApplicationUtils.showToastMessage(context, response.body().getMessage());
+                        ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                     }
                 }
 
@@ -248,12 +235,12 @@ public class VerifyPhoneFragment extends BaseFragment {
                 public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable errors) {
                     Timber.e("Throwable Errors: -> %s", errors.toString());
                     hideLoading();
-                    ApplicationUtils.showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
                 }
             });
         } else {
             hideLoading();
-            ApplicationUtils.showToastMessage(context, context.getResources().getString(R.string.enter_valid_otp));
+            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.enter_valid_otp));
         }
     }
 
@@ -298,12 +285,10 @@ public class VerifyPhoneFragment extends BaseFragment {
 
         if (s1 >= 0x0980 && s1 <= 0x09E0) {
             spannableString.setSpan(clickableSpan, 70, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            textViewResentOtp.setText(spannableString);
-            textViewResentOtp.setMovementMethod(LinkMovementMethod.getInstance());
         } else {
             spannableString.setSpan(clickableSpan, 63, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            textViewResentOtp.setText(spannableString);
-            textViewResentOtp.setMovementMethod(LinkMovementMethod.getInstance());
         }
+        textViewResentOtp.setText(spannableString);
+        textViewResentOtp.setMovementMethod(LinkMovementMethod.getInstance());
     }
 }

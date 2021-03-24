@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
@@ -21,8 +20,6 @@ import java.util.Random;
 
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
-
-import static www.fiberathome.com.parkingapp.base.ParkingApp.TAG;
 
 public class GeoFenceBroadcastReceiver extends BroadcastReceiver {
 

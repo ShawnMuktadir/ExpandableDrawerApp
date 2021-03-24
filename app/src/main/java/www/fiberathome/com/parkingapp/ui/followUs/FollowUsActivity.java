@@ -1,8 +1,5 @@
 package www.fiberathome.com.parkingapp.ui.followUs;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.NativeActivity;
 import android.content.Context;
 import android.os.Bundle;
 
