@@ -21,47 +21,40 @@ public class SnackBarUtils {
         return snackBarUtils;
     }
 
-    public void showSuccessSnackBar(Context context, View view, String s) {
+    public void showSuccessSnackBar(Context context, View view, String message, String actionDismissText) {
         view.setEnabled(false);
-        Snackbar snack = Snackbar.make(view, s, Snackbar.LENGTH_LONG);
+        Snackbar snack = Snackbar.make(view, message, Snackbar.LENGTH_LONG);
         View sbview = snack.getView();
-        sbview.setBackgroundColor(ContextCompat.getColor(context, R.color.green));
+        sbview.setBackgroundColor(ContextCompat.getColor(context, R.color.glossy_green));
         TextView textView = (TextView) sbview.findViewById(R.id.snackbar_text);
-        textView.setTextColor(ContextCompat.getColor(context, R.color.white));
-        snack.setAction("Dismiss", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            }
+        textView.setTextColor(ContextCompat.getColor(context, R.color.glossy_white));
+        textView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        snack.setAction(actionDismissText, v -> {
         });
+
         snack.show();
     }
 
-    public void showWarningSnackBar(Context context, View view, String s) {
+    public void showWarningSnackBar(Context context, View view, String s, String actionDismissText) {
         view.setEnabled(false);
         Snackbar snack = Snackbar.make(view, s, Snackbar.LENGTH_LONG);
         View sbview = snack.getView();
         sbview.setBackgroundColor(ContextCompat.getColor(context, R.color.quantum_orange));
         TextView textView = (TextView) sbview.findViewById(R.id.snackbar_text);
         textView.setTextColor(ContextCompat.getColor(context, R.color.white));
-        snack.setAction("Dismiss", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            }
+        snack.setAction(actionDismissText, v -> {
         });
         snack.show();
     }
 
-    public void showErrorSnackBar(Context context, View view, String s) {
+    public void showErrorSnackBar(Context context, View view, String s, String actionDismissText) {
         view.setEnabled(false);
         Snackbar snack = Snackbar.make(view, s, Snackbar.LENGTH_LONG);
         View sbview = snack.getView();
         sbview.setBackgroundColor(ContextCompat.getColor(context, R.color.red));
         TextView textView = (TextView) sbview.findViewById(R.id.snackbar_text);
         textView.setTextColor(ContextCompat.getColor(context, R.color.white));
-        snack.setAction("Dismiss", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            }
+        snack.setAction(actionDismissText, v -> {
         });
         snack.show();
     }

@@ -1,5 +1,7 @@
 package www.fiberathome.com.parkingapp.utils;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Build;
@@ -36,9 +38,10 @@ public class ViewUtils {
         return result;
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     public void setBackground(Context context, View source, int resId) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            source.setBackground(context.getDrawable(resId));
+            source.setBackground(context.getResources().getDrawable(resId));
         } else {
             source.setBackground(context.getResources().getDrawable(resId));
         }
@@ -51,5 +54,10 @@ public class ViewUtils {
             p.setMargins(l, t, r, b);
             v.requestLayout();
         }
+    }
+
+    public void hideStatusBar(Activity activityContext) {
+        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+        activityContext.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
     }
 }

@@ -1338,8 +1338,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         } else {
                             if (myPreviousLocation != null) {
                                 double distanceTraveledLast = MathUtils.getInstance().
-                                        calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
-                                                myPreviousLocation.getLatitude(), myPreviousLocation.getLongitude()) * 1000;
+                                        calculateDistance(onConnectedLocation.getLatitude(),
+                                                onConnectedLocation.getLongitude(),
+                                                myPreviousLocation.getLatitude(),
+                                                myPreviousLocation.getLongitude()) * 1000;
 
                                 if (distanceTraveledLast > 500) {
                                     myPreviousLocation = onConnectedLocation;
@@ -3366,9 +3368,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         }
                     }
                 } else if (getDirectionButtonClicked == 1) {
-                    DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
+                    //DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
                     //getDirectionButtonClicked--;
                     if (isInAreaEnabled) {
+                        btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
                         Bundle bundle = new Bundle();
                         bundle.putBoolean("m", false); //m for more
                         bundle.putString("markerUid", adapterUid);
@@ -3376,6 +3379,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         scheduleFragment.setArguments(bundle);
                         listener.fragmentChange(scheduleFragment);
                         bottomSheet.setVisibility(View.GONE);
+                    } else {
+                        DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
                     }
                 }
 
@@ -3537,8 +3542,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     if (parkingNumberOfIndividualMarker.equals("0")) {
                         DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.no_parking_spot_message), context);
                     } else {
-                        DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
+                        //DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
                         if (isInAreaEnabled) {
+                            btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
                             Bundle bundle = new Bundle();
                             bundle.putBoolean("m", false); //m for more
                             bundle.putString("markerUid", markerUid);
@@ -3546,6 +3552,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             scheduleFragment.setArguments(bundle);
                             listener.fragmentChange(scheduleFragment);
                             bottomSheet.setVisibility(View.GONE);
+                        } else {
+                            DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
                         }
                     }
                 }

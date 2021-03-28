@@ -17,7 +17,7 @@
             android:layout_height="?attr/actionBarSize"
             android:minHeight="?attr/actionBarSize"
             android:animateLayoutChanges="true"
-            android:background="@color/gloss_white"
+            android:background="@color/glossy_white"
             android:fitsSystemWindows="true"
             app:title="@string/welcome_to_locc_parking"
             app:titleTextAppearance="@style/Toolbar.TitleText"

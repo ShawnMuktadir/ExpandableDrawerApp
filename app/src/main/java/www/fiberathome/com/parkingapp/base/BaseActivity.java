@@ -57,6 +57,7 @@ import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.GeoFenceBroadcastReceiver;
 import www.fiberathome.com.parkingapp.utils.GeofenceConstants;
+import www.fiberathome.com.parkingapp.utils.SnackBarUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.internet.Connectivity;
 
@@ -265,6 +266,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         if (ni != null && ni.getState() == NetworkInfo.State.CONNECTED && isFastConnection) {
             isConnected = true;
             snackbar.dismiss();
+            SnackBarUtils.getInstance().showSuccessSnackBar(context, snackbar.getView(), "Back online", "");
             //overlay.setVisibility(View.GONE);
             //showNoConnectionSnackBar("Connected", isConnected, 1500);
 

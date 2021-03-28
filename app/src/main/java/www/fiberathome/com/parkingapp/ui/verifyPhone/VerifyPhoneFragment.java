@@ -10,6 +10,7 @@ import android.text.Spanned;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -251,6 +252,9 @@ public class VerifyPhoneFragment extends BaseFragment {
 
         int s1 = spannableString.toString().codePointAt(0);
 
+        ForegroundColorSpan foregroundSpan = new ForegroundColorSpan(context.
+                getResources().getColor(R.color.light_blue));
+
         ClickableSpan clickableSpan = new ClickableSpan() {
             @Override
             public void onClick(@NonNull View textView) {
@@ -262,31 +266,36 @@ public class VerifyPhoneFragment extends BaseFragment {
                 textViewResentOtp.setMovementMethod(null);
                 textViewResentOtp.setClickable(false);
 
-                NoUnderlineSpan mNoUnderlineSpan = new NoUnderlineSpan();
+                NoUnderlineSpan mNoUnderlineSpan = new NoUnderlineSpan(context);
                 if (textViewResentOtp.getText() instanceof Spannable) {
                     Spannable s = (Spannable) textViewResentOtp.getText();
                     if (s1 >= 0x0980 && s1 <= 0x09E0) {
                         s.setSpan(mNoUnderlineSpan, 70, s.length(), Spanned.SPAN_MARK_MARK);
+                        s.setSpan(foregroundSpan, 70, s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                     } else {
                         s.setSpan(mNoUnderlineSpan, 63, s.length(), Spanned.SPAN_MARK_MARK);
+                        s.setSpan(foregroundSpan, 63, s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
                 }
 
                 if (s1 >= 0x0980 && s1 <= 0x09E0) {
                     spannableString.setSpan(new NoUnderlineSpan(context.getResources().getString(R.string.if_you_have_not_received_any_otp_code_within_3_minute_then_resend)),
                             70, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    spannableString.setSpan(foregroundSpan, 70, spannableString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 } else {
-
                     spannableString.setSpan(new NoUnderlineSpan(context.getResources().getString(R.string.if_you_have_not_received_any_otp_code_within_3_minute_then_resend)),
                             63, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    spannableString.setSpan(foregroundSpan, 63, spannableString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
             }
         };
 
         if (s1 >= 0x0980 && s1 <= 0x09E0) {
             spannableString.setSpan(clickableSpan, 70, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spannableString.setSpan(foregroundSpan, 70, spannableString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         } else {
             spannableString.setSpan(clickableSpan, 63, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spannableString.setSpan(foregroundSpan, 63, spannableString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
         textViewResentOtp.setText(spannableString);
         textViewResentOtp.setMovementMethod(LinkMovementMethod.getInstance());
