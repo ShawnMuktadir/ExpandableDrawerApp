@@ -1,4 +1,4 @@
-        package www.fiberathome.com.parkingapp.ui.home;
+package www.fiberathome.com.parkingapp.ui.home;
 
 import android.Manifest;
 import android.animation.Animator;
@@ -1319,7 +1319,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         if (location != null) {
 
-            myLocationChangedDistance = ApplicationUtils.calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), location.getLatitude(), location.getLongitude());
+          if(onConnectedLocation!=null){
+              myLocationChangedDistance = ApplicationUtils.calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), location.getLatitude(), location.getLongitude());
+          }
 
             onConnectedLocation = location;
 
@@ -1430,22 +1432,47 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                    }
                }
                else {
-                   Polyline polyline2 = polyline;
-                   polyline.remove();
-                   polyline = mMap.addPolyline(getDefaultPolyLines(ApplicationUtils.getUpdatedPolyline(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
-                           polyline2.getPoints(),false, false, 60.0f)));
-                   points.clear();
-                   points.addAll(polyline.getPoints());
+
                    if (myPreviousLocation != null) {
+                       if(onConnectedLocation.getLatitude()!=myPreviousLocation.getLatitude()&&onConnectedLocation.getLongitude()!=myPreviousLocation.getLongitude()) {
+                           List<LatLng> pointsNew = ApplicationUtils.getUpdatedPolyline(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
+                                   polyline.getPoints(), false, false, 60.0f);
+
+                           pointsNew.add(0,new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()));
+
+                           polyline.remove();
+                           polyline = mMap.addPolyline(getDefaultPolyLines(pointsNew));
+                       }
                        double distanceTravledLast = ApplicationUtils.
                                calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), myPreviousLocation.getLatitude(), myPreviousLocation.getLongitude()) * 1000;
-                       if (distanceTravledLast > 500) {
+                       if (distanceTravledLast > 1) {
+//                           List<LatLng> pointsNew =polyline.getPoints();
+//                           pointsNew.remove(0);
+//                           polyline.remove();
+//                           polyline = mMap.addPolyline(getDefaultPolyLines(pointsNew));
                            myPreviousLocation = onConnectedLocation;
-                           reDrawRoute(origin);
+                       //    reDrawRoute(origin);
                        }
                    } else {
                        myPreviousLocation = onConnectedLocation;
                    }
+//                   int ixLastPoint = 0;
+//                   for (int i = 0; i < polyline.getPoints().size(); i++) {
+//                       LatLng point1 = polyline.getPoints().get(i);
+//                       List<LatLng> currentSegment = new ArrayList<>();
+//                       currentSegment.add(point1);
+//                       if (PolyUtil.isLocationOnPath(new LatLng(myPreviousLocation.getLatitude(), myPreviousLocation.getLongitude()), currentSegment, true, 50)) {
+//                           // save index of last point and exit loop
+//                           ixLastPoint = i;
+//                           break;
+//                       }
+//                   }
+//                   List<LatLng> pathPoints = polyline.getPoints();
+//                   for (int i = 0; i < ixLastPoint; i++) {
+//                       pathPoints.remove(0);
+//                   }
+//                   polyline.remove();
+//                   polyline = mMap.addPolyline(getDefaultPolyLines(pathPoints));
                }
            }
        }

@@ -1062,7 +1062,7 @@ public class ApplicationUtils {
                         lat2 = Math.toRadians(point2.latitude);
                         y1 = Math.toRadians(point2.longitude);
                         if (isOnSegmentGC(lat1, lng1, lat2, y1, lat3, lng3, havTolerance)) {
-                            poly.remove(prev);
+                            poly.remove(point2);
                             return poly;
                         }
 
@@ -1100,7 +1100,10 @@ public class ApplicationUtils {
                                 double latClosest = MathUtilsDP.inverseMercator(yClosest);
                                 double havDist = MathUtilsDP.havDistance(lat3, latClosest, x3 - xClosest);
                                 if (havDist < havTolerance) {
-                                    poly.remove(point2);
+                                 if(!poly.isEmpty()) {
+                                     poly.remove(prev);
+                                     poly.remove(0);
+                                 }
                                     return poly;
                                 }
                             }
@@ -1162,6 +1165,78 @@ public class ApplicationUtils {
         double d = Math.sin(lat21) + 2.0D * sinLat1 * cosLat2 * MathUtilsDP.hav(lng21);
         double denom = (a * a + b * b) * (c * c + d * d);
         return denom <= 0.0D ? 1.0D : (a * d - b * c) / Math.sqrt(denom);
+    }
+    public static List<LatLng> containsLocation(double latitude, double longitude, List<LatLng> polygon, boolean geodesic) {
+        int size = polygon.size();
+        if (size == 0) {
+            return polygon;
+        } else {
+            double lat3 = Math.toRadians(latitude);
+            double lng3 = Math.toRadians(longitude);
+            LatLng prev = (LatLng)polygon.get(size - 1);
+            double lat1 = Math.toRadians(prev.latitude);
+            double lng1 = Math.toRadians(prev.longitude);
+            int nIntersect = 0;
+
+            double lng2;
+            for(Iterator var17 = polygon.iterator(); var17.hasNext(); lng1 = lng2) {
+                LatLng point2 = (LatLng)var17.next();
+                double dLng3 = MathUtilsDP.wrap(lng3 - lng1, -3.141592653589793D, 3.141592653589793D);
+                if (lat3 == lat1 && dLng3 == 0.0D) {
+                    polygon.remove(polygon.size());
+                    return polygon;
+                }
+
+                double lat2 = Math.toRadians(point2.latitude);
+                lng2 = Math.toRadians(point2.longitude);
+                if (intersects(lat1, lat2, MathUtilsDP.wrap(lng2 - lng1, -3.141592653589793D, 3.141592653589793D), lat3, dLng3, geodesic)) {
+                    ++nIntersect;
+                }
+
+                lat1 = lat2;
+            }
+
+            if((nIntersect & 1) != 0){
+
+                return polygon;
+            } else {
+                polygon.remove(polygon.size()-1);
+                return polygon;
+            }
+
+        }
+    }
+    private static boolean intersects(double lat1, double lat2, double lng2, double lat3, double lng3, boolean geodesic) {
+        if ((lng3 < 0.0D || lng3 < lng2) && (lng3 >= 0.0D || lng3 >= lng2)) {
+            if (lat3 <= -1.5707963267948966D) {
+                return false;
+            } else if (lat1 > -1.5707963267948966D && lat2 > -1.5707963267948966D && lat1 < 1.5707963267948966D && lat2 < 1.5707963267948966D) {
+                if (lng2 <= -3.141592653589793D) {
+                    return false;
+                } else {
+                    double linearLat = (lat1 * (lng2 - lng3) + lat2 * lng3) / lng2;
+                    if (lat1 >= 0.0D && lat2 >= 0.0D && lat3 < linearLat) {
+                        return false;
+                    } else if (lat1 <= 0.0D && lat2 <= 0.0D && lat3 >= linearLat) {
+                        return true;
+                    } else if (lat3 >= 1.5707963267948966D) {
+                        return true;
+                    } else {
+                        return geodesic ? Math.tan(lat3) >= tanLatGC(lat1, lat2, lng2, lng3) : MathUtilsDP.mercator(lat3) >= mercatorLatRhumb(lat1, lat2, lng2, lng3);
+                    }
+                }
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+    private static double tanLatGC(double lat1, double lat2, double lng2, double lng3) {
+        return (Math.tan(lat1) * Math.sin(lng2 - lng3) + Math.tan(lat2) * Math.sin(lng3)) / Math.sin(lng2);
+    }
+    private static double mercatorLatRhumb(double lat1, double lat2, double lng2, double lng3) {
+        return (MathUtilsDP.mercator(lat1) * (lng2 - lng3) + MathUtilsDP.mercator(lat2) * lng3) / lng2;
     }
 
 }
