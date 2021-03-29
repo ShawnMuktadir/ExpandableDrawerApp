@@ -15,26 +15,8 @@
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".ui.MapActivity"
             tools:ignore="FragmentTagUsage"
             tools:layout="@layout/fragment_home">
-
-            <Button
-                android:id="@+id/nearest"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|center_horizontal"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
-                android:background="@color/black"
-                android:padding="10dp"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:text="@string/find_nearest"
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/dimTex14"
-                android:textStyle="bold"
-                android:visibility="gone" />
 
             <RelativeLayout
                 android:id="@+id/relLayout1"
@@ -44,7 +26,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
                 android:background="@drawable/white_border"
-                android:elevation="10dp"
+                android:elevation="@dimen/dim10"
                 android:visibility="gone">
 
             </RelativeLayout>

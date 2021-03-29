@@ -1,9 +1,6 @@
 package www.fiberathome.com.parkingapp.ui.home;
 
 import android.Manifest;
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.Notification;
@@ -36,7 +33,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.view.ViewCompat;
@@ -438,6 +434,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     public HomeFragment() {
 
     }
+
     private double myLocationChangedDistance;
 
     public static HomeFragment newInstance(double lat, double lng, String areaName, String count) {
@@ -477,6 +474,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
+
     private Marker pinMarker;
 
     public static HomeFragment newInstance() {
@@ -527,38 +525,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         mMap.setOnCameraMoveCanceledListener(this);
     }
 
-    void fadeOutAnimation(View viewToFadeOut) {
-        ObjectAnimator fadeOut = ObjectAnimator.ofFloat(viewToFadeOut, "alpha", 1f, 0f);
-
-        fadeOut.setDuration(500);
-        fadeOut.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                // We wanna set the view to GONE, after it's fade out. so it actually disappear from the layout & don't take up space.
-                super.onAnimationEnd(animation);
-                viewToFadeOut.setVisibility(View.GONE);
-            }
-        });
-
-        fadeOut.start();
-    }
-
-    void fadeInAnimation(View viewToFadeIn) {
-        ObjectAnimator fadeIn = ObjectAnimator.ofFloat(viewToFadeIn, "alpha", 0f, 1f);
-        fadeIn.setDuration(500);
-
-        fadeIn.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-                super.onAnimationStart(animation);
-                viewToFadeIn.setVisibility(View.VISIBLE);
-                viewToFadeIn.setAlpha(0);
-            }
-        });
-
-        fadeIn.start();
-    }
-
     public static MarkerOptions markerOptionsPin;
 
     public static MarkerOptions newMarkerPinInstance() {
@@ -604,16 +570,19 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         case BottomSheetBehavior.STATE_HIDDEN:
                             break;
                         case BottomSheetBehavior.STATE_EXPANDED:
+                            bottomSheetRecyclerView.smoothScrollToPosition(0);
                             toolbarAnimVisibility(view, false);
-                            //fadeOutAnimation(toolbar);
                             break;
                         case BottomSheetBehavior.STATE_COLLAPSED:
                             bottomSheetRecyclerView.smoothScrollToPosition(0);
                             toolbarAnimVisibility(view, true);
-                            //fadeInAnimation(toolbar);
+                            if (bottomSheetAdapter != null)
+                                bottomSheetAdapter.onAttachedToRecyclerView(bottomSheetRecyclerView);
                             break;
                         case BottomSheetBehavior.STATE_DRAGGING:
                             toolbarAnimVisibility(view, true);
+                            if (bottomSheetAdapter != null)
+                                bottomSheetAdapter.onAttachedToRecyclerView(bottomSheetRecyclerView);
                             //fadeInAnimation(toolbar);
                             break;
                         case BottomSheetBehavior.STATE_SETTLING:
@@ -682,7 +651,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         Transition transition = new Fade();
         transition.setDuration(600);
         transition.addTarget(R.id.image);
-        Toolbar toolbar = view.findViewById(R.id.toolbar);
+        //Toolbar toolbar = view.findViewById(R.id.toolbar);
+        View toolbar = getActivity().findViewById(R.id.toolbar);
         TransitionManager.beginDelayedTransition((ViewGroup) view, transition);
         toolbar.setVisibility(show ? View.VISIBLE : View.GONE);
     }
@@ -1266,6 +1236,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         settingGeoFire();
     }
+
     double oldTotalDistanceInKm, totalDistanceInKm;
 
     @Override
@@ -1822,8 +1793,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         });
                     } else {
                         linearLayoutParkingAdapterBackBottom.setOnClickListener(v -> {
-                            //ApplicationUtils.showMessageDialog("Hey Shawn!!!", getContext());
-                            //Toast.makeText(context, "", Toast.LENGTH_SHORT).show();
+                            Timber.e("linearLayoutParkingAdapterBackBottom onClick Listener");
                         });
                     }
 
@@ -2077,116 +2047,122 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                    @NonNull retrofit2.Response<SensorsResponse> response) {
                 Timber.e("response -> %s", response.message());
 
-                if (response.body() != null && !response.body().getError()) {
-                    if (response.isSuccessful()) {
+                try {
+                    if (response.body() != null && !response.body().getError()) {
+                        if (response.isSuccessful()) {
 
-                        hideLoading();
+                            hideLoading();
 
-                        stopShimmer();
+                            stopShimmer();
 
-                        sensorArrayList = response.body().getSensors();
+                            sensorArrayList = response.body().getSensors();
 
-                        for (int i = 0; i < sensorArrayList.size(); i++) {
+                            for (int i = 0; i < sensorArrayList.size(); i++) {
 
-                            Sensor sensor = sensorArrayList.get(i);
+                                Sensor sensor = sensorArrayList.get(i);
 
-                            String areaName = sensor.getParkingArea();
+                                String areaName = sensor.getParkingArea();
 
-                            String parkingCount = sensor.getNoOfParking();
+                                String parkingCount = sensor.getNoOfParking();
 
-                            double latitude = MathUtils.getInstance().convertToDouble(sensor.getLatitude());
+                                double latitude = MathUtils.getInstance().convertToDouble(sensor.getLatitude());
 
-                            double longitude = MathUtils.getInstance().convertToDouble(sensor.getLongitude());
+                                double longitude = MathUtils.getInstance().convertToDouble(sensor.getLongitude());
 
-                            double tDistance = calculateDistance(latitude, longitude, location.getLatitude(), location.getLongitude());
+                                double tDistance = calculateDistance(latitude, longitude, location.getLatitude(), location.getLongitude());
 
-                            if (tDistance < nDistance) {
-                                nDistance = tDistance;
-                                nLatitude = latitude;
-                                nLongitude = longitude;
-                            }
+                                if (tDistance < nDistance) {
+                                    nDistance = tDistance;
+                                    nLatitude = latitude;
+                                    nLongitude = longitude;
+                                }
 
-                            if (sensor.getsStatus().equalsIgnoreCase("1")) {
-                                if (sensor.getReserveStatus().toString().equalsIgnoreCase("1")) {
-                                    sensorStatus = "Occupied";
-                                    double lat = latitude;
-                                    double lon = longitude;
-                                    if (mMap != null) {
-                                        MarkerOptions marker = new MarkerOptions()
-                                                .position(new LatLng(lat, lon))
-                                                .title(sensor.getUid())
-                                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
+                                if (sensor.getsStatus().equalsIgnoreCase("1")) {
+                                    if (sensor.getReserveStatus().toString().equalsIgnoreCase("1")) {
+                                        sensorStatus = "Occupied";
+                                        double lat = latitude;
+                                        double lon = longitude;
+                                        if (mMap != null) {
+                                            MarkerOptions marker = new MarkerOptions()
+                                                    .position(new LatLng(lat, lon))
+                                                    .title(sensor.getUid())
+                                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
 
-                                        Marker marker1 = mMap.addMarker(marker);
-                                        marker1.setTag(sensor);
-                                        mMarkerArrayList.add(marker);
+                                            Marker marker1 = mMap.addMarker(marker);
+                                            marker1.setTag(sensor);
+                                            mMarkerArrayList.add(marker);
+                                        }
+                                    } else {
+                                        sensorStatus = "Empty";
+                                        double lat = latitude;
+                                        double lon = longitude;
+
+                                        if (mMap != null) {
+                                            MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).title(sensor.getUid()).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
+                                            Marker marker1 = mMap.addMarker(marker);
+                                            marker1.setTag(sensor);
+                                            mMarkerArrayList.add(marker);
+                                        }
                                     }
                                 } else {
-                                    sensorStatus = "Empty";
-                                    double lat = latitude;
-                                    double lon = longitude;
+                                    if (sensor.getReserveStatus().toString().equalsIgnoreCase("1")) {
+                                        sensorStatus = "Occupied";
+                                        double lat = latitude;
+                                        double lon = longitude;
+                                        if (mMap != null) {
+                                            MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).title(sensor.getUid()).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
+                                            Marker marker1 = mMap.addMarker(marker);
+                                            marker1.setTag(sensor);
+                                            mMarkerArrayList.add(marker);
+                                        }
 
-                                    if (mMap != null) {
-                                        MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).title(sensor.getUid()).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
-                                        Marker marker1 = mMap.addMarker(marker);
-                                        marker1.setTag(sensor);
-                                        mMarkerArrayList.add(marker);
+                                    } else {
+                                        sensorStatus = "Empty";
+                                        double lat = latitude;
+                                        double lon = longitude;
+                                        if (mMap != null) {
+                                            MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).title(sensor.getUid()).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
+                                            Marker marker1 = mMap.addMarker(marker);
+                                            marker1.setTag(sensor);
+                                            mMarkerArrayList.add(marker);
+                                        }
                                     }
                                 }
-                            } else {
-                                if (sensor.getReserveStatus().toString().equalsIgnoreCase("1")) {
-                                    sensorStatus = "Occupied";
-                                    double lat = latitude;
-                                    double lon = longitude;
-                                    if (mMap != null) {
-                                        MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).title(sensor.getUid()).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
-                                        Marker marker1 = mMap.addMarker(marker);
-                                        marker1.setTag(sensor);
-                                        mMarkerArrayList.add(marker);
-                                    }
 
-                                } else {
-                                    sensorStatus = "Empty";
-                                    double lat = latitude;
-                                    double lon = longitude;
-                                    if (mMap != null) {
-                                        MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).title(sensor.getUid()).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
-                                        Marker marker1 = mMap.addMarker(marker);
-                                        marker1.setTag(sensor);
-                                        mMarkerArrayList.add(marker);
-                                    }
+                                //TaskParser taskParser = new TaskParser();
+                                double fetchDistance = calculateDistance(location.getLatitude(), location.getLongitude(),
+                                        latitude, longitude);
+
+                                double doubleDuration = MathUtils.getInstance().convertToDouble(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(fetchDistance * 2.43));
+                                Timber.e("kim doubleDuration -> %s", doubleDuration);
+
+                                String initialNearestDuration = String.valueOf(doubleDuration);
+                                Timber.e("kim initialNearestDuration -> %s", initialNearestDuration);
+
+                                if (fetchDistance < 7) {
+                                    origin = new LatLng(location.getLatitude(), location.getLongitude());
+
+                                    String nearestCurrentAreaName = areaName;
+
+                                    Timber.e("nearestCurrentAreaName -> %s", nearestCurrentAreaName);
+
+                                    bookingSensorsArrayListGlobal.add(new BookingSensors(nearestCurrentAreaName, latitude, longitude,
+                                            adjustDistance(fetchDistance), parkingCount, initialNearestDuration,
+                                            BookingSensors.INFO_TYPE, 1));
+
+                                    //fetch distance in ascending order
+                                    Collections.sort(bookingSensorsArrayListGlobal, (c1, c2) -> Double.compare(c1.getDistance(), c2.getDistance()));
                                 }
                             }
-
-                            //TaskParser taskParser = new TaskParser();
-                            double fetchDistance = calculateDistance(location.getLatitude(), location.getLongitude(),
-                                    latitude, longitude);
-
-                            double doubleDuration = MathUtils.getInstance().convertToDouble(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(fetchDistance * 2.43));
-                            Timber.e("kim doubleDuration -> %s", doubleDuration);
-
-                            String initialNearestDuration = String.valueOf(doubleDuration);
-                            Timber.e("kim initialNearestDuration -> %s", initialNearestDuration);
-
-                            if (fetchDistance < 7) {
-                                origin = new LatLng(location.getLatitude(), location.getLongitude());
-
-                                String nearestCurrentAreaName = areaName;
-
-                                Timber.e("nearestCurrentAreaName -> %s", nearestCurrentAreaName);
-
-                                bookingSensorsArrayListGlobal.add(new BookingSensors(nearestCurrentAreaName, latitude, longitude,
-                                        adjustDistance(fetchDistance), parkingCount, initialNearestDuration,
-                                        BookingSensors.INFO_TYPE, 1));
-
-                                //fetch distance in ascending order
-                                Collections.sort(bookingSensorsArrayListGlobal, (c1, c2) -> Double.compare(c1.getDistance(), c2.getDistance()));
-                            }
+                            setBottomSheetFragmentControls(bookingSensorsArrayListGlobal);
+                        } else {
+                            Timber.e("Errors: ");
                         }
-                        setBottomSheetFragmentControls(bookingSensorsArrayListGlobal);
-                    } else {
-                        Timber.e("Errors: ");
                     }
+                } catch (Exception e) {
+                    e.getCause();
+                    hideLoading();
+                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
                 }
             }
 
@@ -3458,6 +3434,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 if (parkingNumberOfIndividualMarker.equals("0")) {
                     DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.no_parking_spot_message), context);
                 } else {
+                    Timber.e("else called");
                     //ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
                 }
 
@@ -3806,13 +3783,13 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         if (geoFire != null) {
             geoFire.setLocation("You", new GeoLocation(lastLocation.getLatitude(),
                     lastLocation.getLongitude()), (key, error) -> {
-                        if (currentUser != null) currentUser.remove();
+                if (currentUser != null) currentUser.remove();
                         /*currentUser = mMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(lastLocation.getLatitude(),
                                         lastLocation.getLongitude())).title("You"));
                         //after add marker move camera
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentUser.getPosition(), 16f));*/
-                    });
+            });
         }
     }
 

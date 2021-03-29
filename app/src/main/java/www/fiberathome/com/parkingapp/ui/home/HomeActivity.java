@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
@@ -60,6 +61,9 @@ import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressLint("NonConstantResourceId")
 public class HomeActivity extends NavigationActivity implements FragmentChangeListener, PermissionInterface {
+
+    @BindView(R.id.toolbar)
+    public Toolbar toolbar;
 
     @BindView(R.id.tvTimeToolbar)
     public TextView tvTimeToolbar;

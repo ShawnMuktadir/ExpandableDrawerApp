@@ -14,6 +14,7 @@
         android:elevation="@dimen/design_appbar_elevation"
         android:orientation="vertical"
         android:overScrollMode="never"
+        android:fillViewport="true"
         app:behavior_hideable="true"
         app:behavior_peekHeight="@dimen/_90sdp"
         app:layout_behavior="@string/bottom_sheet_behavior"
@@ -109,6 +110,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </FrameLayout>
 
