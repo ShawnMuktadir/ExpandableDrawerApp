@@ -479,4 +479,5 @@
         If you have not received any OTP code within 2.30 minutes then resend</string>
     <string name="press_back_again_to_exit">Press Back button again to exit</string>
     <string name="booking_time_rules">You can\'t set Booking time more than 2 hours</string>
+    <string name="gps_enabled">GPS is enabled</string>
 </resources>

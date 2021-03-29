@@ -328,7 +328,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     public final ArrayList<LatLng> coordList = new ArrayList<>();
 
-    public static Location currentLocation;
+    public static Location currentLocation = null;
     public static LatLng adapterPlaceLatLng;
     public LatLng searchPlaceLatLng;
     public LatLng bottomSheetPlaceLatLng;
@@ -1012,11 +1012,16 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     }
 
+    private final int FASTEST_INTERVAL = 3000; // use whatever suits you
+    private double oldTotalDistanceInKm, totalDistanceInKm;
+    private long locationUpdatedAt = Long.MIN_VALUE;
+
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         locationRequest = new LocationRequest();
         locationRequest.setInterval(1000);
         locationRequest.setFastestInterval(1000);
+        locationRequest.setSmallestDisplacement(200); //200 meter
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) !=
@@ -1238,43 +1243,59 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         settingGeoFire();
     }
 
-    double oldTotalDistanceInKm, totalDistanceInKm;
-
     @Override
     public void onLocationChanged(@NonNull Location location) {
-        currentLocation = location;
-
-        if (location != null) {
-
-            myLocationChangedDistance = MathUtils.getInstance().
-                    calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
-                            location.getLatitude(), location.getLongitude());
-
-            onConnectedLocation = location;
-
-            //Timber.e("onLocationChanged: onConnectedLocation -> %s", onConnectedLocation);
-
-            SharedData.getInstance().setOnConnectedLocation(location);
-
-            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-
-            if (currentLocationMarker != null) {
-                currentLocationMarker.remove();
+        Timber.e("onLocationChanged: location -> %s", location);
+        boolean updateLocationandReport = false;
+        if (currentLocation == null) {
+            currentLocation = location;
+            locationUpdatedAt = System.currentTimeMillis();
+            updateLocationandReport = true;
+        } else {
+            long secondsElapsed = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - locationUpdatedAt);
+            if (secondsElapsed >= TimeUnit.MILLISECONDS.toSeconds(FASTEST_INTERVAL)) {
+                // check location accuracy here
+                currentLocation = location;
+                locationUpdatedAt = System.currentTimeMillis();
+                updateLocationandReport = true;
             }
+        }
+        //currentLocation = location;
 
-            currentLocationMarker = mMap.addMarker(new MarkerOptions().position(latLng)
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running))
-                    .title("My Location")
-                    .rotation(location.getBearing() - 45).flat(true).anchor(0.5f, 0.5f));
+        if (updateLocationandReport) {
+            //  send your location to server
+            if (location != null) {
 
-            if (markerClicked != null) {
-                checkParkingSpotDistance(latLng, markerClicked.getPosition());
-            } else if (adapterPlaceLatLng != null) {
-                checkParkingSpotDistance(latLng, adapterPlaceLatLng);
-            } else if (bottomSheetPlaceLatLng != null) {
-                checkParkingSpotDistance(latLng, bottomSheetPlaceLatLng);
-            } else if (searchPlaceLatLng != null) {
-                checkParkingSpotDistance(latLng, searchPlaceLatLng);
+                myLocationChangedDistance = MathUtils.getInstance().
+                        calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
+                                location.getLatitude(), location.getLongitude());
+
+                onConnectedLocation = location;
+
+                //Timber.e("onLocationChanged: onConnectedLocation -> %s", onConnectedLocation);
+
+                SharedData.getInstance().setOnConnectedLocation(location);
+
+                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+
+                if (currentLocationMarker != null) {
+                    currentLocationMarker.remove();
+                }
+
+                currentLocationMarker = mMap.addMarker(new MarkerOptions().position(latLng)
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running))
+                        .title("My Location")
+                        .rotation(location.getBearing() - 45).flat(true).anchor(0.5f, 0.5f));
+
+                if (markerClicked != null) {
+                    checkParkingSpotDistance(latLng, markerClicked.getPosition());
+                } else if (adapterPlaceLatLng != null) {
+                    checkParkingSpotDistance(latLng, adapterPlaceLatLng);
+                } else if (bottomSheetPlaceLatLng != null) {
+                    checkParkingSpotDistance(latLng, bottomSheetPlaceLatLng);
+                } else if (searchPlaceLatLng != null) {
+                    checkParkingSpotDistance(latLng, searchPlaceLatLng);
+                }
             }
         }
 
@@ -1290,7 +1311,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                 boolean isUserOnRoute = PolyUtil.isLocationOnPath(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
                         polyline.getPoints(), false, 60.0f);
-
 
                 if (!isUserOnRoute) {
 
@@ -1740,7 +1760,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 hideLoading();
 
                 if (providerEnabled) {
-                    ToastUtils.getInstance().showToastMessage(context, "GPS is enabled");
+                    ToastUtils.getInstance().showToastMessage(context,
+                            context.getResources().getString(R.string.gps_enabled));
                     Timber.e("providerEnabled HomeFragment check called");
 
                     supportMapFragment = SupportMapFragment.newInstance();
@@ -1755,15 +1776,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         ToastUtils.getInstance().showToastMessage(context, "Enable your Gps Location");
                     }
 
-                    //progressDialog = ApplicationUtils.progressDialog(context, "Initializing....");
                     showLoading(context);
 
-                    new GpsUtils(context).turnGPSOn(new GpsUtils.onGpsListener() {
-                        @Override
-                        public void gpsStatus(boolean isGPSEnable) {
-                            // turn on GPS
-                            isGPS = isGPSEnable;
-                        }
+                    new GpsUtils(context).turnGPSOn(isGPSEnable -> {
+                        // turn on GPS
+                        isGPS = isGPSEnable;
                     });
 
                     if ((ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) !=
@@ -1800,9 +1817,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     }
 
                 } else {
-                    ToastUtils.getInstance().showToastMessage(context, "GPS not enabled. Unable to show user location");
+                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.gps_network_not_enabled));
                 }
-
             }, 6000);
         }
     }
