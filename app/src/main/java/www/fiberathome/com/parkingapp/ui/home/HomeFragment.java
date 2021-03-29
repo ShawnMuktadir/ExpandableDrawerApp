@@ -1436,7 +1436,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         float[] distance = new float[2];
 
-        Location.distanceBetween(car.latitude, car.longitude, circle.getCenter().latitude, circle.getCenter().longitude, distance);
+        Location.distanceBetween(car.latitude, car.longitude,
+                circle.getCenter().latitude, circle.getCenter().longitude, distance);
 
         if (distance[0] <= circle.getRadius()) {
             // Inside The Circle
