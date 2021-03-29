@@ -437,6 +437,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     private double myLocationChangedDistance;
 
+    public static HomeFragment newInstance() {
+        return new HomeFragment();
+    }
+
     public static HomeFragment newInstance(double lat, double lng, String areaName, String count) {
         HomeFragment fragment = new HomeFragment();
         Bundle bundle = new Bundle();
@@ -475,73 +479,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
-    private Marker pinMarker;
-
-    public static HomeFragment newInstance() {
-        return new HomeFragment();
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        Timber.e("onMapReady called");
-
-        mMap = googleMap;
-
-        hideLoading();
-
-        defaultMapSettings(context, mMap, fusedLocationProviderClient, locationRequest, locationCallback);
-
-        buildGoogleApiClient();
-
-        //only view BD map
-
-        /*LatLng v1 = new LatLng(26.633914, 92.6801153); //northeast
-        LatLng v2 = new LatLng(20.3794, 88.00861410000002); //southwest
-
-        LatLngBounds latLngBounds = new LatLngBounds(
-                v2, v1
-        );
-
-        //mMap.setLatLngBoundsForCameraTarget(latLngBounds);
-
-        //int padding = 15; // offset from edges of the map in pixels
-        //CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(BANGLADESH, padding);
-        //mMap.moveCamera(cameraUpdate);
-
-        int width = context.getResources().getDisplayMetrics().widthPixels;
-        int height = context.getResources().getDisplayMetrics().heightPixels;
-        int padding = (int) (width * 0.12); // offset from edges of the map 12% of screen
-
-        new Handler().postDelayed(() -> {
-            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, width, height, padding));
-            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, width, height, padding));
-        },500);*/
-
-        mMap.setOnMarkerClickListener(this);
-
-        mMap.setOnCameraIdleListener(this);
-        mMap.setOnCameraMoveStartedListener(this);
-        mMap.setOnCameraMoveListener(this);
-        mMap.setOnCameraMoveCanceledListener(this);
-    }
-
-    public static MarkerOptions markerOptionsPin;
-
-    public static MarkerOptions newMarkerPinInstance() {
-        if (markerOptionsPin == null) {
-            markerOptionsPin = new MarkerOptions();
-        }
-        return markerOptionsPin;
-    }
-
-    boolean isMyCurrentLocation = false;
-
-    private Circle circle;
-
-    private Sensor markerTagObj;
-
-    private int fromSearchMultipleRouteDrawn = 0;
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         Timber.e("onViewCreated called");
@@ -565,11 +502,13 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             bottomSheetBehavior.setHideable(false);
             bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
                 @Override
-                public void onStateChanged(@NonNull View view, int i) {
-                    switch (i) {
+                public void onStateChanged(@NonNull View view, int newState) {
+                    switch (newState) {
                         case BottomSheetBehavior.STATE_HIDDEN:
                             break;
                         case BottomSheetBehavior.STATE_EXPANDED:
+                            bottomSheet.requestLayout();
+                            bottomSheet.invalidate();
                             bottomSheetRecyclerView.smoothScrollToPosition(0);
                             toolbarAnimVisibility(view, false);
                             break;
@@ -583,7 +522,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             toolbarAnimVisibility(view, true);
                             if (bottomSheetAdapter != null)
                                 bottomSheetAdapter.onAttachedToRecyclerView(bottomSheetRecyclerView);
-                            //fadeInAnimation(toolbar);
                             break;
                         case BottomSheetBehavior.STATE_SETTLING:
                             break;
@@ -646,6 +584,69 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             mService = Common.getGoogleApi();
         }
     }
+
+    private Marker pinMarker;
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        Timber.e("onMapReady called");
+
+        mMap = googleMap;
+
+        hideLoading();
+
+        defaultMapSettings(context, mMap, fusedLocationProviderClient, locationRequest, locationCallback);
+
+        buildGoogleApiClient();
+
+        //only view BD map
+
+        /*LatLng v1 = new LatLng(26.633914, 92.6801153); //northeast
+        LatLng v2 = new LatLng(20.3794, 88.00861410000002); //southwest
+
+        LatLngBounds latLngBounds = new LatLngBounds(
+                v2, v1
+        );
+
+        //mMap.setLatLngBoundsForCameraTarget(latLngBounds);
+
+        //int padding = 15; // offset from edges of the map in pixels
+        //CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(BANGLADESH, padding);
+        //mMap.moveCamera(cameraUpdate);
+
+        int width = context.getResources().getDisplayMetrics().widthPixels;
+        int height = context.getResources().getDisplayMetrics().heightPixels;
+        int padding = (int) (width * 0.12); // offset from edges of the map 12% of screen
+
+        new Handler().postDelayed(() -> {
+            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, width, height, padding));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, width, height, padding));
+        },500);*/
+
+        mMap.setOnMarkerClickListener(this);
+
+        mMap.setOnCameraIdleListener(this);
+        mMap.setOnCameraMoveStartedListener(this);
+        mMap.setOnCameraMoveListener(this);
+        mMap.setOnCameraMoveCanceledListener(this);
+    }
+
+    public static MarkerOptions markerOptionsPin;
+
+    public static MarkerOptions newMarkerPinInstance() {
+        if (markerOptionsPin == null) {
+            markerOptionsPin = new MarkerOptions();
+        }
+        return markerOptionsPin;
+    }
+
+    boolean isMyCurrentLocation = false;
+
+    private Circle circle;
+
+    private Sensor markerTagObj;
+
+    private int fromSearchMultipleRouteDrawn = 0;
 
     private void toolbarAnimVisibility(View view, boolean show) {
         Transition transition = new Fade();
@@ -1240,7 +1241,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     double oldTotalDistanceInKm, totalDistanceInKm;
 
     @Override
-    public void onLocationChanged(Location location) {
+    public void onLocationChanged(@NonNull Location location) {
         currentLocation = location;
 
         if (location != null) {
@@ -3439,6 +3440,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 }
 
                 mMap.setTrafficEnabled(false);
+
                 isRouteDrawn = 1;
 
                 if (getDirectionMarkerButtonClicked == 0) {
@@ -3449,8 +3451,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                         linearLayoutMarkerNameCount.setVisibility(View.GONE);
                         buttonSearch.setVisibility(View.GONE);
-                        bookingSensorsArrayListGlobal.clear();
-                        bookingSensorsArrayList.clear();
+                        //bookingSensorsArrayListGlobal.clear();
+                        //bookingSensorsArrayList.clear();
 
                         coordList.add(new LatLng(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude));
 
@@ -3551,6 +3553,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     if (count.equals("0")) {
                         DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.no_parking_spot_message), context);
                     } else {
+                        Timber.e("else called");
                         //ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
                     }
                     if (bottomSheetPlaceLatLng != null ||
