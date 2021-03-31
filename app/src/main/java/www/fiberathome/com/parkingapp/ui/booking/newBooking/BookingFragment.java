@@ -170,17 +170,16 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
     @Override
     public boolean onBackPressed() {
         if (isGPSEnabled()) {
-            if (isGPSEnabled()) {
-                if (getActivity() != null) {
-                    getActivity().getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.nav_host_fragment, HomeFragment.newInstance())
-                            .addToBackStack(null)
-                            .commit();
-                } else {
-                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
-                }
+            if (getActivity() != null) {
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.nav_host_fragment, HomeFragment.newInstance())
+                        .addToBackStack(null)
+                        .commit();
             }
+        } else {
+            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
         }
+
         return false;
     }
 

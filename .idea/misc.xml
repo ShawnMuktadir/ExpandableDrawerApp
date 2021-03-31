@@ -5,6 +5,16 @@
       <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" />
     </configurations>
   </component>
+  <component name="EntryPointsManager">
+    <list size="6">
+      <item index="0" class="java.lang.String" itemvalue="org.greenrobot.eventbus.Subscribe" />
+      <item index="1" class="java.lang.String" itemvalue="org.greenrobot.eventbus.Subscribe" />
+      <item index="2" class="java.lang.String" itemvalue="org.greenrobot.eventbus.Subscribe" />
+      <item index="3" class="java.lang.String" itemvalue="org.greenrobot.eventbus.Subscribe" />
+      <item index="4" class="java.lang.String" itemvalue="org.greenrobot.eventbus.Subscribe" />
+      <item index="5" class="java.lang.String" itemvalue="org.greenrobot.eventbus.Subscribe" />
+    </list>
+  </component>
   <component name="JavadocGenerationManager">
     <option name="OUTPUT_DIRECTORY" value="$USER_HOME$/Desktop" />
     <option name="OPTION_SCOPE" value="public" />

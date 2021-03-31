@@ -139,6 +139,12 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         notifyDataSetChanged();
     }
 
+    public void update(ArrayList<BookingSensors> datas) {
+        bookingSensorsArrayList.clear();
+        bookingSensorsArrayList.addAll(datas);
+        notifyDataSetChanged();
+    }
+
     public void clear() {
         bookingSensorsArrayList.clear();
         notifyDataSetChanged();
