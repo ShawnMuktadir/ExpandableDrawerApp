@@ -438,6 +438,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     public Marker previousGetDestinationMarker;
     private Location myPreviousLocation;
     private LocationManager mLocationManager;
+    private List<LatLng> initialRoutePoints;
 
     public HomeFragment() {
 
@@ -1393,18 +1394,23 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                } else {
                                    if (points != null) {
                                        points.clear();
+                                   }else{
+                                       points = new ArrayList<>();
                                    }
-                                   points.add(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()));
+
                                    points.addAll(polyline.getPoints());
+                                   points.add(0,new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()));
                                    polyline.remove();
                                    polyline = mMap.addPolyline(getDefaultPolyLines(points));
                                }
                            } else {
                                if (points != null) {
                                    points.clear();
+                               }else{
+                                   points = new ArrayList<>();
                                }
-                               points.add(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()));
                                points.addAll(polyline.getPoints());
+                               points.add(0,new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()));
                                polyline.remove();
                                polyline = mMap.addPolyline(getDefaultPolyLines(points));
                                myPreviousLocation = onConnectedLocation;
@@ -1435,13 +1441,32 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                    if (myPreviousLocation != null) {
                        if(onConnectedLocation.getLatitude()!=myPreviousLocation.getLatitude()&&onConnectedLocation.getLongitude()!=myPreviousLocation.getLongitude()) {
-                           List<LatLng> pointsNew = ApplicationUtils.getUpdatedPolyline(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
-                                   polyline.getPoints(), false, false, 60.0f);
+//                           List<LatLng> pointsNew = ApplicationUtils.getUpdatedPolyline(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
+//                                   polyline.getPoints(), false, false, 60.0f);
+                           List<LatLng> pointsNew;
+                           if(!initialRoutePoints.isEmpty()){
+                               pointsNew = new ArrayList<>(initialRoutePoints);
+                           }else {
+                               pointsNew = polyline.getPoints();
+                           }
 
-                           pointsNew.add(0,new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()));
+                           int point = PolyUtil.locationIndexOnPath(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),pointsNew,false,30.0);
+                           if(point>=0){
 
-                           polyline.remove();
-                           polyline = mMap.addPolyline(getDefaultPolyLines(pointsNew));
+                               for(int i =point; i>=0;--i) {
+                                   pointsNew.remove(i);
+                               }
+                               pointsNew.add(0,new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()));
+                              if(pointsNew.size()>2){
+                                  double distance = ApplicationUtils.calculateDistance(pointsNew.get(0).latitude,pointsNew.get(0).longitude,pointsNew.get(1).latitude,pointsNew.get(1).longitude)*1000;
+                                if(distance<10){
+                                    pointsNew.remove(1);
+                                }
+                              }
+                               polyline.remove();
+                               polyline = mMap.addPolyline(getDefaultPolyLines(pointsNew));
+                           }
+
                        }
                        double distanceTravledLast = ApplicationUtils.
                                calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), myPreviousLocation.getLatitude(), myPreviousLocation.getLongitude()) * 1000;
@@ -4148,9 +4173,14 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             updatedRoute = route;
             for (www.fiberathome.com.parkingapp.module.GoogleMapWebServiceNDistance.directionModules.Route mRoute : route) {
                 PolylineOptions polylineOptions = getDefaultPolyLines(mRoute.points);
+                initialRoutePoints = mRoute.points;
                 /*if (polylineStyle == PolylineStyle.DOTTED)
                     polylineOptions = getDottedPolylines(route.points);*/
                 polyline = mMap.addPolyline(polylineOptions);
+                for(int i= 0; i< initialRoutePoints.size();i++){
+                    mMap.addMarker(new MarkerOptions().position(initialRoutePoints.get(i))
+                            .title(String.valueOf(i)));
+                }
             }
         } catch (Exception e) {
             Toast.makeText(context, "Error occurred on finding the directions...", Toast.LENGTH_SHORT).show();
