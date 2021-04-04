@@ -22,6 +22,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import www.fiberathome.com.parkingapp.R;
 
@@ -70,6 +71,7 @@ public class GoogleMapHelper {
         googleMap.getUiSettings().setZoomControlsEnabled(false);
         googleMap.getUiSettings().setScrollGesturesEnabledDuringRotateOrZoom(true);
         googleMap.getUiSettings().setZoomGesturesEnabled(true);
+        googleMap.getUiSettings().setRotateGesturesEnabled(false);
 
         googleMap.setBuildingsEnabled(false);
         googleMap.setTrafficEnabled(true);
@@ -83,7 +85,7 @@ public class GoogleMapHelper {
         googleMap.getUiSettings().setMyLocationButtonEnabled(false);
 
         if (fusedLocationProviderClient != null) {
-            fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
+            fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Objects.requireNonNull(Looper.myLooper()));
         }
     }
 

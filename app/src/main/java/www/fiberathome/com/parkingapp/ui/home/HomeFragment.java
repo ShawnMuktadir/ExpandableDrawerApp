@@ -481,6 +481,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     private Marker pinMarker;
 
+    @SuppressLint("PotentialBehaviorOverride")
     @Override
     public void onMapReady(GoogleMap googleMap) {
         Timber.e("onMapReady called");
