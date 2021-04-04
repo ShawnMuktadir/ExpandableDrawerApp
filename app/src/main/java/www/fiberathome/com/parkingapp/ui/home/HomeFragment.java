@@ -429,6 +429,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     public Marker previousGetDestinationMarker;
     private Location myPreviousLocation;
+    private double oldTotalDistanceInKm, totalDistanceInKm;
 
     public HomeFragment() {
 
@@ -553,8 +554,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     .title(markerUid));
         }
     }
-
-    private double oldTotalDistanceInKm;
 
     private double adjustDistance(double distance) {
 
@@ -1240,23 +1239,22 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         settingGeoFire();
     }
 
+    private List<LatLng> initialRoutePoints;
+
     @Override
     public void onLocationChanged(Location location) {
-        Timber.e("onLocationChanged: location -> %s", location);
-
+        //Timber.e("onLocationChanged: ");
         currentLocation = location;
 
-        //  send your location to server
         if (location != null) {
 
-            myLocationChangedDistance = MathUtils.getInstance().
-                    calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
-                            location.getLatitude(), location.getLongitude());
+            if (onConnectedLocation != null) {
+                myLocationChangedDistance = MathUtils.getInstance().calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), location.getLatitude(), location.getLongitude());
+            }
 
             onConnectedLocation = location;
 
             //Timber.e("onLocationChanged: onConnectedLocation -> %s", onConnectedLocation);
-
             SharedData.getInstance().setOnConnectedLocation(location);
 
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
@@ -1301,23 +1299,20 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     if (myLocationChangedDistance >= 0.001) {
                         //polylineOptions.addAll(polyline.getPoints());
 
-                        String[] latLng = oldDestination.split(",");
-                        double lat = Double.parseDouble(latLng[0].trim());
-                        double lon = Double.parseDouble(latLng[1].trim());
+                        String[] latlong = oldDestination.split(",");
+                        double lat = Double.parseDouble(latlong[0].trim());
+                        double lon = Double.parseDouble(latlong[1].trim());
 
-                        double totalDistanceInKm = MathUtils.getInstance().
-                                calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
-                                        lat, lon);
+                        totalDistanceInKm = MathUtils.getInstance().
+                                calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), lat, lon);
 
                         if (totalDistanceInKm < oldTotalDistanceInKm) {
                             reDrawRoute(origin);
                         } else {
                             if (myPreviousLocation != null) {
                                 double distanceTraveledLast = MathUtils.getInstance().
-                                        calculateDistance(onConnectedLocation.getLatitude(),
-                                                onConnectedLocation.getLongitude(),
-                                                myPreviousLocation.getLatitude(),
-                                                myPreviousLocation.getLongitude()) * 1000;
+                                        calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
+                                                myPreviousLocation.getLatitude(), myPreviousLocation.getLongitude()) * 1000;
 
                                 if (distanceTraveledLast > 500) {
                                     myPreviousLocation = onConnectedLocation;
@@ -1325,56 +1320,110 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                 } else {
                                     if (points != null) {
                                         points.clear();
+                                    } else {
+                                        points = new ArrayList<>();
                                     }
-                                    assert points != null;
-                                    points.add(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()));
+
                                     points.addAll(polyline.getPoints());
+                                    points.add(0, new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()));
                                     polyline.remove();
                                     polyline = mMap.addPolyline(getDefaultPolyLines(points));
                                 }
                             } else {
                                 if (points != null) {
                                     points.clear();
+                                } else {
+                                    points = new ArrayList<>();
                                 }
-                                assert points != null;
-                                points.add(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()));
                                 points.addAll(polyline.getPoints());
+                                points.add(0, new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()));
                                 polyline.remove();
                                 polyline = mMap.addPolyline(getDefaultPolyLines(points));
                                 myPreviousLocation = onConnectedLocation;
                             }
                         }
+
                         oldTotalDistanceInKm = totalDistanceInKm;
 
-                        //double totalDistanceInMeters = totalDistanceInKm * 1000;
+                        double totalDistanceInMeters = totalDistanceInKm * 1000;
 
                         /*if (totalDistanceInMeters < 500) {
-                        reDrawRoute(origin);
-                    } else if (totalDistanceInMeters < 1500) {
-                        reDrawRoute(origin);
-                    } else if (totalDistanceInMeters < 3000) {
-                        reDrawRoute(origin);
-                    } else if (totalDistanceInMeters < 6000) {
-                        reDrawRoute(origin);
-                    } else if (totalDistanceInMeters < 10000) {
-                        reDrawRoute(origin);
-                    } else if (totalDistanceInMeters < 15000) {
-                        reDrawRoute(origin);
-                    } else if (totalDistanceInMeters < 25000) {
-                        reDrawRoute(origin);
-                    }*/
+                            reDrawRoute(origin);
+                        } else if (totalDistanceInMeters < 1500) {
+                            reDrawRoute(origin);
+                        } else if (totalDistanceInMeters < 3000) {
+                            reDrawRoute(origin);
+                        } else if (totalDistanceInMeters < 6000) {
+                            reDrawRoute(origin);
+                        } else if (totalDistanceInMeters < 10000) {
+                            reDrawRoute(origin);
+                        } else if (totalDistanceInMeters < 15000) {
+                            reDrawRoute(origin);
+                        } else if (totalDistanceInMeters < 25000) {
+                            reDrawRoute(origin);
+                        }*/
                     }
                 } else {
                     if (myPreviousLocation != null) {
-                        double distanceTravledLast = MathUtils.getInstance().
+                        if (onConnectedLocation.getLatitude() != myPreviousLocation.getLatitude() && onConnectedLocation.getLongitude() != myPreviousLocation.getLongitude()) {
+                           /*List<LatLng> pointsNew = ApplicationUtils.getUpdatedPolyline(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
+                                   polyline.getPoints(), false, false, 60.0f);*/
+                            List<LatLng> pointsNew;
+                            if (!initialRoutePoints.isEmpty()) {
+                                pointsNew = new ArrayList<>(initialRoutePoints);
+                            } else {
+                                pointsNew = polyline.getPoints();
+                            }
+
+                            int point = PolyUtil.locationIndexOnPath(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()), pointsNew, false, 30.0);
+                            if (point >= 0) {
+
+                                for (int i = point; i >= 0; --i) {
+                                    pointsNew.remove(i);
+                                }
+                                pointsNew.add(0, new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()));
+                                if (pointsNew.size() > 2) {
+                                    double distance = MathUtils.getInstance().calculateDistance(pointsNew.get(0).latitude, pointsNew.get(0).longitude, pointsNew.get(1).latitude, pointsNew.get(1).longitude) * 1000;
+                                    if (distance < 10) {
+                                        pointsNew.remove(1);
+                                    }
+                                }
+                                polyline.remove();
+                                polyline = mMap.addPolyline(getDefaultPolyLines(pointsNew));
+                            }
+
+                        }
+                        double distanceTraveledLast = MathUtils.getInstance().
                                 calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), myPreviousLocation.getLatitude(), myPreviousLocation.getLongitude()) * 1000;
-                        if (distanceTravledLast > 500) {
+                        if (distanceTraveledLast > 1) {
+                           /*List<LatLng> pointsNew =polyline.getPoints();
+                           pointsNew.remove(0);
+                           polyline.remove();
+                           polyline = mMap.addPolyline(getDefaultPolyLines(pointsNew));*/
                             myPreviousLocation = onConnectedLocation;
-                            reDrawRoute(origin);
+                            //reDrawRoute(origin);
                         }
                     } else {
                         myPreviousLocation = onConnectedLocation;
                     }
+
+                    /*int ixLastPoint = 0;
+                   for (int i = 0; i < polyline.getPoints().size(); i++) {
+                       LatLng point1 = polyline.getPoints().get(i);
+                       List<LatLng> currentSegment = new ArrayList<>();
+                       currentSegment.add(point1);
+                       if (PolyUtil.isLocationOnPath(new LatLng(myPreviousLocation.getLatitude(), myPreviousLocation.getLongitude()), currentSegment, true, 50)) {
+                           // save index of last point and exit loop
+                           ixLastPoint = i;
+                           break;
+                       }
+                   }
+                   List<LatLng> pathPoints = polyline.getPoints();
+                   for (int i = 0; i < ixLastPoint; i++) {
+                       pathPoints.remove(0);
+                   }
+                   polyline.remove();
+                   polyline = mMap.addPolyline(getDefaultPolyLines(pathPoints));*/
                 }
             }
         }
@@ -3954,12 +4003,17 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             updatedRoute = route;
             for (www.fiberathome.com.parkingapp.module.GoogleMapWebServiceNDistance.directionModules.Route mRoute : route) {
                 PolylineOptions polylineOptions = getDefaultPolyLines(mRoute.points);
+                initialRoutePoints = mRoute.points;
                 /*if (polylineStyle == PolylineStyle.DOTTED)
                     polylineOptions = getDottedPolylines(route.points);*/
                 polyline = mMap.addPolyline(polylineOptions);
+                for (int i = 0; i < initialRoutePoints.size(); i++) {
+                    mMap.addMarker(new MarkerOptions().position(initialRoutePoints.get(i))
+                            .title(String.valueOf(i)));
+                }
             }
         } catch (Exception e) {
-            ToastUtils.getInstance().showToastMessage(context, "Error occurred on finding the directions...");
+            Toast.makeText(context, "Error occurred on finding the directions...", Toast.LENGTH_SHORT).show();
         }
     }
 }
