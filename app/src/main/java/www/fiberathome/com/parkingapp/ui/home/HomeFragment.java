@@ -1265,7 +1265,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             }
 
             currentLocationMarker = mMap.addMarker(new MarkerOptions().position(latLng)
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_car_running))
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_car_running))
                     .title("My Location")
                     .rotation(location.getBearing())
                     .flat(false)
