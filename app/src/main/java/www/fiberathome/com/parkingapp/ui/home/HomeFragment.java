@@ -429,7 +429,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     public Marker previousGetDestinationMarker;
     private Location myPreviousLocation;
-    private double oldTotalDistanceInKm, totalDistanceInKm;
+    public double oldTotalDistanceInKm, totalDistanceInKm;
 
     public HomeFragment() {
 
