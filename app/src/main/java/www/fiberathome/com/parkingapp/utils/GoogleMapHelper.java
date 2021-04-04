@@ -71,14 +71,13 @@ public class GoogleMapHelper {
         googleMap.getUiSettings().setZoomControlsEnabled(false);
         googleMap.getUiSettings().setScrollGesturesEnabledDuringRotateOrZoom(true);
         googleMap.getUiSettings().setZoomGesturesEnabled(true);
-        googleMap.getUiSettings().setRotateGesturesEnabled(false);
 
         googleMap.setBuildingsEnabled(false);
         googleMap.setTrafficEnabled(true);
         googleMap.setIndoorEnabled(false);
 
         googleMap.getUiSettings().setMapToolbarEnabled(false);
-        googleMap.getUiSettings().setRotateGesturesEnabled(true);
+        googleMap.getUiSettings().setRotateGesturesEnabled(false);
         googleMap.getUiSettings().setMapToolbarEnabled(false);
         googleMap.getUiSettings().setTiltGesturesEnabled(true);
         googleMap.getUiSettings().setCompassEnabled(false);
