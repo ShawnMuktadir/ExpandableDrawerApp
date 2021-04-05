@@ -3,12 +3,13 @@ package www.fiberathome.com.parkingapp.utils;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+
+import timber.log.Timber;
 
 public class ForceUpdateChecker {
 
@@ -18,8 +19,8 @@ public class ForceUpdateChecker {
     public static final String KEY_CURRENT_VERSION = "force_update_current_version";
     public static final String KEY_UPDATE_URL = "force_update_store_url";
 
-    private OnUpdateNeededListener onUpdateNeededListener;
-    private Context context;
+    private final OnUpdateNeededListener onUpdateNeededListener;
+    private final Context context;
 
     public interface OnUpdateNeededListener {
         void onUpdateNeeded(String updateUrl);
@@ -48,7 +49,7 @@ public class ForceUpdateChecker {
             if (!TextUtils.equals(currentVersion, appVersion)
                     && onUpdateNeededListener != null) {
 
-                if (updateUrl != null) {
+                if (!updateUrl.equalsIgnoreCase("") && !updateUrl.isEmpty()) {
                     onUpdateNeededListener.onUpdateNeeded(updateUrl);
                 } else {
                     Toast.makeText(context, "No play store URL found", Toast.LENGTH_SHORT).show();
@@ -74,7 +75,7 @@ public class ForceUpdateChecker {
                     .versionName;
             result = result.replaceAll("[a-zA-Z]|-", "");
         } catch (PackageManager.NameNotFoundException e) {
-            Log.e(TAG, e.getMessage());
+            Timber.e("Exception -> %s", e.getMessage());
         }
 
         return result;
@@ -82,7 +83,7 @@ public class ForceUpdateChecker {
 
     public static class Builder {
 
-        private Context context;
+        private final Context context;
         private OnUpdateNeededListener onUpdateNeededListener;
 
         public Builder(Context context) {

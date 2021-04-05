@@ -21,6 +21,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.ui.booking.newBooking.BookingActivity;
+import www.fiberathome.com.parkingapp.ui.widget.BaseBottomSheetDialog;
 
 public class DialogUtils {
     private static DialogUtils dialogUtils;
@@ -199,6 +200,22 @@ public class DialogUtils {
             TastyToastUtils.showTastySuccessToast(activity, activity.getResources().getString(R.string.thanks_message));
         });
 
+    }
+
+    public BaseBottomSheetDialog bottomSheetDialog(
+            Context context,
+            View view,
+            boolean cancellable,
+            boolean cancellableOnOutsideTouch
+    ) {
+        BaseBottomSheetDialog baseBottomSheetDialog = new BaseBottomSheetDialog(context);
+
+        baseBottomSheetDialog.setContentView(view);
+        baseBottomSheetDialog.setCancelable(cancellable);
+        baseBottomSheetDialog.setCanceledOnTouchOutside(cancellableOnOutsideTouch);
+        baseBottomSheetDialog.show();
+
+        return baseBottomSheetDialog;
     }
 
     public MaterialDialog showMaterialCircularProgressDialog(Context callingClassContext, String content) {

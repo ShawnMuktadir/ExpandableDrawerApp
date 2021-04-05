@@ -43,7 +43,7 @@ android {
         }
 
         release {
-            debuggable false
+            debuggable true
             minifyEnabled true
             shrinkResources true
             signingConfig signingConfigs.release
@@ -198,7 +198,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth-api-phone:17.5.0'
 
     //pinview
-    implementation 'com.github.GoodieBag:Pinview:v1.3'
+    implementation 'com.poovam:pin-edittext-field:1.2.3'
 }
 
 task javadoc(type: Javadoc) {

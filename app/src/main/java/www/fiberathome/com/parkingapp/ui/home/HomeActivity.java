@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
@@ -22,7 +23,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
@@ -30,6 +30,7 @@ import com.google.android.gms.location.LocationServices;
 import com.karumi.dexter.PermissionToken;
 
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -49,7 +50,6 @@ import www.fiberathome.com.parkingapp.ui.permission.PermissionActivity;
 import www.fiberathome.com.parkingapp.ui.permission.listener.PermissionInterface;
 import www.fiberathome.com.parkingapp.ui.privacyPolicy.PrivacyPolicyFragment;
 import www.fiberathome.com.parkingapp.ui.profile.ProfileFragment;
-import www.fiberathome.com.parkingapp.ui.ratingReview.RatingReviewFragment;
 import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
 import www.fiberathome.com.parkingapp.ui.settings.SettingsFragment;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
@@ -73,19 +73,16 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
 
     private Unbinder unbinder;
 
-    private LocationRequest locationRequest;
     private LocationCallback locationCallback;
     private Location lastLocation;
-    private FusedLocationProviderClient fusedLocationProviderClient;
 
-    private final boolean exit = true;
     private Toast exitToast;
     private int exitCounter = 1;
 
     public static final int GPS_REQUEST_CODE = 9003;
 
+    private FusedLocationProviderClient fusedLocationProviderClient;
     private Context context;
-    private GeofencingRequest geofencingRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +100,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
         buildLocationCallBack();
-        locationRequest = new LocationRequest();
+        LocationRequest locationRequest = new LocationRequest();
         locationRequest.setInterval(1000);
         locationRequest.setFastestInterval(1000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -119,7 +116,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                 // for ActivityCompat#requestPermissions for more details.
                 return;
             }
-            fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
+            fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Objects.requireNonNull(Looper.myLooper()));
         }
 
         double lat = getIntent().getDoubleExtra("lat", 0.0);
@@ -192,6 +189,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                 for (Fragment f : fragmentList) {
                     if (f instanceof HomeFragment) {
                         ((HomeFragment) f).onBackPressed();
+                        boolean exit = true;
                         if (exit) {
                             Timber.e("onBackPressed exit if");
                             exitCounter--;
@@ -240,9 +238,6 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                         toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
                     } else if (f instanceof GetDiscountFragment) {
                         ((GetDiscountFragment) f).onBackPressed();
-                        toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
-                    } else if (f instanceof RatingReviewFragment) {
-                        ((RatingReviewFragment) f).onBackPressed();
                         toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
                     } else if (f instanceof FollowUsFragment) {
                         ((FollowUsFragment) f).onBackPressed();
@@ -400,7 +395,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
         Timber.e("buildLocationCallBack HomeActivity call hoiche");
         locationCallback = new LocationCallback() {
             @Override
-            public void onLocationResult(final LocationResult locationResult) {
+            public void onLocationResult(@NonNull final LocationResult locationResult) {
                 //if (mMap != null) {
                 lastLocation = locationResult.getLastLocation();
                 SharedData.getInstance().setLastLocation(lastLocation);

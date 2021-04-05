@@ -464,7 +464,7 @@
     <string name="no_data_found">কোন তথ্য পাওয়া যায়নি</string>
     <string name="update">আপডেট</string>
     <string name="new_version_available">নতুন ভার্সন পাওয়া যাচ্ছে</string>
-    <string name="please_update_the_app">দয়া করে অ্যাপটি নতুন ভার্সনে আপডেট করে ব্যাবহার করুন </string>
+    <string name="please_update_the_app">আমাদের উন্নত পরিষেবাগুলি পেতে, দয়া করে আপনার এলওসিসি স্মার্ট পার্কিং অ্যাপ্লিকেশনটি গুগল প্লে স্টোরের সর্বশেষ সংস্করণে আপডেট করুন</string>
     <string name="no_thanks">না, ধন্যবাদ</string>
     <string name="are_you_sure_you_want_to_exit">আপনি কি বের হবার ব্যাপারে নিশ্চিত?</string>
     <string name="no_route_exist">কোন পথ নেই</string>
@@ -484,5 +484,7 @@
     <string name="press_back_again_to_exit">প্রস্থান করতে আবার ব্যাক বাটন প্রেস করুন</string>
     <string name="booking_time_rules">আপনি বুকিংয়ের সময় ২ ঘণ্টার বেশি সেট করতে পারবেন না</string>
     <string name="gps_enabled">জিপিএস সক্রিয় করা হয়েছে</string>
+    <string name="update_available">New Update Available</string>
+    <string name="not_implemented_yet">Not implemented yet</string>
 </resources>
 

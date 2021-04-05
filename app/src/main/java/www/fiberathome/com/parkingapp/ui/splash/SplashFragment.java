@@ -15,10 +15,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.app.ActivityCompat;
+
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -222,29 +226,31 @@ public class SplashFragment extends BaseFragment implements ForceUpdateChecker.O
         }
     }
 
-    @Override
-    public void onUpdateNeeded(final String updateUrl) {
-        DialogUtils.getInstance().alertDialog(context,
-                context,
-                context.getResources().getString(R.string.new_version_available), context.getResources().getString(R.string.please_update_the_app),
-                context.getResources().getString(R.string.update), context.getResources().getString(R.string.no_thanks),
-                new DialogUtils.DialogClickListener() {
-                    @Override
-                    public void onPositiveClick() {
-                        redirectStore(updateUrl);
-                    }
-
-                    @Override
-                    public void onNegativeClick() {
-                        context.finishAffinity();
-                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
-                    }
-                }).show();
-    }
+    private BottomSheetDialog bottomSheetDialogAppUpdate;
 
     @Override
     public void noUpdateNeeded() {
         checkUserLogin();
+    }
+
+    @Override
+    public void onUpdateNeeded(final String updateUrl) {
+        showAppUpdateDialog();
+    }
+
+    @SuppressLint("InflateParams")
+    public void showAppUpdateDialog() {
+        View dialogView = getLayoutInflater().inflate(
+                R.layout.bottom_sheet_dialog_app_update_options, null);
+
+        AppCompatButton buttonUpdate = dialogView.findViewById(R.id.button_update);
+        buttonUpdate.setOnClickListener(view -> {
+            Toast.makeText(context, getString(R.string.not_implemented_yet), Toast.LENGTH_SHORT).show();
+            redirectStore(ForceUpdateChecker.KEY_UPDATE_URL);
+        });
+
+        bottomSheetDialogAppUpdate = DialogUtils.getInstance().bottomSheetDialog(context, dialogView,
+                true, false);
     }
 
     private void redirectStore(String updateUrl) {
@@ -254,7 +260,10 @@ public class SplashFragment extends BaseFragment implements ForceUpdateChecker.O
             startActivity(intent);
         } catch (ActivityNotFoundException e) {
             e.getCause();
-            TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.places_try_again));
+            TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.something_went_wrong));
+        } catch (Exception e) {
+            e.getCause();
+            TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.something_went_wrong));
         }
     }
 }

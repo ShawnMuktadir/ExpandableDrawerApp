@@ -92,12 +92,6 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
     private Context context;
     private boolean isFastConnection;
 
-    /*@Override
-    protected void attachBaseContext(Context base) {
-        super.attachBaseContext(ParkingApp.localeManager.setLocale(base));
-        Timber.e("attachBaseContext");
-    }*/
-
     private final BroadcastReceiver mNetworkDetectReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -105,12 +99,6 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         }
     };
 
-    /*private BroadcastReceiver mBackgroundLocationReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Timber.e("mBackgroundLocationReceiver");
-        }
-    };*/
     private AlertDialog mInternetDialog;
     private AlertDialog mGPSDialog;
 
@@ -309,11 +297,11 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         View snackView = getLayoutInflater().inflate(R.layout.snackbar_internet, null);
         snackbar = Snackbar.make(this.findViewById(android.R.id.content), message, duration);
         View sbView = snackbar.getView();
-        TextView tv = (TextView) sbView.findViewById(com.google.android.material.R.id.snackbar_text);
+        TextView tv = sbView.findViewById(com.google.android.material.R.id.snackbar_text);
         tv.setTextColor(Color.TRANSPARENT);
         //snackbar.setBackgroundTint(ContextCompat.getColor(this, R.color.transparent_white));
         // Configure our custom view
-        overlay = (View) snackView.findViewById(R.id.overlay);
+        overlay = snackView.findViewById(R.id.overlay);
 
         if (isConnected) {
             snackbar.dismiss();
@@ -342,11 +330,11 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
             layout.setPadding(0, 0, 0, 0);
             layout.setLayoutParams(parentParams);
 
-            TextView messageTextView = (TextView) snackView.findViewById(R.id.message_text_view);
+            TextView messageTextView = snackView.findViewById(R.id.message_text_view);
             //messageTextView.setTextColor(context.getResources().getColor(R.color.transparent_white));
             messageTextView.setText(message);
 
-            TextView textViewOne = (TextView) snackView.findViewById(R.id.first_text_view);
+            TextView textViewOne = snackView.findViewById(R.id.first_text_view);
             textViewOne.setText(context.getResources().getString(R.string.retry));
             textViewOne.setOnClickListener(v -> {
                 Timber.d("showTwoButtonSnackbar() : allow clicked");
@@ -359,7 +347,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
                 }
             });
 
-            TextView textViewTwo = (TextView) snackView.findViewById(R.id.second_text_view);
+            TextView textViewTwo = snackView.findViewById(R.id.second_text_view);
             textViewTwo.setText(context.getResources().getString(R.string.close_app));
             textViewTwo.setOnClickListener(v -> {
                 Timber.d("showTwoButtonSnackbar() : deny clicked");
@@ -433,7 +421,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content),
                 message, duration);
         View sbView = snackbar.getView();
-        TextView textView = (TextView) sbView
+        TextView textView = sbView
                 .findViewById(com.google.android.material.R.id.snackbar_text);
         textView.setTextColor(ContextCompat.getColor(this, android.R.color.white));
 

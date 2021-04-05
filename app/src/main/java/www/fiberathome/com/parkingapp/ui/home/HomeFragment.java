@@ -4008,10 +4008,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 /*if (polylineStyle == PolylineStyle.DOTTED)
                     polylineOptions = getDottedPolylines(route.points);*/
                 polyline = mMap.addPolyline(polylineOptions);
-                for (int i = 0; i < initialRoutePoints.size(); i++) {
+                /*for (int i = 0; i < initialRoutePoints.size(); i++) {
                     mMap.addMarker(new MarkerOptions().position(initialRoutePoints.get(i))
                             .title(String.valueOf(i)));
-                }
+                }*/
             }
         } catch (Exception e) {
             Toast.makeText(context, "Error occurred on finding the directions...", Toast.LENGTH_SHORT).show();
