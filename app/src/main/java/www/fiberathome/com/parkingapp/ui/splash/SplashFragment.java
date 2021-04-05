@@ -2,12 +2,10 @@ package www.fiberathome.com.parkingapp.ui.splash;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
@@ -15,14 +13,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.app.ActivityCompat;
-
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,7 +30,6 @@ import www.fiberathome.com.parkingapp.ui.permission.PermissionActivity;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
-import www.fiberathome.com.parkingapp.utils.ForceUpdateChecker;
 import www.fiberathome.com.parkingapp.utils.LocationHelper;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
@@ -45,7 +38,7 @@ import static android.content.Context.LOCATION_SERVICE;
 import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
 
 @SuppressLint("NonConstantResourceId")
-public class SplashFragment extends BaseFragment implements ForceUpdateChecker.OnUpdateNeededListener {
+public class SplashFragment extends BaseFragment {
 
     @BindView(R.id.splash_iv_logo)
     ImageView imageViewSplashLogo;
@@ -55,8 +48,6 @@ public class SplashFragment extends BaseFragment implements ForceUpdateChecker.O
     private SplashActivity context;
 
     private LocationManager mLocationManager;
-
-    private static final int UPDATE_CODE = 1000;
 
     public SplashFragment() {
         // Required empty public constructor
@@ -85,13 +76,14 @@ public class SplashFragment extends BaseFragment implements ForceUpdateChecker.O
         unbinder = ButterKnife.bind(this, view);
 
         context = (SplashActivity) getActivity();
+
+        checkUserLogin();
     }
 
     @Override
     public void onResume() {
         super.onResume();
         try {
-            ForceUpdateChecker.with(context).onUpdateNeeded(SplashFragment.this).check();
             mLocationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
             if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
@@ -223,47 +215,6 @@ public class SplashFragment extends BaseFragment implements ForceUpdateChecker.O
             }
         } else {
             ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.gps_not_enabled_unable_to_show_user_location));
-        }
-    }
-
-    private BottomSheetDialog bottomSheetDialogAppUpdate;
-
-    @Override
-    public void noUpdateNeeded() {
-        checkUserLogin();
-    }
-
-    @Override
-    public void onUpdateNeeded(final String updateUrl) {
-        showAppUpdateDialog();
-    }
-
-    @SuppressLint("InflateParams")
-    public void showAppUpdateDialog() {
-        View dialogView = getLayoutInflater().inflate(
-                R.layout.bottom_sheet_dialog_app_update_options, null);
-
-        AppCompatButton buttonUpdate = dialogView.findViewById(R.id.button_update);
-        buttonUpdate.setOnClickListener(view -> {
-            Toast.makeText(context, getString(R.string.not_implemented_yet), Toast.LENGTH_SHORT).show();
-            redirectStore(ForceUpdateChecker.KEY_UPDATE_URL);
-        });
-
-        bottomSheetDialogAppUpdate = DialogUtils.getInstance().bottomSheetDialog(context, dialogView,
-                true, false);
-    }
-
-    private void redirectStore(String updateUrl) {
-        try {
-            final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(updateUrl));
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-        } catch (ActivityNotFoundException e) {
-            e.getCause();
-            TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.something_went_wrong));
-        } catch (Exception e) {
-            e.getCause();
-            TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.something_went_wrong));
         }
     }
 }

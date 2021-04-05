@@ -140,8 +140,6 @@ import www.fiberathome.com.parkingapp.model.response.search.SelectedPlace;
 import www.fiberathome.com.parkingapp.model.response.sensors.Sensor;
 import www.fiberathome.com.parkingapp.model.response.sensors.SensorArea;
 import www.fiberathome.com.parkingapp.model.response.sensors.SensorsResponse;
-import www.fiberathome.com.parkingapp.module.GoogleMapWebServiceNDistance.directionModules.DirectionFinder;
-import www.fiberathome.com.parkingapp.module.GoogleMapWebServiceNDistance.directionModules.DirectionFinderListener;
 import www.fiberathome.com.parkingapp.module.eventBus.GetDirectionAfterButtonClickEvent;
 import www.fiberathome.com.parkingapp.module.eventBus.GetDirectionBottomSheetEvent;
 import www.fiberathome.com.parkingapp.module.eventBus.GetDirectionForMarkerEvent;
@@ -149,6 +147,8 @@ import www.fiberathome.com.parkingapp.module.eventBus.GetDirectionForSearchEvent
 import www.fiberathome.com.parkingapp.module.eventBus.SetMarkerEvent;
 import www.fiberathome.com.parkingapp.module.geoFenceInterface.IOnLoadLocationListener;
 import www.fiberathome.com.parkingapp.module.geoFenceInterface.MyLatLng;
+import www.fiberathome.com.parkingapp.module.googleService.directionModules.DirectionFinder;
+import www.fiberathome.com.parkingapp.module.googleService.directionModules.DirectionFinderListener;
 import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.ui.bottomSheet.BottomSheetAdapter;
 import www.fiberathome.com.parkingapp.ui.bottomSheet.CustomLinearLayoutManager;
@@ -3993,16 +3993,16 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         showLoading(context);
     }
 
-    List<www.fiberathome.com.parkingapp.module.GoogleMapWebServiceNDistance.directionModules.Route> updatedRoute;
+    List<www.fiberathome.com.parkingapp.module.googleService.directionModules.Route> updatedRoute;
 
     @Override
-    public void onDirectionFinderSuccess(List<www.fiberathome.com.parkingapp.module.GoogleMapWebServiceNDistance.directionModules.Route> route) {
+    public void onDirectionFinderSuccess(List<www.fiberathome.com.parkingapp.module.googleService.directionModules.Route> route) {
         hideLoading();
 
         if (!route.isEmpty() && polyline != null) polyline.remove();
         try {
             updatedRoute = route;
-            for (www.fiberathome.com.parkingapp.module.GoogleMapWebServiceNDistance.directionModules.Route mRoute : route) {
+            for (www.fiberathome.com.parkingapp.module.googleService.directionModules.Route mRoute : route) {
                 PolylineOptions polylineOptions = getDefaultPolyLines(mRoute.points);
                 initialRoutePoints = mRoute.points;
                 /*if (polylineStyle == PolylineStyle.DOTTED)

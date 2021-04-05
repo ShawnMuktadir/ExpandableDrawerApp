@@ -55,6 +55,7 @@ import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
+import www.fiberathome.com.parkingapp.utils.ForceUpdateChecker;
 import www.fiberathome.com.parkingapp.utils.GeoFenceBroadcastReceiver;
 import www.fiberathome.com.parkingapp.utils.GeofenceConstants;
 import www.fiberathome.com.parkingapp.utils.SnackBarUtils;
@@ -74,13 +75,12 @@ import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CO
  *
  * </ul>
  */
-public class BaseActivity extends AppCompatActivity implements LocationListener {
+public class BaseActivity extends AppCompatActivity implements LocationListener, ForceUpdateChecker.OnUpdateNeededListener {
 
     private static final int GPS_ENABLE_REQUEST = 0x1001;
     private static final int WIFI_ENABLE_REQUEST = 0x1006;
     private static final int UPDATE_CODE = 1000;
 
-    private View overlay;
     private Snackbar snackbar;
 
     private final List<Geofence> geofenceList = new ArrayList<>();
@@ -100,7 +100,6 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
     };
 
     private AlertDialog mInternetDialog;
-    private AlertDialog mGPSDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,6 +147,12 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
 
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //ForceUpdateChecker.with(context).onUpdateNeeded(BaseActivity.this).check();
     }
 
     @Override
@@ -245,12 +250,11 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         progressDialog.cancel();
     }
 
-    private boolean isConnected = false;
-
     private void checkInternetConnection() {
         ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo ni = manager.getActiveNetworkInfo();
 
+        boolean isConnected = false;
         if (ni != null && ni.getState() == NetworkInfo.State.CONNECTED && isFastConnection) {
             isConnected = true;
             snackbar.dismiss();
@@ -301,7 +305,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         tv.setTextColor(Color.TRANSPARENT);
         //snackbar.setBackgroundTint(ContextCompat.getColor(this, R.color.transparent_white));
         // Configure our custom view
-        overlay = snackView.findViewById(R.id.overlay);
+        View overlay = snackView.findViewById(R.id.overlay);
 
         if (isConnected) {
             snackbar.dismiss();
@@ -412,7 +416,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
                                 TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                             }
                         });
-        mGPSDialog = builder.create();
+        AlertDialog mGPSDialog = builder.create();
         mGPSDialog.show();
         mGPSDialog.setCanceledOnTouchOutside(false);
     }
@@ -663,5 +667,14 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
     protected void setActionBarBackButton() {
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public void noUpdateNeeded() {
+    }
+
+    @Override
+    public void onUpdateNeeded(final String updateUrl) {
+        //showAppUpdateDialog();
     }
 }

@@ -5,6 +5,8 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.ProcessLifecycleOwner;
 import androidx.multidex.MultiDex;
 
 import com.android.volley.Request;
@@ -18,9 +20,10 @@ import java.util.Map;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.BuildConfig;
 import www.fiberathome.com.parkingapp.utils.ForceUpdateChecker;
+import www.fiberathome.com.parkingapp.utils.ForceUpgradeManager;
 import www.fiberathome.com.parkingapp.utils.internet.ConnectivityReceiver;
 
-public class ParkingApp extends Application {
+public class ParkingApp extends Application implements LifecycleObserver {
 
     public static final String TAG = ParkingApp.class.getSimpleName();
 
@@ -29,6 +32,8 @@ public class ParkingApp extends Application {
     private RequestQueue mRequestQueue;
 
     protected FirebaseRemoteConfig firebaseRemoteConfig;
+
+    private ForceUpgradeManager forceUpgradeManager;
 
     public static synchronized ParkingApp getInstance() {
         return mInstance;
@@ -41,9 +46,12 @@ public class ParkingApp extends Application {
 
         initTimber();
 
-        firebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
+        //firebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
 
-        setAppDefaults();
+        //setAppDefaults();
+
+        initForceUpgradeManager();
+        ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
     }
 
     @Override
@@ -69,6 +77,12 @@ public class ParkingApp extends Application {
                         firebaseRemoteConfig.activate();
                     }
                 });
+    }
+
+    public void initForceUpgradeManager() {
+        if (forceUpgradeManager == null) {
+            forceUpgradeManager = new ForceUpgradeManager(mInstance);
+        }
     }
 
     public RequestQueue getRequestQueue() {

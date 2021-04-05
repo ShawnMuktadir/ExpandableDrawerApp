@@ -150,6 +150,7 @@ dependencies {
     //Add live data and view model dependency
     def lifecycle_version = "1.1.1"
     implementation "android.arch.lifecycle:extensions:$lifecycle_version"
+    annotationProcessor "android.arch.lifecycle:compiler:$lifecycle_version"
 
     //for duration takes this library
     implementation 'com.akexorcist:googledirectionlibrary:1.1.1' // Custom Google Direction API
