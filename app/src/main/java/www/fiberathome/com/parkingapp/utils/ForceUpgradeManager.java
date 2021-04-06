@@ -52,7 +52,7 @@ public class ForceUpgradeManager implements LifecycleObserver {
 
                 @Override
                 public void onActivityStarted(@NonNull Activity activity) {
-                    //ForceUpgradeManager.this.activityWeakReference = new WeakReference<>(activity);
+                    ForceUpgradeManager.this.activityWeakReference = new WeakReference<>(activity);
                 }
 
                 @Override
@@ -62,7 +62,9 @@ public class ForceUpgradeManager implements LifecycleObserver {
 
                 @Override
                 public void onActivityPaused(@NonNull Activity activity) {
-
+                    if (bottomSheetDialogAppUpdate != null) {
+                        bottomSheetDialogAppUpdate.dismiss();
+                    }
                 }
 
                 @Override
@@ -127,11 +129,10 @@ public class ForceUpgradeManager implements LifecycleObserver {
         buttonUpdate.setOnClickListener(view -> {
             redirectStore(updateUrl);
             //redirectStore();
-            //Toast.makeText(context, getString(R.string.not_implemented_yet), Toast.LENGTH_SHORT).show();
         });
 
         bottomSheetDialogAppUpdate = DialogUtils.getInstance().bottomSheetDialog(getCurrentActivity(), dialogView,
-                true, false);
+                true, true);
     }
 
     private View getLayoutInflater() {
@@ -152,9 +153,6 @@ public class ForceUpgradeManager implements LifecycleObserver {
             if (intent.resolveActivity(context.getPackageManager()) != null) {
                 context.startActivity(intent);
             }
-            /*final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(updateUrl));
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(intent);*/
         } catch (Exception e) {
             Timber.d("Exception -> %s", e.getCause());
             TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.something_went_wrong));

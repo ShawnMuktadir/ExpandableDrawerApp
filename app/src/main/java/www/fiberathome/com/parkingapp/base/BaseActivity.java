@@ -55,7 +55,6 @@ import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
-import www.fiberathome.com.parkingapp.utils.ForceUpdateChecker;
 import www.fiberathome.com.parkingapp.utils.GeoFenceBroadcastReceiver;
 import www.fiberathome.com.parkingapp.utils.GeofenceConstants;
 import www.fiberathome.com.parkingapp.utils.SnackBarUtils;
@@ -75,7 +74,7 @@ import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CO
  *
  * </ul>
  */
-public class BaseActivity extends AppCompatActivity implements LocationListener, ForceUpdateChecker.OnUpdateNeededListener {
+public class BaseActivity extends AppCompatActivity implements LocationListener {
 
     private static final int GPS_ENABLE_REQUEST = 0x1001;
     private static final int WIFI_ENABLE_REQUEST = 0x1006;
@@ -90,6 +89,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
     protected LocationManager mLocationManager;
 
     private Context context;
+
     private boolean isFastConnection;
 
     private final BroadcastReceiver mNetworkDetectReceiver = new BroadcastReceiver() {
@@ -667,14 +667,5 @@ public class BaseActivity extends AppCompatActivity implements LocationListener,
     protected void setActionBarBackButton() {
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
-
-    @Override
-    public void noUpdateNeeded() {
-    }
-
-    @Override
-    public void onUpdateNeeded(final String updateUrl) {
-        //showAppUpdateDialog();
     }
 }
