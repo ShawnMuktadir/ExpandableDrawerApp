@@ -3,21 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/bg_bottom_sheet_dialog"
     android:gravity="center"
     android:orientation="vertical"
     android:padding="@dimen/app_padding"
     app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
-
-    <ImageView
-        android:id="@+id/bottom_sheet_iv_update"
-        android:layout_width="@dimen/_100sdp"
-        android:layout_height="@dimen/_100sdp"
-        android:layout_centerInParent="true"
-        android:src="@mipmap/ic_update"
-        android:visibility="gone"
-        tools:ignore="ContentDescription" />
 
     <TextView
         style="@style/MessageTextStyle"

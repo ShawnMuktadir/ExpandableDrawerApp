@@ -57,7 +57,7 @@ public class ForceUpgradeManager implements LifecycleObserver {
 
                 @Override
                 public void onActivityResumed(@NonNull Activity activity) {
-                    ForceUpgradeManager.this.activityWeakReference = new WeakReference<>(activity);
+                    //ForceUpgradeManager.this.activityWeakReference = new WeakReference<>(activity);
                 }
 
                 @Override

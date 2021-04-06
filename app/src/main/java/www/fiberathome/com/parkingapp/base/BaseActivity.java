@@ -152,7 +152,6 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
     @Override
     protected void onResume() {
         super.onResume();
-        //ForceUpdateChecker.with(context).onUpdateNeeded(BaseActivity.this).check();
     }
 
     @Override

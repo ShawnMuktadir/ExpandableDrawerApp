@@ -2,6 +2,7 @@ package www.fiberathome.com.parkingapp.base;
 
 import android.app.Application;
 import android.content.Context;
+import android.location.LocationManager;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
@@ -52,7 +53,7 @@ public class ParkingApp extends Application implements LifecycleObserver {
 
         //setAppDefaults();
 
-        if (!getClass().getSimpleName().equalsIgnoreCase(SplashActivity.class.getSimpleName())) {
+        if (isGPSEnabled(getApplicationContext()) && !getClass().getSimpleName().equalsIgnoreCase(SplashActivity.class.getSimpleName())) {
 
             initForceUpgradeManager();
 
@@ -127,5 +128,19 @@ public class ParkingApp extends Application implements LifecycleObserver {
 
     public void setConnectivityListener(ConnectivityReceiver.ConnectivityReceiverListener listener) {
         ConnectivityReceiver.listener = listener;
+    }
+
+    public boolean isGPSEnabled(Context context) {
+
+        LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
+
+        boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+        if (providerEnabled) {
+            return true;
+        } else {
+            Timber.e("else called");
+        }
+        return false;
     }
 }
