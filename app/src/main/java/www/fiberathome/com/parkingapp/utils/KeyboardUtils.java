@@ -9,6 +9,7 @@ import android.widget.EditText;
 
 import timber.log.Timber;
 
+@SuppressWarnings("unused")
 public class KeyboardUtils {
 
     private static KeyboardUtils keyboardUtils;
@@ -28,33 +29,27 @@ public class KeyboardUtils {
 
     public void hideKeyboard(final Activity activity) {
         Timber.e("hideKeyboard -> ");
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
+        new Thread(() -> {
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            activity.runOnUiThread(() -> {
                 try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            if (activity != null) {
-                                final InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-                                final View view = activity.getCurrentFocus();
-                                if (view != null) {
-                                    final IBinder binder = view.getWindowToken();
-                                    imm.hideSoftInputFromWindow(binder, 0);
-                                    imm.showSoftInputFromInputMethod(binder, 0);
-                                }
-                            }
-                        } catch (final Exception e) {
-                            Timber.d(e, "-> %s Exception to hide keyboard", ApplicationUtils.class.getSimpleName());
+                    if (activity != null) {
+                        final InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+                        final View view = activity.getCurrentFocus();
+                        if (view != null) {
+                            final IBinder binder = view.getWindowToken();
+                            imm.hideSoftInputFromWindow(binder, 0);
+                            imm.showSoftInputFromInputMethod(binder, 0);
                         }
                     }
-                });
-            }
+                } catch (final Exception e) {
+                    Timber.d(e, "-> %s Exception to hide keyboard", ApplicationUtils.class.getSimpleName());
+                }
+            });
         }).start();
     }
 

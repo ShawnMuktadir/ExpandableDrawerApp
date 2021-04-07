@@ -4,8 +4,6 @@ import android.util.Log;
 import android.view.View;
 
 import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONArray;
@@ -15,10 +13,11 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 
-
+@SuppressWarnings("unused")
 public class SensorList {
 
     public List<Sensors> sensors;
@@ -26,59 +25,47 @@ public class SensorList {
     public String id;
 
     public SensorList() {
-        sensors = new ArrayList<Sensors>();
+        sensors = new ArrayList<>();
     }
 
-    private void fachText(View view) {
+    private void fetchText(View view) {
 
-        StringRequest strReq = new StringRequest(Request.Method.POST, AppConfig.URL_FETCH_SENSORS, new Response.Listener<String>() {
+        StringRequest strReq = new StringRequest(Request.Method.POST, AppConfig.URL_FETCH_SENSORS, response -> {
 
-            @Override
-            public void onResponse(String response) {
+            Timber.e("response -> %s", response);
 
-                Log.e("response",""+response);
+            try {
+                JSONArray JsonArray = new JSONArray(response);
 
-                try {
-                    JSONArray JsonArray = new JSONArray(response);
+                for (int i = 0; i < 1; i++) {
 
-                    for (int i = 0; i < 1; i++) {
+                    JSONObject obj = JsonArray.getJSONObject(0);
+                    String uid = obj.getString("uid");
+                    Log.e("Sensor Id: ", uid);
 
-                        JSONObject obj = JsonArray.getJSONObject(0);
-                        String uid= obj.getString("uid");
-                        Log.e("Sensor Id: ", uid);
-
-                        //  String id= obj.getString ( "id" );
-
+                    //  String id= obj.getString ( "id" );
 
 
 //                        String fetcheddata = text+ "\n" ;
 //                        textView.setText(fetcheddata );
 
-                    }
-
-                } catch (JSONException e) {
-                    // JSON error
-                    e.printStackTrace();
-                    System.out.println(e.getMessage());
-
                 }
-            }
-        }, new Response.ErrorListener() {
-            @Override
 
-
-            public void onErrorResponse(VolleyError error) {
-
+            } catch (JSONException e) {
+                // JSON error
+                e.printStackTrace();
+                System.out.println(e.getMessage());
 
             }
+        }, error -> {
+
+
         }) {
 
         };
 
         ParkingApp.getInstance().addToRequestQueue(strReq);
     }
-
-
 
     public boolean canLoadMore(){
         return next_page_token != null;

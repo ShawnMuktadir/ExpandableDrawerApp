@@ -25,6 +25,7 @@ import www.fiberathome.com.parkingapp.utils.ForceUpdateChecker;
 import www.fiberathome.com.parkingapp.utils.ForceUpgradeManager;
 import www.fiberathome.com.parkingapp.utils.internet.ConnectivityReceiver;
 
+@SuppressWarnings("unused")
 public class ParkingApp extends Application implements LifecycleObserver {
 
     public static final String TAG = ParkingApp.class.getSimpleName();

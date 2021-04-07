@@ -128,7 +128,7 @@ import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
-import www.fiberathome.com.parkingapp.model.api.Common;
+import www.fiberathome.com.parkingapp.model.api.CommonGoogleApi;
 import www.fiberathome.com.parkingapp.model.api.IGoogleApi;
 import www.fiberathome.com.parkingapp.model.data.AppConstants;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
@@ -169,14 +169,15 @@ import www.fiberathome.com.parkingapp.utils.ViewUtils;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.LOCATION_SERVICE;
-import static www.fiberathome.com.parkingapp.model.response.searchHistory.AppConstants.FIRST_TIME_INSTALLED;
-import static www.fiberathome.com.parkingapp.model.response.searchHistory.AppConstants.HISTORY_PLACE_SELECTED;
-import static www.fiberathome.com.parkingapp.model.response.searchHistory.AppConstants.NEW_PLACE_SELECTED;
-import static www.fiberathome.com.parkingapp.model.response.searchHistory.AppConstants.NEW_SEARCH_ACTIVITY_REQUEST_CODE;
+import static www.fiberathome.com.parkingapp.model.response.searchHistory.SearchConstants.FIRST_TIME_INSTALLED;
+import static www.fiberathome.com.parkingapp.model.response.searchHistory.SearchConstants.HISTORY_PLACE_SELECTED;
+import static www.fiberathome.com.parkingapp.model.response.searchHistory.SearchConstants.NEW_PLACE_SELECTED;
+import static www.fiberathome.com.parkingapp.model.response.searchHistory.SearchConstants.NEW_SEARCH_ACTIVITY_REQUEST_CODE;
 import static www.fiberathome.com.parkingapp.utils.GoogleMapHelper.defaultMapSettings;
 import static www.fiberathome.com.parkingapp.utils.GoogleMapHelper.getDefaultPolyLines;
 
 @SuppressLint("NonConstantResourceId")
+@SuppressWarnings("unused")
 public class HomeFragment extends BaseFragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener, GoogleMap.OnMarkerClickListener,
         IOnLoadLocationListener, GeoQueryEventListener,
@@ -605,6 +606,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 public void onStateChanged(@NonNull View view, int newState) {
                     switch (newState) {
                         case BottomSheetBehavior.STATE_HIDDEN:
+                        case BottomSheetBehavior.STATE_SETTLING:
                             break;
                         case BottomSheetBehavior.STATE_EXPANDED:
                             bottomSheet.requestLayout();
@@ -622,8 +624,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             toolbarAnimVisibility(view, true);
                             if (bottomSheetAdapter != null)
                                 bottomSheetAdapter.onAttachedToRecyclerView(bottomSheetRecyclerView);
-                            break;
-                        case BottomSheetBehavior.STATE_SETTLING:
                             break;
                         case BottomSheetBehavior.STATE_HALF_EXPANDED:
                             break;
@@ -681,7 +681,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
             polyLineList = new ArrayList<>();
 
-            mService = Common.getGoogleApi();
+            mService = CommonGoogleApi.getGoogleApi();
         }
     }
 
@@ -1015,7 +1015,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        locationRequest = new LocationRequest();
+        //locationRequest = new LocationRequest();
+        locationRequest = LocationRequest.create();
         locationRequest.setInterval(1000);
         locationRequest.setFastestInterval(1000);
         //locationRequest.setSmallestDisplacement(10f); //100 meter
@@ -1243,7 +1244,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private List<LatLng> initialRoutePoints;
 
     @Override
-    public void onLocationChanged(Location location) {
+    public void onLocationChanged(@NonNull Location location) {
         //Timber.e("onLocationChanged: ");
         currentLocation = location;
 
@@ -3018,7 +3019,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
     }
 
-    private boolean isSearchAreaVisible = false;
+    //private boolean isSearchAreaVisible = false;
 
     @SuppressLint("SetTextI18n")
     private void layoutSearchVisible(boolean isVisible, String name, String count,
@@ -3035,7 +3036,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             linearLayoutSearchNameCount.setVisibility(View.GONE);
             textViewSearchParkingAreaCount.setText(count);
             textViewSearchParkingAreaName.setText(TextUtils.getInstance().capitalizeFirstLetter(name));
-            isSearchAreaVisible = true;
+            //isSearchAreaVisible = true;
         } else {
             linearLayoutSearchBottom.setVisibility(View.GONE);
         }
@@ -3074,8 +3075,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         String uid;
 
-        String locationName = "";
-
         if (isVisible) {
             if (bottomSheetPlaceLatLng != null) {
                 MarkerOptions markerOptions = new MarkerOptions();
@@ -3090,12 +3089,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         String latitude1 = sensor.getLatitude();
                         String longitude1 = sensor.getLongitude();
                         uid = sensor.getUid();
-
-                        if (isSearchAreaVisible) {
-                            locationName = name;
-                        } else {
-                            locationName = sensor.getParkingArea();
-                        }
 
                         double distanceForCount = calculateDistance(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude,
                                 MathUtils.getInstance().convertToDouble(latitude1),
@@ -3747,6 +3740,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void sendNotification(String title, String content) {
         String NOTIFICATION_CHANNEL_ID = "Shawn_Muktadir";
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -3846,7 +3840,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private void buildLocationCallBack() {
         locationCallback = new LocationCallback() {
             @Override
-            public void onLocationResult(final LocationResult locationResult) {
+            public void onLocationResult(@NonNull final LocationResult locationResult) {
                 if (mMap != null) {
                     lastLocation = locationResult.getLastLocation();
                     SharedData.getInstance().setLastLocation(lastLocation);
@@ -3857,7 +3851,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     }
 
     private void buildLocationRequest() {
-        locationRequest = new LocationRequest();
+        //locationRequest = new LocationRequest();
+        locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(5000);
         locationRequest.setFastestInterval(3000);
@@ -3874,15 +3869,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             return true;
         } else {
             Timber.e("else called");
-            /*AlertDialog alertDialog = new AlertDialog.Builder(context)
-                    .setTitle("GPS Permissions")
-                    .setMessage("GPS is required for this app to work. Please enable GPS.")
-                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
-                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        startActivityForResult(intent, GPS_REQUEST_CODE);
-                    }))
-                    .setCancelable(false)
-                    .show();*/
         }
 
         return false;

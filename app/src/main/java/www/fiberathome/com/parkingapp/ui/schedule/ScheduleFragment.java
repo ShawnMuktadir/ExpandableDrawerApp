@@ -6,7 +6,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.VibrationEffect;
@@ -26,13 +25,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
-import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
 import com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker;
 import com.google.gson.Gson;
@@ -78,6 +75,7 @@ import static android.content.Context.LOCATION_SERVICE;
 import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
 
 @SuppressLint("NonConstantResourceId")
+@SuppressWarnings("unused")
 public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBtnClickListener,
         IOnBackPressListener, AdapterView.OnItemSelectedListener {
 
@@ -127,9 +125,9 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
     private boolean setArrivedDate = false;
     private boolean more = false;
     private FragmentChangeListener listener;
-    private DialogHelper.PayBtnClickListener payBtnClickListener;
+    public DialogHelper.PayBtnClickListener payBtnClickListener;
     private String markerUid = "";
-    private long arrived, departure, difference;
+    public long arrived, departure, difference;
 
     public ScheduleFragment() {
         // Required empty public constructor
@@ -157,7 +155,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
         spinner.setOnItemSelectedListener(this);
 
         // Spinner Drop down elements
-        List<String> categories = new ArrayList<String>();
+        List<String> categories = new ArrayList<>();
         categories.add("Item 1");
         categories.add("Item 2");
         categories.add("Item 3");
@@ -271,9 +269,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
     }
 
     private void setListeners() {
-        ivBackArrow.setOnClickListener(v -> {
-            onBackPressed();
-        });
+        ivBackArrow.setOnClickListener(v -> onBackPressed());
 
         setBtn.setOnClickListener(v -> {
             Timber.d("onClick: didnot entered to condition");
@@ -420,56 +416,51 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
         Timber.e("storeReservation post method e dhukche");
         showLoading(context);
         HttpsTrustManager.allowAllSSL();
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_STORE_RESERVATION, new Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_STORE_RESERVATION, response -> {
+            //progressDialog.dismiss();
+            hideLoading();
+            Timber.e("response -> %s", new Gson().toJson(response));
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                Timber.e(jsonObject.toString());
+                if (!jsonObject.getBoolean("error")) {
+                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.reservation_successful));
+                    //check 15 minutes before departure
+                    //ToDo
+                    startAlarm(convertLongToCalendar(departedDate.getTime()));
+                    if (getActivity() != null)
+                        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
 
-            @RequiresApi(api = Build.VERSION_CODES.O)
-            @Override
-            public void onResponse(String response) {
-                //progressDialog.dismiss();
-                hideLoading();
-                Timber.e("response -> %s", new Gson().toJson(response));
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    Timber.e(jsonObject.toString());
-                    if (!jsonObject.getBoolean("error")) {
-                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.reservation_successful));
-                        //check 15 minutes before departure
-                        //ToDo
-                        startAlarm(convertLongToCalendar(departedDate.getTime()));
-                        if (getActivity() != null)
-                            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
+                    Timber.e("response no error called");
+                    Timber.e(jsonObject.getString("reservation"));
+                    Timber.e(jsonObject.getString("bill"));
 
-                        Timber.e("response no error called");
-                        Timber.e(jsonObject.getString("reservation"));
-                        Timber.e(jsonObject.getString("bill"));
+                    // creating a new user object
+                    Reservation reservation = new Reservation();
+                    // getting the reservation from the response
+                    //JSONObject reservationJson = jsonObject.getJSONObject("reservation");
 
-                        // creating a new user object
-                        Reservation reservation = new Reservation();
-                        // getting the reservation from the response
-                        //JSONObject reservationJson = jsonObject.getJSONObject("reservation");
+                    JSONObject reservationJson = new JSONObject(response);
+                    Timber.e("reservationJson -> %s", new Gson().toJson(reservationJson));
 
-                        JSONObject reservationJson = new JSONObject(response);
-                        Timber.e("reservationJson -> %s", new Gson().toJson(reservationJson));
-
-                        reservation.setId(reservationJson.getInt("reservation"));
-                        /*reservation.setMobileNo(reservationJson.getString("mobile_no"));
-                        reservation.setTimeStart(reservationJson.getString("time_start"));
-                        reservation.setTimeEnd(reservationJson.getString("time_end"));
-                        reservation.setSpotId(reservationJson.getString("spot_id"));*/
-                        if (isGPSEnabled()) {
-                            ApplicationUtils.replaceFragmentWithAnimation(getParentFragmentManager(), HomeFragment.newInstance());
-                        } else {
-                            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
-                        }
+                    reservation.setId(reservationJson.getInt("reservation"));
+                    /*reservation.setMobileNo(reservationJson.getString("mobile_no"));
+                    reservation.setTimeStart(reservationJson.getString("time_start"));
+                    reservation.setTimeEnd(reservationJson.getString("time_end"));
+                    reservation.setSpotId(reservationJson.getString("spot_id"));*/
+                    if (isGPSEnabled()) {
+                        ApplicationUtils.replaceFragmentWithAnimation(getParentFragmentManager(), HomeFragment.newInstance());
                     } else {
-                        hideLoading();
-                        Toast.makeText(getContext(), "Reservation Failed! Please Try Again. ", Toast.LENGTH_SHORT).show();
+                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
                     }
-
-                } catch (JSONException e) {
+                } else {
                     hideLoading();
-                    e.printStackTrace();
+                    Toast.makeText(getContext(), "Reservation Failed! Please Try Again. ", Toast.LENGTH_SHORT).show();
                 }
+
+            } catch (JSONException e) {
+                hideLoading();
+                e.printStackTrace();
             }
         }, error -> {
             hideLoading();
@@ -512,7 +503,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
         long min = 0;
         long difference;
         try {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm aa"); // for 12-hour system, hh should be used instead of HH
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm aa", Locale.US); // for 12-hour system, hh should be used instead of HH
             // There is no minute different between the two, only 8 hours difference. We are not considering Date, So minute will always remain 0
             Date date1 = simpleDateFormat.parse(String.valueOf(arrived));
             Date date2 = simpleDateFormat.parse(String.valueOf(departure));
@@ -550,7 +541,6 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                     }))
                     .setCancelable(false)
                     .show();
-
         }
 
         return false;

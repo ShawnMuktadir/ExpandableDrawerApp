@@ -15,18 +15,19 @@ import timber.log.Timber;
 /**
  * Created by NgocTri on 12/11/2017.
  */
-
+@SuppressWarnings("unused")
 public class DirectionsParser {
     /**
      * Returns a list of lists containing latitude and longitude from a JSONObject
      */
+    @SuppressWarnings("rawtypes")
     public List<List<HashMap<String, String>>> parse(JSONObject jObject) {
 
-        List<List<HashMap<String, String>>> routes = new ArrayList<List<HashMap<String, String>>>();
+        List<List<HashMap<String, String>>> routes = new ArrayList<>();
         HashMap<String, Object> hashMap = new HashMap<>();
-        JSONArray jRoutes = null;
-        JSONArray jLegs = null;
-        JSONArray jSteps = null;
+        JSONArray jRoutes;
+        JSONArray jLegs;
+        JSONArray jSteps;
         double totalDistance = 0;
         long totalDuration = 0;
 
@@ -51,13 +52,13 @@ public class DirectionsParser {
 
                     //Loop for all steps
                     for (int k = 0; k < jSteps.length(); k++) {
-                        String polyline = "";
+                        String polyline;
                         polyline = (String) ((JSONObject) ((JSONObject) jSteps.get(k)).get("polyline")).get("points");
                         List list = decodePolyline(polyline);
 
                         //Loop for all points
                         for (int l = 0; l < list.size(); l++) {
-                            HashMap<String, String> hm = new HashMap<String, String>();
+                            HashMap<String, String> hm = new HashMap<>();
                             hm.put("lat", Double.toString(((LatLng) list.get(l)).latitude));
                             hm.put("lon", Double.toString(((LatLng) list.get(l)).longitude));
                             path.add(hm);
@@ -77,6 +78,7 @@ public class DirectionsParser {
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (Exception e) {
+            Timber.e("catch all called");
         }
 
         return routes;
@@ -84,6 +86,7 @@ public class DirectionsParser {
 
     // Dijkstra's shortest path algorithm
 
+    @SuppressWarnings("rawtypes")
     private List decodePolyline(String encoded) {
 
         List poly = new ArrayList();

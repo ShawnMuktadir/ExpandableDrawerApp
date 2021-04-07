@@ -38,6 +38,7 @@ import static android.content.Context.LOCATION_SERVICE;
 import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
 
 @SuppressLint("NonConstantResourceId")
+@SuppressWarnings("unused")
 public class SplashFragment extends BaseFragment {
 
     @BindView(R.id.splash_iv_logo)
@@ -108,8 +109,9 @@ public class SplashFragment extends BaseFragment {
             } else {
                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.rules_for_using_app_through_gps));
             }
-        } catch (Exception e) {
+        } catch (NullPointerException e) {
             e.getCause();
+            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
         }
     }
 

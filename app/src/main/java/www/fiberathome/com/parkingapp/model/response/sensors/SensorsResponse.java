@@ -1,6 +1,5 @@
 package www.fiberathome.com.parkingapp.model.response.sensors;
 
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -8,6 +7,7 @@ import java.util.List;
 
 import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 
+@SuppressWarnings("unused")
 public class SensorsResponse extends BaseResponse {
 
     @SerializedName("sensors")

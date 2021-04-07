@@ -1,24 +1,24 @@
 package www.fiberathome.com.parkingapp.utils;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.data.StaticData;
 import www.fiberathome.com.parkingapp.utils.internet.ConnectivityInterceptor;
 
+@SuppressWarnings("unused")
 public class ApplicationUtils {
 
     public static OkHttpClient getClient(final Context context) {
@@ -26,23 +26,20 @@ public class ApplicationUtils {
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-        OkHttpClient client = new OkHttpClient
+        return new OkHttpClient
                 .Builder()
-                .addInterceptor(new Interceptor() {
-                    @Override
-                    public Response intercept(Chain chain) throws IOException {
-                        Request request = chain.request();
-                        Request.Builder requestBuilder = request.newBuilder();
-                        requestBuilder.addHeader(StaticData.OS, "Android");
-                        //requestBuilder.addHeader(StaticData.VERSION, BuildConfig.VERSION_NAME);
-                        if (ConnectivityUtils.getInstance().checkInternet(context)) {
-                            requestBuilder.header("Cache-Control", "public, max-age=" + 60);
-                        } else {
-                            requestBuilder.header("Cache-Control", "public, only-if-cached, max-stale=" + 60 * 60 * 24 * 7);
-                        }
-                        request = requestBuilder.build();
-                        return chain.proceed(request);
+                .addInterceptor(chain -> {
+                    Request request = chain.request();
+                    Request.Builder requestBuilder = request.newBuilder();
+                    requestBuilder.addHeader(StaticData.OS, "Android");
+                    //requestBuilder.addHeader(StaticData.VERSION, BuildConfig.VERSION_NAME);
+                    if (ConnectivityUtils.getInstance().checkInternet(context)) {
+                        requestBuilder.header("Cache-Control", "public, max-age=" + 60);
+                    } else {
+                        requestBuilder.header("Cache-Control", "public, only-if-cached, max-stale=" + 60 * 60 * 24 * 7);
                     }
+                    request = requestBuilder.build();
+                    return chain.proceed(request);
                 })
                 .addInterceptor(new ConnectivityInterceptor(context))
                 .addInterceptor(httpLoggingInterceptor)
@@ -50,7 +47,6 @@ public class ApplicationUtils {
                 .writeTimeout(50, TimeUnit.SECONDS)
                 .readTimeout(50, TimeUnit.SECONDS)
                 .build();
-        return client;
     }
 
     public static void addFragmentToActivity(@NonNull FragmentManager fragmentManager,
@@ -91,13 +87,12 @@ public class ApplicationUtils {
         transaction.commit();
     }
 
-    public static Fragment recreateFragment(@NonNull FragmentManager fragmentManager,
-                                            @NonNull Fragment fragment) {
+    public static void recreateFragment(@NonNull FragmentManager fragmentManager,
+                                        @NonNull Fragment fragment) {
         try {
             Fragment.SavedState savedState = fragmentManager.saveFragmentInstanceState(fragment);
             Fragment newInstance = fragment.getClass().newInstance();
             newInstance.setInitialSavedState(savedState);
-            return newInstance;
         } catch (Exception e) // InstantiationException, IllegalAccessException
         {
             throw new RuntimeException("Cannot reinstated fragment " + fragment.getClass().getName(), e);
@@ -115,5 +110,15 @@ public class ApplicationUtils {
                 .detach(fragment)
                 .attach(fragment)
                 .commit();
+    }
+
+    /**
+     * Redirect to play store
+     */
+    public static void redirectStore(Context context) {
+        Uri updateUrl = Uri.parse("market://details?id=" + context.getPackageName());
+        final Intent intent = new Intent(Intent.ACTION_VIEW, updateUrl);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
     }
 }

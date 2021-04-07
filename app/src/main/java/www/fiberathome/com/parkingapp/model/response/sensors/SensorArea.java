@@ -1,5 +1,6 @@
 package www.fiberathome.com.parkingapp.model.response.sensors;
 
+@SuppressWarnings("unused")
 public class SensorArea {
 
     private String parkingArea;
@@ -8,10 +9,10 @@ public class SensorArea {
     private String duration;
     private boolean isChecked;
 
-    private String placeId = null;
-    private double endLat = 0.0;
-    private double endLng = 0.0;
-    private double fetchDistance = 0.0;
+    private final double fetchDistance = 0.0;
+    private String placeId;
+    private double endLat;
+    private double endLng;
 
     public SensorArea(String parkingArea, String placeId, double endLat, double endLng, String count, double fetchDistance) {
         this.parkingArea = parkingArea;

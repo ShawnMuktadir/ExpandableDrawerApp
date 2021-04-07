@@ -43,7 +43,7 @@ public class ForceUpgradeManager implements LifecycleObserver {
 
     @Nullable
     private WeakReference<Activity> activityWeakReference;
-    private final Application.ActivityLifecycleCallbacks callbacks =
+    public final Application.ActivityLifecycleCallbacks callbacks =
             new Application.ActivityLifecycleCallbacks() {
 
                 @Override
@@ -111,8 +111,6 @@ public class ForceUpgradeManager implements LifecycleObserver {
 
     /**
      * Gets update alert.
-     *
-     * @param updateUrl
      */
     private void onUpdateNeeded(String updateUrl) {
         Activity temp = getCurrentActivity();
@@ -123,7 +121,8 @@ public class ForceUpgradeManager implements LifecycleObserver {
 
     @SuppressLint("InflateParams")
     public void showAppUpdateDialog(String updateUrl) {
-        View dialogView = getLayoutInflater().inflate(context, bottom_sheet_dialog_app_update_options, null);
+        getLayoutInflater();
+        View dialogView = View.inflate(context, bottom_sheet_dialog_app_update_options, null);
 
         AppCompatButton buttonUpdate = dialogView.findViewById(R.id.button_update);
         buttonUpdate.setOnClickListener(view -> {
@@ -132,11 +131,11 @@ public class ForceUpgradeManager implements LifecycleObserver {
         });
 
         bottomSheetDialogAppUpdate = DialogUtils.getInstance().bottomSheetDialog(getCurrentActivity(), dialogView,
-                true, true);
+                true, false);
     }
 
-    private View getLayoutInflater() {
-        return View.inflate(context, bottom_sheet_dialog_app_update_options, null);
+    private void getLayoutInflater() {
+        View.inflate(context, bottom_sheet_dialog_app_update_options, null);
     }
 
     @SuppressLint("QueryPermissionsNeeded")
@@ -154,26 +153,16 @@ public class ForceUpgradeManager implements LifecycleObserver {
                 context.startActivity(intent);
             }
         } catch (Exception e) {
-            Timber.d("Exception -> %s", e.getCause());
+            Timber.e(e.getCause());
             TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.something_went_wrong));
         }
-    }
-
-    /**
-     * Redirect to play store
-     */
-    private void redirectStore() {
-        Uri updateUrl = Uri.parse("market://details?id=" + context.getPackageName());
-        final Intent intent = new Intent(Intent.ACTION_VIEW, updateUrl);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
     }
 
     private void checkForceUpdateNeeded() {
         final FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.getInstance();
         // long cacheExpiration = 12 * 60 * 60; // fetch every 12 hours
         // set in-app defaults
-        Map<String, Object> remoteConfigDefaults = new HashMap();
+        Map<String, Object> remoteConfigDefaults = new HashMap<>();
         remoteConfigDefaults.put(KEY_UPDATE_REQUIRED, false);
         remoteConfigDefaults.put(KEY_CURRENT_VERSION, BuildConfig.VERSION_NAME);
         remoteConfigDefaults.put(KEY_UPDATE_URL,

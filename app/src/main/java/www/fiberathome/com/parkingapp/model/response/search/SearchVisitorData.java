@@ -2,8 +2,8 @@ package www.fiberathome.com.parkingapp.model.response.search;
 
 import java.io.Serializable;
 
+@SuppressWarnings("unused")
 public class SearchVisitorData implements Serializable {
-//    , Comparable<SearchVisitorData>
 
     private String visitedArea;
     private String placeId;

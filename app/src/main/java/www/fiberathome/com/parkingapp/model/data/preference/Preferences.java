@@ -1,5 +1,6 @@
 package www.fiberathome.com.parkingapp.model.data.preference;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -8,6 +9,8 @@ import www.fiberathome.com.parkingapp.model.user.User;
 
 import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
 
+@SuppressLint("StaticFieldLeak")
+@SuppressWarnings("unused")
 public class Preferences {
 
     private static final String SHARED_PREF_NAME = "PARKINGAPP";
@@ -54,6 +57,7 @@ public class Preferences {
     }
 
     // String IO
+    @SuppressWarnings("SameParameterValue")
     private void saveValue(String key, String value) {
         if (key == null || key.isEmpty()) return;
 
@@ -63,6 +67,7 @@ public class Preferences {
         editor.apply();
     }
 
+    @SuppressWarnings("SameParameterValue")
     private String getValue(String key, String defaultValue) {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getString(key, defaultValue);
@@ -88,13 +93,9 @@ public class Preferences {
         return sharedPreferences.getBoolean(KEY_IS_LOCATION_PERMISSION, false);
     }
 
-    public boolean isLoggedIn(){
+    public boolean isLoggedIn() {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
-        if (sharedPreferences.getString(KEY_MOBILE_NO, null) != null){
-            return true;
-        }else {
-            return false;
-        }
+        return sharedPreferences.getString(KEY_MOBILE_NO, null) != null;
     }
 
     public User getUser(){

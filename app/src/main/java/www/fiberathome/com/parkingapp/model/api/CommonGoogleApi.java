@@ -1,6 +1,6 @@
 package www.fiberathome.com.parkingapp.model.api;
 
-public class Common {
+public class CommonGoogleApi {
     public static final String baseUrl = "https://googleapis.com";
 
     public static IGoogleApi getGoogleApi() {

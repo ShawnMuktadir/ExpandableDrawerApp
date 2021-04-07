@@ -10,6 +10,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import www.fiberathome.com.parkingapp.R;
 
+@SuppressWarnings("unused")
 public class SnackBarUtils {
     private static SnackBarUtils snackBarUtils;
 
@@ -26,7 +27,7 @@ public class SnackBarUtils {
         Snackbar snack = Snackbar.make(view, message, Snackbar.LENGTH_LONG);
         View sbview = snack.getView();
         sbview.setBackgroundColor(ContextCompat.getColor(context, R.color.glossy_green));
-        TextView textView = (TextView) sbview.findViewById(R.id.snackbar_text);
+        TextView textView = sbview.findViewById(R.id.snackbar_text);
         textView.setTextColor(ContextCompat.getColor(context, R.color.glossy_white));
         textView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         snack.setAction(actionDismissText, v -> {
@@ -40,7 +41,7 @@ public class SnackBarUtils {
         Snackbar snack = Snackbar.make(view, s, Snackbar.LENGTH_LONG);
         View sbview = snack.getView();
         sbview.setBackgroundColor(ContextCompat.getColor(context, R.color.quantum_orange));
-        TextView textView = (TextView) sbview.findViewById(R.id.snackbar_text);
+        TextView textView = sbview.findViewById(R.id.snackbar_text);
         textView.setTextColor(ContextCompat.getColor(context, R.color.white));
         snack.setAction(actionDismissText, v -> {
         });
@@ -52,7 +53,7 @@ public class SnackBarUtils {
         Snackbar snack = Snackbar.make(view, s, Snackbar.LENGTH_LONG);
         View sbview = snack.getView();
         sbview.setBackgroundColor(ContextCompat.getColor(context, R.color.red));
-        TextView textView = (TextView) sbview.findViewById(R.id.snackbar_text);
+        TextView textView = sbview.findViewById(R.id.snackbar_text);
         textView.setTextColor(ContextCompat.getColor(context, R.color.white));
         snack.setAction(actionDismissText, v -> {
         });

@@ -29,11 +29,13 @@ import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.ui.settings.adapter.SettingAdapter;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
 
 @SuppressLint("NonConstantResourceId")
+@SuppressWarnings("unused")
 public class SettingsFragment extends BaseFragment implements SettingAdapter.OnItemClickListener, IOnBackPressListener {
 
     @BindView(R.id.recyclerView_settings)
@@ -100,16 +102,7 @@ public class SettingsFragment extends BaseFragment implements SettingAdapter.OnI
         return false;
     }
 
-    @Override
-    public void onItemClick(View view, int position) {
-        switch (position) {
-            case 0:
-                context.startActivity(LanguageSettingActivity.class);
-                break;
-
-            //ToDo for more settings
-        }
-    }
+    public AlertDialog alertDialog;
 
     private void initView(View view) {
         unbinder = ButterKnife.bind(this, view);
@@ -142,6 +135,23 @@ public class SettingsFragment extends BaseFragment implements SettingAdapter.OnI
         return settings;
     }
 
+    @Override
+    public void onItemClick(View view, int position) {
+        switch (position) {
+            case 0:
+                context.startActivity(LanguageSettingActivity.class);
+                break;
+
+            case 1:
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.not_implemented_yet));
+                break;
+
+            //ToDo for more settings
+            default:
+                throw new IllegalStateException("Unexpected value: " + position);
+        }
+    }
+
     private boolean isGPSEnabled() {
 
         LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
@@ -151,7 +161,7 @@ public class SettingsFragment extends BaseFragment implements SettingAdapter.OnI
         if (providerEnabled) {
             return true;
         } else {
-            AlertDialog alertDialog = new AlertDialog.Builder(context)
+            alertDialog = new AlertDialog.Builder(context)
                     .setTitle("GPS Permissions")
                     .setMessage("GPS is required for this app to work. Please enable GPS.")
                     .setPositiveButton("Yes", ((dialogInterface, i) -> {

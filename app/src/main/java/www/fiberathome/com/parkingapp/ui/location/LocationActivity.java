@@ -41,17 +41,7 @@ public class LocationActivity extends BaseActivity {
 
     private BaseActivity context;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_location);
-
-        context = (BaseActivity) this;
-
-        unbinder = ButterKnife.bind(this);
-
-        setListeners();
-    }
+    public AlertDialog alertDialog;
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -171,6 +161,18 @@ public class LocationActivity extends BaseActivity {
                 GPS_REQUEST_CODE));
     }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_location);
+
+        context = this;
+
+        unbinder = ButterKnife.bind(this);
+
+        setListeners();
+    }
+
     public boolean isGPSEnabled() {
 
         LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
@@ -180,7 +182,7 @@ public class LocationActivity extends BaseActivity {
         if (providerEnabled) {
             return true;
         } else {
-            AlertDialog alertDialog = new AlertDialog.Builder(context)
+            alertDialog = new AlertDialog.Builder(context)
                     .setTitle("GPS Permissions")
                     .setMessage("GPS is required for this app to work. Please enable GPS.")
                     .setPositiveButton("Yes", ((dialogInterface, i) -> {

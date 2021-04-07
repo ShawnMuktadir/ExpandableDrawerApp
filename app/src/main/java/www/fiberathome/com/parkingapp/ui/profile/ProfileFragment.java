@@ -1,7 +1,6 @@
 package www.fiberathome.com.parkingapp.ui.profile;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -30,6 +29,7 @@ import www.fiberathome.com.parkingapp.utils.TextUtils;
 import static android.content.Context.LOCATION_SERVICE;
 
 @SuppressLint("NonConstantResourceId")
+@SuppressWarnings("unused")
 public class ProfileFragment extends Fragment implements IOnBackPressListener {
 
     @BindView(R.id.tvUserName)
@@ -45,7 +45,8 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
     ImageView ivUserProfilePic;
 
     private Unbinder unbinder;
-    private Context context;
+
+    private ProfileActivity context;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -67,9 +68,13 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
+
         unbinder = ButterKnife.bind(this, view);
-        context = getActivity();
+
+        context = (ProfileActivity) getActivity();
+
         User user = Preferences.getInstance(context).getUser();
+
         setData(user);
 
         return view;
@@ -107,17 +112,7 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
         if (providerEnabled) {
             return true;
         } else {
-
-            /*AlertDialog alertDialog = new AlertDialog.Builder(context)
-                    .setTitle("GPS Permissions")
-                    .setMessage("GPS is required for this app to work. Please enable GPS.")
-                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
-                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        startActivityForResult(intent, GPS_REQUEST_CODE);
-                    }))
-                    .setCancelable(false)
-                    .show();*/
-
+            Timber.e("else called");
         }
         return false;
     }
@@ -139,6 +134,6 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
 
         String url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
         Timber.e("Image URL -> %s", url);
-        Glide.with(getActivity()).load(url).placeholder(R.drawable.blank_profile).dontAnimate().into(ivUserProfilePic);
+        Glide.with(context).load(url).placeholder(R.drawable.blank_profile).dontAnimate().into(ivUserProfilePic);
     }
 }

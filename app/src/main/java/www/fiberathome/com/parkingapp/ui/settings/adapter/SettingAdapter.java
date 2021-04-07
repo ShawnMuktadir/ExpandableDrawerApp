@@ -47,9 +47,7 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.Settings
         if (data.getImage() == 0) viewHolder.imageViewIcon.setVisibility(View.INVISIBLE);
         else viewHolder.imageViewIcon.setImageResource(data.getImage());
 
-        viewHolder.itemView.setOnClickListener(v -> {
-            listener.onItemClick(viewHolder.itemView, position);
-        });
+        viewHolder.itemView.setOnClickListener(v -> listener.onItemClick(viewHolder.itemView, position));
     }
 
     @Override

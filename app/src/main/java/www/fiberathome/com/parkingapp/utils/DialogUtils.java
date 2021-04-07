@@ -23,6 +23,7 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.ui.booking.newBooking.BookingActivity;
 import www.fiberathome.com.parkingapp.ui.widget.BaseBottomSheetDialog;
 
+@SuppressWarnings("unused")
 public class DialogUtils {
     private static DialogUtils dialogUtils;
 
@@ -118,25 +119,23 @@ public class DialogUtils {
             builder.setCancelable(true);
             builder.setPositiveButton(context.getResources().getString(R.string.get_support),
                     (dialog, which) -> DialogUtils.getInstance().showAlertDialog(context.getString(R.string.number),
-                    context, context.getString(R.string.call),
-                    context.getString(R.string.cancel),
-                    (dialog1, which1) -> {
-                        Timber.e("Positive Button clicked");
-                        String number = context.getString(R.string.number);
-                        Intent intent = new Intent();
-                        intent.setAction(Intent.ACTION_DIAL); // Action for what intent called for
-                        intent.setData(Uri.parse("tel: " + number)); // Datum with intent respective action on intent
-                        context.startActivity(intent);
-                        dialog1.dismiss();
-                    },
+                            context, context.getString(R.string.call),
+                            context.getString(R.string.cancel),
+                            (dialog1, which1) -> {
+                                Timber.e("Positive Button clicked");
+                                String number = context.getString(R.string.number);
+                                Intent intent = new Intent();
+                                intent.setAction(Intent.ACTION_DIAL); // Action for what intent called for
+                                intent.setData(Uri.parse("tel: " + number)); // Datum with intent respective action on intent
+                                context.startActivity(intent);
+                                dialog1.dismiss();
+                            },
 
-                    (dialog1, which1) -> {
-                        Timber.e("Negative Button Clicked");
-                        dialog1.dismiss();
-                    }));
-            builder.setNegativeButton(context.getResources().getString(R.string.ok), (dialog, which) -> {
-                dialog.dismiss();
-            });
+                            (dialog1, which1) -> {
+                                Timber.e("Negative Button Clicked");
+                                dialog1.dismiss();
+                            }));
+            builder.setNegativeButton(context.getResources().getString(R.string.ok), (dialog, which) -> dialog.dismiss());
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
 
@@ -152,9 +151,7 @@ public class DialogUtils {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             builder.setMessage(message);
             builder.setCancelable(true);
-            builder.setPositiveButton(context.getResources().getString(R.string.ok), (dialog, which) -> {
-                dialog.dismiss();
-            });
+            builder.setPositiveButton(context.getResources().getString(R.string.ok), (dialog, which) -> dialog.dismiss());
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
 
@@ -165,6 +162,7 @@ public class DialogUtils {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     public void showExitDialog(final Activity activity) {
         android.app.AlertDialog.Builder dialogBuilder = new android.app.AlertDialog.Builder(activity, R.style.Theme_AppCompat_NoActionBar);
         LayoutInflater inflater = activity.getLayoutInflater();
@@ -184,14 +182,10 @@ public class DialogUtils {
         lp.dimAmount = 0.4f;
         alertDialog.getWindow().setAttributes(lp);
         alertDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);*/
-        outside_view.setOnTouchListener(new View.OnTouchListener() {
-            @SuppressLint("ClickableViewAccessibility")
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                alertDialog.dismiss();
+        outside_view.setOnTouchListener((View view, MotionEvent motionEvent) -> {
+            alertDialog.dismiss();
 
-                return false;
-            }
+            return false;
         });
 
         tv_exit.setOnClickListener(v -> {

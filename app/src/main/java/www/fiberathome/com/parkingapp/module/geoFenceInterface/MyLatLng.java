@@ -1,5 +1,6 @@
 package www.fiberathome.com.parkingapp.module.geoFenceInterface;
 
+@SuppressWarnings("unused")
 public class MyLatLng  {
     private double latitude;
     private double longitude;

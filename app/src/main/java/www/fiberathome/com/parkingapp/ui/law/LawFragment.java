@@ -52,8 +52,6 @@ import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
 @SuppressLint("NonConstantResourceId")
 public class LawFragment extends BaseFragment implements IOnBackPressListener {
 
-    private final String TAG = getClass().getSimpleName();
-
     @BindView(R.id.editTextSearchLaw)
     EditText editTextSearchLaw;
 
@@ -71,8 +69,6 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
     private LawActivity context;
 
     private LawAdapter lawAdapter;
-
-    private final ArrayList<Result> resultArrayList = new ArrayList<>();
 
     public LawFragment() {
         // Required empty public constructor

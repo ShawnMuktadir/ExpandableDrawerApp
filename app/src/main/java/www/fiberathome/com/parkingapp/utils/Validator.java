@@ -13,6 +13,8 @@ import www.fiberathome.com.parkingapp.model.data.StaticData;
 /**
  * Created by Zahidul_Islam_George on 08-November-2016.
  */
+
+@SuppressWarnings("unused")
 public class Validator {
     public static String EMAIL_ERROR = "Email is not valid";
     public static int PASSWORD_COUNT_MAX = 20;

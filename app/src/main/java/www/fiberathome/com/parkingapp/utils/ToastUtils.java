@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import www.fiberathome.com.parkingapp.R;
 
+@SuppressWarnings("unused")
 public class ToastUtils {
 
     private static ToastUtils toastUtils;

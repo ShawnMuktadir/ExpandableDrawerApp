@@ -75,6 +75,7 @@ import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
 @SuppressLint("NonConstantResourceId")
+@SuppressWarnings("unused")
 public class SignUpFragment extends BaseFragment implements View.OnClickListener, ProgressView {
 
     public static final String TAG = SignUpActivity.class.getSimpleName();
@@ -530,6 +531,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         startActivityForResult(cameraIntent, REQUEST_PICK_CAMERA);
     }
 
+    @SuppressWarnings("SameParameterValue")
     private Bitmap getResizedBitmap(Bitmap image, int maxSize) {
         int width = image.getWidth();
         int height = image.getHeight();

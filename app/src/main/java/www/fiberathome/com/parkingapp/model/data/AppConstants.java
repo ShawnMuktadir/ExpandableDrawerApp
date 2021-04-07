@@ -1,5 +1,6 @@
 package www.fiberathome.com.parkingapp.model.data;
 
+@SuppressWarnings("unused")
 public class AppConstants {
     public static final int REQUEST_CHECK_SETTINGS = 401;
     public static int GPS_REQUEST = 200;

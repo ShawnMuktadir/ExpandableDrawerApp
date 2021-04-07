@@ -7,7 +7,9 @@ import android.widget.Toast;
 import com.sdsmdg.tastytoast.TastyToast;
 import com.vdx.animatedtoast.AnimatedToast;
 
+@SuppressWarnings("unused")
 public class TastyToastUtils {
+
     public static void showTastySuccessToast(Context context, String message) {
         //TastyToast.makeText(context, message, TastyToast.LENGTH_LONG, TastyToast.SUCCESS).show();
         AnimatedToast.Success(context, "Success", message, Gravity.BOTTOM, Toast.LENGTH_LONG, AnimatedToast.STYLE_DARK, AnimatedToast.ANIMATION_ROTATE);

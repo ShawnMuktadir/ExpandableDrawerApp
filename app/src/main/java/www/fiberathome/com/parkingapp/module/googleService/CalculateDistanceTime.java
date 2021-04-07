@@ -2,7 +2,6 @@ package www.fiberathome.com.parkingapp.module.googleService;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -21,10 +20,11 @@ import java.util.Set;
 
 import timber.log.Timber;
 
+@SuppressWarnings("unused")
 public class CalculateDistanceTime {
 
     private taskCompleteListener mTaskListener;
-    private final Context mContext;
+    public final Context mContext;
 
 
     public CalculateDistanceTime(Context context) {
@@ -82,9 +82,9 @@ public class CalculateDistanceTime {
 
             BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
 
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
 
-            String line = "";
+            String line;
             while ((line = br.readLine()) != null) {
                 sb.append(line);
             }
@@ -120,7 +120,7 @@ public class CalculateDistanceTime {
                 // Fetching the data from web service
                 data = downloadUrl(url[0]);
             } catch (Exception e) {
-                Log.d("Background Task", e.toString());
+                Timber.d("Background Task -> %s", e.toString());
             }
             return data;
         }

@@ -1,5 +1,6 @@
 package www.fiberathome.com.parkingapp.module.googleService;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,15 +11,13 @@ import com.google.android.gms.maps.model.Marker;
 
 import www.fiberathome.com.parkingapp.R;
 
-/**
- * Created by User on 10/2/2017.
- */
-
+@SuppressWarnings("unused")
 public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
     private final View mWindow;
-    private final Context mContext;
+    public final Context mContext;
 
+    @SuppressLint("InflateParams")
     public CustomInfoWindowAdapter(Context context) {
         mContext = context;
         mWindow = LayoutInflater.from(context).inflate(R.layout.custom_info_window, null);
@@ -27,14 +26,14 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
     private void rendowWindowText(Marker marker, View view){
 
         String title = marker.getTitle();
-        TextView tvTitle = (TextView) view.findViewById(R.id.title);
+        TextView tvTitle = view.findViewById(R.id.title);
 
         if(!title.equals("")){
             tvTitle.setText(title);
         }
 
         String snippet = marker.getSnippet();
-        TextView tvSnippet = (TextView) view.findViewById(R.id.snippet);
+        TextView tvSnippet = view.findViewById(R.id.snippet);
 
         if(!snippet.equals("")){
             tvSnippet.setText(snippet);
