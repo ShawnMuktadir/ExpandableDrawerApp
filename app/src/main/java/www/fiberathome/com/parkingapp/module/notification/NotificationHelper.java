@@ -66,5 +66,4 @@ class NotificationHelper extends ContextWrapper {
                     .setSmallIcon(R.mipmap.ic_launcher);
         }
     }
-
 }
