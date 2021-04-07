@@ -2,8 +2,10 @@ package www.fiberathome.com.parkingapp.ui.splash;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -39,7 +41,9 @@ import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CO
 
 @SuppressLint("NonConstantResourceId")
 @SuppressWarnings("unused")
-public class SplashFragment extends BaseFragment {
+public class SplashFragment extends BaseFragment implements LocationListener {
+
+    private static final String TAG = "SplashFragment";
 
     @BindView(R.id.splash_iv_logo)
     ImageView imageViewSplashLogo;
@@ -49,6 +53,8 @@ public class SplashFragment extends BaseFragment {
     private SplashActivity context;
 
     private LocationManager mLocationManager;
+
+    private boolean isLocationEnabled = false;
 
     public SplashFragment() {
         // Required empty public constructor
@@ -82,10 +88,16 @@ public class SplashFragment extends BaseFragment {
     }
 
     @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        mLocationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         try {
-            mLocationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
+            //mLocationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
             if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
                 //    ActivityCompat#requestPermissions
@@ -96,18 +108,20 @@ public class SplashFragment extends BaseFragment {
                 // for ActivityCompat#requestPermissions for more details.
                 return;
             }
-            mLocationManager.
-                    requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, (LocationListener) this);
+            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 
-            if (new LocationHelper(context).isLocationEnabled() && mLocationManager != null) {
-                showLoading(context, context.getResources().getString(R.string.initialize_location));
+            if (isLocationEnabled) {
+                if (new LocationHelper(context).isLocationEnabled() && mLocationManager != null) {
+                    showLoading(context, context.getResources().getString(R.string.please_wait));
 
-                new Handler().postDelayed(() -> {
-                    hideLoading();
-                    context.startActivityWithFinish(HomeActivity.class);
-                }, 4000);
-            } else {
-                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.rules_for_using_app_through_gps));
+                    new Handler().postDelayed(() -> {
+                        hideLoading();
+                        context.startActivityWithFinish(HomeActivity.class);
+                    }, 4000);
+                } else {
+                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.rules_for_using_app_through_gps));
+                }
             }
         } catch (NullPointerException e) {
             e.getCause();
@@ -132,6 +146,7 @@ public class SplashFragment extends BaseFragment {
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.finish();
                 } else {
+                    isLocationEnabled = false;
                     DialogUtils.getInstance().alertDialog(context,
                             requireActivity(),
                             context.getResources().getString(R.string.enable_gps), context.getResources().getString(R.string.locc_smart_parking_app_needs_permission_to_access_device_location_to_provide_required_services_please_allow_the_permission),
@@ -205,6 +220,7 @@ public class SplashFragment extends BaseFragment {
             boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
             if (providerEnabled) {
+                isLocationEnabled = true;
                 showLoading(context);
                 new Handler().postDelayed(() -> {
                     hideLoading();
@@ -218,5 +234,26 @@ public class SplashFragment extends BaseFragment {
         } else {
             ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.gps_not_enabled_unable_to_show_user_location));
         }
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        Timber.e("location lat -> %s", String.valueOf(location.getLatitude()));
+        Timber.e("location lng -> %s", String.valueOf(location.getLongitude()));
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+        Timber.e("status -> %s", "Provider " + provider + " has now status: " + status);
+    }
+
+    @Override
+    public void onProviderEnabled(@NonNull String provider) {
+        Timber.e("provider enable -> %s", "Provider " + provider + " is enabled");
+    }
+
+    @Override
+    public void onProviderDisabled(@NonNull String provider) {
+        Timber.e("provider disable -> %s", "Provider " + provider + " is disabled");
     }
 }
