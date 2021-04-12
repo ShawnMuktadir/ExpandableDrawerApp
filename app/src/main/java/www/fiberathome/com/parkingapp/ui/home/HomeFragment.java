@@ -439,6 +439,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private Location myPreviousLocation;
     private LocationManager mLocationManager;
     private List<LatLng> initialRoutePoints;
+    private boolean firstDraw = true;
 
     public HomeFragment() {
 
@@ -1546,36 +1547,24 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         .strokeWidth(0f)
                         .fillColor(context.getResources().getColor(R.color.transparent))
         );
+        isNotificationSent = false;
     }
 
     private void checkParkingSpotDistance(LatLng car, LatLng spot) {
         double distanceBetween = calculateDistance(car.latitude, car.longitude, spot.latitude, spot.longitude);
 
-        if (markerPlaceLatLng != null) {
-            setCircleOnLocation(markerPlaceLatLng);
-        } else if (bottomSheetPlaceLatLng != null) {
-            setCircleOnLocation(bottomSheetPlaceLatLng);
-        } else if (adapterPlaceLatLng != null) {
-            setCircleOnLocation(adapterPlaceLatLng);
-        } else if (searchPlaceLatLng != null) {
-            setCircleOnLocation(searchPlaceLatLng);
-        }
-
         float[] distance = new float[2];
 
-        Location.distanceBetween(car.latitude, car.longitude, circle.getCenter().latitude, circle.getCenter().longitude, distance);
+        if (circle != null) {
+            Location.distanceBetween(car.latitude, car.longitude, circle.getCenter().latitude, circle.getCenter().longitude, distance);
 
-        if (distance[0] <= circle.getRadius()) {
-            // Inside The Circle
-            isInAreaEnabled = true;
-            isNotificationSent = true;
-            sendNotification("You Entered parking spot", "You can book parking slot");
-            //Toast.makeText(context, "inside circle", Toast.LENGTH_SHORT).show();
-        } else {
-            // Outside The Circle
-            isInAreaEnabled = false;
-            isNotificationSent = false;
-            //Toast.makeText(context, "outside circle", Toast.LENGTH_SHORT).show();
+            if (distance[0] <= circle.getRadius() && !isNotificationSent) {
+                // Inside The Circle
+                isInAreaEnabled = true;
+                isNotificationSent = true;
+                sendNotification("You Entered parking spot", "You can book parking slot");
+                //Toast.makeText(context, "inside circle", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -2227,6 +2216,33 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         stopShimmer();
 
                         sensorArrayList = response.body().getSensors();
+                        Sensor rajSensor = new Sensor();
+                        Sensor rajSensor2 = new Sensor();
+                        rajSensor.setAddress("Rajshahi");
+                        rajSensor.setAreaId("raj6100");
+                        rajSensor.setAreaNo("1232");
+                        rajSensor.setLatitude("24.36674279444273");
+                        rajSensor.setLongitude("88.60069189220667");
+                        rajSensor.setId("879");
+                        rajSensor.setNoOfParking("63");
+                        rajSensor.setParkingArea("Shaheb Bazar, Rajshahi");
+                        rajSensor.setUid("raj7687");
+                        rajSensor.setsStatus("1");
+                        rajSensor.setReserveStatus(1);
+
+                        rajSensor2.setAddress("Rajshahi");
+                        rajSensor2.setAreaId("raj61001");
+                        rajSensor2.setAreaNo("1231");
+                        rajSensor2.setLatitude("24.374818820697296");
+                        rajSensor2.setLongitude("88.59884049743414");
+                        rajSensor2.setId("879");
+                        rajSensor2.setNoOfParking("30");
+                        rajSensor2.setParkingArea("Getter road, Rajshahi");
+                        rajSensor2.setUid("raj7688");
+                        rajSensor2.setsStatus("1");
+                        rajSensor2.setReserveStatus(1);
+                        sensorArrayList.add(rajSensor);
+                        sensorArrayList.add(rajSensor2);
 
                         for (int i = 0; i < sensorArrayList.size(); i++) {
 
@@ -3485,8 +3501,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                     getDirectionButtonClicked++;
 
+
                     if (adapterPlaceLatLng != null) {
                         EventBus.getDefault().post(new GetDirectionAfterButtonClickEvent(adapterPlaceLatLng));
+
+                        setCircleOnLocation(adapterPlaceLatLng);
 
                         buttonSearch.setVisibility(View.GONE);
 
@@ -3612,7 +3631,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     getDirectionMarkerButtonClicked++;
 
                     if (markerPlaceLatLng != null) {
-
+                        setCircleOnLocation(markerPlaceLatLng);
                         linearLayoutMarkerNameCount.setVisibility(View.GONE);
                         buttonSearch.setVisibility(View.GONE);
                         bookingSensorsArrayListGlobal.clear();
@@ -3635,7 +3654,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         fetchDirections(origin, destination);
 
                         fromMarkerRouteDrawn = 1;
-                        getDirectionPinMarkerDraw(markerPlaceLatLng,markerUid);
+                        getDirectionPinMarkerDraw(markerPlaceLatLng, markerUid);
 
                         linearLayoutNameCount.setVisibility(View.GONE);
                         linearLayoutSearchBottom.setVisibility(View.GONE);
@@ -3710,6 +3729,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 isRouteDrawn = 1;
 
                 if (getDirectionBottomSheetButtonClicked == 0) {
+
                     getDirectionBottomSheetButtonClicked++;
                     if (count.equals("0")) {
                         ApplicationUtils.showMessageDialog(context.getResources().getString(R.string.no_parking_spot_message), context);
@@ -3722,6 +3742,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             searchPlaceLatLng != null) {
                         //Timber.e("all location called");
 
+                        setCircleOnLocation(bottomSheetPlaceLatLng);
                         EventBus.getDefault().post(new GetDirectionBottomSheetEvent(bottomSheetPlaceLatLng));
 
                         linearLayoutBottom.setVisibility(View.GONE);
@@ -4097,8 +4118,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     }
 
     public void setNoData() {
-        textViewNoData.setVisibility(View.VISIBLE);
-        textViewNoData.setText(context.getString(R.string.no_nearest_parking_area_found));
+        if (textViewNoData != null) {
+            textViewNoData.setVisibility(View.VISIBLE);
+            textViewNoData.setText(context.getString(R.string.no_nearest_parking_area_found));
+        }
     }
 
     public void hideNoData() {
@@ -4177,10 +4200,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 /*if (polylineStyle == PolylineStyle.DOTTED)
                     polylineOptions = getDottedPolylines(route.points);*/
                 polyline = mMap.addPolyline(polylineOptions);
-                for(int i= 0; i< initialRoutePoints.size();i++){
-                    mMap.addMarker(new MarkerOptions().position(initialRoutePoints.get(i))
-                            .title(String.valueOf(i)));
-                }
+                firstDraw = true;
+//                for(int i= 0; i< initialRoutePoints.size();i++){
+//                    mMap.addMarker(new MarkerOptions().position(initialRoutePoints.get(i))
+//                            .title(String.valueOf(i)));
+//                }
             }
         } catch (Exception e) {
             Toast.makeText(context, "Error occurred on finding the directions...", Toast.LENGTH_SHORT).show();

@@ -74,8 +74,9 @@ public class SplashFragment extends BaseFragment implements ForceUpdateChecker.O
     @Override
     public void onResume() {
         super.onResume();
+        checkUserLogin();
         try {
-            ForceUpdateChecker.with(context).onUpdateNeeded(SplashFragment.this).check();
+//            ForceUpdateChecker.with(context).onUpdateNeeded(SplashFragment.this).check();
         } catch (Exception e) {
             e.getCause();
         }
