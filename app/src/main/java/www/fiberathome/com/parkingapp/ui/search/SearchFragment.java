@@ -66,6 +66,7 @@ import static www.fiberathome.com.parkingapp.model.data.AppConstants.HISTORY_PLA
 import static www.fiberathome.com.parkingapp.model.data.AppConstants.NEW_PLACE_SELECTED;
 
 @SuppressLint("NonConstantResourceId")
+@SuppressWarnings("unused")
 public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAdapter.ClickListener {
 
     private final String TAG = getClass().getSimpleName();

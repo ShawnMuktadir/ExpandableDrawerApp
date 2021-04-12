@@ -2,6 +2,7 @@ package www.fiberathome.com.parkingapp.model.response.booking;
 
 import com.google.gson.annotations.SerializedName;
 
+@SuppressWarnings("unused")
 public class Reservation {
 
     @SerializedName("id")
@@ -23,7 +24,6 @@ public class Reservation {
     public Reservation(){
 
     }
-
 
 
     public Reservation( String mobileNo, String timeStart, String timeEnd, String spotId) {

@@ -30,6 +30,7 @@ import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_BN;
 import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
 
 @SuppressLint("NonConstantResourceId")
+@SuppressWarnings("unused")
 public class LanguageSettingFragment extends Fragment {
 
     @BindView(R.id.recyclerView_settings)
@@ -44,8 +45,7 @@ public class LanguageSettingFragment extends Fragment {
     }
 
     public static LanguageSettingFragment newInstance() {
-        LanguageSettingFragment fragment = new LanguageSettingFragment();
-        return fragment;
+        return new LanguageSettingFragment();
     }
 
     @Override
@@ -81,7 +81,7 @@ public class LanguageSettingFragment extends Fragment {
         String[] subNames = new String[]{context.getResources().getString(R.string.english), context.getResources().getString(R.string.bangla_bn)};
         String[] isoCodes = new String[]{LANGUAGE_EN, LANGUAGE_BN};
 
-        int s1 = context.getResources().getString(R.string.language_settings).toString().codePointAt(0);
+        int s1 = context.getResources().getString(R.string.language_settings).codePointAt(0);
         if (s1 >= 0x0980 && s1 <= 0x09E0) {
             Preferences.getInstance(context).setAppLanguage(LANGUAGE_BN);
             LanguagePreferences.getInstance(context).setAppLanguage(LANGUAGE_BN);

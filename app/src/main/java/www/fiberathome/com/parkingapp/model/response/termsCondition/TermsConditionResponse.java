@@ -7,6 +7,7 @@ import java.util.List;
 
 import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 
+@SuppressWarnings("unused")
 public class TermsConditionResponse extends BaseResponse {
 
     @SerializedName("termsCondition")

@@ -1,7 +1,6 @@
 package www.fiberathome.com.parkingapp.utils;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
@@ -16,6 +15,7 @@ import www.fiberathome.com.parkingapp.R;
 
 import static android.content.Context.LOCATION_SERVICE;
 
+@SuppressWarnings("unused")
 public class ConnectivityUtils {
     private static ConnectivityUtils connectivityUtils;
 
@@ -31,9 +31,8 @@ public class ConnectivityUtils {
         ConnectivityManager check = (ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = check.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null &&
+        return activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
-        return isConnected;
     }
 
     public boolean isConnected(Context context) {
@@ -53,6 +52,7 @@ public class ConnectivityUtils {
         if (providerEnabled) {
             return true;
         } else {
+            Timber.e("error called");
             //showToastMessage(context, context.getResources().getString(R.string.please_enable_gps));
         }
         return false;
@@ -90,12 +90,7 @@ public class ConnectivityUtils {
             // notify user
             new AlertDialog.Builder(context)
                     .setMessage(R.string.gps_network_not_enabled)
-                    .setPositiveButton(R.string.open_location_settings, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                            context.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                        }
-                    }).setNegativeButton(R.string.cancel, null)
+                    .setPositiveButton(R.string.open_location_settings, (paramDialogInterface, paramInt) -> context.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))).setNegativeButton(R.string.cancel, null)
                     .show();
         }
         return gps_enabled && network_enabled;

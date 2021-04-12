@@ -45,6 +45,7 @@ import www.fiberathome.com.parkingapp.utils.ToastUtils;
 import static android.content.Context.LOCATION_SERVICE;
 
 @SuppressLint("NonConstantResourceId")
+@SuppressWarnings("unused")
 public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressListener {
 
     @BindView(R.id.webView)
@@ -108,15 +109,6 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
             return true;
         } else {
             Timber.e("isGPSEnabled else called");
-            /*AlertDialog alertDialog = new AlertDialog.Builder(context)
-                    .setTitle("GPS Permissions")
-                    .setMessage("GPS is required for this app to work. Please enable GPS.")
-                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
-                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        startActivityForResult(intent, GPS_REQUEST_CODE);
-                    }))
-                    .setCancelable(false)
-                    .show();*/
         }
         return false;
     }

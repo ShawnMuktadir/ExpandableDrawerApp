@@ -1,5 +1,6 @@
 package www.fiberathome.com.parkingapp.model;
 
+@SuppressWarnings("unused")
 public class Language {
 
     private String name;

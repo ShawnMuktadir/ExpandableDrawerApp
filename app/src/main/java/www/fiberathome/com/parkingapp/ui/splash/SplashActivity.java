@@ -14,7 +14,6 @@ import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
 import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_BN;
 
-
 public class SplashActivity extends BaseActivity {
 
     private Context context;
@@ -45,7 +44,6 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
     }
 
     @Override

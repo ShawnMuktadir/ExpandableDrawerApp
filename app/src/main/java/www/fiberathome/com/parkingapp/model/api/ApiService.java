@@ -13,6 +13,7 @@ import www.fiberathome.com.parkingapp.model.response.search.SearchVisitedPlaceRe
 import www.fiberathome.com.parkingapp.model.response.sensors.SensorsResponse;
 import www.fiberathome.com.parkingapp.model.response.termsCondition.TermsConditionResponse;
 
+@SuppressWarnings("unused")
 public interface ApiService {
 
     @FormUrlEncoded

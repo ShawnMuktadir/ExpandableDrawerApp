@@ -12,6 +12,7 @@ import java.util.TimeZone;
 
 import timber.log.Timber;
 
+@SuppressWarnings("unused")
 public class DateTimeUtils {
     private static DateTimeUtils dateTimeUtils;
 
@@ -28,16 +29,14 @@ public class DateTimeUtils {
         Timber.e("Current time => %s", c);
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-        String formattedDate = df.format(c);
-        return formattedDate;
+        return df.format(c);
     }
 
     public String getPSTTimeZoneCurrentDate() {
         //Output: ex: Wednesday, July 20, 2011
         DateFormat df = DateFormat.getDateInstance(DateFormat.FULL);
         df.setTimeZone(TimeZone.getTimeZone("PST"));
-        final String dateString = df.format(new Date());
-        return dateString;
+        return df.format(new Date());
     }
 
     public String getTime(String dateTime) {
@@ -54,8 +53,7 @@ public class DateTimeUtils {
 
     public String getDateNow() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.US);
-        String dateNow = dateFormat.format(System.currentTimeMillis());
-        return dateNow;
+        return dateFormat.format(System.currentTimeMillis());
     }
 
     @SuppressLint("SimpleDateFormat")

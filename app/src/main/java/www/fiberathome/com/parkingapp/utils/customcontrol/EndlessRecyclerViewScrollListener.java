@@ -1,10 +1,12 @@
 package www.fiberathome.com.parkingapp.utils.customcontrol;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+@SuppressWarnings("unused")
 public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnScrollListener {
     // The minimum amount of items to have below your current scroll position
     // before loading more.
@@ -16,7 +18,7 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
     // True if we are still waiting for the last set of data to load.
     private boolean loading = true;
     // Sets the starting page index
-    private int startingPageIndex = 0;
+    private final int startingPageIndex = 0;
 
     RecyclerView.LayoutManager mLayoutManager;
 
@@ -39,8 +41,7 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
         for (int i = 0; i < lastVisibleItemPositions.length; i++) {
             if (i == 0) {
                 maxSize = lastVisibleItemPositions[i];
-            }
-            else if (lastVisibleItemPositions[i] > maxSize) {
+            } else if (lastVisibleItemPositions[i] > maxSize) {
                 maxSize = lastVisibleItemPositions[i];
             }
         }
@@ -51,7 +52,7 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
     // We are given a few useful parameters to help us work out if we need to load some more data,
     // but first we check if we are waiting for the previous load to finish.
     @Override
-    public void onScrolled(RecyclerView view, int dx, int dy) {
+    public void onScrolled(@NonNull RecyclerView view, int dx, int dy) {
         int lastVisibleItemPosition = 0;
         int totalItemCount = mLayoutManager.getItemCount();
 
@@ -96,8 +97,7 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
     public boolean isLastItemDisplaying(RecyclerView recyclerView) {
         if (recyclerView.getAdapter().getItemCount() != 0) {
             int lastVisibleItemPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition();
-            if (lastVisibleItemPosition != RecyclerView.NO_POSITION && lastVisibleItemPosition == recyclerView.getAdapter().getItemCount() - 1)
-                return true;
+            return lastVisibleItemPosition != RecyclerView.NO_POSITION && lastVisibleItemPosition == recyclerView.getAdapter().getItemCount() - 1;
         }
         return false;
     }

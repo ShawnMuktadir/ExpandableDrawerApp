@@ -2,9 +2,12 @@ package www.fiberathome.com.parkingapp.base;
 
 import android.app.Application;
 import android.content.Context;
+import android.location.LocationManager;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.ProcessLifecycleOwner;
 import androidx.multidex.MultiDex;
 
 import com.android.volley.Request;
@@ -17,10 +20,13 @@ import java.util.Map;
 
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.BuildConfig;
+import www.fiberathome.com.parkingapp.ui.splash.SplashActivity;
 import www.fiberathome.com.parkingapp.utils.ForceUpdateChecker;
+import www.fiberathome.com.parkingapp.utils.ForceUpgradeManager;
 import www.fiberathome.com.parkingapp.utils.internet.ConnectivityReceiver;
 
-public class ParkingApp extends Application {
+@SuppressWarnings("unused")
+public class ParkingApp extends Application implements LifecycleObserver {
 
     public static final String TAG = ParkingApp.class.getSimpleName();
 
@@ -30,6 +36,8 @@ public class ParkingApp extends Application {
 
     protected FirebaseRemoteConfig firebaseRemoteConfig;
 
+    private ForceUpgradeManager forceUpgradeManager;
+
     public static synchronized ParkingApp getInstance() {
         return mInstance;
     }
@@ -37,13 +45,21 @@ public class ParkingApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
         mInstance = this;
 
         initTimber();
 
-        firebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
+        //firebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
 
-        setAppDefaults();
+        //setAppDefaults();
+
+        if (isGPSEnabled(getApplicationContext()) && !getClass().getSimpleName().equalsIgnoreCase(SplashActivity.class.getSimpleName())) {
+
+            initForceUpgradeManager();
+
+            ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
+        }
     }
 
     @Override
@@ -69,6 +85,12 @@ public class ParkingApp extends Application {
                         firebaseRemoteConfig.activate();
                     }
                 });
+    }
+
+    public void initForceUpgradeManager() {
+        if (forceUpgradeManager == null) {
+            forceUpgradeManager = new ForceUpgradeManager(mInstance);
+        }
     }
 
     public RequestQueue getRequestQueue() {
@@ -107,5 +129,19 @@ public class ParkingApp extends Application {
 
     public void setConnectivityListener(ConnectivityReceiver.ConnectivityReceiverListener listener) {
         ConnectivityReceiver.listener = listener;
+    }
+
+    public boolean isGPSEnabled(Context context) {
+
+        LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
+
+        boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+        if (providerEnabled) {
+            return true;
+        } else {
+            Timber.e("else called");
+        }
+        return false;
     }
 }

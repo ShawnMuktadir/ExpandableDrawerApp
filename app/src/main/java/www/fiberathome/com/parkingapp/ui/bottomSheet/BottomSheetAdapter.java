@@ -22,6 +22,7 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingSensors;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
@@ -31,19 +32,18 @@ import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
 import static android.content.Context.LOCATION_SERVICE;
 
+@SuppressWarnings("unused")
 public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.TextBookingViewHolder> {
 
     public Context context;
 
-    private final HomeFragment homeFragment;
+    public final HomeFragment homeFragment;
 
     private ArrayList<BookingSensors> bookingSensorsArrayList;
 
     public Location location;
 
     private int selectedItem = -1;
-
-    private final int count = 0;
 
     private final onItemClickListeners clickListeners;
 
@@ -139,6 +139,12 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         notifyDataSetChanged();
     }
 
+    public void update(ArrayList<BookingSensors> datas) {
+        bookingSensorsArrayList.clear();
+        bookingSensorsArrayList.addAll(datas);
+        notifyDataSetChanged();
+    }
+
     public void clear() {
         bookingSensorsArrayList.clear();
         notifyDataSetChanged();
@@ -153,7 +159,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         if (providerEnabled) {
             return true;
         } else {
-
+            Timber.e("else called");
         }
         return false;
     }

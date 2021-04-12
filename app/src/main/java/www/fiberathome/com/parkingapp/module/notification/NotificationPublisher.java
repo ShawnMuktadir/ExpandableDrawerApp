@@ -22,6 +22,6 @@ public class NotificationPublisher extends BroadcastReceiver {
         if (vibrator != null) {
             vibrator.vibrate(2000);
         }
-//        notification.sound = Uri.parse("android.resource://com.packagename.org/raw/alert");
+        // notification.sound = Uri.parse("android.resource://com.packagename.org/raw/alert");
     }
 }

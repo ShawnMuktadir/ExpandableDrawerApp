@@ -14,20 +14,18 @@ import android.util.TypedValue;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
 
 import www.fiberathome.com.parkingapp.R;
 
 @SuppressLint("AppCompatCustomView")
+@SuppressWarnings("unused")
 public class PinEntryEditTextNew extends EditText {
     public static final String XML_NAMESPACE_ANDROID = "http://schemas.android.com/apk/res/android";
 
     private float mSpace = 24; //24 dp by default, space between the lines
-    private float mCharSize;
     private float mNumChars = 4;
     private float mLineSpacing = 8; //8dp by default, height of the text from our lines
-    private int mMaxLength = 4;
 
     private OnClickListener mClickListener;
 
@@ -94,8 +92,7 @@ public class PinEntryEditTextNew extends EditText {
         setBackgroundResource(0);
         mSpace = multi * mSpace; //convert to pixels for our density
         mLineSpacing = multi * mLineSpacing; //convert to pixels for our density
-        mMaxLength = attrs.getAttributeIntValue(XML_NAMESPACE_ANDROID, "maxLength", 4);
-        mNumChars = mMaxLength;
+        mNumChars = attrs.getAttributeIntValue(XML_NAMESPACE_ANDROID, "maxLength", 4);
 
         //Disable copy paste
         super.setCustomSelectionActionModeCallback(new ActionMode.Callback() {
@@ -115,13 +112,10 @@ public class PinEntryEditTextNew extends EditText {
             }
         });
         // When tapped, move cursor to end of text.
-        super.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setSelection(getText().length());
-                if (mClickListener != null) {
-                    mClickListener.onClick(v);
-                }
+        super.setOnClickListener(v -> {
+            setSelection(getText().length());
+            if (mClickListener != null) {
+                mClickListener.onClick(v);
             }
         });
 
@@ -137,10 +131,12 @@ public class PinEntryEditTextNew extends EditText {
         throw new RuntimeException("setCustomSelectionActionModeCallback() not supported.");
     }
 
+    @SuppressLint("DrawAllocation")
     @Override
     protected void onDraw(Canvas canvas) {
         //super.onDraw(canvas);
         int availableWidth = getWidth() - getPaddingRight() - getPaddingLeft();
+        float mCharSize;
         if (mSpace < 0) {
             mCharSize = (availableWidth / (mNumChars * 2 - 1));
         } else {

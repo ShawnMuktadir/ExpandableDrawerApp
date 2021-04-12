@@ -32,26 +32,13 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.response.booking.BookedList;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingArea;
 
+@SuppressWarnings("unused")
 public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context context;
-    private BookingFragment bookingFragment;
-    private int selectedItem;
     public LatLng location;
-    private ArrayList<BookingArea> bookingAreas = new ArrayList<>();
-    private ArrayList<BookedList> bookedLists = new ArrayList<>();
-
-    /*public BookingAdapter(Context context, BookingFragment bookingFragment, ArrayList<BookingArea> bookingAreas) {
-        this.context = context;
-        this.bookingFragment = bookingFragment;
-        this.bookingAreas = bookingAreas;
-        selectedItem = -1;
-    }*/
-
-    public BookingAdapter(Context context) {
-
-        //selectedItem = -1;
-    }
+    private final ArrayList<BookingArea> bookingAreas = new ArrayList<>();
+    private ArrayList<BookedList> bookedLists;
 
     public BookingAdapter(BookingActivity context, ArrayList<BookedList> bookedLists) {
         this.context = context;
@@ -106,17 +93,11 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show();
         });*/
 
-        bookingViewHolder.textViewParkingRateNTip.setOnClickListener(v -> {
-            Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show();
-        });
+        bookingViewHolder.textViewParkingRateNTip.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
 
-        bookingViewHolder.btnViewReceipt.setOnClickListener(v -> {
-            Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show();
-        });
+        bookingViewHolder.btnViewReceipt.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
 
-        bookingViewHolder.btnGetHelp.setOnClickListener(v -> {
-            Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show();
-        });
+        bookingViewHolder.btnGetHelp.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
     }
 
     public void setDataList(ArrayList<BookedList> dataList) {

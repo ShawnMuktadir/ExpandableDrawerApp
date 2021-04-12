@@ -45,11 +45,7 @@ import static com.android.volley.VolleyLog.TAG;
 import static www.fiberathome.com.parkingapp.utils.NotificationClass.CHANNEL_HIGH_PRIORITY_ID;
 
 public class DialogForm extends AppCompatDialogFragment {
-
-    //    private EditText usernameEt;
-//    private EditText passwordEt;
-//    private EditText mobileET;
-    private DialogFormListener listener;
+    private final String format = "";
     private TimePicker parkingReqStartTime;
     private TimePicker parkingReqEndTime;
     private DatePicker parkingReqStartDate;
@@ -63,12 +59,14 @@ public class DialogForm extends AppCompatDialogFragment {
     private ImageView paymentGateIV;
 
     private Calendar calendar;
-    private String format = "";
+    /*    private EditText usernameEt;
+        private EditText passwordEt;
+        private EditText mobileET;*/
+    private DialogFormListener listener;
 
     public String selectedSpt;
 
     private NotificationManagerCompat notificationManager;
-
 
     @NonNull
     @Override
@@ -89,7 +87,6 @@ public class DialogForm extends AppCompatDialogFragment {
 
         if (getArguments() != null) {
             selectedSpt = getArguments().getString("selectedSpt", "");
-
         }
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -135,13 +132,13 @@ public class DialogForm extends AppCompatDialogFragment {
         paymentGateIV = view.findViewById(R.id.payment_gate_image);
         paymentGateIV.setVisibility(View.GONE);
 
-        parkingReqStartDate = (DatePicker) view.findViewById(R.id.parking_req_start_date);
+        parkingReqStartDate = view.findViewById(R.id.parking_req_start_date);
 
-        parkingReqStartTime = (TimePicker) view.findViewById(R.id.parking_req_start_time);
+        parkingReqStartTime = view.findViewById(R.id.parking_req_start_time);
 
-        parkingReqEndDate = (DatePicker) view.findViewById(R.id.parking_req_end_date);
+        parkingReqEndDate = view.findViewById(R.id.parking_req_end_date);
 
-        parkingReqEndTime = (TimePicker) view.findViewById(R.id.parking_req_end_time);
+        parkingReqEndTime = view.findViewById(R.id.parking_req_end_time);
 
         reserveFinal.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -156,20 +153,20 @@ public class DialogForm extends AppCompatDialogFragment {
 
                 //String startTime =  showTime(parkingReqStartTime.getCurrentHour(),  parkingReqStartTime.getCurrentMinute());
 
-                Timber.e(startTimestamp.toString());
+                Timber.e(startTimestamp);
 
                 //String endTime =  showTime(parkingReqEndTime.getCurrentHour(), parkingReqEndTime.getCurrentMinute());
 
-                Timber.e(endTimestamp.toString());
+                Timber.e(endTimestamp);
 
                 User user = Preferences.getInstance(requireContext()).getUser();
 
                 String mobileNo = user.getMobileNo();
 
-                Timber.e(mobileNo.toString());
-                Timber.e(selectedSpt.toString());
+                Timber.e(mobileNo);
+                Timber.e(selectedSpt);
 
-                storeReservation(mobileNo.toString(), startTimestamp.toString(), endTimestamp.toString(), selectedSpt.toString());
+                storeReservation(mobileNo, startTimestamp, endTimestamp, selectedSpt);
 
 //                Toast.makeText(getContext(),"Your Reservation is Completed! ",Toast.LENGTH_SHORT).show();
 //                Toast.makeText(getContext(),"Start Time: "+startTimestamp.toString()+"End Time: "+endTimestamp.toString(),Toast.LENGTH_SHORT).show();

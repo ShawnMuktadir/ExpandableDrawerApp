@@ -49,6 +49,7 @@ import static android.content.Context.LOCATION_SERVICE;
 import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
 
 @SuppressLint("NonConstantResourceId")
+@SuppressWarnings("unused")
 public class BookingFragment extends BaseFragment implements IOnBackPressListener {
 
     @BindView(R.id.recyclerViewBooking)
@@ -63,8 +64,6 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
     private Unbinder unbinder;
 
     private BookingActivity context;
-
-    private BookingAdapter bookingAdapter;
 
     private ArrayList<BookedList> bookedLists;
 
@@ -170,17 +169,16 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
     @Override
     public boolean onBackPressed() {
         if (isGPSEnabled()) {
-            if (isGPSEnabled()) {
-                if (getActivity() != null) {
-                    getActivity().getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.nav_host_fragment, HomeFragment.newInstance())
-                            .addToBackStack(null)
-                            .commit();
-                } else {
-                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
-                }
+            if (getActivity() != null) {
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.nav_host_fragment, HomeFragment.newInstance())
+                        .addToBackStack(null)
+                        .commit();
             }
+        } else {
+            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
         }
+
         return false;
     }
 
@@ -258,7 +256,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
     private void setFragmentControls(ArrayList<BookedList> bookedLists) {
         recyclerViewBooking.setHasFixedSize(true);
         recyclerViewBooking.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
-        bookingAdapter = new BookingAdapter(context, bookedLists);
+        BookingAdapter bookingAdapter = new BookingAdapter(context, bookedLists);
         recyclerViewBooking.setAdapter(bookingAdapter);
     }
 

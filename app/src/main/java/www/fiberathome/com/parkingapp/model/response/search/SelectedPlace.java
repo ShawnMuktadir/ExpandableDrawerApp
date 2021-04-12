@@ -2,13 +2,14 @@ package www.fiberathome.com.parkingapp.model.response.search;
 
 import java.io.Serializable;
 
+@SuppressWarnings("unused")
 public class SelectedPlace implements Serializable {
 
     private String placeId;
     private String areaName;
     private String areaAddress;
-    private double latitude;
-    private double longitude;
+    private final double latitude;
+    private final double longitude;
 
     public SelectedPlace(String areaName, double latitude, double longitude) {
         this.areaName = areaName;

@@ -91,7 +91,6 @@ import www.fiberathome.com.parkingapp.ui.permission.listener.DexterPermissionLis
 import www.fiberathome.com.parkingapp.ui.permission.listener.PermissionInterface;
 import www.fiberathome.com.parkingapp.ui.privacyPolicy.PrivacyPolicyFragment;
 import www.fiberathome.com.parkingapp.ui.profile.ProfileFragment;
-import www.fiberathome.com.parkingapp.ui.ratingReview.RatingReviewFragment;
 import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
 import www.fiberathome.com.parkingapp.ui.settings.SettingsFragment;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
@@ -320,7 +319,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 toolbar.setTitle(context.getResources().getString(R.string.give_review_rating));
                 tvTimeToolbar.setVisibility(View.GONE);
                 linearLayoutToolbarTime.setVisibility(View.GONE);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, RatingReviewFragment.newInstance()).commit();
                 break;
 
             case R.id.nav_follow_us:
@@ -460,9 +458,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                         toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
                     } else if (f instanceof GetDiscountFragment) {
                         ((GetDiscountFragment) f).onBackPressed();
-                        toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
-                    } else if (f instanceof RatingReviewFragment) {
-                        ((RatingReviewFragment) f).onBackPressed();
                         toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
                     } else if (f instanceof FollowUsFragment) {
                         ((FollowUsFragment) f).onBackPressed();

@@ -22,12 +22,14 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.response.sensors.SensorArea;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
 
 import static android.content.Context.LOCATION_SERVICE;
 
+@SuppressWarnings("unused")
 public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ParkingActivity context;
@@ -36,7 +38,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public LatLng location;
 
-    private final Location onConnectedLocation;
+    public final Location onConnectedLocation;
 
     private int selectedPosition = -1;
 
@@ -123,18 +125,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (providerEnabled) {
             return true;
         } else {
-            /*AlertDialog alertDialog = new AlertDialog.Builder(context)
-                    .setTitle("GPS Permissions")
-                    .setMessage("GPS is required for this app to work. Please enable GPS.")
-                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
-                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        intent.putExtra("position",position);
-                        Activity origin = (Activity)context;
-
-                        origin.startActivityForResult(intent, GPS_REQUEST_CODE);
-                    }))
-                    .setCancelable(false)
-                    .show();*/
+            Timber.e("else called");
         }
 
         return false;

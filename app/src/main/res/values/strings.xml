@@ -422,7 +422,7 @@
     <string name="please_wait">Please wait…</string>
     <string name="are_you_sure">Are you sure you want to exit?</string>
     <string name="get_support">Get Support</string>
-    <string name="number">01924262749</string>
+    <string name="number">01312787938</string>
     <string name="call">Call</string>
     <string name="you_have_to_exit_from_current_destination">Do you want to change the parking spot?</string>
     <string name="please_try_again">Please try again</string>
@@ -460,7 +460,7 @@
     <string name="no_data_found">No data found</string>
     <string name="update">Update</string>
     <string name="new_version_available">New version available</string>
-    <string name="please_update_the_app">Please, update app to new version to continue using</string>
+    <string name="please_update_the_app">To get our improved services, please update your LOCC Smart Parking app to the latest version from Google Play Store</string>
     <string name="no_thanks">No, thanks</string>
     <string name="are_you_sure_you_want_to_exit">Are you sure you want to exit?</string>
     <string name="no_route_exist">No routes exist</string>
@@ -479,4 +479,7 @@
         If you have not received any OTP code within 2.30 minutes then resend</string>
     <string name="press_back_again_to_exit">Press Back button again to exit</string>
     <string name="booking_time_rules">You can\'t set Booking time more than 2 hours</string>
+    <string name="gps_enabled">GPS is enabled</string>
+    <string name="update_available">New Update Available</string>
+    <string name="not_implemented_yet">Not implemented yet</string>
 </resources>

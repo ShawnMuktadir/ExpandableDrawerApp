@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import www.fiberathome.com.parkingapp.R;
 
+@SuppressWarnings("unused")
 public class ViewUtils {
     private static ViewUtils viewUtils;
 

@@ -29,6 +29,7 @@ import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -72,6 +73,7 @@ import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
 
 @SuppressLint("NonConstantResourceId")
+@SuppressWarnings("unused")
 public class NavigationActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     @BindView(R.id.tvTimeToolbar)
@@ -89,6 +91,14 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
 
     private Context context;
 
+    public static Drawable getTintedDrawable(@NonNull Context context, @NonNull Drawable inputDrawable,
+                                             @ColorInt int color) {
+        Drawable wrapDrawable = DrawableCompat.wrap(inputDrawable);
+        DrawableCompat.setTint(wrapDrawable, color);
+        DrawableCompat.setTintMode(wrapDrawable, PorterDuff.Mode.SRC_IN);
+        return wrapDrawable;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,7 +109,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-            getWindow().setStatusBarColor(context.getResources().getColor(R.color.gray_update));
+            getWindow().setStatusBarColor(ContextCompat.getColor(context, R.color.gray_update));
         }
 
         toolbar = findViewById(R.id.toolbar);
@@ -123,74 +133,8 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         setNavMenuItemThemeColors(context.getResources().getColor(R.color.black));
 
         hideMenuItem(R.id.nav_home);
+
         hideMenuItem(R.id.nav_notification);
-    }
-
-    @SuppressLint("NonConstantResourceId")
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        closeNavDrawer();
-        navigationView.setCheckedItem(item.getItemId());
-
-        int id = item.getItemId();
-
-        switch (id) {
-            case R.id.nav_home:
-                startActivity(HomeActivity.class);
-                break;
-
-            case R.id.nav_parking:
-                if (ConnectivityUtils.getInstance().checkInternet(context) && isGPSEnabled()) {
-                    startActivity(ParkingActivity.class);
-                    // Remove any previous data from SharedData's sensor Data Parking Information
-                    SharedData.getInstance().setSensorArea(null);
-                } else {
-                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
-                }
-                break;
-
-            case R.id.nav_booking:
-                startActivity(BookingActivity.class);
-                break;
-
-            case R.id.nav_law:
-                startActivity(LawActivity.class);
-                break;
-
-            case R.id.nav_profile:
-                startActivity(ProfileActivity.class);
-                break;
-
-            case R.id.nav_settings:
-                startActivity(SettingsActivity.class);
-                break;
-
-            case R.id.nav_get_discount:
-                startActivity(GetDiscountActivity.class);
-                break;
-
-            case R.id.nav_rating_review:
-                openAppRating(context);
-                break;
-
-            case R.id.nav_follow_us:
-                startActivity(FollowUsActivity.class);
-                break;
-
-            case R.id.nav_privacy_policy:
-                startActivity(PrivacyPolicyActivity.class);
-                break;
-
-            case R.id.nav_share:
-                navigationView.getMenu().getItem(0).setChecked(true);
-                shareApp();
-                break;
-
-            default:
-                return false;
-        }
-
-        return true;
     }
 
     @Override
@@ -435,23 +379,87 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         return true;
     }
 
-    public static Drawable getTintedDrawable(@NonNull Context context, @NonNull Drawable inputDrawable, @ColorInt int color) {
-        Drawable wrapDrawable = DrawableCompat.wrap(inputDrawable);
-        DrawableCompat.setTint(wrapDrawable, color);
-        DrawableCompat.setTintMode(wrapDrawable, PorterDuff.Mode.SRC_IN);
-        return wrapDrawable;
+    @SuppressLint("NonConstantResourceId")
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        closeNavDrawer();
+
+        navigationView.setCheckedItem(item.getItemId());
+
+        int id = item.getItemId();
+
+        switch (id) {
+            case R.id.nav_home:
+                startActivity(HomeActivity.class);
+                break;
+
+            case R.id.nav_parking:
+                if (ConnectivityUtils.getInstance().checkInternet(context) && isGPSEnabled()) {
+                    startActivity(ParkingActivity.class);
+                    // Remove any previous data from SharedData's sensor Data Parking Information
+                    SharedData.getInstance().setSensorArea(null);
+                } else {
+                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
+                }
+                break;
+
+            case R.id.nav_booking:
+                startActivity(BookingActivity.class);
+                break;
+
+            case R.id.nav_law:
+                startActivity(LawActivity.class);
+                break;
+
+            case R.id.nav_profile:
+                startActivity(ProfileActivity.class);
+                break;
+
+            case R.id.nav_settings:
+                startActivity(SettingsActivity.class);
+                break;
+
+            case R.id.nav_get_discount:
+                startActivity(GetDiscountActivity.class);
+                break;
+
+            case R.id.nav_rating_review:
+                openAppRating(context);
+                break;
+
+            case R.id.nav_follow_us:
+                startActivity(FollowUsActivity.class);
+                break;
+
+            case R.id.nav_privacy_policy:
+                startActivity(PrivacyPolicyActivity.class);
+                break;
+
+            case R.id.nav_share:
+                navigationView.getMenu().getItem(0).setChecked(true);
+                shareApp();
+                break;
+
+            default:
+                return false;
+        }
+
+        return true;
     }
 
+    @SuppressWarnings("rawtypes")
     public void startActivity(Class activityClass) {
         startActivity(new Intent(getApplicationContext(), activityClass));
     }
 
+    @SuppressWarnings("rawtypes")
     public void startActivity(Class activityClass, Bundle bundle) {
         Intent intent = new Intent(getApplicationContext(), activityClass);
         intent.putExtras(bundle);
         startActivity(intent);
     }
 
+    @SuppressWarnings("rawtypes")
     public void startActivityWithFinishBundle(Class activityClass, Bundle bundle) {
         Intent intent = new Intent(getApplicationContext(), activityClass);
         intent.putExtras(bundle);
@@ -459,6 +467,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         finishAffinity();
     }
 
+    @SuppressWarnings("rawtypes")
     public void startActivityWithFinishAffinity(Class activityClass) {
         startActivity(new Intent(getApplicationContext(), activityClass));
         finishAffinity();
@@ -473,6 +482,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         startActivity(Intent.createChooser(shareIntent, "Share Via:"));
     }
 
+    @SuppressLint("ObsoleteSdkInt")
     public void setAppLocale(String localeCode) {
         Resources resources = getResources();
         DisplayMetrics dm = resources.getDisplayMetrics();
@@ -485,6 +495,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         resources.updateConfiguration(config, dm);
     }
 
+    @SuppressLint("QueryPermissionsNeeded")
     public void openAppRating(Context context) {
         // you can also use BuildConfig.APPLICATION_ID/appId
         String appId = context.getPackageName();

@@ -6,6 +6,7 @@ import com.google.gson.annotations.SerializedName;
 import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 import www.fiberathome.com.parkingapp.model.user.User;
 
+@SuppressWarnings("unused")
 public class LoginResponse extends BaseResponse {
 
     @SerializedName("authentication")

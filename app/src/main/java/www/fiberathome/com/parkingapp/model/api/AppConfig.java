@@ -1,5 +1,6 @@
 package www.fiberathome.com.parkingapp.model.api;
 
+@SuppressWarnings("unused")
 public class AppConfig {
 
     // ROOT URLs

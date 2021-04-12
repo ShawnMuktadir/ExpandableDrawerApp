@@ -4,11 +4,11 @@
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/base/BaseFragment.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/model/Language.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/model/Settings.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/module/GoogleMapWebServiceNDistance/directionModules/DirectionFinder.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/module/GoogleMapWebServiceNDistance/directionModules/DirectionFinderListener.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/module/GoogleMapWebServiceNDistance/directionModules/Distance.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/module/GoogleMapWebServiceNDistance/directionModules/Duration.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/module/GoogleMapWebServiceNDistance/directionModules/Route.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/module/googleService/directionModules/DirectionFinder.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/module/googleService/directionModules/DirectionFinderListener.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/module/googleService/directionModules/Distance.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/module/googleService/directionModules/Duration.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/module/googleService/directionModules/Route.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/ui/NavigationActivity.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/ui/changePassword/ChangePasswordActivityForOTPFragment.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/ui/changePassword/URLSpanNoUnderline.java" charset="UTF-8" />
@@ -19,7 +19,9 @@
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/ui/settings/adapter/SettingAdapter.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/ui/splash/SplashActivity.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/ui/splash/SplashFragment.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/ui/widget/BaseBottomSheetDialog.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/utils/Constants.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/utils/ForceUpgradeManager.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/utils/GeofenceConstants.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/utils/GeofenceRegistrationService.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/utils/GoogleMapHelper.java" charset="UTF-8" />
@@ -28,10 +30,13 @@
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/utils/UiHelper.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/utils/Utility.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/color/textview_colors.xml" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-xxxhdpi/bg_bottom_sheet_dialog.xml" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/bg_bottom_sheet_dialog.xml" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/rect_white_bg_gray_border_rounded.xml" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_base.xml" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_navigation.xml" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/layout/app_bar_main.xml" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/layout/bottom_sheet_dialog_app_update_options.xml" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/layout/content_navigation_main.xml" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_splash.xml" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/layout/layout_fragment.xml" charset="UTF-8" />

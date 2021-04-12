@@ -35,6 +35,7 @@ import www.fiberathome.com.parkingapp.utils.ToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
 
 @SuppressLint("NonConstantResourceId")
+@SuppressWarnings("unused")
 public class ChangeNewPasswordFragment extends BaseFragment {
 
     private static final String TAG = ChangeNewPasswordFragment.class.getSimpleName();

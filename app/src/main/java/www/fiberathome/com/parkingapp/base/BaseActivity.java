@@ -43,8 +43,6 @@ import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
@@ -74,13 +72,13 @@ import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CO
  *
  * </ul>
  */
+@SuppressWarnings("unused")
 public class BaseActivity extends AppCompatActivity implements LocationListener {
 
     private static final int GPS_ENABLE_REQUEST = 0x1001;
     private static final int WIFI_ENABLE_REQUEST = 0x1006;
     private static final int UPDATE_CODE = 1000;
 
-    private View overlay;
     private Snackbar snackbar;
 
     private final List<Geofence> geofenceList = new ArrayList<>();
@@ -90,13 +88,8 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
     protected LocationManager mLocationManager;
 
     private Context context;
-    private boolean isFastConnection;
 
-    /*@Override
-    protected void attachBaseContext(Context base) {
-        super.attachBaseContext(ParkingApp.localeManager.setLocale(base));
-        Timber.e("attachBaseContext");
-    }*/
+    private boolean isFastConnection;
 
     private final BroadcastReceiver mNetworkDetectReceiver = new BroadcastReceiver() {
         @Override
@@ -105,14 +98,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         }
     };
 
-    /*private BroadcastReceiver mBackgroundLocationReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Timber.e("mBackgroundLocationReceiver");
-        }
-    };*/
     private AlertDialog mInternetDialog;
-    private AlertDialog mGPSDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,7 +112,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-            getWindow().setStatusBarColor(context.getResources().getColor(R.color.updatedColorPrimaryDark));
+            getWindow().setStatusBarColor(ContextCompat.getColor(context, R.color.updatedColorPrimaryDark));
         }
 
         snackbar = Snackbar.make(this.findViewById(android.R.id.content), context.getResources().getString(R.string.connect_to_internet), 86400000);
@@ -151,7 +137,9 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         }
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION}, GPS_ENABLE_REQUEST);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION}, GPS_ENABLE_REQUEST);
+            }
         } else {
             // permission granted
             return;
@@ -160,6 +148,11 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
 
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -257,12 +250,11 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         progressDialog.cancel();
     }
 
-    private boolean isConnected = false;
-
     private void checkInternetConnection() {
         ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo ni = manager.getActiveNetworkInfo();
 
+        boolean isConnected;
         if (ni != null && ni.getState() == NetworkInfo.State.CONNECTED && isFastConnection) {
             isConnected = true;
             snackbar.dismiss();
@@ -288,7 +280,6 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         if (providerEnabled) {
             return true;
         } else {
-
             AlertDialog alertDialog = new AlertDialog.Builder(context)
                     .setTitle("GPS Permissions")
                     .setMessage("GPS is required for this app to work. Please enable GPS.")
@@ -298,22 +289,22 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
                     }))
                     .setCancelable(false)
                     .show();
-
         }
         return false;
     }
 
     @SuppressLint("InflateParams")
+    @SuppressWarnings("SameParameterValue")
     private void showInternetConnectionSnackBar(String message, boolean isConnected, int duration) {
         // Inflate our custom view
         View snackView = getLayoutInflater().inflate(R.layout.snackbar_internet, null);
         snackbar = Snackbar.make(this.findViewById(android.R.id.content), message, duration);
         View sbView = snackbar.getView();
-        TextView tv = (TextView) sbView.findViewById(com.google.android.material.R.id.snackbar_text);
+        TextView tv = sbView.findViewById(com.google.android.material.R.id.snackbar_text);
         tv.setTextColor(Color.TRANSPARENT);
         //snackbar.setBackgroundTint(ContextCompat.getColor(this, R.color.transparent_white));
         // Configure our custom view
-        overlay = (View) snackView.findViewById(R.id.overlay);
+        View overlay = snackView.findViewById(R.id.overlay);
 
         if (isConnected) {
             snackbar.dismiss();
@@ -342,11 +333,11 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
             layout.setPadding(0, 0, 0, 0);
             layout.setLayoutParams(parentParams);
 
-            TextView messageTextView = (TextView) snackView.findViewById(R.id.message_text_view);
+            TextView messageTextView = snackView.findViewById(R.id.message_text_view);
             //messageTextView.setTextColor(context.getResources().getColor(R.color.transparent_white));
             messageTextView.setText(message);
 
-            TextView textViewOne = (TextView) snackView.findViewById(R.id.first_text_view);
+            TextView textViewOne = snackView.findViewById(R.id.first_text_view);
             textViewOne.setText(context.getResources().getString(R.string.retry));
             textViewOne.setOnClickListener(v -> {
                 Timber.d("showTwoButtonSnackbar() : allow clicked");
@@ -359,7 +350,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
                 }
             });
 
-            TextView textViewTwo = (TextView) snackView.findViewById(R.id.second_text_view);
+            TextView textViewTwo = snackView.findViewById(R.id.second_text_view);
             textViewTwo.setText(context.getResources().getString(R.string.close_app));
             textViewTwo.setOnClickListener(v -> {
                 Timber.d("showTwoButtonSnackbar() : deny clicked");
@@ -387,15 +378,18 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         return result;
     }
 
+    @SuppressWarnings("rawtypes")
     public void startActivity(Class activityClass) {
         startActivity(new Intent(getApplicationContext(), activityClass));
     }
 
+    @SuppressWarnings("rawtypes")
     public void startActivityWithFinish(Class activityClass) {
         startActivity(new Intent(getApplicationContext(), activityClass));
         finish();
     }
 
+    @SuppressWarnings("rawtypes")
     public void startActivityWithFinishAffinity(Class activityClass) {
         startActivity(new Intent(getApplicationContext(), activityClass));
         finishAffinity();
@@ -424,7 +418,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
                                 TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
                             }
                         });
-        mGPSDialog = builder.create();
+        AlertDialog mGPSDialog = builder.create();
         mGPSDialog.show();
         mGPSDialog.setCanceledOnTouchOutside(false);
     }
@@ -433,7 +427,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content),
                 message, duration);
         View sbView = snackbar.getView();
-        TextView textView = (TextView) sbView
+        TextView textView = sbView
                 .findViewById(com.google.android.material.R.id.snackbar_text);
         textView.setTextColor(ContextCompat.getColor(this, android.R.color.white));
 
@@ -451,7 +445,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
                     TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                 }
             });
-            snackbar.setActionTextColor(getResources().getColor(R.color.white));
+            snackbar.setActionTextColor(context.getResources().getColor(R.color.white));
         }
 
         snackbar.show();
@@ -532,40 +526,34 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         }
 
         geofencingClient.addGeofences(getGeoFencingRequest(), getGeoFencePendingIntent())
-                .addOnSuccessListener(this, new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        // Geofences added
-                        // ...
-                        Timber.e("Success");
-                    }
+                .addOnSuccessListener(this, aVoid -> {
+                    // Geofences added
+                    // ...
+                    Timber.e("Success");
                 })
-                .addOnFailureListener(this, new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // Failed to add geofences
-                        // ...
-                        //Allow location Access should be all the time
-                        Timber.e("Fail -> %s", e.getMessage());
-                        /*new android.app.AlertDialog.Builder(context).setTitle(context.getResources().getString(R.string.permission_all_time)).
-                                //setMessage(context.getResources().getString(R.string.allow_this_permission_from_settings)).
-                                        setMessage(context.getResources().getString(R.string.in_order_to_use_this_app)).
-                                setPositiveButton(context.getResources().getString(R.string.allow), new DialogInterface.OnClickListener() {
+                .addOnFailureListener(this, e -> {
+                    // Failed to add geofences
+                    // ...
+                    //Allow location Access should be all the time
+                    Timber.e("Fail -> %s", e.getMessage());
+                    /*new android.app.AlertDialog.Builder(context).setTitle(context.getResources().getString(R.string.permission_all_time)).
+                            //setMessage(context.getResources().getString(R.string.allow_this_permission_from_settings)).
+                                    setMessage(context.getResources().getString(R.string.in_order_to_use_this_app)).
+                            setPositiveButton(context.getResources().getString(R.string.allow), new DialogInterface.OnClickListener() {
 
-                                    @RequiresApi(api = Build.VERSION_CODES.Q)
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        openSettings();
-                                        dialog.dismiss();
-                                    }
-                                }).
-                                setNegativeButton(context.getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                }).show();*/
-                    }
+                                @RequiresApi(api = Build.VERSION_CODES.Q)
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    openSettings();
+                                    dialog.dismiss();
+                                }
+                            }).
+                            setNegativeButton(context.getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            }).show();*/
                 });
 
     }
@@ -660,6 +648,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         }
     }
 
+    @SuppressLint("ObsoleteSdkInt")
     public void setAppLocale(String localeCode) {
         Resources resources = getResources();
         DisplayMetrics dm = resources.getDisplayMetrics();

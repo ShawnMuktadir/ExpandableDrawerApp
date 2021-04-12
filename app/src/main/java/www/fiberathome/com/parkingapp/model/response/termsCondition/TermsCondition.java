@@ -1,5 +1,6 @@
 package www.fiberathome.com.parkingapp.model.response.termsCondition;
 
+@SuppressWarnings("unused")
 public class TermsCondition {
 
     private String title;

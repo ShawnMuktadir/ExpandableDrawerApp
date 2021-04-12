@@ -9,6 +9,7 @@ import www.fiberathome.com.parkingapp.model.data.Constants;
 import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
 
 @SuppressLint("StaticFieldLeak")
+@SuppressWarnings("unused")
 public class LanguagePreferences {
 
     private static final String SHARED_PREF_NAME = "PARKINGAPP";
@@ -32,6 +33,7 @@ public class LanguagePreferences {
     }
 
     // String IO
+    @SuppressWarnings("SameParameterValue")
     private void saveValue(String key, String value) {
         if (key == null || key.isEmpty()) return;
 
@@ -41,6 +43,7 @@ public class LanguagePreferences {
         editor.apply();
     }
 
+    @SuppressWarnings("SameParameterValue")
     private String getValue(String key, String defaultValue) {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getString(key, defaultValue);

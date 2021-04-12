@@ -3,6 +3,7 @@ package www.fiberathome.com.parkingapp.model.response.search;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+@SuppressWarnings("unused")
 public class SearchVisitedPostResponse {
 
     @SerializedName("id")

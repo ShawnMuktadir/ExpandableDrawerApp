@@ -2,6 +2,7 @@ package www.fiberathome.com.parkingapp.utils;
 
 import android.location.Location;
 
+@SuppressWarnings("unused")
 public class MathUtils {
     private static MathUtils mathUtils;
 
@@ -27,33 +28,27 @@ public class MathUtils {
         float intValue;
         try {
             intValue = Float.parseFloat(value);
-        } catch (NumberFormatException ex) {
-            intValue = 0.0f;
-        } catch (NullPointerException ex) {
+        } catch (NumberFormatException | NullPointerException ex) {
             intValue = 0.0f;
         }
         return intValue;
     }
 
     public int convertToInt(String value) {
-        int intValue = 0;
+        int intValue;
         try {
             intValue = Integer.parseInt(value);
-        } catch (NumberFormatException ex) {
-            intValue = 0;
-        } catch (NullPointerException ex) {
+        } catch (NumberFormatException | NullPointerException ex) {
             intValue = 0;
         }
         return intValue;
     }
 
     public long convertToLong(String value) {
-        long longValue = 0;
+        long longValue;
         try {
             longValue = Long.parseLong(value);
-        } catch (NumberFormatException ex) {
-            longValue = 0;
-        } catch (NullPointerException ex) {
+        } catch (NumberFormatException | NullPointerException ex) {
             longValue = 0;
         }
         return longValue;

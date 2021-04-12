@@ -2,6 +2,7 @@ package www.fiberathome.com.parkingapp.model.response.booking;
 
 import java.util.Comparator;
 
+@SuppressWarnings("unused")
 public class BookingSensors {
 
     private String parkingArea;

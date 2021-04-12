@@ -67,9 +67,7 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.Settin
             }
         }
 
-        viewHolder.itemView.setOnClickListener(v -> {
-            listener.onItemClick(data);
-        });
+        viewHolder.itemView.setOnClickListener(v -> listener.onItemClick(data));
     }
 
     @Override

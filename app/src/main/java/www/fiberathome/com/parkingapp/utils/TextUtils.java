@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 
+@SuppressWarnings("unused")
 public class TextUtils {
     private static TextUtils textUtils;
 
@@ -132,7 +133,7 @@ public class TextUtils {
         int lspaces = 0;// Number of left spaces
         char[] ch = str.toCharArray();
         int len = str.length();
-        StringBuffer bchar = new StringBuffer();
+        StringBuilder bchar = new StringBuilder();
         if (ch[0] == ' ') {
             while (ch[j] == ' ') {
                 lspaces++;
@@ -178,9 +179,9 @@ public class TextUtils {
         Matcher matcher = pattern.matcher(str);
 
         boolean b = matcher.find();
-        if (b == true) {
+        if (b) {
             System.out.println("There is a special character in my string:- " + str);
-//            Toast.makeText(context, "Sorry, no places found!", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, "Sorry, no places found!", Toast.LENGTH_SHORT).show();
         } else {
             System.out.println("There is no special character in my String :-  " + str);
         }
@@ -218,7 +219,7 @@ public class TextUtils {
 
     public String getCountryZipCode(Context context) {
 
-        String CountryID = "";
+        String CountryID;
         String CountryZipCode = "";
 
         TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
@@ -226,8 +227,8 @@ public class TextUtils {
         assert manager != null;
         CountryID = manager.getSimCountryIso().toUpperCase();
         String[] rl = context.getResources().getStringArray(R.array.CountryCodes);
-        for (int i = 0; i < rl.length; i++) {
-            String[] g = rl[i].split(",");
+        for (String s : rl) {
+            String[] g = s.split(",");
             if (g[1].trim().equals(CountryID.trim())) {
                 CountryZipCode = g[0];
                 Timber.e("CountryZipCode -> %s", CountryZipCode);
@@ -354,7 +355,7 @@ public class TextUtils {
     }
 
     public TextView createLink(TextView targetTextView, String completeString,
-                                      String partToClick, ClickableSpan clickableAction) {
+                               String partToClick, ClickableSpan clickableAction) {
 
         SpannableString spannableString = new SpannableString(completeString);
 

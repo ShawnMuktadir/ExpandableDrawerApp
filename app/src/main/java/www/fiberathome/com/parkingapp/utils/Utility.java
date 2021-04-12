@@ -17,6 +17,7 @@ import timber.log.Timber;
 import static android.content.pm.PackageManager.GET_META_DATA;
 import static android.os.Build.VERSION_CODES.P;
 
+@SuppressWarnings("unused")
 public class Utility {
 
     public static String hexString(Resources res) {

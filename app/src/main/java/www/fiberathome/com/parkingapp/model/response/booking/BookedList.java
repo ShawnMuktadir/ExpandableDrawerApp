@@ -3,6 +3,7 @@ package www.fiberathome.com.parkingapp.model.response.booking;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+@SuppressWarnings("unused")
 public class BookedList {
 
     @SerializedName("id")

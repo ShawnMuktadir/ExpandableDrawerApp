@@ -9,6 +9,7 @@ import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 
+@SuppressWarnings("unused")
 public class BaseFragment extends Fragment {
 
     private ProgressDialog progressDialog;
@@ -32,15 +33,9 @@ public class BaseFragment extends Fragment {
         } catch (final IllegalArgumentException e) {
             // Handle or log or ignore
             e.getCause();
-        } catch (final Exception e) {
-            // Handle or log or ignore
-            e.getCause();
         } finally {
             progressDialog = null;
             Timber.e("progressDialog finally block called");
         }
-
-        /*progressDialog.dismiss();
-        progressDialog.cancel();*/
     }
 }

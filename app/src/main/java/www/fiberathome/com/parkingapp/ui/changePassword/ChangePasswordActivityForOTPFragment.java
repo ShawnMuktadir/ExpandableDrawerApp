@@ -48,6 +48,7 @@ import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressLint("NonConstantResourceId")
+@SuppressWarnings("unused")
 public class ChangePasswordActivityForOTPFragment extends BaseFragment {
 
     @BindView(R.id.btn_verify_otp)
