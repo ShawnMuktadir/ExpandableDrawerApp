@@ -1261,7 +1261,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         if (location != null) {
 
             if(onConnectedLocation!=null){
-                myLocationChangedDistance = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), location.getLatitude(), location.getLongitude());
+                myLocationChangedDistance = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), location.getLatitude(), location.getLongitude())*1000;
             }
 
             onConnectedLocation = location;
