@@ -1261,7 +1261,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         if (location != null) {
 
             if(onConnectedLocation!=null){
-                myLocationChangedDistance = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), location.getLatitude(), location.getLongitude());
+                myLocationChangedDistance = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), location.getLatitude(), location.getLongitude())*1000;
             }
 
             onConnectedLocation = location;
@@ -2237,7 +2237,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     @SuppressLint("SetTextI18n")
     private void setBottomSheetFragmentControls(ArrayList<BookingSensors> sensors) {
-        bottomSheetRecyclerView.setHasFixedSize(true);
+        bottomSheetRecyclerView.setHasFixedSize(false);
         bottomSheetRecyclerView.setNestedScrollingEnabled(false);
 
         RecyclerView.LayoutManager mLayoutManager = new CustomLinearLayoutManager(getActivity());
