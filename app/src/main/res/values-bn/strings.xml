@@ -486,5 +486,6 @@
     <string name="gps_enabled">জিপিএস সক্রিয় করা হয়েছে</string>
     <string name="update_available">New Update Available</string>
     <string name="not_implemented_yet">Not implemented yet</string>
+    <string name="update_info">Update Info</string>
 </resources>
 
