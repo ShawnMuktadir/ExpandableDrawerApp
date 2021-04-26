@@ -21,7 +21,7 @@
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:layout_centerHorizontal="true"
-                android:src="@drawable/blank_profile"
+                android:src="@drawable/ic_user_profile"
                 android:visibility="visible"
                 app:civ_border_color="@android:color/black"
                 app:civ_border_width="@dimen/dim2"

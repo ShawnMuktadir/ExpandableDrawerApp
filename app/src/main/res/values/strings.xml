@@ -483,4 +483,5 @@
     <string name="update_available">New Update Available</string>
     <string name="not_implemented_yet">Not implemented yet</string>
     <string name="update_info">Update Info</string>
+    <string name="save">"Save "</string>
 </resources>

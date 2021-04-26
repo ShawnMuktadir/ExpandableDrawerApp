@@ -141,7 +141,7 @@ public class EditProfileFragment extends Fragment implements IOnBackPressListene
 
         String url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
         Timber.e("Image URL -> %s", url);
-        Glide.with(context).load(url).placeholder(R.drawable.blank_profile).dontAnimate().into(imageViewEditProfileImage);
+        Glide.with(context).load(url).placeholder(R.drawable.ic_account_settings).dontAnimate().into(imageViewEditProfileImage);
     }
 
     private boolean isGPSEnabled() {
