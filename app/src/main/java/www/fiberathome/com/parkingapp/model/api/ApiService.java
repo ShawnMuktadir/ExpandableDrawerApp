@@ -46,8 +46,8 @@ public interface ApiService {
     );
 
     @FormUrlEncoded
-    @POST("test1.php")
-    //@POST("edit_U_info.php")
+//    @POST("test1.php")
+    @POST("edit_U_info.php")
     Call<LoginResponse> editProfile(
             @Field("fullname") String name,
             @Field("password") String password,

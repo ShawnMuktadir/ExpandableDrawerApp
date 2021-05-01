@@ -102,6 +102,13 @@
                     android:textColorHint="@android:color/darker_gray" />
 
             </com.google.android.material.textfield.TextInputLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/select_vehicle_city_and_class"
+                android:layout_gravity="start"
+                android:layout_margin="2dp"
+                android:gravity="start"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -111,10 +118,6 @@
                 android:layout_margin="2dp"
                 android:weightSum="2">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/select_vehicle_city_and_class"/>
 
                 <Spinner
                     android:id="@+id/classSpinner"
