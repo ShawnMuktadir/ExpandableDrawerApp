@@ -21,9 +21,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +43,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import butterknife.BindView;
@@ -124,11 +129,19 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     @BindView(R.id.login_rl_invisible)
     RelativeLayout relativeLayoutInvisible;
 
+    @BindView(R.id.classSpinner)
+    Spinner classSpinner;
+
+    @BindView(R.id.divSpinner)
+    Spinner divSpinner;
+
     private Unbinder unbinder;
 
     private Bitmap bitmap;
 
     private SignUpActivity context;
+    private String vehicleClass="";
+    private String vehicleDiv="";
 
     public SignUpFragment() {
         // Required empty public constructor
@@ -154,6 +167,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         context = (SignUpActivity) getActivity();
 
         setListeners();
+        setSpinner(context);
 
         // Check user is logged in
         if (Preferences.getInstance(context).isLoggedIn()) {
@@ -192,6 +206,81 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         tvLogin.setOnClickListener(this);
         imageViewUploadProfileImage.setOnClickListener(this);
         imageViewCaptureImage.setOnClickListener(this);
+    }
+
+    private void setSpinner(SignUpActivity context) {
+        // Spinner Drop down elements
+        List<String> categories = new ArrayList<>();
+        categories.add("Select");
+        categories.add("Dhaka Metro");
+        categories.add("Chattogram Metro");
+        // Creating adapter for spinner
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, categories);
+
+        // Drop down layout style - list view with radio button
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // attaching data adapter to spinner
+        classSpinner.setAdapter(dataAdapter);
+
+        List<String> div = new ArrayList<>();
+        div.add("Select");
+        div.add("Ka");
+        div.add("kha");
+        div.add("Ga");
+        div.add("Gha");
+        div.add("Ch");
+        div.add("Cha");
+        div.add("Ja");
+        div.add("Jha");
+        div.add("Ta");
+        div.add("Tha");
+        div.add("DA");
+        div.add("No");
+        div.add("Po");
+        div.add("Vo");
+        div.add("Mo");
+        div.add("Da");
+        div.add("Th");
+        div.add("Ha");
+        div.add("La");
+        div.add("E");
+        div.add("Zo");
+        // Creating adapter for spinner
+        ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, div);
+
+        // Drop down layout style - list view with radio button
+        dataAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // attaching data adapter to spinner
+        divSpinner.setAdapter(dataAdapter2);
+
+        classSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                vehicleClass = categories.get(position);
+
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                vehicleClass = "";
+
+            }
+        });
+        divSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                vehicleDiv = div.get(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                vehicleDiv ="";
+            }
+        });
     }
 
     @Override
@@ -575,9 +664,10 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             String mobileNo = editTextMobileNumber.getText().toString().trim();
             String vehicleNo = editTextVehicleRegNumber.getText().toString().trim();
             String password = editTextPassword.getText().toString().trim();
+            String licencePlateInfo = vehicleClass+" "+vehicleDiv+" "+vehicleNo;
 
             if (bitmap != null) {
-                registerUser(fullName, password, mobileNo, vehicleNo);
+                registerUser(fullName, password, mobileNo, licencePlateInfo);
             } else {
                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.upload_profile_photo));
             }
@@ -641,7 +731,13 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         boolean isPhoneValid = Validator.checkValidity(textInputLayoutMobile, editTextMobileNumber.getText().toString(), context.getString(R.string.err_msg_mobile), "phone");
         boolean isVehicleRegValid = Validator.checkValidity(textInputLayoutVehicle, editTextVehicleRegNumber.getText().toString(), context.getString(R.string.err_msg_vehicle), "text");
         boolean isPasswordValid = Validator.checkValidity(textInputLayoutPassword, editTextPassword.getText().toString(), context.getString(R.string.err_msg_password_signup), "textPassword");
+        boolean isLicencePlateValid = false;
+        if (!vehicleClass.isEmpty()&&!vehicleClass.equals("Select")&&!vehicleDiv.isEmpty()&&!vehicleDiv.equals("Select")){
+            isLicencePlateValid = true;
+        }else{
+            Toast.makeText(context,"Select Vehicle City and Class", Toast.LENGTH_SHORT).show();
+        }
 
-        return isNameValid && isPhoneValid && isVehicleRegValid && isPasswordValid;
+        return isNameValid && isPhoneValid && isVehicleRegValid && isPasswordValid && isLicencePlateValid;
     }
 }

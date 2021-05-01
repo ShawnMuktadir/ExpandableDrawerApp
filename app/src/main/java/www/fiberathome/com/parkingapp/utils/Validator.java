@@ -80,7 +80,12 @@ public class Validator {
             textInputLayout.setErrorEnabled(true);
             textInputLayout.setError(errorText);
             return false;
-        } else {
+        } else if(input.length()<6){
+            textInputLayout.setErrorEnabled(true);
+            textInputLayout.setError("Vehicle number must be 6 digits");
+            return false;
+        }
+            else {
             if (textType.equalsIgnoreCase("number")) {
                 if (isInputTypeNumber(input)) {
                     textInputLayout.setError(null);

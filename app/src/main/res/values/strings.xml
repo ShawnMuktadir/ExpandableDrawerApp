@@ -484,4 +484,5 @@
     <string name="not_implemented_yet">Not implemented yet</string>
     <string name="update_info">Update Info</string>
     <string name="save">"Save "</string>
+    <string name="select_vehicle_city_and_class">Select Vehicle City and Class:</string>
 </resources>

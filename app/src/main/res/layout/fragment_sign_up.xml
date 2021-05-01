@@ -106,18 +106,33 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:padding="4dp"
+                android:layout_margin="2dp"
+                android:weightSum="2">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/select_vehicle_city_and_class"/>
 
                 <Spinner
                     android:id="@+id/classSpinner"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical" />
 
                 <Spinner
                     android:id="@+id/divSpinner"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1" />
+
+
             </LinearLayout>
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textInputLayoutVehicle"
                 style="@style/TextLabel"
@@ -130,12 +145,12 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/reg_num"
                     android:imeOptions="actionNext"
-                    android:inputType="text"
+                    android:inputType="number"
+                    android:maxLength="6"
                     android:textColor="@android:color/black"
                     android:textColorHint="@android:color/black"
                     tools:ignore="TextFields" />
             </com.google.android.material.textfield.TextInputLayout>
-
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textInputLayoutPassword"
                 style="@style/TextLabel"
