@@ -501,18 +501,17 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     private void showPictureDialog() {
         AlertDialog.Builder pictureDialog = new AlertDialog.Builder(context);
         pictureDialog.setTitle("Select Image");
-        /*String[] pictureDialogItems = {"Select photo from gallery",
+        String[] pictureDialogItems = {"Select photo from gallery",
                 "Capture photo from camera"
-        };*/
-        String[] pictureDialogItems = {"Capture photo from camera"};
+        };
 
         pictureDialog.setItems(pictureDialogItems, (dialog, which) -> {
             switch (which) {
                 case 0:
-                    takePhotoFromCamera();
+                    choosePhotoFromGallery();
                     break;
                 case 1:
-                    choosePhotoFromGallery();
+                    takePhotoFromCamera();
                     break;
             }
         });

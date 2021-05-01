@@ -34,6 +34,7 @@ public class PhotoUtil {
         // Save a file: path for use with ACTION_VIEW intents
         return Uri.fromFile(image);
     }
+
     public static void copyFileUsingFileChannels(File source, File dest){
         FileChannel inputChannel = null;
         FileChannel outputChannel = null;

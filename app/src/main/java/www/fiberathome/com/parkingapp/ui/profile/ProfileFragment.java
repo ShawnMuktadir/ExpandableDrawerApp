@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
@@ -52,6 +54,8 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
 
     private Unbinder unbinder;
 
+    private User user;
+
     private ProfileActivity context;
 
     public ProfileFragment() {
@@ -78,13 +82,20 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
 
         context = (ProfileActivity) getActivity();
 
-        User user = Preferences.getInstance(context).getUser();
-
-        setData(user);
-
-        setListeners();
-
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setListeners();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        user = Preferences.getInstance(context).getUser();
+        setData(user);
     }
 
     private void setListeners() {

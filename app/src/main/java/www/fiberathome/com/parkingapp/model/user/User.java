@@ -37,7 +37,8 @@ public class User {
     public User() {
     }
 
-    public User(Integer id, String fullName, String mobileNo, String vehicleNo, String image, String createdAt, Integer status) {
+    public User(Integer id, String fullName, String mobileNo, String vehicleNo,
+                String image, String createdAt, Integer status) {
         this.id = id;
         this.fullName = fullName;
         this.mobileNo = mobileNo;

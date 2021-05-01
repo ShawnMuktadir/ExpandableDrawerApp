@@ -237,9 +237,9 @@ public class SplashFragment extends BaseFragment implements LocationListener {
     }
 
     @Override
-    public void onLocationChanged(Location location) {
-        Timber.e("location lat -> %s", String.valueOf(location.getLatitude()));
-        Timber.e("location lng -> %s", String.valueOf(location.getLongitude()));
+    public void onLocationChanged(@NonNull Location location) {
+        //Timber.e("location lat -> %s", String.valueOf(location.getLatitude()));
+        //Timber.e("location lng -> %s", String.valueOf(location.getLongitude()));
     }
 
     @Override

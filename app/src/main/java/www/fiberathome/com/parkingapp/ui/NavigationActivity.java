@@ -122,7 +122,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
 
         setupNavigationDrawer();
 
-        setupNavigationDrawerHeader();
+        //setupNavigationDrawerHeader();
 
         setupNavDrawerMenuItem();
 
@@ -173,6 +173,12 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         actionBarDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        setupNavigationDrawerHeader();
     }
 
     @Override

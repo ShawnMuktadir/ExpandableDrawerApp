@@ -22,6 +22,9 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class ImageUtils {
     private static ImageUtils imageUtils;
@@ -160,5 +163,19 @@ public class ImageUtils {
         Canvas canvas = new Canvas(bitmap);
         vectorDrawable.draw(canvas);
         return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
+
+    public Bitmap imageUrlToBitmap(String src) {
+        try {
+            URL url = new URL(src);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            return BitmapFactory.decodeStream(input);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

@@ -413,7 +413,6 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                         Timber.e("user after login -> %s", new Gson().toJson(user));
 
                         if (response.body().getMessage().equalsIgnoreCase("Please verify Your Account by OTP")) {
-                            //Intent verifyPhoneIntent = new Intent(context, VerifyPhoneActivity.class);
                             Intent verifyPhoneIntent = new Intent(context, VerifyPhoneActivity.class);
                             if (checkFields()) {
                                 verifyPhoneIntent.putExtra("mobile_no", mobileNo);
@@ -445,7 +444,6 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                             if (response.body().getMessage().equalsIgnoreCase("Please verify Your Account by OTP")) {
                                 ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                                 btnOTP.setVisibility(View.GONE);
-                                //Intent verifyPhoneIntent = new Intent(context, VerifyPhoneActivity.class);
                                 Intent verifyPhoneIntent = new Intent(context, VerifyPhoneActivity.class);
                                 verifyPhoneIntent.putExtra("mobile_no", mobileNo);
                                 verifyPhoneIntent.putExtra("password", password);
