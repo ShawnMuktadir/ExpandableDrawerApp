@@ -4,19 +4,25 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,44 +31,40 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 
-import com.android.volley.Request;
-import com.android.volley.toolbox.StringRequest;
 import com.bumptech.glide.Glide;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import de.hdodenhof.circleimageview.CircleImageView;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.adapter.UniversalSpinnerAdapter;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
-import www.fiberathome.com.parkingapp.model.response.BaseResponse;
-import www.fiberathome.com.parkingapp.model.response.editProfile.EditProfileResponse;
 import www.fiberathome.com.parkingapp.model.response.login.LoginResponse;
 import www.fiberathome.com.parkingapp.model.user.User;
 import www.fiberathome.com.parkingapp.ui.helper.ProgressView;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
-import www.fiberathome.com.parkingapp.ui.verifyPhone.VerifyPhoneActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DateTimeUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
-import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.ImageUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
@@ -86,6 +88,12 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
 
     @BindView(R.id.editTextFullName)
     EditText editTextFullName;
+
+    @BindView(R.id.classSpinner)
+    Spinner classSpinner;
+
+    @BindView(R.id.divSpinner)
+    Spinner divSpinner;
 
     @BindView(R.id.textInputLayoutCarNumber)
     TextInputLayout textInputLayoutCarNumber;
@@ -111,6 +119,10 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
     private Unbinder unbinder;
 
     private EditProfileActivity context;
+
+    private String vehicleClass = "";
+    private String vehicleDiv = "";
+    private long classId, divId;
 
     private Bitmap bitmap;
 
@@ -149,11 +161,71 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
 
         user = Preferences.getInstance(context).getUser();
 
+        //setSpinner(context);
+
+        setVehicleClassCategory();
+        setVehicleDivCategory();
+
         setData(user);
+
+        setListeners();
 
         btnUpdateInfo.setOnClickListener(this);
         imageViewEditProfileImage.setOnClickListener(this);
         imageViewCaptureImage.setOnClickListener(this);
+    }
+
+    private void setListeners() {
+        Objects.requireNonNull(textInputLayoutFullName.getEditText()).addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() < 1) {
+                    textInputLayoutFullName.setErrorEnabled(true);
+                    textInputLayoutFullName.setError(context.getString(R.string.err_msg_fullname));
+                }
+
+                if (s.length() > 0) {
+                    textInputLayoutFullName.setError(null);
+                    textInputLayoutFullName.setErrorEnabled(false);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        Objects.requireNonNull(textInputLayoutCarNumber.getEditText()).addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() < 1) {
+                    textInputLayoutCarNumber.setErrorEnabled(true);
+                    textInputLayoutCarNumber.setError(context.getString(R.string.err_msg_vehicle));
+                }
+
+                if (s.length() > 0) {
+                    textInputLayoutCarNumber.setError(null);
+                    textInputLayoutCarNumber.setErrorEnabled(false);
+                }
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
     @Override
@@ -180,6 +252,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                 Bitmap convertedImage = getResizedBitmap(bitmap, 500);
                 //Toast.makeText(SignUpActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
                 imageViewEditProfileImage.setImageBitmap(convertedImage);
+                //user.setImage(imageToString(bitmap));
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -192,6 +265,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                 if (data.getExtras() != null) {
                     bitmap = (Bitmap) data.getExtras().get("data");
                     imageViewEditProfileImage.setImageBitmap(bitmap);
+                    //user.setImage(imageToString(bitmap));
                 }
                 /*saveImage(thumbnail);
                  Toast.makeText(SignUpActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();*/
@@ -267,14 +341,203 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
         name = TextUtils.getInstance().capitalizeFirstLetter(name);
         editTextFullName.setText(name);
 
-        tvUserMobileNo.setText(TextUtils.getInstance().addCountryPrefix(user.getMobileNo()));
+        tvUserMobileNo.setText(TextUtils.getInstance().addCountryPrefixWithPlus(user.getMobileNo()));
         Timber.e("Mobile no -> %s", user.getMobileNo());
 
-        editTextCarNumber.setText(user.getVehicleNo());
+        String currentString = user.getVehicleNo().trim();
+        String[] separated = currentString.split(" ");
 
-        String url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
-        Timber.e("Image URL -> %s", url);
-        Glide.with(context).load(url).placeholder(R.drawable.ic_account_settings).dontAnimate().into(imageViewEditProfileImage);
+        String carPlateNumber = separated[2];
+
+        editTextCarNumber.setText(carPlateNumber);
+
+        selectSpinnerItemByValue(classSpinner, Preferences.getInstance(context).getVehicleClassData());
+
+        selectSpinnerItemByValue(divSpinner, Preferences.getInstance(context).getVehicleDivData());
+
+        if (user.getImage() != null) {
+            String url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
+            Timber.e("Image URL -> %s", url);
+            Glide.with(context).load(url).placeholder(R.drawable.ic_account_settings).dontAnimate().into(imageViewEditProfileImage);
+        } else {
+            ToastUtils.getInstance().showErrorToast(context, "Image value " + user.getImage(), Toast.LENGTH_SHORT);
+        }
+    }
+
+    public void selectSpinnerItemByValue(Spinner spinner, String value) {
+        UniversalSpinnerAdapter adapter = (UniversalSpinnerAdapter) spinner.getAdapter();
+        for (int position = 0; position < adapter.getCount(); position++) {
+            if (adapter.getItem(position).getValue().equalsIgnoreCase(value)) {
+                spinner.setSelection(position);
+                return;
+            }
+        }
+    }
+
+    private void setSpinner(EditProfileActivity context) {
+        // Spinner Drop down elements
+        List<String> categories = new ArrayList<>();
+        categories.add("Select");
+        categories.add("Dhaka Metro");
+        categories.add("Chattogram Metro");
+        // Creating adapter for spinner
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, categories);
+
+        // Drop down layout style - list view with radio button
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // attaching data adapter to spinner
+        classSpinner.setAdapter(dataAdapter);
+
+        List<String> div = new ArrayList<>();
+        div.add("Select");
+        div.add("Ka");
+        div.add("kha");
+        div.add("Ga");
+        div.add("Gha");
+        div.add("Ch");
+        div.add("Cha");
+        div.add("Ja");
+        div.add("Jha");
+        div.add("Ta");
+        div.add("Tha");
+        div.add("DA");
+        div.add("No");
+        div.add("Po");
+        div.add("Vo");
+        div.add("Mo");
+        div.add("Da");
+        div.add("Th");
+        div.add("Ha");
+        div.add("La");
+        div.add("E");
+        div.add("Zo");
+        // Creating adapter for spinner
+        ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, div);
+
+        // Drop down layout style - list view with radio button
+        dataAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // attaching data adapter to spinner
+        divSpinner.setAdapter(dataAdapter2);
+
+        classSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                vehicleClass = categories.get(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                vehicleClass = "";
+
+            }
+        });
+        divSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                vehicleDiv = div.get(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                vehicleDiv = "";
+            }
+        });
+    }
+
+    private UniversalSpinnerAdapter vehicleClassAdapter;
+    private List<www.fiberathome.com.parkingapp.model.Spinner> classDataList;
+    private List<www.fiberathome.com.parkingapp.model.Spinner> classDivList;
+
+    private void setVehicleClassCategory() {
+        vehicleClassAdapter =
+                new UniversalSpinnerAdapter(context,
+                        android.R.layout.simple_spinner_item,
+                        populateVehicleClassData());
+
+        classSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                classId = id;
+                vehicleClass = classDataList.get(position).getValue();
+                Preferences.getInstance(context).saveVehicleClassData(vehicleClass);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        classSpinner.setAdapter(vehicleClassAdapter);
+    }
+
+    private List<www.fiberathome.com.parkingapp.model.Spinner> populateVehicleClassData() {
+        classDataList = new ArrayList<>();
+
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(1, "Dhaka-Metro"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(2, "Chattogram-Metro"));
+
+        return classDataList;
+    }
+
+    private UniversalSpinnerAdapter vehicleDivAdapter;
+
+    private void setVehicleDivCategory() {
+        vehicleDivAdapter =
+                new UniversalSpinnerAdapter(context,
+                        android.R.layout.simple_spinner_item,
+                        populateVehicleDivData());
+
+        divSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                divId = id;
+                vehicleDiv = classDivList.get(position).getValue();
+                Preferences.getInstance(context).saveVehicleDivData(vehicleDiv);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        divSpinner.setAdapter(vehicleDivAdapter);
+    }
+
+    private List<www.fiberathome.com.parkingapp.model.Spinner> populateVehicleDivData() {
+
+        classDivList = new ArrayList<>();
+        //List<www.fiberathome.com.parkingapp.model.Spinner> dataList = new ArrayList<>();
+
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(1, "Ka"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(2, "kha"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(3, "Ga"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(4, "Gha"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(5, "Ch"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(6, "Cha"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(7, "Ja"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(8, "Jha"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(9, "Ta"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(10, "Tha"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(11, "DA"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(12, "No"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(13, "Po"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(14, "Vo"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(15, "Mo"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(16, "Da"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(17, "Th"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(18, "Ha"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(19, "La"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(20, "E"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(21, "Zo"));
+
+        return classDivList;
     }
 
     private boolean isPermissionGranted() {
@@ -323,11 +586,21 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
 
     private String imageToString(Bitmap bitmap) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        //bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
         byte[] imageByte = byteArrayOutputStream.toByteArray();
 
         return Base64.encodeToString(imageByte, Base64.DEFAULT);
+    }
 
+    public Bitmap StringToBitMap(String encodedString){
+        try{
+            byte [] encodeByte = Base64.decode(encodedString,Base64.DEFAULT);
+            return BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+        }
+        catch(Exception e){
+            e.getMessage();
+            return null;
+        }
     }
 
     private void editProfile(final String fullName, final String password, final String mobileNo, final String vehicleNo) {
@@ -337,70 +610,62 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
         showProgress();
 
         ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<ResponseBody> call = service.editProfile(fullName, password, mobileNo, vehicleNo, bitmap!=null? imageToString(bitmap) :
-                imageToString(ImageUtils.getInstance().imageUrlToBitmap(AppConfig.IMAGES_URL + user.getImage() + ".jpg")),
+        Call<LoginResponse> call = service.editProfile(fullName,
+                password,
+                user.getMobileNo(),
+                vehicleNo,
+                bitmap!=null? imageToString(bitmap) :
+                imageToString(((BitmapDrawable) imageViewEditProfileImage.getDrawable()).getBitmap()),
+                //imageToString(ImageUtils.getInstance().imageUrlToBitmap(AppConfig.IMAGES_URL + user.getImage() + ".jpg")),
                 mobileNo + "_" + DateTimeUtils.getInstance().getCurrentTimeStamp());
 
-        call.enqueue(new Callback<ResponseBody>() {
+        call.enqueue(new Callback<LoginResponse>() {
             @Override
-            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+            public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
 
-                Timber.e("edit profile response body-> %s", new Gson().toJson(response.body()));
+               /*Timber.e("edit profile response body-> %s", new Gson().toJson(response.body()));
                 assert response.body() != null;
-//                Timber.e("edit profile response user-> %s", new Gson().toJson(response.body().getUser()));
+                Timber.e("edit profile response user-> %s", new Gson().toJson(response.body().getUser()));*/
 
                 hideLoading();
 
                 hideProgress();
 
                 try {
-                    Log.e("Response",response.body().string());
-                    Log.e("ResponseCall", new Gson().toJson(call.request().body()));
-                } catch (IOException e) {
+                    Timber.e("Response -> %s",new Gson().toJson(response.body()));
+                    Timber.e("ResponseCall -> %s", new Gson().toJson(call.request().body()));
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
                 if (response.body() != null) {
-                  /*  if (!response.body()) {
+                    if (!response.body().getError()) {
                         ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
 
                         User user = new User();
                         user.setId(Preferences.getInstance(context).getUser().getId());
-                        user.setFullName(fullName);
-                        user.setMobileNo(mobileNo);
-                        user.setVehicleNo(vehicleNo);
-                        user.setImage(bitmap!=null? imageToString(bitmap) :
-                                imageToString(ImageUtils.getInstance().imageUrlToBitmap(AppConfig.IMAGES_URL + user.getImage() + ".jpg")));
+                        user.setFullName(response.body().getUser().getFullName());
+                        user.setMobileNo(response.body().getUser().getMobileNo());
+                        user.setVehicleNo(response.body().getUser().getVehicleNo());
+                        user.setImage(response.body().getUser().getImage());
+                        /*user.setImage(bitmap!=null? imageToString(bitmap) :
+                                imageToString(ImageUtils.getInstance().imageUrlToBitmap(AppConfig.IMAGES_URL + user.getImage() + ".jpg")));*/
 
                         // storing the user in sharedPreference
                         Preferences.getInstance(context).userLogin(user);
                         Timber.e("user after update -> %s", new Gson().toJson(user));
 
-                        *//*if (response.body().getUser() != null) {
-                            User user = new User();
-                            user.setId(Preferences.getInstance(context).getUser().getId());
-                            //user.setId(response.body().getUser().getId());
-                            user.setFullName(response.body().getUser().getFullName());
-                            user.setMobileNo(response.body().getUser().getMobileNo());
-                            user.setVehicleNo(response.body().getUser().getVehicleNo());
-                            user.setImage(response.body().getUser().getImage());
-
-                            // storing the user in sharedPreference
-                            Preferences.getInstance(context).userLogin(user);
-                            Timber.e("user after update -> %s", new Gson().toJson(user));
-                        }*//*
-
                     } else {
                         Timber.e("jsonObject else called");
-//                        ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
-                    }*/
+                        ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
+                    }
                 } else {
-//                    ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
+                    ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable errors) {
+            public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable errors) {
                 Timber.e("Throwable Errors: -> %s", errors.toString());
                 ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
                 hideLoading();
@@ -408,78 +673,6 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
             }
         });
     }
-
-
-    /*
-    private void registerUser(final String fullname, final String mobileNo, final String vehicleNo, final String password) {
-
-        showProgress();
-
-        HttpsTrustManager.allowAllSSL();
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_REGISTER, response -> {
-
-            progressDialog.dismiss();
-
-            try {
-                //converting response to json object
-                JSONObject jsonObject = new JSONObject(response);
-                Timber.e("jsonObject -> %s", jsonObject.toString());
-
-                // if no error response
-                if (!jsonObject.getBoolean("error")) {
-                    Timber.e("jsonObject if e dhukche");
-
-                    showMessage(jsonObject.getString("message"));
-                    // boolean flag saying device is waiting for sms
-//                    SharedPreManager.getInstance(getApplicationContext()).setIsWaitingForSMS(true);
-
-                    // Moving the screen to next pager item i.e otp screen
-                    Intent intent = new Intent(SignUpActivity.this, VerifyPhoneActivity.class);
-//                    intent.putExtra("fullname",fullname);
-//                    intent.putExtra("password",password);
-//                    intent.putExtra("mobile_no",mobileNo);
-//                    intent.putExtra("vehicle_no",vehicleNo);
-//                    intent.putExtra("image", imageToString(bitmap));
-//                    intent.putExtra("image_name", mobileNo);
-                    startActivity(intent);
-
-
-                } else {
-                    showMessage(jsonObject.getString("message"));
-                    Timber.e("jsonObject else e dhukche");
-                }
-            } catch (JSONException e) {
-                Timber.e("jsonObject catch -> %s",e.getMessage());
-                e.printStackTrace();
-            }
-
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Timber.e("jsonObject onErrorResponse -> %s",error.getMessage());
-                SignUpActivity.this.showMessage(error.getMessage());
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("fullname", fullname);
-                params.put("password", password);
-                SharedData.getInstance().setPassword(password);
-                params.put("mobile_no", mobileNo);
-                params.put("vehicle_no", vehicleNo);
-                params.put("image", imageToString(bitmap));
-                params.put("image_name", mobileNo);
-
-                return params;
-            }
-        };
-
-        stringRequest.setRetryPolicy(new DefaultRetryPolicy(50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        ParkingApp.getInstance().addToRequestQueue(stringRequest, TAG);
-    }
-*/
 
     private void showPictureDialog() {
         AlertDialog.Builder pictureDialog = new AlertDialog.Builder(context);
@@ -517,22 +710,25 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
         if (checkFields()) {
             String fullName = editTextFullName.getText().toString().trim();
             String vehicleNo = editTextCarNumber.getText().toString().trim();
+            String licencePlateInfo = vehicleClass + " " + vehicleDiv + " " + vehicleNo;
             String password = SharedData.getInstance().getPassword();
-            String mobileNo = TextUtils.getInstance().addCountryPrefix(user.getMobileNo());
+            String mobileNo = user.getMobileNo();
 
-            //if (bitmap != null) {
-                editProfile(fullName, password, mobileNo, vehicleNo);
-           /* } else {
-                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.upload_profile_photo));
-            }*/
+            editProfile(fullName, password, mobileNo, licencePlateInfo);
         }
     }
 
     private boolean checkFields() {
         boolean isNameValid = Validator.checkValidity(textInputLayoutFullName, editTextFullName.getText().toString(), context.getString(R.string.err_msg_fullname), "text");
-        boolean isVehicleRegValid = Validator.checkValidity(textInputLayoutCarNumber, editTextCarNumber.getText().toString(), context.getString(R.string.err_msg_vehicle), "text");
+        boolean isVehicleRegValid = Validator.checkValidity(textInputLayoutCarNumber, editTextCarNumber.getText().toString(), context.getString(R.string.err_msg_vehicle), "vehicleNumber");
+        boolean isLicencePlateValid = false;
+        if (!vehicleClass.isEmpty() && !vehicleClass.equalsIgnoreCase("Select") && !vehicleDiv.isEmpty() && !vehicleDiv.equalsIgnoreCase("Select")) {
+            isLicencePlateValid = true;
+        } else {
+            Toast.makeText(context, "Select Vehicle City and Class", Toast.LENGTH_SHORT).show();
+        }
 
-        return isNameValid && isVehicleRegValid;
+        return isNameValid && isVehicleRegValid && isLicencePlateValid;
     }
 
     @Override

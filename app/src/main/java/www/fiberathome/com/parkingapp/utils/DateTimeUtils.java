@@ -59,7 +59,7 @@ public class DateTimeUtils {
     @SuppressLint("SimpleDateFormat")
     public String getCurrentTimeStamp() {
         try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss");
             return dateFormat.format(new Date());
         } catch (Exception e) {
             e.printStackTrace();

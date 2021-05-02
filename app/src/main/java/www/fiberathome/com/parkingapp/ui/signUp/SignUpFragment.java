@@ -56,6 +56,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.adapter.UniversalSpinnerAdapter;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
@@ -140,8 +141,10 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     private Bitmap bitmap;
 
     private SignUpActivity context;
-    private String vehicleClass="";
-    private String vehicleDiv="";
+
+    private String vehicleClass = "";
+    private String vehicleDiv = "";
+    private long classId, cityId;
 
     public SignUpFragment() {
         // Required empty public constructor
@@ -167,7 +170,11 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         context = (SignUpActivity) getActivity();
 
         setListeners();
-        setSpinner(context);
+
+        //setSpinner(context);
+
+        setVehicleClassCategory();
+        setVehicleDivCategory();
 
         // Check user is logged in
         if (Preferences.getInstance(context).isLoggedIn()) {
@@ -201,6 +208,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
         textViewTermsConditions.setMovementMethod(LinkMovementMethod.getInstance());
         textViewTermsConditions.setText(addMultipleClickablePart(context.getResources().getString(R.string.by_using_this_app_you_agree_to_our_terms_and_conditions_amp_privacy_policy)));
+
 
         btnSignup.setOnClickListener(this);
         tvLogin.setOnClickListener(this);
@@ -259,9 +267,9 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
+                classId = id;
                 vehicleClass = categories.get(position);
-
-
+                Preferences.getInstance(context).saveVehicleClassData(vehicleClass);
             }
 
             @Override
@@ -270,17 +278,114 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
             }
         });
+
         divSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                cityId = id;
                 vehicleDiv = div.get(position);
+                Preferences.getInstance(context).saveVehicleDivData(vehicleDiv);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                vehicleDiv ="";
+                vehicleDiv = "";
             }
         });
+    }
+
+    private UniversalSpinnerAdapter vehicleClassAdapter;
+    private List<www.fiberathome.com.parkingapp.model.Spinner> classDataList;
+    private List<www.fiberathome.com.parkingapp.model.Spinner> classDivList;
+
+    private void setVehicleClassCategory() {
+        vehicleClassAdapter =
+                new UniversalSpinnerAdapter(context,
+                        android.R.layout.simple_spinner_item,
+                        populateVehicleClassData());
+
+        classSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                classId = id;
+                vehicleClass = classDataList.get(position).getValue();
+                Preferences.getInstance(context).saveVehicleClassData(vehicleClass);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        classSpinner.setAdapter(vehicleClassAdapter);
+    }
+
+    private List<www.fiberathome.com.parkingapp.model.Spinner> populateVehicleClassData() {
+        classDataList = new ArrayList<>();
+        //List<www.fiberathome.com.parkingapp.model.Spinner> dataList = new ArrayList<>();
+
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(1, "Dhaka Metro"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(2, "Chattogram Metro"));
+
+        return classDataList;
+    }
+
+    private UniversalSpinnerAdapter vehicleDivAdapter;
+
+    private void setVehicleDivCategory() {
+        vehicleDivAdapter =
+                new UniversalSpinnerAdapter(context,
+                        android.R.layout.simple_spinner_item,
+                        populateVehicleDivData());
+
+        divSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                cityId = id;
+                vehicleDiv = classDivList.get(position).getValue();
+                Preferences.getInstance(context).saveVehicleDivData(vehicleDiv);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        divSpinner.setAdapter(vehicleDivAdapter);
+    }
+
+    private List<www.fiberathome.com.parkingapp.model.Spinner> populateVehicleDivData() {
+
+        classDivList = new ArrayList<>();
+        //List<www.fiberathome.com.parkingapp.model.Spinner> dataList = new ArrayList<>();
+
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(1, "Ka"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(2, "kha"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(3, "Ga"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(4, "Gha"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(5, "Ch"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(6, "Cha"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(7, "Ja"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(8, "Jha"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(9, "Ta"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(10, "Tha"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(11, "DA"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(12, "No"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(13, "Po"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(14, "Vo"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(15, "Mo"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(16, "Da"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(17, "Th"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(18, "Ha"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(19, "La"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(20, "E"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(21, "Zo"));
+
+        return classDivList;
     }
 
     @Override
@@ -664,7 +769,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             String mobileNo = editTextMobileNumber.getText().toString().trim();
             String vehicleNo = editTextVehicleRegNumber.getText().toString().trim();
             String password = editTextPassword.getText().toString().trim();
-            String licencePlateInfo = vehicleClass+" "+vehicleDiv+" "+vehicleNo;
+            String licencePlateInfo = vehicleClass + " " + vehicleDiv + " " + vehicleNo;
 
             if (bitmap != null) {
                 registerUser(fullName, password, mobileNo, licencePlateInfo);
@@ -729,13 +834,13 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     private boolean checkFields() {
         boolean isNameValid = Validator.checkValidity(textInputLayoutFullName, editTextFullName.getText().toString(), context.getString(R.string.err_msg_fullname), "text");
         boolean isPhoneValid = Validator.checkValidity(textInputLayoutMobile, editTextMobileNumber.getText().toString(), context.getString(R.string.err_msg_mobile), "phone");
-        boolean isVehicleRegValid = Validator.checkValidity(textInputLayoutVehicle, editTextVehicleRegNumber.getText().toString(), context.getString(R.string.err_msg_vehicle), "text");
+        boolean isVehicleRegValid = Validator.checkValidity(textInputLayoutVehicle, editTextVehicleRegNumber.getText().toString(), context.getString(R.string.err_msg_vehicle), "vehicleNumber");
         boolean isPasswordValid = Validator.checkValidity(textInputLayoutPassword, editTextPassword.getText().toString(), context.getString(R.string.err_msg_password_signup), "textPassword");
         boolean isLicencePlateValid = false;
-        if (!vehicleClass.isEmpty()&&!vehicleClass.equals("Select")&&!vehicleDiv.isEmpty()&&!vehicleDiv.equals("Select")){
+        if (!vehicleClass.isEmpty() && !vehicleClass.equalsIgnoreCase("Select") && !vehicleDiv.isEmpty() && !vehicleDiv.equalsIgnoreCase("Select")) {
             isLicencePlateValid = true;
-        }else{
-            Toast.makeText(context,"Select Vehicle City and Class", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "Select Vehicle City and Class", Toast.LENGTH_SHORT).show();
         }
 
         return isNameValid && isPhoneValid && isVehicleRegValid && isPasswordValid && isLicencePlateValid;

@@ -80,12 +80,7 @@ public class Validator {
             textInputLayout.setErrorEnabled(true);
             textInputLayout.setError(errorText);
             return false;
-        } else if(input.length()<6){
-            textInputLayout.setErrorEnabled(true);
-            textInputLayout.setError("Vehicle number must be 6 digits");
-            return false;
-        }
-            else {
+        } else {
             if (textType.equalsIgnoreCase("number")) {
                 if (isInputTypeNumber(input)) {
                     textInputLayout.setError(null);
@@ -130,6 +125,16 @@ public class Validator {
                 if (input.length() > PASSWORD_COUNT_MAX || input.length() < PASSWORD_COUNT_MIN) {
                     textInputLayout.setErrorEnabled(true);
                     textInputLayout.setError(PASSWORD_COUNT_ERROR);
+                    return false;
+                } else {
+                    textInputLayout.setError(null);
+                    textInputLayout.setErrorEnabled(false);
+                    return true;
+                }
+            } else if (textType.equalsIgnoreCase("vehicleNumber")) {
+                if (input.length() < PASSWORD_COUNT_MIN) {
+                    textInputLayout.setErrorEnabled(true);
+                    textInputLayout.setError("Vehicle number must be 6 digits");
                     return false;
                 } else {
                     textInputLayout.setError(null);

@@ -174,10 +174,30 @@ public class TextUtils {
             return "88";
     }
 
+    public String addCountryPrefixWithPlus(String number) {
+        if (number != null && android.text.TextUtils.isDigitsOnly(number)) {
+            if (number.length() > 2) {
+                if (number.startsWith("88")) {
+                    return number;
+                } else
+                    return "+88" + number;
+            } else
+                return "88";
+        }
+        else if (number != null) {
+            if(number.length() > 3 && number.startsWith("+88") )
+                return number;
+            else
+                return "88";
+        }
+        else
+            return "88";
+    }
+
     public boolean getSpecialCharacter(Context context, String str) {
         if (str == null || str.trim().isEmpty()) {
             System.out.println("format of string is Incorrect ");
-//            Toast.makeText(context, "Format of string is Incorrect", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, "Format of string is Incorrect", Toast.LENGTH_SHORT).show();
             return false;
         }
 
