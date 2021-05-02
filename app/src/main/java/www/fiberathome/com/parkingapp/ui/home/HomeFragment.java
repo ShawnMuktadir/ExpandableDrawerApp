@@ -2196,15 +2196,15 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                         latitude, longitude);
 
                                 double doubleDuration = MathUtils.getInstance().convertToDouble(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(fetchDistance * 2.43));
-                                Timber.e("kim doubleDuration -> %s", doubleDuration);
+                                //Timber.e("kim doubleDuration -> %s", doubleDuration);
 
                                 String initialNearestDuration = String.valueOf(doubleDuration);
-                                Timber.e("kim initialNearestDuration -> %s", initialNearestDuration);
+                                //Timber.e("kim initialNearestDuration -> %s", initialNearestDuration);
 
                                 if (fetchDistance < 7) {
                                     origin = new LatLng(location.getLatitude(), location.getLongitude());
 
-                                    Timber.e("nearestCurrentAreaName -> %s", areaName);
+                                    //Timber.e("nearestCurrentAreaName -> %s", areaName);
 
                                     bookingSensorsArrayListGlobal.add(new BookingSensors(areaName, latitude, longitude,
                                             adjustDistance(fetchDistance), parkingCount, initialNearestDuration,

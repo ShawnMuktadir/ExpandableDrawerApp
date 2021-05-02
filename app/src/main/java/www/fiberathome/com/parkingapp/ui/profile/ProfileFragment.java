@@ -135,7 +135,7 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
         name = TextUtils.getInstance().capitalizeFirstLetter(name);
         tvUserName.setText(name);
 
-        tvUserMobileNo.setText(TextUtils.getInstance().addCountryPrefix(user.getMobileNo()));
+        tvUserMobileNo.setText(TextUtils.getInstance().addCountryPrefixWithPlus(user.getMobileNo()));
         Timber.e("Mobile no -> %s", user.getMobileNo());
 
         tvUserVehicleNo.setText(user.getVehicleNo());
