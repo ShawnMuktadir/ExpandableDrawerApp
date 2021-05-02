@@ -163,9 +163,15 @@ public class TextUtils {
                     return "+88" + number;
             } else
                 return "88";
-        } else
+        }
+        else if (number != null) {
+            if(number.length() > 3 && number.startsWith("+88") )
+                return number;
+            else
+                return "88";
+        }
+        else
             return "88";
-
     }
 
     public boolean getSpecialCharacter(Context context, String str) {

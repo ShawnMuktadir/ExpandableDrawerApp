@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +40,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -335,24 +337,31 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
         showProgress();
 
         ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<LoginResponse> call = service.editProfile(fullName, password, mobileNo, vehicleNo, bitmap!=null? imageToString(bitmap) :
+        Call<ResponseBody> call = service.editProfile(fullName, password, mobileNo, vehicleNo, bitmap!=null? imageToString(bitmap) :
                 imageToString(ImageUtils.getInstance().imageUrlToBitmap(AppConfig.IMAGES_URL + user.getImage() + ".jpg")),
                 mobileNo + "_" + DateTimeUtils.getInstance().getCurrentTimeStamp());
 
-        call.enqueue(new Callback<LoginResponse>() {
+        call.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
 
                 Timber.e("edit profile response body-> %s", new Gson().toJson(response.body()));
                 assert response.body() != null;
-                Timber.e("edit profile response user-> %s", new Gson().toJson(response.body().getUser()));
+//                Timber.e("edit profile response user-> %s", new Gson().toJson(response.body().getUser()));
 
                 hideLoading();
 
                 hideProgress();
 
+                try {
+                    Log.e("Response",response.body().string());
+                    Log.e("ResponseCall", new Gson().toJson(call.request().body()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
                 if (response.body() != null) {
-                    if (!response.body().getError()) {
+                  /*  if (!response.body()) {
                         ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
 
                         User user = new User();
@@ -367,7 +376,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                         Preferences.getInstance(context).userLogin(user);
                         Timber.e("user after update -> %s", new Gson().toJson(user));
 
-                        /*if (response.body().getUser() != null) {
+                        *//*if (response.body().getUser() != null) {
                             User user = new User();
                             user.setId(Preferences.getInstance(context).getUser().getId());
                             //user.setId(response.body().getUser().getId());
@@ -379,19 +388,19 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                             // storing the user in sharedPreference
                             Preferences.getInstance(context).userLogin(user);
                             Timber.e("user after update -> %s", new Gson().toJson(user));
-                        }*/
+                        }*//*
 
                     } else {
                         Timber.e("jsonObject else called");
-                        ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
-                    }
+//                        ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
+                    }*/
                 } else {
-                    ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
+//                    ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable errors) {
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable errors) {
                 Timber.e("Throwable Errors: -> %s", errors.toString());
                 ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
                 hideLoading();

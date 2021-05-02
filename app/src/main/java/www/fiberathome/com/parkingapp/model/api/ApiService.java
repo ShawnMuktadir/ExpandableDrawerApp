@@ -1,5 +1,6 @@
 package www.fiberathome.com.parkingapp.model.api;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -46,9 +47,9 @@ public interface ApiService {
     );
 
     @FormUrlEncoded
-//    @POST("test1.php")
-    @POST("edit_U_info.php")
-    Call<LoginResponse> editProfile(
+    @POST("test1.php")
+//    @POST("edit_U_info.php")
+    Call<ResponseBody> editProfile(
             @Field("fullname") String name,
             @Field("password") String password,
             @Field("mobile_no") String mobileNo,

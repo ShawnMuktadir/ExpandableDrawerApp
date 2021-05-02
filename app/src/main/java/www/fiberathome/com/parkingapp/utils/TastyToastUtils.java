@@ -7,7 +7,6 @@ import android.widget.Toast;
 import com.sdsmdg.tastytoast.TastyToast;
 import com.vdx.animatedtoast.AnimatedToast;
 
-@SuppressWarnings("unused")
 public class TastyToastUtils {
 
     public static void showTastySuccessToast(Context context, String message) {
