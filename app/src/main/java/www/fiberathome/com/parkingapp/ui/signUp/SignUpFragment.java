@@ -151,7 +151,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     private String vehicleClass = "";
     private String vehicleDiv = "";
     private long classId, cityId;
-    private boolean vehicleImage=false;
+    private boolean vehicleImage = false;
     private Bitmap bitmap2;
 
     public SignUpFragment() {
@@ -368,7 +368,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                 break;
             case R.id.ivVehiclePlate:
             case R.id.ivVehiclePlatePreview:
-                if (isPermissionGranted()){
+                if (isPermissionGranted()) {
                     vehicleImage = true;
                     showPictureDialog();
                 }
@@ -388,11 +388,11 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         if (requestCode == REQUEST_PICK_GALLERY && resultCode == RESULT_OK && data != null) {
             Uri contentURI = data.getData();
             try {
-                if(!vehicleImage){
+                if (!vehicleImage) {
                     bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), contentURI);
                     Bitmap convertedImage = getResizedBitmap(bitmap, 500);
                     imageViewUploadProfileImage.setImageBitmap(convertedImage);
-                }else  {
+                } else {
                     bitmap2 = MediaStore.Images.Media.getBitmap(context.getContentResolver(), contentURI);
                     Bitmap convertedImage = getResizedBitmap(bitmap2, 500);
                     ivVehiclePlatePreview.setImageBitmap(convertedImage);
@@ -406,16 +406,15 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                 ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
 
-        }
-        else if (requestCode == REQUEST_PICK_CAMERA && resultCode == RESULT_OK && data != null) {
+        } else if (requestCode == REQUEST_PICK_CAMERA && resultCode == RESULT_OK && data != null) {
 
             try {
                 if (data.getExtras() != null) {
 
-                    if(!vehicleImage){
+                    if (!vehicleImage) {
                         bitmap = (Bitmap) data.getExtras().get("data");
                         imageViewUploadProfileImage.setImageBitmap(bitmap);
-                    }else {
+                    } else {
                         bitmap2 = (Bitmap) data.getExtras().get("data");
                         ivVehiclePlatePreview.setImageBitmap(bitmap2);
                     }
@@ -739,10 +738,11 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         showProgress();
 
         ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<BaseResponse> call = service.createUser(fullName, password, mobileNo, vehicleNo, imageToString(bitmap),
+        Call<BaseResponse> call = service.createUser(fullName, password, mobileNo, vehicleNo,
+                imageToString(bitmap),
                 mobileNo + "_" + DateTimeUtils.getInstance().getCurrentTimeStamp(),
-                 imageToString(bitmap2),
-                vehicleNo+"_"+DateTimeUtils.getInstance().getCurrentTimeStamp());
+                imageToString(bitmap2),
+                vehicleNo + "_" + DateTimeUtils.getInstance().getCurrentTimeStamp());
 
         call.enqueue(new Callback<BaseResponse>() {
             @Override
