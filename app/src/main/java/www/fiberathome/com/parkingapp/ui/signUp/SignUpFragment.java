@@ -255,8 +255,8 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     private List<www.fiberathome.com.parkingapp.model.Spinner> populateVehicleClassData() {
         classDataList = new ArrayList<>();
 
-        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(1, "Dhaka Metro"));
-        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(2, "Chattogram Metro"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(1, "Dhaka-Metro"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(2, "Chattogram-Metro"));
 
         return classDataList;
     }
@@ -742,7 +742,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                 imageToString(bitmap),
                 mobileNo + "_" + DateTimeUtils.getInstance().getCurrentTimeStamp(),
                 imageToString(bitmap2),
-                vehicleNo + "_" + DateTimeUtils.getInstance().getCurrentTimeStamp());
+                mobileNo + "vehicle_" + DateTimeUtils.getInstance().getCurrentTimeStamp());
 
         call.enqueue(new Callback<BaseResponse>() {
             @Override
@@ -760,6 +760,8 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
                         // Moving the screen to next pager item i.e otp screen
                         Intent intent = new Intent(context, VerifyPhoneActivity.class);
+                        intent.putExtra("mobile_no",mobileNo);
+                        intent.putExtra("password",password);
                         startActivity(intent);
                         SharedData.getInstance().setPassword(password);
 
