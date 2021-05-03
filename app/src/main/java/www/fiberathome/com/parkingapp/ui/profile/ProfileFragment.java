@@ -52,6 +52,9 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
     @BindView(R.id.btn_update_info)
     Button btnUpdateInfo;
 
+    @BindView(R.id.ivVehicleEditPlatePreview)
+    ImageView ivVehicleEditPlatePreview;
+
     private Unbinder unbinder;
 
     private User user;
@@ -131,7 +134,6 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
         }
 
         String name = user.getFullName();
-        //name = name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
         name = TextUtils.getInstance().capitalizeFirstLetter(name);
         tvUserName.setText(name);
 
@@ -143,6 +145,10 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
         String url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
         Timber.e("Image URL -> %s", url);
         Glide.with(context).load(url).placeholder(R.drawable.blank_profile).dontAnimate().into(ivUserProfilePic);
+
+        String vehicleUrl = AppConfig.IMAGES_URL + user.getVehicleImage() + ".jpg";
+        Timber.e("Vehicle Image URL -> %s", url);
+        Glide.with(context).load(vehicleUrl).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(ivVehicleEditPlatePreview);
     }
 
     private boolean isGPSEnabled() {

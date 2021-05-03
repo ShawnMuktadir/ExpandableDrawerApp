@@ -374,7 +374,6 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
         boolean isPasswordValid = Validator.checkValidity(textInputLayoutPassword, editTextPassword.getText().toString(), context.getString(R.string.err_msg_password), "textPassword");
 
         return isPhoneValid && isPasswordValid;
-
     }
 
     private void checkLogin(final String mobileNo, final String password) {
@@ -406,6 +405,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                         user.setFullName(response.body().getUser().getFullName());
                         user.setMobileNo(response.body().getUser().getMobileNo());
                         user.setVehicleNo(response.body().getUser().getVehicleNo());
+                        user.setVehicleImage(response.body().getUser().getVehicleImage());
                         user.setImage(response.body().getUser().getImage());
 
                         // storing the user in sharedPreference

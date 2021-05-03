@@ -2149,7 +2149,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                 if (sensor.getsStatus().equalsIgnoreCase("1")) {
                                     if (sensor.getReserveStatus().toString().equalsIgnoreCase("1")) {
                                         sensorStatus = "Occupied";
-                                        Timber.e("sensorStatus -> %s", sensorStatus);
+                                        //Timber.e("sensorStatus -> %s", sensorStatus);
                                         if (mMap != null) {
                                             MarkerOptions marker = new MarkerOptions()
                                                     .position(new LatLng(latitude, longitude))

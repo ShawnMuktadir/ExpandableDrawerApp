@@ -66,7 +66,6 @@ import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DateTimeUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
-import www.fiberathome.com.parkingapp.utils.ImageUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
@@ -113,7 +112,6 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
     @BindView(R.id.ivVehicleEditPlatePreview)
     ImageView ivVehicleEditPlatePreview;
 
-
     @BindView(R.id.imageViewCaptureImage)
     ImageView imageViewCaptureImage;
 
@@ -135,7 +133,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
 
     private User user;
     private Bitmap bitmap2;
-    private boolean vehicleImage= false;
+    private boolean vehicleImage = false;
 
     public EditProfileFragment() {
         // Required empty public constructor
@@ -170,12 +168,11 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
 
         user = Preferences.getInstance(context).getUser();
 
-        //setSpinner(context);
-
         setVehicleClassCategory();
         setVehicleDivCategory();
 
         setData(user);
+        editTextFullName.setSelection(editTextFullName.getText().length());
 
         setListeners();
 
@@ -259,11 +256,11 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
         if (requestCode == REQUEST_PICK_GALLERY && resultCode == RESULT_OK && data != null) {
             Uri contentURI = data.getData();
             try {
-                if(!vehicleImage){
+                if (!vehicleImage) {
                     bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), contentURI);
                     Bitmap convertedImage = getResizedBitmap(bitmap, 500);
                     imageViewEditProfileImage.setImageBitmap(convertedImage);
-                }else  {
+                } else {
                     bitmap2 = MediaStore.Images.Media.getBitmap(context.getContentResolver(), contentURI);
                     Bitmap convertedImage = getResizedBitmap(bitmap2, 500);
                     ivVehicleEditPlatePreview.setImageBitmap(convertedImage);
@@ -277,22 +274,19 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                 ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
 
-        }
-        else if (requestCode == REQUEST_PICK_CAMERA && resultCode == RESULT_OK && data != null) {
+        } else if (requestCode == REQUEST_PICK_CAMERA && resultCode == RESULT_OK && data != null) {
 
             try {
                 if (data.getExtras() != null) {
 
-                    if(!vehicleImage){
+                    if (!vehicleImage) {
                         bitmap = (Bitmap) data.getExtras().get("data");
                         imageViewEditProfileImage.setImageBitmap(bitmap);
-                    }else {
+                    } else {
                         bitmap2 = (Bitmap) data.getExtras().get("data");
                         ivVehicleEditPlatePreview.setImageBitmap(bitmap2);
                     }
                 }
-                /*saveImage(thumbnail);
-                 Toast.makeText(SignUpActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();*/
             } catch (Exception e) {
                 e.printStackTrace();
                 Toast.makeText(context, context.getResources().getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show();
@@ -360,7 +354,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                 break;
             case R.id.ivVehiclePlateEdit:
             case R.id.ivVehicleEditPlatePreview:
-                if (isPermissionGranted()){
+                if (isPermissionGranted()) {
                     vehicleImage = true;
                     showPictureDialog();
                 }
@@ -377,16 +371,16 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
         tvUserMobileNo.setText(TextUtils.getInstance().addCountryPrefixWithPlus(user.getMobileNo()));
         Timber.e("Mobile no -> %s", user.getMobileNo());
 
-        try{
-                String currentString = user.getVehicleNo().trim();
-                String[] separated = currentString.split(" ");
+        try {
+            String currentString = user.getVehicleNo().trim();
+            String[] separated = currentString.split(" ");
 
-                String carPlateNumber = separated[2];
+            String carPlateNumber = separated[2];
 
-                editTextCarNumber.setText(carPlateNumber);
-       }catch(Exception e){
-           editTextCarNumber.setText(user.getVehicleNo().trim());
-       }
+            editTextCarNumber.setText(carPlateNumber);
+        } catch (Exception e) {
+            editTextCarNumber.setText(user.getVehicleNo().trim());
+        }
 
         selectSpinnerItemByValue(classSpinner, Preferences.getInstance(context).getVehicleClassData());
 
@@ -397,7 +391,17 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
             Timber.e("Image URL -> %s", url);
             Glide.with(context).load(url).placeholder(R.drawable.ic_account_settings).dontAnimate().into(imageViewEditProfileImage);
         } else {
-            ToastUtils.getInstance().showErrorToast(context, "Image value " + user.getImage(), Toast.LENGTH_SHORT);
+            //ToastUtils.getInstance().showErrorToast(context, "Image value " + user.getImage(), Toast.LENGTH_SHORT);
+            Timber.e("Image value -> %s", user.getImage());
+        }
+
+        if (user.getVehicleImage() != null) {
+            String url = AppConfig.IMAGES_URL + user.getVehicleImage() + ".jpg";
+            Timber.e("Vehicle Image URL -> %s", url);
+            Glide.with(context).load(url).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(ivVehicleEditPlatePreview);
+        } else {
+            //ToastUtils.getInstance().showErrorToast(context, "Image value " + user.getImage(), Toast.LENGTH_SHORT);
+            Timber.e("Vehicle Image value -> %s", user.getVehicleImage());
         }
     }
 
@@ -550,7 +554,6 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
     private List<www.fiberathome.com.parkingapp.model.Spinner> populateVehicleDivData() {
 
         classDivList = new ArrayList<>();
-        //List<www.fiberathome.com.parkingapp.model.Spinner> dataList = new ArrayList<>();
 
         classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(1, "Ka"));
         classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(2, "kha"));
@@ -629,12 +632,11 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
         return Base64.encodeToString(imageByte, Base64.DEFAULT);
     }
 
-    public Bitmap StringToBitMap(String encodedString){
-        try{
-            byte [] encodeByte = Base64.decode(encodedString,Base64.DEFAULT);
+    public Bitmap StringToBitMap(String encodedString) {
+        try {
+            byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
             return BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             e.getMessage();
             return null;
         }
@@ -651,28 +653,24 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                 password,
                 user.getMobileNo(),
                 vehicleNo,
-                bitmap!=null? imageToString(bitmap) :
-                imageToString(((BitmapDrawable) imageViewEditProfileImage.getDrawable()).getBitmap()),
+                bitmap != null ? imageToString(bitmap) :
+                        imageToString(((BitmapDrawable) imageViewEditProfileImage.getDrawable()).getBitmap()),
                 //imageToString(ImageUtils.getInstance().imageUrlToBitmap(AppConfig.IMAGES_URL + user.getImage() + ".jpg")),
                 mobileNo + "_" + DateTimeUtils.getInstance().getCurrentTimeStamp(),
-                bitmap2!=null? imageToString(bitmap2) :
+                bitmap2 != null ? imageToString(bitmap2) :
                         imageToString(((BitmapDrawable) ivVehicleEditPlatePreview.getDrawable()).getBitmap()),
-                vehicleNo+"_"+DateTimeUtils.getInstance().getCurrentTimeStamp());
+                vehicleNo + "_" + DateTimeUtils.getInstance().getCurrentTimeStamp());
 
         call.enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
-
-               /*Timber.e("edit profile response body-> %s", new Gson().toJson(response.body()));
-                assert response.body() != null;
-                Timber.e("edit profile response user-> %s", new Gson().toJson(response.body().getUser()));*/
 
                 hideLoading();
 
                 hideProgress();
 
                 try {
-                    Timber.e("Response -> %s",new Gson().toJson(response.body()));
+                    Timber.e("Response -> %s", new Gson().toJson(response.body()));
                     Timber.e("ResponseCall -> %s", new Gson().toJson(call.request().body()));
                 } catch (Exception e) {
                     e.printStackTrace();

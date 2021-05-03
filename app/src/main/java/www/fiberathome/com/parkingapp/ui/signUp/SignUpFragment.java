@@ -372,7 +372,6 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     private List<www.fiberathome.com.parkingapp.model.Spinner> populateVehicleDivData() {
 
         classDivList = new ArrayList<>();
-        //List<www.fiberathome.com.parkingapp.model.Spinner> dataList = new ArrayList<>();
 
         classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(1, "Ka"));
         classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(2, "kha"));
@@ -805,10 +804,10 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             String password = editTextPassword.getText().toString().trim();
             String licencePlateInfo = vehicleClass + " " + vehicleDiv + " " + vehicleNo;
 
-            if (bitmap != null && bitmap2!=null) {
+            if (bitmap != null && bitmap2 != null) {
                 registerUser(fullName, password, mobileNo, licencePlateInfo);
-            } else if(bitmap2==null){
-                Toast.makeText(context, "Upload vehicle picture", Toast.LENGTH_SHORT).show();
+            } else if (bitmap2 == null) {
+                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.upload_vehicle_pic));
             } else {
                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.upload_profile_photo));
             }
