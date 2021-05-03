@@ -22,7 +22,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -180,8 +179,6 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
         setListeners();
 
-        //setSpinner(context);
-
         setVehicleClassCategory();
         setVehicleDivCategory();
 
@@ -227,84 +224,6 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         ivVehiclePlatePreview.setOnClickListener(this);
     }
 
-    private void setSpinner(SignUpActivity context) {
-        // Spinner Drop down elements
-        List<String> categories = new ArrayList<>();
-        categories.add("Select");
-        categories.add("Dhaka Metro");
-        categories.add("Chattogram Metro");
-        // Creating adapter for spinner
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, categories);
-
-        // Drop down layout style - list view with radio button
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        // attaching data adapter to spinner
-        classSpinner.setAdapter(dataAdapter);
-
-        List<String> div = new ArrayList<>();
-        div.add("Select");
-        div.add("Ka");
-        div.add("kha");
-        div.add("Ga");
-        div.add("Gha");
-        div.add("Ch");
-        div.add("Cha");
-        div.add("Ja");
-        div.add("Jha");
-        div.add("Ta");
-        div.add("Tha");
-        div.add("DA");
-        div.add("No");
-        div.add("Po");
-        div.add("Vo");
-        div.add("Mo");
-        div.add("Da");
-        div.add("Th");
-        div.add("Ha");
-        div.add("La");
-        div.add("E");
-        div.add("Zo");
-        // Creating adapter for spinner
-        ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, div);
-
-        // Drop down layout style - list view with radio button
-        dataAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        // attaching data adapter to spinner
-        divSpinner.setAdapter(dataAdapter2);
-
-        classSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                classId = id;
-                vehicleClass = categories.get(position);
-                Preferences.getInstance(context).saveVehicleClassData(vehicleClass);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                vehicleClass = "";
-
-            }
-        });
-
-        divSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                cityId = id;
-                vehicleDiv = div.get(position);
-                Preferences.getInstance(context).saveVehicleDivData(vehicleDiv);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                vehicleDiv = "";
-            }
-        });
-    }
-
     private UniversalSpinnerAdapter vehicleClassAdapter;
     private List<www.fiberathome.com.parkingapp.model.Spinner> classDataList;
     private List<www.fiberathome.com.parkingapp.model.Spinner> classDivList;
@@ -335,7 +254,6 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
     private List<www.fiberathome.com.parkingapp.model.Spinner> populateVehicleClassData() {
         classDataList = new ArrayList<>();
-        //List<www.fiberathome.com.parkingapp.model.Spinner> dataList = new ArrayList<>();
 
         classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(1, "Dhaka Metro"));
         classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(2, "Chattogram Metro"));
@@ -847,7 +765,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                     } else {
                         Timber.e("jsonObject else called");
                         if (response.body().getMessage().equalsIgnoreCase("Sorry! mobile number is not valid or missing mate")) {
-                            ToastUtils.getInstance().showToastMessage(context, "Mobile Number/Vehicle Registration Number already exists or Image Size is too large");
+                            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
                         } else if (!response.body().getMessage().equalsIgnoreCase("Sorry! mobile number is not valid or missing mate")) {
                             ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                         }

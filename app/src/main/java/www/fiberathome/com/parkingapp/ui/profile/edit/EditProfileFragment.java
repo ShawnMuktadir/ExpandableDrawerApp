@@ -686,8 +686,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                         user.setMobileNo(response.body().getUser().getMobileNo());
                         user.setVehicleNo(response.body().getUser().getVehicleNo());
                         user.setImage(response.body().getUser().getImage());
-                        /*user.setImage(bitmap!=null? imageToString(bitmap) :
-                                imageToString(ImageUtils.getInstance().imageUrlToBitmap(AppConfig.IMAGES_URL + user.getImage() + ".jpg")));*/
+                        user.setVehicleImage(response.body().getUser().getVehicleImage());
 
                         // storing the user in sharedPreference
                         Preferences.getInstance(context).userLogin(user);
