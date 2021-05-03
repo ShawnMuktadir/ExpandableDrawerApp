@@ -7,7 +7,6 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.BookedResponse;
-import www.fiberathome.com.parkingapp.model.response.editProfile.EditProfileResponse;
 import www.fiberathome.com.parkingapp.model.response.login.LoginResponse;
 import www.fiberathome.com.parkingapp.model.response.parkingSlot.ParkingSlotResponse;
 import www.fiberathome.com.parkingapp.model.response.search.SearchVisitedPlaceResponse;
@@ -43,7 +42,7 @@ public interface ApiService {
             @Field("vehicle_no") String vehicleNo,
             @Field("image") String image,
             @Field("image_name") String imageName,
-            @Field("vehicle_image ") String vehicleImage,
+            @Field("vehicle_image") String vehicleImage,
             @Field("vehicle_image_name") String vehicleImageName
     );
 
@@ -57,7 +56,7 @@ public interface ApiService {
             @Field("vehicle_no") String vehicleNo,
             @Field("image") String image,
             @Field("image_name") String imageName,
-            @Field("vehicle_image ") String vehicleImage,
+            @Field("vehicle_image") String vehicleImage,
             @Field("vehicle_image_name") String vehicleImageName
     );
 
