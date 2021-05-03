@@ -52,8 +52,8 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
     @BindView(R.id.btn_update_info)
     Button btnUpdateInfo;
 
-    @BindView(R.id.ivVehicleEditPlatePreview)
-    ImageView ivVehicleEditPlatePreview;
+    @BindView(R.id.ivVehicleProfilePlatePreview)
+    ImageView ivVehicleProfilePlatePreview;
 
     private Unbinder unbinder;
 
@@ -147,8 +147,8 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
         Glide.with(context).load(url).placeholder(R.drawable.blank_profile).dontAnimate().into(ivUserProfilePic);
 
         String vehicleUrl = AppConfig.IMAGES_URL + user.getVehicleImage() + ".jpg";
-        Timber.e("Vehicle Image URL -> %s", url);
-        Glide.with(context).load(vehicleUrl).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(ivVehicleEditPlatePreview);
+        Timber.e("Vehicle Image URL -> %s", vehicleUrl);
+        Glide.with(context).load(vehicleUrl).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(ivVehicleProfilePlatePreview);
     }
 
     private boolean isGPSEnabled() {

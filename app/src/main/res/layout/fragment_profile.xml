@@ -109,7 +109,7 @@
             android:layout_gravity="center_horizontal">
 
             <ImageView
-                android:id="@+id/ivVehicleEditPlatePreview"
+                android:id="@+id/ivVehicleProfilePlatePreview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/ic_image_border"
