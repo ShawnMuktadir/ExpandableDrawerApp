@@ -740,7 +740,8 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
         ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
         Call<BaseResponse> call = service.createUser(fullName, password, mobileNo, vehicleNo, imageToString(bitmap),
-                mobileNo + "_" + DateTimeUtils.getInstance().getCurrentTimeStamp(),imageToString(bitmap2),
+                mobileNo + "_" + DateTimeUtils.getInstance().getCurrentTimeStamp(),
+                 imageToString(bitmap2),
                 vehicleNo+"_"+DateTimeUtils.getInstance().getCurrentTimeStamp());
 
         call.enqueue(new Callback<BaseResponse>() {
