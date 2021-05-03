@@ -43,7 +43,7 @@ public interface ApiService {
             @Field("vehicle_no") String vehicleNo,
             @Field("image") String image,
             @Field("image_name") String imageName,
-            @Field("vehicle_image ") String vehicleImage,
+            @Field("vehicle_image") String vehicleImage,
             @Field("vehicle_image_name") String vehicleImageName
     );
 
@@ -57,7 +57,7 @@ public interface ApiService {
             @Field("vehicle_no") String vehicleNo,
             @Field("image") String image,
             @Field("image_name") String imageName,
-            @Field("vehicle_image ") String vehicleImage,
+            @Field("vehicle_image") String vehicleImage,
             @Field("vehicle_image_name") String vehicleImageName
     );
 

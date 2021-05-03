@@ -18,6 +18,7 @@ public class Preferences {
     private static final String KEY_FULLNAME = "fullname";
     private static final String KEY_MOBILE_NO = "mobile_no";
     private static final String KEY_VEHICLE_NO = "vehicle_no";
+    private static final String KEY_VEHICLE_PIC = "vehicle_pic";
     private static final String KEY_PROFILE_PIC = "profile_pic";
     private static final String KEY_ID = "id";
     private static final String KEY_LANGUAGE = "language";
@@ -55,6 +56,7 @@ public class Preferences {
         editor.putString(KEY_MOBILE_NO, user.getMobileNo());
         editor.putString(KEY_VEHICLE_NO, user.getVehicleNo());
         editor.putString(KEY_PROFILE_PIC, user.getImage());
+        editor.putString(KEY_VEHICLE_PIC, user.getVehicleImage());
         editor.apply();
     }
 
@@ -124,6 +126,7 @@ public class Preferences {
         user.setMobileNo(sharedPreferences.getString(KEY_MOBILE_NO, null));
         user.setVehicleNo(sharedPreferences.getString(KEY_VEHICLE_NO, null));
         user.setImage(sharedPreferences.getString(KEY_PROFILE_PIC, null));
+        user.setVehicleImage(sharedPreferences.getString(KEY_VEHICLE_PIC, null));
 
         return user;
     }

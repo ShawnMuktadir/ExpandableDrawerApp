@@ -659,7 +659,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                 mobileNo + "_" + DateTimeUtils.getInstance().getCurrentTimeStamp(),
                 bitmap2 != null ? imageToString(bitmap2) :
                         imageToString(((BitmapDrawable) ivVehicleEditPlatePreview.getDrawable()).getBitmap()),
-                vehicleNo + "_" + DateTimeUtils.getInstance().getCurrentTimeStamp());
+                mobileNo + "vehicle_" + DateTimeUtils.getInstance().getCurrentTimeStamp());
 
         call.enqueue(new Callback<LoginResponse>() {
             @Override
