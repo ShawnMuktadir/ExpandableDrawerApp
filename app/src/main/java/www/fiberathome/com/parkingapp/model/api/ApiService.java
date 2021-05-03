@@ -42,7 +42,9 @@ public interface ApiService {
             @Field("mobile_no") String mobileNo,
             @Field("vehicle_no") String vehicleNo,
             @Field("image") String image,
-            @Field("image_name") String imageName
+            @Field("image_name") String imageName,
+            @Field("vehicle_image ") String vehicleImage,
+            @Field("vehicle_image_name") String vehicleImageName
     );
 
     @FormUrlEncoded
@@ -54,7 +56,9 @@ public interface ApiService {
             @Field("mobile_no") String mobileNo,
             @Field("vehicle_no") String vehicleNo,
             @Field("image") String image,
-            @Field("image_name") String imageName
+            @Field("image_name") String imageName,
+            @Field("vehicle_image ") String vehicleImage,
+            @Field("vehicle_image_name") String vehicleImageName
     );
 
     @FormUrlEncoded

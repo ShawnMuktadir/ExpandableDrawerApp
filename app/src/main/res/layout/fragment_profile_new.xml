@@ -147,6 +147,44 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/upload_vehicle_picture"/>
+                <RelativeLayout
+                    android:layout_width="220dp"
+                    android:layout_height="180dp"
+                    android:layout_gravity="center_horizontal">
+                    <ImageView
+                        android:id="@+id/ivVehicleEditPlatePreview"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:srcCompat="@drawable/ic_image_place_holder"
+                        />
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/ivVehiclePlateEdit"
+                        android:layout_width="@dimen/_35sdp"
+                        android:layout_height="@dimen/_35sdp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_gravity="center_horizontal|center_vertical"
+                        android:layout_marginBottom="@dimen/dim5"
+                        android:backgroundTint="@color/white"
+                        android:src="@drawable/ic_camera_update"
+                        android:tintMode="src_in"
+                        android:visibility="visible"
+                        app:civ_border_color="@color/transparent"
+                        app:civ_border_width="@dimen/_1sdp"
+                        app:civ_circle_background_color="@color/white"
+                        app:tint="@color/white" />
+                </RelativeLayout>
+
+            </LinearLayout>
+
             <Button
                 android:id="@+id/btn_update_info"
                 android:layout_width="match_parent"

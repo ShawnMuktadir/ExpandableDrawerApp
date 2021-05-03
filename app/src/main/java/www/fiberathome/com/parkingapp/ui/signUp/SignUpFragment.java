@@ -25,6 +25,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -124,6 +125,12 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     @BindView(R.id.imageViewCaptureImage)
     CircleImageView imageViewCaptureImage;
 
+    @BindView(R.id.ivVehiclePlate)
+    CircleImageView ivVehiclePlate;
+
+    @BindView(R.id.ivVehiclePlatePreview)
+    ImageView ivVehiclePlatePreview;
+
     @BindView(R.id.textViewTermsConditions)
     TextView textViewTermsConditions;
 
@@ -145,6 +152,8 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     private String vehicleClass = "";
     private String vehicleDiv = "";
     private long classId, cityId;
+    private boolean vehicleImage=false;
+    private Bitmap bitmap2;
 
     public SignUpFragment() {
         // Required empty public constructor
@@ -214,6 +223,8 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         tvLogin.setOnClickListener(this);
         imageViewUploadProfileImage.setOnClickListener(this);
         imageViewCaptureImage.setOnClickListener(this);
+        ivVehiclePlate.setOnClickListener(this);
+        ivVehiclePlatePreview.setOnClickListener(this);
     }
 
     private void setSpinner(SignUpActivity context) {
@@ -434,6 +445,14 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             case R.id.imageViewUploadProfileImage:
             case R.id.imageViewCaptureImage:
                 if (isPermissionGranted()) {
+                    vehicleImage = false;
+                    showPictureDialog();
+                }
+                break;
+            case R.id.ivVehiclePlate:
+            case R.id.ivVehiclePlatePreview:
+                if (isPermissionGranted()){
+                    vehicleImage = true;
                     showPictureDialog();
                 }
                 break;
@@ -452,22 +471,37 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         if (requestCode == REQUEST_PICK_GALLERY && resultCode == RESULT_OK && data != null) {
             Uri contentURI = data.getData();
             try {
-                bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), contentURI);
-                Bitmap convertedImage = getResizedBitmap(bitmap, 500);
+                if(!vehicleImage){
+                    bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), contentURI);
+                    Bitmap convertedImage = getResizedBitmap(bitmap, 500);
+                    imageViewUploadProfileImage.setImageBitmap(convertedImage);
+                }else  {
+                    bitmap2 = MediaStore.Images.Media.getBitmap(context.getContentResolver(), contentURI);
+                    Bitmap convertedImage = getResizedBitmap(bitmap2, 500);
+                    ivVehiclePlatePreview.setImageBitmap(convertedImage);
+                }
+
                 //Toast.makeText(SignUpActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
-                imageViewUploadProfileImage.setImageBitmap(convertedImage);
+
 
             } catch (IOException e) {
                 e.printStackTrace();
                 ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
 
-        } else if (requestCode == REQUEST_PICK_CAMERA && resultCode == RESULT_OK && data != null) {
+        }
+        else if (requestCode == REQUEST_PICK_CAMERA && resultCode == RESULT_OK && data != null) {
 
             try {
                 if (data.getExtras() != null) {
-                    bitmap = (Bitmap) data.getExtras().get("data");
-                    imageViewUploadProfileImage.setImageBitmap(bitmap);
+
+                    if(!vehicleImage){
+                        bitmap = (Bitmap) data.getExtras().get("data");
+                        imageViewUploadProfileImage.setImageBitmap(bitmap);
+                    }else {
+                        bitmap2 = (Bitmap) data.getExtras().get("data");
+                        ivVehiclePlatePreview.setImageBitmap(bitmap2);
+                    }
                 }
                 /*saveImage(thumbnail);
                  Toast.makeText(SignUpActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();*/
@@ -771,8 +805,10 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             String password = editTextPassword.getText().toString().trim();
             String licencePlateInfo = vehicleClass + " " + vehicleDiv + " " + vehicleNo;
 
-            if (bitmap != null) {
+            if (bitmap != null && bitmap2!=null) {
                 registerUser(fullName, password, mobileNo, licencePlateInfo);
+            } else if(bitmap2==null){
+                Toast.makeText(context, "Upload vehicle picture", Toast.LENGTH_SHORT).show();
             } else {
                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.upload_profile_photo));
             }
@@ -787,7 +823,8 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
         ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
         Call<BaseResponse> call = service.createUser(fullName, password, mobileNo, vehicleNo, imageToString(bitmap),
-                mobileNo + "_" + DateTimeUtils.getInstance().getCurrentTimeStamp());
+                mobileNo + "_" + DateTimeUtils.getInstance().getCurrentTimeStamp(),imageToString(bitmap2),
+                vehicleNo+"_"+DateTimeUtils.getInstance().getCurrentTimeStamp());
 
         call.enqueue(new Callback<BaseResponse>() {
             @Override

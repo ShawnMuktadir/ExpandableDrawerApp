@@ -107,6 +107,13 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
     @BindView(R.id.imageViewEditProfileImage)
     CircleImageView imageViewEditProfileImage;
 
+    @BindView(R.id.ivVehiclePlateEdit)
+    CircleImageView ivVehiclePlateEdit;
+
+    @BindView(R.id.ivVehicleEditPlatePreview)
+    ImageView ivVehicleEditPlatePreview;
+
+
     @BindView(R.id.imageViewCaptureImage)
     ImageView imageViewCaptureImage;
 
@@ -127,6 +134,8 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
     private Bitmap bitmap;
 
     private User user;
+    private Bitmap bitmap2;
+    private boolean vehicleImage= false;
 
     public EditProfileFragment() {
         // Required empty public constructor
@@ -173,6 +182,8 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
         btnUpdateInfo.setOnClickListener(this);
         imageViewEditProfileImage.setOnClickListener(this);
         imageViewCaptureImage.setOnClickListener(this);
+        ivVehiclePlateEdit.setOnClickListener(this);
+        ivVehicleEditPlatePreview.setOnClickListener(this);
     }
 
     private void setListeners() {
@@ -248,24 +259,37 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
         if (requestCode == REQUEST_PICK_GALLERY && resultCode == RESULT_OK && data != null) {
             Uri contentURI = data.getData();
             try {
-                bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), contentURI);
-                Bitmap convertedImage = getResizedBitmap(bitmap, 500);
+                if(!vehicleImage){
+                    bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), contentURI);
+                    Bitmap convertedImage = getResizedBitmap(bitmap, 500);
+                    imageViewEditProfileImage.setImageBitmap(convertedImage);
+                }else  {
+                    bitmap2 = MediaStore.Images.Media.getBitmap(context.getContentResolver(), contentURI);
+                    Bitmap convertedImage = getResizedBitmap(bitmap2, 500);
+                    ivVehicleEditPlatePreview.setImageBitmap(convertedImage);
+                }
+
                 //Toast.makeText(SignUpActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
-                imageViewEditProfileImage.setImageBitmap(convertedImage);
-                //user.setImage(imageToString(bitmap));
+
 
             } catch (IOException e) {
                 e.printStackTrace();
                 ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
 
-        } else if (requestCode == REQUEST_PICK_CAMERA && resultCode == RESULT_OK && data != null) {
+        }
+        else if (requestCode == REQUEST_PICK_CAMERA && resultCode == RESULT_OK && data != null) {
 
             try {
                 if (data.getExtras() != null) {
-                    bitmap = (Bitmap) data.getExtras().get("data");
-                    imageViewEditProfileImage.setImageBitmap(bitmap);
-                    //user.setImage(imageToString(bitmap));
+
+                    if(!vehicleImage){
+                        bitmap = (Bitmap) data.getExtras().get("data");
+                        imageViewEditProfileImage.setImageBitmap(bitmap);
+                    }else {
+                        bitmap2 = (Bitmap) data.getExtras().get("data");
+                        ivVehicleEditPlatePreview.setImageBitmap(bitmap2);
+                    }
                 }
                 /*saveImage(thumbnail);
                  Toast.makeText(SignUpActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();*/
@@ -274,6 +298,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                 Toast.makeText(context, context.getResources().getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show();
             }
         }
+
     }
 
     @Override
@@ -329,6 +354,14 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
             case R.id.imageViewEditProfileImage:
             case R.id.imageViewCaptureImage:
                 if (isPermissionGranted()) {
+                    vehicleImage = false;
+                    showPictureDialog();
+                }
+                break;
+            case R.id.ivVehiclePlateEdit:
+            case R.id.ivVehicleEditPlatePreview:
+                if (isPermissionGranted()){
+                    vehicleImage = true;
                     showPictureDialog();
                 }
                 break;
@@ -344,12 +377,16 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
         tvUserMobileNo.setText(TextUtils.getInstance().addCountryPrefixWithPlus(user.getMobileNo()));
         Timber.e("Mobile no -> %s", user.getMobileNo());
 
-        String currentString = user.getVehicleNo().trim();
-        String[] separated = currentString.split(" ");
+        try{
+                String currentString = user.getVehicleNo().trim();
+                String[] separated = currentString.split(" ");
 
-        String carPlateNumber = separated[2];
+                String carPlateNumber = separated[2];
 
-        editTextCarNumber.setText(carPlateNumber);
+                editTextCarNumber.setText(carPlateNumber);
+       }catch(Exception e){
+           editTextCarNumber.setText(user.getVehicleNo().trim());
+       }
 
         selectSpinnerItemByValue(classSpinner, Preferences.getInstance(context).getVehicleClassData());
 
@@ -617,7 +654,10 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                 bitmap!=null? imageToString(bitmap) :
                 imageToString(((BitmapDrawable) imageViewEditProfileImage.getDrawable()).getBitmap()),
                 //imageToString(ImageUtils.getInstance().imageUrlToBitmap(AppConfig.IMAGES_URL + user.getImage() + ".jpg")),
-                mobileNo + "_" + DateTimeUtils.getInstance().getCurrentTimeStamp());
+                mobileNo + "_" + DateTimeUtils.getInstance().getCurrentTimeStamp(),
+                bitmap2!=null? imageToString(bitmap2) :
+                        imageToString(((BitmapDrawable) ivVehicleEditPlatePreview.getDrawable()).getBitmap()),
+                vehicleNo+"_"+DateTimeUtils.getInstance().getCurrentTimeStamp());
 
         call.enqueue(new Callback<LoginResponse>() {
             @Override
