@@ -360,7 +360,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
             Timber.e("onConnectedLocation -> %s", onConnectedLocation);
         }
 
-        ApiService request = ApiClient.getRetrofitInstance(AppConfig.URL_FETCH_SENSOR_AREA).create(ApiService.class);
+        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
         Call<ParkingSlotResponse> call = request.getParkingSlots();
         call.enqueue(new Callback<ParkingSlotResponse>() {
             @Override

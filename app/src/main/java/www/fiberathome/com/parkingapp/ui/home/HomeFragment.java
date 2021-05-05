@@ -135,6 +135,7 @@ import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingSensors;
+import www.fiberathome.com.parkingapp.model.response.parkingSlot.ParkingSlotResponse;
 import www.fiberathome.com.parkingapp.model.response.search.SearchVisitorData;
 import www.fiberathome.com.parkingapp.model.response.search.SelectedPlace;
 import www.fiberathome.com.parkingapp.model.response.sensors.Sensor;
@@ -434,6 +435,15 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     public double oldTotalDistanceInKm, totalDistanceInKm;
 
     private boolean firstDraw = true;
+    private List<List<String>> list = new ArrayList<>();
+    private ParkingSlotResponse parkingSlotResponse;
+    private List<List<String>> parkingSlotList = new ArrayList<>();
+    private String parkingArea;
+    private String placeId;
+    private double endLat;
+    private double endLng;
+    private double fetchDistance;
+    private List<SensorArea> sensorAreaArrayList = new ArrayList<>();
 
     public HomeFragment() {
 
@@ -543,7 +553,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     private Circle circle;
 
-    private Sensor markerTagObj;
+    private SensorArea markerTagObj;
 
     private int fromSearchMultipleRouteDrawn = 0;
     private double myLocationChangedDistance;
@@ -712,10 +722,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         final String[] markerAreaName1 = {""};
 
         if (marker.getTag() != null)
-            markerTagObj = (Sensor) marker.getTag();
+            markerTagObj = (SensorArea) marker.getTag();
 
         if (markerTagObj != null) {
-            Timber.e("marker if UID: -> %s", markerTagObj.getAddress());
+            Timber.e("marker if UID: -> %s", markerTagObj.getParkingArea());
         } else {
             Timber.e("marker else UID: did not work");
         }
@@ -797,23 +807,23 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                     if (!isMyCurrentLocation) {
 
-                        for (int i = 0; i < sensorArrayList.size(); i++) {
+                        for (int i = 0; i < sensorAreaArrayList.size(); i++) {
                             JSONObject jsonObject;
-                            Sensor sensor = sensorArrayList.get(i);
+                            SensorArea sensor = sensorAreaArrayList.get(i);
                             try {
                                 // jsonObject = clickEventJsonArray.getJSONObject(i);
-                                String latitude1 = sensor.getLatitude();
-                                String longitude1 = sensor.getLongitude();
-                                uid[0] = sensor.getUid();
+//                                String latitude1 = sensor.getLatitude();
+//                                String longitude1 = sensor.getLongitude();
+//                                uid[0] = sensor.getUid();
                                 markerAreaName = sensor.getParkingArea();
                                 //Timber.e("jsonUid -> %s", uid[0]);
                                 //TaskParser taskParser = new TaskParser();
                                 double distanceForCount = calculateDistance(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude,
-                                        MathUtils.getInstance().convertToDouble(latitude1),
-                                        MathUtils.getInstance().convertToDouble(longitude1));
+                                       sensor.getEndLat(),
+                                        sensor.getEndLng());
 
                                 if (distanceForCount < 0.001) {
-                                    parkingNumberOfIndividualMarker = sensor.getNoOfParking();
+                                    parkingNumberOfIndividualMarker = sensor.getCount();
                                     textViewMarkerParkingAreaCount.setText(parkingNumberOfIndividualMarker);
                                     break;
                                 }
@@ -866,7 +876,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                     context.getResources().getString(R.string.nearest_parking_from_your_destination),
                                     BookingSensors.TEXT_INFO_TYPE, 0));
 
-                            if (sensorArrayList != null) {
+                            if (sensorAreaArrayList != null) {
 
                                 setBottomSheetList(() -> {
                                     if (bottomSheetAdapter != null) {
@@ -876,7 +886,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                     } else {
                                         Timber.e("marker click else -> %s", markerUid);
                                     }
-                                }, sensorArrayList, marker.getPosition(), bookingSensorsMarkerArrayList, finalUid);
+                                }, sensorAreaArrayList, marker.getPosition(), bookingSensorsMarkerArrayList, finalUid);
                             }
 
                         } else {
@@ -945,20 +955,20 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                                 fromMarkerRouteDrawn = 1;
 
-                                for (int i = 0; i < sensorArrayList.size(); i++) {
+                                for (int i = 0; i < sensorAreaArrayList.size(); i++) {
                                     JSONObject jsonObject;
-                                    Sensor sensor = sensorArrayList.get(i);
+                                    SensorArea sensor = sensorAreaArrayList.get(i);
                                     try {
                                         //jsonObject = clickEventJsonArray.getJSONObject(i);
-                                        String latitude1 = sensor.getLatitude();
-                                        String longitude1 = sensor.getLongitude();
-                                        uid1[0] = sensor.getUid();
+//                                        String latitude1 = sensor.getLatitude();
+//                                        String longitude1 = sensor.getLongitude();
+//                                        uid1[0] = sensor.getUid();
                                         markerAreaName1[0] = sensor.getParkingArea();
                                         double distanceForCount = calculateDistance(marker.getPosition().latitude, marker.getPosition().longitude,
-                                                MathUtils.getInstance().convertToDouble(latitude1), MathUtils.getInstance().convertToDouble(longitude1));
+                                               sensor.getEndLat(),sensor.getEndLng());
 
                                         if (distanceForCount < 0.001) {
-                                            parkingNumberOfIndividualMarker = sensor.getNoOfParking();
+                                            parkingNumberOfIndividualMarker = sensor.getCount();
                                             textViewMarkerParkingAreaCount.setText(parkingNumberOfIndividualMarker);
                                             break;
                                         }
@@ -983,11 +993,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                 String markerStringDuration = String.valueOf(markerDoubleDuration);
 
                                 bookingSensorsMarkerArrayList.add(new BookingSensors(markerTagObj.getParkingArea(), marker.getPosition().latitude, marker.getPosition().longitude,
-                                        markerDistance, markerTagObj.getNoOfParking(), markerStringDuration,
+                                        markerDistance, markerTagObj.getCount(), markerStringDuration,
                                         context.getResources().getString(R.string.nearest_parking_from_your_destination),
                                         BookingSensors.TEXT_INFO_TYPE, 0));
 
-                                if (sensorArrayList != null) {
+                                if (sensorAreaArrayList != null) {
 
                                     setBottomSheetList(() -> {
                                         if (bottomSheetAdapter != null) {
@@ -997,7 +1007,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                         } else {
                                             Timber.e("bottomSheetAdapter null");
                                         }
-                                    }, sensorArrayList, marker.getPosition(), bookingSensorsMarkerArrayList, finalUid);
+                                    }, sensorAreaArrayList, marker.getPosition(), bookingSensorsMarkerArrayList, finalUid);
                                 }
 
                                 bottomSheetAdapter.setDataList(bookingSensorsMarkerArrayList);
@@ -1057,7 +1067,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._92sdp));
 
                 if (ConnectivityUtils.getInstance().checkInternet(context) && isGPSEnabled()) {
-                    fetchSensorRetrofit(onConnectedLocation);
+//                    fetchSensorRetrofit(onConnectedLocation);
+                    fetchParkingSlotSensors(onConnectedLocation);
                 } else {
                     ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_gps));
                 }
@@ -1203,7 +1214,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             }
 
             if (ConnectivityUtils.getInstance().checkInternet(context)) {
-                fetchSensorRetrofit(onConnectedLocation);
+//                fetchSensorRetrofit(onConnectedLocation);
+                fetchParkingSlotSensors(onConnectedLocation);
             } else {
                 DialogUtils.getInstance().alertDialog(context,
                         context,
@@ -1215,7 +1227,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             public void onPositiveClick() {
                                 Timber.e("Positive Button clicked");
                                 if (ConnectivityUtils.getInstance().checkInternet(context)) {
-                                    fetchSensorRetrofit(onConnectedLocation);
+//                                    fetchSensorRetrofit(onConnectedLocation);
+                                    fetchParkingSlotSensors(onConnectedLocation);
                                 } else {
                                     TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                                 }
@@ -1740,34 +1753,35 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             context.getResources().getString(R.string.nearest_parking_from_your_destination),
                             BookingSensors.TEXT_INFO_TYPE, 0));
 
-                    if (sensorArrayList != null) {
-                        for (int i = 0; i < (sensorArrayList != null ? sensorArrayList.size() : 0); i++) {
+                    if (sensorAreaArrayList != null) {
+                        for (int i = 0; i < (sensorAreaArrayList != null ? sensorAreaArrayList.size() : 0); i++) {
 
-                            Sensor sensor = sensorArrayList.get(i);
-                            String latitude1 = sensor.getLatitude();
-                            String longitude1 = sensor.getLongitude();
+                            SensorArea sensor = sensorAreaArrayList.get(i);
+//                            String latitude1 = sensor.getLatitude();
+//                            String longitude1 = sensor.getLongitude();
                             String nearestSearchAreaName = sensor.getParkingArea();
 
                             double distanceForNearbyLoc = calculateDistance(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude,
-                                    MathUtils.getInstance().convertToDouble(latitude1), MathUtils.getInstance().convertToDouble(longitude1));
+                                   sensor.getEndLat(), sensor.getEndLng());
 
                             if (distanceForNearbyLoc < 5) {
                                 origin = new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude);
 
-                                String parkingNumberOfNearbyDistanceLoc = sensor.getNoOfParking();
+                                String parkingNumberOfNearbyDistanceLoc = sensor.getCount();
 
                                 double nearbySearchDoubleDuration = MathUtils.getInstance().convertToDouble(new DecimalFormat("##.##", new DecimalFormatSymbols(Locale.US)).format(distanceForNearbyLoc * 2.43));
 
                                 String nearbySearchStringDuration = String.valueOf(nearbySearchDoubleDuration);
 
-                                bookingSensorsArrayList.add(new BookingSensors(nearestSearchAreaName, MathUtils.getInstance().convertToDouble(latitude1),
-                                        MathUtils.getInstance().convertToDouble(longitude1), adjustDistance(distanceForNearbyLoc), parkingNumberOfNearbyDistanceLoc,
+                                bookingSensorsArrayList.add(new BookingSensors(nearestSearchAreaName,
+                                        sensor.getEndLat(),
+                                        sensor.getEndLng(), adjustDistance(distanceForNearbyLoc), parkingNumberOfNearbyDistanceLoc,
                                         nearbySearchStringDuration,
                                         BookingSensors.INFO_TYPE, 1));
 
                                 bubbleSortArrayList(bookingSensorsArrayList);
 
-                                if (sensorArrayList != null) {
+                                if (sensorAreaArrayList != null) {
                                     if (bottomSheetAdapter != null) {
                                         bookingSensorsArrayListGlobal.clear();
                                         bookingSensorsArrayListGlobal.addAll(bookingSensorsArrayList);
@@ -1775,7 +1789,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                     }
                                 }
                             } else {
-                                if (sensorArrayList != null) {
+                                if (sensorAreaArrayList != null) {
                                     if (bottomSheetAdapter != null) {
                                         bookingSensorsArrayListGlobal.clear();
                                         bookingSensorsArrayListGlobal.addAll(bookingSensorsArrayList);
@@ -1844,36 +1858,38 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             context.getResources().getString(R.string.nearest_parking_from_your_destination),
                             BookingSensors.TEXT_INFO_TYPE, 0));
 
-                    if (sensorArrayList != null) {
-                        for (int i = 0; i < (sensorArrayList != null ? sensorArrayList.size() : 0); i++) {
+                    if (sensorAreaArrayList != null) {
+                        for (int i = 0; i < (sensorAreaArrayList != null ? sensorAreaArrayList.size() : 0); i++) {
 
-                            Sensor sensor = sensorArrayList.get(i);
-                            String latitude1 = sensor.getLatitude();
-                            String longitude1 = sensor.getLongitude();
+                            SensorArea sensor = sensorAreaArrayList.get(i);
+//                            String latitude1 = sensor.getLatitude();
+//                            String longitude1 = sensor.getLongitude();
                             String nearestSearchAreaName = sensor.getParkingArea();
 
                             double distanceForNearbyLoc = calculateDistance(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude,
-                                    MathUtils.getInstance().convertToDouble(latitude1), MathUtils.getInstance().convertToDouble(longitude1));
+                                    sensor.getEndLat(), sensor.getEndLng());
 
                             if (distanceForNearbyLoc < 5) {
                                 origin = new LatLng(searchPlaceLatLng.latitude, searchPlaceLatLng.longitude);
 
                                 String parkingNumberOfNearbyDistanceLoc;
-                                parkingNumberOfNearbyDistanceLoc = sensor.getNoOfParking();
+                                parkingNumberOfNearbyDistanceLoc = sensor.getCount();
 
                                 double nearbySearchDoubleDuration = MathUtils.getInstance().convertToDouble(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(distanceForNearbyLoc * 2.43));
 
                                 String nearbySearchStringDuration = String.valueOf(nearbySearchDoubleDuration);
 
-                                bookingSensorsArrayList.add(new BookingSensors(nearestSearchAreaName, MathUtils.getInstance().convertToDouble(latitude1),
-                                        MathUtils.getInstance().convertToDouble(longitude1), adjustDistance(distanceForNearbyLoc), parkingNumberOfNearbyDistanceLoc,
+                                bookingSensorsArrayList.add(new BookingSensors(nearestSearchAreaName,
+                                        sensor.getEndLat(),
+                                        sensor.getEndLng(),
+                                        adjustDistance(distanceForNearbyLoc), parkingNumberOfNearbyDistanceLoc,
                                         nearbySearchStringDuration,
                                         BookingSensors.INFO_TYPE, 1));
 
                                 bubbleSortArrayList(bookingSensorsArrayList);
 
                             }
-                            if (sensorArrayList != null) {
+                            if (sensorAreaArrayList != null) {
                                 if (bottomSheetAdapter != null) {
                                     bookingSensorsArrayListGlobal.clear();
                                     bookingSensorsArrayListGlobal.addAll(bookingSensorsArrayList);
@@ -1977,34 +1993,34 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
     }
 
-    private synchronized void setBottomSheetList(SetBottomSheetCallBack setBottomSheetCallBack, List<Sensor> sensorArrayList, LatLng latLng, ArrayList<BookingSensors> bookingSensorsArrayList, String markerUid) {
+    private synchronized void setBottomSheetList(SetBottomSheetCallBack setBottomSheetCallBack, List<SensorArea> sensorArrayList, LatLng latLng, ArrayList<BookingSensors> bookingSensorsArrayList, String markerUid) {
         final int[] count = {0};
         int count2 = sensorArrayList.size();
         for (int i = 0; i < sensorArrayList.size(); i++) {
 
-            Sensor sensor = sensorArrayList.get(i);
+            SensorArea sensor = sensorArrayList.get(i);
             try {
-                String latitude1 = sensor.getLatitude();
-
-                String longitude1 = sensor.getLongitude();
-
-                String uid = sensor.getUid();
+//                String latitude1 = sensor.getLatitude();
+//
+//                String longitude1 = sensor.getLongitude();
+//
+//                String uid = sensor.getUid();
 
                 String parkingArea = sensor.getParkingArea();
 
                 double distanceForNearbyLoc = calculateDistance(latLng.latitude, latLng.longitude,
-                        MathUtils.getInstance().convertToDouble(latitude1), MathUtils.getInstance().convertToDouble(longitude1));
+                        sensor.getEndLat(),sensor.getEndLng());
 
                 final String[] nearbyAreaName = {""};
 
-                if (distanceForNearbyLoc < 5 && !markerUid.equals(uid)) {
+                if (distanceForNearbyLoc < 5) {
                     origin = new LatLng(latLng.latitude, latLng.longitude);
 
                     nearbyAreaName[0] = parkingArea;
 
                     String parkingNumberOfNearbyDistanceLoc = null;
                     try {
-                        parkingNumberOfNearbyDistanceLoc = sensor.getNoOfParking();
+                        parkingNumberOfNearbyDistanceLoc = sensor.getCount();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -2014,8 +2030,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                     String nearbySearchStringDuration = String.valueOf(nearbySearchDoubleDuration);
 
-                    bookingSensorsArrayList.add(new BookingSensors(nearbyAreaName[0], MathUtils.getInstance().convertToDouble(latitude1),
-                            MathUtils.getInstance().convertToDouble(longitude1), adjustDistance(distanceForNearbyLoc), parkingNumberOfNearbyDistanceLoc,
+                    bookingSensorsArrayList.add(new BookingSensors(nearbyAreaName[0], sensor.getEndLat(),
+                            sensor.getEndLng(), adjustDistance(distanceForNearbyLoc), parkingNumberOfNearbyDistanceLoc,
                             nearbySearchStringDuration,
                             BookingSensors.INFO_TYPE, 1));
 
@@ -2070,215 +2086,421 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private List<Sensor> sensorArrayList = new ArrayList<>();
     private List<Sensor> sensorInitialArrayList = new ArrayList<>();
 
-    public void fetchSensorRetrofit(Location location) {
-
-        this.onConnectedLocation = location;
-
-        bookingSensorsArrayListGlobal.clear();
-
-        // UI Service.
-        ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<SensorsResponse> sensorsCall = service.getSensors();
+    private void fetchParkingSlotSensors(Location location) {
+        Timber.e("fetchParkingSlotSensors called");
 
         showLoading(context);
-
         startShimmer();
+        bookingSensorsArrayListGlobal.clear();
 
-        // Gathering results.
-        sensorsCall.enqueue(new Callback<SensorsResponse>() {
+
+        if (SharedData.getInstance().getOnConnectedLocation() != null) {
+            onConnectedLocation = SharedData.getInstance().getOnConnectedLocation();
+            Timber.e("onConnectedLocation -> %s", onConnectedLocation);
+        }
+
+        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+        Call<ParkingSlotResponse> call = request.getParkingSlots();
+        call.enqueue(new Callback<ParkingSlotResponse>() {
             @Override
-            public void onResponse(@NonNull Call<SensorsResponse> call,
-                                   @NonNull retrofit2.Response<SensorsResponse> response) {
-                Timber.e("response -> %s", response.message());
+            public void onResponse(@NonNull Call<ParkingSlotResponse> call,
+                                   @NonNull retrofit2.Response<ParkingSlotResponse> response) {
+                hideLoading();
+                stopShimmer();
+                if (response.body() != null) {
+                    list = response.body().getSensors();
+                    Timber.e("list -> %s", new Gson().toJson(list));
 
-                try {
-                    if (response.body() != null && !response.body().getError()) {
-                        if (response.isSuccessful()) {
+                    parkingSlotResponse = response.body();
 
-                            hideLoading();
+                    parkingSlotList = parkingSlotResponse.getSensors();
 
-                            stopShimmer();
+                    if (parkingSlotList != null) {
+                        for (List<String> baseStringList : parkingSlotList) {
+                            for (int i = 0; i < baseStringList.size(); i++) {
 
-                            sensorInitialArrayList = response.body().getSensors();
-                            Collections.sort(sensorInitialArrayList, (Sensor c1, Sensor c2) -> {
-                                return Double.compare(parseInt(c1.getAreaId()), parseInt(c2.getAreaId()));
-                            });
-//                            Sensor rajSensor = new Sensor();
-//                            Sensor rajSensor2 = new Sensor();
-//                            rajSensor.setAddress("Rajshahi");
-//                            rajSensor.setAreaId("6100");
-//                            rajSensor.setAreaNo("1232");
-//                            rajSensor.setLatitude("24.36674279444273");
-//                            rajSensor.setLongitude("88.60069189220667");
-//                            rajSensor.setId("879");
-//                            rajSensor.setNoOfParking("63");
-//                            rajSensor.setParkingArea("Shaheb Bazar, Rajshahi");
-//                            rajSensor.setUid("raj7687");
-//                            rajSensor.setsStatus("1");
-//                            rajSensor.setReserveStatus(1);
-//
-//                            rajSensor2.setAddress("Rajshahi");
-//                            rajSensor2.setAreaId("raj61001");
-//                            rajSensor2.setAreaNo("1231");
-//                            rajSensor2.setLatitude("24.374818820697296");
-//                            rajSensor2.setLongitude("88.59884049743414");
-//                            rajSensor2.setId("879");
-//                            rajSensor2.setNoOfParking("30");
-//                            rajSensor2.setParkingArea("Getter road, Rajshahi");
-//                            rajSensor2.setUid("raj7688");
-//                            rajSensor2.setsStatus("1");
-//                            rajSensor2.setReserveStatus(1);
-//                            sensorArrayList.add(rajSensor);
-//                            sensorArrayList.add(rajSensor2);
-                            new Handler().postDelayed(() -> {
-                                if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
-                                    if (lat != null && lng != null && areaName != null && parkingSlotCount != null) {
+                                Timber.d("onResponse: i ->  %s", i);
 
-                                        hideNoData();
-
-                                        getDirectionPinMarkerDraw(new LatLng(lat, lng), adapterUid);
-
-                                        cordList.add(new LatLng(lat, lng));
-
-                                        //move map camera
-                                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 13.5f), 500, null);
-                                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 13.5f));
-
-                                        String uid = "";
-
-                                        String adapterAreaName = "";
-
-                                        if (sensorArrayList != null && !sensorArrayList.isEmpty()) {
-                                            for (int i = 0; i < sensorArrayList.size(); i++) {
-                                                Timber.e("sensorArrayList size -> %s", sensorArrayList.size());
-                                                Sensor sensor = sensorArrayList.get(i);
-                                                try {
-                                                    String latitude1 = sensor.getLatitude();
-
-                                                    String longitude1 = sensor.getLongitude();
-
-                                                    uid = sensor.getUid();
-
-                                                    adapterAreaName = sensor.getParkingArea();
-
-                                                    double distanceForCount = calculateDistance(lat, lng,
-                                                            MathUtils.getInstance().convertToDouble(latitude1), MathUtils.getInstance().convertToDouble(longitude1));
-
-                                                    if (distanceForCount < 0.001) {
-                                                        adapterUid = uid;
-
-                                                        Timber.e("adapterUid -> %s", adapterUid);
-
-                                                        break;
-                                                    }
-                                                } catch (Exception e) {
-                                                    e.printStackTrace();
-                                                }
-                                            }
-                                        } else {
-                                            Timber.e("sensorArrayList size -> %s", sensorArrayList != null ? sensorArrayList.size() : 0);
-                                            //Toast.makeText(context, "sensorArrayList empty", Toast.LENGTH_SHORT).show();
-                                        }
-
-                                        bookingSensorsAdapterArrayList.clear();
-
-                                        bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._92sdp));
-
-                                        adapterDistance = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
-                                                lat, lng);
-
-                                        String finalUid = uid;
-
-                                        String adapterPlaceName = adapterAreaName;
-
-                                        double adapterDoubleDuration = MathUtils.getInstance().convertToDouble(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(adapterDistance * 2.43));
-                                        String adapterStringDuration = String.valueOf(adapterDoubleDuration);
-
-                                        layoutVisible(true, TextUtils.getInstance().capitalizeFirstLetter(areaName), parkingSlotCount,
-                                                String.valueOf(adapterDistance), new LatLng(lat, lng));
-
-                                        bookingSensorsAdapterArrayList.add(new BookingSensors(TextUtils.getInstance().capitalizeFirstLetter(areaName), lat, lng,
-                                                adjustDistance(adapterDistance), parkingSlotCount, adapterStringDuration,
-                                                context.getResources().getString(R.string.nearest_parking_from_your_destination),
-                                                BookingSensors.TEXT_INFO_TYPE, 0));
-
-                                        if (sensorArrayList != null) {
-                                            setBottomSheetList(() -> {
-                                                if (bottomSheetAdapter != null) {
-                                                    hideLoading();
-                                                    bookingSensorsArrayListGlobal.clear();
-                                                    bookingSensorsArrayListGlobal.addAll(bookingSensorsAdapterArrayList);
-                                                    bottomSheetAdapter.notifyDataSetChanged();
-                                                } else {
-                                                    Timber.e("sensorArrayList null");
-                                                }
-                                            }, sensorArrayList, new LatLng(lat, lng), bookingSensorsAdapterArrayList, finalUid);
-                                        }
-
-                                        //value getting from parking adapter
-                                        if (SharedData.getInstance().getSensorArea() != null) {
-                                            SensorArea sensorArea = SharedData.getInstance().getSensorArea();
-
-                                            textViewParkingAreaName.setText(TextUtils.getInstance().capitalizeFirstLetter(sensorArea.getParkingArea()));
-                                            textViewParkingAreaCount.setText(sensorArea.getCount());
-                                            String distance = new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(sensorArea.getDistance()) + " km";
-
-                                            textViewParkingDistance.setText(context.getResources().getString(R.string.distance, distance));
-
-                                            getDestinationInfoForDuration(new LatLng(sensorArea.getEndLat(), sensorArea.getEndLng()));
-                                        } else {
-                                            Timber.e("Genjam");
-                                        }
-                                    }
-                                } else {
-                                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
+                                if (i == 1) {
+                                    parkingArea = baseStringList.get(i);
                                 }
-                            }, 1000);
 
-                            Sensor sensorTemp = new Sensor();
+                                if (i == 0) {
+                                    placeId = baseStringList.get(i);
+                                }
 
+                                if (i == 2) {
+                                    endLat = Double.parseDouble(baseStringList.get(i).trim());
+                                    Timber.e("endLat -> %s", endLat);
+                                }
 
+                                if (i == 3) {
+                                    endLng = Double.parseDouble(baseStringList.get(i).trim());
+                                    Timber.e("endLng -> %s", endLng);
+                                }
 
-                           if(sensorInitialArrayList.size()>0){
-                               sensorTemp = sensorInitialArrayList.get(0);
-                               sensorArrayList.add(sensorTemp);
-                               renderSensors(sensorTemp,location);
-                           }
+                                if (i == 4) {
+                                    count = baseStringList.get(i);
+                                }
 
-                            for (int i = 1; i < sensorInitialArrayList.size(); i++) {
+                                fetchDistance =  MathUtils.getInstance().calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
+                                        endLat, endLng);
 
-
-                                Sensor sensor = sensorInitialArrayList.get(i);
-                            if (!sensor.getAreaId().equals(sensorTemp.getAreaId())){
-                                renderSensors(sensor,location);
-
-                                sensorArrayList.add(sensor);
+                                if (fetchDistance > 1.9) {
+                                    fetchDistance = fetchDistance + 2;
+                                } else if (fetchDistance < 1.9 && fetchDistance > 1) {
+                                    fetchDistance = fetchDistance + 1;
+                                } else {
+                                    fetchDistance = fetchDistance + 0.5;
+                                }
                             }
-                                sensorTemp = sensorInitialArrayList.get(i);
 
-                            }
+                            Timber.e("distance before adjust:" + fetchDistance + parkingArea +
+                                    "  mine lat " + onConnectedLocation.getLatitude() + " lon " + onConnectedLocation.getLongitude()
+                                    + " area lat " + endLat + " lon " + endLng);
 
-                                setBottomSheetFragmentControls(bookingSensorsArrayListGlobal);
+                            SensorArea sensorArea = new SensorArea(parkingArea, placeId, endLat, endLng, count,
+                                    fetchDistance);
 
-                        } else {
-                            Timber.e("Errors: ");
+                            Timber.e("distanceAbdur after adjust:" + sensorArea.getDistance() + parkingArea);
+
+                            sensorAreaArrayList.add(sensorArea);
                         }
+
+                        Collections.sort(sensorAreaArrayList, (c1, c2) -> Double.compare(c1.getDistance(), c2.getDistance()));
+
+                      for(int i = 0;i<sensorAreaArrayList.size();i++){
+                          renderSensors2(sensorAreaArrayList.get(i),location);
+                      }
+
+
+                        new Handler().postDelayed(() -> {
+                            if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
+                                if (lat != null && lng != null && areaName != null && parkingSlotCount != null) {
+
+                                    hideNoData();
+
+                                    getDirectionPinMarkerDraw(new LatLng(lat, lng), adapterUid);
+
+                                    cordList.add(new LatLng(lat, lng));
+
+                                    //move map camera
+                                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 13.5f), 500, null);
+                                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 13.5f));
+
+                                    String uid = "";
+
+                                    String adapterAreaName = "";
+
+                                    if (sensorAreaArrayList != null && !sensorAreaArrayList.isEmpty()) {
+                                        for (int i = 0; i < sensorAreaArrayList.size(); i++) {
+                                            Timber.e("sensorArrayList size -> %s", sensorAreaArrayList.size());
+                                            SensorArea sensor = sensorAreaArrayList.get(i);
+                                            try {
+//                                                String latitude1 = sensor.getLatitude();
+//
+//                                                String longitude1 = sensor.getLongitude();
+
+//                                                uid = sensor.getUid();
+
+                                                adapterAreaName = sensor.getParkingArea();
+
+                                                double distanceForCount = calculateDistance(lat, lng,
+                                                       sensor.getEndLat(),sensor.getEndLng());
+
+                                                if (distanceForCount < 0.001) {
+//                                                    adapterUid = uid;
+
+//                                                    Timber.e("adapterUid -> %s", adapterUid);
+
+                                                    break;
+                                                }
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    } else {
+                                        Timber.e("sensorArrayList size -> %s", sensorAreaArrayList != null ? sensorAreaArrayList.size() : 0);
+                                        //Toast.makeText(context, "sensorArrayList empty", Toast.LENGTH_SHORT).show();
+                                    }
+
+                                    bookingSensorsAdapterArrayList.clear();
+
+                                    bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._92sdp));
+
+                                    adapterDistance = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
+                                            lat, lng);
+
+                                  //  String finalUid = uid;
+
+                                    String adapterPlaceName = adapterAreaName;
+
+                                    double adapterDoubleDuration = MathUtils.getInstance().convertToDouble(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(adapterDistance * 2.43));
+                                    String adapterStringDuration = String.valueOf(adapterDoubleDuration);
+
+                                    layoutVisible(true, TextUtils.getInstance().capitalizeFirstLetter(areaName), parkingSlotCount,
+                                            String.valueOf(adapterDistance), new LatLng(lat, lng));
+
+                                    bookingSensorsAdapterArrayList.add(new BookingSensors(TextUtils.getInstance().capitalizeFirstLetter(areaName), lat, lng,
+                                            adjustDistance(adapterDistance), parkingSlotCount, adapterStringDuration,
+                                            context.getResources().getString(R.string.nearest_parking_from_your_destination),
+                                            BookingSensors.TEXT_INFO_TYPE, 0));
+
+                                    if (sensorAreaArrayList != null) {
+                                        setBottomSheetList(() -> {
+                                            if (bottomSheetAdapter != null) {
+                                                hideLoading();
+                                                bookingSensorsArrayListGlobal.clear();
+                                                bookingSensorsArrayListGlobal.addAll(bookingSensorsAdapterArrayList);
+                                                bottomSheetAdapter.notifyDataSetChanged();
+                                            } else {
+                                                Timber.e("sensorArrayList null");
+                                            }
+                                        }, sensorAreaArrayList, new LatLng(lat, lng), bookingSensorsAdapterArrayList, "finalUid");
+                                    }
+
+                                    //value getting from parking adapter
+                                    if (SharedData.getInstance().getSensorArea() != null) {
+                                        SensorArea sensorArea = SharedData.getInstance().getSensorArea();
+
+                                        textViewParkingAreaName.setText(TextUtils.getInstance().capitalizeFirstLetter(sensorArea.getParkingArea()));
+                                        textViewParkingAreaCount.setText(sensorArea.getCount());
+                                        String distance = new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(sensorArea.getDistance()) + " km";
+
+                                        textViewParkingDistance.setText(context.getResources().getString(R.string.distance, distance));
+
+                                        getDestinationInfoForDuration(new LatLng(sensorArea.getEndLat(), sensorArea.getEndLng()));
+                                    } else {
+                                        Timber.e("Genjam");
+                                    }
+                                }
+                            } else {
+                                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
+                            }
+                        }, 1000);
+                        setBottomSheetFragmentControls(bookingSensorsArrayListGlobal);
                     }
-                } catch (Exception e) {
-                    e.getCause();
-                    hideLoading();
-                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<SensorsResponse> call, @NonNull Throwable errors) {
-                Timber.e("Throwable Errors: -> %s", errors.toString());
+            public void onFailure(@NonNull Call<ParkingSlotResponse> call, @NonNull Throwable t) {
+                Timber.e("onFailure -> %s", t.getMessage());
                 hideLoading();
                 ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
         });
     }
+
+//    public void fetchSensorRetrofit(Location location) {
+//
+//        this.onConnectedLocation = location;
+//
+//        bookingSensorsArrayListGlobal.clear();
+//
+//        // UI Service.
+//        ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+//        Call<SensorsResponse> sensorsCall = service.getSensors();
+//
+//        showLoading(context);
+//
+//        startShimmer();
+//
+//        // Gathering results.
+//        sensorsCall.enqueue(new Callback<SensorsResponse>() {
+//            @Override
+//            public void onResponse(@NonNull Call<SensorsResponse> call,
+//                                   @NonNull retrofit2.Response<SensorsResponse> response) {
+//                Timber.e("response -> %s", response.message());
+//
+//                try {
+//                    if (response.body() != null && !response.body().getError()) {
+//                        if (response.isSuccessful()) {
+//
+//                            hideLoading();
+//
+//                            stopShimmer();
+//
+//                            sensorInitialArrayList = response.body().getSensors();
+//                            Collections.sort(sensorInitialArrayList, (Sensor c1, Sensor c2) -> {
+//                                return Double.compare(parseInt(c1.getAreaId()), parseInt(c2.getAreaId()));
+//                            });
+////                            Sensor rajSensor = new Sensor();
+////                            Sensor rajSensor2 = new Sensor();
+////                            rajSensor.setAddress("Rajshahi");
+////                            rajSensor.setAreaId("6100");
+////                            rajSensor.setAreaNo("1232");
+////                            rajSensor.setLatitude("24.36674279444273");
+////                            rajSensor.setLongitude("88.60069189220667");
+////                            rajSensor.setId("879");
+////                            rajSensor.setNoOfParking("63");
+////                            rajSensor.setParkingArea("Shaheb Bazar, Rajshahi");
+////                            rajSensor.setUid("raj7687");
+////                            rajSensor.setsStatus("1");
+////                            rajSensor.setReserveStatus(1);
+////
+////                            rajSensor2.setAddress("Rajshahi");
+////                            rajSensor2.setAreaId("raj61001");
+////                            rajSensor2.setAreaNo("1231");
+////                            rajSensor2.setLatitude("24.374818820697296");
+////                            rajSensor2.setLongitude("88.59884049743414");
+////                            rajSensor2.setId("879");
+////                            rajSensor2.setNoOfParking("30");
+////                            rajSensor2.setParkingArea("Getter road, Rajshahi");
+////                            rajSensor2.setUid("raj7688");
+////                            rajSensor2.setsStatus("1");
+////                            rajSensor2.setReserveStatus(1);
+////                            sensorArrayList.add(rajSensor);
+////                            sensorArrayList.add(rajSensor2);
+//                            new Handler().postDelayed(() -> {
+//                                if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
+//                                    if (lat != null && lng != null && areaName != null && parkingSlotCount != null) {
+//
+//                                        hideNoData();
+//
+//                                        getDirectionPinMarkerDraw(new LatLng(lat, lng), adapterUid);
+//
+//                                        cordList.add(new LatLng(lat, lng));
+//
+//                                        //move map camera
+//                                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 13.5f), 500, null);
+//                                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 13.5f));
+//
+//                                        String uid = "";
+//
+//                                        String adapterAreaName = "";
+//
+//                                        if (sensorArrayList != null && !sensorArrayList.isEmpty()) {
+//                                            for (int i = 0; i < sensorArrayList.size(); i++) {
+//                                                Timber.e("sensorArrayList size -> %s", sensorArrayList.size());
+//                                                Sensor sensor = sensorArrayList.get(i);
+//                                                try {
+//                                                    String latitude1 = sensor.getLatitude();
+//
+//                                                    String longitude1 = sensor.getLongitude();
+//
+//                                                    uid = sensor.getUid();
+//
+//                                                    adapterAreaName = sensor.getParkingArea();
+//
+//                                                    double distanceForCount = calculateDistance(lat, lng,
+//                                                            MathUtils.getInstance().convertToDouble(latitude1), MathUtils.getInstance().convertToDouble(longitude1));
+//
+//                                                    if (distanceForCount < 0.001) {
+//                                                        adapterUid = uid;
+//
+//                                                        Timber.e("adapterUid -> %s", adapterUid);
+//
+//                                                        break;
+//                                                    }
+//                                                } catch (Exception e) {
+//                                                    e.printStackTrace();
+//                                                }
+//                                            }
+//                                        } else {
+//                                            Timber.e("sensorArrayList size -> %s", sensorArrayList != null ? sensorArrayList.size() : 0);
+//                                            //Toast.makeText(context, "sensorArrayList empty", Toast.LENGTH_SHORT).show();
+//                                        }
+//
+//                                        bookingSensorsAdapterArrayList.clear();
+//
+//                                        bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._92sdp));
+//
+//                                        adapterDistance = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
+//                                                lat, lng);
+//
+//                                        String finalUid = uid;
+//
+//                                        String adapterPlaceName = adapterAreaName;
+//
+//                                        double adapterDoubleDuration = MathUtils.getInstance().convertToDouble(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(adapterDistance * 2.43));
+//                                        String adapterStringDuration = String.valueOf(adapterDoubleDuration);
+//
+//                                        layoutVisible(true, TextUtils.getInstance().capitalizeFirstLetter(areaName), parkingSlotCount,
+//                                                String.valueOf(adapterDistance), new LatLng(lat, lng));
+//
+//                                        bookingSensorsAdapterArrayList.add(new BookingSensors(TextUtils.getInstance().capitalizeFirstLetter(areaName), lat, lng,
+//                                                adjustDistance(adapterDistance), parkingSlotCount, adapterStringDuration,
+//                                                context.getResources().getString(R.string.nearest_parking_from_your_destination),
+//                                                BookingSensors.TEXT_INFO_TYPE, 0));
+//
+//                                        if (sensorArrayList != null) {
+//                                            setBottomSheetList(() -> {
+//                                                if (bottomSheetAdapter != null) {
+//                                                    hideLoading();
+//                                                    bookingSensorsArrayListGlobal.clear();
+//                                                    bookingSensorsArrayListGlobal.addAll(bookingSensorsAdapterArrayList);
+//                                                    bottomSheetAdapter.notifyDataSetChanged();
+//                                                } else {
+//                                                    Timber.e("sensorArrayList null");
+//                                                }
+//                                            }, sensorArrayList, new LatLng(lat, lng), bookingSensorsAdapterArrayList, finalUid);
+//                                        }
+//
+//                                        //value getting from parking adapter
+//                                        if (SharedData.getInstance().getSensorArea() != null) {
+//                                            SensorArea sensorArea = SharedData.getInstance().getSensorArea();
+//
+//                                            textViewParkingAreaName.setText(TextUtils.getInstance().capitalizeFirstLetter(sensorArea.getParkingArea()));
+//                                            textViewParkingAreaCount.setText(sensorArea.getCount());
+//                                            String distance = new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(sensorArea.getDistance()) + " km";
+//
+//                                            textViewParkingDistance.setText(context.getResources().getString(R.string.distance, distance));
+//
+//                                            getDestinationInfoForDuration(new LatLng(sensorArea.getEndLat(), sensorArea.getEndLng()));
+//                                        } else {
+//                                            Timber.e("Genjam");
+//                                        }
+//                                    }
+//                                } else {
+//                                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
+//                                }
+//                            }, 1000);
+//
+//                            Sensor sensorTemp = new Sensor();
+//
+//
+//
+//                           if(sensorInitialArrayList.size()>0){
+//                               sensorTemp = sensorInitialArrayList.get(0);
+//                               sensorArrayList.add(sensorTemp);
+//                               renderSensors(sensorTemp,location);
+//                           }
+//
+//                            for (int i = 1; i < sensorInitialArrayList.size(); i++) {
+//
+//
+//                                Sensor sensor = sensorInitialArrayList.get(i);
+//                            if (!sensor.getAreaId().equals(sensorTemp.getAreaId())){
+//                                renderSensors(sensor,location);
+//
+//                                sensorArrayList.add(sensor);
+//                            }
+//                                sensorTemp = sensorInitialArrayList.get(i);
+//
+//                            }
+//
+//                                setBottomSheetFragmentControls(bookingSensorsArrayListGlobal);
+//
+//                        } else {
+//                            Timber.e("Errors: ");
+//                        }
+//                    }
+//                } catch (Exception e) {
+//                    e.getCause();
+//                    hideLoading();
+//                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(@NonNull Call<SensorsResponse> call, @NonNull Throwable errors) {
+//                Timber.e("Throwable Errors: -> %s", errors.toString());
+//                hideLoading();
+//                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+//            }
+//        });
+//    }
 
     private void renderSensors(Sensor sensor, Location location) {
         String areaName = sensor.getParkingArea();
@@ -2368,6 +2590,62 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
     }
 
+    private void renderSensors2(SensorArea sensor, Location location) {
+        String areaName = sensor.getParkingArea();
+
+        String parkingCount = sensor.getCount();
+
+        double latitude = sensor.getEndLat();
+
+        double longitude = sensor.getEndLng();
+
+        double tDistance = calculateDistance(latitude, longitude, location.getLatitude(), location.getLongitude());
+
+        if (tDistance < nDistance) {
+            nDistance = tDistance;
+            nLatitude = latitude;
+            nLongitude = longitude;
+        }
+
+
+                sensorStatus = "Empty";
+
+                if (mMap != null) {
+                    MarkerOptions marker = new MarkerOptions().position(new LatLng(latitude, longitude))
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
+                    Marker marker1 = mMap.addMarker(marker);
+                    marker1.setTag(sensor);
+                    mMarkerArrayList.add(marker);
+                }
+
+
+
+        //TaskParser taskParser = new TaskParser();
+        double fetchDistance = calculateDistance(location.getLatitude(), location.getLongitude(),
+                latitude, longitude);
+
+        double doubleDuration = MathUtils.getInstance().convertToDouble(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(fetchDistance * 2.43));
+        //Timber.e("kim doubleDuration -> %s", doubleDuration);
+
+        String initialNearestDuration = String.valueOf(doubleDuration);
+        //Timber.e("kim initialNearestDuration -> %s", initialNearestDuration);
+
+        if (fetchDistance < 7) {
+            origin = new LatLng(location.getLatitude(), location.getLongitude());
+
+            //Timber.e("nearestCurrentAreaName -> %s", areaName);
+
+            bookingSensorsArrayListGlobal.add(new BookingSensors(areaName, latitude, longitude,
+                    adjustDistance(fetchDistance), parkingCount, initialNearestDuration,
+                    BookingSensors.INFO_TYPE, 1));
+
+            //fetch distance in ascending order
+            Collections.sort(bookingSensorsArrayListGlobal, (BookingSensors c1, BookingSensors c2) -> {
+                return Double.compare(c1.getDistance(), c2.getDistance());
+            });
+        }
+    }
+
     @SuppressLint("SetTextI18n")
     private void setBottomSheetFragmentControls(ArrayList<BookingSensors> sensors) {
         bottomSheetRecyclerView.setHasFixedSize(false);
@@ -2426,17 +2704,17 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude), 13.5f), 500, null);
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude), 13.5f));
 
-                        for (int i = 0; i < sensorArrayList.size(); i++) {
-                            Sensor sensor = sensorArrayList.get(i);
+                        for (int i = 0; i < sensorAreaArrayList.size(); i++) {
+                            SensorArea sensor = sensorAreaArrayList.get(i);
                             try {
-                                String latitude1 = sensor.getLatitude();
-                                String longitude1 = sensor.getLongitude();
-                                uid = sensor.getUid();
+//                                String latitude1 = sensor.getLatitude();
+//                                String longitude1 = sensor.getLongitude();
+//                                uid = sensor.getUid();
 
                                 locationName = sensor.getParkingArea();
 
                                 double distanceForCount = calculateDistance(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude,
-                                        MathUtils.getInstance().convertToDouble(latitude1), MathUtils.getInstance().convertToDouble(longitude1));
+                                       sensor.getEndLat(),sensor.getEndLng());
 
                                 if (distanceForCount < 0.001) {
                                     bottomUid = uid;
@@ -2469,7 +2747,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             context.getResources().getString(R.string.nearest_parking_from_your_destination),
                             BookingSensors.TEXT_INFO_TYPE, 0));
 
-                    if (sensorArrayList != null) {
+                    if (sensorAreaArrayList != null) {
                         setBottomSheetList(() -> {
                             if (bottomSheetAdapter != null) {
                                 Timber.e("setBottomSheet if called");
@@ -2480,7 +2758,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             } else {
                                 Timber.e("setBottomSheet if else called");
                             }
-                        }, sensorArrayList, bottomSheetPlaceLatLng, bookingSensorsBottomSheetArrayList, finalUid);
+                        }, sensorAreaArrayList, bottomSheetPlaceLatLng, bookingSensorsBottomSheetArrayList, finalUid);
                     } else {
                         Toast.makeText(context, context.getResources().getString(R.string.something_went_wrong_please_check_internet_connection),
                                 Toast.LENGTH_SHORT).show();
@@ -2536,23 +2814,23 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                     bookingSensorsBottomSheetArrayList.clear();
 
                                     String bottomSheetPlaceName = null;
-                                    for (int i = 0; i < sensorArrayList.size(); i++) {
+                                    for (int i = 0; i < sensorAreaArrayList.size(); i++) {
 
-                                        Sensor sensor = sensorArrayList.get(i);
+                                        SensorArea sensor = sensorAreaArrayList.get(i);
                                         try {
-                                            String latitude1 = sensor.getLatitude();
-                                            String longitude1 = sensor.getLongitude();
-                                            uid1[0] = sensor.getUid();
+//                                            String latitude1 = sensor.getLatitude();
+//                                            String longitude1 = sensor.getLongitude();
+//                                            uid1[0] = sensor.getUid();
                                             bottomSheetPlaceName = sensor.getParkingArea();
                                             double distanceForCount = calculateDistance(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude,
-                                                    MathUtils.getInstance().convertToDouble(latitude1),
-                                                    MathUtils.getInstance().convertToDouble(longitude1));
+                                                    sensor.getEndLat(),
+                                                    sensor.getEndLng());
 
                                             if (distanceForCount < 0.001) {
                                                 bottomUid = uid1[0];
                                                 Timber.e("bottomUid -> %s", bottomUid);
 
-                                                parkingNumberOfIndividualMarker = sensor.getNoOfParking();
+                                                parkingNumberOfIndividualMarker = sensor.getCount();
                                                 textViewMarkerParkingAreaCount.setText(parkingNumberOfIndividualMarker);
                                                 break;
                                             }
@@ -2572,7 +2850,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                             context.getResources().getString(R.string.nearest_parking_from_your_destination),
                                             BookingSensors.TEXT_INFO_TYPE, 0));
 
-                                    if (sensorArrayList != null) {
+                                    if (sensorAreaArrayList != null) {
 
                                         setBottomSheetList(() -> {
                                             if (bottomSheetAdapter != null) {
@@ -2583,7 +2861,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                             } else {
                                                 Timber.e("bottomSheetAdapter null");
                                             }
-                                        }, sensorArrayList, bottomSheetPlaceLatLng, bookingSensorsBottomSheetArrayList, bottomUid);
+                                        }, sensorAreaArrayList, bottomSheetPlaceLatLng, bookingSensorsBottomSheetArrayList, bottomUid);
                                     }
 
                                     bottomSheetAdapter.setDataList(bookingSensorsBottomSheetArrayList);
@@ -3240,20 +3518,20 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                 cordList.add(new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
 
-                for (int i = 0; i < sensorArrayList.size(); i++) {
+                for (int i = 0; i < sensorAreaArrayList.size(); i++) {
 
-                    Sensor sensor = sensorArrayList.get(i);
+                    SensorArea sensor = sensorAreaArrayList.get(i);
                     try {
-                        String latitude1 = sensor.getLatitude();
-                        String longitude1 = sensor.getLongitude();
-                        uid = sensor.getUid();
+//                        String latitude1 = sensor.getLatitude();
+//                        String longitude1 = sensor.getLongitude();
+//                        uid = sensor.getUid();
 
                         double distanceForCount = calculateDistance(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude,
-                                MathUtils.getInstance().convertToDouble(latitude1),
-                                MathUtils.getInstance().convertToDouble(longitude1));
+                                sensor.getEndLat(),
+                                sensor.getEndLng());
 
                         if (distanceForCount < 0.001) {
-                            bottomUid = uid;
+//                            bottomUid = uid;
                             Timber.e("bottomUid -> %s", bottomUid);
                             break;
                         }
@@ -3308,7 +3586,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 }
 
                 if (onConnectedLocation != null) {
-                    fetchSensorRetrofit(onConnectedLocation);
+//                    fetchSensorRetrofit(onConnectedLocation);
+                    fetchParkingSlotSensors(onConnectedLocation);
                     animateCamera(onConnectedLocation);
                 }
 
@@ -3348,7 +3627,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         public void onPositiveClick() {
                             Timber.e("Positive Button clicked");
                             if (ConnectivityUtils.getInstance().checkInternet(context)) {
-                                fetchSensorRetrofit(onConnectedLocation);
+//                                fetchSensorRetrofit(onConnectedLocation);
+                                fetchParkingSlotSensors(onConnectedLocation);
                             } else {
                                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                             }
@@ -3385,7 +3665,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 bookingSensorsMarkerArrayList.clear();
                 bookingSensorsBottomSheetArrayList.clear();
 
-                fetchSensorRetrofit(onConnectedLocation);
+//                                fetchSensorRetrofit(onConnectedLocation);
+                fetchParkingSlotSensors(onConnectedLocation);
 
                 animateCamera(onConnectedLocation);
 
@@ -3407,7 +3688,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             public void onPositiveClick() {
                                 Timber.e("Positive Button clicked");
                                 if (ConnectivityUtils.getInstance().checkInternet(context)) {
-                                    fetchSensorRetrofit(onConnectedLocation);
+//                                fetchSensorRetrofit(onConnectedLocation);
+                                    fetchParkingSlotSensors(onConnectedLocation);
                                 } else {
                                     TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                                 }
