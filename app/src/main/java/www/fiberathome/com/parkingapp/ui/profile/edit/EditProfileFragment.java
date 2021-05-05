@@ -386,22 +386,43 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
 
         selectSpinnerItemByValue(divSpinner, Preferences.getInstance(context).getVehicleDivData());
 
-        if (user.getImage() != null) {
-            String url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
-            Timber.e("Image URL -> %s", url);
-            Glide.with(context).load(url).placeholder(R.drawable.ic_account_settings).dontAnimate().into(imageViewEditProfileImage);
-        } else {
-            //ToastUtils.getInstance().showErrorToast(context, "Image value " + user.getImage(), Toast.LENGTH_SHORT);
-            Timber.e("Image value -> %s", user.getImage());
-        }
+        if(!user.getImage().endsWith(".jpg")) {
+            if (user.getImage() != null) {
+                String url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
+                Timber.e("Image URL -> %s", url);
+                Glide.with(context).load(url).placeholder(R.drawable.ic_account_settings).dontAnimate().into(imageViewEditProfileImage);
+            } else {
+                //ToastUtils.getInstance().showErrorToast(context, "Image value " + user.getImage(), Toast.LENGTH_SHORT);
+                Timber.e("Image value -> %s", user.getImage());
+            }
 
-        if (user.getVehicleImage() != null) {
-            String url = AppConfig.IMAGES_URL + user.getVehicleImage() + ".jpg";
-            Timber.e("Vehicle Image URL -> %s", url);
-            Glide.with(context).load(url).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(ivVehicleEditPlatePreview);
-        } else {
-            //ToastUtils.getInstance().showErrorToast(context, "Image value " + user.getImage(), Toast.LENGTH_SHORT);
-            Timber.e("Vehicle Image value -> %s", user.getVehicleImage());
+            if (user.getVehicleImage() != null) {
+                String url = AppConfig.IMAGES_URL + user.getVehicleImage() + ".jpg";
+                Timber.e("Vehicle Image URL -> %s", url);
+                Glide.with(context).load(url).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(ivVehicleEditPlatePreview);
+            } else {
+                //ToastUtils.getInstance().showErrorToast(context, "Image value " + user.getImage(), Toast.LENGTH_SHORT);
+                Timber.e("Vehicle Image value -> %s", user.getVehicleImage());
+            }
+        }
+        else{
+            if (user.getImage() != null) {
+                String url = AppConfig.IMAGES_URL + user.getImage();
+                Timber.e("Image URL -> %s", url);
+                Glide.with(context).load(url).placeholder(R.drawable.ic_account_settings).dontAnimate().into(imageViewEditProfileImage);
+            } else {
+                //ToastUtils.getInstance().showErrorToast(context, "Image value " + user.getImage(), Toast.LENGTH_SHORT);
+                Timber.e("Image value -> %s", user.getImage());
+            }
+
+            if (user.getVehicleImage() != null) {
+                String url = AppConfig.IMAGES_URL + user.getVehicleImage();
+                Timber.e("Vehicle Image URL -> %s", url);
+                Glide.with(context).load(url).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(ivVehicleEditPlatePreview);
+            } else {
+                //ToastUtils.getInstance().showErrorToast(context, "Image value " + user.getImage(), Toast.LENGTH_SHORT);
+                Timber.e("Vehicle Image value -> %s", user.getVehicleImage());
+            }
         }
     }
 

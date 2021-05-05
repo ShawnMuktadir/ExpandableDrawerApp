@@ -141,14 +141,24 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
         Timber.e("Mobile no -> %s", user.getMobileNo());
 
         tvUserVehicleNo.setText(user.getVehicleNo());
+        if(!user.getImage().endsWith(".jpg")) {
+            String url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
+            Timber.e("Image URL -> %s", url);
+            Glide.with(context).load(url).placeholder(R.drawable.blank_profile).dontAnimate().into(ivUserProfilePic);
 
-        String url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
-        Timber.e("Image URL -> %s", url);
-        Glide.with(context).load(url).placeholder(R.drawable.blank_profile).dontAnimate().into(ivUserProfilePic);
+            String vehicleUrl = AppConfig.IMAGES_URL + user.getVehicleImage() + ".jpg";
+            Timber.e("Vehicle Image URL -> %s", vehicleUrl);
+            Glide.with(context).load(vehicleUrl).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(ivVehicleProfilePlatePreview);
+        }
+        else{
+            String url = AppConfig.IMAGES_URL + user.getImage();
+            Timber.e("Image URL -> %s", url);
+            Glide.with(context).load(url).placeholder(R.drawable.blank_profile).dontAnimate().into(ivUserProfilePic);
 
-        String vehicleUrl = AppConfig.IMAGES_URL + user.getVehicleImage() + ".jpg";
-        Timber.e("Vehicle Image URL -> %s", vehicleUrl);
-        Glide.with(context).load(vehicleUrl).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(ivVehicleProfilePlatePreview);
+            String vehicleUrl = AppConfig.IMAGES_URL + user.getVehicleImage();
+            Timber.e("Vehicle Image URL -> %s", vehicleUrl);
+            Glide.with(context).load(vehicleUrl).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(ivVehicleProfilePlatePreview);
+        }
     }
 
     private boolean isGPSEnabled() {
