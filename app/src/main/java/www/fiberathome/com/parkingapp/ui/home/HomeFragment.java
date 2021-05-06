@@ -731,7 +731,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
 
         if (currentLocationMarker != null && calculateDistance(currentLocationMarker.getPosition().latitude, currentLocationMarker.getPosition().longitude,
-                marker.getPosition().latitude, marker.getPosition().longitude) <= 0.001) {
+                marker.getPosition().latitude, marker.getPosition().longitude)*1000 <= 0.01) {
             double distance = calculateDistance(currentLocationMarker.getPosition().latitude, currentLocationMarker.getPosition().longitude,
                     marker.getPosition().latitude, marker.getPosition().longitude);
 
@@ -814,7 +814,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                 // jsonObject = clickEventJsonArray.getJSONObject(i);
 //                                String latitude1 = sensor.getLatitude();
 //                                String longitude1 = sensor.getLongitude();
-//                                uid[0] = sensor.getUid();
+                                uid[0] = sensor.getPlaceId();
                                 markerAreaName = sensor.getParkingArea();
                                 //Timber.e("jsonUid -> %s", uid[0]);
                                 //TaskParser taskParser = new TaskParser();
@@ -962,7 +962,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                         //jsonObject = clickEventJsonArray.getJSONObject(i);
 //                                        String latitude1 = sensor.getLatitude();
 //                                        String longitude1 = sensor.getLongitude();
-//                                        uid1[0] = sensor.getUid();
+                                        uid1[0] = sensor.getPlaceId();
                                         markerAreaName1[0] = sensor.getParkingArea();
                                         double distanceForCount = calculateDistance(marker.getPosition().latitude, marker.getPosition().longitude,
                                                sensor.getEndLat(),sensor.getEndLng());
@@ -1781,20 +1781,12 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                                 bubbleSortArrayList(bookingSensorsArrayList);
 
-                                if (sensorAreaArrayList != null) {
-                                    if (bottomSheetAdapter != null) {
-                                        bookingSensorsArrayListGlobal.clear();
-                                        bookingSensorsArrayListGlobal.addAll(bookingSensorsArrayList);
-                                        bottomSheetAdapter.notifyDataSetChanged();
-                                    }
-                                }
-                            } else {
-                                if (sensorAreaArrayList != null) {
-                                    if (bottomSheetAdapter != null) {
-                                        bookingSensorsArrayListGlobal.clear();
-                                        bookingSensorsArrayListGlobal.addAll(bookingSensorsArrayList);
-                                        bottomSheetAdapter.notifyDataSetChanged();
-                                    }
+                            }
+                            if (sensorAreaArrayList != null) {
+                                if (bottomSheetAdapter != null) {
+                                    bookingSensorsArrayListGlobal.clear();
+                                    bookingSensorsArrayListGlobal.addAll(bookingSensorsArrayList);
+                                    bottomSheetAdapter.notifyDataSetChanged();
                                 }
                             }
                         }
@@ -2004,7 +1996,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 //
 //                String longitude1 = sensor.getLongitude();
 //
-//                String uid = sensor.getUid();
+                String uid = sensor.getPlaceId();
 
                 String parkingArea = sensor.getParkingArea();
 
@@ -2013,7 +2005,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                 final String[] nearbyAreaName = {""};
 
-                if (distanceForNearbyLoc < 5) {
+                if (distanceForNearbyLoc < 5 && !markerUid.equals(uid)) {
                     origin = new LatLng(latLng.latitude, latLng.longitude);
 
                     nearbyAreaName[0] = parkingArea;
@@ -2094,10 +2086,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         bookingSensorsArrayListGlobal.clear();
 
 
-        if (SharedData.getInstance().getOnConnectedLocation() != null) {
-            onConnectedLocation = SharedData.getInstance().getOnConnectedLocation();
-            Timber.e("onConnectedLocation -> %s", onConnectedLocation);
-        }
+        this.onConnectedLocation = location;
 
         ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
         Call<ParkingSlotResponse> call = request.getParkingSlots();
@@ -2201,7 +2190,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 //
 //                                                String longitude1 = sensor.getLongitude();
 
-//                                                uid = sensor.getUid();
+                                                uid = sensor.getPlaceId();
 
                                                 adapterAreaName = sensor.getParkingArea();
 
@@ -2209,9 +2198,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                                        sensor.getEndLat(),sensor.getEndLng());
 
                                                 if (distanceForCount < 0.001) {
-//                                                    adapterUid = uid;
+                                                    adapterUid = uid;
 
-//                                                    Timber.e("adapterUid -> %s", adapterUid);
+                                                    Timber.e("adapterUid -> %s", adapterUid);
 
                                                     break;
                                                 }
@@ -2231,7 +2220,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                     adapterDistance = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
                                             lat, lng);
 
-                                  //  String finalUid = uid;
+                                    String finalUid = uid;
 
                                     String adapterPlaceName = adapterAreaName;
 
@@ -2256,7 +2245,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                             } else {
                                                 Timber.e("sensorArrayList null");
                                             }
-                                        }, sensorAreaArrayList, new LatLng(lat, lng), bookingSensorsAdapterArrayList, "finalUid");
+                                        }, sensorAreaArrayList, new LatLng(lat, lng), bookingSensorsAdapterArrayList, finalUid);
                                     }
 
                                     //value getting from parking adapter
@@ -2611,7 +2600,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 sensorStatus = "Empty";
 
                 if (mMap != null) {
-                    MarkerOptions marker = new MarkerOptions().position(new LatLng(latitude, longitude))
+                    MarkerOptions marker = new MarkerOptions()
+                            .position(new LatLng(latitude, longitude))
+                            .title(sensor.getPlaceId())
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
                     Marker marker1 = mMap.addMarker(marker);
                     marker1.setTag(sensor);
@@ -2709,7 +2700,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             try {
 //                                String latitude1 = sensor.getLatitude();
 //                                String longitude1 = sensor.getLongitude();
-//                                uid = sensor.getUid();
+                                uid = sensor.getPlaceId();
 
                                 locationName = sensor.getParkingArea();
 
@@ -2820,7 +2811,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                         try {
 //                                            String latitude1 = sensor.getLatitude();
 //                                            String longitude1 = sensor.getLongitude();
-//                                            uid1[0] = sensor.getUid();
+                                            uid1[0] = sensor.getPlaceId();
                                             bottomSheetPlaceName = sensor.getParkingArea();
                                             double distanceForCount = calculateDistance(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude,
                                                     sensor.getEndLat(),
@@ -3524,14 +3515,14 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     try {
 //                        String latitude1 = sensor.getLatitude();
 //                        String longitude1 = sensor.getLongitude();
-//                        uid = sensor.getUid();
+                        uid = sensor.getPlaceId();
 
                         double distanceForCount = calculateDistance(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude,
                                 sensor.getEndLat(),
                                 sensor.getEndLng());
 
                         if (distanceForCount < 0.001) {
-//                            bottomUid = uid;
+                            bottomUid = uid;
                             Timber.e("bottomUid -> %s", bottomUid);
                             break;
                         }

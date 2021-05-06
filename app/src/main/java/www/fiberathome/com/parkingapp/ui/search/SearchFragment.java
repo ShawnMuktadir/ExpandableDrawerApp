@@ -140,14 +140,11 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
             if (s.toString().length() > 0) {
                 mAutoCompleteAdapter.getFilter().filter(s.toString());
                 mAutoCompleteAdapter.notifyDataSetChanged();
-                if (!ConnectivityUtils.getInstance().checkInternet(context)) {
-                    KeyboardUtils.getInstance().hideKeyboard(context, editTextSearch);
-                }
             } else {
                 mAutoCompleteAdapter.clearList();
-                if (!ConnectivityUtils.getInstance().checkInternet(context)) {
-                    KeyboardUtils.getInstance().hideKeyboard(context, editTextSearch);
-                }
+            }
+            if (!ConnectivityUtils.getInstance().checkInternet(context)) {
+                KeyboardUtils.getInstance().hideKeyboard(context, editTextSearch);
             }
         }
     };
