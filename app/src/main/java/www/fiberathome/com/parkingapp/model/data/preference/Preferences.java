@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import www.fiberathome.com.parkingapp.model.data.Constants;
 import www.fiberathome.com.parkingapp.model.user.User;
 
+import static android.content.Context.MODE_PRIVATE;
 import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
 
 @SuppressLint("StaticFieldLeak")
@@ -17,10 +18,12 @@ public class Preferences {
     private static final String KEY_FULLNAME = "fullname";
     private static final String KEY_MOBILE_NO = "mobile_no";
     private static final String KEY_VEHICLE_NO = "vehicle_no";
+    private static final String KEY_VEHICLE_PIC = "vehicle_pic";
     private static final String KEY_PROFILE_PIC = "profile_pic";
     private static final String KEY_ID = "id";
     private static final String KEY_LANGUAGE = "language";
     private static final String KEY_IS_LOCATION_PERMISSION = "KEY_IS_LOCATION_PERMISSION";
+    private static final String KEY_VEHICLE_CLASS_DATA = "vehicle_class_data";
 
     // SMS Tags
     private static final String KEY_IS_WAITING_FOR_SMS = "isWaitingForSMS22";
@@ -45,7 +48,7 @@ public class Preferences {
     }
 
     public void userLogin(User user){
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         editor.putInt(KEY_ID, user.getId());
@@ -53,6 +56,7 @@ public class Preferences {
         editor.putString(KEY_MOBILE_NO, user.getMobileNo());
         editor.putString(KEY_VEHICLE_NO, user.getVehicleNo());
         editor.putString(KEY_PROFILE_PIC, user.getImage());
+        editor.putString(KEY_VEHICLE_PIC, user.getVehicleImage());
         editor.apply();
     }
 
@@ -61,7 +65,7 @@ public class Preferences {
     private void saveValue(String key, String value) {
         if (key == null || key.isEmpty()) return;
 
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(key, value);
         editor.apply();
@@ -69,8 +73,24 @@ public class Preferences {
 
     @SuppressWarnings("SameParameterValue")
     private String getValue(String key, String defaultValue) {
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         return sharedPreferences.getString(key, defaultValue);
+    }
+
+    public String getVehicleClassData() {
+        return getValue(Constants.KEY_VEHICLE_CLASS_DATA, LANGUAGE_EN);
+    }
+
+    public void saveVehicleClassData(String vehicleClassData) {
+        saveValue(Constants.KEY_VEHICLE_CLASS_DATA, vehicleClassData);
+    }
+
+    public String getVehicleDivData() {
+        return getValue(Constants.KEY_VEHICLE_DIV_DATA, LANGUAGE_EN);
+    }
+
+    public void saveVehicleDivData(String vehicleDivData) {
+        saveValue(Constants.KEY_VEHICLE_DIV_DATA, vehicleDivData);
     }
 
     public String getAppLanguage() {
@@ -82,74 +102,75 @@ public class Preferences {
     }
 
     public void setIsLocationPermissionGiven(boolean isLocationPermissionGiven){
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(KEY_IS_LOCATION_PERMISSION, isLocationPermissionGiven);
         editor.apply();
     }
 
     public boolean isWaitingForLocationPermission(){
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         return sharedPreferences.getBoolean(KEY_IS_LOCATION_PERMISSION, false);
     }
 
     public boolean isLoggedIn() {
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         return sharedPreferences.getString(KEY_MOBILE_NO, null) != null;
     }
 
     public User getUser(){
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         User user = new User();
         user.setId(sharedPreferences.getInt(KEY_ID, -1));
         user.setFullName(sharedPreferences.getString(KEY_FULLNAME, null));
         user.setMobileNo(sharedPreferences.getString(KEY_MOBILE_NO, null));
         user.setVehicleNo(sharedPreferences.getString(KEY_VEHICLE_NO, null));
         user.setImage(sharedPreferences.getString(KEY_PROFILE_PIC, null));
+        user.setVehicleImage(sharedPreferences.getString(KEY_VEHICLE_PIC, null));
 
         return user;
     }
 
     public void logout(){
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.clear();
         editor.apply();
     }
 
     public void setIsWaitingForSMS(boolean isWaiting){
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(KEY_IS_WAITING_FOR_SMS, isWaiting);
         editor.apply();
     }
 
     public boolean isWaitingForSMS(){
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         return sharedPreferences.getBoolean(KEY_IS_WAITING_FOR_SMS, false);
     }
 
     public void setIsUpdateRequired(boolean isUpdateRequired){
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(KEY_IS_UPDATE_REQUIRED, isUpdateRequired);
         editor.apply();
     }
 
     public boolean isUpdateRequired(){
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         return sharedPreferences.getBoolean(KEY_IS_UPDATE_REQUIRED, false);
     }
 
     private int checkedItem;
 
     public int getCheckedItem() {
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         return sharedPreferences.getInt(KEY_CHECKED_ITEM, 0);
     }
 
     public void setCheckedItem(int checkedItem) {
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt(KEY_CHECKED_ITEM, checkedItem);
         editor.apply();

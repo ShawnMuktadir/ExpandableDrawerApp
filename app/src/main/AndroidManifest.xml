@@ -49,25 +49,35 @@
         tools:targetApi="q">
         <activity android:name=".ui.getDiscount.GetDiscountActivity"
             android:screenOrientation="unspecified"
-            android:theme="@style/AppTheme.DefaultActionBar"/>
+            android:theme="@style/AppTheme.DefaultActionBar" />
 
-        <activity android:name=".ui.followUs.FollowUsActivity"
+        <activity
+            android:name=".ui.followUs.FollowUsActivity"
             android:screenOrientation="unspecified"
-            android:theme="@style/AppTheme.DefaultActionBar"/>
+            android:theme="@style/AppTheme.DefaultActionBar" />
 
-        <activity android:name=".ui.profile.ProfileActivity"
+        <activity
+            android:name=".ui.profile.ProfileActivity"
             android:screenOrientation="unspecified"
-            android:theme="@style/AppTheme.DefaultActionBar"/>
+            android:theme="@style/AppTheme.DefaultActionBar" />
 
-        <activity android:name=".ui.law.LawActivity"
+        <activity
+            android:name=".ui.profile.edit.EditProfileActivity"
             android:screenOrientation="unspecified"
-            android:theme="@style/AppTheme.DefaultActionBar"/>
+            android:theme="@style/AppTheme.DefaultActionBar" />
 
-        <activity android:name=".ui.booking.newBooking.BookingActivity"
+        <activity
+            android:name=".ui.law.LawActivity"
             android:screenOrientation="unspecified"
-            android:theme="@style/AppTheme.DefaultActionBar"/>
+            android:theme="@style/AppTheme.DefaultActionBar" />
 
-        <activity android:name=".ui.parking.ParkingActivity"
+        <activity
+            android:name=".ui.booking.newBooking.BookingActivity"
+            android:screenOrientation="unspecified"
+            android:theme="@style/AppTheme.DefaultActionBar" />
+
+        <activity
+            android:name=".ui.parking.ParkingActivity"
             android:screenOrientation="unspecified"
             android:windowSoftInputMode="stateAlwaysHidden"
             android:theme="@style/AppTheme.DefaultActionBar"/>

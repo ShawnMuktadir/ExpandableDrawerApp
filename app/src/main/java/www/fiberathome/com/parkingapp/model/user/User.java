@@ -26,6 +26,10 @@ public class User {
     @Expose
     private String image;
 
+    @SerializedName("vehicle_image")
+    @Expose
+    private String vehicleImage;
+
     @SerializedName("created_at")
     @Expose
     private String createdAt;
@@ -37,7 +41,8 @@ public class User {
     public User() {
     }
 
-    public User(Integer id, String fullName, String mobileNo, String vehicleNo, String image, String createdAt, Integer status) {
+    public User(Integer id, String fullName, String mobileNo, String vehicleNo,
+                String image, String createdAt, Integer status) {
         this.id = id;
         this.fullName = fullName;
         this.mobileNo = mobileNo;
@@ -85,6 +90,14 @@ public class User {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getVehicleImage() {
+        return vehicleImage;
+    }
+
+    public void setVehicleImage(String vehicleImage) {
+        this.vehicleImage = vehicleImage;
     }
 
     public String getCreatedAt() {

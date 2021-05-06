@@ -21,9 +21,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +43,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import butterknife.BindView;
@@ -51,6 +56,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.adapter.UniversalSpinnerAdapter;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
@@ -118,17 +124,35 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     @BindView(R.id.imageViewCaptureImage)
     CircleImageView imageViewCaptureImage;
 
+    @BindView(R.id.ivVehiclePlate)
+    CircleImageView ivVehiclePlate;
+
+    @BindView(R.id.ivVehiclePlatePreview)
+    ImageView ivVehiclePlatePreview;
+
     @BindView(R.id.textViewTermsConditions)
     TextView textViewTermsConditions;
 
     @BindView(R.id.login_rl_invisible)
     RelativeLayout relativeLayoutInvisible;
 
+    @BindView(R.id.classSpinner)
+    Spinner classSpinner;
+
+    @BindView(R.id.divSpinner)
+    Spinner divSpinner;
+
     private Unbinder unbinder;
 
     private Bitmap bitmap;
 
     private SignUpActivity context;
+
+    private String vehicleClass = "";
+    private String vehicleDiv = "";
+    private long classId, cityId;
+    private boolean vehicleImage = false;
+    private Bitmap bitmap2;
 
     public SignUpFragment() {
         // Required empty public constructor
@@ -154,6 +178,9 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         context = (SignUpActivity) getActivity();
 
         setListeners();
+
+        setVehicleClassCategory();
+        setVehicleDivCategory();
 
         // Check user is logged in
         if (Preferences.getInstance(context).isLoggedIn()) {
@@ -188,10 +215,105 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         textViewTermsConditions.setMovementMethod(LinkMovementMethod.getInstance());
         textViewTermsConditions.setText(addMultipleClickablePart(context.getResources().getString(R.string.by_using_this_app_you_agree_to_our_terms_and_conditions_amp_privacy_policy)));
 
+
         btnSignup.setOnClickListener(this);
         tvLogin.setOnClickListener(this);
         imageViewUploadProfileImage.setOnClickListener(this);
         imageViewCaptureImage.setOnClickListener(this);
+        ivVehiclePlate.setOnClickListener(this);
+        ivVehiclePlatePreview.setOnClickListener(this);
+    }
+
+    private UniversalSpinnerAdapter vehicleClassAdapter;
+    private List<www.fiberathome.com.parkingapp.model.Spinner> classDataList;
+    private List<www.fiberathome.com.parkingapp.model.Spinner> classDivList;
+
+    private void setVehicleClassCategory() {
+        vehicleClassAdapter =
+                new UniversalSpinnerAdapter(context,
+                        android.R.layout.simple_spinner_item,
+                        populateVehicleClassData());
+
+        classSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                classId = id;
+                vehicleClass = classDataList.get(position).getValue();
+                Preferences.getInstance(context).saveVehicleClassData(vehicleClass);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        classSpinner.setAdapter(vehicleClassAdapter);
+    }
+
+    private List<www.fiberathome.com.parkingapp.model.Spinner> populateVehicleClassData() {
+        classDataList = new ArrayList<>();
+
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(1, "Dhaka-Metro"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(2, "Chattogram-Metro"));
+
+        return classDataList;
+    }
+
+    private UniversalSpinnerAdapter vehicleDivAdapter;
+
+    private void setVehicleDivCategory() {
+        vehicleDivAdapter =
+                new UniversalSpinnerAdapter(context,
+                        android.R.layout.simple_spinner_item,
+                        populateVehicleDivData());
+
+        divSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                cityId = id;
+                vehicleDiv = classDivList.get(position).getValue();
+                Preferences.getInstance(context).saveVehicleDivData(vehicleDiv);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        divSpinner.setAdapter(vehicleDivAdapter);
+    }
+
+    private List<www.fiberathome.com.parkingapp.model.Spinner> populateVehicleDivData() {
+
+        classDivList = new ArrayList<>();
+
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(1, "Ka"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(2, "kha"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(3, "Ga"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(4, "Gha"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(5, "Ch"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(6, "Cha"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(7, "Ja"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(8, "Jha"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(9, "Ta"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(10, "Tha"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(11, "DA"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(12, "No"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(13, "Po"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(14, "Vo"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(15, "Mo"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(16, "Da"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(17, "Th"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(18, "Ha"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(19, "La"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(20, "E"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(21, "Zo"));
+
+        return classDivList;
     }
 
     @Override
@@ -240,6 +362,14 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             case R.id.imageViewUploadProfileImage:
             case R.id.imageViewCaptureImage:
                 if (isPermissionGranted()) {
+                    vehicleImage = false;
+                    showPictureDialog();
+                }
+                break;
+            case R.id.ivVehiclePlate:
+            case R.id.ivVehiclePlatePreview:
+                if (isPermissionGranted()) {
+                    vehicleImage = true;
                     showPictureDialog();
                 }
                 break;
@@ -258,10 +388,18 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         if (requestCode == REQUEST_PICK_GALLERY && resultCode == RESULT_OK && data != null) {
             Uri contentURI = data.getData();
             try {
-                bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), contentURI);
-                Bitmap convertedImage = getResizedBitmap(bitmap, 500);
+                if (!vehicleImage) {
+                    bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), contentURI);
+                    Bitmap convertedImage = getResizedBitmap(bitmap, 500);
+                    imageViewUploadProfileImage.setImageBitmap(convertedImage);
+                } else {
+                    bitmap2 = MediaStore.Images.Media.getBitmap(context.getContentResolver(), contentURI);
+                    Bitmap convertedImage = getResizedBitmap(bitmap2, 500);
+                    ivVehiclePlatePreview.setImageBitmap(convertedImage);
+                }
+
                 //Toast.makeText(SignUpActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
-                imageViewUploadProfileImage.setImageBitmap(convertedImage);
+
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -272,8 +410,14 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
             try {
                 if (data.getExtras() != null) {
-                    bitmap = (Bitmap) data.getExtras().get("data");
-                    imageViewUploadProfileImage.setImageBitmap(bitmap);
+
+                    if (!vehicleImage) {
+                        bitmap = (Bitmap) data.getExtras().get("data");
+                        imageViewUploadProfileImage.setImageBitmap(bitmap);
+                    } else {
+                        bitmap2 = (Bitmap) data.getExtras().get("data");
+                        ivVehiclePlatePreview.setImageBitmap(bitmap2);
+                    }
                 }
                 /*saveImage(thumbnail);
                  Toast.makeText(SignUpActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();*/
@@ -501,18 +645,17 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     private void showPictureDialog() {
         AlertDialog.Builder pictureDialog = new AlertDialog.Builder(context);
         pictureDialog.setTitle("Select Image");
-        /*String[] pictureDialogItems = {"Select photo from gallery",
+        String[] pictureDialogItems = {"Select photo from gallery",
                 "Capture photo from camera"
-        };*/
-        String[] pictureDialogItems = {"Capture photo from camera"};
+        };
 
         pictureDialog.setItems(pictureDialogItems, (dialog, which) -> {
             switch (which) {
                 case 0:
-                    takePhotoFromCamera();
+                    choosePhotoFromGallery();
                     break;
                 case 1:
-                    choosePhotoFromGallery();
+                    takePhotoFromCamera();
                     break;
             }
         });
@@ -576,9 +719,12 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             String mobileNo = editTextMobileNumber.getText().toString().trim();
             String vehicleNo = editTextVehicleRegNumber.getText().toString().trim();
             String password = editTextPassword.getText().toString().trim();
+            String licencePlateInfo = vehicleClass + " " + vehicleDiv + " " + vehicleNo;
 
-            if (bitmap != null) {
-                registerUser(fullName, password, mobileNo, vehicleNo);
+            if (bitmap != null && bitmap2 != null) {
+                registerUser(fullName, password, mobileNo, licencePlateInfo);
+            } else if (bitmap2 == null) {
+                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.upload_vehicle_pic));
             } else {
                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.upload_profile_photo));
             }
@@ -592,8 +738,11 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         showProgress();
 
         ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<BaseResponse> call = service.createUser(fullName, password, mobileNo, vehicleNo, imageToString(bitmap),
-                mobileNo + "_" + DateTimeUtils.getInstance().getCurrentTimeStamp());
+        Call<BaseResponse> call = service.createUser(fullName, password, mobileNo, vehicleNo,
+                imageToString(bitmap),
+                mobileNo + "_" + DateTimeUtils.getInstance().getCurrentTimeStamp(),
+                imageToString(bitmap2),
+                mobileNo + "vehicle_" + DateTimeUtils.getInstance().getCurrentTimeStamp());
 
         call.enqueue(new Callback<BaseResponse>() {
             @Override
@@ -611,13 +760,15 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
                         // Moving the screen to next pager item i.e otp screen
                         Intent intent = new Intent(context, VerifyPhoneActivity.class);
+                        intent.putExtra("mobile_no",mobileNo);
+                        intent.putExtra("password",password);
                         startActivity(intent);
                         SharedData.getInstance().setPassword(password);
 
                     } else {
                         Timber.e("jsonObject else called");
                         if (response.body().getMessage().equalsIgnoreCase("Sorry! mobile number is not valid or missing mate")) {
-                            ToastUtils.getInstance().showToastMessage(context, "Mobile Number/Vehicle Registration Number already exists or Image Size is too large");
+                            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
                         } else if (!response.body().getMessage().equalsIgnoreCase("Sorry! mobile number is not valid or missing mate")) {
                             ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                         }
@@ -640,9 +791,15 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     private boolean checkFields() {
         boolean isNameValid = Validator.checkValidity(textInputLayoutFullName, editTextFullName.getText().toString(), context.getString(R.string.err_msg_fullname), "text");
         boolean isPhoneValid = Validator.checkValidity(textInputLayoutMobile, editTextMobileNumber.getText().toString(), context.getString(R.string.err_msg_mobile), "phone");
-        boolean isVehicleRegValid = Validator.checkValidity(textInputLayoutVehicle, editTextVehicleRegNumber.getText().toString(), context.getString(R.string.err_msg_vehicle), "text");
+        boolean isVehicleRegValid = Validator.checkValidity(textInputLayoutVehicle, editTextVehicleRegNumber.getText().toString(), context.getString(R.string.err_msg_vehicle), "vehicleNumber");
         boolean isPasswordValid = Validator.checkValidity(textInputLayoutPassword, editTextPassword.getText().toString(), context.getString(R.string.err_msg_password_signup), "textPassword");
+        boolean isLicencePlateValid = false;
+        if (!vehicleClass.isEmpty() && !vehicleClass.equalsIgnoreCase("Select") && !vehicleDiv.isEmpty() && !vehicleDiv.equalsIgnoreCase("Select")) {
+            isLicencePlateValid = true;
+        } else {
+            Toast.makeText(context, "Select Vehicle City and Class", Toast.LENGTH_SHORT).show();
+        }
 
-        return isNameValid && isPhoneValid && isVehicleRegValid && isPasswordValid;
+        return isNameValid && isPhoneValid && isVehicleRegValid && isPasswordValid && isLicencePlateValid;
     }
 }

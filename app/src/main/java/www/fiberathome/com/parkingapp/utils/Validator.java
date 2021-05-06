@@ -131,6 +131,16 @@ public class Validator {
                     textInputLayout.setErrorEnabled(false);
                     return true;
                 }
+            } else if (textType.equalsIgnoreCase("vehicleNumber")) {
+                if (input.length() < PASSWORD_COUNT_MIN) {
+                    textInputLayout.setErrorEnabled(true);
+                    textInputLayout.setError("Vehicle number must be 6 digits");
+                    return false;
+                } else {
+                    textInputLayout.setError(null);
+                    textInputLayout.setErrorEnabled(false);
+                    return true;
+                }
             } else if (textType.equalsIgnoreCase("text")) {
                 if (TextUtils.isEmpty(input)) {
                     textInputLayout.setErrorEnabled(true);

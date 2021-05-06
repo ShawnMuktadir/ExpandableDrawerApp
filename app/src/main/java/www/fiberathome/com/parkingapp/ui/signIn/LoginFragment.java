@@ -374,7 +374,6 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
         boolean isPasswordValid = Validator.checkValidity(textInputLayoutPassword, editTextPassword.getText().toString(), context.getString(R.string.err_msg_password), "textPassword");
 
         return isPhoneValid && isPasswordValid;
-
     }
 
     private void checkLogin(final String mobileNo, final String password) {
@@ -406,6 +405,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                         user.setFullName(response.body().getUser().getFullName());
                         user.setMobileNo(response.body().getUser().getMobileNo());
                         user.setVehicleNo(response.body().getUser().getVehicleNo());
+                        user.setVehicleImage(response.body().getUser().getVehicleImage());
                         user.setImage(response.body().getUser().getImage());
 
                         // storing the user in sharedPreference
@@ -413,7 +413,6 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                         Timber.e("user after login -> %s", new Gson().toJson(user));
 
                         if (response.body().getMessage().equalsIgnoreCase("Please verify Your Account by OTP")) {
-                            //Intent verifyPhoneIntent = new Intent(context, VerifyPhoneActivity.class);
                             Intent verifyPhoneIntent = new Intent(context, VerifyPhoneActivity.class);
                             if (checkFields()) {
                                 verifyPhoneIntent.putExtra("mobile_no", mobileNo);
@@ -445,7 +444,6 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                             if (response.body().getMessage().equalsIgnoreCase("Please verify Your Account by OTP")) {
                                 ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                                 btnOTP.setVisibility(View.GONE);
-                                //Intent verifyPhoneIntent = new Intent(context, VerifyPhoneActivity.class);
                                 Intent verifyPhoneIntent = new Intent(context, VerifyPhoneActivity.class);
                                 verifyPhoneIntent.putExtra("mobile_no", mobileNo);
                                 verifyPhoneIntent.putExtra("password", password);

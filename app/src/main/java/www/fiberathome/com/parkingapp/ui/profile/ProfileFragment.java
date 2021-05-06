@@ -1,14 +1,18 @@
 package www.fiberathome.com.parkingapp.ui.profile;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
@@ -22,6 +26,7 @@ import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.user.User;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
+import www.fiberathome.com.parkingapp.ui.profile.edit.EditProfileActivity;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
@@ -44,7 +49,15 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
     @BindView(R.id.ivUserProfilePic)
     ImageView ivUserProfilePic;
 
+    @BindView(R.id.btn_update_info)
+    Button btnUpdateInfo;
+
+    @BindView(R.id.ivVehicleProfilePlatePreview)
+    ImageView ivVehicleProfilePlatePreview;
+
     private Unbinder unbinder;
+
+    private User user;
 
     private ProfileActivity context;
 
@@ -60,7 +73,6 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
     public void onCreate(Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
-        Timber.e("onCreate called");
     }
 
     @SuppressLint("SetTextI18n")
@@ -73,11 +85,24 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
 
         context = (ProfileActivity) getActivity();
 
-        User user = Preferences.getInstance(context).getUser();
-
-        setData(user);
-
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setListeners();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        user = Preferences.getInstance(context).getUser();
+        setData(user);
+    }
+
+    private void setListeners() {
+        btnUpdateInfo.setOnClickListener(v -> startActivity(new Intent(context, EditProfileActivity.class)));
     }
 
     @Override
@@ -103,6 +128,39 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
         return false;
     }
 
+    private void setData(User user) {
+        if (getActivity() != null) {
+            getActivity().setTitle(user.getFullName());
+        }
+
+        String name = user.getFullName();
+        name = TextUtils.getInstance().capitalizeFirstLetter(name);
+        tvUserName.setText(name);
+
+        tvUserMobileNo.setText(TextUtils.getInstance().addCountryPrefixWithPlus(user.getMobileNo()));
+        Timber.e("Mobile no -> %s", user.getMobileNo());
+
+        tvUserVehicleNo.setText(user.getVehicleNo());
+        if(!user.getImage().endsWith(".jpg")) {
+            String url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
+            Timber.e("Image URL -> %s", url);
+            Glide.with(context).load(url).placeholder(R.drawable.blank_profile).dontAnimate().into(ivUserProfilePic);
+
+            String vehicleUrl = AppConfig.IMAGES_URL + user.getVehicleImage() + ".jpg";
+            Timber.e("Vehicle Image URL -> %s", vehicleUrl);
+            Glide.with(context).load(vehicleUrl).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(ivVehicleProfilePlatePreview);
+        }
+        else{
+            String url = AppConfig.IMAGES_URL + user.getImage();
+            Timber.e("Image URL -> %s", url);
+            Glide.with(context).load(url).placeholder(R.drawable.blank_profile).dontAnimate().into(ivUserProfilePic);
+
+            String vehicleUrl = AppConfig.IMAGES_URL + user.getVehicleImage();
+            Timber.e("Vehicle Image URL -> %s", vehicleUrl);
+            Glide.with(context).load(vehicleUrl).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(ivVehicleProfilePlatePreview);
+        }
+    }
+
     private boolean isGPSEnabled() {
 
         LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
@@ -115,25 +173,5 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
             Timber.e("else called");
         }
         return false;
-    }
-
-    private void setData(User user) {
-        if (getActivity() != null) {
-            getActivity().setTitle(user.getFullName());
-        }
-
-        String name = user.getFullName();
-        //name = name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
-        name = TextUtils.getInstance().capitalizeFirstLetter(name);
-        tvUserName.setText(name);
-
-        tvUserMobileNo.setText(TextUtils.getInstance().addCountryPrefix(user.getMobileNo()));
-        Timber.e("Mobile no -> %s", user.getMobileNo());
-
-        tvUserVehicleNo.setText(user.getVehicleNo());
-
-        String url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
-        Timber.e("Image URL -> %s", url);
-        Glide.with(context).load(url).placeholder(R.drawable.blank_profile).dontAnimate().into(ivUserProfilePic);
     }
 }

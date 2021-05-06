@@ -5,6 +5,7 @@ public class AppConfig {
 
     // ROOT URLs
     public static final String BASE_URL = "http://163.47.157.198/parkingapp/";
+    //public static final String BASE_URL_EDIT = "http://192.168.41.21/parkingapp/";
     public static final String BASE_URL_PYTHON = "http://163.47.157.195:5000/";
     public static final String URL_REGISTER     = BASE_URL + "request_sms.php";
     public static final String URL_LOGIN        = BASE_URL + "verify_user.php";

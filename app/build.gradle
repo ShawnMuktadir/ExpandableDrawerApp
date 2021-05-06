@@ -11,14 +11,14 @@ android {
     }
 
     def versionMajor = 1
-    def versionMinor = 0
+    def versionMinor = 2
     def versionPatch = 2
 
     defaultConfig {
         applicationId "www.fiberathome.com.parkingapp"
         minSdkVersion 19
         targetSdkVersion 30
-        versionCode 3
+        versionCode versionMajor+versionMinor+versionPatch
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
@@ -91,7 +91,7 @@ dependencies {
 
     //google map services
     implementation 'com.google.maps:google-maps-services:0.18.0'
-    implementation 'com.google.android.gms:play-services-maps:17.0.0'
+    implementation 'com.google.android.gms:play-services-maps:17.0.1'
     implementation 'com.google.android.gms:play-services-places:17.0.0'
     implementation 'com.google.android.libraries.places:places:2.4.0'
     //noinspection GradleDynamicVersion
@@ -148,9 +148,8 @@ dependencies {
     implementation 'com.intuit.ssp:ssp-android:1.0.6'
 
     //Add live data and view model dependency
-    def lifecycle_version = "1.1.1"
     implementation "android.arch.lifecycle:extensions:1.1.1"
-    annotationProcessor "android.arch.lifecycle:compiler:1.1.1"
+    implementation "androidx.lifecycle:lifecycle-common-java8:2.3.1"
 
     //for duration takes this library
     implementation 'com.akexorcist:googledirectionlibrary:1.1.1' // Custom Google Direction API
