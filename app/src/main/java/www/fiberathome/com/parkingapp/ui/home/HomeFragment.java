@@ -1752,10 +1752,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             searchDistance, searchPlaceCount, searchStringDuration,
                             context.getResources().getString(R.string.nearest_parking_from_your_destination),
                             BookingSensors.TEXT_INFO_TYPE, 0));
-
+//                    Timber.e("SensorAreaArrayListSearch ->%s", new Gson().toJson(sensorAreaArrayList));
                     if (sensorAreaArrayList != null) {
                         for (int i = 0; i < (sensorAreaArrayList != null ? sensorAreaArrayList.size() : 0); i++) {
-
+                            Timber.e("SensorAreaArrayListSearch ->%s", new Gson().toJson(sensorAreaArrayList.get(i)));
                             SensorArea sensor = sensorAreaArrayList.get(i);
 //                            String latitude1 = sensor.getLatitude();
 //                            String longitude1 = sensor.getLongitude();
@@ -2085,6 +2085,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         startShimmer();
         bookingSensorsArrayListGlobal.clear();
 
+        bookingSensorsAdapterArrayList.clear();
+        sensorAreaArrayList.clear();
+
 
         this.onConnectedLocation = location;
 
@@ -2165,7 +2168,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                         new Handler().postDelayed(() -> {
                             if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
-                                if (lat != null && lng != null && areaName != null && parkingSlotCount != null) {
+                                if (lat != null && lng != null && areaName != null && !areaName.equalsIgnoreCase("") && parkingSlotCount != null) {
 
                                     hideNoData();
 
@@ -3574,6 +3577,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                 if (getArguments() != null) {
                     getArguments().clear();
+                    areaName = null;
                 }
 
                 if (onConnectedLocation != null) {
