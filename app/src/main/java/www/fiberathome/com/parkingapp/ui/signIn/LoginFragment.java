@@ -410,6 +410,19 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
 
                         // storing the user in sharedPreference
                         Preferences.getInstance(context).userLogin(user);
+
+                        try {
+                            String currentString = user.getVehicleNo().trim();
+                            String[] separated = currentString.split(" ");
+
+                            String vehicleClass = separated[0];
+                            String vehicleDiv = separated[1];
+                            String carNumber = separated[2];
+                            Preferences.getInstance(context).saveVehicleClassData(vehicleClass);
+                            Preferences.getInstance(context).saveVehicleDivData(vehicleDiv);
+                        } catch (Exception e) {
+                            Timber.e(e.getCause());
+                        }
                         Timber.e("user after login -> %s", new Gson().toJson(user));
 
                         if (response.body().getMessage().equalsIgnoreCase("Please verify Your Account by OTP")) {

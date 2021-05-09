@@ -153,7 +153,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_profile_new, container, false);
+        View view = inflater.inflate(R.layout.fragment_profile_edit, container, false);
 
         unbinder = ButterKnife.bind(this, view);
 
@@ -392,7 +392,6 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                 Timber.e("Image URL -> %s", url);
                 Glide.with(context).load(url).placeholder(R.drawable.ic_account_settings).dontAnimate().into(imageViewEditProfileImage);
             } else {
-                //ToastUtils.getInstance().showErrorToast(context, "Image value " + user.getImage(), Toast.LENGTH_SHORT);
                 Timber.e("Image value -> %s", user.getImage());
             }
 
@@ -401,7 +400,6 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                 Timber.e("Vehicle Image URL -> %s", url);
                 Glide.with(context).load(url).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(ivVehicleEditPlatePreview);
             } else {
-                //ToastUtils.getInstance().showErrorToast(context, "Image value " + user.getImage(), Toast.LENGTH_SHORT);
                 Timber.e("Vehicle Image value -> %s", user.getVehicleImage());
             }
         }

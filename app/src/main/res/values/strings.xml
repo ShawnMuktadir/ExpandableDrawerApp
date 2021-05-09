@@ -485,6 +485,8 @@
     <string name="update_info">Update Info</string>
     <string name="save">"Save "</string>
     <string name="select_vehicle_city_and_class">Select Vehicle City and Class:</string>
-    <string name="upload_vehicle_picture_text">Upload Vehicle picture with licence plate clearly visible :</string>
+    <string name="upload_vehicle_picture_text">Upload vehicle picture with licence plate :</string>
     <string name="upload_vehicle_pic">Upload vehicle picture</string>
+    <string name="vehicle_license_plate">Vehicle license plate: </string>
+    <string name="vehicle_license_plate_image">Vehicle license plate image: </string>
 </resources>

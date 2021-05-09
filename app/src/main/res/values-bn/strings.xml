@@ -485,11 +485,13 @@
     <string name="booking_time_rules">আপনি বুকিংয়ের সময় ২ ঘণ্টার বেশি সেট করতে পারবেন না</string>
     <string name="gps_enabled">জিপিএস সক্রিয় করা হয়েছে</string>
     <string name="update_available">New Update Available</string>
-    <string name="not_implemented_yet">Not implemented yet</string>
-    <string name="update_info">Update Info</string>
-    <string name="save">"Save "</string>
-    <string name="select_vehicle_city_and_class">Select vehicle registration City and Class:</string>
-    <string name="upload_vehicle_picture_text">Upload Vehicle picture with licence plate clearly visible :</string>
-    <string name="upload_vehicle_pic">Upload vehicle picture</string>
+    <string name="not_implemented_yet">এখনো বাস্তবায়িত হয় নি</string>
+    <string name="update_info">আপডেট তথ্য</string>
+    <string name="save">"সংরক্ষণ "</string>
+    <string name="select_vehicle_city_and_class">যানবাহনের নিবন্ধকরণ শহর এবং শ্রেণি নির্বাচন করুন:</string>
+    <string name="upload_vehicle_picture_text">লাইসেন্স প্লেট সহ গাড়ির ছবি আপলোড করুন: </string>
+    <string name="upload_vehicle_pic">গাড়ির ছবি আপলোড করুন</string>
+    <string name="vehicle_license_plate">যানবাহন লাইসেন্স প্লেট:</string>
+    <string name="vehicle_license_plate_image">যানবাহন লাইসেন্স প্লেটের ছবি: </string>
 </resources>
 
