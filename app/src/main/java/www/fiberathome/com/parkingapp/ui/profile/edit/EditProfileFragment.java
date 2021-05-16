@@ -17,7 +17,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -292,7 +291,6 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                 Toast.makeText(context, context.getResources().getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show();
             }
         }
-
     }
 
     @Override
@@ -386,7 +384,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
 
         selectSpinnerItemByValue(divSpinner, Preferences.getInstance(context).getVehicleDivData());
 
-        if(!user.getImage().endsWith(".jpg")) {
+        if (!user.getImage().endsWith(".jpg")) {
             if (user.getImage() != null) {
                 String url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
                 Timber.e("Image URL -> %s", url);
@@ -402,8 +400,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
             } else {
                 Timber.e("Vehicle Image value -> %s", user.getVehicleImage());
             }
-        }
-        else{
+        } else {
             if (user.getImage() != null) {
                 String url = AppConfig.IMAGES_URL + user.getImage();
                 Timber.e("Image URL -> %s", url);
@@ -432,79 +429,6 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                 return;
             }
         }
-    }
-
-    private void setSpinner(EditProfileActivity context) {
-        // Spinner Drop down elements
-        List<String> categories = new ArrayList<>();
-        categories.add("Select");
-        categories.add("Dhaka Metro");
-        categories.add("Chattogram Metro");
-        // Creating adapter for spinner
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, categories);
-
-        // Drop down layout style - list view with radio button
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        // attaching data adapter to spinner
-        classSpinner.setAdapter(dataAdapter);
-
-        List<String> div = new ArrayList<>();
-        div.add("Select");
-        div.add("Ka");
-        div.add("kha");
-        div.add("Ga");
-        div.add("Gha");
-        div.add("Ch");
-        div.add("Cha");
-        div.add("Ja");
-        div.add("Jha");
-        div.add("Ta");
-        div.add("Tha");
-        div.add("DA");
-        div.add("No");
-        div.add("Po");
-        div.add("Vo");
-        div.add("Mo");
-        div.add("Da");
-        div.add("Th");
-        div.add("Ha");
-        div.add("La");
-        div.add("E");
-        div.add("Zo");
-        // Creating adapter for spinner
-        ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, div);
-
-        // Drop down layout style - list view with radio button
-        dataAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        // attaching data adapter to spinner
-        divSpinner.setAdapter(dataAdapter2);
-
-        classSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                vehicleClass = categories.get(position);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                vehicleClass = "";
-
-            }
-        });
-        divSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                vehicleDiv = div.get(position);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                vehicleDiv = "";
-            }
-        });
     }
 
     private UniversalSpinnerAdapter vehicleClassAdapter;
@@ -540,6 +464,71 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
 
         classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(1, "Dhaka-Metro"));
         classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(2, "Chattogram-Metro"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(3, "Bagerhat"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(4, "Barguna"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(5, "Barishal"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(6, "Bandarban"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(7, "Bhola"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(8, "Bogura"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(9, "Brahmanbaria"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(10, "Chapainawabganj"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(11, "Chandpur"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(12, "Chattogram"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(13, "Cox's Bazar"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(14, "Cumilla"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(15, "Chuadanga"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(16, "Dhaka"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(17, "Dinajpur"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(18, "Feni"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(19, "Faridpur"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(20, "Gaibandha"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(21, "Gazipur"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(22, "Gopalganj"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(23, "Habiganj"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(24, "Jhalokati"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(25, "Jashore"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(26, "Jhenaidah"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(27, "Jamalpur"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(28, "Joypurhat"));
+
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(29, "Khulna"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(30, "Kurigram"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(31, "Kushtia"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(32, "Khagrachhari"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(33, "Kishoreganj"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(34, "Lakshmipur"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(35, "Lalmonirhat"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(36, "Madaripur"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(37, "Manikganj"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(38, "Magura"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(39, "Meherpur"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(40, "Moulvibazar"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(41, "Munshiganj"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(42, "Mymensingh"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(43, "Naogaon"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(44, "Natore"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(45, "Narail"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(46, "Netrokona"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(47, "Narayanganj"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(48, "Narsingdi"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(49, "Nilphamari"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(50, "Noakhali"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(51, "Pabna"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(52, "Panchagarh"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(53, "Patuakhali"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(54, "Pirojpur"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(55, "Rajshahi"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(56, "Rangamati"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(57, "Rajbari"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(58, "Rangpur"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(59, "Shariatpur"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(60, "Satkhira"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(61, "Sherpur"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(62, "Sirajganj"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(63, "Sunamganj"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(64, "Sylhet"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(65, "Tangail"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(66, "Thakurgaon"));
 
         return classDataList;
     }
