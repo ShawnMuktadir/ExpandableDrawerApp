@@ -73,6 +73,7 @@ import www.fiberathome.com.parkingapp.ui.verifyPhone.VerifyPhoneActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DateTimeUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
+import www.fiberathome.com.parkingapp.utils.MathUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
@@ -356,27 +357,35 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
         classDivList = new ArrayList<>();
 
-        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(1, "Ka"));
-        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(2, "kha"));
-        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(3, "Ga"));
-        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(4, "Gha"));
-        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(5, "Ch"));
-        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(6, "Cha"));
-        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(7, "Ja"));
-        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(8, "Jha"));
-        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(9, "Ta"));
-        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(10, "Tha"));
-        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(11, "DA"));
-        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(12, "No"));
-        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(13, "Po"));
-        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(14, "Vo"));
-        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(15, "Mo"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(1, "A"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(2, "Ka"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(3, "Kha"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(4, "Ga"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(5, "Gha"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(6, "Uo"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(7, "Ca"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(8, "Cha"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(9, "Ja"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(10, "Jha"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(11, "Ta"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(12, "Tha"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(13, "D"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(14, "Dha"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(15, "Tha"));
         classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(16, "Da"));
-        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(17, "Th"));
-        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(18, "Ha"));
-        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(19, "La"));
-        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(20, "E"));
-        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(21, "Zo"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(17, "Na"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(18, "Pa"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(19, "Pha"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(20, "Ba"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(21, "Bha"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(22, "Ma"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(23, "Ja"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(24, "Ra"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(25, "La"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(26, "Sha"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(27, "Sa"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(28, "Ha"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(29, "E"));
 
         return classDivList;
     }
@@ -739,7 +748,6 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         startActivityForResult(cameraIntent, REQUEST_PICK_CAMERA);
     }
 
-    @SuppressWarnings("SameParameterValue")
     private Bitmap getResizedBitmap(Bitmap image, int maxSize) {
         int width = image.getWidth();
         int height = image.getHeight();
@@ -786,12 +794,21 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             String password = editTextPassword.getText().toString().trim();
             String licencePlateInfo = vehicleClass + " " + vehicleDiv + " " + vehicleNo;
 
-            if (bitmap != null && bitmap2 != null) {
-                registerUser(fullName, password, mobileNo, licencePlateInfo);
-            } else if (bitmap2 == null) {
-                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.upload_vehicle_pic));
+            String temp = "" + vehicleNo.charAt(0) + vehicleNo.charAt(1);
+            int vehicleNoInt = MathUtils.getInstance().convertToInt(temp);
+
+            if (vehicleNoInt < 11 || (vehicleDiv.equalsIgnoreCase("E") && vehicleNoInt > 60) ||
+                    (vehicleDiv.equalsIgnoreCase("Ma") && vehicleClass.equalsIgnoreCase("Munshiganj") && vehicleNoInt > 50) ||
+                    (vehicleDiv.equalsIgnoreCase("Ma") && vehicleClass.equalsIgnoreCase("Narayanganj") && vehicleNoInt < 51)) {
+                Toast.makeText(context, "Invalid vehicle number", Toast.LENGTH_SHORT).show();
             } else {
-                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.upload_profile_photo));
+                if (bitmap != null && bitmap2 != null) {
+                    registerUser(fullName, password, mobileNo, licencePlateInfo);
+                } else if (bitmap2 == null) {
+                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.upload_vehicle_pic));
+                } else {
+                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.upload_profile_photo));
+                }
             }
         }
     }
@@ -825,8 +842,8 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
                         // Moving the screen to next pager item i.e otp screen
                         Intent intent = new Intent(context, VerifyPhoneActivity.class);
-                        intent.putExtra("mobile_no",mobileNo);
-                        intent.putExtra("password",password);
+                        intent.putExtra("mobile_no", mobileNo);
+                        intent.putExtra("password", password);
                         startActivity(intent);
                         SharedData.getInstance().setPassword(password);
 
