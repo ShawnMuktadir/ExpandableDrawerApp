@@ -284,7 +284,6 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(26, "Jhenaidah"));
         classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(27, "Jamalpur"));
         classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(28, "Joypurhat"));
-
         classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(29, "Khulna"));
         classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(30, "Kurigram"));
         classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(31, "Kushtia"));
@@ -797,8 +796,11 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             String temp = "" + vehicleNo.charAt(0) + vehicleNo.charAt(1);
             int vehicleNoInt = MathUtils.getInstance().convertToInt(temp);
 
-            if (vehicleNoInt < 11 || (vehicleDiv.equalsIgnoreCase("E") && vehicleNoInt > 60) ||
-                    (vehicleDiv.equalsIgnoreCase("Ma") && vehicleClass.equalsIgnoreCase("Munshiganj") && vehicleNoInt > 50) ||
+            String tempForOther = "" + vehicleNo.charAt(4) + vehicleNo.charAt(5);
+            int vehicleNoIntForOther = MathUtils.getInstance().convertToInt(tempForOther);
+
+            if (vehicleNoInt < 11 || (vehicleDiv.equalsIgnoreCase("E") && vehicleNoIntForOther > 60) ||
+                    (vehicleDiv.equalsIgnoreCase("Ma") && vehicleClass.equalsIgnoreCase("Munshiganj") && vehicleNoIntForOther > 50) ||
                     (vehicleDiv.equalsIgnoreCase("Ma") && vehicleClass.equalsIgnoreCase("Narayanganj") && vehicleNoInt < 51)) {
                 Toast.makeText(context, "Invalid vehicle number", Toast.LENGTH_SHORT).show();
             } else {

@@ -771,8 +771,11 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
             String temp = "" + vehicleNo.charAt(0) + vehicleNo.charAt(1);
             int vehicleNoInt = MathUtils.getInstance().convertToInt(temp);
 
-            if (vehicleNoInt < 11 || (vehicleDiv.equalsIgnoreCase("E") && vehicleNoInt > 60) ||
-                    (vehicleDiv.equalsIgnoreCase("Ma") && vehicleClass.equalsIgnoreCase("Munshiganj") && vehicleNoInt > 50) ||
+            String tempForOther = "" + vehicleNo.charAt(4) + vehicleNo.charAt(5);
+            int vehicleNoIntForOther = MathUtils.getInstance().convertToInt(tempForOther);
+
+            if (vehicleNoInt < 11 || (vehicleDiv.equalsIgnoreCase("E") && vehicleNoIntForOther > 60) ||
+                    (vehicleDiv.equalsIgnoreCase("Ma") && vehicleClass.equalsIgnoreCase("Munshiganj") && vehicleNoIntForOther > 50) ||
                     (vehicleDiv.equalsIgnoreCase("Ma") && vehicleClass.equalsIgnoreCase("Narayanganj") && vehicleNoInt < 51)) {
                 Toast.makeText(context, "Invalid vehicle number", Toast.LENGTH_SHORT).show();
             } else {
