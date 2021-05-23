@@ -80,14 +80,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dim10"
-            android:gravity="center"
+            android:gravity="start"
             android:orientation="horizontal">
 
             <ImageView
                 android:layout_width="@dimen/dim25"
                 android:layout_height="@dimen/dim25"
+                android:layout_gravity="center"
                 android:layout_marginEnd="@dimen/dim10"
-                android:layout_weight="0"
                 app:srcCompat="@drawable/ic_directions_car_white_48px"
                 app:tint="@color/black" />
 
@@ -95,10 +95,23 @@
                 android:id="@+id/tvUserVehicleNo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="@dimen/dim10"
+                android:layout_gravity="bottom"
+                android:paddingStart="@dimen/dim10"
+                android:paddingTop="@dimen/dim10"
+                android:paddingBottom="@dimen/dim10"
                 android:text="@string/vehicle_no"
                 android:textSize="@dimen/dimTex20" />
+
+            <TextView
+                android:id="@+id/tvUserVehicleNoArmy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:visibility="visible"
+                android:paddingTop="@dimen/dim10"
+                android:paddingBottom="@dimen/dim10"
+                android:text="@string/vehicle_no"
+                android:textSize="@dimen/dimTex25" />
 
         </LinearLayout>
 

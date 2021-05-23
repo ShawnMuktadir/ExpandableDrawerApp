@@ -94,6 +94,18 @@ public class TextUtils {
         return false;
     }
 
+    public boolean isNumeric(String strNum) {
+        if (strNum == null) {
+            return false;
+        }
+        try {
+            double d = Double.parseDouble(strNum);
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+        return true;
+    }
+
     public boolean textContainsEnglish(String str) {
         return ((!str.equals(""))
                 && (str != null)

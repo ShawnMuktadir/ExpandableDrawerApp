@@ -39,15 +39,15 @@ public class Preferences {
         mContext = context;
     }
 
-    public static synchronized Preferences getInstance(Context context){
-        if (instance == null){
+    public static synchronized Preferences getInstance(Context context) {
+        if (instance == null) {
             instance = new Preferences(context);
         }
 
         return instance;
     }
 
-    public void userLogin(User user){
+    public void userLogin(User user) {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -93,6 +93,18 @@ public class Preferences {
         saveValue(Constants.KEY_VEHICLE_DIV_DATA, vehicleDivData);
     }
 
+    public void setRadioButtonVehicleFormat(String key, boolean radioButtonValue) {
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(key, radioButtonValue);
+        editor.apply();
+    }
+
+    public boolean getRadioButtonVehicleFormat(String key) {
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        return sharedPreferences.getBoolean(key, false);
+    }
+
     public String getAppLanguage() {
         return getValue(Constants.LANGUAGE, LANGUAGE_EN);
     }
@@ -101,14 +113,14 @@ public class Preferences {
         saveValue(Constants.LANGUAGE, language);
     }
 
-    public void setIsLocationPermissionGiven(boolean isLocationPermissionGiven){
+    public void setIsLocationPermissionGiven(boolean isLocationPermissionGiven) {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(KEY_IS_LOCATION_PERMISSION, isLocationPermissionGiven);
         editor.apply();
     }
 
-    public boolean isWaitingForLocationPermission(){
+    public boolean isWaitingForLocationPermission() {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         return sharedPreferences.getBoolean(KEY_IS_LOCATION_PERMISSION, false);
     }
@@ -118,7 +130,7 @@ public class Preferences {
         return sharedPreferences.getString(KEY_MOBILE_NO, null) != null;
     }
 
-    public User getUser(){
+    public User getUser() {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         User user = new User();
         user.setId(sharedPreferences.getInt(KEY_ID, -1));
@@ -131,33 +143,33 @@ public class Preferences {
         return user;
     }
 
-    public void logout(){
+    public void logout() {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.clear();
         editor.apply();
     }
 
-    public void setIsWaitingForSMS(boolean isWaiting){
+    public void setIsWaitingForSMS(boolean isWaiting) {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(KEY_IS_WAITING_FOR_SMS, isWaiting);
         editor.apply();
     }
 
-    public boolean isWaitingForSMS(){
+    public boolean isWaitingForSMS() {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         return sharedPreferences.getBoolean(KEY_IS_WAITING_FOR_SMS, false);
     }
 
-    public void setIsUpdateRequired(boolean isUpdateRequired){
+    public void setIsUpdateRequired(boolean isUpdateRequired) {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(KEY_IS_UPDATE_REQUIRED, isUpdateRequired);
         editor.apply();
     }
 
-    public boolean isUpdateRequired(){
+    public boolean isUpdateRequired() {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         return sharedPreferences.getBoolean(KEY_IS_UPDATE_REQUIRED, false);
     }

@@ -46,6 +46,9 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
     @BindView(R.id.tvUserVehicleNo)
     TextView tvUserVehicleNo;
 
+    @BindView(R.id.tvUserVehicleNoArmy)
+    TextView tvUserVehicleNoArmy;
+
     @BindView(R.id.ivUserProfilePic)
     ImageView ivUserProfilePic;
 
@@ -140,8 +143,16 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
         tvUserMobileNo.setText(TextUtils.getInstance().addCountryPrefixWithPlus(user.getMobileNo()));
         Timber.e("Mobile no -> %s", user.getMobileNo());
 
-        tvUserVehicleNo.setText(user.getVehicleNo());
-        if(!user.getImage().endsWith(".jpg")) {
+        if (TextUtils.getInstance().isNumeric(Preferences.getInstance(context).getUser().getVehicleNo())) {
+            tvUserVehicleNoArmy.setVisibility(View.VISIBLE);
+            tvUserVehicleNo.setText(String.format("^%s", user.getVehicleNo().substring(0, 2)));
+            tvUserVehicleNoArmy.setText(user.getVehicleNo().substring(2, 6));
+        } else {
+            tvUserVehicleNo.setText(user.getVehicleNo());
+            tvUserVehicleNoArmy.setVisibility(View.GONE);
+        }
+
+        if (!user.getImage().endsWith(".jpg")) {
             String url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
             Timber.e("Image URL -> %s", url);
             Glide.with(context).load(url).placeholder(R.drawable.blank_profile).dontAnimate().into(ivUserProfilePic);
@@ -149,8 +160,7 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
             String vehicleUrl = AppConfig.IMAGES_URL + user.getVehicleImage() + ".jpg";
             Timber.e("Vehicle Image URL -> %s", vehicleUrl);
             Glide.with(context).load(vehicleUrl).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(ivVehicleProfilePlatePreview);
-        }
-        else{
+        } else {
             String url = AppConfig.IMAGES_URL + user.getImage();
             Timber.e("Image URL -> %s", url);
             Glide.with(context).load(url).placeholder(R.drawable.blank_profile).dontAnimate().into(ivUserProfilePic);

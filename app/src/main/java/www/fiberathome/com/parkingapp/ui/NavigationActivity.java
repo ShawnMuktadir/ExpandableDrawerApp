@@ -323,19 +323,24 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
 
         StringBuilder stringBuilder = new StringBuilder();
         if (user.getVehicleNo() != null) {
-            stringBuilder.append(context.getResources().getString(R.string.vehicle_no)).append(" ").append(user.getVehicleNo());
+            if (TextUtils.getInstance().isNumeric(user.getVehicleNo())) {
+                stringBuilder.append(context.getResources().getString(R.string.vehicle_no)).append(" ").append("^").append(user.getVehicleNo());
+                tvUserVehicleNo.setText(stringBuilder.toString());
+            } else {
+                stringBuilder.append(context.getResources().getString(R.string.vehicle_no)).append(" ").append(user.getVehicleNo());
+                tvUserVehicleNo.setText(stringBuilder.toString());
+            }
         }
-        tvUserVehicleNo.setText(stringBuilder.toString());
 
         RequestOptions requestOptions = new RequestOptions()
                 .centerCrop()
                 .placeholder(R.drawable.blank_profile)
                 .error(R.drawable.blank_profile);
+
         String url;
-        if(!user.getImage().endsWith(".jpg")) {
+        if (!user.getImage().endsWith(".jpg")) {
             url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
-        }
-        else{
+        } else {
             url = AppConfig.IMAGES_URL + user.getImage();
         }
         Timber.e("user profile photo url -> %s", url);

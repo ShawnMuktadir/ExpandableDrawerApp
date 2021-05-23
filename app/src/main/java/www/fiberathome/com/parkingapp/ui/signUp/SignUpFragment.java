@@ -26,6 +26,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -169,6 +170,12 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     @BindView(R.id.radioGroup)
     RadioGroup radioGroup;
 
+    @BindView(R.id.radioGeneral)
+    RadioButton radioGeneral;
+
+    @BindView(R.id.radioMilitary)
+    RadioButton radioMilitary;
+
     private Unbinder unbinder;
 
     private Bitmap bitmap;
@@ -207,6 +214,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         setListeners();
 
         setVehicleClassCategory();
+
         setVehicleDivCategory();
 
         // Check user is logged in
@@ -891,13 +899,6 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
             if (radioGroup.getCheckedRadioButtonId() == R.id.radioGeneral) {
                 licencePlateInfo = vehicleClass + " " + vehicleDiv + " " + vehicleNo;
-            } else if (radioGroup.getCheckedRadioButtonId() == R.id.radioMilitary) {
-                licencePlateInfo = editTextVehicleRegNumberMilitaryFirstTwoDigit.getText().toString().trim() +
-                        editTextVehicleRegNumberMilitaryLastFourDigit.getText().toString().trim();
-            }
-
-            if (radioGroup.getCheckedRadioButtonId() == R.id.radioGeneral) {
-                licencePlateInfo = vehicleClass + " " + vehicleDiv + " " + vehicleNo;
                 String temp = "" + vehicleNo.charAt(0) + vehicleNo.charAt(1);
                 int vehicleNoInt = MathUtils.getInstance().convertToInt(temp);
 
@@ -908,8 +909,20 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                         (vehicleDiv.equalsIgnoreCase("Ma") && vehicleClass.equalsIgnoreCase("Munshiganj") && vehicleNoIntForOther > 50) ||
                         (vehicleDiv.equalsIgnoreCase("Ma") && vehicleClass.equalsIgnoreCase("Narayanganj") && vehicleNoInt < 51)) {
                     Toast.makeText(context, "Invalid vehicle number", Toast.LENGTH_SHORT).show();
+                } else {
+                    if (bitmap != null && bitmap2 != null) {
+                        registerUser(fullName, password, mobileNo, licencePlateInfo);
+                    } else if (bitmap2 == null) {
+                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.upload_vehicle_pic));
+                    } else {
+                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.upload_profile_photo));
+                    }
                 }
-            } else {
+            } else if (radioGroup.getCheckedRadioButtonId() == R.id.radioMilitary) {
+                licencePlateInfo = editTextVehicleRegNumberMilitaryFirstTwoDigit.getText().toString().trim() +
+                        editTextVehicleRegNumberMilitaryLastFourDigit.getText().toString().trim();
+
+
                 if (bitmap != null && bitmap2 != null) {
                     registerUser(fullName, password, mobileNo, licencePlateInfo);
                 } else if (bitmap2 == null) {
@@ -917,6 +930,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                 } else {
                     TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.upload_profile_photo));
                 }
+
             }
         } else {
             Toast.makeText(context, "Please provide valid information", Toast.LENGTH_SHORT).show();
