@@ -112,7 +112,31 @@
                 android:textColor="@color/black"
                 android:textSize="@dimen/dimTex16" />
 
+            <RadioGroup
+                android:id="@+id/radioGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="start"
+                android:padding="@dimen/app_radius">
+
+                <RadioButton
+                    android:id="@+id/radioGeneral"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/radio_general"
+                    android:checked="true" />
+
+                <RadioButton
+                    android:id="@+id/radioMilitary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/radio_military" />
+
+            </RadioGroup>
+
             <LinearLayout
+                android:id="@+id/linearLayoutGeneralFormat"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="2dp"
@@ -154,6 +178,71 @@
                         android:textColor="@android:color/black"
                         android:textColorHint="@android:color/darker_gray" />
 
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linearLayoutMilitaryFormat"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="2dp"
+                android:orientation="horizontal"
+                android:weightSum="2.3"
+                android:padding="@dimen/dim5"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight=".3"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:gravity="end"
+                    android:layout_margin="2dp"
+                    android:text="@string/army_vehicle_arrow"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/dimTex16" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textInputLayoutVehicleMilitaryFirstTwoDigit"
+                    style="@style/TextLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <EditText
+                        android:id="@+id/editTextVehicleRegNumberMilitaryFirstTwoDigit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/first_two_digit"
+                        android:imeOptions="actionNext"
+                        android:inputType="number"
+                        android:maxLength="2"
+                        android:textSize="@dimen/_9ssp"
+                        android:textColor="@android:color/black"
+                        android:textColorHint="@android:color/black"
+                        tools:ignore="TextFields" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textInputLayoutVehicleMilitaryLastFourDigit"
+                    style="@style/TextLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <EditText
+                        android:id="@+id/editTextVehicleRegNumberMilitaryLastFourDigit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/last_four_digit"
+                        android:imeOptions="actionNext"
+                        android:inputType="number"
+                        android:maxLength="4"
+                        android:textSize="@dimen/_12ssp"
+                        android:textColor="@android:color/black"
+                        android:textColorHint="@android:color/black"
+                        tools:ignore="TextFields" />
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>

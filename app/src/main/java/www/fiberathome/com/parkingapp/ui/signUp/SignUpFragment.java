@@ -25,6 +25,8 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -95,6 +97,9 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     @BindView(R.id.btnSignup)
     Button btnSignup;
 
+    @BindView(R.id.tvSelectVehicleCityClass)
+    TextView tvSelectVehicleCityClass;
+
     @BindView(R.id.textInputLayoutFullName)
     TextInputLayout textInputLayoutFullName;
 
@@ -112,6 +117,18 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
     @BindView(R.id.editTextVehicleRegNumber)
     EditText editTextVehicleRegNumber;
+
+    @BindView(R.id.textInputLayoutVehicleMilitaryFirstTwoDigit)
+    TextInputLayout textInputLayoutVehicleMilitaryFirstTwoDigit;
+
+    @BindView(R.id.editTextVehicleRegNumberMilitaryFirstTwoDigit)
+    EditText editTextVehicleRegNumberMilitaryFirstTwoDigit;
+
+    @BindView(R.id.textInputLayoutVehicleMilitaryLastFourDigit)
+    TextInputLayout textInputLayoutVehicleMilitaryLastFourDigit;
+
+    @BindView(R.id.editTextVehicleRegNumberMilitaryLastFourDigit)
+    EditText editTextVehicleRegNumberMilitaryLastFourDigit;
 
     @BindView(R.id.textInputLayoutPassword)
     TextInputLayout textInputLayoutPassword;
@@ -137,11 +154,20 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     @BindView(R.id.login_rl_invisible)
     RelativeLayout relativeLayoutInvisible;
 
+    @BindView(R.id.linearLayoutGeneralFormat)
+    LinearLayout linearLayoutGeneralFormat;
+
+    @BindView(R.id.linearLayoutMilitaryFormat)
+    LinearLayout linearLayoutMilitaryFormat;
+
     @BindView(R.id.classSpinner)
     Spinner classSpinner;
 
     @BindView(R.id.divSpinner)
     Spinner divSpinner;
+
+    @BindView(R.id.radioGroup)
+    RadioGroup radioGroup;
 
     private Unbinder unbinder;
 
@@ -571,6 +597,22 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     }
 
     private void setListeners() {
+
+        radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            switch (checkedId) {
+                case R.id.radioGeneral:
+                    // do operations specific to this selection
+                    linearLayoutGeneralFormat.setVisibility(View.VISIBLE);
+                    linearLayoutMilitaryFormat.setVisibility(View.GONE);
+                    break;
+                case R.id.radioMilitary:
+                    // do operations specific to this selection
+                    linearLayoutGeneralFormat.setVisibility(View.GONE);
+                    linearLayoutMilitaryFormat.setVisibility(View.VISIBLE);
+                    break;
+            }
+        });
+
         editTextPassword.setOnEditorActionListener(
                 (v, actionId, event) -> {
                     if (actionId == EditorInfo.IME_ACTION_SEARCH
@@ -713,6 +755,58 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
             }
         });
+
+        Objects.requireNonNull(textInputLayoutVehicleMilitaryFirstTwoDigit.getEditText()).addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() < 1) {
+                    textInputLayoutVehicleMilitaryFirstTwoDigit.setErrorEnabled(true);
+                    textInputLayoutVehicleMilitaryFirstTwoDigit.setError(context.getString(R.string.err_msg_vehicle));
+                }
+
+                if (s.length() > 0) {
+                    textInputLayoutVehicleMilitaryFirstTwoDigit.setError(null);
+                    textInputLayoutVehicleMilitaryFirstTwoDigit.setErrorEnabled(false);
+                }
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        Objects.requireNonNull(textInputLayoutVehicleMilitaryLastFourDigit.getEditText()).addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() < 1) {
+                    textInputLayoutVehicleMilitaryLastFourDigit.setErrorEnabled(true);
+                    textInputLayoutVehicleMilitaryLastFourDigit.setError(context.getString(R.string.err_msg_vehicle));
+                }
+
+                if (s.length() > 0) {
+                    textInputLayoutVehicleMilitaryLastFourDigit.setError(null);
+                    textInputLayoutVehicleMilitaryLastFourDigit.setErrorEnabled(false);
+                }
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
     private void showPictureDialog() {
@@ -785,24 +879,36 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
     }
 
+    private String licencePlateInfo = " ";
+
     private void submitRegistration() {
+
         if (checkFields()) {
             String fullName = editTextFullName.getText().toString().trim();
             String mobileNo = editTextMobileNumber.getText().toString().trim();
             String vehicleNo = editTextVehicleRegNumber.getText().toString().trim();
             String password = editTextPassword.getText().toString().trim();
-            String licencePlateInfo = vehicleClass + " " + vehicleDiv + " " + vehicleNo;
 
-            String temp = "" + vehicleNo.charAt(0) + vehicleNo.charAt(1);
-            int vehicleNoInt = MathUtils.getInstance().convertToInt(temp);
+            if (radioGroup.getCheckedRadioButtonId() == R.id.radioGeneral) {
+                licencePlateInfo = vehicleClass + " " + vehicleDiv + " " + vehicleNo;
+            } else if (radioGroup.getCheckedRadioButtonId() == R.id.radioMilitary) {
+                licencePlateInfo = editTextVehicleRegNumberMilitaryFirstTwoDigit.getText().toString().trim() +
+                        editTextVehicleRegNumberMilitaryLastFourDigit.getText().toString().trim();
+            }
 
-            String tempForOther = "" + vehicleNo.charAt(4) + vehicleNo.charAt(5);
-            int vehicleNoIntForOther = MathUtils.getInstance().convertToInt(tempForOther);
+            if (radioGroup.getCheckedRadioButtonId() == R.id.radioGeneral) {
+                licencePlateInfo = vehicleClass + " " + vehicleDiv + " " + vehicleNo;
+                String temp = "" + vehicleNo.charAt(0) + vehicleNo.charAt(1);
+                int vehicleNoInt = MathUtils.getInstance().convertToInt(temp);
 
-            if (vehicleNoInt < 11 || (vehicleDiv.equalsIgnoreCase("E") && vehicleNoIntForOther > 60) ||
-                    (vehicleDiv.equalsIgnoreCase("Ma") && vehicleClass.equalsIgnoreCase("Munshiganj") && vehicleNoIntForOther > 50) ||
-                    (vehicleDiv.equalsIgnoreCase("Ma") && vehicleClass.equalsIgnoreCase("Narayanganj") && vehicleNoInt < 51)) {
-                Toast.makeText(context, "Invalid vehicle number", Toast.LENGTH_SHORT).show();
+                String tempForOther = "" + vehicleNo.charAt(4) + vehicleNo.charAt(5);
+                int vehicleNoIntForOther = MathUtils.getInstance().convertToInt(tempForOther);
+
+                if (vehicleNoInt < 11 || (vehicleDiv.equalsIgnoreCase("E") && vehicleNoIntForOther > 60) ||
+                        (vehicleDiv.equalsIgnoreCase("Ma") && vehicleClass.equalsIgnoreCase("Munshiganj") && vehicleNoIntForOther > 50) ||
+                        (vehicleDiv.equalsIgnoreCase("Ma") && vehicleClass.equalsIgnoreCase("Narayanganj") && vehicleNoInt < 51)) {
+                    Toast.makeText(context, "Invalid vehicle number", Toast.LENGTH_SHORT).show();
+                }
             } else {
                 if (bitmap != null && bitmap2 != null) {
                     registerUser(fullName, password, mobileNo, licencePlateInfo);
@@ -812,6 +918,8 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                     TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.upload_profile_photo));
                 }
             }
+        } else {
+            Toast.makeText(context, "Please provide valid information", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -873,17 +981,44 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     }
 
     private boolean checkFields() {
+        boolean isVehicleRegValid = false;
+        boolean isVehicleRegValidForFirstTwoDigit = false;
+        boolean isVehicleRegValidForLastFourDigit = false;
         boolean isNameValid = Validator.checkValidity(textInputLayoutFullName, editTextFullName.getText().toString(), context.getString(R.string.err_msg_fullname), "text");
         boolean isPhoneValid = Validator.checkValidity(textInputLayoutMobile, editTextMobileNumber.getText().toString(), context.getString(R.string.err_msg_mobile), "phone");
-        boolean isVehicleRegValid = Validator.checkValidity(textInputLayoutVehicle, editTextVehicleRegNumber.getText().toString(), context.getString(R.string.err_msg_vehicle), "vehicleNumber");
         boolean isPasswordValid = Validator.checkValidity(textInputLayoutPassword, editTextPassword.getText().toString(), context.getString(R.string.err_msg_password_signup), "textPassword");
         boolean isLicencePlateValid = false;
-        if (!vehicleClass.isEmpty() && !vehicleClass.equalsIgnoreCase("Select") && !vehicleDiv.isEmpty() && !vehicleDiv.equalsIgnoreCase("Select")) {
-            isLicencePlateValid = true;
+
+        if (radioGroup.getCheckedRadioButtonId() == R.id.radioGeneral) {
+            isVehicleRegValid = Validator.checkValidity(textInputLayoutVehicle, editTextVehicleRegNumber.getText().toString(), context.getString(R.string.err_msg_vehicle), "vehicleNumber");
         } else {
-            Toast.makeText(context, "Select Vehicle City and Class", Toast.LENGTH_SHORT).show();
+            isVehicleRegValidForFirstTwoDigit = Validator.checkValidity(textInputLayoutVehicleMilitaryFirstTwoDigit, editTextVehicleRegNumberMilitaryFirstTwoDigit.getText().toString(), context.getString(R.string.err_msg_vehicle), "vehicleMilitaryNumberForFirstTwo");
+            isVehicleRegValidForLastFourDigit = Validator.checkValidity(textInputLayoutVehicleMilitaryLastFourDigit, editTextVehicleRegNumberMilitaryLastFourDigit.getText().toString(), context.getString(R.string.err_msg_vehicle), "vehicleMilitaryNumberForLastFour");
         }
 
-        return isNameValid && isPhoneValid && isVehicleRegValid && isPasswordValid && isLicencePlateValid;
+        if (radioGroup.getCheckedRadioButtonId() == R.id.radioMilitary) {
+            licencePlateInfo = editTextVehicleRegNumberMilitaryFirstTwoDigit.getText().toString().trim() +
+                    editTextVehicleRegNumberMilitaryLastFourDigit.getText().toString().trim();
+        }
+
+        if (radioGroup.getCheckedRadioButtonId() == R.id.radioGeneral) {
+            if (!vehicleClass.isEmpty() && !vehicleClass.equalsIgnoreCase("Select") && !vehicleDiv.isEmpty() && !vehicleDiv.equalsIgnoreCase("Select")) {
+                isLicencePlateValid = true;
+            }
+        } else if (radioGroup.getCheckedRadioButtonId() == R.id.radioMilitary) {
+            if (!licencePlateInfo.equalsIgnoreCase("000000"))
+                isLicencePlateValid = true;
+            else isLicencePlateValid = false;
+        } else {
+            Toast.makeText(context, "Please give valid vehicle number", Toast.LENGTH_SHORT).show();
+        }
+
+        if (radioGroup.getCheckedRadioButtonId() == R.id.radioGeneral) {
+            return isNameValid && isPhoneValid && isVehicleRegValid && isPasswordValid && isLicencePlateValid;
+        } else if (radioGroup.getCheckedRadioButtonId() == R.id.radioMilitary) {
+            return isNameValid && isPhoneValid && isVehicleRegValidForFirstTwoDigit && isVehicleRegValidForLastFourDigit && isPasswordValid && isLicencePlateValid;
+        } else {
+            return false;
+        }
     }
 }

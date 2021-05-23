@@ -20,6 +20,8 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -100,6 +102,18 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
     @BindView(R.id.editTextCarNumber)
     EditText editTextCarNumber;
 
+    @BindView(R.id.textInputLayoutVehicleMilitaryFirstTwoDigit)
+    TextInputLayout textInputLayoutVehicleMilitaryFirstTwoDigit;
+
+    @BindView(R.id.editTextVehicleRegNumberMilitaryFirstTwoDigit)
+    EditText editTextVehicleRegNumberMilitaryFirstTwoDigit;
+
+    @BindView(R.id.textInputLayoutVehicleMilitaryLastFourDigit)
+    TextInputLayout textInputLayoutVehicleMilitaryLastFourDigit;
+
+    @BindView(R.id.editTextVehicleRegNumberMilitaryLastFourDigit)
+    EditText editTextVehicleRegNumberMilitaryLastFourDigit;
+
     @BindView(R.id.tvUserMobileNo)
     TextView tvUserMobileNo;
 
@@ -120,6 +134,15 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
 
     @BindView(R.id.login_rl_invisible)
     RelativeLayout relativeLayoutInvisible;
+
+    @BindView(R.id.radioGroup)
+    RadioGroup radioGroup;
+
+    @BindView(R.id.linearLayoutGeneralFormat)
+    LinearLayout linearLayoutGeneralFormat;
+
+    @BindView(R.id.linearLayoutMilitaryFormat)
+    LinearLayout linearLayoutMilitaryFormat;
 
     private Unbinder unbinder;
 
@@ -184,6 +207,21 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
     }
 
     private void setListeners() {
+        radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            switch (checkedId) {
+                case R.id.radioGeneral:
+                    // do operations specific to this selection
+                    linearLayoutGeneralFormat.setVisibility(View.VISIBLE);
+                    linearLayoutMilitaryFormat.setVisibility(View.GONE);
+                    break;
+                case R.id.radioMilitary:
+                    // do operations specific to this selection
+                    linearLayoutGeneralFormat.setVisibility(View.GONE);
+                    linearLayoutMilitaryFormat.setVisibility(View.VISIBLE);
+                    break;
+            }
+        });
+
         Objects.requireNonNull(textInputLayoutFullName.getEditText()).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -225,6 +263,58 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                 if (s.length() > 0) {
                     textInputLayoutCarNumber.setError(null);
                     textInputLayoutCarNumber.setErrorEnabled(false);
+                }
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        Objects.requireNonNull(textInputLayoutVehicleMilitaryFirstTwoDigit.getEditText()).addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() < 1) {
+                    textInputLayoutVehicleMilitaryFirstTwoDigit.setErrorEnabled(true);
+                    textInputLayoutVehicleMilitaryFirstTwoDigit.setError(context.getString(R.string.err_msg_vehicle));
+                }
+
+                if (s.length() > 0) {
+                    textInputLayoutVehicleMilitaryFirstTwoDigit.setError(null);
+                    textInputLayoutVehicleMilitaryFirstTwoDigit.setErrorEnabled(false);
+                }
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        Objects.requireNonNull(textInputLayoutVehicleMilitaryLastFourDigit.getEditText()).addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() < 1) {
+                    textInputLayoutVehicleMilitaryLastFourDigit.setErrorEnabled(true);
+                    textInputLayoutVehicleMilitaryLastFourDigit.setError(context.getString(R.string.err_msg_vehicle));
+                }
+
+                if (s.length() > 0) {
+                    textInputLayoutVehicleMilitaryLastFourDigit.setError(null);
+                    textInputLayoutVehicleMilitaryLastFourDigit.setErrorEnabled(false);
                 }
 
             }

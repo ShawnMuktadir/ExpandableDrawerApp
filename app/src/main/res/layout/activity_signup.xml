@@ -116,7 +116,8 @@
                     android:imeOptions="actionNext"
                     android:inputType="text"
                     android:textColor="@android:color/black"
-                    android:textColorHint="@android:color/black" />
+                    android:textColorHint="@android:color/black"
+                    tools:ignore="TextFields" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout

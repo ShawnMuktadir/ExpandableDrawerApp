@@ -141,6 +141,26 @@ public class Validator {
                     textInputLayout.setErrorEnabled(false);
                     return true;
                 }
+            } else if (textType.equalsIgnoreCase("vehicleMilitaryNumberForFirstTwo")) {
+                if (input.length() < 2) {
+                    textInputLayout.setErrorEnabled(true);
+                    textInputLayout.setError("Vehicle number must be valid");
+                    return false;
+                } else {
+                    textInputLayout.setError(null);
+                    textInputLayout.setErrorEnabled(false);
+                    return true;
+                }
+            } else if (textType.equalsIgnoreCase("vehicleMilitaryNumberForLastFour")) {
+                if (input.length() < 4) {
+                    textInputLayout.setErrorEnabled(true);
+                    textInputLayout.setError("Vehicle number must be valid");
+                    return false;
+                } else {
+                    textInputLayout.setError(null);
+                    textInputLayout.setErrorEnabled(false);
+                    return true;
+                }
             } else if (textType.equalsIgnoreCase("text")) {
                 if (TextUtils.isEmpty(input)) {
                     textInputLayout.setErrorEnabled(true);

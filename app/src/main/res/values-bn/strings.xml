@@ -493,5 +493,10 @@
     <string name="upload_vehicle_pic">গাড়ির ছবি আপলোড করুন</string>
     <string name="vehicle_license_plate">যানবাহন লাইসেন্স প্লেট:</string>
     <string name="vehicle_license_plate_image">যানবাহন লাইসেন্স প্লেটের ছবি: </string>
+    <string name="radio_general">General</string>
+    <string name="radio_military">Military</string>
+    <string name="first_two_digit">First two digit</string>
+    <string name="last_four_digit">Last four digit</string>
+    <string name="army_vehicle_arrow">^</string>
 </resources>
 
