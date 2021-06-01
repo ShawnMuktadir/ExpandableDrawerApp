@@ -1193,7 +1193,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                     polyline = mMap.addPolyline(getDefaultPolyLines(pointsNew));
                                 }
                             } catch (Exception e) {
-                                Timber.e(e.getMessage());
+                                Timber.e(e);
                             }
                         }
                         double distanceTravledLast = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), myPreviousLocation.getLatitude(), myPreviousLocation.getLongitude()) * 1000;
