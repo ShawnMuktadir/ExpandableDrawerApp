@@ -18,7 +18,7 @@ import androidx.core.app.ActivityCompat;
 
 import timber.log.Timber;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class GPSTracker extends Service implements LocationListener {
 
     private final Context mContext;
@@ -98,6 +98,7 @@ public class GPSTracker extends Service implements LocationListener {
                 // if GPS Enabled get lat/long using GPS Services
                 if (isGPSEnabled) {
                     if (location == null) {
+                        assert locationManager != null;
                         locationManager.requestLocationUpdates(
                                 LocationManager.GPS_PROVIDER,
                                 MIN_TIME_BW_UPDATES,

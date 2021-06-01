@@ -15,7 +15,7 @@ import timber.log.Timber;
 /**
  * Created by NgocTri on 12/11/2017.
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class DirectionsParser {
     /**
      * Returns a list of lists containing latitude and longitude from a JSONObject

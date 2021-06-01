@@ -20,7 +20,7 @@ import java.util.Map;
 
 import timber.log.Timber;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class TinyDB {
 
     private final SharedPreferences preferences;

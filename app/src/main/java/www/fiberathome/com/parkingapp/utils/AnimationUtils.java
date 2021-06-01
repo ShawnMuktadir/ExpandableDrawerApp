@@ -7,7 +7,7 @@ import android.animation.ValueAnimator;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class AnimationUtils {
 
     private static AnimationUtils animationUtils;

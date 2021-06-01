@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class TextUtils {
     private static TextUtils textUtils;
 
@@ -107,13 +107,11 @@ public class TextUtils {
     }
 
     public boolean textContainsEnglish(String str) {
-        return ((!str.equals(""))
-                && (str != null)
-                && (str.matches("^[a-zA-Z]*$")));
+        return !str.equals("") && str.matches("^[a-zA-Z]*$");
     }
 
     public String capitalize(String str) {
-        if (str == null || str.isEmpty() || str.equals("")) {
+        if (str == null || str.isEmpty()) {
             return str;
         }
 
@@ -243,13 +241,13 @@ public class TextUtils {
         Calendar c = Calendar.getInstance();
         int timeOfDay = c.get(Calendar.HOUR_OF_DAY);
 
-        if (timeOfDay >= 0 && timeOfDay < 12) {
+        if (timeOfDay < 12) {
             return "Good Morning";
-        } else if (timeOfDay >= 12 && timeOfDay < 16) {
+        } else if (timeOfDay < 16) {
             message = "Good Afternoon";
-        } else if (timeOfDay >= 16 && timeOfDay < 21) {
+        } else if (timeOfDay < 21) {
             message = "Good Evening";
-        } else if (timeOfDay >= 21 && timeOfDay < 24) {
+        } else if (timeOfDay < 24) {
             message = "Good Night";
         }
         return message;

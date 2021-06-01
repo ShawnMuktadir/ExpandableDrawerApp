@@ -3,7 +3,7 @@ package www.fiberathome.com.parkingapp.model.user;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class User {
 
     @SerializedName("id")

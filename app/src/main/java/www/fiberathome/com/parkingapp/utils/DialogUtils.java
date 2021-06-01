@@ -23,7 +23,7 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.ui.booking.newBooking.BookingActivity;
 import www.fiberathome.com.parkingapp.ui.widget.BaseBottomSheetDialog;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class DialogUtils {
     private static DialogUtils dialogUtils;
 

@@ -72,7 +72,7 @@ import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CO
  *
  * </ul>
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class BaseActivity extends AppCompatActivity implements LocationListener {
 
     private static final int GPS_ENABLE_REQUEST = 0x1001;

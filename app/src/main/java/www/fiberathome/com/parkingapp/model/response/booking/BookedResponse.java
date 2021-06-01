@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class BookedResponse extends BaseResponse {
 
     @SerializedName("bookings")

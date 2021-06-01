@@ -45,7 +45,7 @@ import www.fiberathome.com.parkingapp.utils.ToastUtils;
 import static android.content.Context.LOCATION_SERVICE;
 
 @SuppressLint("NonConstantResourceId")
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressListener {
 
     @BindView(R.id.webView)

@@ -10,7 +10,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import www.fiberathome.com.parkingapp.R;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class SnackBarUtils {
     private static SnackBarUtils snackBarUtils;
 

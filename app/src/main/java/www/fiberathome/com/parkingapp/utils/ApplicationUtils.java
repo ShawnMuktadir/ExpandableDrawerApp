@@ -18,7 +18,7 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.data.StaticData;
 import www.fiberathome.com.parkingapp.utils.internet.ConnectivityInterceptor;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class ApplicationUtils {
 
     public static OkHttpClient getClient(final Context context) {

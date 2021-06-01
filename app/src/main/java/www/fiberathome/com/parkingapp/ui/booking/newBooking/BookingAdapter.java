@@ -32,7 +32,7 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.response.booking.BookedList;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingArea;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context context;

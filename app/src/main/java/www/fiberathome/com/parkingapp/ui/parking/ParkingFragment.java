@@ -69,7 +69,7 @@ import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
 import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
 
 @SuppressLint("NonConstantResourceId")
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class ParkingFragment extends BaseFragment implements IOnBackPressListener {
 
     @BindView(R.id.recyclerViewParking)

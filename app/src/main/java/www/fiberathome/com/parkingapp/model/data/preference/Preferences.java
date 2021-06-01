@@ -11,7 +11,7 @@ import static android.content.Context.MODE_PRIVATE;
 import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
 
 @SuppressLint("StaticFieldLeak")
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class Preferences {
 
     private static final String SHARED_PREF_NAME = "PARKINGAPP";

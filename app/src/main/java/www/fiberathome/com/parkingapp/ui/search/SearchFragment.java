@@ -66,7 +66,7 @@ import static www.fiberathome.com.parkingapp.model.data.AppConstants.HISTORY_PLA
 import static www.fiberathome.com.parkingapp.model.data.AppConstants.NEW_PLACE_SELECTED;
 
 @SuppressLint("NonConstantResourceId")
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAdapter.ClickListener {
 
     private final String TAG = getClass().getSimpleName();
@@ -618,7 +618,6 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
     }
 
     public ArrayList<SearchVisitorData> removeDuplicatesSearchVisitorData(ArrayList<SearchVisitorData> list) {
-        // Set set1 = new LinkedHashSet(list);
         Set<SearchVisitorData> set = new TreeSet<SearchVisitorData>(new Comparator() {
             @Override
             public int compare(Object o1, Object o2) {

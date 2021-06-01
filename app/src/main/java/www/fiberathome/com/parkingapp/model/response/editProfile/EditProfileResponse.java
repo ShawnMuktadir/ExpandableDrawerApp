@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 import www.fiberathome.com.parkingapp.model.user.User;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class EditProfileResponse extends BaseResponse {
 
     @SerializedName("user")

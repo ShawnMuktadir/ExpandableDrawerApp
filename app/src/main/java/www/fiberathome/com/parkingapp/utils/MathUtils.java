@@ -2,7 +2,7 @@ package www.fiberathome.com.parkingapp.utils;
 
 import android.location.Location;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class MathUtils {
     private static MathUtils mathUtils;
 

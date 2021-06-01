@@ -12,7 +12,7 @@ import java.util.List;
 
 import timber.log.Timber;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class DirectionsJSONParser {
 
     /**

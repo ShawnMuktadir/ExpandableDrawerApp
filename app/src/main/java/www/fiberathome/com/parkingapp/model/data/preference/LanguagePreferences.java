@@ -9,7 +9,7 @@ import www.fiberathome.com.parkingapp.model.data.Constants;
 import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
 
 @SuppressLint("StaticFieldLeak")
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class LanguagePreferences {
 
     private static final String SHARED_PREF_NAME = "PARKINGAPP";

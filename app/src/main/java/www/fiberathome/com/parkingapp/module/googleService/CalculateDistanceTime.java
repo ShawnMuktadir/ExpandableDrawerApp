@@ -20,7 +20,7 @@ import java.util.Set;
 
 import timber.log.Timber;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class CalculateDistanceTime {
 
     private taskCompleteListener mTaskListener;
@@ -96,6 +96,7 @@ public class CalculateDistanceTime {
         } catch (Exception e) {
             Timber.d("Exception while downloading url -> %s", e.toString());
         } finally {
+            assert iStream != null;
             iStream.close();
             urlConnection.disconnect();
         }

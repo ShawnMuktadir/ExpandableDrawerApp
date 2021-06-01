@@ -12,7 +12,7 @@ import java.util.TimeZone;
 
 import timber.log.Timber;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class DateTimeUtils {
     private static DateTimeUtils dateTimeUtils;
 
@@ -44,6 +44,7 @@ public class DateTimeUtils {
         SimpleDateFormat expectedFormat = new SimpleDateFormat("hh:mm a", Locale.US);
         try {
             Date dT = dateFormat.parse(dateTime);
+            assert dT != null;
             return expectedFormat.format(dT);
         } catch (ParseException e) {
             e.printStackTrace();

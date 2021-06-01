@@ -1,6 +1,5 @@
 package www.fiberathome.com.parkingapp.model.response.sensors;
 
-import android.util.Log;
 import android.view.View;
 
 import com.android.volley.Request;
@@ -17,7 +16,7 @@ import timber.log.Timber;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class SensorList {
 
     public List<Sensors> sensors;
@@ -41,33 +40,22 @@ public class SensorList {
 
                     JSONObject obj = JsonArray.getJSONObject(0);
                     String uid = obj.getString("uid");
-                    Log.e("Sensor Id: ", uid);
-
-                    //  String id= obj.getString ( "id" );
-
-
-//                        String fetcheddata = text+ "\n" ;
-//                        textView.setText(fetcheddata );
-
+                    Timber.e("Sensor Id: -> %s", uid);
                 }
 
             } catch (JSONException e) {
-                // JSON error
                 e.printStackTrace();
                 System.out.println(e.getMessage());
 
             }
         }, error -> {
-
-
         }) {
-
         };
 
         ParkingApp.getInstance().addToRequestQueue(strReq);
     }
 
-    public boolean canLoadMore(){
+    public boolean canLoadMore() {
         return next_page_token != null;
     }
 }

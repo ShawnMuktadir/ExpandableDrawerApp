@@ -15,10 +15,12 @@ import android.view.MenuItem;
 
 import androidx.appcompat.widget.AppCompatEditText;
 
+import java.util.Objects;
+
 import www.fiberathome.com.parkingapp.R;
 
 @SuppressLint("AppCompatCustomView")
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class PinEntryEditText extends AppCompatEditText {
     public static final String XML_NAMESPACE_ANDROID = "http://schemas.android.com/apk/res/android";
 
@@ -112,7 +114,7 @@ public class PinEntryEditText extends AppCompatEditText {
         });
         // When tapped, move cursor to end of text.
         super.setOnClickListener(v -> {
-            setSelection(getText().length());
+            setSelection(Objects.requireNonNull(getText()).length());
             if (mClickListener != null) {
                 mClickListener.onClick(v);
             }
@@ -147,6 +149,7 @@ public class PinEntryEditText extends AppCompatEditText {
 
         //Text Width
         Editable text = getText();
+        assert text != null;
         int textLength = text.length();
         float[] textWidths = new float[textLength];
         getPaint().getTextWidths(getText(), 0, textLength, textWidths);

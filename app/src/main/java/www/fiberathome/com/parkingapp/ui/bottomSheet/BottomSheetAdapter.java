@@ -32,7 +32,7 @@ import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
 import static android.content.Context.LOCATION_SERVICE;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.TextBookingViewHolder> {
 
     public Context context;

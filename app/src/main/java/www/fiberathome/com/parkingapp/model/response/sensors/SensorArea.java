@@ -1,6 +1,6 @@
 package www.fiberathome.com.parkingapp.model.response.sensors;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class SensorArea {
 
     private String parkingArea;

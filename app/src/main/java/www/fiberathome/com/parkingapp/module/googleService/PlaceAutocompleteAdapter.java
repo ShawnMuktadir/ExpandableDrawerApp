@@ -51,7 +51,7 @@ import timber.log.Timber;
  * <p>
  * The API client must be maintained in the encapsulating Activity, including all lifecycle and
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class PlaceAutocompleteAdapter
         extends ArrayAdapter<AutocompletePrediction> implements Filterable {
 
@@ -126,6 +126,7 @@ public class PlaceAutocompleteAdapter
 
         TextView textView1 = row.findViewById(android.R.id.text1);
         TextView textView2 = row.findViewById(android.R.id.text2);
+        assert item != null;
         textView1.setText(item.getPrimaryText(STYLE_BOLD));
         textView2.setText(item.getSecondaryText(STYLE_BOLD));
 

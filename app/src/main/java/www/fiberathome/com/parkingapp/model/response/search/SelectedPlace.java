@@ -2,7 +2,7 @@ package www.fiberathome.com.parkingapp.model.response.search;
 
 import java.io.Serializable;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class SelectedPlace implements Serializable {
 
     private String placeId;

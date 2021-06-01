@@ -1,6 +1,6 @@
 package www.fiberathome.com.parkingapp.model.response.booking;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class BookingArea {
 
     private String spotName;

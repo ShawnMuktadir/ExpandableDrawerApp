@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 
 import static android.content.Context.MODE_PRIVATE;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class PreferenceUtil {
 
     private static final String PREFS_FILE_NAME = "file_name";

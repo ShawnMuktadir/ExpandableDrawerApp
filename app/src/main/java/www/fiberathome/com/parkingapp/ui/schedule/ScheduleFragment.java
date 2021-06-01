@@ -75,7 +75,7 @@ import static android.content.Context.LOCATION_SERVICE;
 import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
 
 @SuppressLint("NonConstantResourceId")
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBtnClickListener,
         IOnBackPressListener, AdapterView.OnItemSelectedListener {
 

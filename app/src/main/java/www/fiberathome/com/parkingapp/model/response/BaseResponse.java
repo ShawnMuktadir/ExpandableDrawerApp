@@ -3,7 +3,7 @@ package www.fiberathome.com.parkingapp.model.response;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class BaseResponse {
 
     @SerializedName("error")

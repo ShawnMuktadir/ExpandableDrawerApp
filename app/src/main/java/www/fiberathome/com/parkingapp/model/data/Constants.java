@@ -1,6 +1,6 @@
 package www.fiberathome.com.parkingapp.model.data;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class Constants {
 
     public static final String IS_LOGGED_IN = "isLoggedIn";

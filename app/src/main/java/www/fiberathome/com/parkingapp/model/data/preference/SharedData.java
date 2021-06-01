@@ -10,7 +10,7 @@ import java.util.List;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.model.response.sensors.SensorArea;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public final class SharedData {
 
     private static SharedData instance = new SharedData();

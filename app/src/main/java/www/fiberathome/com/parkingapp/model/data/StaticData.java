@@ -3,7 +3,7 @@ package www.fiberathome.com.parkingapp.model.data;
 /**
  * Created by Md. Muktadir on 03-March-2020.
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class StaticData {
 
     /**

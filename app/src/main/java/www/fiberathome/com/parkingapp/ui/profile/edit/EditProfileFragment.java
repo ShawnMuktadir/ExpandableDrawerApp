@@ -79,7 +79,7 @@ import static android.app.Activity.RESULT_OK;
 import static android.content.Context.LOCATION_SERVICE;
 
 @SuppressLint("NonConstantResourceId")
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class EditProfileFragment extends BaseFragment implements IOnBackPressListener, View.OnClickListener, ProgressView {
 
     private static final int REQUEST_PICK_GALLERY = 1001;
@@ -708,6 +708,8 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
         classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(27, "Sa"));
         classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(28, "Ha"));
         classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(29, "E"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(30, "O"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(31, "AU"));
 
         return classDivList;
     }
@@ -879,7 +881,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
         if (checkFields()) {
             String fullName = editTextFullName.getText().toString().trim();
             String vehicleNo = editTextCarNumber.getText().toString().trim();
-            String licencePlateInfo = vehicleClass + " " + vehicleDiv + " " + vehicleNo;
+            String licencePlateInfo;
             String password = SharedData.getInstance().getPassword();
             String mobileNo = user.getMobileNo();
 
@@ -933,9 +935,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                 isLicencePlateValid = true;
             }
         } else if (radioGroup.getCheckedRadioButtonId() == R.id.radioMilitary) {
-            if (!licencePlateInfo.equalsIgnoreCase("000000"))
-                isLicencePlateValid = true;
-            else isLicencePlateValid = false;
+            isLicencePlateValid = !licencePlateInfo.equalsIgnoreCase("000000");
         } else {
             Toast.makeText(context, "Please give valid vehicle number", Toast.LENGTH_SHORT).show();
         }

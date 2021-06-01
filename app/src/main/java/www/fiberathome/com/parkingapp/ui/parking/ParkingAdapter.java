@@ -29,7 +29,7 @@ import www.fiberathome.com.parkingapp.utils.TextUtils;
 
 import static android.content.Context.LOCATION_SERVICE;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ParkingActivity context;

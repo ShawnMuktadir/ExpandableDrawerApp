@@ -2,7 +2,7 @@ package www.fiberathome.com.parkingapp.model.response.booking;
 
 import com.google.gson.annotations.SerializedName;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class Reservation {
 
     @SerializedName("id")

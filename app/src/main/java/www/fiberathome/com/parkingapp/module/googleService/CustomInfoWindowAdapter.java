@@ -6,12 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 
 import www.fiberathome.com.parkingapp.R;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
     private final View mWindow;
@@ -28,6 +30,7 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
         String title = marker.getTitle();
         TextView tvTitle = view.findViewById(R.id.title);
 
+        assert title != null;
         if(!title.equals("")){
             tvTitle.setText(title);
         }
@@ -35,19 +38,20 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
         String snippet = marker.getSnippet();
         TextView tvSnippet = view.findViewById(R.id.snippet);
 
+        assert snippet != null;
         if(!snippet.equals("")){
             tvSnippet.setText(snippet);
         }
     }
 
     @Override
-    public View getInfoWindow(Marker marker) {
+    public View getInfoWindow(@NonNull Marker marker) {
         rendowWindowText(marker, mWindow);
         return mWindow;
     }
 
     @Override
-    public View getInfoContents(Marker marker) {
+    public View getInfoContents(@NonNull Marker marker) {
         rendowWindowText(marker, mWindow);
         return mWindow;
     }

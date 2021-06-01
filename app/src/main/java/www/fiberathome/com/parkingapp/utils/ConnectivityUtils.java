@@ -15,7 +15,7 @@ import www.fiberathome.com.parkingapp.R;
 
 import static android.content.Context.LOCATION_SERVICE;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class ConnectivityUtils {
     private static ConnectivityUtils connectivityUtils;
 

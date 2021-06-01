@@ -17,7 +17,7 @@ import timber.log.Timber;
 import static android.content.pm.PackageManager.GET_META_DATA;
 import static android.os.Build.VERSION_CODES.P;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class Utility {
 
     public static String hexString(Resources res) {
@@ -28,7 +28,7 @@ public class Utility {
 
     public static Object getPrivateField(String className, String fieldName, Object object) {
         try {
-            Class c = Class.forName(className);
+            Class<?> c = Class.forName(className);
             Field f = c.getDeclaredField(fieldName);
             f.setAccessible(true);
             return f.get(object);

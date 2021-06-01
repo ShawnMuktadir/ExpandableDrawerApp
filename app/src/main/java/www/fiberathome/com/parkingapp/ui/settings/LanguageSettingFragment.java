@@ -30,7 +30,7 @@ import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_BN;
 import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
 
 @SuppressLint("NonConstantResourceId")
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class LanguageSettingFragment extends Fragment {
 
     @BindView(R.id.recyclerView_settings)

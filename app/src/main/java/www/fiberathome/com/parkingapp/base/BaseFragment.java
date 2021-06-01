@@ -9,7 +9,7 @@ import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class BaseFragment extends Fragment {
 
     private ProgressDialog progressDialog;
@@ -26,7 +26,7 @@ public class BaseFragment extends Fragment {
         if (progressDialog == null) return;
 
         try {
-            if ((progressDialog != null) && progressDialog.isShowing()) {
+            if (progressDialog.isShowing()) {
                 progressDialog.dismiss();
                 progressDialog.cancel();
             }

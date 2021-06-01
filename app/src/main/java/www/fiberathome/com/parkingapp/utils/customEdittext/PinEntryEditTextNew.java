@@ -19,7 +19,7 @@ import android.widget.EditText;
 import www.fiberathome.com.parkingapp.R;
 
 @SuppressLint("AppCompatCustomView")
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class PinEntryEditTextNew extends EditText {
     public static final String XML_NAMESPACE_ANDROID = "http://schemas.android.com/apk/res/android";
 

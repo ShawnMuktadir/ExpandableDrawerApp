@@ -7,9 +7,11 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import java.util.Objects;
+
 import timber.log.Timber;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class KeyboardUtils {
 
     private static KeyboardUtils keyboardUtils;
@@ -24,7 +26,7 @@ public class KeyboardUtils {
 
     public void hideKeyboard(Context mContext) {
         InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(((Activity) mContext).getWindow().getCurrentFocus().getWindowToken(), 0);
+        imm.hideSoftInputFromWindow(Objects.requireNonNull(((Activity) mContext).getWindow().getCurrentFocus()).getWindowToken(), 0);
     }
 
     public void hideKeyboard(final Activity activity) {
@@ -37,14 +39,12 @@ public class KeyboardUtils {
             }
             activity.runOnUiThread(() -> {
                 try {
-                    if (activity != null) {
-                        final InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-                        final View view = activity.getCurrentFocus();
-                        if (view != null) {
-                            final IBinder binder = view.getWindowToken();
-                            imm.hideSoftInputFromWindow(binder, 0);
-                            imm.showSoftInputFromInputMethod(binder, 0);
-                        }
+                    final InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+                    final View view = activity.getCurrentFocus();
+                    if (view != null) {
+                        final IBinder binder = view.getWindowToken();
+                        imm.hideSoftInputFromWindow(binder, 0);
+                        imm.showSoftInputFromInputMethod(binder, 0);
                     }
                 } catch (final Exception e) {
                     Timber.d(e, "-> %s Exception to hide keyboard", ApplicationUtils.class.getSimpleName());

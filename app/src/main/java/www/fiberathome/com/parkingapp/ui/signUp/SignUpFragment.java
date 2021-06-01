@@ -85,7 +85,8 @@ import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
 @SuppressLint("NonConstantResourceId")
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
+
 public class SignUpFragment extends BaseFragment implements View.OnClickListener, ProgressView {
 
     public static final String TAG = SignUpActivity.class.getSimpleName();
@@ -419,6 +420,8 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(27, "Sa"));
         classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(28, "Ha"));
         classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(29, "E"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(30, "O"));
+        classDivList.add(new www.fiberathome.com.parkingapp.model.Spinner(31, "AU"));
 
         return classDivList;
     }
@@ -1020,9 +1023,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                 isLicencePlateValid = true;
             }
         } else if (radioGroup.getCheckedRadioButtonId() == R.id.radioMilitary) {
-            if (!licencePlateInfo.equalsIgnoreCase("000000"))
-                isLicencePlateValid = true;
-            else isLicencePlateValid = false;
+            isLicencePlateValid = !licencePlateInfo.equalsIgnoreCase("000000");
         } else {
             Toast.makeText(context, "Please give valid vehicle number", Toast.LENGTH_SHORT).show();
         }

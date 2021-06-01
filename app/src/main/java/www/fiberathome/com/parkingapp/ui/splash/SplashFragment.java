@@ -40,7 +40,7 @@ import static android.content.Context.LOCATION_SERVICE;
 import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
 
 @SuppressLint("NonConstantResourceId")
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class SplashFragment extends BaseFragment implements LocationListener {
 
     private static final String TAG = "SplashFragment";

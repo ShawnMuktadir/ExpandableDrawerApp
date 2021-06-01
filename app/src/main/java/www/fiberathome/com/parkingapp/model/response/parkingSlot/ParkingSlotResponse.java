@@ -7,7 +7,7 @@ import java.util.List;
 
 import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class ParkingSlotResponse extends BaseResponse {
 
     @SerializedName("sensors")
