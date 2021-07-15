@@ -495,7 +495,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     @SuppressLint("PotentialBehaviorOverride")
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(@NonNull GoogleMap googleMap) {
         Timber.e("onMapReady called");
 
         mMap = googleMap;
@@ -1072,7 +1072,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         onConnectedLocation = location;
 
-        //Timber.e("onLocationChanged: onConnectedLocation -> %s", onConnectedLocation);
         SharedData.getInstance().setOnConnectedLocation(location);
 
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
@@ -1505,7 +1504,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             searchDistance, searchPlaceCount, searchStringDuration,
                             context.getResources().getString(R.string.nearest_parking_from_your_destination),
                             BookingSensors.TEXT_INFO_TYPE, 0));
-//                    Timber.e("SensorAreaArrayListSearch ->%s", new Gson().toJson(sensorAreaArrayList));
+                    //Timber.e("SensorAreaArrayListSearch ->%s", new Gson().toJson(sensorAreaArrayList));
                     if (sensorAreaArrayList != null) {
                         for (int i = 0; i < (sensorAreaArrayList != null ? sensorAreaArrayList.size() : 0); i++) {
                             Timber.e("SensorAreaArrayListSearch ->%s", new Gson().toJson(sensorAreaArrayList.get(i)));
@@ -1902,7 +1901,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             SensorArea sensorArea = new SensorArea(parkingArea, placeId, endLat, endLng, count,
                                     fetchDistance);
 
-                            Timber.e("distanceAbdur after adjust:" + sensorArea.getDistance() + parkingArea);
+                            Timber.e("distance after adjust:" + sensorArea.getDistance() + parkingArea);
 
                             sensorAreaArrayList.add(sensorArea);
                         }

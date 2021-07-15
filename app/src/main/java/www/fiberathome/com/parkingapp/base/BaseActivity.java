@@ -81,7 +81,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
 
     private Snackbar snackbar;
 
-    private final List<Geofence> geofenceList = new ArrayList<>();
+    private final List<Geofence> geoFenceList = new ArrayList<>();
     private Geofence geoFence;
     private GeofencingClient geofencingClient;
 
@@ -121,10 +121,6 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
 
         context.registerReceiver(mNetworkDetectReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
-        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            registerReceiver(mBackgroundLocationReceiver, new IntentFilter(Manifest.permission.ACCESS_BACKGROUND_LOCATION));
-        }*/
-
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -160,10 +156,6 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         mLocationManager.removeUpdates(this);
 
         context.unregisterReceiver(mNetworkDetectReceiver);
-
-        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            context.unregisterReceiver(mBackgroundLocationReceiver);
-        } */
 
         super.onDestroy();
     }
@@ -259,15 +251,9 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
             isConnected = true;
             snackbar.dismiss();
             SnackBarUtils.getInstance().showSuccessSnackBar(context, snackbar.getView(), "Back online", "");
-            //overlay.setVisibility(View.GONE);
-            //showNoConnectionSnackBar("Connected", isConnected, 1500);
-
         } else {
             isConnected = false;
-            //showNoConnectionSnackBar("No active Internet connection found.", isConnected, 6000);
             showInternetConnectionSnackBar(context.getResources().getString(R.string.connect_to_internet), isConnected, 86400000);
-            //showInternetConnectionSnackBar(context.getResources().getString(R.string.connect_to_internet), isConnected, Snackbar.LENGTH_INDEFINITE);
-            //overlay.setVisibility(View.VISIBLE);
         }
     }
 
@@ -302,7 +288,6 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         View sbView = snackbar.getView();
         TextView tv = sbView.findViewById(com.google.android.material.R.id.snackbar_text);
         tv.setTextColor(Color.TRANSPARENT);
-        //snackbar.setBackgroundTint(ContextCompat.getColor(this, R.color.transparent_white));
         // Configure our custom view
         View overlay = snackView.findViewById(R.id.overlay);
 
@@ -318,8 +303,6 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
             // Create the Snackbar
             LinearLayout.LayoutParams objLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT);
-            //Snackbar snackbar = Snackbar.make(this.findViewById(android.R.id.content), message, Snackbar.LENGTH_INDEFINITE);
-
             // Get the Snackbar layout view
             Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
 
@@ -327,21 +310,17 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
             int navbarHeight = getNavBarHeight(this);
             FrameLayout.LayoutParams parentParams = (FrameLayout.LayoutParams) layout.getLayoutParams();
             parentParams.gravity = Gravity.TOP;
-            //parentParams.setMargins(0, 0, 0, 0 - navbarHeight + 50); //from bottom
-            //parentParams.setMargins(0, navbarHeight - 150, 0, 0); //from top
             layout.setLayoutParams(parentParams);
             layout.setPadding(0, 0, 0, 0);
             layout.setLayoutParams(parentParams);
 
             TextView messageTextView = snackView.findViewById(R.id.message_text_view);
-            //messageTextView.setTextColor(context.getResources().getColor(R.color.transparent_white));
             messageTextView.setText(message);
 
             TextView textViewOne = snackView.findViewById(R.id.first_text_view);
             textViewOne.setText(context.getResources().getString(R.string.retry));
             textViewOne.setOnClickListener(v -> {
                 Timber.d("showTwoButtonSnackbar() : allow clicked");
-                //snackbar.dismiss();
                 if (ConnectivityUtils.getInstance().checkInternet(context)) {
                     snackbar.dismiss();
                 } else {
@@ -437,8 +416,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         } else {
             sbView.setBackgroundColor(getResources().getColor(R.color.transparent_gray));
             snackbar.setAction(context.getString(R.string.retry), view -> {
-                /*Intent internetOptionsIntent = new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS);
-                startActivityForResult(internetOptionsIntent, WIFI_ENABLE_REQUEST);*/
+
                 if (ConnectivityUtils.getInstance().checkInternet(context)) {
                     return;
                 } else {
@@ -453,26 +431,6 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
 
     private void showNoInternetDialog() {
 
-        /*if (ApplicationUtils.checkInternet(context)) {
-            return;
-        } else {
-            ApplicationUtils.showAlertDialog(context.getString(R.string.connect_to_internet), context, context.getString(R.string.retry), context.getString(R.string.close_app), (dialog, which) -> {
-                Timber.e("Positive Button clicked");
-                if (ApplicationUtils.checkInternet(context)) {
-                    return;
-                } else {
-                    TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
-                }
-            }, (dialog, which) -> {
-                Timber.e("Negative Button Clicked");
-                dialog.dismiss();
-                if (context != null) {
-                    finishAffinity();
-                    TastyToastUtils.showTastySuccessToast(context, "Thanks for being with us");
-                }
-            });
-        }*/
-
         if (mInternetDialog != null && mInternetDialog.isShowing()) {
             return;
         }
@@ -480,8 +438,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         builder.setTitle("Internet Disabled!");
         builder.setMessage("No active Internet connection found.");
         builder.setPositiveButton(context.getString(R.string.retry), (dialog, which) -> {
-            /*Intent gpsOptionsIntent = new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS);
-            startActivityForResult(gpsOptionsIntent, WIFI_ENABLE_REQUEST);*/
+
             if (ConnectivityUtils.getInstance().checkInternet(context)) {
                 return;
             } else {
@@ -500,7 +457,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
 
     public void setGeoFencing(LatLng latlng) {
 
-        geofenceList.add(new Geofence.Builder()
+        geoFenceList.add(new Geofence.Builder()
                 // Set the request ID of the geofence. This is a string to identify this
                 // geofence.
                 .setRequestId(GeofenceConstants.GEOFENCE_ID)
@@ -569,7 +526,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
     private GeofencingRequest getGeoFencingRequest() {
         GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
         builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
-        builder.addGeofences(geofenceList);
+        builder.addGeofences(geoFenceList);
         return builder.build();
     }
     //geoFencing
