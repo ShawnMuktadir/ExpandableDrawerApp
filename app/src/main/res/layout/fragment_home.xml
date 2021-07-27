@@ -137,7 +137,7 @@
                         android:gravity="center"
                         android:text="@string/parking_slots"
                         android:textColor="@color/whiteColor"
-                        android:textSize="10sp"
+                        android:textSize="@dimen/_10ssp"
                         android:textStyle="normal" />
 
                 </LinearLayout>
@@ -198,7 +198,6 @@
                             android:id="@+id/textViewParkingAreaAddress"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_below="@+id/linearLayoutParkingAreaName"
                             android:layout_weight="1.5"
                             android:padding="@dimen/dim3"
                             android:text="@string/subject_to_availability"
@@ -225,7 +224,6 @@
                 android:id="@+id/linearLayoutParkingAdapterBackBottom"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dim40"
-                android:layout_alignParentBottom="true"
                 android:visibility="visible"
                 android:layout_gravity="center_vertical"
                 android:background="@android:color/white"
@@ -250,7 +248,8 @@
                     android:foreground="?attr/selectableItemBackground"
                     android:text="@string/get_direction"
                     android:textAllCaps="false"
-                    android:textColor="#fff" />
+                    android:textColor="#fff"
+                    tools:ignore="UnusedAttribute" />
             </LinearLayout>
 
         </LinearLayout>
@@ -301,7 +300,7 @@
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="2px"
+                        android:layout_height="@dimen/dim2"
                         android:background="@android:color/darker_gray" />
 
                     <TextView
@@ -312,7 +311,7 @@
                         android:gravity="center"
                         android:text="@string/parking_slots"
                         android:textColor="@color/whiteColor"
-                        android:textSize="10sp"
+                        android:textSize="@dimen/_10ssp"
                         android:textStyle="normal" />
 
                 </LinearLayout>
@@ -372,7 +371,6 @@
                             android:id="@+id/textViewSearchParkingAreaAddress"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_below="@+id/linearLayoutParkingAreaName"
                             android:layout_weight="1.5"
                             android:padding="@dimen/dim3"
                             android:text="@string/subject_to_availability"
@@ -399,7 +397,6 @@
                 android:id="@+id/linearLayoutSearchBottomButton"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dim40"
-                android:layout_alignParentBottom="true"
                 android:layout_gravity="center_vertical"
                 android:background="@android:color/white"
                 android:visibility="gone"
@@ -474,7 +471,7 @@
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="2px"
+                        android:layout_height="@dimen/dim2"
                         android:background="@android:color/darker_gray" />
 
                     <TextView
@@ -485,7 +482,7 @@
                         android:gravity="center"
                         android:text="@string/parking_slots"
                         android:textColor="@color/whiteColor"
-                        android:textSize="10sp"
+                        android:textSize="@dimen/_10ssp"
                         android:textStyle="normal" />
 
                 </LinearLayout>
@@ -545,7 +542,6 @@
                             android:id="@+id/textViewMarkerParkingAreaAddress"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_below="@+id/linearLayoutParkingAreaName"
                             android:layout_weight="1.5"
                             android:padding="@dimen/dim3"
                             android:text="@string/subject_to_availability"
@@ -572,7 +568,6 @@
                 android:id="@+id/linearLayoutMarkerBackNGetDirection"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dim40"
-                android:layout_alignParentBottom="true"
                 android:layout_gravity="center_vertical"
                 android:visibility="gone"
                 android:background="@android:color/white"
@@ -649,7 +644,7 @@
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="2px"
+                        android:layout_height="@dimen/dim2"
                         android:background="@android:color/darker_gray" />
 
                     <TextView
@@ -660,7 +655,7 @@
                         android:gravity="center"
                         android:text="@string/parking_slots"
                         android:textColor="@color/whiteColor"
-                        android:textSize="10sp"
+                        android:textSize="@dimen/_10ssp"
                         android:textStyle="normal" />
 
                 </LinearLayout>
@@ -720,7 +715,6 @@
                             android:id="@+id/textViewBottomSheetParkingAreaAddress"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_below="@+id/linearLayoutParkingAreaName"
                             android:layout_weight="1.5"
                             android:padding="@dimen/dim3"
                             android:text="@string/subject_to_availability"
@@ -747,7 +741,6 @@
                 android:id="@+id/linearLayoutBottomSheetGetDirection"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dim40"
-                android:layout_alignParentBottom="true"
                 android:layout_gravity="center_vertical"
                 android:background="@android:color/white"
                 android:orientation="horizontal"
@@ -760,7 +753,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight=".3"
                     android:padding="@dimen/dim3"
-                    app:srcCompat="@drawable/ic_back" />
+                    app:srcCompat="@drawable/ic_back"
+                    android:contentDescription="@string/app_name" />
 
                 <Button
                     android:id="@+id/btnBottomSheetGetDirection"
@@ -839,7 +833,7 @@
                         android:id="@+id/arrivedtimeTV"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
                         android:layout_margin="@dimen/dim2"
                         android:padding="@dimen/dim2"
                         android:textColor="@color/black"
@@ -861,7 +855,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/black"
-                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
                         android:layout_centerInParent="true"
                         android:layout_margin="2dp"
                         android:padding="2dp"
@@ -909,7 +903,7 @@
                     android:layout_weight="1"
                     android:background="@android:color/black"
                     android:padding="2dp"
-                    android:text="Live Parkin"
+                    android:text="Live Parking"
                     android:textColor="@android:color/white" />
             </LinearLayout>
 
@@ -925,7 +919,7 @@
                     android:layout_height="wrap_content"
                     android:text="01:25"
                     android:textColor="@android:color/black"
-                    android:textSize="30dp"
+                    android:textSize="@dimen/dimTex30"
                     android:textStyle="bold" />
 
                 <TextView
@@ -958,9 +952,8 @@
                 android:id="@+id/textViewTermsCondition"
                 android:layout_width="60dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right"
+                android:layout_gravity="end"
                 android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
                 android:layout_marginBottom="@dimen/dim2"
                 android:background="@drawable/border_style"
                 android:gravity="center"
@@ -976,7 +969,7 @@
                 android:layout_margin="4dp"
                 android:background="@drawable/button_shape"
                 android:padding="4dp"
-                android:text="Car Deprature"
+                android:text="Car Departure"
                 android:textColor="@android:color/white"
                 android:textSize="16sp" />
 
