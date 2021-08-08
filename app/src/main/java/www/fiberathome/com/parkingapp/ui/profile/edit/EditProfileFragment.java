@@ -284,7 +284,6 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                     textInputLayoutCarNumber.setError(null);
                     textInputLayoutCarNumber.setErrorEnabled(false);
                 }
-
             }
 
             @Override
@@ -305,12 +304,10 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                     textInputLayoutVehicleMilitaryFirstTwoDigit.setErrorEnabled(true);
                     textInputLayoutVehicleMilitaryFirstTwoDigit.setError(context.getString(R.string.err_msg_vehicle));
                 }
-
                 if (s.length() > 0) {
                     textInputLayoutVehicleMilitaryFirstTwoDigit.setError(null);
                     textInputLayoutVehicleMilitaryFirstTwoDigit.setErrorEnabled(false);
                 }
-
             }
 
             @Override
@@ -331,12 +328,10 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                     textInputLayoutVehicleMilitaryLastFourDigit.setErrorEnabled(true);
                     textInputLayoutVehicleMilitaryLastFourDigit.setError(context.getString(R.string.err_msg_vehicle));
                 }
-
                 if (s.length() > 0) {
                     textInputLayoutVehicleMilitaryLastFourDigit.setError(null);
                     textInputLayoutVehicleMilitaryLastFourDigit.setErrorEnabled(false);
                 }
-
             }
 
             @Override
@@ -362,7 +357,6 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
         if (resultCode == RESULT_CANCELED) {
             return;
         }
-
         if (requestCode == REQUEST_PICK_GALLERY && resultCode == RESULT_OK && data != null) {
             Uri contentURI = data.getData();
             try {
@@ -380,7 +374,6 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                 e.printStackTrace();
                 ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
-
         } else if (requestCode == REQUEST_PICK_CAMERA && resultCode == RESULT_OK && data != null) {
             try {
                 if (data.getExtras() != null) {
@@ -503,7 +496,6 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
             } else {
                 Timber.e("Image value -> %s", user.getImage());
             }
-
             if (user.getVehicleImage() != null) {
                 String url = AppConfig.IMAGES_URL + user.getVehicleImage() + ".jpg";
                 Timber.e("Vehicle Image URL -> %s", url);
@@ -517,7 +509,6 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                 Timber.e("Image URL -> %s", url);
                 Glide.with(context).load(url).placeholder(R.drawable.ic_account_settings).dontAnimate().into(imageViewEditProfileImage);
             } else {
-                //ToastUtils.getInstance().showErrorToast(context, "Image value " + user.getImage(), Toast.LENGTH_SHORT);
                 Timber.e("Image value -> %s", user.getImage());
             }
 
@@ -526,7 +517,6 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                 Timber.e("Vehicle Image URL -> %s", url);
                 Glide.with(context).load(url).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(ivVehicleEditPlatePreview);
             } else {
-                //ToastUtils.getInstance().showErrorToast(context, "Image value " + user.getImage(), Toast.LENGTH_SHORT);
                 Timber.e("Vehicle Image value -> %s", user.getVehicleImage());
             }
         }
@@ -542,15 +532,13 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
         }
     }
 
-    private UniversalSpinnerAdapter vehicleClassAdapter;
     private List<www.fiberathome.com.parkingapp.model.Spinner> classDataList;
     private List<www.fiberathome.com.parkingapp.model.Spinner> classDivList;
 
     private void setVehicleClassCategory() {
-        vehicleClassAdapter =
-                new UniversalSpinnerAdapter(context,
-                        android.R.layout.simple_spinner_item,
-                        populateVehicleClassData());
+        UniversalSpinnerAdapter vehicleClassAdapter = new UniversalSpinnerAdapter(context,
+                android.R.layout.simple_spinner_item,
+                populateVehicleClassData());
 
         classSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -644,13 +632,10 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
         return classDataList;
     }
 
-    private UniversalSpinnerAdapter vehicleDivAdapter;
-
     private void setVehicleDivCategory() {
-        vehicleDivAdapter =
-                new UniversalSpinnerAdapter(context,
-                        android.R.layout.simple_spinner_item,
-                        populateVehicleDivData());
+        UniversalSpinnerAdapter vehicleDivAdapter = new UniversalSpinnerAdapter(context,
+                android.R.layout.simple_spinner_item,
+                populateVehicleDivData());
 
         divSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
