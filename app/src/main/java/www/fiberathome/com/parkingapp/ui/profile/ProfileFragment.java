@@ -60,8 +60,6 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
 
     private Unbinder unbinder;
 
-    private User user;
-
     private ProfileActivity context;
 
     public ProfileFragment() {
@@ -100,7 +98,7 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
     @Override
     public void onStart() {
         super.onStart();
-        user = Preferences.getInstance(context).getUser();
+        User user = Preferences.getInstance(context).getUser();
         setData(user);
     }
 

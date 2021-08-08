@@ -64,6 +64,7 @@ import www.fiberathome.com.parkingapp.model.response.login.LoginResponse;
 import www.fiberathome.com.parkingapp.model.user.User;
 import www.fiberathome.com.parkingapp.ui.helper.ProgressView;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
+import www.fiberathome.com.parkingapp.ui.profile.ProfileActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DateTimeUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
@@ -825,7 +826,8 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                         // storing the user in sharedPreference
                         Preferences.getInstance(context).userLogin(user);
                         Timber.e("user after update -> %s", new Gson().toJson(user));
-
+                        startActivityWithFinishAffinity(context, ProfileActivity.class);
+                        Toast.makeText(context, response.message(), Toast.LENGTH_SHORT).show();
                     } else {
                         Timber.e("jsonObject else called");
                         ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());

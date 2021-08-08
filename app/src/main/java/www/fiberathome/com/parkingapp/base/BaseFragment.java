@@ -2,6 +2,7 @@ package www.fiberathome.com.parkingapp.base;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 
 import androidx.fragment.app.Fragment;
 
@@ -37,5 +38,22 @@ public class BaseFragment extends Fragment {
             progressDialog = null;
             Timber.e("progressDialog finally block called");
         }
+    }
+
+    @SuppressWarnings("rawtypes")
+    public void startActivity(BaseActivity context, Class activityClass) {
+        startActivity(new Intent(context, activityClass));
+    }
+
+    @SuppressWarnings("rawtypes")
+    public void startActivityWithFinish(BaseActivity context, Class activityClass) {
+        startActivity(new Intent(context, activityClass));
+        context.finish();
+    }
+
+    @SuppressWarnings("rawtypes")
+    public void startActivityWithFinishAffinity(BaseActivity context, Class activityClass) {
+        startActivity(new Intent(context, activityClass));
+        context.finishAffinity();
     }
 }
