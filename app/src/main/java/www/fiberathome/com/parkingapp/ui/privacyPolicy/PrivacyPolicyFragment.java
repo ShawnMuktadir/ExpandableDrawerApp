@@ -180,11 +180,9 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
                         termsConditionTemp.setTitle(array2.getString(6).trim());
                         termsConditionTemp.setDescription(array2.getString(2).trim());
                     }
-
                     termsConditionsGlobal.add(termsCondition);
                     Timber.e("termsConditions -> %s", new Gson().toJson(termsConditionsGlobal));
                 }
-
                 setTermsConditions(termsConditionsGlobal);
             } catch (JSONException e) {
                 e.printStackTrace();

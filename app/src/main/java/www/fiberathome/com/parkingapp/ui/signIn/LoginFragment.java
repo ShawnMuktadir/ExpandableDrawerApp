@@ -234,7 +234,6 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                 Intent otpIntent = new Intent(context, VerifyPhoneActivity.class);
                 startActivity(otpIntent);
                 break;
-
         }
     }
 
@@ -248,7 +247,6 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
 
     @Override
     public void showProgress() {
-        //progressBarLogin.setVisibility(View.VISIBLE);
         relativeLayoutInvisible.setVisibility(View.VISIBLE);
         editTextMobile.setEnabled(false);
         editTextPassword.setEnabled(false);
@@ -258,7 +256,6 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
 
     @Override
     public void hideProgress() {
-        //progressBarLogin.setVisibility(View.INVISIBLE);
         relativeLayoutInvisible.setVisibility(View.GONE);
         editTextMobile.setEnabled(true);
         editTextPassword.setEnabled(true);
@@ -350,9 +347,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                     textInputLayoutPassword.setError(null);
                     textInputLayoutPassword.setErrorEnabled(false);
                 }
-
             }
-
             @Override
             public void afterTextChanged(Editable s) {
 

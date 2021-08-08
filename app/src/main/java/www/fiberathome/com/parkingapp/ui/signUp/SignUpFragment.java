@@ -260,15 +260,13 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         ivVehiclePlatePreview.setOnClickListener(this);
     }
 
-    private UniversalSpinnerAdapter vehicleClassAdapter;
     private List<www.fiberathome.com.parkingapp.model.Spinner> classDataList;
     private List<www.fiberathome.com.parkingapp.model.Spinner> classDivList;
 
     private void setVehicleClassCategory() {
-        vehicleClassAdapter =
-                new UniversalSpinnerAdapter(context,
-                        android.R.layout.simple_spinner_item,
-                        populateVehicleClassData());
+        UniversalSpinnerAdapter vehicleClassAdapter = new UniversalSpinnerAdapter(context,
+                android.R.layout.simple_spinner_item,
+                populateVehicleClassData());
 
         classSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -361,13 +359,10 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         return classDataList;
     }
 
-    private UniversalSpinnerAdapter vehicleDivAdapter;
-
     private void setVehicleDivCategory() {
-        vehicleDivAdapter =
-                new UniversalSpinnerAdapter(context,
-                        android.R.layout.simple_spinner_item,
-                        populateVehicleDivData());
+        UniversalSpinnerAdapter vehicleDivAdapter = new UniversalSpinnerAdapter(context,
+                android.R.layout.simple_spinner_item,
+                populateVehicleDivData());
 
         divSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -893,7 +888,6 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     private String licencePlateInfo = " ";
 
     private void submitRegistration() {
-
         if (checkFields()) {
             String fullName = editTextFullName.getText().toString().trim();
             String mobileNo = editTextMobileNumber.getText().toString().trim();
@@ -924,8 +918,6 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             } else if (radioGroup.getCheckedRadioButtonId() == R.id.radioMilitary) {
                 licencePlateInfo = editTextVehicleRegNumberMilitaryFirstTwoDigit.getText().toString().trim() +
                         editTextVehicleRegNumberMilitaryLastFourDigit.getText().toString().trim();
-
-
                 if (bitmap != null && bitmap2 != null) {
                     registerUser(fullName, password, mobileNo, licencePlateInfo);
                 } else if (bitmap2 == null) {
@@ -933,7 +925,6 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                 } else {
                     TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.upload_profile_photo));
                 }
-
             }
         } else {
             Toast.makeText(context, "Please provide valid information", Toast.LENGTH_SHORT).show();
@@ -973,7 +964,6 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                         intent.putExtra("password", password);
                         startActivity(intent);
                         SharedData.getInstance().setPassword(password);
-
                     } else {
                         Timber.e("jsonObject else called");
                         if (response.body().getMessage().equalsIgnoreCase("Sorry! mobile number is not valid or missing mate")) {
@@ -986,7 +976,6 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                     ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                 }
             }
-
             @Override
             public void onFailure(@NonNull Call<BaseResponse> call, @NonNull Throwable errors) {
                 Timber.e("Throwable Errors: -> %s", errors.toString());
