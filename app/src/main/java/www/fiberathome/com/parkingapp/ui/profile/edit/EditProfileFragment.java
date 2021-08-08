@@ -64,7 +64,6 @@ import www.fiberathome.com.parkingapp.model.response.login.LoginResponse;
 import www.fiberathome.com.parkingapp.model.user.User;
 import www.fiberathome.com.parkingapp.ui.helper.ProgressView;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
-import www.fiberathome.com.parkingapp.ui.profile.ProfileActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DateTimeUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
@@ -376,20 +375,15 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                     Bitmap convertedImage = getResizedBitmap(bitmap2, 500);
                     ivVehicleEditPlatePreview.setImageBitmap(convertedImage);
                 }
-
                 //Toast.makeText(SignUpActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
-
-
             } catch (IOException e) {
                 e.printStackTrace();
                 ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
 
         } else if (requestCode == REQUEST_PICK_CAMERA && resultCode == RESULT_OK && data != null) {
-
             try {
                 if (data.getExtras() != null) {
-
                     if (!vehicleImage) {
                         bitmap = (Bitmap) data.getExtras().get("data");
                         imageViewEditProfileImage.setImageBitmap(bitmap);
@@ -790,7 +784,6 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                 vehicleNo,
                 bitmap != null ? imageToString(bitmap) :
                         imageToString(((BitmapDrawable) imageViewEditProfileImage.getDrawable()).getBitmap()),
-                //imageToString(ImageUtils.getInstance().imageUrlToBitmap(AppConfig.IMAGES_URL + user.getImage() + ".jpg")),
                 mobileNo + "_" + DateTimeUtils.getInstance().getCurrentTimeStamp(),
                 bitmap2 != null ? imageToString(bitmap2) :
                         imageToString(((BitmapDrawable) ivVehicleEditPlatePreview.getDrawable()).getBitmap()),
@@ -807,33 +800,31 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                 try {
                     Timber.e("Response -> %s", new Gson().toJson(response.body()));
                     Timber.e("ResponseCall -> %s", new Gson().toJson(call.request().body()));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                    if (response.body() != null) {
+                        if (!response.body().getError()) {
+                            ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
 
-                if (response.body() != null) {
-                    if (!response.body().getError()) {
-                        ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
+                            User user = new User();
+                            user.setId(Preferences.getInstance(context).getUser().getId());
+                            user.setFullName(response.body().getUser().getFullName());
+                            user.setMobileNo(response.body().getUser().getMobileNo());
+                            user.setVehicleNo(response.body().getUser().getVehicleNo());
+                            user.setImage(response.body().getUser().getImage());
+                            user.setVehicleImage(response.body().getUser().getVehicleImage());
 
-                        User user = new User();
-                        user.setId(Preferences.getInstance(context).getUser().getId());
-                        user.setFullName(response.body().getUser().getFullName());
-                        user.setMobileNo(response.body().getUser().getMobileNo());
-                        user.setVehicleNo(response.body().getUser().getVehicleNo());
-                        user.setImage(response.body().getUser().getImage());
-                        user.setVehicleImage(response.body().getUser().getVehicleImage());
-
-                        // storing the user in sharedPreference
-                        Preferences.getInstance(context).userLogin(user);
-                        Timber.e("user after update -> %s", new Gson().toJson(user));
-                        startActivityWithFinishAffinity(context, ProfileActivity.class);
-                        Toast.makeText(context, response.message(), Toast.LENGTH_SHORT).show();
+                            // storing the user in sharedPreference
+                            Preferences.getInstance(context).userLogin(user);
+                            Timber.e("user after update -> %s", new Gson().toJson(user));
+                            Toast.makeText(context, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                        } else {
+                            Timber.e("jsonObject else called");
+                            ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
+                        }
                     } else {
-                        Timber.e("jsonObject else called");
                         ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                     }
-                } else {
-                    ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
 
