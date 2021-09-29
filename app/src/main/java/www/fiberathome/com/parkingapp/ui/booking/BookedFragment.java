@@ -3,7 +3,6 @@ package www.fiberathome.com.parkingapp.ui.booking;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,13 +19,11 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class BookedFragment extends Fragment {
     private final String TAG = getClass().getSimpleName();
     private long arrived, departure;
@@ -66,14 +63,13 @@ public class BookedFragment extends Fragment {
         departure = getArguments().getLong("departure", 0);
         difference = departure - arrived;
 
-        Log.d(TAG, "onCreateView: " + arrived + "    " + departure);
-        Log.d(TAG, "onCreateView: difference:" + difference);
+        Timber.d("onCreateView: " + arrived + "    " + departure);
+        Timber.d("onCreateView: difference:%s", difference);
        /* String arrivedDate=getDate(arrived);
         String departureDate=getDate(departure);
 
         timeElavation.setText("Arrived "+arrivedDate+"-"+departureDate+" Departure");
-        timeDifference.setText(getDate(difference));
-*/
+        timeDifference.setText(getDate(difference));*/
         return view;
     }
 
@@ -86,41 +82,21 @@ public class BookedFragment extends Fragment {
         departuretimeTV.setText("Departure " + getDate(departure));
         timeDifferenceTV.setText(getTimeDifference(difference) + " min");
 
-        moreBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ScheduleFragment scheduleFragment = new ScheduleFragment();
-                Bundle bundle = new Bundle();
-                bundle.putBoolean("m", true);
-                bundle.putLong("a", arrived);
-                bundle.putLong("d", departure);
-                scheduleFragment.setArguments(bundle);
-                listener.fragmentChange(scheduleFragment);
-            }
+        moreBtn.setOnClickListener(v -> {
+            ScheduleFragment scheduleFragment = new ScheduleFragment();
+            Bundle bundle = new Bundle();
+            bundle.putBoolean("m", true);
+            bundle.putLong("a", arrived);
+            bundle.putLong("d", departure);
+            scheduleFragment.setArguments(bundle);
+            listener.fragmentChange(scheduleFragment);
         });
 
-        btnCarDeparture.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(context, "Car Departure Coming Soon!!!", Toast.LENGTH_SHORT).show();
-            }
-        });
+        btnCarDeparture.setOnClickListener(v -> Toast.makeText(context, "Car Departure Coming Soon!!!", Toast.LENGTH_SHORT).show());
 
-        liveParkingBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(context, "Live Parking Coming Soon!!!", Toast.LENGTH_SHORT).show();
-            }
-        });
+        liveParkingBtn.setOnClickListener(v -> Toast.makeText(context, "Live Parking Coming Soon!!!", Toast.LENGTH_SHORT).show());
 
-        textViewTermsCondition.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(context, "T&C Coming Soon!!!", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-
+        textViewTermsCondition.setOnClickListener(v -> Toast.makeText(context, "T&C Coming Soon!!!", Toast.LENGTH_SHORT).show());
     }
 
     @SuppressLint("DefaultLocale")

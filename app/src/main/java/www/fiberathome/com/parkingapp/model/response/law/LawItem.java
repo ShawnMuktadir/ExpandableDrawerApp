@@ -8,5 +8,4 @@ public class LawItem extends ExpandableGroup<Law> {
     public LawItem(String title, List<Law> items) {
         super(title, items);
     }
-
 }

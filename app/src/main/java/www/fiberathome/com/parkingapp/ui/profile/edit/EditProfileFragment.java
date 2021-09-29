@@ -801,6 +801,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                             Preferences.getInstance(context).userLogin(user);
                             Timber.e("user after update -> %s", new Gson().toJson(user));
                             Toast.makeText(context, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                            context.onBackPressed();
                         } else {
                             Timber.e("jsonObject else called");
                             ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
