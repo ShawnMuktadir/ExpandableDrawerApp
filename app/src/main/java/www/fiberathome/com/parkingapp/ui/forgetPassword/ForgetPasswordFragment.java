@@ -221,7 +221,7 @@ public class ForgetPasswordFragment extends BaseFragment {
                 hideLoading();
 
                 if (response.body() != null) {
-                    if (!response.body().getError()) {
+                    if (response.body().getError()) {
                         ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                     } else {
                         if (response.body().getMessage().equalsIgnoreCase("Try Again! Invalid Mobile Number.")) {
@@ -229,7 +229,7 @@ public class ForgetPasswordFragment extends BaseFragment {
                                     context.getResources().getString(R.string.mobile_number_not_exist));
                         } else {
                             ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
-                            if (response.body().getError()) {
+                            if (!response.body().getError()) {
 
                                 ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
 
