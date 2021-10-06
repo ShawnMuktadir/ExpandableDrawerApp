@@ -46,6 +46,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -179,15 +180,14 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
     private Unbinder unbinder;
 
-    private Bitmap bitmap;
-
     private SignUpActivity context;
 
     private String vehicleClass = "";
     private String vehicleDiv = "";
     private long classId, cityId;
+    private Bitmap profileBitmap;
+    private Bitmap vehicleBitmap;
     private boolean vehicleImage = false;
-    private Bitmap bitmap2;
 
     public SignUpFragment() {
         // Required empty public constructor
@@ -494,12 +494,12 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             Uri contentURI = data.getData();
             try {
                 if (!vehicleImage) {
-                    bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), contentURI);
-                    Bitmap convertedImage = getResizedBitmap(bitmap, 500);
+                    profileBitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), contentURI);
+                    Bitmap convertedImage = getResizedBitmap(profileBitmap, 500);
                     imageViewUploadProfileImage.setImageBitmap(convertedImage);
                 } else {
-                    bitmap2 = MediaStore.Images.Media.getBitmap(context.getContentResolver(), contentURI);
-                    Bitmap convertedImage = getResizedBitmap(bitmap2, 500);
+                    vehicleBitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), contentURI);
+                    Bitmap convertedImage = getResizedBitmap(vehicleBitmap, 500);
                     ivVehiclePlatePreview.setImageBitmap(convertedImage);
                 }
 
@@ -517,11 +517,11 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                 if (data.getExtras() != null) {
 
                     if (!vehicleImage) {
-                        bitmap = (Bitmap) data.getExtras().get("data");
-                        imageViewUploadProfileImage.setImageBitmap(bitmap);
+                        profileBitmap = (Bitmap) data.getExtras().get("data");
+                        imageViewUploadProfileImage.setImageBitmap(profileBitmap);
                     } else {
-                        bitmap2 = (Bitmap) data.getExtras().get("data");
-                        ivVehiclePlatePreview.setImageBitmap(bitmap2);
+                        vehicleBitmap = (Bitmap) data.getExtras().get("data");
+                        ivVehiclePlatePreview.setImageBitmap(vehicleBitmap);
                     }
                 }
                 /*saveImage(thumbnail);
@@ -907,9 +907,9 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                         (vehicleDiv.equalsIgnoreCase("Ma") && vehicleClass.equalsIgnoreCase("Narayanganj") && vehicleNoInt < 51)) {
                     Toast.makeText(context, "Invalid vehicle number", Toast.LENGTH_SHORT).show();
                 } else {
-                    if (bitmap != null && bitmap2 != null) {
+                    if (profileBitmap != null && vehicleBitmap != null) {
                         registerUser(fullName, password, mobileNo, licencePlateInfo);
-                    } else if (bitmap2 == null) {
+                    } else if (vehicleBitmap == null) {
                         TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.upload_vehicle_pic));
                     } else {
                         TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.upload_profile_photo));
@@ -918,9 +918,9 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             } else if (radioGroup.getCheckedRadioButtonId() == R.id.radioMilitary) {
                 licencePlateInfo = editTextVehicleRegNumberMilitaryFirstTwoDigit.getText().toString().trim() +
                         editTextVehicleRegNumberMilitaryLastFourDigit.getText().toString().trim();
-                if (bitmap != null && bitmap2 != null) {
+                if (profileBitmap != null && vehicleBitmap != null) {
                     registerUser(fullName, password, mobileNo, licencePlateInfo);
-                } else if (bitmap2 == null) {
+                } else if (vehicleBitmap == null) {
                     TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.upload_vehicle_pic));
                 } else {
                     TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.upload_profile_photo));
@@ -939,26 +939,23 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
         ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
         Call<BaseResponse> call = service.createUser(fullName, password, mobileNo, vehicleNo,
-                imageToString(bitmap),
+                imageToString(profileBitmap),
                 mobileNo + "_" + DateTimeUtils.getInstance().getCurrentTimeStamp(),
-                imageToString(bitmap2),
+                imageToString(vehicleBitmap),
                 mobileNo + "vehicle_" + DateTimeUtils.getInstance().getCurrentTimeStamp());
 
         call.enqueue(new Callback<BaseResponse>() {
             @Override
             public void onResponse(@NonNull Call<BaseResponse> call, @NonNull Response<BaseResponse> response) {
-
                 Timber.e("registration response body-> %s", new Gson().toJson(response.body()));
-
                 hideLoading();
-
                 hideProgress();
 
                 if (response.body() != null) {
                     if (!response.body().getError()) {
+                        Timber.e("Success ->%s", new Gson().toJson(response.body()));
                         ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
-
-                        // Moving the screen to next pager item i.e otp screen
+                        // Moving the screen to next page i.e otp screen
                         Intent intent = new Intent(context, VerifyPhoneActivity.class);
                         intent.putExtra("mobile_no", mobileNo);
                         intent.putExtra("password", password);
@@ -966,20 +963,46 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                         SharedData.getInstance().setPassword(password);
                     } else {
                         Timber.e("jsonObject else called");
-                        if (response.body().getMessage().equalsIgnoreCase("Sorry! mobile number is not valid or missing mate")) {
+                        ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
+                        Timber.e("Error ->%s", new Gson().toJson(response.body()));
+                        /*if (response.body().getMessage().equalsIgnoreCase("Sorry! mobile number is not valid or missing mate")) {
                             ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
                         } else if (!response.body().getMessage().equalsIgnoreCase("Sorry! mobile number is not valid or missing mate")) {
                             ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
-                        }
+                        }*/
                     }
                 } else {
                     ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                 }
             }
+
             @Override
             public void onFailure(@NonNull Call<BaseResponse> call, @NonNull Throwable errors) {
                 Timber.e("Throwable Errors: -> %s", errors.toString());
                 ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+                if (errors instanceof SocketTimeoutException)
+                {
+                    // "Connection Timeout";
+                    Timber.e("Throwable Errors: -> %s", errors.toString());
+                }
+                else if (errors instanceof IOException)
+                {
+                    // "Timeout";
+                    Timber.e("Throwable Errors: -> %s", errors.toString());
+                }
+                else
+                {
+                    //Call was cancelled by user
+                    if(call.isCanceled())
+                    {
+                        Timber.e("Call was cancelled forcefully");
+                    }
+                    else
+                    {
+                        //Generic error handling
+                        Timber.e("Network Error :: -> %s", errors.getLocalizedMessage());
+                    }
+                }
                 hideLoading();
                 hideProgress();
             }
