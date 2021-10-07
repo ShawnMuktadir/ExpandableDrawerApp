@@ -499,5 +499,6 @@
     <string name="last_four_digit">Last four digit</string>
     <string name="army_vehicle_arrow">^</string>
     <string name="error_occured_reg">দুঃখিত!নিবন্ধনে ত্রুটি ঘটেছে।</string>
+    <string name="park_message">একবার আপনি আপনার গন্তব্যে পৌঁছে গেলে, আপনি আপনার গাড়িটি পার্কিং স্লটে পার্ক করতে পারবেন</string>
 </resources>
 

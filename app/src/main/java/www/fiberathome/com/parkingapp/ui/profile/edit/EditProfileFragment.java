@@ -798,7 +798,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                             user.setVehicleImage(response.body().getUser().getVehicleImage());
 
                             // storing the user in sharedPreference
-                            Preferences.getInstance(context).userLogin(user);
+                            Preferences.getInstance(context).setUser(user);
                             Timber.e("user after update -> %s", new Gson().toJson(user));
                             Toast.makeText(context, response.body().getMessage(), Toast.LENGTH_SHORT).show();
                             context.onBackPressed();

@@ -55,6 +55,7 @@ import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
+import www.fiberathome.com.parkingapp.model.BookedPlace;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.booking.Reservation;
@@ -128,6 +129,9 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
     public DialogHelper.PayBtnClickListener payBtnClickListener;
     private String markerUid = "";
     public long arrived, departure, difference;
+    private double lat;
+    private double lon;
+    private String route;
 
     public ScheduleFragment() {
         // Required empty public constructor
@@ -189,6 +193,9 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
 
         if (getArguments() != null) {
             markerUid = getArguments().getString("markerUid");
+            lat = getArguments().getDouble("lat");
+            lon = getArguments().getDouble("long");
+            route = getArguments().getString("route");
             Timber.e("markerUid -> %s", markerUid);
         }
         arrivedPicker.setIsAmPm(true);
@@ -448,8 +455,16 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                     reservation.setTimeStart(reservationJson.getString("time_start"));
                     reservation.setTimeEnd(reservationJson.getString("time_end"));
                     reservation.setSpotId(reservationJson.getString("spot_id"));*/
+
+                    BookedPlace bookedPlace= new BookedPlace();
+                    bookedPlace.setBookedUid(markerUid);
+                    bookedPlace.setLat(lat);
+                    bookedPlace.setLon(lon);
+                    bookedPlace.setRoute(route);
+
+                    Preferences.getInstance(context).setBooked(bookedPlace);
                     if (isGPSEnabled()) {
-                        ApplicationUtils.replaceFragmentWithAnimation(getParentFragmentManager(), HomeFragment.newInstance());
+                        ApplicationUtils.replaceFragmentWithAnimation(getParentFragmentManager(), HomeFragment.newInstance(bookedPlace));
                     } else {
                         TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
                     }

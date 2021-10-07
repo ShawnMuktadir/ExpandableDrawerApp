@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import www.fiberathome.com.parkingapp.model.BookedPlace;
 import www.fiberathome.com.parkingapp.model.data.Constants;
 import www.fiberathome.com.parkingapp.model.user.User;
 
@@ -47,7 +48,7 @@ public class Preferences {
         return instance;
     }
 
-    public void userLogin(User user) {
+    public void setUser(User user) {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -58,6 +59,38 @@ public class Preferences {
         editor.putString(KEY_PROFILE_PIC, user.getImage());
         editor.putString(KEY_VEHICLE_PIC, user.getVehicleImage());
         editor.apply();
+    }
+    public User getUser() {
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        User user = new User();
+        user.setId(sharedPreferences.getInt(KEY_ID, -1));
+        user.setFullName(sharedPreferences.getString(KEY_FULLNAME, null));
+        user.setMobileNo(sharedPreferences.getString(KEY_MOBILE_NO, null));
+        user.setVehicleNo(sharedPreferences.getString(KEY_VEHICLE_NO, null));
+        user.setImage(sharedPreferences.getString(KEY_PROFILE_PIC, null));
+        user.setVehicleImage(sharedPreferences.getString(KEY_VEHICLE_PIC, null));
+
+        return user;
+    }
+    public void setBooked(BookedPlace booked) {
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putString("uid", booked.getBookedUid());
+        editor.putLong("lat", (long) booked.getLat());
+        editor.putLong("lon", (long) booked.getLon());
+        editor.putString("route", booked.getRoute());
+        editor.apply();
+    }
+    public BookedPlace getBooked() {
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        BookedPlace bookedPlace = new BookedPlace();
+        bookedPlace.setBookedUid(sharedPreferences.getString("uid", ""));
+        bookedPlace.setRoute(sharedPreferences.getString("route", ""));
+        bookedPlace.setLat(sharedPreferences.getLong("lat", 0));
+        bookedPlace.setLon(sharedPreferences.getLong("lon", 0));
+
+        return bookedPlace;
     }
 
     // String IO
@@ -91,6 +124,13 @@ public class Preferences {
 
     public void saveVehicleDivData(String vehicleDivData) {
         saveValue(Constants.KEY_VEHICLE_DIV_DATA, vehicleDivData);
+    }
+   public String getBookedParkingData() {
+        return getValue(Constants.KEY_Booked_Parking_DATA, null);
+    }
+
+    public void setBookedParkingData(String value) {
+        saveValue(Constants.KEY_Booked_Parking_DATA, value);
     }
 
     public void setRadioButtonVehicleFormat(String key, boolean radioButtonValue) {
@@ -130,18 +170,7 @@ public class Preferences {
         return sharedPreferences.getString(KEY_MOBILE_NO, null) != null;
     }
 
-    public User getUser() {
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
-        User user = new User();
-        user.setId(sharedPreferences.getInt(KEY_ID, -1));
-        user.setFullName(sharedPreferences.getString(KEY_FULLNAME, null));
-        user.setMobileNo(sharedPreferences.getString(KEY_MOBILE_NO, null));
-        user.setVehicleNo(sharedPreferences.getString(KEY_VEHICLE_NO, null));
-        user.setImage(sharedPreferences.getString(KEY_PROFILE_PIC, null));
-        user.setVehicleImage(sharedPreferences.getString(KEY_VEHICLE_PIC, null));
 
-        return user;
-    }
 
     public void logout() {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);

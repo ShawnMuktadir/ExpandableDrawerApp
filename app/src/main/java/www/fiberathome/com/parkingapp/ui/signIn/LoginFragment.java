@@ -404,7 +404,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                         user.setImage(response.body().getUser().getImage());
 
                         // storing the user in sharedPreference
-                        Preferences.getInstance(context).userLogin(user);
+                        Preferences.getInstance(context).setUser(user);
 
                         try {
                             String currentString = user.getVehicleNo().trim();

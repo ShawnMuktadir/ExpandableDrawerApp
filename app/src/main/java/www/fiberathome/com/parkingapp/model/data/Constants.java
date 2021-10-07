@@ -11,4 +11,5 @@ public class Constants {
     public static final String LANGUAGE_BN = "bn";
     public static final String KEY_VEHICLE_CLASS_DATA = "vehicle_class_data";
     public static final String KEY_VEHICLE_DIV_DATA = "vehicle_div_data";
+    public static final String KEY_Booked_Parking_DATA ="KEY_Booked_Parking_DATA" ;
 }

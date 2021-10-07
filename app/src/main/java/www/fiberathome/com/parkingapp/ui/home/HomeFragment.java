@@ -1,5 +1,14 @@
 package www.fiberathome.com.parkingapp.ui.home;
 
+import static android.app.Activity.RESULT_OK;
+import static android.content.Context.LOCATION_SERVICE;
+import static www.fiberathome.com.parkingapp.model.response.searchHistory.SearchConstants.FIRST_TIME_INSTALLED;
+import static www.fiberathome.com.parkingapp.model.response.searchHistory.SearchConstants.HISTORY_PLACE_SELECTED;
+import static www.fiberathome.com.parkingapp.model.response.searchHistory.SearchConstants.NEW_PLACE_SELECTED;
+import static www.fiberathome.com.parkingapp.model.response.searchHistory.SearchConstants.NEW_SEARCH_ACTIVITY_REQUEST_CODE;
+import static www.fiberathome.com.parkingapp.utils.GoogleMapHelper.defaultMapSettings;
+import static www.fiberathome.com.parkingapp.utils.GoogleMapHelper.getDefaultPolyLines;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -92,6 +101,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.google.maps.android.PolyUtil;
 
 import org.greenrobot.eventbus.EventBus;
@@ -103,6 +113,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
@@ -125,6 +136,7 @@ import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
+import www.fiberathome.com.parkingapp.model.BookedPlace;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
@@ -167,15 +179,6 @@ import www.fiberathome.com.parkingapp.utils.TextUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 import www.fiberathome.com.parkingapp.utils.ViewUtils;
 
-import static android.app.Activity.RESULT_OK;
-import static android.content.Context.LOCATION_SERVICE;
-import static www.fiberathome.com.parkingapp.model.response.searchHistory.SearchConstants.FIRST_TIME_INSTALLED;
-import static www.fiberathome.com.parkingapp.model.response.searchHistory.SearchConstants.HISTORY_PLACE_SELECTED;
-import static www.fiberathome.com.parkingapp.model.response.searchHistory.SearchConstants.NEW_PLACE_SELECTED;
-import static www.fiberathome.com.parkingapp.model.response.searchHistory.SearchConstants.NEW_SEARCH_ACTIVITY_REQUEST_CODE;
-import static www.fiberathome.com.parkingapp.utils.GoogleMapHelper.defaultMapSettings;
-import static www.fiberathome.com.parkingapp.utils.GoogleMapHelper.getDefaultPolyLines;
-
 @SuppressLint("NonConstantResourceId")
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class HomeFragment extends BaseFragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
@@ -187,6 +190,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         GoogleMap.OnCameraMoveCanceledListener,
         GoogleMap.OnCameraIdleListener {
 
+    private static boolean isBooked = false;
+    private static String bookedUid;
+    private static BookedPlace bookedPlace;
     private final String TAG = getClass().getSimpleName();
 
     public static final int GPS_REQUEST_CODE = 9003;
@@ -462,6 +468,12 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         return fragment;
     }
 
+    public static HomeFragment newInstance(BookedPlace mBookedPlace) {
+        isBooked = true;
+        bookedPlace = mBookedPlace;
+        return new HomeFragment();
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         Timber.e("onCreate called");
@@ -605,10 +617,18 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         unbinder = ButterKnife.bind(this, view);
 
+
         if (isAdded()) {
 
             initUI(view);
 
+            if (isBooked) {
+                linearLayoutBottom.setVisibility(View.VISIBLE);
+                imageViewBack.setVisibility(View.VISIBLE);
+                btnGetDirection.setText("Park");
+                btnGetDirection.setVisibility(View.VISIBLE);
+
+            }
             bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
             bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._92sdp));
             bottomSheetBehavior.setHideable(false);
@@ -1204,6 +1224,17 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     }
                 }
             }
+        } else if (isBooked) {
+            Gson gson = new Gson();
+            String json = bookedPlace.getRoute();
+            Type type = new TypeToken<List<LatLng>>() {
+            }.getType();
+            if (json != null && json.length() > 1) {
+                polyline = mMap.addPolyline(getDefaultPolyLines(gson.fromJson(json, type)));
+                isRouteDrawn = 1;
+                getDirectionPinMarkerDraw(new LatLng(bookedPlace.getLat(), bookedPlace.getLon()), bookedPlace.getBookedUid());
+            }
+
         }
     }
 
@@ -3514,55 +3545,75 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                 isRouteDrawn = 1;
 
-                if (getDirectionButtonClicked == 0) {
+                if (isBooked) {
+                    if (isInAreaEnabled) {
+                        //TODO park
 
-                    getDirectionButtonClicked++;
+                    }
+                   else{
+                       DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.park_message), context);
+                    }
 
-                    if (adapterPlaceLatLng != null) {
-                        EventBus.getDefault().post(new GetDirectionAfterButtonClickEvent(adapterPlaceLatLng));
-                        setCircleOnLocation(adapterPlaceLatLng);
+                } else {
+                    if (getDirectionButtonClicked == 0) {
 
-                        buttonSearch.setVisibility(View.GONE);
+                        getDirectionButtonClicked++;
 
-                        linearLayoutBottom.setVisibility(View.VISIBLE);
-                        linearLayoutSearchBottom.setVisibility(View.GONE);
-                        linearLayoutMarkerBottom.setVisibility(View.GONE);
-                        imageViewBack.setVisibility(View.VISIBLE);
+                        if (adapterPlaceLatLng != null) {
+                            EventBus.getDefault().post(new GetDirectionAfterButtonClickEvent(adapterPlaceLatLng));
+                            setCircleOnLocation(adapterPlaceLatLng);
 
-                        btnGetDirection.setText(context.getString(R.string.confirm_booking));
-                        btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
-                        btnGetDirection.setEnabled(true);
-                        btnGetDirection.setFocusable(true);
+                            buttonSearch.setVisibility(View.GONE);
 
-                        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                            linearLayoutBottom.setVisibility(View.VISIBLE);
+                            linearLayoutSearchBottom.setVisibility(View.GONE);
+                            linearLayoutMarkerBottom.setVisibility(View.GONE);
+                            imageViewBack.setVisibility(View.VISIBLE);
 
-                        if (isInAreaEnabled) {
-                            btnGetDirection.setEnabled(true);
-                            btnGetDirection.setFocusable(true);
+                            btnGetDirection.setText(context.getString(R.string.confirm_booking));
                             btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
-                            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.you_can_book_parking_slot));
-                        } else {
                             btnGetDirection.setEnabled(true);
                             btnGetDirection.setFocusable(true);
-                            btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
+
+                            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+//                        if (isInAreaEnabled) {
+//                            btnGetDirection.setEnabled(true);
+//                            btnGetDirection.setFocusable(true);
+//                            btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
+//                            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.you_can_book_parking_slot));
+//                        } else {
+//                            btnGetDirection.setEnabled(true);
+//                            btnGetDirection.setFocusable(true);
+//                            btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
+//                        }
                         }
                     }
-                } else if (getDirectionButtonClicked == 1) {
-                    //DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
-                    //getDirectionButtonClicked--;
-                    if (isInAreaEnabled) {
+                    else if (getDirectionButtonClicked == 1) {
+                        //DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
+                        //getDirectionButtonClicked--;
+//                    if (isInAreaEnabled) {
                         btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
                         Bundle bundle = new Bundle();
                         bundle.putBoolean("m", false); //m for more
                         bundle.putString("markerUid", adapterUid);
+                        bundle.putDouble("lat", adapterPlaceLatLng.latitude);
+                        bundle.putDouble("long", adapterPlaceLatLng.longitude);
+                        bundle.putString("route", new Gson().toJson(initialRoutePoints));
+
                         ScheduleFragment scheduleFragment = new ScheduleFragment();
                         scheduleFragment.setArguments(bundle);
                         listener.fragmentChange(scheduleFragment);
                         bottomSheet.setVisibility(View.GONE);
-                    } else {
-                        DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
+
+//                    } else {
+//                        DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
+//                    }
                     }
                 }
+
+
+//
 
             } else {
                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));

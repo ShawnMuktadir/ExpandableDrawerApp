@@ -495,4 +495,5 @@
     <string name="last_four_digit">Last four digit</string>
     <string name="army_vehicle_arrow">^</string>
     <string name="error_occured_reg">Sorry! Error occurred in registration.</string>
+    <string name="park_message">Once you reach to your destination, you can park your vehicle  on parking slot</string>
 </resources>
