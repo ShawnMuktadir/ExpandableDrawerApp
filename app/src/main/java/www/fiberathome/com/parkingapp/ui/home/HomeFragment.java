@@ -1,14 +1,5 @@
 package www.fiberathome.com.parkingapp.ui.home;
 
-import static android.app.Activity.RESULT_OK;
-import static android.content.Context.LOCATION_SERVICE;
-import static www.fiberathome.com.parkingapp.model.response.searchHistory.SearchConstants.FIRST_TIME_INSTALLED;
-import static www.fiberathome.com.parkingapp.model.response.searchHistory.SearchConstants.HISTORY_PLACE_SELECTED;
-import static www.fiberathome.com.parkingapp.model.response.searchHistory.SearchConstants.NEW_PLACE_SELECTED;
-import static www.fiberathome.com.parkingapp.model.response.searchHistory.SearchConstants.NEW_SEARCH_ACTIVITY_REQUEST_CODE;
-import static www.fiberathome.com.parkingapp.utils.GoogleMapHelper.defaultMapSettings;
-import static www.fiberathome.com.parkingapp.utils.GoogleMapHelper.getDefaultPolyLines;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -17,6 +8,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -178,6 +170,17 @@ import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 import www.fiberathome.com.parkingapp.utils.ViewUtils;
+
+import static android.app.Activity.RESULT_OK;
+import static android.content.Context.LOCATION_SERVICE;
+import static android.content.Context.MODE_PRIVATE;
+import static www.fiberathome.com.parkingapp.model.data.preference.Preferences.SHARED_PREF_NAME;
+import static www.fiberathome.com.parkingapp.model.response.searchHistory.SearchConstants.FIRST_TIME_INSTALLED;
+import static www.fiberathome.com.parkingapp.model.response.searchHistory.SearchConstants.HISTORY_PLACE_SELECTED;
+import static www.fiberathome.com.parkingapp.model.response.searchHistory.SearchConstants.NEW_PLACE_SELECTED;
+import static www.fiberathome.com.parkingapp.model.response.searchHistory.SearchConstants.NEW_SEARCH_ACTIVITY_REQUEST_CODE;
+import static www.fiberathome.com.parkingapp.utils.GoogleMapHelper.defaultMapSettings;
+import static www.fiberathome.com.parkingapp.utils.GoogleMapHelper.getDefaultPolyLines;
 
 @SuppressLint("NonConstantResourceId")
 @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -501,6 +504,117 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        Timber.e("onViewCreated called");
+        super.onViewCreated(view, savedInstanceState);
+
+        context = (HomeActivity) getActivity();
+
+        if (context != null) {
+            context.changeDefaultActionBarDrawerToogleIcon();
+            listener = context;
+        }
+
+        unbinder = ButterKnife.bind(this, view);
+
+        if (isAdded()) {
+
+            initUI(view);
+
+            if (isBooked) {
+                linearLayoutBottom.setVisibility(View.VISIBLE);
+                imageViewBack.setVisibility(View.VISIBLE);
+                btnGetDirection.setText(context.getResources().getString(R.string.park));
+                btnGetDirection.setVisibility(View.VISIBLE);
+            }
+
+            bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+            bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._92sdp));
+            bottomSheetBehavior.setHideable(false);
+            bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+                @Override
+                public void onStateChanged(@NonNull View view, int newState) {
+                    switch (newState) {
+                        case BottomSheetBehavior.STATE_HIDDEN:
+                        case BottomSheetBehavior.STATE_SETTLING:
+                            break;
+                        case BottomSheetBehavior.STATE_EXPANDED:
+                            bottomSheet.requestLayout();
+                            bottomSheet.invalidate();
+                            bottomSheetRecyclerView.smoothScrollToPosition(0);
+                            toolbarAnimVisibility(view, false);
+                            break;
+                        case BottomSheetBehavior.STATE_COLLAPSED:
+                            bottomSheetRecyclerView.smoothScrollToPosition(0);
+                            toolbarAnimVisibility(view, true);
+                            if (bottomSheetAdapter != null)
+                                bottomSheetAdapter.onAttachedToRecyclerView(bottomSheetRecyclerView);
+                            break;
+                        case BottomSheetBehavior.STATE_DRAGGING:
+                            toolbarAnimVisibility(view, true);
+                            if (bottomSheetAdapter != null)
+                                bottomSheetAdapter.onAttachedToRecyclerView(bottomSheetRecyclerView);
+                            break;
+                        case BottomSheetBehavior.STATE_HALF_EXPANDED:
+                            break;
+                    }
+                }
+
+                @Override
+                public void onSlide(@NonNull View view, float slideOffset) {
+                    if (isAdded()) {
+                        Timber.e("onSlide called");
+                    }
+                }
+            });
+
+            buildLocationRequest();
+
+            buildLocationCallBack();
+
+            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
+
+            if (getArguments() != null) {
+                if (getArguments().getBoolean("s")) {
+                    bookedLayout.setVisibility(View.VISIBLE);
+                    arrived = getArguments().getLong("arrived", 0);
+                    departure = getArguments().getLong("departure", 0);
+                    difference = departure - arrived;
+
+                    setTimer(difference);
+
+                    Timber.d("onCreateView: " + arrived + "    " + departure);
+                    Timber.d("onCreateView: difference: -> %s", difference);
+                }
+            }
+
+            if (mMap == null) {
+                showLoading(context, context.getResources().getString(R.string.please_wait));
+            }
+
+            if (isServicesOk()) {
+                supportMapFragment = SupportMapFragment.newInstance();
+
+                if (context != null) {
+                    FragmentTransaction ft = context.getSupportFragmentManager().beginTransaction().
+                            replace(R.id.map, supportMapFragment);
+                    ft.commit();
+                    supportMapFragment.getMapAsync(this);
+                } else {
+                    ToastUtils.getInstance().showToastMessage(context, "Unable to load map");
+                }
+
+            } else {
+                ToastUtils.getInstance().showToastMessage(context, "Play services are required by this application");
+            }
+
+            polyLineList = new ArrayList<>();
+
+            mService = CommonGoogleApi.getGoogleApi();
+        }
+    }
+
     private int countAdd = 0;
 
     private Marker pinMarker;
@@ -601,118 +715,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        Timber.e("onViewCreated called");
-        super.onViewCreated(view, savedInstanceState);
-
-        context = (HomeActivity) getActivity();
-
-        if (context != null) {
-            context.changeDefaultActionBarDrawerToogleIcon();
-            listener = context;
-        }
-
-        unbinder = ButterKnife.bind(this, view);
-
-
-        if (isAdded()) {
-
-            initUI(view);
-
-            if (isBooked) {
-                linearLayoutBottom.setVisibility(View.VISIBLE);
-                imageViewBack.setVisibility(View.VISIBLE);
-                btnGetDirection.setText("Park");
-                btnGetDirection.setVisibility(View.VISIBLE);
-
-            }
-            bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
-            bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._92sdp));
-            bottomSheetBehavior.setHideable(false);
-            bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-                @Override
-                public void onStateChanged(@NonNull View view, int newState) {
-                    switch (newState) {
-                        case BottomSheetBehavior.STATE_HIDDEN:
-                        case BottomSheetBehavior.STATE_SETTLING:
-                            break;
-                        case BottomSheetBehavior.STATE_EXPANDED:
-                            bottomSheet.requestLayout();
-                            bottomSheet.invalidate();
-                            bottomSheetRecyclerView.smoothScrollToPosition(0);
-                            toolbarAnimVisibility(view, false);
-                            break;
-                        case BottomSheetBehavior.STATE_COLLAPSED:
-                            bottomSheetRecyclerView.smoothScrollToPosition(0);
-                            toolbarAnimVisibility(view, true);
-                            if (bottomSheetAdapter != null)
-                                bottomSheetAdapter.onAttachedToRecyclerView(bottomSheetRecyclerView);
-                            break;
-                        case BottomSheetBehavior.STATE_DRAGGING:
-                            toolbarAnimVisibility(view, true);
-                            if (bottomSheetAdapter != null)
-                                bottomSheetAdapter.onAttachedToRecyclerView(bottomSheetRecyclerView);
-                            break;
-                        case BottomSheetBehavior.STATE_HALF_EXPANDED:
-                            break;
-                    }
-                }
-
-                @Override
-                public void onSlide(@NonNull View view, float slideOffset) {
-                    if (isAdded()) {
-                        Timber.e("onSlide called");
-                    }
-                }
-            });
-
-            buildLocationRequest();
-
-            buildLocationCallBack();
-
-            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
-
-            if (getArguments() != null) {
-                if (getArguments().getBoolean("s")) {
-                    bookedLayout.setVisibility(View.VISIBLE);
-                    arrived = getArguments().getLong("arrived", 0);
-                    departure = getArguments().getLong("departure", 0);
-                    difference = departure - arrived;
-
-                    setTimer(difference);
-
-                    Timber.d("onCreateView: " + arrived + "    " + departure);
-                    Timber.d("onCreateView: difference: -> %s", difference);
-                }
-            }
-
-            if (mMap == null) {
-                showLoading(context, context.getResources().getString(R.string.please_wait));
-            }
-
-            if (isServicesOk()) {
-                supportMapFragment = SupportMapFragment.newInstance();
-
-                if (context != null) {
-                    FragmentTransaction ft = context.getSupportFragmentManager().beginTransaction().
-                            replace(R.id.map, supportMapFragment);
-                    ft.commit();
-                    supportMapFragment.getMapAsync(this);
-                } else {
-                    ToastUtils.getInstance().showToastMessage(context, "Unable to load map");
-                }
-
-            } else {
-                ToastUtils.getInstance().showToastMessage(context, "Play services are required by this application");
-            }
-
-            polyLineList = new ArrayList<>();
-
-            mService = CommonGoogleApi.getGoogleApi();
-        }
     }
 
     private void toolbarAnimVisibility(View view, boolean show) {
@@ -1189,7 +1191,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         if (onConnectedLocation.getLatitude() != myPreviousLocation.getLatitude() && onConnectedLocation.getLongitude() != myPreviousLocation.getLongitude()) {
                             List<LatLng> pointsNew;
                             try {
-                                if (!initialRoutePoints.isEmpty()) {
+                                if (initialRoutePoints != null && !initialRoutePoints.isEmpty()) {
                                     pointsNew = new ArrayList<>(initialRoutePoints);
                                 } else {
                                     pointsNew = polyline.getPoints();
@@ -1237,7 +1239,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         }
     }
-
 
     private void setCircleOnLocation(LatLng latLng) {
         circle = mMap.addCircle(
@@ -1347,121 +1348,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 sendNotification("You Entered parking spot", "You can book parking slot");
                 //Toast.makeText(context, "inside circle", Toast.LENGTH_SHORT).show();
             }
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        Timber.d("onRequestPermissionsResult");
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
-            Timber.d("onRequestPermissionsResult: First time evoked");
-
-            if (grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                // Showing the toast message
-                Timber.d("onRequestPermissionResult: on requestPermission if-if");
-                /*if (progressDialog != null) {
-                    progressDialog.show();
-                }*/
-                if (isLocationEnabled(context)) {
-                    supportMapFragment.getMapAsync(this);
-                    /*if (progressDialog != null && progressDialog.isShowing()) {
-                        progressDialog.dismiss();
-                    }*/
-                }
-                //Toast.makeText(context, "Permission Granted", Toast.LENGTH_SHORT).show();
-            } else if (grantResults.length == FIRST_TIME_INSTALLED && context != null) {
-                if ((ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                        ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
-
-                    requestPermissions(new String[]{
-                            Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
-                    Timber.d("onViewCreated: in if");
-                }
-            }
-        }
-    }
-
-    @Override
-    public boolean onBackPressed() {
-        return false;
-    }
-
-    @NonNull
-    private CameraPosition getCameraPositionWithBearing(LatLng latLng) {
-        //Timber.e("getCameraPositionWithBearing called");
-        return new CameraPosition.Builder().target(latLng).zoom(13.8f).build();
-    }
-
-    @Override
-    public void onCameraMoveStarted(int reason) {
-
-        if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
-            Timber.e("OnCameraMoveStartedListener called");
-            /*Toast.makeText(context, "The user gestured on the map.",
-                    Toast.LENGTH_SHORT).show();*/
-        } else if (reason == GoogleMap.OnCameraMoveStartedListener
-                .REASON_API_ANIMATION) {
-            Timber.e("OnCameraMoveStartedListener called");
-            /*Toast.makeText(context, "The user tapped something on the map.",
-                    Toast.LENGTH_SHORT).show();*/
-        } else if (reason == GoogleMap.OnCameraMoveStartedListener
-                .REASON_DEVELOPER_ANIMATION) {
-            Timber.e("OnCameraMoveStartedListener called");
-            /*Toast.makeText(context, "The app moved the camera.",
-                    Toast.LENGTH_SHORT).show();*/
-        }
-    }
-
-    @Override
-    public void onCameraMove() {
-        /*Toast.makeText(context, "The camera is moving.",
-                Toast.LENGTH_SHORT).show();*/
-    }
-
-    @Override
-    public void onCameraMoveCanceled() {
-        /*Toast.makeText(context, "Camera movement canceled.",
-                Toast.LENGTH_SHORT).show();*/
-    }
-
-    @Override
-    public void onCameraIdle() {
-        /*Toast.makeText(context, "The camera has stopped moving.",
-                Toast.LENGTH_SHORT).show();*/
-    }
-
-    private static Boolean isLocationEnabled(Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            // This is new method provided in API 28
-            LocationManager lm = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-            return lm.isLocationEnabled();
-
-        } else {
-            // This is Deprecated in API 28
-            int mode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE,
-                    Settings.Secure.LOCATION_MODE_OFF);
-            return (mode != Settings.Secure.LOCATION_MODE_OFF);
-        }
-    }
-
-    private final View.OnClickListener clickListener = view -> {
-        if (view.getId() == R.id.currentLocationImageButton && mMap != null && onConnectedLocation != null)
-            animateCamera(onConnectedLocation);
-        currentLocationButton = 0;
-    };
-
-    private int currentLocationButton = 1;
-
-    private void showCurrentLocationButton() {
-        if (currentLocationButton == 1) {
-            currentLocationImageButton.setVisibility(View.VISIBLE);
-            currentLocationButton--;
-        } else if (currentLocationButton == 0) {
-            currentLocationImageButton.setVisibility(View.GONE);
-            currentLocationButton++;
         }
     }
 
@@ -1751,6 +1637,121 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.gps_network_not_enabled));
                 }
             }, 6000);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Timber.d("onRequestPermissionsResult");
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            Timber.d("onRequestPermissionsResult: First time evoked");
+
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                // Showing the toast message
+                Timber.d("onRequestPermissionResult: on requestPermission if-if");
+                /*if (progressDialog != null) {
+                    progressDialog.show();
+                }*/
+                if (isLocationEnabled(context)) {
+                    supportMapFragment.getMapAsync(this);
+                    /*if (progressDialog != null && progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }*/
+                }
+                //Toast.makeText(context, "Permission Granted", Toast.LENGTH_SHORT).show();
+            } else if (grantResults.length == FIRST_TIME_INSTALLED && context != null) {
+                if ((ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                        ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+
+                    requestPermissions(new String[]{
+                            Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+                    Timber.d("onViewCreated: in if");
+                }
+            }
+        }
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        return false;
+    }
+
+    @NonNull
+    private CameraPosition getCameraPositionWithBearing(LatLng latLng) {
+        //Timber.e("getCameraPositionWithBearing called");
+        return new CameraPosition.Builder().target(latLng).zoom(13.8f).build();
+    }
+
+    @Override
+    public void onCameraMoveStarted(int reason) {
+
+        if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
+            Timber.e("OnCameraMoveStartedListener called");
+            /*Toast.makeText(context, "The user gestured on the map.",
+                    Toast.LENGTH_SHORT).show();*/
+        } else if (reason == GoogleMap.OnCameraMoveStartedListener
+                .REASON_API_ANIMATION) {
+            Timber.e("OnCameraMoveStartedListener called");
+            /*Toast.makeText(context, "The user tapped something on the map.",
+                    Toast.LENGTH_SHORT).show();*/
+        } else if (reason == GoogleMap.OnCameraMoveStartedListener
+                .REASON_DEVELOPER_ANIMATION) {
+            Timber.e("OnCameraMoveStartedListener called");
+            /*Toast.makeText(context, "The app moved the camera.",
+                    Toast.LENGTH_SHORT).show();*/
+        }
+    }
+
+    @Override
+    public void onCameraMove() {
+        /*Toast.makeText(context, "The camera is moving.",
+                Toast.LENGTH_SHORT).show();*/
+    }
+
+    @Override
+    public void onCameraMoveCanceled() {
+        /*Toast.makeText(context, "Camera movement canceled.",
+                Toast.LENGTH_SHORT).show();*/
+    }
+
+    @Override
+    public void onCameraIdle() {
+        /*Toast.makeText(context, "The camera has stopped moving.",
+                Toast.LENGTH_SHORT).show();*/
+    }
+
+    private static Boolean isLocationEnabled(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            // This is new method provided in API 28
+            LocationManager lm = (LocationManager) context.getSystemService(LOCATION_SERVICE);
+            return lm.isLocationEnabled();
+
+        } else {
+            // This is Deprecated in API 28
+            int mode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE,
+                    Settings.Secure.LOCATION_MODE_OFF);
+            return (mode != Settings.Secure.LOCATION_MODE_OFF);
+        }
+    }
+
+    private final View.OnClickListener clickListener = view -> {
+        if (view.getId() == R.id.currentLocationImageButton && mMap != null && onConnectedLocation != null)
+            animateCamera(onConnectedLocation);
+        currentLocationButton = 0;
+    };
+
+    private int currentLocationButton = 1;
+
+    private void showCurrentLocationButton() {
+        if (currentLocationButton == 1) {
+            currentLocationImageButton.setVisibility(View.VISIBLE);
+            currentLocationButton--;
+        } else if (currentLocationButton == 0) {
+            currentLocationImageButton.setVisibility(View.GONE);
+            currentLocationButton++;
         }
     }
 
@@ -3045,32 +3046,36 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onCustomDirectionEvent(GetDirectionAfterButtonClickEvent event) {
-        final Handler handler = new Handler();
-        handler.postDelayed(() -> {
-            adapterPlaceLatLng = event.location;
+        if (isAdded()) {
+            final Handler handler = new Handler();
+            handler.postDelayed(() -> {
+                adapterPlaceLatLng = event.location;
 
-            cordList.add(new LatLng(event.location.latitude, event.location.longitude));
+                cordList.add(new LatLng(event.location.latitude, event.location.longitude));
 
-            getDirectionPinMarkerDraw(adapterPlaceLatLng, adapterUid);
+                getDirectionPinMarkerDraw(adapterPlaceLatLng, adapterUid);
 
-            btnGetDirection.setVisibility(View.VISIBLE);
-            linearLayoutBottom.setVisibility(View.VISIBLE);
-            imageViewBack.setVisibility(View.VISIBLE);
+                linearLayoutBottom.setVisibility(View.VISIBLE);
+                imageViewBack.setVisibility(View.VISIBLE);
+                btnGetDirection.setVisibility(View.VISIBLE);
 
-            String origin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
+                String origin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
 
-            String destination = null;
+                String destination = null;
 
-            if (adapterPlaceLatLng != null) {
-                destination = "" + event.location.latitude + ", " + event.location.longitude;
-            }
+                if (adapterPlaceLatLng != null) {
+                    destination = "" + event.location.latitude + ", " + event.location.longitude;
+                }
 
-            fetchDirections(origin, destination);
+                fetchDirections(origin, destination);
 
-            setMapZoomLevelDirection(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()), adapterPlaceLatLng);
+                setMapZoomLevelDirection(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()), adapterPlaceLatLng);
 
-            isRouteDrawn = 1;
-        }, 1000);
+                isRouteDrawn = 1;
+            }, 1000);
+        } else {
+            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+        }
     }
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
@@ -3363,7 +3368,22 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 buttonSearch.setText(null);
                 buttonSearch.setVisibility(View.VISIBLE);
 
-                //ApplicationUtils.recreateFragment(getParentFragmentManager(), this);
+                SharedPreferences preferences = context.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+                if (preferences != null) {
+                    preferences.edit().remove("uid").apply();
+                    preferences.edit().remove("route").apply();
+                    preferences.edit().remove("lat").apply();
+                    preferences.edit().remove("lon").apply();
+                    isBooked = false;
+                }
+                if (initialRoutePoints != null)
+                    initialRoutePoints.clear();
+
+                BookedPlace bookedPlace = new BookedPlace();
+                bookedPlace.setBookedUid(null);
+                bookedPlace.setLat(0.0);
+                bookedPlace.setLon(0.0);
+                bookedPlace.setRoute(null);
 
                 try {
                     if (polyline == null || !polyline.isVisible())
@@ -3549,9 +3569,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     if (isInAreaEnabled) {
                         //TODO park
 
-                    }
-                   else{
-                       DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.park_message), context);
+                    } else {
+                        DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.park_message), context);
                     }
 
                 } else {
@@ -3576,20 +3595,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             btnGetDirection.setFocusable(true);
 
                             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-
-//                        if (isInAreaEnabled) {
-//                            btnGetDirection.setEnabled(true);
-//                            btnGetDirection.setFocusable(true);
-//                            btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
-//                            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.you_can_book_parking_slot));
-//                        } else {
-//                            btnGetDirection.setEnabled(true);
-//                            btnGetDirection.setFocusable(true);
-//                            btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
-//                        }
                         }
-                    }
-                    else if (getDirectionButtonClicked == 1) {
+                    } else if (getDirectionButtonClicked == 1) {
                         //DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.confirm_booking_message), context);
                         //getDirectionButtonClicked--;
 //                    if (isInAreaEnabled) {
@@ -3611,9 +3618,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 //                    }
                     }
                 }
-
-
-//
 
             } else {
                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
