@@ -131,7 +131,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
     public long arrived, departure, difference;
     private double lat;
     private double lon;
-    private String route;
+    private String route, areaName, parkingSlotCount;
 
     public ScheduleFragment() {
         // Required empty public constructor
@@ -186,6 +186,8 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                 lat = getArguments().getDouble("lat");
                 lon = getArguments().getDouble("long");
                 route = getArguments().getString("route");
+                areaName = getArguments().getString("areaName");
+                parkingSlotCount = getArguments().getString("parkingSlotCount");
                 Timber.e("markerUid -> %s", markerUid);
             }
             arrivedPicker.setIsAmPm(true);
@@ -450,6 +452,8 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                     bookedPlace.setLat(lat);
                     bookedPlace.setLon(lon);
                     bookedPlace.setRoute(route);
+                    bookedPlace.setAreaName(areaName);
+                    bookedPlace.setParkingSlotCount(parkingSlotCount);
 
                     Preferences.getInstance(context).setBooked(bookedPlace);
                     if (isGPSEnabled()) {
