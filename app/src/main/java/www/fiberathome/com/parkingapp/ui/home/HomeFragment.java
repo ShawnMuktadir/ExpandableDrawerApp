@@ -3792,14 +3792,15 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     @Override
     public void onDirectionFinderStart() {
         showLoading(context);
+        overlay.setVisibility(View.VISIBLE);
     }
 
     List<www.fiberathome.com.parkingapp.module.googleService.directionModules.Route> updatedRoute;
 
     @Override
     public void onDirectionFinderSuccess(List<www.fiberathome.com.parkingapp.module.googleService.directionModules.Route> route) {
+        overlay.setVisibility(View.GONE);
         hideLoading();
-
         if (!route.isEmpty() && polyline != null) polyline.remove();
         try {
             updatedRoute = route;
