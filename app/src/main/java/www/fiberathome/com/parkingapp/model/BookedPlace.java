@@ -3,16 +3,18 @@ package www.fiberathome.com.parkingapp.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
-
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class BookedPlace implements Parcelable {
 
   private double lat;
   private double lon;
   private String bookedUid;
-  private  String route;
+  private String route;
+  private String areaName;
+  private String parkingSlotCount;
+
+  public BookedPlace() {
+  }
 
   public double getLat() {
     return lat;
@@ -46,8 +48,21 @@ public class BookedPlace implements Parcelable {
     this.route = route;
   }
 
+  public String getAreaName() {
+    return areaName;
+  }
 
+  public void setAreaName(String areaName) {
+    this.areaName = areaName;
+  }
 
+  public String getParkingSlotCount() {
+    return parkingSlotCount;
+  }
+
+  public void setParkingSlotCount(String parkingSlotCount) {
+    this.parkingSlotCount = parkingSlotCount;
+  }
 
   @Override
   public int describeContents() {
@@ -60,6 +75,8 @@ public class BookedPlace implements Parcelable {
     dest.writeDouble(this.lon);
     dest.writeString(this.bookedUid);
     dest.writeString(this.route);
+    dest.writeString(this.areaName);
+    dest.writeString(this.parkingSlotCount);
   }
 
   public void readFromParcel(Parcel source) {
@@ -67,9 +84,8 @@ public class BookedPlace implements Parcelable {
     this.lon = source.readDouble();
     this.bookedUid = source.readString();
     this.route = source.readString();
-  }
-
-  public BookedPlace() {
+    this.areaName = source.readString();
+    this.parkingSlotCount = source.readString();
   }
 
   protected BookedPlace(Parcel in) {
@@ -77,6 +93,8 @@ public class BookedPlace implements Parcelable {
     this.lon = in.readDouble();
     this.bookedUid = in.readString();
     this.route = in.readString();
+    this.areaName = in.readString();
+    this.parkingSlotCount = in.readString();
   }
 
   public static final Parcelable.Creator<BookedPlace> CREATOR = new Parcelable.Creator<BookedPlace>() {

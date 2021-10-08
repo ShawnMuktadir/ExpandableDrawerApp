@@ -131,7 +131,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
     public long arrived, departure, difference;
     private double lat;
     private double lon;
-    private String route;
+    private String route, areaName, parkingSlotCount;
 
     public ScheduleFragment() {
         // Required empty public constructor
@@ -145,134 +145,125 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_schedule, container, false);
-        unbinder = ButterKnife.bind(this, view);
-
-        context = getActivity();
-
-        textViewCurrentDate.setText(DateTimeUtils.getInstance().getPSTTimeZoneCurrentDate());
-
-        listener = (FragmentChangeListener) getActivity();
-        payBtnClickListener = this;
-
-        // Spinner click listener
-        spinner.setOnItemSelectedListener(this);
-
-        // Spinner Drop down elements
-        List<String> categories = new ArrayList<>();
-        categories.add("Item 1");
-        categories.add("Item 2");
-        categories.add("Item 3");
-        categories.add("Item 4");
-        categories.add("Item 5");
-        categories.add("Item 6");
-
-        // Creating adapter for spinner
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, categories);
-
-        // Drop down layout style - list view with radio button
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        // attaching data adapter to spinner
-        spinner.setAdapter(dataAdapter);
-
-        return view;
+        return inflater.inflate(R.layout.fragment_schedule, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Timber.e("onViewCreated called ");
-        Date currentTime = Calendar.getInstance().getTime();
+        if (isAdded()) {
+            unbinder = ButterKnife.bind(this, view);
 
+            context = getActivity();
 
-        if (getArguments() != null) {
-            more = getArguments().getBoolean("m");
-        }
+            textViewCurrentDate.setText(DateTimeUtils.getInstance().getPSTTimeZoneCurrentDate());
 
-        if (getArguments() != null) {
-            markerUid = getArguments().getString("markerUid");
-            lat = getArguments().getDouble("lat");
-            lon = getArguments().getDouble("long");
-            route = getArguments().getString("route");
-            Timber.e("markerUid -> %s", markerUid);
-        }
-        arrivedPicker.setIsAmPm(true);
-        departurePicker.setIsAmPm(true);
-        arrivedPicker.setDefaultDate(currentTime);
-        departurePicker.setDefaultDate(currentTime);
+            listener = (FragmentChangeListener) getActivity();
+            payBtnClickListener = this;
 
-        if (more) {
-            setArrivedDate = true;
-            arrivedPicker.setEnabled(false);
-            arriveDisableLayout.setBackgroundColor(getResources().getColor(R.color.disableColor));
-            Date arrived = new Date(getArguments().getLong("a"));
-            Date departure = new Date(getArguments().getLong("d"));
+            // Spinner click listener
+            spinner.setOnItemSelectedListener(this);
 
-            arrivedDate = arrived;
-            departedDate = departure;
+            // Spinner Drop down elements
+            List<String> categories = new ArrayList<>();
+            categories.add("Item 1");
+            categories.add("Item 2");
 
-            arrivedPicker.setDefaultDate(arrived);
-            departurePicker.setDefaultDate(departure);
+            // Creating adapter for spinner
+            ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, categories);
 
-        }
-        else {
-            departurePicker.setEnabled(false);
-            departureDisableLayout.setBackgroundColor(getResources().getColor(R.color.disableColor));
+            // Drop down layout style - list view with radio button
+            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-            arrivedDate = arrivedPicker.getDate();
-            Timber.d("arrived date before scrolling -> %s", arrivedDate);
-            departedDate = departurePicker.getDate();
-            Timber.d("departure date before scrolling -> %s", departedDate);
-            arrived = arrivedDate.getTime();
-            departure = departedDate.getTime();
-            difference = arrived - departure;
-            Timber.e("difference -> %s", difference);
-        }
+            // attaching data adapter to spinner
+            spinner.setAdapter(dataAdapter);
 
-        arrivedPicker.addOnDateChangedListener((displayed, date) -> {
-            arrivedDate = date;
-            Timber.e("onDateChanged: -> %s", date);
-            Timber.e("onDateChanged: departureDate: -> %s", arrivedDate);
-
-            Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-            final long[] pattern = {0, 10};
-            final int[] amplitudes = {50, 50};
-
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                VibrationEffect effect = VibrationEffect.createWaveform(pattern, amplitudes, 0);
-                assert vibrator != null;
-                vibrator.vibrate(effect);
-                (new Handler()).postDelayed(vibrator::cancel, 50);
-            } else {
-                assert vibrator != null;
-                vibrator.vibrate(10);
+            Date currentTime = Calendar.getInstance().getTime();
+            if (getArguments() != null) {
+                more = getArguments().getBoolean("m");
+                markerUid = getArguments().getString("markerUid");
+                lat = getArguments().getDouble("lat");
+                lon = getArguments().getDouble("long");
+                route = getArguments().getString("route");
+                areaName = getArguments().getString("areaName");
+                parkingSlotCount = getArguments().getString("parkingSlotCount");
+                Timber.e("markerUid -> %s", markerUid);
             }
-        });
+            arrivedPicker.setIsAmPm(true);
+            departurePicker.setIsAmPm(true);
+            arrivedPicker.setDefaultDate(currentTime);
+            departurePicker.setDefaultDate(currentTime);
 
-        departurePicker.addOnDateChangedListener((displayed, date) -> {
-            departedDate = date;
-            Timber.e("onDateChanged: -> %s", date);
-            Timber.e("onDateChanged: departureDate: -> %s", departedDate);
+            if (more) {
+                setArrivedDate = true;
+                arrivedPicker.setEnabled(false);
+                arriveDisableLayout.setBackgroundColor(getResources().getColor(R.color.disableColor));
+                Date arrived = new Date(getArguments().getLong("a"));
+                Date departure = new Date(getArguments().getLong("d"));
 
-            Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-            final long[] pattern = {0, 10};
-            final int[] amplitudes = {50, 50};
+                arrivedDate = arrived;
+                departedDate = departure;
 
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                VibrationEffect effect = VibrationEffect.createWaveform(pattern, amplitudes, 0);
-                assert vibrator != null;
-                vibrator.vibrate(effect);
-                (new Handler()).postDelayed(vibrator::cancel, 50);
+                arrivedPicker.setDefaultDate(arrived);
+                departurePicker.setDefaultDate(departure);
+
             } else {
-                assert vibrator != null;
-                vibrator.vibrate(10);
+                departurePicker.setEnabled(false);
+                departureDisableLayout.setBackgroundColor(getResources().getColor(R.color.disableColor));
+
+                arrivedDate = arrivedPicker.getDate();
+                Timber.d("arrived date before scrolling -> %s", arrivedDate);
+                departedDate = departurePicker.getDate();
+                Timber.d("departure date before scrolling -> %s", departedDate);
+                arrived = arrivedDate.getTime();
+                departure = departedDate.getTime();
+                difference = arrived - departure;
+                Timber.e("difference -> %s", difference);
             }
-        });
 
-        setListeners();
+            arrivedPicker.addOnDateChangedListener((displayed, date) -> {
+                arrivedDate = date;
+                Timber.e("onDateChanged: -> %s", date);
+                Timber.e("onDateChanged: departureDate: -> %s", arrivedDate);
 
+                Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+                final long[] pattern = {0, 10};
+                final int[] amplitudes = {50, 50};
+
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    VibrationEffect effect = VibrationEffect.createWaveform(pattern, amplitudes, 0);
+                    assert vibrator != null;
+                    vibrator.vibrate(effect);
+                    (new Handler()).postDelayed(vibrator::cancel, 50);
+                } else {
+                    assert vibrator != null;
+                    vibrator.vibrate(10);
+                }
+            });
+
+            departurePicker.addOnDateChangedListener((displayed, date) -> {
+                departedDate = date;
+                Timber.e("onDateChanged: -> %s", date);
+                Timber.e("onDateChanged: departureDate: -> %s", departedDate);
+
+                Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+                final long[] pattern = {0, 10};
+                final int[] amplitudes = {50, 50};
+
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    VibrationEffect effect = VibrationEffect.createWaveform(pattern, amplitudes, 0);
+                    assert vibrator != null;
+                    vibrator.vibrate(effect);
+                    (new Handler()).postDelayed(vibrator::cancel, 50);
+                } else {
+                    assert vibrator != null;
+                    vibrator.vibrate(10);
+                }
+            });
+
+            setListeners();
+        }
     }
 
     private void setListeners() {
@@ -456,11 +447,13 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                     reservation.setTimeEnd(reservationJson.getString("time_end"));
                     reservation.setSpotId(reservationJson.getString("spot_id"));*/
 
-                    BookedPlace bookedPlace= new BookedPlace();
+                    BookedPlace bookedPlace = new BookedPlace();
                     bookedPlace.setBookedUid(markerUid);
                     bookedPlace.setLat(lat);
                     bookedPlace.setLon(lon);
                     bookedPlace.setRoute(route);
+                    bookedPlace.setAreaName(areaName);
+                    bookedPlace.setParkingSlotCount(parkingSlotCount);
 
                     Preferences.getInstance(context).setBooked(bookedPlace);
                     if (isGPSEnabled()) {
@@ -546,7 +539,6 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
         if (providerEnabled) {
             return true;
         } else {
-
             AlertDialog alertDialog = new AlertDialog.Builder(context)
                     .setTitle("GPS Permissions")
                     .setMessage("GPS is required for this app to work. Please enable GPS.")

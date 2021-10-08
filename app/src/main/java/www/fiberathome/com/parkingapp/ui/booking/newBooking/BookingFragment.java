@@ -227,11 +227,8 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                 if (response.body() != null && !response.body().getError()) {
                     if (response.isSuccessful()) {
                         bookedResponse = response.body();
-
                         bookedLists = bookedResponse.getBookedLists();
-
                         Timber.e("bookedLists -> %s", new Gson().toJson(bookedLists));
-
                         if (bookedLists != null && !bookedLists.isEmpty()) {
                             setFragmentControls(bookedLists);
                             hideNoData();

@@ -15,7 +15,7 @@ import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class Preferences {
 
-    private static final String SHARED_PREF_NAME = "PARKINGAPP";
+    public static final String SHARED_PREF_NAME = "PARKINGAPP";
     private static final String KEY_FULLNAME = "fullname";
     private static final String KEY_MOBILE_NO = "mobile_no";
     private static final String KEY_VEHICLE_NO = "vehicle_no";
@@ -60,6 +60,7 @@ public class Preferences {
         editor.putString(KEY_VEHICLE_PIC, user.getVehicleImage());
         editor.apply();
     }
+
     public User getUser() {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         User user = new User();
@@ -72,6 +73,7 @@ public class Preferences {
 
         return user;
     }
+
     public void setBooked(BookedPlace booked) {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -82,6 +84,7 @@ public class Preferences {
         editor.putString("route", booked.getRoute());
         editor.apply();
     }
+
     public BookedPlace getBooked() {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         BookedPlace bookedPlace = new BookedPlace();
