@@ -489,6 +489,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         if (getArguments() != null) {
             lat = getArguments().getDouble("lat", 0.0);
             lng = getArguments().getDouble("lng", 0.0);
+            oldDestination = "" + lat + ", " + lng;
+
             areaName = getArguments().getString("areaName", null);
             parkingSlotCount = getArguments().getString("count", null);
         }

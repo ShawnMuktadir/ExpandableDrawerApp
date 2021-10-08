@@ -495,11 +495,16 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             try {
                 if (!vehicleImage) {
                     profileBitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), contentURI);
-                    Bitmap convertedImage = getResizedBitmap(profileBitmap, 500);
+
+//                    Bitmap convertedImage = getResizedBitmap(profileBitmap, 500);
+                    Bitmap convertedImage = Bitmap.createScaledBitmap(profileBitmap, 828,828,true);
+                    profileBitmap = convertedImage;
                     imageViewUploadProfileImage.setImageBitmap(convertedImage);
                 } else {
                     vehicleBitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), contentURI);
-                    Bitmap convertedImage = getResizedBitmap(vehicleBitmap, 500);
+//                    Bitmap convertedImage = getResizedBitmap(vehicleBitmap, 500);
+                    Bitmap convertedImage = Bitmap.createScaledBitmap(profileBitmap, 828,828,true);
+                    vehicleBitmap = convertedImage;
                     ivVehiclePlatePreview.setImageBitmap(convertedImage);
                 }
 
@@ -518,9 +523,11 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
                     if (!vehicleImage) {
                         profileBitmap = (Bitmap) data.getExtras().get("data");
+                        profileBitmap = Bitmap.createScaledBitmap(profileBitmap, 828,828,true);
                         imageViewUploadProfileImage.setImageBitmap(profileBitmap);
                     } else {
                         vehicleBitmap = (Bitmap) data.getExtras().get("data");
+                        vehicleBitmap = Bitmap.createScaledBitmap(vehicleBitmap, 828,828,true);
                         ivVehiclePlatePreview.setImageBitmap(vehicleBitmap);
                     }
                 }
