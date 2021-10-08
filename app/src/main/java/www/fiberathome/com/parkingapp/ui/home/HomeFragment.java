@@ -3221,8 +3221,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             imageViewBack.setVisibility(View.VISIBLE);
                             btnGetDirection.setText(context.getString(R.string.confirm_booking));
                             btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
-                            btnGetDirection.setEnabled(true);
-                            btnGetDirection.setFocusable(true);
+                            btnGetDirection.setEnabled(false);
+                            btnGetDirection.setFocusable(false);
                             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                         }
                     } else if (getDirectionButtonClicked == 1) {
@@ -3325,7 +3325,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         fetchDirections(origin, destination);
                         fromMarkerRouteDrawn = 1;
                         getDirectionPinMarkerDraw(markerPlaceLatLng, markerUid);
-
                         linearLayoutNameCount.setVisibility(View.GONE);
                         linearLayoutSearchBottom.setVisibility(View.GONE);
                         linearLayoutBottom.setVisibility(View.GONE);
@@ -3361,14 +3360,13 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                 ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.you_can_book_parking_slot));
                             }
                         } else {
-                            btnMarkerGetDirection.setEnabled(true);
-                            btnMarkerGetDirection.setFocusable(true);
+                            btnMarkerGetDirection.setEnabled(false);
+                            btnMarkerGetDirection.setFocusable(false);
                             btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
                         }
 
                         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     }
-
                 } else if (getDirectionMarkerButtonClicked == 1) {
                     if (parkingNumberOfIndividualMarker.equals("0")) {
                         DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.no_parking_spot_message), context);
@@ -3416,8 +3414,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         linearLayoutBottomSheetBottom.setVisibility(View.VISIBLE);
                         btnBottomSheetGetDirection.setText(context.getResources().getString(R.string.confirm_booking));
                         btnBottomSheetGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
-                        btnBottomSheetGetDirection.setEnabled(true);
-                        btnBottomSheetGetDirection.setFocusable(true);
+                        btnBottomSheetGetDirection.setEnabled(false);
+                        btnBottomSheetGetDirection.setFocusable(false);
 
                         if (count.equals("0")) {
                             Timber.e("count 0 if condition called");
@@ -3447,8 +3445,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                 ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.you_can_book_parking_slot));
                             }
                         } else {
-                            btnBottomSheetGetDirection.setEnabled(true);
-                            btnBottomSheetGetDirection.setFocusable(true);
+                            btnBottomSheetGetDirection.setEnabled(false);
+                            btnBottomSheetGetDirection.setFocusable(false);
                             btnBottomSheetGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
                         }
                         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -3812,6 +3810,12 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     polylineOptions = getDottedPolylines(route.points);*/
                 polyline = mMap.addPolyline(polylineOptions);
                 firstDraw = true;
+                btnGetDirection.setEnabled(true);
+                btnGetDirection.setFocusable(true);
+                btnMarkerGetDirection.setEnabled(true);
+                btnMarkerGetDirection.setFocusable(true);
+                btnBottomSheetGetDirection.setEnabled(true);
+                btnBottomSheetGetDirection.setFocusable(true);
                 /*for (int i = 0; i < initialRoutePoints.size(); i++) {
                     mMap.addMarker(new MarkerOptions().position(initialRoutePoints.get(i))
                             .title(String.valueOf(i)));
