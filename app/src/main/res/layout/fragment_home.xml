@@ -9,7 +9,6 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
         <fragment
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.SupportMapFragment"
@@ -72,6 +71,14 @@
 
         <include layout="@layout/layout_bottom_sheet" />
 
+        <View
+            android:id="@+id/overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/light_gray"
+            android:clickable="false"
+            android:focusable="false"
+            android:visibility="gone" />
     </FrameLayout>
 
     <FrameLayout
@@ -767,9 +774,7 @@
                     android:textAllCaps="false"
                     android:textColor="#fff" />
             </LinearLayout>
-
         </LinearLayout>
-
     </FrameLayout>
 
     <FrameLayout
@@ -876,7 +881,8 @@
                 android:layout_margin="2dp"
                 android:padding="3dp"
                 android:scaleType="fitXY"
-                android:src="@color/transparent" />
+                android:src="@color/transparent"
+                tools:ignore="ContentDescription" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -892,8 +898,9 @@
                     android:layout_weight="1"
                     android:background="@android:color/black"
                     android:padding="2dp"
-                    android:text="More Time"
-                    android:textColor="@android:color/white" />
+                    android:text="@string/more_time"
+                    android:textColor="@android:color/white"
+                    tools:ignore="ButtonStyle" />
 
                 <Button
                     android:id="@+id/btnLiveParking"
@@ -903,7 +910,7 @@
                     android:layout_weight="1"
                     android:background="@android:color/black"
                     android:padding="2dp"
-                    android:text="Live Parking"
+                    android:text="@string/live_parking"
                     android:textColor="@android:color/white" />
             </LinearLayout>
 
@@ -974,7 +981,6 @@
                 android:textSize="16sp" />
 
         </LinearLayout>
-
     </FrameLayout>
 
 </RelativeLayout>
