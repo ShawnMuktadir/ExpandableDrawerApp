@@ -503,5 +503,6 @@
     <string name="park">পার্ক</string>
     <string name="more_time">More Time</string>
     <string name="live_parking">Live Parking</string>
+    <string name="already_booked_msg">যেহেতু আপনি ইতিমধ্যে একটি পার্কিং স্পট বুক করেছেন, তাই আপনি এখন বুক করতে পারবেন না।</string>
 </resources>
 

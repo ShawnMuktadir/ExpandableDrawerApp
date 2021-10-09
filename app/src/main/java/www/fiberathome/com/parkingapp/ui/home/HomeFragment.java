@@ -456,6 +456,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private List<SensorArea> sensorAreaArrayList = new ArrayList<>();
     private String bottomSheetPlaceName = "";
     private String bottomSheetParkingAreaCount = "";
+    private boolean parkingAreaChanged=false;
 
     public HomeFragment() {
 
@@ -3207,7 +3208,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 if (isBooked) {
                     if (isInAreaEnabled) {
                         //TODO park
-                    } else {
+                    }
+                    else if(parkingAreaChanged){
+                            DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.already_booked_msg), context);
+                    }
+                    else {
                         DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.park_message), context);
                     }
                 } else {
@@ -3758,6 +3763,13 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         polyline = mMap.addPolyline(getDefaultPolyLines(points));
 
+        if(isBooked){
+            btnGetDirection.setText(context.getResources().getString(R.string.confirm_booking));
+            btnMarkerGetDirection.setText(context.getResources().getString(R.string.confirm_booking));
+            btnBottomSheetGetDirection.setText(context.getResources().getString(R.string.confirm_booking));
+            parkingAreaChanged = true;
+        }
+
         if (!oldDestination.equalsIgnoreCase(destination))
             oldDestination = destination;
 
@@ -3809,8 +3821,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             for (www.fiberathome.com.parkingapp.module.googleService.directionModules.Route mRoute : route) {
                 PolylineOptions polylineOptions = getDefaultPolyLines(mRoute.points);
                 initialRoutePoints = mRoute.points;
-                /*if (polylineStyle == PolylineStyle.DOTTED)
-                    polylineOptions = getDottedPolylines(route.points);*/
+                /*
+                if (polylineStyle == PolylineStyle.DOTTED)
+                    polylineOptions = getDottedPolylines(route.points);
+                    */
                 polyline = mMap.addPolyline(polylineOptions);
                 firstDraw = true;
                 btnGetDirection.setEnabled(true);

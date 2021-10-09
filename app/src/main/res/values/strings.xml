@@ -499,4 +499,5 @@
     <string name="park">Park</string>
     <string name="more_time">More Time</string>
     <string name="live_parking">Live Parking</string>
+    <string name="already_booked_msg">As you have already booked a parking spot, so you can\'t book now.</string>
 </resources>
