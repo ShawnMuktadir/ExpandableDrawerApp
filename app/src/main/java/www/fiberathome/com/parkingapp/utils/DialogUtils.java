@@ -35,9 +35,6 @@ public class DialogUtils {
         return dialogUtils;
     }
 
-    public void alertDialog(BookingActivity context, Activity context1, String string, BookingActivity context2, String string1, String string2, Object positive_button_clicked, Object negative_button_clicked) {
-    }
-
     public interface DialogClickListener {
         void onPositiveClick();
 

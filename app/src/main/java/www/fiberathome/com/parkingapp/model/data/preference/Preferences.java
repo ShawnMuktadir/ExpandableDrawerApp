@@ -173,8 +173,6 @@ public class Preferences {
         return sharedPreferences.getString(KEY_MOBILE_NO, null) != null;
     }
 
-
-
     public void logout() {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
