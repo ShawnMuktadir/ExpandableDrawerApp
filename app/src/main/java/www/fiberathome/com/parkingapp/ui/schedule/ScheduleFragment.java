@@ -37,6 +37,7 @@ import com.google.gson.Gson;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -104,7 +105,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
     TextView textViewActionBarSubTitle;
 
     @BindView(R.id.tvTotalParkingTime)
-    TextView textViewTotalParkingTime;
+    TextView tvTotalParkingTime;
 
     @BindView(R.id.spinner)
     Spinner spinner;
@@ -423,6 +424,13 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
         showLoading(context);
         String totalBookingTime = arrivalTime + "-" + departureTime;
         textViewActionBarTitle.setText(totalBookingTime);
+        long diff = departedDate.getTime() - arrivedDate.getTime();
+        long seconds = diff / 1000;
+        long minutes = seconds / 60;
+        long hours = minutes / 60;
+        long days = hours / 24;
+        tvTotalParkingTime.setText(new StringBuilder().append("Total : \n").append(hours).append(" hr").append(" : ").append(minutes).append(" min").toString());
+
         ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
         Call<ReservationResponse> call = request.storeReservation(mobileNo, arrivalTime, departureTime, markerUid);
         call.enqueue(new Callback<ReservationResponse>() {
@@ -431,6 +439,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                                    @NonNull retrofit2.Response<ReservationResponse> response) {
                 hideLoading();
                 if (response.isSuccessful()) {
+                    Timber.e("response -> %s", new Gson().toJson(response.body()));
                     overlay.setVisibility(View.VISIBLE);
                     TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.reservation_successful));
                     //check 15 minutes before departure

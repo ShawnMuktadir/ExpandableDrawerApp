@@ -30,6 +30,7 @@
             android:layout_height="wrap_content"
             android:text="@string/parking_slot"
             android:textColor="@color/black"
+            android:maxLines="2"
             android:textStyle="bold"
             android:textSize="@dimen/dimTex15"/>
 

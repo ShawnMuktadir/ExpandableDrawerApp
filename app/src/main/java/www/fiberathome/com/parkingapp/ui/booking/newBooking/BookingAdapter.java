@@ -78,10 +78,7 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             long difference = 0;
             if (date1 != null && date2 != null) {
                 difference = date1.getTime() - date2.getTime();
-
             }
-
-            //String result = substractDates(date1, date2, new SimpleDateFormat("HH:mm:ss"));
             bookingViewHolder.textViewParkingTotalTime.setText(getTimeDifference(difference));
         } catch (ParseException e) {
             e.printStackTrace();
