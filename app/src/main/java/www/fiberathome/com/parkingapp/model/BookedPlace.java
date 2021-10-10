@@ -3,6 +3,8 @@ package www.fiberathome.com.parkingapp.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Date;
+
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class BookedPlace implements Parcelable {
 
@@ -13,6 +15,8 @@ public class BookedPlace implements Parcelable {
   private String areaName;
   private String parkingSlotCount;
   private boolean isBooked = false;
+  private String placeId;
+  private long departedDate;
 
   public BookedPlace() {
   }
@@ -65,6 +69,31 @@ public class BookedPlace implements Parcelable {
     this.parkingSlotCount = parkingSlotCount;
   }
 
+
+    public boolean getIsBooked() {
+        return isBooked;
+    }
+
+    public void setIsBooked(boolean isBooked) {
+        this.isBooked = isBooked;
+    }
+
+  public void setPlaceId(String placeId) {
+    this.placeId = placeId;
+  }
+
+  public String getPlaceId() {
+    return placeId;
+  }
+
+  public void setDepartedDate(long departedDate) {
+    this.departedDate = departedDate;
+  }
+
+  public long getDepartedDate() {
+    return departedDate;
+  }
+
   @Override
   public int describeContents() {
     return 0;
@@ -78,6 +107,9 @@ public class BookedPlace implements Parcelable {
     dest.writeString(this.route);
     dest.writeString(this.areaName);
     dest.writeString(this.parkingSlotCount);
+    dest.writeByte(this.isBooked ? (byte) 1 : (byte) 0);
+    dest.writeString(this.placeId);
+    dest.writeDouble(this.departedDate);
   }
 
   public void readFromParcel(Parcel source) {
@@ -87,6 +119,9 @@ public class BookedPlace implements Parcelable {
     this.route = source.readString();
     this.areaName = source.readString();
     this.parkingSlotCount = source.readString();
+    this.isBooked = source.readByte() != 0;
+    this.placeId = source.readString();
+    this.departedDate = source.readLong();
   }
 
   protected BookedPlace(Parcel in) {
@@ -96,9 +131,12 @@ public class BookedPlace implements Parcelable {
     this.route = in.readString();
     this.areaName = in.readString();
     this.parkingSlotCount = in.readString();
+    this.isBooked = in.readByte() != 0;
+    this.placeId = in.readString();
+    this.departedDate = in.readLong();
   }
 
-  public static final Creator<BookedPlace> CREATOR = new Creator<BookedPlace>() {
+  public static final Parcelable.Creator<BookedPlace> CREATOR = new Parcelable.Creator<BookedPlace>() {
     @Override
     public BookedPlace createFromParcel(Parcel source) {
       return new BookedPlace(source);
@@ -109,12 +147,4 @@ public class BookedPlace implements Parcelable {
       return new BookedPlace[size];
     }
   };
-
-    public boolean getIsBooked() {
-        return isBooked;
-    }
-
-    public void setIsBooked(boolean isBooked) {
-        this.isBooked = isBooked;
-    }
 }

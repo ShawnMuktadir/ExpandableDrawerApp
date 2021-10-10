@@ -2,10 +2,12 @@ package www.fiberathome.com.parkingapp.ui.home;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
 import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -116,6 +118,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -153,6 +156,7 @@ import www.fiberathome.com.parkingapp.module.geoFenceInterface.IOnLoadLocationLi
 import www.fiberathome.com.parkingapp.module.geoFenceInterface.MyLatLng;
 import www.fiberathome.com.parkingapp.module.googleService.directionModules.DirectionFinder;
 import www.fiberathome.com.parkingapp.module.googleService.directionModules.DirectionFinderListener;
+import www.fiberathome.com.parkingapp.module.notification.NotificationPublisher;
 import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.ui.bottomSheet.BottomSheetAdapter;
 import www.fiberathome.com.parkingapp.ui.bottomSheet.CustomLinearLayoutManager;
@@ -3329,6 +3333,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 if (isBooked && bookedPlace != null) {
                     if (isInAreaEnabled) {
                         //TODO park
+                        startAlarm(convertLongToCalendar(bookedPlace.getDepartedDate()));
                     } else if (parkingAreaChanged) {
                         DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.already_booked_msg), context);
                     } else {
@@ -3980,5 +3985,28 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         } catch (Exception e) {
             Toast.makeText(context, "Error occurred on finding the directions...", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void startAlarm(Calendar c) {
+        Timber.e("startAlarm called");
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(context, NotificationPublisher.class);
+        Intent intent2 = new Intent(context, NotificationPublisher.class);
+        intent2.putExtra("ended", "Book Time Up");
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, intent, 0);
+        PendingIntent pendingIntent2 = PendingIntent.getBroadcast(context, 2, intent2, 0);
+        if (c.before(Calendar.getInstance())) {
+            c.add(Calendar.DATE, 1);
+        }
+        Objects.requireNonNull(alarmManager).setExact(AlarmManager.RTC_WAKEUP,
+                c.getTimeInMillis() - 900000, pendingIntent);
+        Objects.requireNonNull(alarmManager).setExact(AlarmManager.RTC_WAKEUP,
+                c.getTimeInMillis(), pendingIntent2);
+    }
+
+    public Calendar convertLongToCalendar(Long source) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(source);
+        return calendar;
     }
 }

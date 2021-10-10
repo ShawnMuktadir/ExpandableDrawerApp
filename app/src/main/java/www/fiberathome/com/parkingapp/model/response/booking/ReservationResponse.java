@@ -16,6 +16,11 @@ public class ReservationResponse extends BaseResponse {
     @Expose
     private String bill;
 
+
+    @SerializedName("uid")
+    @Expose
+    private String uid;
+
     public String getReservation() {
         return reservation;
     }
@@ -30,5 +35,13 @@ public class ReservationResponse extends BaseResponse {
 
     public void setBill(String bill) {
         this.bill = bill;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 }

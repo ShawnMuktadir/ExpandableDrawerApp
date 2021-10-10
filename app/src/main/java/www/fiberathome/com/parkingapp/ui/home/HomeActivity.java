@@ -95,6 +95,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
         unbinder = ButterKnife.bind(this);
 
         setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
+        //setTitle(ApplicationUtils.getGreetingsMessage());
 
         //location permission check
         handleLocationPermissionCheck(context);

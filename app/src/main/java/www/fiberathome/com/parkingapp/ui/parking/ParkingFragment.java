@@ -456,8 +456,11 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
         recyclerViewParking.addOnItemTouchListener(new RecyclerTouchListener(context, recyclerViewParking, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
+
                 if (context != null) {
+
                     context.navigationView.getMenu().getItem(1).setChecked(false);
+
                     KeyboardUtils.getInstance().hideKeyboard(context, editTextParking);
                 }
             }
