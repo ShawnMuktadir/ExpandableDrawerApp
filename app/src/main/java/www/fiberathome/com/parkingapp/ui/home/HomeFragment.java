@@ -478,7 +478,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     }
 
     public static HomeFragment newInstance(BookedPlace mBookedPlace) {
-        isBooked = true;
+        //isBooked = true;
         bookedPlace = mBookedPlace;
         return new HomeFragment();
     }
@@ -522,7 +522,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             listener = context;
         }
         unbinder = ButterKnife.bind(this, view);
-
+        if (Preferences.getInstance(context).getBooked() != null) {
+            isBooked = Preferences.getInstance(context).getBooked().getIsBooked();
+        }
         if (isAdded()) {
             initUI(view);
             bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
@@ -567,7 +569,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             buildLocationRequest();
             buildLocationCallBack();
             fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
-            if (isBooked)
+            if (isBooked && bookedPlace != null)
                 oldDestination = "" + bookedPlace.getLat() + ", " + bookedPlace.getLon();
             if (getArguments() != null) {
                 if (getArguments().getBoolean("s")) {
@@ -831,7 +833,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                     textViewMarkerParkingAreaCount.setText(parkingNumberOfIndividualMarker);
                                     break;
                                 }
-
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -880,18 +881,15 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                     context.getResources().getString(R.string.nearest_parking_from_your_destination),
                                     BookingSensors.TEXT_INFO_TYPE, 0));
 
-                            if (sensorAreaArrayList != null) {
-
-                                setBottomSheetList(() -> {
-                                    if (bottomSheetAdapter != null) {
-                                        bookingSensorsArrayListGlobal.clear();
-                                        bookingSensorsArrayListGlobal.addAll(bookingSensorsMarkerArrayList);
-                                        bottomSheetAdapter.notifyDataSetChanged();
-                                    } else {
-                                        Timber.e("marker click else -> %s", markerUid);
-                                    }
-                                }, sensorAreaArrayList, marker.getPosition(), bookingSensorsMarkerArrayList, finalUid);
-                            }
+                            setBottomSheetList(() -> {
+                                if (bottomSheetAdapter != null) {
+                                    bookingSensorsArrayListGlobal.clear();
+                                    bookingSensorsArrayListGlobal.addAll(bookingSensorsMarkerArrayList);
+                                    bottomSheetAdapter.notifyDataSetChanged();
+                                } else {
+                                    Timber.e("marker click else -> %s", markerUid);
+                                }
+                            }, sensorAreaArrayList, marker.getPosition(), bookingSensorsMarkerArrayList, finalUid);
 
                         } else {
                             ToastUtils.getInstance().showToastMessage(context, "Something went wrong!!! Please check your Internet connection");
@@ -1115,18 +1113,12 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 polyline = mMap.addPolyline(getDefaultPolyLines(points));
                 Timber.e("polyline null -> %s", polyline);
             } else if (polyline != null) {
-
                 Timber.e("polyline not null-> %s", polyline);
-
                 boolean isUserOnRoute = PolyUtil.isLocationOnPath(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
                         polyline.getPoints(), false, 60.0f);
-
-
                 if (!isUserOnRoute) {
-
                     if (myLocationChangedDistance >= 0.001) {
                         //polylineOptions.addAll(polyline.getPoints());
-
                         String[] latlong = oldDestination.split(",");
                         if (latlong == null) return;
                         double lat = MathUtils.getInstance().convertToDouble(latlong[0].trim());
@@ -1216,7 +1208,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     }
                 }
             }
-        } else if (isBooked) {
+        } else if (isBooked && bookedPlace != null) {
             Gson gson = new Gson();
             String json = bookedPlace.getRoute();
             Type type = new TypeToken<List<LatLng>>() {
@@ -1225,8 +1217,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 polyline = mMap.addPolyline(getDefaultPolyLines(gson.fromJson(json, type)));
                 isRouteDrawn = 1;
                 getDirectionPinMarkerDraw(new LatLng(bookedPlace.getLat(), bookedPlace.getLon()), bookedPlace.getBookedUid());
+                zoomRoute(mMap, polyline.getPoints());
             }
-
         }
     }
 
@@ -1847,7 +1839,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     private void fetchParkingSlotSensors(Location location) {
         Timber.e("fetchParkingSlotSensors called");
-
         this.onConnectedLocation = location;
         showLoading(context);
         startShimmer();
@@ -1929,7 +1920,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                         new Handler().postDelayed(() -> {
                             if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
-                                if (isBooked) {
+                                if (isBooked && bookedPlace != null) {
                                     bookedWiseBottomItemLayout(linearLayoutBottom, imageViewBack, btnGetDirection, mMap, bookedPlace.getLat(), bookedPlace.getLon(),
                                             sensorAreaArrayList, bookedPlace.getAreaName(), bookedPlace.getParkingSlotCount(), textViewParkingAreaName, textViewParkingAreaCount, textViewParkingDistance);
                                 }
@@ -1997,7 +1988,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                         }
                                     }, sensorAreaArrayList, new LatLng(adapterPlaceLatLng.latitude, adapterPlaceLatLng.longitude), bookingSensorsAdapterArrayList, finalUid);
 
-                                    if (isBooked) {
+                                    if (isBooked && bookedPlace != null) {
                                         SharedPreferences preferences = context.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
                                         if (preferences != null) {
                                             preferences.edit().remove("uid").apply();
@@ -2060,8 +2051,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                                         Timber.e("setBottomSheet if else called");
                                                     }
                                                 }, sensorAreaArrayList, bottomSheetPlaceLatLng, bookingSensorsBottomSheetArrayList, finalUid);
-                                            }
-                                            else {
+                                            } else {
                                                 DialogUtils.getInstance().alertDialog(context,
                                                         context,
                                                         context.getString(R.string.you_have_to_exit_from_current_destination),
@@ -2138,6 +2128,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                                             @Override
                                                             public void onNegativeClick() {
                                                                 Timber.e("Negative Button Clicked");
+
                                                             }
                                                         }).show();
                                             }
@@ -2188,8 +2179,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         btnGetDirection.setVisibility(View.VISIBLE);
 
         hideNoData();
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(bookedPlace.getLat(), bookedPlace.getLon()), 13.5f), 500, null);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(bookedPlace.getLat(), bookedPlace.getLon()), 13.5f));
 
         String uid = "";
         String adapterAreaName = "";
@@ -2449,22 +2438,17 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             adjustDistance(bottomSheetDistance), textViewBottomSheetParkingAreaCount.getText().toString(), bottomSheetStringDuration,
                             context.getResources().getString(R.string.nearest_parking_from_your_destination),
                             BookingSensors.TEXT_INFO_TYPE, 0));
-                    if (sensorAreaArrayList != null) {
-                        setBottomSheetList(() -> {
-                            if (bottomSheetAdapter != null) {
-                                Timber.e("setBottomSheet if called");
-                                bookingSensorsArrayListGlobal.clear();
-                                bookingSensorsArrayListGlobal.addAll(bookingSensorsBottomSheetArrayList);
-                                bottomSheetAdapter.notifyDataSetChanged();
-                                bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._92sdp));
-                            } else {
-                                Timber.e("setBottomSheet if else called");
-                            }
-                        }, sensorAreaArrayList, bottomSheetPlaceLatLng, bookingSensorsBottomSheetArrayList, finalUid);
-                    } else {
-                        Toast.makeText(context, context.getResources().getString(R.string.something_went_wrong_please_check_internet_connection),
-                                Toast.LENGTH_SHORT).show();
-                    }
+                    setBottomSheetList(() -> {
+                        if (bottomSheetAdapter != null) {
+                            Timber.e("setBottomSheet if called");
+                            bookingSensorsArrayListGlobal.clear();
+                            bookingSensorsArrayListGlobal.addAll(bookingSensorsBottomSheetArrayList);
+                            bottomSheetAdapter.notifyDataSetChanged();
+                            bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._92sdp));
+                        } else {
+                            Timber.e("setBottomSheet if else called");
+                        }
+                    }, sensorAreaArrayList, bottomSheetPlaceLatLng, bookingSensorsBottomSheetArrayList, finalUid);
                 } else {
                     DialogUtils.getInstance().alertDialog(context,
                             context,
@@ -2534,18 +2518,16 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                             context.getResources().getString(R.string.nearest_parking_from_your_destination),
                                             BookingSensors.TEXT_INFO_TYPE, 0));
 
-                                    if (sensorAreaArrayList != null) {
-                                        setBottomSheetList(() -> {
-                                            if (bottomSheetAdapter != null) {
-                                                bookingSensorsArrayListGlobal.clear();
-                                                bookingSensorsArrayListGlobal.addAll(bookingSensorsBottomSheetArrayList);
-                                                bottomSheetAdapter.notifyDataSetChanged();
-                                                bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._142sdp));
-                                            } else {
-                                                Timber.e("bottomSheetAdapter null");
-                                            }
-                                        }, sensorAreaArrayList, bottomSheetPlaceLatLng, bookingSensorsBottomSheetArrayList, bottomUid);
-                                    }
+                                    setBottomSheetList(() -> {
+                                        if (bottomSheetAdapter != null) {
+                                            bookingSensorsArrayListGlobal.clear();
+                                            bookingSensorsArrayListGlobal.addAll(bookingSensorsBottomSheetArrayList);
+                                            bottomSheetAdapter.notifyDataSetChanged();
+                                            bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._142sdp));
+                                        } else {
+                                            Timber.e("bottomSheetAdapter null");
+                                        }
+                                    }, sensorAreaArrayList, bottomSheetPlaceLatLng, bookingSensorsBottomSheetArrayList, bottomUid);
                                     bottomSheetAdapter.setDataList(bookingSensorsBottomSheetArrayList);
                                 }
 
@@ -3344,7 +3326,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
                 mMap.setTrafficEnabled(false);
                 isRouteDrawn = 1;
-                if (isBooked) {
+                if (isBooked && bookedPlace != null) {
                     if (isInAreaEnabled) {
                         //TODO park
                     } else if (parkingAreaChanged) {
@@ -3452,7 +3434,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 }
                 mMap.setTrafficEnabled(false);
                 isRouteDrawn = 1;
-                if (isBooked) {
+                if (isBooked && bookedPlace != null) {
                     if (isInAreaEnabled) {
                         //TODO park
                     } else if (parkingAreaChanged) {
@@ -3549,7 +3531,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
                 mMap.setTrafficEnabled(false);
                 isRouteDrawn = 1;
-                if (isBooked) {
+                if (isBooked && bookedPlace != null) {
                     if (isInAreaEnabled) {
                         //TODO park
                     } else if (parkingAreaChanged) {
@@ -3920,7 +3902,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         polyline = mMap.addPolyline(getDefaultPolyLines(points));
 
-        if (isBooked) {
+        if (isBooked && bookedPlace != null) {
             btnGetDirection.setText(context.getResources().getString(R.string.confirm_booking));
             btnMarkerGetDirection.setText(context.getResources().getString(R.string.confirm_booking));
             btnBottomSheetGetDirection.setText(context.getResources().getString(R.string.confirm_booking));

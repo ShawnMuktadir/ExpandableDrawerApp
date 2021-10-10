@@ -82,6 +82,7 @@ public class Preferences {
         editor.putLong("lat", (long) booked.getLat());
         editor.putLong("lon", (long) booked.getLon());
         editor.putString("route", booked.getRoute());
+        editor.putBoolean("isBooked", booked.getIsBooked());
         editor.apply();
     }
 
@@ -92,6 +93,7 @@ public class Preferences {
         bookedPlace.setRoute(sharedPreferences.getString("route", ""));
         bookedPlace.setLat(sharedPreferences.getLong("lat", 0));
         bookedPlace.setLon(sharedPreferences.getLong("lon", 0));
+        bookedPlace.setIsBooked(sharedPreferences.getBoolean("isBooked", false));
 
         return bookedPlace;
     }

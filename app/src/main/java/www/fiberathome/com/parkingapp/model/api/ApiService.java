@@ -7,6 +7,7 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.BookedResponse;
+import www.fiberathome.com.parkingapp.model.response.booking.ReservationResponse;
 import www.fiberathome.com.parkingapp.model.response.login.LoginResponse;
 import www.fiberathome.com.parkingapp.model.response.parkingSlot.ParkingSlotResponse;
 import www.fiberathome.com.parkingapp.model.response.search.SearchVisitedPlaceResponse;
@@ -47,7 +48,6 @@ public interface ApiService {
     );
 
     @FormUrlEncoded
-    //@POST("test1.php")
     @POST("edit_U_info.php")
     Call<LoginResponse> editProfile(
             @Field("fullname") String name,
@@ -86,6 +86,14 @@ public interface ApiService {
             @Field("start_long") String startLongitude,
             @Field("address") String areaAddress
     );
+
+    @FormUrlEncoded
+    @POST("reservation_fnc.php")
+    Call<ReservationResponse> storeReservation(
+            @Field("mobile_no") String mobileNo,
+            @Field("time_start") String startTime,
+            @Field("time_end") String endTime,
+            @Field("spot_id") String spotId);
 
     @FormUrlEncoded
     @POST("visitor_place_tracker_get.php")

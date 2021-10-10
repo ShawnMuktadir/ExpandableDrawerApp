@@ -175,7 +175,6 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
         if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
             navigationView.getMenu().getItem(0).setChecked(true);
             drawerLayout.closeDrawers();
-            //toolbar.setSubtitle("");
             //super.onBackPressed(); delete this line
             // and start your fragment:
 

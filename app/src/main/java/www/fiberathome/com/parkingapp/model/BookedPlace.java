@@ -12,6 +12,7 @@ public class BookedPlace implements Parcelable {
   private String route;
   private String areaName;
   private String parkingSlotCount;
+  private boolean isBooked = false;
 
   public BookedPlace() {
   }
@@ -97,7 +98,7 @@ public class BookedPlace implements Parcelable {
     this.parkingSlotCount = in.readString();
   }
 
-  public static final Parcelable.Creator<BookedPlace> CREATOR = new Parcelable.Creator<BookedPlace>() {
+  public static final Creator<BookedPlace> CREATOR = new Creator<BookedPlace>() {
     @Override
     public BookedPlace createFromParcel(Parcel source) {
       return new BookedPlace(source);
@@ -108,4 +109,12 @@ public class BookedPlace implements Parcelable {
       return new BookedPlace[size];
     }
   };
+
+    public boolean getIsBooked() {
+        return isBooked;
+    }
+
+    public void setIsBooked(boolean isBooked) {
+        this.isBooked = isBooked;
+    }
 }

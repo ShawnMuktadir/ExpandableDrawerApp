@@ -51,14 +51,20 @@ import java.util.concurrent.TimeUnit;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import retrofit2.Call;
+import retrofit2.Callback;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.model.BookedPlace;
+import www.fiberathome.com.parkingapp.model.api.ApiClient;
+import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.booking.Reservation;
+import www.fiberathome.com.parkingapp.model.response.booking.ReservationResponse;
+import www.fiberathome.com.parkingapp.model.response.parkingSlot.ParkingSlotResponse;
 import www.fiberathome.com.parkingapp.module.notification.NotificationPublisher;
 import www.fiberathome.com.parkingapp.ui.booking.PaymentFragment;
 import www.fiberathome.com.parkingapp.ui.booking.helper.DialogHelper;
@@ -81,6 +87,9 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
         IOnBackPressListener, AdapterView.OnItemSelectedListener {
 
     private final String TAG = getClass().getSimpleName();
+
+    @BindView(R.id.overlay)
+    View overlay;
 
     @BindView(R.id.textViewCurrentDate)
     TextView textViewCurrentDate;
@@ -225,7 +234,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
             arrivedPicker.addOnDateChangedListener((displayed, date) -> {
                 arrivedDate = date;
                 Timber.e("onDateChanged: -> %s", date);
-                Timber.e("onDateChanged: departureDate: -> %s", arrivedDate);
+                Timber.e("onDateChanged: arrivedDate: -> %s", arrivedDate);
 
                 Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
                 final long[] pattern = {0, 10};
@@ -411,42 +420,22 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
     }
 
     private void storeReservation(String mobileNo, String arrivalTime, String departureTime, String markerUid) {
-        Timber.e("storeReservation post method e dhukche");
         showLoading(context);
-        HttpsTrustManager.allowAllSSL();
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_STORE_RESERVATION, response -> {
-            //progressDialog.dismiss();
-            hideLoading();
-            Timber.e("response -> %s", new Gson().toJson(response));
-            try {
-                JSONObject jsonObject = new JSONObject(response);
-                Timber.e(jsonObject.toString());
-                if (!jsonObject.getBoolean("error")) {
+        String totalBookingTime = arrivalTime + "-" + departureTime;
+        textViewActionBarTitle.setText(totalBookingTime);
+        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+        Call<ReservationResponse> call = request.storeReservation(mobileNo, arrivalTime, departureTime, markerUid);
+        call.enqueue(new Callback<ReservationResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ReservationResponse> call,
+                                   @NonNull retrofit2.Response<ReservationResponse> response) {
+                hideLoading();
+                if (response.isSuccessful()) {
+                    overlay.setVisibility(View.VISIBLE);
                     TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.reservation_successful));
                     //check 15 minutes before departure
                     //ToDo
                     startAlarm(convertLongToCalendar(departedDate.getTime()));
-                    if (getActivity() != null)
-                        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
-
-                    Timber.e("response no error called");
-                    Timber.e(jsonObject.getString("reservation"));
-                    Timber.e(jsonObject.getString("bill"));
-
-                    // creating a new user object
-                    Reservation reservation = new Reservation();
-                    // getting the reservation from the response
-                    //JSONObject reservationJson = jsonObject.getJSONObject("reservation");
-
-                    JSONObject reservationJson = new JSONObject(response);
-                    Timber.e("reservationJson -> %s", new Gson().toJson(reservationJson));
-
-                    reservation.setId(reservationJson.getInt("reservation"));
-                    /*reservation.setMobileNo(reservationJson.getString("mobile_no"));
-                    reservation.setTimeStart(reservationJson.getString("time_start"));
-                    reservation.setTimeEnd(reservationJson.getString("time_end"));
-                    reservation.setSpotId(reservationJson.getString("spot_id"));*/
-
                     BookedPlace bookedPlace = new BookedPlace();
                     bookedPlace.setBookedUid(markerUid);
                     bookedPlace.setLat(lat);
@@ -454,37 +443,29 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                     bookedPlace.setRoute(route);
                     bookedPlace.setAreaName(areaName);
                     bookedPlace.setParkingSlotCount(parkingSlotCount);
+                    bookedPlace.setIsBooked(true);
 
                     Preferences.getInstance(context).setBooked(bookedPlace);
                     if (isGPSEnabled()) {
+                        if (getActivity() != null)
+                            Objects.requireNonNull(((AppCompatActivity) getActivity()).getSupportActionBar()).setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
                         ApplicationUtils.replaceFragmentWithAnimation(getParentFragmentManager(), HomeFragment.newInstance(bookedPlace));
                     } else {
                         TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
                     }
                 } else {
-                    hideLoading();
-                    Toast.makeText(getContext(), "Reservation Failed! Please Try Again. ", Toast.LENGTH_SHORT).show();
+                    overlay.setVisibility(View.GONE);
+                    Toast.makeText(getContext(), context.getResources().getString(R.string.reservation_failed), Toast.LENGTH_SHORT).show();
                 }
+            }
 
-            } catch (JSONException e) {
-                hideLoading();
-                e.printStackTrace();
-            }
-        }, error -> {
-            hideLoading();
-            Timber.e("Volley Error -> %s", error.getMessage());
-        }) {
             @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("mobile_no", mobileNo);
-                params.put("time_start", arrivalTime);
-                params.put("time_end", departureTime);
-                params.put("spot_id", markerUid);
-                return params;
+            public void onFailure(@NonNull Call<ReservationResponse> call, @NonNull Throwable t) {
+                Timber.e("onFailure -> %s", t.getMessage());
+                hideLoading();
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
-        };
-        ParkingApp.getInstance().addToRequestQueue(stringRequest, TAG);
+        });
     }
 
     private String getDate(long milliSeconds) {
