@@ -501,4 +501,17 @@
     <string name="live_parking">Live Parking</string>
     <string name="already_booked_msg">As you have already booked a parking spot, so you can\'t book now.</string>
     <string name="reservation_failed">Reservation Failed! Please Try Again…</string>
+    <string name="reset">Reset</string>
+    <string name="bdt_00_00">(BDT 00.00)</string>
+    <string name="use_promo">Use promo</string>
+    <string name="bdt_15_h">BDT 15/h</string>
+    <string name="each_hour">Each hour</string>
+    <string name="subtotal_parking">Subtotal Parking:</string>
+    <string name="discount">Discount</string>
+    <string name="total">Total</string>
+    <string name="edit_slot">Edit slot</string>
+    <string name="your_booking">Booking Information</string>
+    <string name="pay_bdt_0">Pay</string>
+    <string name="booking_payment">Booking Payment</string>
+    <string name="terms_condition_booking"><![CDATA[T&C Minimum 30 min required]]></string>
 </resources>

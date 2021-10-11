@@ -1,5 +1,7 @@
 package www.fiberathome.com.parkingapp.ui.bottomSheet;
 
+import static android.content.Context.LOCATION_SERVICE;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
@@ -29,8 +31,6 @@ import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.MathUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
-
-import static android.content.Context.LOCATION_SERVICE;
 
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.TextBookingViewHolder> {
@@ -70,7 +70,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
     @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(@NonNull TextBookingViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull TextBookingViewHolder holder, @SuppressLint("RecyclerView") int position) {
         BookingSensors bookingSensors = bookingSensorsArrayList.get(position);
 
         if (bookingSensors.type == BookingSensors.TEXT_INFO_TYPE) {

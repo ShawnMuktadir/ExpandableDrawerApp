@@ -1,12 +1,12 @@
 package www.fiberathome.com.parkingapp.model.data.preference;
 
+import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 
 import www.fiberathome.com.parkingapp.model.data.Constants;
-
-import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
 
 @SuppressLint("StaticFieldLeak")
 @SuppressWarnings({"unused", "RedundantSuppression"})

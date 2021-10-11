@@ -8,6 +8,9 @@
 
 package www.fiberathome.com.parkingapp.utils;
 
+import static android.os.Build.VERSION_CODES.JELLY_BEAN_MR1;
+import static android.os.Build.VERSION_CODES.N;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -21,9 +24,6 @@ import androidx.annotation.RequiresApi;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Set;
-
-import static android.os.Build.VERSION_CODES.JELLY_BEAN_MR1;
-import static android.os.Build.VERSION_CODES.N;
 
 public class LocaleManager {
 

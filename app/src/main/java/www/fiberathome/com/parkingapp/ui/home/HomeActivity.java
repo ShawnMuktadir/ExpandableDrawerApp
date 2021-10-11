@@ -18,7 +18,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -28,8 +27,6 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.karumi.dexter.PermissionToken;
 
 import java.util.List;
@@ -133,7 +130,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
             //initialize home fragment
             ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
                     HomeFragment.newInstance(lat, lng, areaName, count), R.id.nav_host_fragment);
-            linearLayoutToolbarTime.setVisibility(View.VISIBLE);
+            linearLayoutToolbarTime.setVisibility(View.GONE);
             navigationView.getMenu().getItem(0).setChecked(true);
         }
 

@@ -91,7 +91,17 @@
                     android:layout_margin="@dimen/app_radius"
                     android:text="@string/schedule_parking"
                     android:textColor="@android:color/black"
-                    android:textSize="@dimen/dimTex16"
+                    android:textSize="@dimen/dimTex14"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="@dimen/app_radius"
+                    android:text="@string/terms_condition_booking"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/dimTex12"
                     android:textStyle="normal" />
 
                 <TextView
@@ -200,8 +210,8 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/dim3"
                         android:layout_weight="1"
-                        android:background="#aaaaaa"
-                        android:text="@string/cancel"
+                        android:background="@color/red"
+                        android:text="@string/reset"
                         android:textAllCaps="false"
                         android:textColor="@color/white"
                         android:textSize="@dimen/dimTex16" />

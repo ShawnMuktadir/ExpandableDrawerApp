@@ -1,5 +1,8 @@
 package www.fiberathome.com.parkingapp.ui.dialog;
 
+import static com.android.volley.VolleyLog.TAG;
+import static www.fiberathome.com.parkingapp.utils.NotificationClass.CHANNEL_HIGH_PRIORITY_ID;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Notification;
@@ -40,9 +43,6 @@ import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.booking.Reservation;
 import www.fiberathome.com.parkingapp.model.user.User;
 import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
-
-import static com.android.volley.VolleyLog.TAG;
-import static www.fiberathome.com.parkingapp.utils.NotificationClass.CHANNEL_HIGH_PRIORITY_ID;
 
 public class DialogForm extends AppCompatDialogFragment {
     private final String format = "";

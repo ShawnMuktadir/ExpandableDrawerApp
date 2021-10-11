@@ -8,6 +8,7 @@ public class SensorArea {
     private String count;
     private String duration;
     private boolean isChecked;
+    private String occupiedCount;
 
     private final double fetchDistance = 0.0;
     private String placeId;
@@ -69,6 +70,14 @@ public class SensorArea {
 
     public void setCount(String count) {
         this.count = count;
+    }
+
+    public String getOccupiedCount() {
+        return occupiedCount;
+    }
+
+    public void setOccupiedCount(String occupiedCount) {
+        this.occupiedCount = occupiedCount;
     }
 
     public boolean isChecked() {

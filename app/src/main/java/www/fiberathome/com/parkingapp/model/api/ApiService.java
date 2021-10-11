@@ -9,6 +9,7 @@ import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.BookedResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.CloseReservationResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.ReservationResponse;
+import www.fiberathome.com.parkingapp.model.response.booking.SensorAreaStatusResponse;
 import www.fiberathome.com.parkingapp.model.response.login.LoginResponse;
 import www.fiberathome.com.parkingapp.model.response.parkingSlot.ParkingSlotResponse;
 import www.fiberathome.com.parkingapp.model.response.search.SearchVisitedPlaceResponse;
@@ -109,11 +110,8 @@ public interface ApiService {
     @GET("terms_condition.php")
     Call<TermsConditionResponse> getTermCondition();
 
-    @FormUrlEncoded
-    @POST("bookings.php")
-    Call<BookedResponse> storeBookingPlace(
-            @Field("mobile_number") String mobileNo
-    );
+    @GET("sensor_area_status.php")
+    Call<SensorAreaStatusResponse> getSensorAreaStatus();
 
     @FormUrlEncoded
     @POST("bookings.php")

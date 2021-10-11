@@ -3,8 +3,6 @@ package www.fiberathome.com.parkingapp.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.Date;
-
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class BookedPlace implements Parcelable {
 

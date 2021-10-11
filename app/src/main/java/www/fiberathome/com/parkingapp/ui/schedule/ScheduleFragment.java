@@ -1,5 +1,8 @@
 package www.fiberathome.com.parkingapp.ui.schedule;
 
+import static android.content.Context.LOCATION_SERVICE;
+import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
+
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -28,24 +31,14 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.toolbox.StringRequest;
 import com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker;
-import com.google.gson.Gson;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -57,30 +50,22 @@ import retrofit2.Callback;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
-import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.model.BookedPlace;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
-import www.fiberathome.com.parkingapp.model.response.booking.Reservation;
 import www.fiberathome.com.parkingapp.model.response.booking.ReservationResponse;
-import www.fiberathome.com.parkingapp.model.response.parkingSlot.ParkingSlotResponse;
 import www.fiberathome.com.parkingapp.module.notification.NotificationPublisher;
 import www.fiberathome.com.parkingapp.ui.booking.PaymentFragment;
 import www.fiberathome.com.parkingapp.ui.booking.helper.DialogHelper;
 import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
-import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DateTimeUtils;
-import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
-
-import static android.content.Context.LOCATION_SERVICE;
-import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
 
 @SuppressLint("NonConstantResourceId")
 @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -295,45 +280,10 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                 if (departedDate.getTime() - arrivedDate.getTime() < 0) {
                     Toast.makeText(requireActivity(), "Departure time can't less than arrived time", Toast.LENGTH_SHORT).show();
                 } else {
-                    /*Bundle bundle = new Bundle();
-                    Log.d(TAG, "onClick: " + arrivedDate.getTime());
-                    Log.d(TAG, "onClick: " + departerDate.getTime());
-                    bundle.putBoolean("s", true);
-                    bundle.putLong("arrived", arrivedDate.getTime());
-                    bundle.putLong("departure", departerDate.getTime());
-                    //BookedFragment bookedFragment=new BookedFragment();
-                    //bookedFragment.setArguments(bundle);
-                    HomeFragment homeFragment = new HomeFragment();
-                    homeFragment.setArguments(bundle);
-                    listener.FragmentChange(homeFragment);*/
-
-                    //open DialogHelper with total amount, time difference
-
-                    /*Dialog dialog = new Dialog(requireActivity());
-                        dialog.setContentView(R.layout.voucher_dialog);
-                        DialogHelper dialogHelper = new DialogHelper(dialog, requireActivity(), getDate(arrivedDate.getTime()), getDate(departerDate.getTime()),
-                                getTimeDiffrence(departerDate.getTime() - arrivedDate.getTime()),
-                                departerDate.getTime() - arrivedDate.getTime(), payBtnClickListener);
-                        dialogHelper.initDialog();
-                        dialog.show();*/
-
-                    if (ConnectivityUtils.getInstance().checkInternet(context)) {
-                        long diff = departedDate.getTime() - arrivedDate.getTime();
-                        long seconds = diff / 1000;
-                        long minutes = seconds / 60;
-                        long hours = minutes / 60;
-                        long days = hours / 24;
-                        Timber.e("hours -> %s", hours);
-                        Timber.e("minutes -> %s", minutes);
-                        if (minutes > 120) {
-                            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.booking_time_rules));
-                        } else {
-                            storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
-                                    getDate(arrivedDate.getTime()), getDate(departedDate.getTime()), markerUid);
-                        }
-                    } else {
-                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
-                    }
+                    PaymentFragment paymentFragment = PaymentFragment.newInstance(arrivedDate, departedDate, getDate(arrivedDate.getTime()), getDate(departedDate.getTime()),
+                            getTimeDifference(departedDate.getTime() - arrivedDate.getTime()),
+                            departedDate.getTime() - arrivedDate.getTime(), markerUid, lat, lon, route, areaName, parkingSlotCount);
+                    listener.fragmentChange(paymentFragment);
                 }
             }
         });
@@ -418,64 +368,6 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
-    }
-
-    private void storeReservation(String mobileNo, String arrivalTime, String departureTime, String markerUid) {
-        showLoading(context);
-        String totalBookingTime = arrivalTime + "-" + departureTime;
-        textViewActionBarTitle.setText(totalBookingTime);
-        long diff = departedDate.getTime() - arrivedDate.getTime();
-        long seconds = diff / 1000;
-        long minutes = seconds / 60;
-        long hours = minutes / 60;
-        long days = hours / 24;
-        tvTotalParkingTime.setText(new StringBuilder().append("Total : \n").append(hours).append(" hr").append(" : ").append(minutes).append(" min").toString());
-
-        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<ReservationResponse> call = request.storeReservation(mobileNo, arrivalTime, departureTime, markerUid);
-        call.enqueue(new Callback<ReservationResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<ReservationResponse> call,
-                                   @NonNull retrofit2.Response<ReservationResponse> response) {
-                hideLoading();
-                if (response.isSuccessful()) {
-                    Timber.e("response -> %s", new Gson().toJson(response.body()));
-                    overlay.setVisibility(View.VISIBLE);
-                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.reservation_successful));
-                    //check 15 minutes before departure
-                    //ToDo
-                    startAlarm(convertLongToCalendar(departedDate.getTime()));
-                    BookedPlace bookedPlace = new BookedPlace();
-                    bookedPlace.setBookedUid(markerUid);
-                    bookedPlace.setLat(lat);
-                    bookedPlace.setLon(lon);
-                    bookedPlace.setRoute(route);
-                    bookedPlace.setAreaName(areaName);
-                    bookedPlace.setParkingSlotCount(parkingSlotCount);
-                    bookedPlace.setDepartedDate(departedDate.getTime());
-                    bookedPlace.setIsBooked(true);
-
-                    Preferences.getInstance(context).setBooked(bookedPlace);
-                    if (isGPSEnabled()) {
-                        if (getActivity() != null)
-                            Objects.requireNonNull(((AppCompatActivity) getActivity()).getSupportActionBar()).setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
-                        ApplicationUtils.replaceFragmentWithAnimation(getParentFragmentManager(), HomeFragment.newInstance(bookedPlace));
-                    } else {
-                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
-                    }
-                } else {
-                    overlay.setVisibility(View.GONE);
-                    Toast.makeText(getContext(), context.getResources().getString(R.string.reservation_failed), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<ReservationResponse> call, @NonNull Throwable t) {
-                Timber.e("onFailure -> %s", t.getMessage());
-                hideLoading();
-                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
-            }
-        });
     }
 
     private String getDate(long milliSeconds) {

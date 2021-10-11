@@ -505,5 +505,18 @@
     <string name="live_parking">Live Parking</string>
     <string name="already_booked_msg">যেহেতু আপনি ইতিমধ্যে একটি পার্কিং স্পট বুক করেছেন, তাই আপনি এখন বুক করতে পারবেন না।</string>
     <string name="reservation_failed">বুকিং সংরক্ষণ ব্যর্থ! অনুগ্রহপূর্বক আবার চেষ্টা করুন…</string>
+    <string name="reset">পুনরায় করুন</string>
+    <string name="bdt_00_00">(BDT 00.00)</string>
+    <string name="use_promo">Use promo</string>
+    <string name="bdt_15_h">BDT 15/h</string>
+    <string name="each_hour">Each hour</string>
+    <string name="subtotal_parking">Subtotal Parking:</string>
+    <string name="discount">Discount</string>
+    <string name="total">Total</string>
+    <string name="edit_slot">Edit slot</string>
+    <string name="your_booking">Booking Information</string>
+    <string name="pay_bdt_0">Pay</string>
+    <string name="booking_payment">Booking Payment</string>
+    <string name="terms_condition_booking"><![CDATA[T&C Minimum 30 min required]]></string>
 </resources>
 

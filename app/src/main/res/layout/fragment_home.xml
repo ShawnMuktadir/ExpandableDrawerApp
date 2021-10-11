@@ -9,6 +9,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <fragment
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.SupportMapFragment"
@@ -835,7 +836,7 @@
                     android:layout_height="wrap_content">
 
                     <TextView
-                        android:id="@+id/arrivedtimeTV"
+                        android:id="@+id/tvArrivedTime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
@@ -846,17 +847,17 @@
                         android:textSize="15sp" />
 
                     <TextView
-                        android:id="@+id/departureTimeTV"
+                        android:id="@+id/tvDepartureTime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/black"
                         android:layout_margin="@dimen/dim2"
                         android:padding="@dimen/dim2"
-                        android:layout_below="@+id/arrivedtimeTV"
+                        android:layout_below="@+id/tvArrivedTime"
                         android:text="Departure-04:30pm" />
 
                     <TextView
-                        android:id="@+id/timeDifferenceTV"
+                        android:id="@+id/tvDifferenceTime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/black"

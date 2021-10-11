@@ -1,5 +1,8 @@
 package www.fiberathome.com.parkingapp.ui.booking.newBooking;
 
+import static android.content.Context.LOCATION_SERVICE;
+import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.location.LocationManager;
@@ -44,9 +47,6 @@ import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
-
-import static android.content.Context.LOCATION_SERVICE;
-import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
 
 @SuppressLint("NonConstantResourceId")
 @SuppressWarnings({"unused", "RedundantSuppression"})

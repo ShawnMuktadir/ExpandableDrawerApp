@@ -1,14 +1,292 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyle"
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#edecea">
+
+        <TextView
+            android:id="@+id/action_bar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:maxLines="2"
+            android:layout_margin="@dimen/dim2"
+            android:padding="@dimen/dim5"
+            android:text="@string/booking_payment"
+            android:textColor="@color/black"
+            android:textSize="@dimen/dimTex16" />
+
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/topText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"/>
+        android:layout_below="@+id/relativeLayout"
+        android:layout_centerInParent="true"
+        android:layout_margin="@dimen/dim5"
+        android:gravity="center"
+        android:padding="@dimen/dim5"
+        android:text="@string/your_booking"
+        android:textSize="@dimen/dimTex16" />
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="10dp"
+        android:padding="@dimen/dim5"
+        android:visibility="gone">
 
-</FrameLayout>
+        <TextView
+            android:id="@+id/editSlotText"
+            android:layout_width="85dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_style"
+            android:gravity="center"
+            android:text="@string/edit_slot"
+            android:textSize="@dimen/dimTex15" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvParkingSlotName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/topText"
+        android:layout_centerInParent="true"
+        android:layout_margin="@dimen/dim5"
+        android:padding="@dimen/dim5"
+        android:text="Parking slot 17"
+        android:textColor="@android:color/black"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+    <View
+        android:id="@+id/border1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/tvParkingSlotName"
+        android:layout_marginTop="@dimen/dim2"
+        android:padding="@dimen/dim5"
+        android:background="#978080" />
+
+    <RelativeLayout
+        android:id="@+id/second_layer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/border1"
+        android:padding="@dimen/dim5"
+        android:layout_marginTop="@dimen/dim5">
+
+        <TextView
+            android:id="@+id/tvArrivedTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/dim5"
+            android:text="@string/arrived"
+            android:textSize="@dimen/dimTex15" />
+
+        <TextView
+            android:id="@+id/tvDepartureTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvArrivedTime"
+            android:padding="@dimen/dim5"
+            android:text="@string/departure"
+            android:textSize="@dimen/dimTex15" />
+
+        <TextView
+            android:id="@+id/tvDifferenceTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerInParent="true"
+            android:layout_margin="@dimen/dim2"
+            android:padding="@dimen/dim5"
+            android:text="2:30h"
+            android:textSize="15sp" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/eachHourText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/second_layer"
+        android:padding="@dimen/dim5"
+        android:layout_marginStart="@dimen/dim5"
+        android:text="@string/each_hour"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/dimTex15"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/eachHourText"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="@dimen/dim2"
+        android:padding="@dimen/dim5"
+        android:text="@string/bdt_15_h"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <View
+        android:id="@+id/border2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/eachHourText"
+        android:layout_marginTop="2dp"
+        android:background="#978080" />
+
+    <TextView
+        android:id="@+id/tvPromo"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/border2"
+        android:layout_marginStart="@dimen/dim5"
+        android:layout_marginTop="@dimen/dim5"
+        android:background="@drawable/border_style"
+        android:gravity="center"
+        android:padding="@dimen/dim5"
+        android:text="@string/use_promo"
+        android:textSize="@dimen/dimTex15"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvSubTotalText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvPromo"
+        android:layout_marginStart="@dimen/dim5"
+        android:layout_marginTop="@dimen/dim5"
+        android:padding="@dimen/dim5"
+        android:text="@string/subtotal_parking"
+        android:textColor="@android:color/black"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvSubTotal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/tvSubTotalText"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="@dimen/dim2"
+        android:padding="@dimen/dim5"
+        android:text="BDT 700.00"
+        android:textColor="@android:color/black"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvDiscountStaticText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvSubTotalText"
+        android:layout_marginStart="@dimen/dim5"
+        android:layout_marginTop="@dimen/dim2"
+        android:padding="@dimen/dim5"
+        android:text="@string/discount"
+        android:textSize="@dimen/dimTex14" />
+
+    <TextView
+        android:id="@+id/tvDiscount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/tvDiscountStaticText"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="@dimen/dim2"
+        android:padding="@dimen/dim5"
+        android:text="@string/bdt_00_00"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/tvTotalStaticText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvDiscountStaticText"
+        android:layout_marginStart="@dimen/dim5"
+        android:layout_marginTop="@dimen/dim2"
+        android:padding="@dimen/dim5"
+        android:text="@string/total"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvTotal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/tvTotalStaticText"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="@dimen/dim2"
+        android:padding="@dimen/dim5"
+        android:text="BDT400.00"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/dimTex15"
+        android:textStyle="bold" />
+
+    <View
+        android:id="@+id/border3"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/tvTotalStaticText"
+        android:layout_marginTop="2dp"
+        android:background="#9C9696" />
+
+    <TextView
+        android:id="@+id/disclaimerTxt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/border3"
+        android:layout_marginStart="3dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginEnd="3dp"
+        android:layout_marginBottom="3dp"
+        android:padding="3dp"
+        android:text="@string/loream_ipsum"
+        android:textSize="14sp"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/termConWrapLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/disclaimerTxt"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="@dimen/dim2"
+        android:padding="@dimen/dim5">
+
+        <TextView
+            android:id="@+id/tvTermCondition"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_style"
+            android:gravity="center"
+            android:text="T&amp;C"
+            android:textSize="@dimen/dimTex14"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnPay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/termConWrapLayout"
+        android:layout_marginStart="@dimen/dim10"
+        android:layout_marginTop="@dimen/dim10"
+        android:layout_marginEnd="@dimen/dim10"
+        android:layout_marginBottom="@dimen/dim10"
+        android:background="@android:color/black"
+        android:padding="@dimen/dim10"
+        android:text="@string/pay_bdt_0"
+        android:textColor="@android:color/white" />
+</RelativeLayout>

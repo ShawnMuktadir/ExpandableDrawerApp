@@ -9,24 +9,10 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 
-import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.model.BookedPlace;
-import www.fiberathome.com.parkingapp.model.api.ApiClient;
-import www.fiberathome.com.parkingapp.model.api.ApiService;
-import www.fiberathome.com.parkingapp.model.api.AppConfig;
-import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
-import www.fiberathome.com.parkingapp.model.response.booking.CloseReservationResponse;
-import www.fiberathome.com.parkingapp.model.response.booking.ReservationResponse;
-import www.fiberathome.com.parkingapp.utils.DialogUtils;
-import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 class NotificationHelper extends ContextWrapper {
     public static final String channelID = "channelID";
@@ -44,7 +30,6 @@ class NotificationHelper extends ContextWrapper {
         }
     }
 
-    //@TargetApi(Build.VERSION_CODES.O)
     private void createChannel() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel;

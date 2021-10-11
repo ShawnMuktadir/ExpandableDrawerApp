@@ -41,28 +41,22 @@ public class DialogHelper extends DialogFragment {
     }
 
     public void initDialog() {
-        dialogClos = dialog.findViewById(R.id.clsDialogImageBtn);
-        arrivedTV = dialog.findViewById(R.id.arrivedtimeTV);
-        departerTV = dialog.findViewById(R.id.departureTimeTV);
-        timeDiferenceTV = dialog.findViewById(R.id.timeDifferenceTV);
-        subtotalTV = dialog.findViewById(R.id.subTtlCountText);
-        totalTV = dialog.findViewById(R.id.ttlCount);
-        payBtn = dialog.findViewById(R.id.payBtn);
+        arrivedTV = dialog.findViewById(R.id.tvArrivedTime);
+        departerTV = dialog.findViewById(R.id.tvDepartureTime);
+        timeDiferenceTV = dialog.findViewById(R.id.tvDifferenceTime);
+        subtotalTV = dialog.findViewById(R.id.tvSubTotal);
+        totalTV = dialog.findViewById(R.id.tvTotal);
+        payBtn = dialog.findViewById(R.id.btnPay);
         editSlotText = dialog.findViewById(R.id.editSlotText);
-        termsConText = dialog.findViewById(R.id.termsConText);
-        promoText = dialog.findViewById(R.id.promoText);
+        termsConText = dialog.findViewById(R.id.tvTermCondition);
+        promoText = dialog.findViewById(R.id.tvPromo);
 
         arrivedTV.setText(arrived);
         departerTV.setText(departure);
         timeDiferenceTV.setText(difference);
         setBill();
         setListeners();
-        dialogClos.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
+        dialogClos.setOnClickListener(v -> dialog.dismiss());
     }
 
     @Override
@@ -82,10 +76,10 @@ public class DialogHelper extends DialogFragment {
         if (getDialog() == null)
             return;
 
-//        int dialogWidth = 1000; // specify a value here
-//        int dialogHeight = 500; // specify a value here
-//
-//        getDialog().getWindow().setLayout(dialogWidth, dialogHeight);
+        /*int dialogWidth = 1000; // specify a value here
+        int dialogHeight = 500; // specify a value here
+
+        getDialog().getWindow().setLayout(dialogWidth, dialogHeight);*/
 
         // ... other stuff you want to do in your onStart() method
     }
@@ -99,26 +93,11 @@ public class DialogHelper extends DialogFragment {
     }
 
     private void setListeners() {
-        editSlotText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show();
-            }
-        });
+        editSlotText.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
 
-        promoText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show();
-            }
-        });
+        promoText.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
 
-        termsConText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show();
-            }
-        });
+        termsConText.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
 
         payBtn.setOnClickListener(new View.OnClickListener() {
             @Override

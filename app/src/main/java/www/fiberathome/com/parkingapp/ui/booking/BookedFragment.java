@@ -50,9 +50,9 @@ public class BookedFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_booked, container, false);
 
         listener = (FragmentChangeListener) getActivity();
-        arrivedtimeTV = view.findViewById(R.id.arrivedtimeTV);
-        departuretimeTV = view.findViewById(R.id.departureTimeTV);
-        timeDifferenceTV = view.findViewById(R.id.timeDifferenceTV);
+        arrivedtimeTV = view.findViewById(R.id.tvArrivedTime);
+        departuretimeTV = view.findViewById(R.id.tvDepartureTime);
+        timeDifferenceTV = view.findViewById(R.id.tvDifferenceTime);
         textViewTermsCondition = view.findViewById(R.id.textViewTermsCondition);
         moreBtn = view.findViewById(R.id.moreBtn);
         btnCarDeparture = view.findViewById(R.id.btnCarDeparture);
