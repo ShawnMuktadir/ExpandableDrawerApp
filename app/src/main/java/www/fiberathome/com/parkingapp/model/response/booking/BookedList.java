@@ -66,6 +66,10 @@ public class BookedList {
     @Expose
     private String status;
 
+    @SerializedName("c_status")
+    @Expose
+    private String c_status;
+
     @SerializedName("address")
     @Expose
     private String address;
@@ -252,5 +256,12 @@ public class BookedList {
 
     public void setNoOfParking(String noOfParking) {
         this.noOfParking = noOfParking;
+    }
+    public String getC_status() {
+        return c_status;
+    }
+
+    public void setC_status(String c_status) {
+        this.c_status = c_status;
     }
 }
