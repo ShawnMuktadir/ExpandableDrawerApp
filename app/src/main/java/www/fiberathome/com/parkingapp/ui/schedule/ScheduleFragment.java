@@ -1,8 +1,5 @@
 package www.fiberathome.com.parkingapp.ui.schedule;
 
-import static android.content.Context.LOCATION_SERVICE;
-import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
-
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -45,27 +42,20 @@ import java.util.concurrent.TimeUnit;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import retrofit2.Call;
-import retrofit2.Callback;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
-import www.fiberathome.com.parkingapp.model.BookedPlace;
-import www.fiberathome.com.parkingapp.model.api.ApiClient;
-import www.fiberathome.com.parkingapp.model.api.ApiService;
-import www.fiberathome.com.parkingapp.model.api.AppConfig;
-import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
-import www.fiberathome.com.parkingapp.model.response.booking.ReservationResponse;
 import www.fiberathome.com.parkingapp.module.notification.NotificationPublisher;
 import www.fiberathome.com.parkingapp.ui.booking.PaymentFragment;
 import www.fiberathome.com.parkingapp.ui.booking.helper.DialogHelper;
 import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.DateTimeUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
-import www.fiberathome.com.parkingapp.utils.ToastUtils;
+
+import static android.content.Context.LOCATION_SERVICE;
+import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
 
 @SuppressLint("NonConstantResourceId")
 @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -117,7 +107,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
 
     private Context context;
 
-    private Date arrivedDate, departedDate;
+    private Date arrivedDate, departedDate, mFutureTime;
     private boolean setArrivedDate = false;
     private boolean more = false;
     private FragmentChangeListener listener;
@@ -175,6 +165,13 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
             spinner.setAdapter(dataAdapter);
 
             Date currentTime = Calendar.getInstance().getTime();
+            //add 30 minutes to date
+            mFutureTime = new Date(); // Instantiate a Date object
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(mFutureTime);
+            cal.add(Calendar.MINUTE, 30);
+            mFutureTime = cal.getTime();
+            Date futureTime = mFutureTime;
             if (getArguments() != null) {
                 more = getArguments().getBoolean("m");
                 markerUid = getArguments().getString("markerUid");
@@ -188,7 +185,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
             arrivedPicker.setIsAmPm(true);
             departurePicker.setIsAmPm(true);
             arrivedPicker.setDefaultDate(currentTime);
-            departurePicker.setDefaultDate(currentTime);
+            departurePicker.setDefaultDate(mFutureTime);
 
             if (more) {
                 setArrivedDate = true;
@@ -219,9 +216,6 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
 
             arrivedPicker.addOnDateChangedListener((displayed, date) -> {
                 arrivedDate = date;
-                Timber.e("onDateChanged: -> %s", date);
-                Timber.e("onDateChanged: arrivedDate: -> %s", arrivedDate);
-
                 Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
                 final long[] pattern = {0, 10};
                 final int[] amplitudes = {50, 50};
@@ -239,9 +233,6 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
 
             departurePicker.addOnDateChangedListener((displayed, date) -> {
                 departedDate = date;
-                Timber.e("onDateChanged: -> %s", date);
-                Timber.e("onDateChanged: departureDate: -> %s", departedDate);
-
                 Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
                 final long[] pattern = {0, 10};
                 final int[] amplitudes = {50, 50};
@@ -276,10 +267,23 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
 
                 setArrivedDate = true;
             } else {
+                long diff = departedDate.getTime() - arrivedDate.getTime();
+                long seconds = diff / 1000;
+                long minutes = seconds / 60;
+                long hours = minutes / 60;
+                long days = hours / 24;
                 Timber.d("onClick: didnot entered to else");
-                if (departedDate.getTime() - arrivedDate.getTime() < 0) {
-                    Toast.makeText(requireActivity(), "Departure time can't less than arrived time", Toast.LENGTH_SHORT).show();
-                } else {
+                Timber.d("seconds-> %s", seconds);
+                Timber.d("minutes-> %s", minutes);
+                if (diff < 0) {
+                    Toast.makeText(requireActivity(), context.getResources().getString(R.string.departure_time_less_arrive_time), Toast.LENGTH_SHORT).show();
+                }
+                /*else if (departedDate.getTime() < mFutureTime.getTime() - arrivedDate.getTime()) {
+                    Timber.e(String.valueOf(departedDate.getTime()));
+                    Timber.e(String.valueOf(mFutureTime.getTime() - arrivedDate.getTime()));
+                    Toast.makeText(requireActivity(), context.getResources().getString(R.string.departure_time_less_thirty_arrive_time), Toast.LENGTH_SHORT).show();
+                }*/
+                else {
                     PaymentFragment paymentFragment = PaymentFragment.newInstance(arrivedDate, departedDate, getDate(arrivedDate.getTime()), getDate(departedDate.getTime()),
                             getTimeDifference(departedDate.getTime() - arrivedDate.getTime()),
                             departedDate.getTime() - arrivedDate.getTime(), markerUid, lat, lon, route, areaName, parkingSlotCount);
