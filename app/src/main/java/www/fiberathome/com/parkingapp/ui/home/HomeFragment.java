@@ -8,8 +8,10 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
@@ -23,6 +25,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +43,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
@@ -127,6 +131,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
@@ -142,6 +147,7 @@ import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingSensors;
+import www.fiberathome.com.parkingapp.model.response.booking.CloseReservationResponse;
 import www.fiberathome.com.parkingapp.model.response.parkingSlot.ParkingSlotResponse;
 import www.fiberathome.com.parkingapp.model.response.search.SearchVisitorData;
 import www.fiberathome.com.parkingapp.model.response.search.SelectedPlace;
@@ -528,7 +534,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         unbinder = ButterKnife.bind(this, view);
         if (Preferences.getInstance(context).getBooked() != null) {
             isBooked = Preferences.getInstance(context).getBooked().getIsBooked();
+
         }
+        setBroadcast();
         if (isAdded()) {
             initUI(view);
             bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
@@ -615,6 +623,42 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
     }
 
+    private void setBroadcast() {
+        LocalBroadcastManager.getInstance(context).registerReceiver(bookingEndedReceiver,
+                new IntentFilter("booking_ended"));
+    }
+    private BroadcastReceiver bookingEndedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Get extra data included in the Intent
+            String message = intent.getStringExtra("message");
+            endBooking();
+            Log.d("receiver", "Got message: " + message);
+        }
+    };
+    private void endBooking() {
+        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+        Call<CloseReservationResponse> call = request.endReservation(Preferences.getInstance(context).getUser().getMobileNo(),Preferences.getInstance(context).getBooked().getBookedUid());
+        call.enqueue(new Callback<CloseReservationResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<CloseReservationResponse> call, @NonNull Response<CloseReservationResponse> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        Preferences.getInstance(context).setBooked(new BookedPlace());
+                        DialogUtils.getInstance().showMessageDialog(response.body().getMessage(), context);
+                        //TODO update bottom sheet and navigate user to payment
+
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<CloseReservationResponse> call, @NonNull Throwable t) {
+                Timber.e("onFailure -> %s", t.getMessage());
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+            }
+        });
+    }
     private int countAdd = 0;
 
     private Marker pinMarker;
@@ -625,6 +669,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         Timber.e("onMapReady called");
 
         mMap = googleMap;
+        if (Preferences.getInstance(context).getBooked() != null && Preferences.getInstance(context).getBooked().getIsBooked()) {
+            setCircleOnLocation(new LatLng(Preferences.getInstance(context).getBooked().getLat(),
+                    Preferences.getInstance(context).getBooked().getLon()));
+        }
 
         hideLoading();
 
@@ -991,21 +1039,23 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                 double markerDoubleDuration = MathUtils.getInstance().convertToDouble(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(markerDistance * 2.43));
                                 String markerStringDuration = String.valueOf(markerDoubleDuration);
 
-                                bookingSensorsMarkerArrayList.add(new BookingSensors(markerTagObj.getParkingArea(), marker.getPosition().latitude, marker.getPosition().longitude,
-                                        markerDistance, markerTagObj.getCount(), markerStringDuration,
-                                        context.getResources().getString(R.string.nearest_parking_from_your_destination),
-                                        BookingSensors.TEXT_INFO_TYPE, 0));
+                             if(markerTagObj!=null) {
+                                 bookingSensorsMarkerArrayList.add(new BookingSensors(markerTagObj.getParkingArea(), marker.getPosition().latitude, marker.getPosition().longitude,
+                                         markerDistance, markerTagObj.getCount(), markerStringDuration,
+                                         context.getResources().getString(R.string.nearest_parking_from_your_destination),
+                                         BookingSensors.TEXT_INFO_TYPE, 0));
 
-                                setBottomSheetList(() -> {
-                                    if (bottomSheetAdapter != null) {
-                                        bookingSensorsArrayListGlobal.clear();
-                                        bookingSensorsArrayListGlobal.addAll(bookingSensorsMarkerArrayList);
-                                        bottomSheetAdapter.notifyDataSetChanged();
-                                    } else {
-                                        Timber.e("bottomSheetAdapter null");
-                                    }
-                                }, sensorAreaArrayList, marker.getPosition(), bookingSensorsMarkerArrayList, finalUid);
-                                bottomSheetAdapter.setDataList(bookingSensorsMarkerArrayList);
+                                 setBottomSheetList(() -> {
+                                     if (bottomSheetAdapter != null) {
+                                         bookingSensorsArrayListGlobal.clear();
+                                         bookingSensorsArrayListGlobal.addAll(bookingSensorsMarkerArrayList);
+                                         bottomSheetAdapter.notifyDataSetChanged();
+                                     } else {
+                                         Timber.e("bottomSheetAdapter null");
+                                     }
+                                 }, sensorAreaArrayList, marker.getPosition(), bookingSensorsMarkerArrayList, finalUid);
+                                 bottomSheetAdapter.setDataList(bookingSensorsMarkerArrayList);
+                             }
                             }
 
                             @Override

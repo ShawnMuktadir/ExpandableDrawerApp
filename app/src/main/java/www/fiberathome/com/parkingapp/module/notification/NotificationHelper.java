@@ -5,21 +5,39 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.model.BookedPlace;
+import www.fiberathome.com.parkingapp.model.api.ApiClient;
+import www.fiberathome.com.parkingapp.model.api.ApiService;
+import www.fiberathome.com.parkingapp.model.api.AppConfig;
+import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
+import www.fiberathome.com.parkingapp.model.response.booking.CloseReservationResponse;
+import www.fiberathome.com.parkingapp.model.response.booking.ReservationResponse;
+import www.fiberathome.com.parkingapp.utils.DialogUtils;
+import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 class NotificationHelper extends ContextWrapper {
     public static final String channelID = "channelID";
     public static final String channelName = "Channel Name";
+    private final Context context;
     private String ended;
     private NotificationManager notificationManager;
 
     public NotificationHelper(Context base, String ended) {
         super(base);
+        context = base;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createChannel();
             this.ended = ended;
@@ -53,6 +71,7 @@ class NotificationHelper extends ContextWrapper {
 
     public NotificationCompat.Builder getChannelNotification() {
         if (ended != null) {
+            closeBooking();
             return new NotificationCompat.Builder(getApplicationContext(), channelID)
                     .setContentTitle("Booking Scheduled Alert")
                     .setContentText(ended)
@@ -65,5 +84,10 @@ class NotificationHelper extends ContextWrapper {
                     .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)
                     .setSmallIcon(R.mipmap.ic_launcher);
         }
+    }
+
+    private void closeBooking() {
+        Intent intent = new Intent("booking_ended");
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 }

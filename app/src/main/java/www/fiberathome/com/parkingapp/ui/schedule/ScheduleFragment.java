@@ -452,6 +452,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                     bookedPlace.setRoute(route);
                     bookedPlace.setAreaName(areaName);
                     bookedPlace.setParkingSlotCount(parkingSlotCount);
+                    bookedPlace.setDepartedDate(departedDate.getTime());
                     bookedPlace.setIsBooked(true);
 
                     Preferences.getInstance(context).setBooked(bookedPlace);
