@@ -24,15 +24,31 @@
         android:padding="@dimen/dim10"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textViewParkingSlot"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/parking_slot"
-            android:textColor="@color/black"
-            android:maxLines="2"
-            android:textStyle="bold"
-            android:textSize="@dimen/dimTex15"/>
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/textViewParkingSlot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/parking_slot"
+                android:textColor="@color/black"
+                android:maxLines="2"
+                android:textStyle="bold"
+                android:layout_weight="1"
+                android:textSize="@dimen/dimTex15"/>
+            <Button
+                android:id="@+id/btnCancel"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="cancel"
+                android:backgroundTint="@color/red"
+                android:textColor="@color/white"/>
+        </LinearLayout>
+
+
 
         <TextView
             android:id="@+id/textViewParkingSlotAddress"

@@ -29,6 +29,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.booking.BookedList;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingArea;
 
@@ -39,10 +40,12 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public LatLng location;
     private final ArrayList<BookingArea> bookingAreas = new ArrayList<>();
     private ArrayList<BookedList> bookedLists;
+    BookingAdapterClickListener bookingAdapterClickListener;
 
-    public BookingAdapter(BookingActivity context, ArrayList<BookedList> bookedLists) {
+    public BookingAdapter(BookingActivity context, ArrayList<BookedList> bookedLists,BookingAdapterClickListener bookingAdapterClickListener) {
         this.context = context;
         this.bookedLists = bookedLists;
+        this.bookingAdapterClickListener = bookingAdapterClickListener;
     }
 
     @NonNull
@@ -89,6 +92,30 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         bookingViewHolder.card_view.setOnClickListener(v -> {
             Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show();
         });*/
+
+        if(bookedList.getAreaId().equalsIgnoreCase(Preferences.getInstance(context).getBooked().getPlaceId())){
+            bookingViewHolder.btnCancel.setVisibility(View.VISIBLE);
+        }
+        else if(bookedList.getC_status().equalsIgnoreCase("0") && bookedList.getStatus().equalsIgnoreCase("1") ){
+            bookingViewHolder.btnCancel.setVisibility(View.VISIBLE);
+            bookingViewHolder.btnCancel.setEnabled(false);
+            bookingViewHolder.btnCancel.setText("Parked");
+            bookingViewHolder.btnCancel.setBackgroundColor(context.getResources().getColor(R.color.glossy_green));
+
+        }
+        else if(bookedList.getC_status().equalsIgnoreCase("1") && bookedList.getStatus().equalsIgnoreCase("1")){
+            bookingViewHolder.btnCancel.setVisibility(View.VISIBLE);
+            bookingViewHolder.btnCancel.setEnabled(false);
+            bookingViewHolder.btnCancel.setText("Canceled");
+        }
+
+        bookingViewHolder.btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bookingAdapterClickListener.onItemClick(bookingViewHolder.getAbsoluteAdapterPosition(),bookedList.getUid());
+                bookingViewHolder.btnCancel.setEnabled(false);
+            }
+        });
 
         bookingViewHolder.textViewParkingRateNTip.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
 
@@ -143,6 +170,9 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         @BindView(R.id.btnGetHelp)
         Button btnGetHelp;
 
+        @BindView(R.id.btnCancel)
+        Button btnCancel;
+
         @BindView(R.id.card_view)
         CardView card_view;
 
@@ -150,5 +180,8 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
+    }
+    public interface BookingAdapterClickListener {
+        void onItemClick(int position, String uid);
     }
 }

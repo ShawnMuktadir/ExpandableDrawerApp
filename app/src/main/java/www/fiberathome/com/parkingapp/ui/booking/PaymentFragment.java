@@ -182,30 +182,33 @@ public class PaymentFragment extends BaseFragment {
                                    @NonNull retrofit2.Response<ReservationResponse> response) {
                 hideLoading();
                 if (response.isSuccessful()) {
-                    Timber.e("response -> %s", new Gson().toJson(response.body()));
-                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.reservation_successful));
-                    //check 15 minutes before departure
-                    //ToDo
-                    startAlarm(convertLongToCalendar(departureDate.getTime()));
-                    BookedPlace bookedPlace = new BookedPlace();
-                    bookedPlace.setBookedUid(markerUid);
-                    bookedPlace.setLat(lat);
-                    bookedPlace.setLon(lon);
-                    bookedPlace.setRoute(route);
-                    bookedPlace.setAreaName(areaName);
-                    bookedPlace.setParkingSlotCount(parkingSlotCount);
-                    bookedPlace.setDepartedDate(departureDate.getTime());
-                    bookedPlace.setIsBooked(true);
+                    if (response.body() != null) {
+                        Timber.e("response -> %s", new Gson().toJson(response.body()));
+                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.reservation_successful));
+                        //check 15 minutes before departure
+                        //ToDo
+                        startAlarm(convertLongToCalendar(departureDate.getTime()));
+                        BookedPlace bookedPlace = new BookedPlace();
+                        bookedPlace.setBookedUid(response.body().getUid());
+                        bookedPlace.setLat(lat);
+                        bookedPlace.setLon(lon);
+                        bookedPlace.setRoute(route);
+                        bookedPlace.setAreaName(areaName);
+                        bookedPlace.setParkingSlotCount(parkingSlotCount);
+                        bookedPlace.setDepartedDate(departureDate.getTime());
+                        bookedPlace.setPlaceId(markerUid);
+                        bookedPlace.setIsBooked(true);
 
-                    Preferences.getInstance(context).setBooked(bookedPlace);
-                    if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
-                        actionBarTitle.setText(context.getResources().getString(R.string.booking_payment));
-                        ApplicationUtils.replaceFragmentWithAnimation(getParentFragmentManager(), HomeFragment.newInstance(bookedPlace));
+                        Preferences.getInstance(context).setBooked(bookedPlace);
+                        if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
+                            actionBarTitle.setText(context.getResources().getString(R.string.booking_payment));
+                            ApplicationUtils.replaceFragmentWithAnimation(getParentFragmentManager(), HomeFragment.newInstance(bookedPlace));
+                        } else {
+                            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
+                        }
                     } else {
-                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
+                        Toast.makeText(getContext(), context.getResources().getString(R.string.reservation_failed), Toast.LENGTH_SHORT).show();
                     }
-                } else {
-                    Toast.makeText(getContext(), context.getResources().getString(R.string.reservation_failed), Toast.LENGTH_SHORT).show();
                 }
             }
 
