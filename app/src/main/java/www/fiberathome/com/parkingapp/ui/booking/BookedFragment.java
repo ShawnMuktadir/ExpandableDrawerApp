@@ -1,8 +1,19 @@
 package www.fiberathome.com.parkingapp.ui.booking;
 
+import static www.fiberathome.com.parkingapp.ui.home.HomeFragment.PLAY_SERVICES_ERROR_CODE;
+
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,51 +23,78 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener;
+import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
+import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
-public class BookedFragment extends Fragment {
+public class BookedFragment extends Fragment implements OnMapReadyCallback {
     private final String TAG = getClass().getSimpleName();
     private long arrived, departure;
-    private TextView arrivedtimeTV, departuretimeTV, timeDifferenceTV, textViewTermsCondition;
+    private TextView tvArrivedTime, tvDepartureTime, tvTimeDifference, tvTermsCondition, tvParkingAreaName;
     private long difference;
-    private Button moreBtn;
+    private Button btnMore;
     private Button btnCarDeparture;
-    private Button liveParkingBtn;
+    private Button btnLiveParking;
     private FragmentChangeListener listener;
 
-    private Context context;
+    private GoogleMap mMap;
+    SupportMapFragment supportMapFragment;
+    LocationRequest mLocationRequest;
+    Location mLastLocation;
+    Marker mCurrLocationMarker;
+    FusedLocationProviderClient mFusedLocationClient;
+
+    private HomeActivity context;
 
     public BookedFragment() {
         // Required empty public constructor
     }
-
 
     @SuppressLint("SetTextI18n")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        context = getActivity();
-        View view = inflater.inflate(R.layout.fragment_booked, container, false);
+        return inflater.inflate(R.layout.fragment_booked, container, false);
+    }
 
+    @SuppressLint("SetTextI18n")
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        context = (HomeActivity) getActivity();
+        initView(view);
         listener = (FragmentChangeListener) getActivity();
-        arrivedtimeTV = view.findViewById(R.id.tvArrivedTime);
-        departuretimeTV = view.findViewById(R.id.tvDepartureTime);
-        timeDifferenceTV = view.findViewById(R.id.tvDifferenceTime);
-        textViewTermsCondition = view.findViewById(R.id.textViewTermsCondition);
-        moreBtn = view.findViewById(R.id.moreBtn);
-        btnCarDeparture = view.findViewById(R.id.btnCarDeparture);
-        liveParkingBtn = view.findViewById(R.id.liveParkingBtn);
 
         assert getArguments() != null;
         arrived = getArguments().getLong("arrived", 0);
@@ -65,24 +103,27 @@ public class BookedFragment extends Fragment {
 
         Timber.d("onCreateView: " + arrived + "    " + departure);
         Timber.d("onCreateView: difference:%s", difference);
-       /* String arrivedDate=getDate(arrived);
-        String departureDate=getDate(departure);
 
-        timeElavation.setText("Arrived "+arrivedDate+"-"+departureDate+" Departure");
-        timeDifference.setText(getDate(difference));*/
-        return view;
-    }
+        if (isServicesOk()) {
+            supportMapFragment = SupportMapFragment.newInstance();
 
-    @SuppressLint("SetTextI18n")
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+            if (context != null) {
+                FragmentTransaction ft = context.getSupportFragmentManager().beginTransaction().
+                        replace(R.id.map, supportMapFragment);
+                ft.commit();
+                supportMapFragment.getMapAsync(this);
+            } else {
+                ToastUtils.getInstance().showToastMessage(context, "Unable to load map");
+            }
+        } else {
+            ToastUtils.getInstance().showToastMessage(context, "Play services are required by this application");
+        }
 
-        arrivedtimeTV.setText("Arrived " + getDate(arrived));
-        departuretimeTV.setText("Departure " + getDate(departure));
-        timeDifferenceTV.setText(getTimeDifference(difference) + " min");
+        tvArrivedTime.setText("Arrived " + getDate(arrived));
+        tvDepartureTime.setText("Departure " + getDate(departure));
+        tvTimeDifference.setText(getTimeDifference(difference) + " min");
 
-        moreBtn.setOnClickListener(v -> {
+        btnMore.setOnClickListener(v -> {
             ScheduleFragment scheduleFragment = new ScheduleFragment();
             Bundle bundle = new Bundle();
             bundle.putBoolean("m", true);
@@ -94,14 +135,142 @@ public class BookedFragment extends Fragment {
 
         btnCarDeparture.setOnClickListener(v -> Toast.makeText(context, "Car Departure Coming Soon!!!", Toast.LENGTH_SHORT).show());
 
-        liveParkingBtn.setOnClickListener(v -> Toast.makeText(context, "Live Parking Coming Soon!!!", Toast.LENGTH_SHORT).show());
+        btnLiveParking.setOnClickListener(v -> Toast.makeText(context, "Live Parking Coming Soon!!!", Toast.LENGTH_SHORT).show());
 
-        textViewTermsCondition.setOnClickListener(v -> Toast.makeText(context, "T&C Coming Soon!!!", Toast.LENGTH_SHORT).show());
+        tvTermsCondition.setOnClickListener(v -> Toast.makeText(context, "T&C Coming Soon!!!", Toast.LENGTH_SHORT).show());
+    }
+
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+        mMap = googleMap;
+
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(120000); // two minute interval
+        mLocationRequest.setFastestInterval(120000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(context,
+                    Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                //Location Permission already granted
+                mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback,
+                        Looper.myLooper());
+                mMap.setMyLocationEnabled(true);
+            } else {
+                //Request Location Permission
+                checkLocationPermission();
+            }
+        } else {
+            mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback,
+                    Looper.myLooper());
+            mMap.setMyLocationEnabled(true);
+        }
+    }
+
+    LocationCallback mLocationCallback = new LocationCallback() {
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+            List<Location> locationList = locationResult.getLocations();
+            if (locationList.size() > 0) {
+                //The last location in the list is the newest
+                Location location = locationList.get(locationList.size() - 1);
+                mLastLocation = location;
+                if (mCurrLocationMarker != null) {
+                    mCurrLocationMarker.remove();
+                }
+
+                //move map camera
+                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(latLng.latitude, latLng.longitude)).zoom(16).build();
+                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            }
+        }
+    };
+
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+
+    private void checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(context,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                new AlertDialog.Builder(context)
+                        .setTitle("Location Permission Needed")
+                        .setMessage("This app needs the Location permission, please accept to use location functionality")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //Prompt the user once explanation has been shown
+                                ActivityCompat.requestPermissions(context,
+                                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                        MY_PERMISSIONS_REQUEST_LOCATION);
+                            }
+                        })
+                        .create()
+                        .show();
+
+
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(context,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_LOCATION);
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // location-related task you need to do.
+                    if (ContextCompat.checkSelfPermission(context,
+                            Manifest.permission.ACCESS_FINE_LOCATION)
+                            == PackageManager.PERMISSION_GRANTED) {
+
+                        mFusedLocationClient.requestLocationUpdates(mLocationRequest,
+                                mLocationCallback, Looper.myLooper());
+                        mMap.setMyLocationEnabled(true);
+                    }
+
+                } else {
+                    // if not allow a permission, the application will exit
+                    Intent intent = new Intent(Intent.ACTION_MAIN);
+                    intent.addCategory(Intent.CATEGORY_HOME);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                    context.finish();
+                    System.exit(0);
+                }
+            }
+        }
+    }
+
+    private void initView(View view) {
+        tvArrivedTime = view.findViewById(R.id.tvArrivedTime);
+        tvDepartureTime = view.findViewById(R.id.tvDepartureTime);
+        tvTimeDifference = view.findViewById(R.id.tvDifferenceTime);
+        tvTermsCondition = view.findViewById(R.id.textViewTermsCondition);
+        btnMore = view.findViewById(R.id.btnMore);
+        btnCarDeparture = view.findViewById(R.id.btnCarDeparture);
+        btnLiveParking = view.findViewById(R.id.btnLiveParking);
+        tvParkingAreaName = view.findViewById(R.id.tvParkingAreaName);
     }
 
     @SuppressLint("DefaultLocale")
     private String getTimeDifference(long difference) {
-
         return String.format("%02d:%02d",
                 TimeUnit.MILLISECONDS.toHours(difference),
                 TimeUnit.MILLISECONDS.toMinutes(difference) -
@@ -111,12 +280,29 @@ public class BookedFragment extends Fragment {
 
     private String getDate(long milliSeconds) {
         // Create a DateFormatter object for displaying date in specified format.
-
         SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.US);
         // Create a calendar object that will convert the date and time value in milliseconds to date.
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(milliSeconds);
-
         return formatter.format(calendar.getTime());
+    }
+
+    private boolean isServicesOk() {
+
+        GoogleApiAvailability googleApi = GoogleApiAvailability.getInstance();
+
+        int result = googleApi.isGooglePlayServicesAvailable(context);
+
+        if (result == ConnectionResult.SUCCESS) {
+            return true;
+        } else if (googleApi.isUserResolvableError(result)) {
+            Dialog dialog = googleApi.getErrorDialog((Activity) context, result, PLAY_SERVICES_ERROR_CODE, task ->
+                    ToastUtils.getInstance().showToastMessage(context, "Dialog is cancelled by User"));
+            if (dialog != null) {
+                dialog.show();
+            }
+        }
+
+        return false;
     }
 }

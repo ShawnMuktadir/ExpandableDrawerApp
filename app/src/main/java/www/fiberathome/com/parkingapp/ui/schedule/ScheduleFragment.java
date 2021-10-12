@@ -272,7 +272,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                 long minutes = seconds / 60;
                 long hours = minutes / 60;
                 long days = hours / 24;
-                Timber.d("onClick: didnot entered to else");
+                Timber.d("onClick: did not entered to else");
                 Timber.d("seconds-> %s", seconds);
                 Timber.d("minutes-> %s", minutes);
                 if (diff < 0) {

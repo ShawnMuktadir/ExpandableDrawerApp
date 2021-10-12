@@ -517,4 +517,5 @@
     <string name="departure_time_less_arrive_time">Departure time can\'t less than arrived time</string>
     <string name="departure_time_less_thirty_arrive_time">Departure time can\'t less than 30 mins</string>
     <string name="parked">Parked</string>
+    <string name="booking_cancel_rules"><![CDATA[Booking can be canceled and booking cancellation will lead user to be charged (user can cancel anytime before departure time end). For more, read T&C]]></string>
 </resources>

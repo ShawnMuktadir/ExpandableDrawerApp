@@ -5,29 +5,29 @@
     android:layout_height="wrap_content"
     tools:context=".ui.booking.BookedFragment">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- TODO: Update blank fragment layout -->
         <TextView
             android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/book"
-            android:textSize="16sp" />
+            android:textSize="@dimen/dimTex15" />
 
         <TextView
-            android:layout_margin="1dp"
-            android:padding="2dp"
-            android:gravity="center"
-            android:textStyle="bold"
+            android:id="@+id/tvParkingAreaName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/dim2"
+            android:padding="@dimen/dim2"
+            android:gravity="center"
+            android:layout_gravity="center"
             android:text="@string/parking"
-            android:textSize="18sp" />
+            android:textStyle="bold"
+            android:textSize="@dimen/dimTex16" />
 
         <TextView
             android:layout_margin="1dp"
@@ -49,13 +49,13 @@
 
             <TextView
                 android:id="@+id/tvArrivedTime"
-                android:layout_alignParentLeft="true"
-                android:padding="2dp"
-                android:layout_margin="2dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_margin="@dimen/dim2"
+                android:padding="@dimen/dim2"
                 android:text="Arriving 12:30pm"
-                android:textSize="15sp" />
+                android:textSize="@dimen/dimTex14" />
 
             <TextView
                 android:id="@+id/tvDepartureTime"
@@ -77,17 +77,18 @@
         </RelativeLayout>
 
         <View
+            android:id="@+id/view"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="#000" />
 
-        <ImageView
-            android:layout_margin="2dp"
-            android:padding="3dp"
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
-            android:layout_height="340dp"
-            android:src="@color/transparent"
-            android:scaleType="fitXY" />
+            android:layout_height="@dimen/_300sdp"
+            tools:ignore="FragmentTagUsage"
+            tools:layout="@layout/fragment_booked"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -96,7 +97,7 @@
             android:weightSum="2">
 
             <Button
-                android:id="@+id/moreBtn"
+                android:id="@+id/btnMore"
                 android:layout_margin="3dp"
                 android:padding="2dp"
                 android:layout_weight="1"
@@ -107,7 +108,7 @@
                 android:background="@android:color/black" />
 
             <Button
-                android:id="@+id/liveParkingBtn"
+                android:id="@+id/btnLiveParking"
                 android:layout_margin="3dp"
                 android:padding="2dp"
                 android:layout_weight="1"
@@ -151,25 +152,24 @@
             android:layout_margin="1dp" />
 
         <TextView
-            android:layout_margin="2dp"
-            android:padding="2dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
-            android:text="@string/loream_ipsum" />
+            android:layout_margin="@dimen/dim2"
+            android:padding="@dimen/dim2"
+            android:textSize="@dimen/dimTex12"
+            android:text="@string/booking_cancel_rules" />
 
         <TextView
             android:id="@+id/textViewTermsCondition"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="2dp"
+            android:layout_width="@dimen/dim50"
+            android:layout_height="wrap_content"
             android:padding="3dp"
             android:gravity="center"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
             android:text="T&amp;C"
             android:textSize="14sp"
             android:background="@drawable/border_style"
-            android:layout_gravity="right"
+            android:layout_gravity="end"
+            android:layout_marginBottom="2dp"
             android:layout_marginEnd="8dp" />
 
         <Button

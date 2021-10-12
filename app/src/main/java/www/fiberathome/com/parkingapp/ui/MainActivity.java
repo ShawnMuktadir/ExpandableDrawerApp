@@ -78,7 +78,6 @@ import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener
 import www.fiberathome.com.parkingapp.ui.booking.newBooking.BookingFragment;
 import www.fiberathome.com.parkingapp.ui.booking.oldBooking.OldBookingDetailsFragment;
 import www.fiberathome.com.parkingapp.ui.changePassword.ChangePasswordFragment;
-import www.fiberathome.com.parkingapp.ui.dialog.DialogForm;
 import www.fiberathome.com.parkingapp.ui.followUs.FollowUsFragment;
 import www.fiberathome.com.parkingapp.ui.getDiscount.GetDiscountFragment;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
@@ -103,7 +102,7 @@ import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressLint("NonConstantResourceId")
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener,
-        DialogForm.DialogFormListener, FragmentChangeListener, PermissionInterface {
+        FragmentChangeListener, PermissionInterface {
 
     @BindView(R.id.tvTimeToolbar)
     public TextView tvTimeToolbar;
@@ -380,14 +379,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         actionBarDrawerToggle.onConfigurationChanged(newConfig);
-    }
-
-    @Override
-    public void applyTexts(String username, String password, String mobile) {
-
-        Timber.e(username);
-        Timber.e(password);
-        Timber.e(mobile);
     }
 
     @Override
