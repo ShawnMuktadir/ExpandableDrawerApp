@@ -476,6 +476,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private final List<SensorStatus> sensorStatusArrayList = new ArrayList<>();
     private boolean ended = false;
     private boolean isBackClicked = false;
+    private String previousOrigin;
 
     public HomeFragment() {
 
@@ -1134,24 +1135,47 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             if (polyline == null && !points.isEmpty()) {
                 polyline = mMap.addPolyline(getDefaultPolyLines(points));
                 Timber.e("polyline null -> %s", polyline);
-            } else if (polyline != null) {
-                Timber.e("polyline not null-> %s", polyline);
+            }
+            else if (polyline != null) {
+                if(previousOrigin!=null) {
+
+                    String[] latlong = previousOrigin.split(",");
+                    String[] latlong2 = oldDestination.split(",");
+                    double lat = MathUtils.getInstance().convertToDouble(latlong[0].trim());
+                    double lon = MathUtils.getInstance().convertToDouble(latlong[1].trim());
+                    double lat2 = MathUtils.getInstance().convertToDouble(latlong2[0].trim());
+                    double lon2 = MathUtils.getInstance().convertToDouble(latlong2[1].trim());
+                    double distanceMoved = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), lat, lon) * 1000;
+                    double distanceFromDestination = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), lat2, lon2) * 1000;
+                    if (distanceMoved >= 50) {
+                        reDrawRoute(origin);
+                        previousOrigin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
+                    }
+                    else if((distanceFromDestination<=20 && distanceFromDestination>=10)&&distanceMoved>=9){
+                        reDrawRoute(origin);
+                        previousOrigin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
+                    }
+                }else{
+                    previousOrigin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
+                }
+               /* Timber.e("polyline not null-> %s", polyline);
                 boolean isUserOnRoute = PolyUtil.isLocationOnPath(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
                         polyline.getPoints(), false, 60.0f);
                 if (!isUserOnRoute) {
                     if (myLocationChangedDistance >= 0.001) {
                         //polylineOptions.addAll(polyline.getPoints());
-                        String[] latlong = oldDestination.split(",");
+                        String[] latlong2 = oldDestination.split(",");
                         if (latlong == null) return;
-                        double lat = MathUtils.getInstance().convertToDouble(latlong[0].trim());
-                        double lon = MathUtils.getInstance().convertToDouble(latlong[1].trim());
+                        double lat2 = MathUtils.getInstance().convertToDouble(latlong2[0].trim());
+                        double lon2 = MathUtils.getInstance().convertToDouble(latlong2[1].trim());
 
                         totalDistanceInKm =
-                                calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), lat, lon);
+                                calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), lat2, lon2);
 
                         if (totalDistanceInKm < oldTotalDistanceInKm) {
                             reDrawRoute(origin);
-                        } else {
+                        }
+                        else {
                             if (myPreviousLocation != null) {
                                 double distanceTraveledLast =
                                         calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
@@ -1228,7 +1252,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     } else {
                         myPreviousLocation = onConnectedLocation;
                     }
-                }
+                }*/
             }
         } else if (isBooked && bookedPlace != null) {
             Gson gson = new Gson();
