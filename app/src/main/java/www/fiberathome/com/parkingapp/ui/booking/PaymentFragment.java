@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,13 +39,17 @@ import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.booking.ReservationResponse;
 import www.fiberathome.com.parkingapp.module.notification.NotificationPublisher;
+import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener;
+import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
+import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
+import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
-public class PaymentFragment extends BaseFragment {
+public class PaymentFragment extends BaseFragment implements IOnBackPressListener{
 
     static Date arrivedDate, departureDate;
     static String arrivedTime, departureTime, timeDifference, placeId, route, areaName, parkingSlotCount;
@@ -52,8 +57,10 @@ public class PaymentFragment extends BaseFragment {
     static double lat, lon;
     private TextView tvArrivedTime, tvDepartureTime, tvTimeDifference, tvSubTotal, tvTotal, etSlot,
             tvTermsCondition, tvPromo, tvParkingSlotName, actionBarTitle;
+    private ImageView ivBackArrow;
     private Button payBtn;
-    private Context context;
+    private HomeActivity context;
+    private FragmentChangeListener listener;
 
     public PaymentFragment() {
         // Required empty public constructor
@@ -94,7 +101,8 @@ public class PaymentFragment extends BaseFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if (isAdded()) {
-            context = getActivity();
+            context = (HomeActivity) getActivity();
+            listener = context;
             initUI(view);
             setListeners();
             setData();
@@ -126,9 +134,15 @@ public class PaymentFragment extends BaseFragment {
         tvPromo = view.findViewById(R.id.tvPromo);
         tvParkingSlotName = view.findViewById(R.id.tvParkingSlotName);
         actionBarTitle = view.findViewById(R.id.action_bar_title);
+        ivBackArrow = view.findViewById(R.id.ivBackArrow);
     }
 
     private void setListeners() {
+        ivBackArrow.setOnClickListener(v-> {
+            ScheduleFragment scheduleFragment = new ScheduleFragment();
+            listener.fragmentChange(scheduleFragment);
+        });
+
         etSlot.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
 
         tvPromo.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
@@ -251,5 +265,11 @@ public class PaymentFragment extends BaseFragment {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(source);
         return calendar;
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        context.onBackPressed();
+        return false;
     }
 }

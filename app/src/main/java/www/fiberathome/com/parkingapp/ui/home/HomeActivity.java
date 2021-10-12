@@ -120,7 +120,6 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
         }
 
         double lat = getIntent().getDoubleExtra("lat", 0.0);
-        //Timber.e("lat parking activity -> %s",lat);
         double lng = getIntent().getDoubleExtra("lng", 0.0);
         //Timber.e("lng parking activity -> %s",lng);
         String areaName = getIntent().getStringExtra("areaName");
