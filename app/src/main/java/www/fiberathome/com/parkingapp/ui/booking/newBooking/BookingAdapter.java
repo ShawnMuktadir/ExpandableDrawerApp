@@ -117,7 +117,7 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         bookingViewHolder.btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                bookingAdapterClickListener.onItemClick(bookingViewHolder.getAbsoluteAdapterPosition(),bookedList.getUid());
+                bookingAdapterClickListener.onItemClick(bookingViewHolder.getAbsoluteAdapterPosition(),bookedList.getSpotId());
             }
         });
 

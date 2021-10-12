@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -299,7 +300,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
     private void cancelBooking(String mobileNo, String uid) {
         showLoading(context);
             ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-            Call<ReservationCancelResponse> call = request.cancelReservation(Preferences.getInstance(context).getUser().getMobileNo(), Preferences.getInstance(context).getBooked().getBookedUid());
+            Call<ReservationCancelResponse> call = request.cancelReservation(Preferences.getInstance(context).getUser().getMobileNo(), uid);
             call.enqueue(new Callback<ReservationCancelResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<ReservationCancelResponse> call, @NonNull Response<ReservationCancelResponse> response) {

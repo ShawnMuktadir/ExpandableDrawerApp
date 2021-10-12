@@ -474,6 +474,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private boolean parkingAreaChanged = false;
     private String sensorAreaStatusAreaId, sensorAreaStatusTotalSensorCount, sensorAreaStatusTotalOccupied;
     private final List<SensorStatus> sensorStatusArrayList = new ArrayList<>();
+    private boolean ended = false;
 
     public HomeFragment() {
 
@@ -1079,7 +1080,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._92sdp));
 
             if (ConnectivityUtils.getInstance().checkInternet(context) && isGPSEnabled()) {
-                fetchParkingSlotSensors(onConnectedLocation);
+//                fetchParkingSlotSensors(onConnectedLocation);
+                ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+
+                Call<SensorAreaStatusResponse> call = request.getSensorAreaStatus();
+                getSensorAreaStatus(call);
             } else {
                 ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_gps));
             }
@@ -1734,7 +1739,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         public void onReceive(Context context, Intent intent) {
             // Get extra data included in the Intent
             String message = intent.getStringExtra("message");
-            endBooking();
+            if (!ended) {
+                ended = true;
+                endBooking();
+            }
         }
     };
 
@@ -1746,6 +1754,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             public void onResponse(@NonNull Call<CloseReservationResponse> call, @NonNull Response<CloseReservationResponse> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
+                        ended = true;
                         DialogUtils.getInstance().alertDialog(context,
                                 (Activity) context,
                                 response.body().getMessage(),
@@ -1800,17 +1809,13 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                 for (int i = 0; i < baseStringList.size(); i++) {
                                     Timber.d("onResponse: i ->  %s", i);
 
-                                    if (i == 0) {
-                                        sensorAreaStatusAreaId = baseStringList.get(i);
-                                    }
 
-                                    if (i == 1) {
-                                        sensorAreaStatusTotalSensorCount = baseStringList.get(i);
-                                    }
+                                    sensorAreaStatusAreaId = baseStringList.get(0);
 
-                                    if (i == 2) {
-                                        sensorAreaStatusTotalOccupied = baseStringList.get(i);
-                                    }
+                                    sensorAreaStatusTotalSensorCount = baseStringList.get(1);
+
+                                    sensorAreaStatusTotalOccupied = baseStringList.get(2);
+
 
                                     SensorStatus sensorStatus = new SensorStatus();
                                     sensorStatus.setAreaId(sensorAreaStatusAreaId);
@@ -3212,22 +3217,22 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 buttonSearch.setText(null);
                 buttonSearch.setVisibility(View.VISIBLE);
 
-                SharedPreferences preferences = context.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
-                if (preferences != null) {
-                    preferences.edit().remove("uid").apply();
-                    preferences.edit().remove("route").apply();
-                    preferences.edit().remove("lat").apply();
-                    preferences.edit().remove("lon").apply();
-                    isBooked = false;
-                }
+//                SharedPreferences preferences = context.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+//                if (preferences != null) {
+//                    preferences.edit().remove("uid").apply();
+//                    preferences.edit().remove("route").apply();
+//                    preferences.edit().remove("lat").apply();
+//                    preferences.edit().remove("lon").apply();
+//                    isBooked = false;
+//                }
                 if (initialRoutePoints != null)
                     initialRoutePoints.clear();
-                if (bookedPlace != null) {
-                    bookedPlace.setBookedUid(null);
-                    bookedPlace.setLat(0.0);
-                    bookedPlace.setLon(0.0);
-                    bookedPlace.setRoute(null);
-                }
+//                if (bookedPlace != null) {
+//                    bookedPlace.setBookedUid(null);
+//                    bookedPlace.setLat(0.0);
+//                    bookedPlace.setLon(0.0);
+//                    bookedPlace.setRoute(null);
+//                }
                 try {
                     if (polyline == null || !polyline.isVisible())
                         return;
@@ -3281,7 +3286,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 bookingSensorsArrayListGlobal.clear();
                 bookingSensorsMarkerArrayList.clear();
                 bookingSensorsBottomSheetArrayList.clear();
-                fetchParkingSlotSensors(onConnectedLocation);
+                ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+
+                Call<SensorAreaStatusResponse> call = request.getSensorAreaStatus();
+                getSensorAreaStatus(call);
                 animateCamera(onConnectedLocation);
                 bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._92sdp));
                 buttonSearch.setText(null);
@@ -3300,7 +3308,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             public void onPositiveClick() {
                                 Timber.e("Positive Button clicked");
                                 if (ConnectivityUtils.getInstance().checkInternet(context)) {
-                                    fetchParkingSlotSensors(onConnectedLocation);
+                                    ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+
+                                    Call<SensorAreaStatusResponse> call = request.getSensorAreaStatus();
+                                    getSensorAreaStatus(call);
                                 } else {
                                     TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                                 }

@@ -2,19 +2,15 @@ package www.fiberathome.com.parkingapp.model.response.booking;
 
 import com.google.gson.annotations.SerializedName;
 
-public class ReservationCancelResponse{
+import www.fiberathome.com.parkingapp.model.response.BaseResponse;
+
+public class ReservationCancelResponse extends BaseResponse {
 
 	@SerializedName("uid")
 	private String uid;
 
 	@SerializedName("mobile_no")
 	private String mobileNo;
-
-	@SerializedName("error")
-	private boolean error;
-
-	@SerializedName("message")
-	private String message;
 
 	public void setUid(String uid){
 		this.uid = uid;
@@ -31,31 +27,4 @@ public class ReservationCancelResponse{
 	public String getMobileNo(){
 		return mobileNo;
 	}
-
-	public void setError(boolean error){
-		this.error = error;
-	}
-
-	public boolean isError(){
-		return error;
-	}
-
-	public void setMessage(String message){
-		this.message = message;
-	}
-
-	public String getMessage(){
-		return message;
-	}
-
-	@Override
- 	public String toString(){
-		return 
-			"ReservationCancelResponse{" + 
-			"uid = '" + uid + '\'' + 
-			",mobile_no = '" + mobileNo + '\'' + 
-			",error = '" + error + '\'' + 
-			",message = '" + message + '\'' + 
-			"}";
-		}
 }
