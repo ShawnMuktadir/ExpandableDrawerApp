@@ -117,11 +117,8 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     private boolean isGPSEnabled() {
-
         LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-
         boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
         if (providerEnabled) {
             return true;
         } else {

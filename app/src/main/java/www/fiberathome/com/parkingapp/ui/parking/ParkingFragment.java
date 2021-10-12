@@ -507,13 +507,11 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                 Timber.e("lng -> %s", lng);
                 bundle.putString("areaName", parkingAreaName);
                 bundle.putString("count", count);
-
                 context.startActivityWithFinishBundle(HomeActivity.class, bundle);
             } else {
                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
             }
         });
-
         recyclerViewParking.setAdapter(parkingAdapter);
     }
 

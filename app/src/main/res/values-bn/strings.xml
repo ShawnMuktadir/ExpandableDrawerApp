@@ -508,7 +508,7 @@
     <string name="reset">পুনরায় করুন</string>
     <string name="bdt_00_00">(BDT 00.00)</string>
     <string name="use_promo">Use promo</string>
-    <string name="bdt_15_h">BDT 15/h</string>
+    <string name="bdt_hour_charge">BDT 20/0.5h</string>
     <string name="each_hour">Each hour</string>
     <string name="subtotal_parking">Subtotal Parking:</string>
     <string name="discount">Discount</string>

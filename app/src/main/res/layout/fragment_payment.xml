@@ -132,9 +132,12 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/eachHourText"
         android:layout_alignParentEnd="true"
-        android:layout_margin="@dimen/dim2"
+        android:layout_marginStart="@dimen/dim2"
+        android:layout_marginTop="@dimen/dim2"
+        android:layout_marginEnd="@dimen/dim2"
+        android:layout_marginBottom="@dimen/dim2"
         android:padding="@dimen/dim5"
-        android:text="@string/bdt_15_h"
+        android:text="@string/bdt_hour_charge"
         android:textSize="16sp"
         android:textStyle="bold" />
 
