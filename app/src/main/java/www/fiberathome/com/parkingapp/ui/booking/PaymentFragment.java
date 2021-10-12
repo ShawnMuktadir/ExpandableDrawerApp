@@ -164,7 +164,7 @@ public class PaymentFragment extends BaseFragment {
     }
 
     private void setBill() {
-        final double perMintBill = 0.25;
+        final double perMintBill = 0.6666666667;
         DecimalFormat df = new DecimalFormat("##.##");
         long minutes = TimeUnit.MILLISECONDS.toMinutes(differenceUnit);
         tvSubTotal.setText(new StringBuilder().append("BDT ").append(df.format(perMintBill * minutes)).toString());

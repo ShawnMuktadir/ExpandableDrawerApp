@@ -520,5 +520,6 @@
     <string name="terms_condition_booking"><![CDATA[T&C Minimum 30 min required]]></string>
     <string name="departure_time_less_arrive_time">প্রস্থান সময় আগত সময়ের চেয়ে কম হতে পারবে না</string>
     <string name="departure_time_less_thirty_arrive_time">প্রস্থান সময় 30 মিনিটের কম হতে পারবে না</string>
+    <string name="parked">Parked</string>
 </resources>
 

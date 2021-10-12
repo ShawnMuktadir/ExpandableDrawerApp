@@ -3994,8 +3994,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     @Override
     public void onDirectionFinderStart() {
-        showLoading(context);
         if (isAdded()) {
+            showLoading(context);
             overlay.setVisibility(View.VISIBLE);
         }
     }
@@ -4004,18 +4004,18 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     @Override
     public void onDirectionFinderSuccess(List<www.fiberathome.com.parkingapp.module.googleService.directionModules.Route> route) {
-        overlay.setVisibility(View.GONE);
-        hideLoading();
+        if (isAdded()) {
+            hideLoading();
+            overlay.setVisibility(View.GONE);
+        }
         if (!route.isEmpty() && polyline != null) polyline.remove();
         try {
             updatedRoute = route;
             for (www.fiberathome.com.parkingapp.module.googleService.directionModules.Route mRoute : route) {
                 PolylineOptions polylineOptions = getDefaultPolyLines(mRoute.points);
                 initialRoutePoints = mRoute.points;
-                /*
-                if (polylineStyle == PolylineStyle.DOTTED)
-                    polylineOptions = getDottedPolylines(route.points);
-                    */
+                /*if (polylineStyle == PolylineStyle.DOTTED)
+                    polylineOptions = getDottedPolylines(route.points);*/
                 polyline = mMap.addPolyline(polylineOptions);
                 firstDraw = true;
                 btnGetDirection.setEnabled(true);
