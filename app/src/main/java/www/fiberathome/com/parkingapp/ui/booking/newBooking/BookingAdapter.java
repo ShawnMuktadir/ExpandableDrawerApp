@@ -2,6 +2,7 @@ package www.fiberathome.com.parkingapp.ui.booking.newBooking;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -93,27 +94,30 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show();
         });*/
 
-        if(bookedList.getAreaId().equalsIgnoreCase(Preferences.getInstance(context).getBooked().getPlaceId())){
+
+        if(bookedList.getC_status().equalsIgnoreCase("0") && bookedList.getStatus().equalsIgnoreCase("0")){
             bookingViewHolder.btnCancel.setVisibility(View.VISIBLE);
+            bookingViewHolder.tvStatus.setVisibility(View.GONE);
         }
         else if(bookedList.getC_status().equalsIgnoreCase("0") && bookedList.getStatus().equalsIgnoreCase("1") ){
-            bookingViewHolder.btnCancel.setVisibility(View.VISIBLE);
-            bookingViewHolder.btnCancel.setEnabled(false);
-            bookingViewHolder.btnCancel.setText("Parked");
-            bookingViewHolder.btnCancel.setBackgroundColor(context.getResources().getColor(R.color.glossy_green));
+            bookingViewHolder.tvStatus.setVisibility(View.VISIBLE);
+            bookingViewHolder.btnCancel.setVisibility(View.GONE);
+            bookingViewHolder.tvStatus.setText("Parked");
+            bookingViewHolder.tvStatus.setTextColor(context.getColor(R.color.green2));
+
 
         }
         else if(bookedList.getC_status().equalsIgnoreCase("1") && bookedList.getStatus().equalsIgnoreCase("1")){
-            bookingViewHolder.btnCancel.setVisibility(View.VISIBLE);
-            bookingViewHolder.btnCancel.setEnabled(false);
-            bookingViewHolder.btnCancel.setText("Canceled");
+            bookingViewHolder.tvStatus.setVisibility(View.VISIBLE);
+            bookingViewHolder.tvStatus.setText("Canceled");
+            bookingViewHolder.btnCancel.setVisibility(View.GONE);
+            bookingViewHolder.tvStatus.setTextColor(Color.RED);
         }
 
         bookingViewHolder.btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bookingAdapterClickListener.onItemClick(bookingViewHolder.getAbsoluteAdapterPosition(),bookedList.getUid());
-                bookingViewHolder.btnCancel.setEnabled(false);
             }
         });
 
@@ -143,6 +147,13 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return bookedLists.size();
     }
 
+    public void updateList(ArrayList<BookedList> mBookedLists) {
+        bookedLists.clear();
+        bookedLists.addAll(mBookedLists);
+        notifyDataSetChanged();
+
+    }
+
     @SuppressLint("NonConstantResourceId")
     public static class BookingViewHolder extends RecyclerView.ViewHolder {
 
@@ -163,6 +174,9 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         @BindView(R.id.textViewParkingRateNTip)
         TextView textViewParkingRateNTip;
+
+        @BindView(R.id.tvStatus)
+        TextView tvStatus;
 
         @BindView(R.id.btnViewReceipt)
         Button btnViewReceipt;

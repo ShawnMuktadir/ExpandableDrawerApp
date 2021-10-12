@@ -5,6 +5,7 @@ import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CO
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -73,6 +74,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
     private ArrayList<BookedList> bookedLists;
 
     private BookedResponse bookedResponse;
+    private BookingAdapter bookingAdapter;
 
     public BookingFragment() {
         // Required empty public constructor
@@ -106,7 +108,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
 
         String mobileNo = Preferences.getInstance(context).getUser().getMobileNo();
         if (ConnectivityUtils.getInstance().checkInternet(context)) {
-            fetchBookedParkingPlace(mobileNo);
+            fetchBookedParkingPlace(mobileNo,false);
         } else {
             DialogUtils.getInstance().alertDialog(context,
                     context,
@@ -115,7 +117,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                         @Override
                         public void onPositiveClick() {
                             if (ConnectivityUtils.getInstance().checkInternet(context)) {
-                                fetchBookedParkingPlace(mobileNo);
+                                fetchBookedParkingPlace(mobileNo,false);
                             } else {
                                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                             }
@@ -211,7 +213,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
         return false;
     }
 
-    private void fetchBookedParkingPlace(String mobileNo) {
+    private void fetchBookedParkingPlace(String mobileNo,boolean refresh) {
 
         Timber.e("fetchBookedParkingPlace mobileNo -> %s,", mobileNo);
 
@@ -235,7 +237,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                         bookedLists = bookedResponse.getBookedLists();
                         Timber.e("bookedLists -> %s", new Gson().toJson(bookedLists));
                         if (bookedLists != null && !bookedLists.isEmpty()) {
-                            setFragmentControls(bookedLists);
+                            setFragmentControls(bookedLists,refresh);
                             hideNoData();
                         } else {
                             setNoData();
@@ -255,50 +257,59 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
         });
     }
 
-    private void setFragmentControls(ArrayList<BookedList> bookedLists) {
-        recyclerViewBooking.setHasFixedSize(true);
-        recyclerViewBooking.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
-        BookingAdapter bookingAdapter = new BookingAdapter(context, bookedLists, new BookingAdapter.BookingAdapterClickListener() {
-            @Override
-            public void onItemClick(int position, String uid) {
-                DialogUtils.getInstance().alertDialog(context,
-                        (Activity) context,
-                        "Do you want to cancel booking?",
-                        context.getString(R.string.ok), context.getString(R.string.cancel),
-                        new DialogUtils.DialogClickListener() {
-                            @Override
-                            public void onPositiveClick() {
-                                Timber.e("Positive Button clicked");
-                                cancelBooking(Preferences.getInstance(context).getUser().getMobileNo(),uid);
-                                Preferences.getInstance(context).setBooked(new BookedPlace());
-                            }
-
-                            @Override
-                            public void onNegativeClick() {
-                                Timber.e("Negative Button Clicked");
-                                if (context != null) {
-                                    context.finish();
+    private void setFragmentControls(ArrayList<BookedList> bookedLists,boolean refresh) {
+        if(!refresh) {
+            recyclerViewBooking.setHasFixedSize(true);
+            recyclerViewBooking.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
+            bookingAdapter = new BookingAdapter(context, bookedLists, new BookingAdapter.BookingAdapterClickListener() {
+                @Override
+                public void onItemClick(int position, String uid) {
+                    DialogUtils.getInstance().alertDialog(context,
+                            (Activity) context,
+                            "Do you want to cancel booking?",
+                            context.getString(R.string.ok), context.getString(R.string.cancel),
+                            new DialogUtils.DialogClickListener() {
+                                @Override
+                                public void onPositiveClick() {
+                                    Timber.e("Positive Button clicked");
+                                    cancelBooking(Preferences.getInstance(context).getUser().getMobileNo(), uid);
+                                    Preferences.getInstance(context).setBooked(new BookedPlace());
                                 }
-                            }
-                        }).show();
-            }
-        });
-        recyclerViewBooking.setAdapter(bookingAdapter);
+
+                                @Override
+                                public void onNegativeClick() {
+                                    Timber.e("Negative Button Clicked");
+                                    if (context != null) {
+
+                                    }
+                                }
+                            }).show();
+
+
+
+                }
+            });
+            recyclerViewBooking.setAdapter(bookingAdapter);
+        }
+        else{
+            bookingAdapter.updateList(bookedLists);
+        }
     }
 
     private void cancelBooking(String mobileNo, String uid) {
+        showLoading(context);
             ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
             Call<ReservationCancelResponse> call = request.cancelReservation(Preferences.getInstance(context).getUser().getMobileNo(), Preferences.getInstance(context).getBooked().getBookedUid());
             call.enqueue(new Callback<ReservationCancelResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<ReservationCancelResponse> call, @NonNull Response<ReservationCancelResponse> response) {
+                    hideLoading();
                     if (response.isSuccessful()) {
                         if (response.body() != null) {
                             DialogUtils.getInstance().showMessageDialog(response.body().getMessage(), context);
-
                             Preferences.getInstance(context).setBooked(new BookedPlace());
                             bookedLists.clear();
-                            fetchBookedParkingPlace(mobileNo);
+                            fetchBookedParkingPlace(mobileNo,true);
                             //TODO update bottom sheet and navigate user to payment
 
                         }
@@ -309,6 +320,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                 public void onFailure(@NonNull Call<ReservationCancelResponse> call, @NonNull Throwable t) {
                     Timber.e("onFailure -> %s", t.getMessage());
                     ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+                    hideLoading();
                 }
             });
     }
