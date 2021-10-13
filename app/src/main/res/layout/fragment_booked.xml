@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".ui.booking.BookedFragment">
+    tools:context=".ui.booking.BookingParkFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -119,31 +119,15 @@
                 android:background="@android:color/black" />
         </LinearLayout>
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/tvCountDown"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="01:25"
-                android:textSize="30dp"
-                android:textColor="@android:color/black"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_gravity="bottom"
-                android:layout_margin="1dp"
-                android:padding="1dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="min"
-                android:textSize="20sp"
-                android:textColor="@android:color/black"
-                android:textStyle="bold" />
-        </LinearLayout>
+            android:gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/dim15"
+            android:text="02:03"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/dimTex15" />
 
         <View
             android:layout_width="match_parent"

@@ -12,7 +12,16 @@ public class NotificationPublisher extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         intent.getStringExtra("ended");
-        NotificationHelper notificationHelper = new NotificationHelper(context, intent.getStringExtra("ended"));
+        intent.getStringExtra("started");
+        NotificationHelper notificationHelper;
+       if(intent.getStringExtra("started")!=null) {
+            notificationHelper = new NotificationHelper(context, intent.getStringExtra("started"));
+       }
+       else {
+
+            notificationHelper = new NotificationHelper(context, intent.getStringExtra("ended"));
+       }
+
         NotificationCompat.Builder nb = notificationHelper.getChannelNotification();
         notificationHelper.getManager().notify(1, nb.build());
         Notification notification = nb.build();

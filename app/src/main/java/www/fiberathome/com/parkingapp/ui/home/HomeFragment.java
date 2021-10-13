@@ -111,7 +111,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.google.maps.android.PolyUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -126,6 +125,9 @@ import java.lang.reflect.Type;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -157,8 +159,10 @@ import www.fiberathome.com.parkingapp.model.data.AppConstants;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.response.BaseResponse;
+import www.fiberathome.com.parkingapp.model.response.booking.BookingParkStatusResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingSensors;
 import www.fiberathome.com.parkingapp.model.response.booking.CloseReservationResponse;
+import www.fiberathome.com.parkingapp.model.response.booking.ReservationCancelResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.SensorAreaStatusResponse;
 import www.fiberathome.com.parkingapp.model.response.parkingSlot.ParkingSlotResponse;
 import www.fiberathome.com.parkingapp.model.response.search.SearchVisitorData;
@@ -176,6 +180,7 @@ import www.fiberathome.com.parkingapp.module.geoFenceInterface.MyLatLng;
 import www.fiberathome.com.parkingapp.module.googleService.directionModules.DirectionFinder;
 import www.fiberathome.com.parkingapp.module.googleService.directionModules.DirectionFinderListener;
 import www.fiberathome.com.parkingapp.module.notification.NotificationPublisher;
+import www.fiberathome.com.parkingapp.ui.booking.BookingParkFragment;
 import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.ui.bottomSheet.BottomSheetAdapter;
 import www.fiberathome.com.parkingapp.ui.bottomSheet.CustomLinearLayoutManager;
@@ -1135,9 +1140,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             if (polyline == null && !points.isEmpty()) {
                 polyline = mMap.addPolyline(getDefaultPolyLines(points));
                 Timber.e("polyline null -> %s", polyline);
-            }
-            else if (polyline != null) {
-                if(previousOrigin!=null) {
+            } else if (polyline != null) {
+                if (previousOrigin != null) {
 
                     String[] latlong = previousOrigin.split(",");
                     String[] latlong2 = oldDestination.split(",");
@@ -1150,12 +1154,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     if (distanceMoved >= 50) {
                         reDrawRoute(origin);
                         previousOrigin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
-                    }
-                    else if((distanceFromDestination<=20 && distanceFromDestination>=10)&&distanceMoved>=9){
+                    } else if ((distanceFromDestination <= 20 && distanceFromDestination >= 10) && distanceMoved >= 9) {
                         reDrawRoute(origin);
                         previousOrigin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
                     }
-                }else{
+                } else {
                     previousOrigin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
                 }
                /* Timber.e("polyline not null-> %s", polyline);
@@ -1778,8 +1781,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                         }*/
                                     }
                                 }).show();
-                        //TODO update bottom sheet and navigate user to payment
-
                     }
                 }
             }
@@ -2803,13 +2804,12 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                 Info durationInfo = leg.getDuration();
                                 String distance = distanceInfo.getText();
                                 String duration = durationInfo.getText();
-
-                                textViewParkingTravelTime.setText(duration);
-                                textViewSearchParkingDistance.setText(distance);
-
-                                textViewSearchParkingTravelTime.setText(duration);
-                                textViewBottomSheetParkingTravelTime.setText(duration);
-
+                                if (isAdded()) {
+                                    textViewParkingTravelTime.setText(duration);
+                                    textViewSearchParkingDistance.setText(distance);
+                                    textViewSearchParkingTravelTime.setText(duration);
+                                    textViewBottomSheetParkingTravelTime.setText(duration);
+                                }
                                 nearByDuration = duration;
                                 Timber.e("nearByDuration -> %s", nearByDuration);
                                 //nearByDistance = distance;
@@ -3419,7 +3419,22 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     assert circle != null;
                     Timber.e(String.valueOf(circle.getRadius()));
                     if (distanceBetween <= distance) {
-                        DialogUtils.getInstance().showOnlyMessageDialog("Your park has been started", context);
+                        DialogUtils.getInstance().alertDialog(context,
+                                (Activity) context,
+                                "Your park has been started",
+                                context.getString(R.string.ok), "",
+                                new DialogUtils.DialogClickListener() {
+                                    @Override
+                                    public void onPositiveClick() {
+                                        Timber.e("Positive Button clicked");
+                                        getBookingPark(Preferences.getInstance(context).getUser().getMobileNo(), bookedPlace.getBookedUid());
+                                    }
+
+                                    @Override
+                                    public void onNegativeClick() {
+
+                                    }
+                                }).show();
                         btnGetDirection.setText("Parking");
                         startAlarm(convertLongToCalendar(bookedPlace.getDepartedDate()));
                     } else if (parkingAreaChanged) {
@@ -3742,6 +3757,33 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         btnLiveParking.setOnClickListener(v -> ToastUtils.getInstance().showToastMessage(context, "Coming Soon..."));
 
         textViewTermsCondition.setOnClickListener(v -> ToastUtils.getInstance().showToastMessage(context, "Coming Soon..."));
+    }
+
+    private void getBookingPark(String mobileNo, String uid) {
+        showLoading(context);
+        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+        Call<ReservationCancelResponse> call = request.getBookingPark(mobileNo, uid);
+        call.enqueue(new Callback<ReservationCancelResponse>() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onResponse(@NonNull Call<ReservationCancelResponse> call, @NonNull Response<ReservationCancelResponse> response) {
+                hideLoading();
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        listener.fragmentChange(new BookingParkFragment());
+                        String arrive= "2021-10-13 06:53:00";
+                        String depart= "2021-10-13 07:23:00";
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ReservationCancelResponse> call, @NonNull Throwable t) {
+                Timber.e("onFailure -> %s", t.getMessage());
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+                hideLoading();
+            }
+        });
     }
 
     private void setTimer(long difference) {

@@ -7,6 +7,7 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.BookedResponse;
+import www.fiberathome.com.parkingapp.model.response.booking.BookingParkStatusResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.CloseReservationResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.ReservationCancelResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.ReservationResponse;
@@ -126,4 +127,12 @@ public interface ApiService {
     @POST("booking_cancel.php")
     Call<ReservationCancelResponse> cancelReservation(@Field("mobile_no") String mobileNo,
                                          @Field("spot_id") String bookedUid);
+    @FormUrlEncoded
+    @POST("booking_park_status.php")
+    Call<BookingParkStatusResponse> getBookingParkStatus(@Field("mobile_no") String mobileNo);
+
+    @FormUrlEncoded
+    @POST("booking_park.php")
+    Call<ReservationCancelResponse> getBookingPark(@Field("mobile_no") String mobileNo,
+                                                   @Field("spot_id") String bookedUid);
 }

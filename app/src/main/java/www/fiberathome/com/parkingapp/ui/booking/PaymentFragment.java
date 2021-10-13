@@ -1,5 +1,6 @@
 package www.fiberathome.com.parkingapp.ui.booking;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -20,6 +21,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.gson.Gson;
 
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -45,11 +47,12 @@ import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
+import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
-public class PaymentFragment extends BaseFragment implements IOnBackPressListener{
+public class PaymentFragment extends BaseFragment implements IOnBackPressListener {
 
     static Date arrivedDate, departureDate;
     static String arrivedTime, departureTime, timeDifference, placeId, route, areaName, parkingSlotCount;
@@ -138,7 +141,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
     }
 
     private void setListeners() {
-        ivBackArrow.setOnClickListener(v-> {
+        ivBackArrow.setOnClickListener(v -> {
             ScheduleFragment scheduleFragment = new ScheduleFragment();
             listener.fragmentChange(scheduleFragment);
         });
@@ -197,28 +200,34 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                 hideLoading();
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
-                        Timber.e("response -> %s", new Gson().toJson(response.body()));
-                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.reservation_successful));
-                        //check 15 minutes before departure
-                        //ToDo
-                        startAlarm(convertLongToCalendar(departureDate.getTime()));
-                        BookedPlace bookedPlace = new BookedPlace();
-                        bookedPlace.setBookedUid(response.body().getUid());
-                        bookedPlace.setLat(lat);
-                        bookedPlace.setLon(lon);
-                        bookedPlace.setRoute(route);
-                        bookedPlace.setAreaName(areaName);
-                        bookedPlace.setParkingSlotCount(parkingSlotCount);
-                        bookedPlace.setDepartedDate(departureDate.getTime());
-                        bookedPlace.setPlaceId(markerUid);
-                        bookedPlace.setIsBooked(true);
+                        if (response.body().getUid() != null) {
+                            Timber.e("response -> %s", new Gson().toJson(response.body()));
+                            TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.reservation_successful));
+                            //check 15 minutes before departure
+                            //ToDo
+                            startAlarm(convertLongToCalendar(arrivedDate.getTime()),convertLongToCalendar(departureDate.getTime()));
+                            BookedPlace bookedPlace = new BookedPlace();
 
-                        Preferences.getInstance(context).setBooked(bookedPlace);
-                        if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
-                            actionBarTitle.setText(context.getResources().getString(R.string.booking_payment));
-                            ApplicationUtils.replaceFragmentWithAnimation(getParentFragmentManager(), HomeFragment.newInstance(bookedPlace));
+                            bookedPlace.setBookedUid(response.body().getUid());
+                            bookedPlace.setLat(lat);
+                            bookedPlace.setLon(lon);
+                            bookedPlace.setRoute(route);
+                            bookedPlace.setAreaName(areaName);
+                            bookedPlace.setParkingSlotCount(parkingSlotCount);
+                            bookedPlace.setDepartedDate(departureDate.getTime());
+                            bookedPlace.setPlaceId(markerUid);
+                            bookedPlace.setIsBooked(true);
+
+                            Preferences.getInstance(context).setBooked(bookedPlace);
+                            if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
+                                actionBarTitle.setText(context.getResources().getString(R.string.booking_payment));
+                                ApplicationUtils.replaceFragmentWithAnimation(getParentFragmentManager(), HomeFragment.newInstance(bookedPlace));
+                            } else {
+                                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
+                            }
                         } else {
-                            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
+                            DialogUtils.getInstance().showOnlyMessageDialog(context.getResources().getString(R.string.parking_slot_not_available), context);
+                            return;
                         }
                     } else {
                         Toast.makeText(getContext(), context.getResources().getString(R.string.reservation_failed), Toast.LENGTH_SHORT).show();
@@ -244,21 +253,29 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
         return formatter.format(calendar.getTime());
     }
 
-    private void startAlarm(Calendar c) {
+    private void startAlarm(Calendar arrive,Calendar departure) {
         Timber.e("startAlarm called");
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent firstIntent = new Intent(context, NotificationPublisher.class); // trigger before 15 mins
         Intent secondIntent = new Intent(context, NotificationPublisher.class); // trigger at end time
+        Intent thiredIntent = new Intent(context, NotificationPublisher.class); // trigger at end time
+        firstIntent.putExtra("started", "Book Time started");
         secondIntent.putExtra("ended", "Book Time Up");
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, firstIntent, 0);
         PendingIntent pendingIntent2 = PendingIntent.getBroadcast(context, 2, secondIntent, 0);
-        if (c.before(Calendar.getInstance())) {
-            c.add(Calendar.DATE, 1);
+        PendingIntent pendingIntent3 = PendingIntent.getBroadcast(context, 3, thiredIntent, 0);
+        if (arrive.before(Calendar.getInstance())) {
+            arrive.add(Calendar.DATE, 1);
+        }
+        if (departure.before(Calendar.getInstance())) {
+            departure.add(Calendar.DATE, 1);
         }
         Objects.requireNonNull(alarmManager).setExact(AlarmManager.RTC_WAKEUP,
-                c.getTimeInMillis() - 900000, pendingIntent);
+                departure.getTimeInMillis() - 900000, pendingIntent3);
         Objects.requireNonNull(alarmManager).setExact(AlarmManager.RTC_WAKEUP,
-                c.getTimeInMillis(), pendingIntent2);
+                arrive.getTimeInMillis(), pendingIntent);
+        Objects.requireNonNull(alarmManager).setExact(AlarmManager.RTC_WAKEUP,
+                departure.getTimeInMillis(), pendingIntent2);
     }
 
     public Calendar convertLongToCalendar(Long source) {

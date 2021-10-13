@@ -13,6 +13,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -40,32 +42,56 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.text.Format;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.base.BaseFragment;
+import www.fiberathome.com.parkingapp.model.BookedPlace;
+import www.fiberathome.com.parkingapp.model.api.ApiClient;
+import www.fiberathome.com.parkingapp.model.api.ApiService;
+import www.fiberathome.com.parkingapp.model.api.AppConfig;
+import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
+import www.fiberathome.com.parkingapp.model.response.booking.BookingParkStatusResponse;
+import www.fiberathome.com.parkingapp.model.response.booking.CloseReservationResponse;
+import www.fiberathome.com.parkingapp.model.response.booking.ReservationCancelResponse;
+import www.fiberathome.com.parkingapp.model.response.booking.SensorAreaStatusResponse;
 import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
+import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
+import www.fiberathome.com.parkingapp.utils.DateTimeUtils;
+import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
-public class BookedFragment extends Fragment implements OnMapReadyCallback {
-    private final String TAG = getClass().getSimpleName();
+public class BookingParkFragment extends BaseFragment implements OnMapReadyCallback {
     private long arrived, departure;
-    private TextView tvArrivedTime, tvDepartureTime, tvTimeDifference, tvTermsCondition, tvParkingAreaName;
+    private TextView tvArrivedTime, tvDepartureTime, tvTimeDifference, tvTermsCondition, tvParkingAreaName, tvCountDown;
     private long difference;
     private Button btnMore;
     private Button btnCarDeparture;
     private Button btnLiveParking;
     private FragmentChangeListener listener;
+    private CountDownTimer countDownTimer;
 
     private GoogleMap mMap;
     SupportMapFragment supportMapFragment;
@@ -75,8 +101,9 @@ public class BookedFragment extends Fragment implements OnMapReadyCallback {
     FusedLocationProviderClient mFusedLocationClient;
 
     private HomeActivity context;
+    private long timerMilliDifference;
 
-    public BookedFragment() {
+    public BookingParkFragment() {
         // Required empty public constructor
     }
 
@@ -95,11 +122,12 @@ public class BookedFragment extends Fragment implements OnMapReadyCallback {
         context = (HomeActivity) getActivity();
         initView(view);
         listener = (FragmentChangeListener) getActivity();
-
-        assert getArguments() != null;
-        arrived = getArguments().getLong("arrived", 0);
-        departure = getArguments().getLong("departure", 0);
-        difference = departure - arrived;
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
+        if (getArguments() != null) {
+            arrived = getArguments().getLong("arrived", 0);
+            departure = getArguments().getLong("departure", 0);
+            difference = departure - arrived;
+        }
 
         Timber.d("onCreateView: " + arrived + "    " + departure);
         Timber.d("onCreateView: difference:%s", difference);
@@ -112,6 +140,7 @@ public class BookedFragment extends Fragment implements OnMapReadyCallback {
                         replace(R.id.map, supportMapFragment);
                 ft.commit();
                 supportMapFragment.getMapAsync(this);
+                getBookingParkStatus(Preferences.getInstance(context).getUser().getMobileNo());
             } else {
                 ToastUtils.getInstance().showToastMessage(context, "Unable to load map");
             }
@@ -119,10 +148,17 @@ public class BookedFragment extends Fragment implements OnMapReadyCallback {
             ToastUtils.getInstance().showToastMessage(context, "Play services are required by this application");
         }
 
-        tvArrivedTime.setText("Arrived " + getDate(arrived));
-        tvDepartureTime.setText("Departure " + getDate(departure));
-        tvTimeDifference.setText(getTimeDifference(difference) + " min");
+        setData();
+        setListeners();
+    }
 
+    private void setData() {
+        tvArrivedTime.setText(new StringBuilder().append("Arrived ").append(getDate(arrived)).toString());
+        tvDepartureTime.setText(new StringBuilder().append("Departure ").append(getDate(departure)).toString());
+        tvTimeDifference.setText(new StringBuilder().append(getTimeDifference(difference)).append(" min").toString());
+    }
+
+    private void setListeners() {
         btnMore.setOnClickListener(v -> {
             ScheduleFragment scheduleFragment = new ScheduleFragment();
             Bundle bundle = new Bundle();
@@ -133,7 +169,9 @@ public class BookedFragment extends Fragment implements OnMapReadyCallback {
             listener.fragmentChange(scheduleFragment);
         });
 
-        btnCarDeparture.setOnClickListener(v -> Toast.makeText(context, "Car Departure Coming Soon!!!", Toast.LENGTH_SHORT).show());
+        btnCarDeparture.setOnClickListener(v -> {
+            endBooking();
+        });
 
         btnLiveParking.setOnClickListener(v -> Toast.makeText(context, "Live Parking Coming Soon!!!", Toast.LENGTH_SHORT).show());
 
@@ -267,6 +305,7 @@ public class BookedFragment extends Fragment implements OnMapReadyCallback {
         btnCarDeparture = view.findViewById(R.id.btnCarDeparture);
         btnLiveParking = view.findViewById(R.id.btnLiveParking);
         tvParkingAreaName = view.findViewById(R.id.tvParkingAreaName);
+        tvCountDown = view.findViewById(R.id.tvCountDown);
     }
 
     @SuppressLint("DefaultLocale")
@@ -304,5 +343,153 @@ public class BookedFragment extends Fragment implements OnMapReadyCallback {
         }
 
         return false;
+    }
+
+    private void endBooking() {
+        showLoading(context);
+        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+        Call<CloseReservationResponse> call = request.endReservation(Preferences.getInstance(context).getUser().getMobileNo(), Preferences.getInstance(context).getBooked().getBookedUid());
+        call.enqueue(new Callback<CloseReservationResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<CloseReservationResponse> call, @NonNull Response<CloseReservationResponse> response) {
+                hideLoading();
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        DialogUtils.getInstance().alertDialog(context,
+                                (Activity) context,
+                                response.body().getMessage(),
+                                context.getString(R.string.ok), "",
+                                new DialogUtils.DialogClickListener() {
+                                    @Override
+                                    public void onPositiveClick() {
+                                        Timber.e("Positive Button clicked");
+                                        Preferences.getInstance(context).setBooked(new BookedPlace());
+                                        listener.fragmentChange(new HomeFragment());
+                                    }
+
+                                    @Override
+                                    public void onNegativeClick() {
+                                        /*Timber.e("Negative Button Clicked");
+                                        if (context != null) {
+                                            context.finish();
+                                        }*/
+                                    }
+                                }).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<CloseReservationResponse> call, @NonNull Throwable t) {
+                Timber.e("onFailure -> %s", t.getMessage());
+                hideLoading();
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+            }
+        });
+    }
+
+    private void getBookingParkStatus(String mobileNo) {
+        showLoading(context);
+        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+        Call<BookingParkStatusResponse> call = request.getBookingParkStatus(mobileNo);
+        call.enqueue(new Callback<BookingParkStatusResponse>() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onResponse(@NonNull Call<BookingParkStatusResponse> call, @NonNull Response<BookingParkStatusResponse> response) {
+                hideLoading();
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        if (response.body().getSensors() != null) {
+                            tvArrivedTime.setText(response.body().getSensors().getParkingArea());
+                            tvArrivedTime.setText(response.body().getSensors().getTimeStart());
+                            tvDepartureTime.setText(response.body().getSensors().getTimeEnd());
+
+                            DateTimeUtils obj = new DateTimeUtils();
+                            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+
+                            try {
+                                Date date1 = simpleDateFormat.parse(response.body().getSensors().getTimeStart());
+                                Date date2 = simpleDateFormat.parse(response.body().getSensors().getTimeEnd());
+
+                                if (date1 != null && date2 != null)
+                                    printDifference(date1, date2);
+
+                            } catch (
+                                    ParseException e) {
+                                e.printStackTrace();
+                            }
+                            //tvTimeDifference.setText((int) hours + "hr " + min + "mins ");
+                        } else {
+                            //ToastUtils.getInstance().showToast(context, "Sorry, there is no parking");
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<BookingParkStatusResponse> call, @NonNull Throwable t) {
+                Timber.e("onFailure -> %s", t.getMessage());
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+                hideLoading();
+            }
+        });
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void startCountDown() {
+        long millis = Preferences.getInstance(context).getBooked().getDepartedDate();
+        countDownTimer = new CountDownTimer(timerMilliDifference, 1000) {
+            @SuppressLint("DefaultLocale")
+            public void onTick(long millisUntilFinished) {
+                tvCountDown.setText("" + String.format("%d min, %d sec remaining",
+                        TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
+                        TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
+                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))));
+            }
+
+            public void onFinish() {
+                tvCountDown.setText(context.getResources().getString(R.string.please_wait));
+            }
+        }.start();
+    }
+
+    public Calendar convertLongToCalendar(Long source) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(source);
+        return calendar;
+    }
+
+
+    //1 minute = 60 seconds
+//1 hour = 60 x 60 = 3600
+//1 day = 3600 x 24 = 86400
+    public void printDifference(Date startDate, Date endDate) {
+        //milliseconds
+        long different = endDate.getTime() - startDate.getTime();
+        timerMilliDifference = different;
+        System.out.println("startDate : " + startDate);
+        System.out.println("endDate : " + endDate);
+        System.out.println("different : " + different);
+
+        long secondsInMilli = 1000;
+        long minutesInMilli = secondsInMilli * 60;
+        long hoursInMilli = minutesInMilli * 60;
+        long daysInMilli = hoursInMilli * 24;
+
+        long elapsedDays = different / daysInMilli;
+        different = different % daysInMilli;
+
+        long elapsedHours = different / hoursInMilli;
+        different = different % hoursInMilli;
+
+        long elapsedMinutes = different / minutesInMilli;
+        different = different % minutesInMilli;
+
+        long elapsedSeconds = different / secondsInMilli;
+        tvTimeDifference.setText(elapsedHours + " hr " + elapsedMinutes + " min " + elapsedSeconds + " sec");
+        startCountDown();
+        System.out.printf(
+                "%d days, %d hours, %d minutes, %d seconds%n",
+                elapsedDays, elapsedHours, elapsedMinutes, elapsedSeconds);
     }
 }

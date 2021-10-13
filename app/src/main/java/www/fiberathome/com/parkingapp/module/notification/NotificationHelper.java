@@ -56,7 +56,9 @@ class NotificationHelper extends ContextWrapper {
 
     public NotificationCompat.Builder getChannelNotification() {
         if (ended != null) {
-            closeBooking();
+           if(ended.equalsIgnoreCase("Book Time Up")) {
+               closeBooking();
+           }
             return new NotificationCompat.Builder(getApplicationContext(), channelID)
                     .setContentTitle("Booking Scheduled Alert")
                     .setContentText(ended)

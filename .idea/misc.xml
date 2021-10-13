@@ -20,6 +20,7 @@
         <entry key="app/src/main/res/layout/fragment_login_2.xml" value="0.15885416666666666" />
         <entry key="app/src/main/res/layout/fragment_payment.xml" value="0.335" />
         <entry key="app/src/main/res/layout/fragment_schedule.xml" value="0.2638888888888889" />
+        <entry key="app/src/main/res/layout/fragment_verify_phone.xml" value="0.26222826086956524" />
         <entry key="app/src/main/res/layout/nav_header.xml" value="0.16302083333333334" />
         <entry key="app/src/main/res/layout/nav_header_home.xml" value="0.16302083333333334" />
         <entry key="app/src/main/res/layout/voucher_dialog.xml" value="0.25" />
