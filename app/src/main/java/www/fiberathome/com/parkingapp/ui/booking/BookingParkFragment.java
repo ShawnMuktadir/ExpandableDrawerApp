@@ -6,7 +6,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -48,12 +47,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -73,8 +68,6 @@ import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingParkStatusResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.CloseReservationResponse;
-import www.fiberathome.com.parkingapp.model.response.booking.ReservationCancelResponse;
-import www.fiberathome.com.parkingapp.model.response.booking.SensorAreaStatusResponse;
 import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
@@ -101,7 +94,6 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
     FusedLocationProviderClient mFusedLocationClient;
 
     private HomeActivity context;
-    private long timerMilliDifference;
 
     public BookingParkFragment() {
         // Required empty public constructor
@@ -136,6 +128,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
             supportMapFragment = SupportMapFragment.newInstance();
 
             if (context != null) {
+                context.setActionToolBarVisibilityGone();
                 FragmentTransaction ft = context.getSupportFragmentManager().beginTransaction().
                         replace(R.id.map, supportMapFragment);
                 ft.commit();
@@ -181,6 +174,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
+        setMapSettings(mMap);
 
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(120000); // two minute interval
@@ -204,6 +198,31 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                     Looper.myLooper());
             mMap.setMyLocationEnabled(true);
         }
+
+        BookedPlace bookedPlace = Preferences.getInstance(context).getBooked();
+
+        Marker bookedLocationMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(bookedPlace.getLat(), bookedPlace.getLon()))
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_gray))
+                .title("Departure Location")
+                .flat(false));
+    }
+
+    private void setMapSettings(GoogleMap mMap) {
+        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        mMap.getUiSettings().setZoomControlsEnabled(true);
+        mMap.getUiSettings().setScrollGesturesEnabledDuringRotateOrZoom(true);
+        mMap.getUiSettings().setZoomGesturesEnabled(true);
+
+        mMap.setBuildingsEnabled(false);
+        mMap.setTrafficEnabled(true);
+        mMap.setIndoorEnabled(false);
+
+        mMap.getUiSettings().setMapToolbarEnabled(false);
+        mMap.getUiSettings().setRotateGesturesEnabled(false);
+        mMap.getUiSettings().setMapToolbarEnabled(false);
+        mMap.getUiSettings().setTiltGesturesEnabled(true);
+        mMap.getUiSettings().setCompassEnabled(false);
+        mMap.getUiSettings().setMyLocationButtonEnabled(false);
     }
 
     LocationCallback mLocationCallback = new LocationCallback() {
@@ -220,7 +239,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
 
                 //move map camera
                 LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(latLng.latitude, latLng.longitude)).zoom(16).build();
+                CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(latLng.latitude, latLng.longitude)).zoom(13.5f).build();
                 mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             }
         }
@@ -369,10 +388,6 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
 
                                     @Override
                                     public void onNegativeClick() {
-                                        /*Timber.e("Negative Button Clicked");
-                                        if (context != null) {
-                                            context.finish();
-                                        }*/
                                     }
                                 }).show();
                     }
@@ -403,22 +418,11 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                             tvArrivedTime.setText(response.body().getSensors().getParkingArea());
                             tvArrivedTime.setText(response.body().getSensors().getTimeStart());
                             tvDepartureTime.setText(response.body().getSensors().getTimeEnd());
+                            tvParkingAreaName.setText(response.body().getSensors().getParkingArea());
 
                             DateTimeUtils obj = new DateTimeUtils();
                             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
-
-                            try {
-                                Date date1 = simpleDateFormat.parse(response.body().getSensors().getTimeStart());
-                                Date date2 = simpleDateFormat.parse(response.body().getSensors().getTimeEnd());
-
-                                if (date1 != null && date2 != null)
-                                    printDifference(date1, date2);
-
-                            } catch (
-                                    ParseException e) {
-                                e.printStackTrace();
-                            }
-                            //tvTimeDifference.setText((int) hours + "hr " + min + "mins ");
+                            findDifference(response.body().getSensors().getTimeStart(), response.body().getSensors().getTimeEnd());
                         } else {
                             //ToastUtils.getInstance().showToast(context, "Sorry, there is no parking");
                         }
@@ -436,7 +440,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
     }
 
     @SuppressLint("SetTextI18n")
-    private void startCountDown() {
+    private void startCountDown(long timerMilliDifference) {
         long millis = Preferences.getInstance(context).getBooked().getDepartedDate();
         countDownTimer = new CountDownTimer(timerMilliDifference, 1000) {
             @SuppressLint("DefaultLocale")
@@ -448,7 +452,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
             }
 
             public void onFinish() {
-                tvCountDown.setText(context.getResources().getString(R.string.please_wait));
+                //tvCountDown.setText(context.getResources().getString(R.string.please_wait));
             }
         }.start();
     }
@@ -459,37 +463,82 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         return calendar;
     }
 
+    public void findDifference(String start_date,
+                               String end_date) {
 
-    //1 minute = 60 seconds
-//1 hour = 60 x 60 = 3600
-//1 day = 3600 x 24 = 86400
-    public void printDifference(Date startDate, Date endDate) {
-        //milliseconds
-        long different = endDate.getTime() - startDate.getTime();
-        timerMilliDifference = different;
-        System.out.println("startDate : " + startDate);
-        System.out.println("endDate : " + endDate);
-        System.out.println("different : " + different);
+        // SimpleDateFormat converts the
+        // string format to date object
+        SimpleDateFormat sdf
+                = new SimpleDateFormat(
+                "dd-MM-yyyy HH:mm:ss");
 
-        long secondsInMilli = 1000;
-        long minutesInMilli = secondsInMilli * 60;
-        long hoursInMilli = minutesInMilli * 60;
-        long daysInMilli = hoursInMilli * 24;
+        // Try Block
+        try {
 
-        long elapsedDays = different / daysInMilli;
-        different = different % daysInMilli;
+            // parse method is used to parse
+            // the text from a string to
+            // produce the date
+            Date d1 = sdf.parse(start_date);
+            Date d2 = sdf.parse(end_date);
 
-        long elapsedHours = different / hoursInMilli;
-        different = different % hoursInMilli;
+            // Calucalte time difference
+            // in milliseconds
+            long difference_In_Time
+                    = d2.getTime() - d1.getTime();
 
-        long elapsedMinutes = different / minutesInMilli;
-        different = different % minutesInMilli;
+            // Calucalte time difference in
+            // seconds, minutes, hours, years,
+            // and days
+            long difference_In_Seconds
+                    = (difference_In_Time
+                    / 1000)
+                    % 60;
 
-        long elapsedSeconds = different / secondsInMilli;
-        tvTimeDifference.setText(elapsedHours + " hr " + elapsedMinutes + " min " + elapsedSeconds + " sec");
-        startCountDown();
-        System.out.printf(
-                "%d days, %d hours, %d minutes, %d seconds%n",
-                elapsedDays, elapsedHours, elapsedMinutes, elapsedSeconds);
+            long difference_In_Minutes
+                    = (difference_In_Time
+                    / (1000 * 60))
+                    % 60;
+
+            long difference_In_Hours
+                    = (difference_In_Time
+                    / (1000 * 60 * 60))
+                    % 24;
+
+            long difference_In_Years
+                    = (difference_In_Time
+                    / (1000l * 60 * 60 * 24 * 365));
+
+            long difference_In_Days
+                    = (difference_In_Time
+                    / (1000 * 60 * 60 * 24))
+                    % 365;
+
+            // Print the date difference in
+            // years, in days, in hours, in
+            // minutes, and in seconds
+            tvTimeDifference.setText(difference_In_Hours + " hr " + difference_In_Minutes + " min " + difference_In_Seconds + " sec");
+            startCountDown(difference_In_Time);
+
+            System.out.print(
+                    "Difference "
+                            + "between two dates is: ");
+
+            System.out.println(
+                    difference_In_Years
+                            + " years, "
+                            + difference_In_Days
+                            + " days, "
+                            + difference_In_Hours
+                            + " hours, "
+                            + difference_In_Minutes
+                            + " minutes, "
+                            + difference_In_Seconds
+                            + " seconds");
+        }
+
+        // Catch the Exception
+        catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 }

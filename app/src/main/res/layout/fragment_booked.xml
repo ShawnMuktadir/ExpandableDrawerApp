@@ -11,9 +11,9 @@
         android:orientation="vertical">
 
         <TextView
-            android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:text="@string/book"
             android:textSize="@dimen/dimTex15" />
 
@@ -21,22 +21,13 @@
             android:id="@+id/tvParkingAreaName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/dim2"
-            android:padding="@dimen/dim2"
-            android:gravity="center"
             android:layout_gravity="center"
-            android:text="@string/parking"
-            android:textStyle="bold"
-            android:textSize="@dimen/dimTex16" />
-
-        <TextView
-            android:layout_margin="1dp"
-            android:padding="1dp"
+            android:layout_margin="@dimen/dim2"
             android:gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/address"
-            android:textSize="16sp" />
+            android:padding="@dimen/dim2"
+            android:text="@string/parking"
+            android:textSize="@dimen/dimTex16"
+            android:textStyle="bold" />
 
         <View
             android:layout_width="match_parent"
@@ -59,19 +50,19 @@
 
             <TextView
                 android:id="@+id/tvDepartureTime"
-                android:layout_below="@+id/tvArrivedTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/tvArrivedTime"
                 android:text="Departure-04:30pm" />
 
             <TextView
-                android:layout_centerInParent="true"
                 android:id="@+id/tvDifferenceTime"
-                android:padding="2dp"
-                android:layout_margin="2dp"
-                android:layout_alignParentRight="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
+                android:layout_margin="2dp"
+                android:padding="2dp"
                 android:text="2:30h"
                 android:textSize="15sp" />
         </RelativeLayout>
@@ -88,84 +79,86 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_300sdp"
             tools:ignore="FragmentTagUsage"
-            tools:layout="@layout/fragment_booked"/>
+            tools:layout="@layout/fragment_booked" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:weightSum="2">
+            android:weightSum="2"
+            android:visibility="gone">
 
             <Button
                 android:id="@+id/btnMore"
-                android:layout_margin="3dp"
-                android:padding="2dp"
-                android:layout_weight="1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:layout_weight="1"
+                android:background="@android:color/black"
+                android:padding="2dp"
                 android:text="More Time"
-                android:textColor="@android:color/white"
-                android:background="@android:color/black" />
+                android:textColor="@android:color/white" />
 
             <Button
                 android:id="@+id/btnLiveParking"
-                android:layout_margin="3dp"
-                android:padding="2dp"
-                android:layout_weight="1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:layout_weight="1"
+                android:background="@android:color/black"
+                android:padding="2dp"
                 android:text="Live Parkin"
-                android:textColor="@android:color/white"
-                android:background="@android:color/black" />
+                android:textColor="@android:color/white" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/tvCountDown"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
             android:layout_marginBottom="@dimen/dim15"
+            android:gravity="center_horizontal"
             android:text="02:03"
             android:textColor="@android:color/black"
-            android:textSize="@dimen/dimTex15" />
+            android:textSize="@dimen/dimTex16"
+            android:textStyle="bold" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@android:color/black"
-            android:layout_margin="1dp" />
+            android:layout_margin="1dp"
+            android:background="@android:color/black" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dim2"
             android:padding="@dimen/dim2"
-            android:textSize="@dimen/dimTex12"
-            android:text="@string/booking_cancel_rules" />
+            android:text="@string/booking_cancel_rules"
+            android:textSize="@dimen/dimTex12" />
 
         <TextView
             android:id="@+id/textViewTermsCondition"
             android:layout_width="@dimen/dim50"
             android:layout_height="wrap_content"
-            android:padding="3dp"
-            android:gravity="center"
-            android:text="T&amp;C"
-            android:textSize="14sp"
-            android:background="@drawable/border_style"
             android:layout_gravity="end"
+            android:layout_marginEnd="8dp"
             android:layout_marginBottom="2dp"
-            android:layout_marginEnd="8dp" />
+            android:background="@drawable/border_style"
+            android:gravity="center"
+            android:padding="3dp"
+            android:text="T&amp;C"
+            android:textSize="@dimen/dimTex14" />
 
         <Button
             android:id="@+id/btnCarDeparture"
-            android:layout_margin="4dp"
-            android:padding="4dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="4dp"
             android:background="@drawable/button_shape"
+            android:padding="4dp"
             android:text="Car Departure"
             android:textColor="@android:color/white"
-            android:textSize="16sp" />
+            android:textSize="@dimen/dimTex14" />
 
     </LinearLayout>
 

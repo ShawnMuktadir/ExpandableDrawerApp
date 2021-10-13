@@ -42,7 +42,7 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private ArrayList<BookedList> bookedLists;
     BookingAdapterClickListener bookingAdapterClickListener;
 
-    public BookingAdapter(BookingActivity context, ArrayList<BookedList> bookedLists,BookingAdapterClickListener bookingAdapterClickListener) {
+    public BookingAdapter(BookingActivity context, ArrayList<BookedList> bookedLists, BookingAdapterClickListener bookingAdapterClickListener) {
         this.context = context;
         this.bookedLists = bookedLists;
         this.bookingAdapterClickListener = bookingAdapterClickListener;
@@ -87,28 +87,27 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             e.printStackTrace();
         }
 
-        /*bookingViewHolder.textViewParkingTotalPaymentAmount.setText(context.getResources().getString(R.string.total_fair));
-
-        bookingViewHolder.card_view.setOnClickListener(v -> {
-            Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show();
-        });*/
-
-
-        if(bookedList.getC_status().equalsIgnoreCase("0") && bookedList.getStatus().equalsIgnoreCase("0")){
-            bookingViewHolder.btnCancel.setVisibility(View.VISIBLE);
-            bookingViewHolder.tvStatus.setVisibility(View.GONE);
-        }
-        else if(bookedList.getC_status().equalsIgnoreCase("0") && bookedList.getStatus().equalsIgnoreCase("1") ){
+        if (bookedList.getC_status().equalsIgnoreCase("0") && bookedList.getStatus().equalsIgnoreCase("0") && bookedList.getP_status().equalsIgnoreCase("1")) {
             bookingViewHolder.tvStatus.setVisibility(View.VISIBLE);
             bookingViewHolder.btnCancel.setVisibility(View.GONE);
-            bookingViewHolder.tvStatus.setText("Parked");
+            bookingViewHolder.tvStatus.setText("Parking");
             bookingViewHolder.tvStatus.setTextColor(context.getColor(R.color.green2));
-
-
-        }
-        else if(bookedList.getC_status().equalsIgnoreCase("1") && bookedList.getStatus().equalsIgnoreCase("1")){
+        } else if (bookedList.getC_status().equalsIgnoreCase("0") && bookedList.getStatus().equalsIgnoreCase("0")) {
+            bookingViewHolder.btnCancel.setVisibility(View.VISIBLE);
+            bookingViewHolder.tvStatus.setVisibility(View.GONE);
+        } else if (bookedList.getC_status().equalsIgnoreCase("0") && bookedList.getStatus().equalsIgnoreCase("1")) {
+            bookingViewHolder.tvStatus.setVisibility(View.VISIBLE);
+            bookingViewHolder.btnCancel.setVisibility(View.GONE);
+            bookingViewHolder.tvStatus.setText("Completed");
+            bookingViewHolder.tvStatus.setTextColor(context.getColor(R.color.green2));
+        } else if (bookedList.getC_status().equalsIgnoreCase("1") && bookedList.getStatus().equalsIgnoreCase("1")) {
             bookingViewHolder.tvStatus.setVisibility(View.VISIBLE);
             bookingViewHolder.tvStatus.setText("Canceled");
+            bookingViewHolder.btnCancel.setVisibility(View.GONE);
+            bookingViewHolder.tvStatus.setTextColor(Color.RED);
+        } else {
+            bookingViewHolder.tvStatus.setVisibility(View.VISIBLE);
+            bookingViewHolder.tvStatus.setText("Rejected");
             bookingViewHolder.btnCancel.setVisibility(View.GONE);
             bookingViewHolder.tvStatus.setTextColor(Color.RED);
         }
@@ -116,7 +115,7 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         bookingViewHolder.btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                bookingAdapterClickListener.onItemClick(bookingViewHolder.getAbsoluteAdapterPosition(),bookedList.getSpotId());
+                bookingAdapterClickListener.onItemClick(bookingViewHolder.getAbsoluteAdapterPosition(), bookedList.getSpotId());
             }
         });
 
@@ -194,6 +193,7 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             ButterKnife.bind(this, itemView);
         }
     }
+
     public interface BookingAdapterClickListener {
         void onItemClick(int position, String uid);
     }

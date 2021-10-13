@@ -28,6 +28,17 @@
             app:contentInsetStartWithNavigation="0dp"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/welcome_to_locc_parking"
+                android:textColor="@color/black"
+                android:textSize="@dimen/dimTex20"
+                android:textStyle="bold"
+                android:visibility="gone"
+                android:layout_gravity="center" />
+
             <LinearLayout
                 android:id="@+id/linearLayoutToolbarTime"
                 android:layout_width="wrap_content"

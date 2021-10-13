@@ -70,6 +70,12 @@ public class BookedList {
     @Expose
     private String c_status;
 
+
+
+    @SerializedName("p_status")
+    @Expose
+    private String p_status;
+
     @SerializedName("address")
     @Expose
     private String address;
@@ -263,5 +269,12 @@ public class BookedList {
 
     public void setC_status(String c_status) {
         this.c_status = c_status;
+    }
+    public String getP_status() {
+        return p_status;
+    }
+
+    public void setP_status(String p_status) {
+        this.p_status = p_status;
     }
 }

@@ -125,12 +125,10 @@ import java.lang.reflect.Type;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -1075,7 +1073,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             if (ConnectivityUtils.getInstance().checkInternet(context) && isGPSEnabled()) {
 //                fetchParkingSlotSensors(onConnectedLocation);
                 ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-
+                //getBookingParkStatus(Preferences.getInstance(context).getUser().getMobileNo());
                 Call<SensorAreaStatusResponse> call = request.getSensorAreaStatus();
                 getSensorAreaStatus(call);
             } else {
@@ -1308,7 +1306,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             if (polyline != null)
                 polyline.remove();
 
-            ToastUtils.getInstance().showToastMessage(context, "Route re-drawn");
+            //ToastUtils.getInstance().showToastMessage(context, "Route re-drawn");
             new DirectionFinder(this, origin, oldDestination).execute();
             hideLoading();
         } catch (UnsupportedEncodingException e) {
@@ -1328,7 +1326,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     public void onResume() {
         Timber.e("onResume called");
         super.onResume();
-        setListeners();
+        if (isAdded())
+            setListeners();
     }
 
     @Override
@@ -2991,9 +2990,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 adapterPlaceLatLng = event.location;
                 cordList.add(new LatLng(event.location.latitude, event.location.longitude));
                 getDirectionPinMarkerDraw(adapterPlaceLatLng, adapterUid);
-                linearLayoutBottom.setVisibility(View.VISIBLE);
-                imageViewBack.setVisibility(View.VISIBLE);
-                btnGetDirection.setVisibility(View.VISIBLE);
+                if (isAdded()) {
+                    linearLayoutBottom.setVisibility(View.VISIBLE);
+                    imageViewBack.setVisibility(View.VISIBLE);
+                    btnGetDirection.setVisibility(View.VISIBLE);
+                }
                 String origin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
                 String destination = null;
                 if (adapterPlaceLatLng != null) {
@@ -3016,9 +3017,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             adapterPlaceLatLng = event.location;
             searchPlaceLatLng = event.location;
             markerPlaceLatLng = event.location;
-            btnBottomSheetGetDirection.setVisibility(View.VISIBLE);
-            linearLayoutBottomSheetBottom.setVisibility(View.VISIBLE);
-            imageViewBottomSheetBack.setVisibility(View.VISIBLE);
+            if (isAdded()) {
+                btnBottomSheetGetDirection.setVisibility(View.VISIBLE);
+                linearLayoutBottomSheetBottom.setVisibility(View.VISIBLE);
+                imageViewBottomSheetBack.setVisibility(View.VISIBLE);
+            }
             String origin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
             String destination = null;
             if (event.location != null) {
@@ -3036,11 +3039,13 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         final Handler handler = new Handler();
         handler.postDelayed(() -> {
             searchPlaceLatLng = event.location;
-            btnSearchGetDirection.setVisibility(View.VISIBLE);
-            linearLayoutSearchBottomButton.setVisibility(View.VISIBLE);
-            imageViewSearchBack.setVisibility(View.VISIBLE);
-            linearLayoutBottom.setVisibility(View.GONE);
-            linearLayoutMarkerBottom.setVisibility(View.GONE);
+            if (isAdded()) {
+                btnSearchGetDirection.setVisibility(View.VISIBLE);
+                linearLayoutSearchBottomButton.setVisibility(View.VISIBLE);
+                imageViewSearchBack.setVisibility(View.VISIBLE);
+                linearLayoutBottom.setVisibility(View.GONE);
+                linearLayoutMarkerBottom.setVisibility(View.GONE);
+            }
             String origin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
             String destination = null;
             if (searchPlaceLatLng != null) {
@@ -3062,7 +3067,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             markerPlaceLatLng = event.location;
             getDirectionPinMarkerDraw(markerPlaceLatLng, markerUid);
             isDestinationMarkerDrawn = true;
-            btnMarkerGetDirection.setVisibility(View.VISIBLE);
+            if (isAdded()) {
+                btnMarkerGetDirection.setVisibility(View.VISIBLE);
+            }
             String origin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
             String destination = null;
             if (event.location != null) {
@@ -3100,7 +3107,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         this.distance = distance;
         Timber.e("distance -> %s", distance);
         HomeFragment.adapterPlaceLatLng = location;
-        if (isVisible) {
+        if (isVisible && isAdded()) {
             try {
                 linearLayoutParkingAdapterBackBottom.setVisibility(View.VISIBLE);
                 linearLayoutBottom.setVisibility(View.GONE);
@@ -3123,7 +3130,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         this.searchPlaceLatLng = location;
         this.distance = distance;
 
-        if (isVisible) {
+        if (isVisible && isAdded()) {
             linearLayoutSearchBottom.setVisibility(View.VISIBLE);
             linearLayoutSearchNameCount.setVisibility(View.GONE);
             textViewSearchParkingAreaCount.setText(count);
@@ -3141,7 +3148,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         this.distance = distance;
         this.markerPlaceLatLng = location;
 
-        if (isVisible) {
+        if (isVisible && isAdded()) {
             linearLayoutMarkerNameCount.setVisibility(View.GONE);
             linearLayoutMarkerBottom.setVisibility(View.VISIBLE);
             btnMarkerGetDirection.setText(context.getResources().getString(R.string.get_direction));
@@ -3163,7 +3170,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         this.bottomSheetPlaceLatLng = location;
 
         String uid;
-        if (isVisible) {
+        if (isVisible && isAdded()) {
             if (bottomSheetPlaceLatLng != null) {
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(bottomSheetPlaceLatLng);
@@ -3309,7 +3316,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 bookingSensorsMarkerArrayList.clear();
                 bookingSensorsBottomSheetArrayList.clear();
                 ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-
                 Call<SensorAreaStatusResponse> call = request.getSensorAreaStatus();
                 getSensorAreaStatus(call);
                 animateCamera(onConnectedLocation);
@@ -3771,8 +3777,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         listener.fragmentChange(new BookingParkFragment());
-                        String arrive= "2021-10-13 06:53:00";
-                        String depart= "2021-10-13 07:23:00";
+                        String arrive = "2021-10-13 06:53:00";
+                        String depart = "2021-10-13 07:23:00";
                     }
                 }
             }
@@ -4127,7 +4133,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 }*/
             }
         } catch (Exception e) {
-            Toast.makeText(context, "Error occurred on finding the directions...", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+            //  Toast.makeText(context, "Error occurred on finding the directions...", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -4153,4 +4160,32 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         calendar.setTimeInMillis(source);
         return calendar;
     }
+
+    /*private void getBookingParkStatus(String mobileNo) {
+        showLoading(context);
+        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+        Call<BookingParkStatusResponse> call = request.getBookingParkStatus(mobileNo);
+        call.enqueue(new Callback<BookingParkStatusResponse>() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onResponse(@NonNull Call<BookingParkStatusResponse> call, @NonNull Response<BookingParkStatusResponse> response) {
+                hideLoading();
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        if (response.body().getSensors() != null) {
+                            BookingParkStatusResponse.Sensors sensors = response.body().getSensors();
+                            listener.fragmentChange(BookingParkFragment.newInstance(sensors));
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<BookingParkStatusResponse> call, @NonNull Throwable t) {
+                Timber.e("onFailure -> %s", t.getMessage());
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+                hideLoading();
+            }
+        });
+    }*/
 }
