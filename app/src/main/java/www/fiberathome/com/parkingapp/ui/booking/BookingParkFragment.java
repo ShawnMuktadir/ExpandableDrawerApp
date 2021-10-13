@@ -92,11 +92,17 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
     Location mLastLocation;
     Marker mCurrLocationMarker;
     FusedLocationProviderClient mFusedLocationClient;
-
+    static BookingParkStatusResponse.Sensors sensors;
     private HomeActivity context;
 
     public BookingParkFragment() {
         // Required empty public constructor
+    }
+
+    public static Fragment newInstance(BookingParkStatusResponse.Sensors mSensors) {
+        sensors = mSensors;
+
+        return new BookingParkFragment();
     }
 
     @SuppressLint("SetTextI18n")
@@ -133,7 +139,19 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                         replace(R.id.map, supportMapFragment);
                 ft.commit();
                 supportMapFragment.getMapAsync(this);
-                getBookingParkStatus(Preferences.getInstance(context).getUser().getMobileNo());
+               if(sensors!=null){
+                   tvParkingAreaName.setText(sensors.getParkingArea());
+                   tvArrivedTime.setText(sensors.getTimeStart());
+                   tvDepartureTime.setText(sensors.getTimeEnd());
+
+                   DateTimeUtils obj = new DateTimeUtils();
+                   SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+                   findDifference(sensors.getTimeStart(), sensors.getTimeEnd());
+
+               }
+               else{
+                   getBookingParkStatus(Preferences.getInstance(context).getUser().getMobileNo());
+               }
             } else {
                 ToastUtils.getInstance().showToastMessage(context, "Unable to load map");
             }
@@ -146,9 +164,9 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
     }
 
     private void setData() {
-        tvArrivedTime.setText(new StringBuilder().append("Arrived ").append(getDate(arrived)).toString());
-        tvDepartureTime.setText(new StringBuilder().append("Departure ").append(getDate(departure)).toString());
-        tvTimeDifference.setText(new StringBuilder().append(getTimeDifference(difference)).append(" min").toString());
+//        tvArrivedTime.setText(new StringBuilder().append("Arrived ").append(getDate(arrived)).toString());
+//        tvDepartureTime.setText(new StringBuilder().append("Departure ").append(getDate(departure)).toString());
+//        tvTimeDifference.setText(new StringBuilder().append(getTimeDifference(difference)).append(" min").toString());
     }
 
     private void setListeners() {
@@ -367,7 +385,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
     private void endBooking() {
         showLoading(context);
         ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<CloseReservationResponse> call = request.endReservation(Preferences.getInstance(context).getUser().getMobileNo(), Preferences.getInstance(context).getBooked().getBookedUid());
+        Call<CloseReservationResponse> call = request.endReservation(Preferences.getInstance(context).getUser().getMobileNo(), sensors.getSpotId());
         call.enqueue(new Callback<CloseReservationResponse>() {
             @Override
             public void onResponse(@NonNull Call<CloseReservationResponse> call, @NonNull Response<CloseReservationResponse> response) {
@@ -415,7 +433,6 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         if (response.body().getSensors() != null) {
-                            tvArrivedTime.setText(response.body().getSensors().getParkingArea());
                             tvArrivedTime.setText(response.body().getSensors().getTimeStart());
                             tvDepartureTime.setText(response.body().getSensors().getTimeEnd());
                             tvParkingAreaName.setText(response.body().getSensors().getParkingArea());

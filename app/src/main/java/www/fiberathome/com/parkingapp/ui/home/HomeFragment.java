@@ -511,6 +511,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         Timber.e("onCreate called");
         setHasOptionsMenu(false);
         super.onCreate(savedInstanceState);
+        context = (HomeActivity) getActivity();
         if (context != null) {
             FirebaseApp.initializeApp(context);
         }
@@ -533,7 +534,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         Timber.e("onViewCreated called");
         super.onViewCreated(view, savedInstanceState);
-        context = (HomeActivity) getActivity();
+
         if (context != null) {
             context.changeDefaultActionBarDrawerToogleIcon();
             listener = context;
@@ -1134,12 +1135,12 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         String origin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
 
-        if (isRouteDrawn == 1) {
+        if (isRouteDrawn == 1 && !(isBooked && bookedPlace != null)) {
             if (polyline == null && !points.isEmpty()) {
                 polyline = mMap.addPolyline(getDefaultPolyLines(points));
                 Timber.e("polyline null -> %s", polyline);
             } else if (polyline != null) {
-                if (previousOrigin != null) {
+                if (previousOrigin != null && oldDestination !=null && onConnectedLocation !=null) {
 
                     String[] latlong = previousOrigin.split(",");
                     String[] latlong2 = oldDestination.split(",");
@@ -4160,32 +4161,4 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         calendar.setTimeInMillis(source);
         return calendar;
     }
-
-    /*private void getBookingParkStatus(String mobileNo) {
-        showLoading(context);
-        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<BookingParkStatusResponse> call = request.getBookingParkStatus(mobileNo);
-        call.enqueue(new Callback<BookingParkStatusResponse>() {
-            @RequiresApi(api = Build.VERSION_CODES.O)
-            @Override
-            public void onResponse(@NonNull Call<BookingParkStatusResponse> call, @NonNull Response<BookingParkStatusResponse> response) {
-                hideLoading();
-                if (response.isSuccessful()) {
-                    if (response.body() != null) {
-                        if (response.body().getSensors() != null) {
-                            BookingParkStatusResponse.Sensors sensors = response.body().getSensors();
-                            listener.fragmentChange(BookingParkFragment.newInstance(sensors));
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<BookingParkStatusResponse> call, @NonNull Throwable t) {
-                Timber.e("onFailure -> %s", t.getMessage());
-                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
-                hideLoading();
-            }
-        });
-    }*/
 }
