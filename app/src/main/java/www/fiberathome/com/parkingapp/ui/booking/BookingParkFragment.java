@@ -123,14 +123,6 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         initView(view);
         listener = (FragmentChangeListener) getActivity();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
-        if (getArguments() != null) {
-            arrived = getArguments().getLong("arrived", 0);
-            departure = getArguments().getLong("departure", 0);
-            difference = departure - arrived;
-        }
-
-        Timber.d("onCreateView: " + arrived + "    " + departure);
-        Timber.d("onCreateView: difference:%s", difference);
 
         if (isServicesOk()) {
             supportMapFragment = SupportMapFragment.newInstance();
@@ -145,10 +137,8 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                     tvParkingAreaName.setText(sensors.getParkingArea());
                     tvArrivedTime.setText(sensors.getTimeStart());
                     tvDepartureTime.setText(sensors.getTimeEnd());
-
                     String currentDateandTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
                     findDifference(currentDateandTime, sensors.getTimeEnd());
-
                 } else {
                     getBookingParkStatus(Preferences.getInstance(context).getUser().getMobileNo());
                 }
@@ -432,7 +422,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         mSensors = response.body().getSensors();
-                        if (sensors != null) {
+                        if (mSensors != null) {
                             tvArrivedTime.setText(mSensors.getTimeStart());
                             tvDepartureTime.setText(mSensors.getTimeEnd());
                             tvParkingAreaName.setText(mSensors.getParkingArea());

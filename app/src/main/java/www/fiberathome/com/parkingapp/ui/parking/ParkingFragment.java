@@ -426,9 +426,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
 
                             sensorAreaArrayList.add(sensorArea);
                         }
-
                         Collections.sort(sensorAreaArrayList, (c1, c2) -> Double.compare(c1.getDistance(), c2.getDistance()));
-
                         setFragmentControls(sensorAreaArrayList);
                     }
                 }
@@ -456,11 +454,8 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
         recyclerViewParking.addOnItemTouchListener(new RecyclerTouchListener(context, recyclerViewParking, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-
                 if (context != null) {
-
                     context.navigationView.getMenu().getItem(1).setChecked(false);
-
                     KeyboardUtils.getInstance().hideKeyboard(context, editTextParking);
                 }
             }
@@ -482,7 +477,6 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
 
     private void setAdapter(ArrayList<SensorArea> sensorAreas) {
         this.sensorAreas = sensorAreas;
-
         parkingAdapter = new ParkingAdapter(context, sensorAreas, onConnectedLocation, (position, lat, lng, parkingAreaName, count) -> {
 
             long now = System.currentTimeMillis();

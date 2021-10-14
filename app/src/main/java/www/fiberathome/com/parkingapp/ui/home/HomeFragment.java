@@ -2241,7 +2241,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                                             @Override
                                                             public void onNegativeClick() {
                                                                 Timber.e("Negative Button Clicked");
-
                                                             }
                                                         }).show();
                                             }
