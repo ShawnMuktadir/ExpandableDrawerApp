@@ -534,7 +534,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         Timber.e("onViewCreated called");
         super.onViewCreated(view, savedInstanceState);
-
         if (context != null) {
             context.changeDefaultActionBarDrawerToogleIcon();
             listener = context;
