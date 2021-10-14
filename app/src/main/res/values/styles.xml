@@ -12,6 +12,8 @@
         <item name="drawerArrowStyle">@style/DrawerIconStyle</item>
         <!-- Support library compatibility -->
         <item name="actionBarStyle">@style/themeActionBar</item>
+        <item name="android:splitMotionEvents">false</item>
+        <item name="android:windowEnableSplitTouch">false</item>
     </style>
 
     <!-- ActionBar styles -->
