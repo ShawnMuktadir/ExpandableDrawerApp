@@ -718,7 +718,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         } else {
             distance = distance + 0.5;
         }
-
         return distance;
     }
 
@@ -2250,18 +2249,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                             e.getCause();
                                             ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
                                         }
-                                    }
-                                    //value getting from parking adapter
-                                    if (SharedData.getInstance().getSensorArea() != null) {
-                                        SensorArea sensorArea = SharedData.getInstance().getSensorArea();
-
-                                        textViewParkingAreaName.setText(TextUtils.getInstance().capitalizeFirstLetter(sensorArea.getParkingArea()));
-                                        textViewParkingAreaCount.setText(sensorArea.getCount());
-                                        String distance = new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(sensorArea.getDistance()) + " km";
-                                        textViewParkingDistance.setText(context.getResources().getString(R.string.distance, distance));
-                                        getDestinationInfoForDuration(new LatLng(sensorArea.getEndLat(), sensorArea.getEndLng()));
-                                    } else {
-                                        Timber.e("Genjam");
                                     }
                                 }
                             } else {
