@@ -11,6 +11,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -100,14 +101,13 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
 
     private AlertDialog mInternetDialog;
 
+    @SuppressLint("SourceLockedOrientationActivity")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         context = this;
-
         isFastConnection = Connectivity.isConnectedFast(context);
-
         geofencingClient = LocationServices.getGeofencingClient(context);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -115,10 +115,9 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
             getWindow().setStatusBarColor(ContextCompat.getColor(context, R.color.updatedColorPrimaryDark));
         }
 
+
         snackbar = Snackbar.make(this.findViewById(android.R.id.content), context.getResources().getString(R.string.connect_to_internet), 86400000);
-
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
         context.registerReceiver(mNetworkDetectReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -142,7 +141,6 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         }
 
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
     }
 
@@ -237,7 +235,6 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
 
     protected void hideLoading() {
         if (progressDialog == null) return;
-
         progressDialog.dismiss();
         progressDialog.cancel();
     }

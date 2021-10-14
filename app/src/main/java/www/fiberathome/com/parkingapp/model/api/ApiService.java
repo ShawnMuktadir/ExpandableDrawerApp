@@ -122,11 +122,13 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("booking_closed.php")
     Call<CloseReservationResponse> endReservation(@Field("mobile_no") String mobileNo,
-                                                    @Field("spot_id") String bookedUid);
+                                                  @Field("spot_id") String bookedUid);
+
     @FormUrlEncoded
     @POST("booking_cancel.php")
     Call<ReservationCancelResponse> cancelReservation(@Field("mobile_no") String mobileNo,
-                                         @Field("spot_id") String bookedUid);
+                                                      @Field("spot_id") String bookedUid);
+
     @FormUrlEncoded
     @POST("booking_park_status.php")
     Call<BookingParkStatusResponse> getBookingParkStatus(@Field("mobile_no") String mobileNo);

@@ -411,6 +411,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
             }
         };
     }
+
     private void getBookingParkStatus(String mobileNo) {
         showLoading(context);
         ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);

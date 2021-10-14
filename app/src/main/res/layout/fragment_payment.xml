@@ -63,7 +63,7 @@
         android:visibility="gone">
 
         <TextView
-            android:id="@+id/editSlotText"
+            android:id="@+id/tvEditSlot"
             android:layout_width="85dp"
             android:layout_height="wrap_content"
             android:background="@drawable/border_style"

@@ -65,6 +65,10 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    buildFeatures {
+        viewBinding true
+    }
+
     useLibrary 'org.apache.http.legacy'
     buildToolsVersion = '30.0.3'
     compileOptions.encoding = 'ISO-8859-1'

@@ -47,7 +47,7 @@ public class DialogHelper extends DialogFragment {
         subtotalTV = dialog.findViewById(R.id.tvSubTotal);
         totalTV = dialog.findViewById(R.id.tvTotal);
         payBtn = dialog.findViewById(R.id.btnPay);
-        editSlotText = dialog.findViewById(R.id.editSlotText);
+        editSlotText = dialog.findViewById(R.id.tvEditSlot);
         termsConText = dialog.findViewById(R.id.tvTermCondition);
         promoText = dialog.findViewById(R.id.tvPromo);
 

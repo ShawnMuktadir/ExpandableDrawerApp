@@ -56,7 +56,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
     static String arrivedTime, departureTime, timeDifference, placeId, route, areaName, parkingSlotCount;
     static long differenceUnit;
     static double lat, lon;
-    private TextView tvArrivedTime, tvDepartureTime, tvTimeDifference, tvSubTotal, tvTotal, etSlot,
+    private TextView tvArrivedTime, tvDepartureTime, tvTimeDifference, tvSubTotal, tvTotal, tvEditSlot,
             tvTermsCondition, tvPromo, tvParkingSlotName, actionBarTitle;
     private ImageView ivBackArrow;
     private Button payBtn;
@@ -123,6 +123,12 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
         Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).show();
     }
 
+    @Override
+    public boolean onBackPressed() {
+        context.onBackPressed();
+        return false;
+    }
+
     private void initUI(View view) {
         tvArrivedTime = view.findViewById(R.id.tvArrivedTime);
         tvDepartureTime = view.findViewById(R.id.tvDepartureTime);
@@ -130,7 +136,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
         tvSubTotal = view.findViewById(R.id.tvSubTotal);
         tvTotal = view.findViewById(R.id.tvTotal);
         payBtn = view.findViewById(R.id.btnPay);
-        etSlot = view.findViewById(R.id.editSlotText);
+        tvEditSlot = view.findViewById(R.id.tvEditSlot);
         tvTermsCondition = view.findViewById(R.id.tvTermCondition);
         tvPromo = view.findViewById(R.id.tvPromo);
         tvParkingSlotName = view.findViewById(R.id.tvParkingSlotName);
@@ -144,7 +150,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
             listener.fragmentChange(scheduleFragment);
         });
 
-        etSlot.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
+        tvEditSlot.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
 
         tvPromo.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
 
@@ -174,7 +180,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
     private void setData() {
         tvArrivedTime.setText(arrivedTime);
         tvDepartureTime.setText(departureTime);
-        tvTimeDifference.setText(timeDifference);
+        tvTimeDifference.setText(new StringBuilder().append(timeDifference).append(" min").toString());
         tvParkingSlotName.setText(areaName);
     }
 
@@ -187,7 +193,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
         payBtn.setText(new StringBuilder().append("Pay BDT ").append(df.format(perMintBill * minutes)).toString());
     }
 
-    private void storeReservation(String mobileNo, String arrivalTime, String departureTime, String markerUid) {
+    private void storeReservation(String mobileNo, String arrivalTime, String departureTime, String markerUid)  {
         showLoading(context);
         ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
         Call<ReservationResponse> call = request.storeReservation(mobileNo, arrivalTime, departureTime, markerUid);
@@ -203,7 +209,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                             TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.reservation_successful));
                             //check 15 minutes before departure
                             //ToDo
-                            startAlarm(convertLongToCalendar(arrivedDate.getTime()),convertLongToCalendar(departureDate.getTime()));
+                            startAlarm(convertLongToCalendar(arrivedDate.getTime()), convertLongToCalendar(departureDate.getTime()));
                             BookedPlace bookedPlace = new BookedPlace();
 
                             bookedPlace.setBookedUid(response.body().getUid());
@@ -251,7 +257,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
         return formatter.format(calendar.getTime());
     }
 
-    private void startAlarm(Calendar arrive,Calendar departure) {
+    private void startAlarm(Calendar arrive, Calendar departure) {
         Timber.e("startAlarm called");
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent firstIntent = new Intent(context, NotificationPublisher.class); // trigger before 15 mins
@@ -280,11 +286,5 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(source);
         return calendar;
-    }
-
-    @Override
-    public boolean onBackPressed() {
-        context.onBackPressed();
-        return false;
     }
 }
