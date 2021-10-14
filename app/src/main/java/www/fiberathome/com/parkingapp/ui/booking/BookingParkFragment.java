@@ -376,8 +376,14 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
 
     private void endBooking() {
         showLoading(context);
+        String spotUid;
+        if (mSensors != null) {
+            spotUid = mSensors.getSpotId();
+        } else {
+            spotUid = sensors.getSpotId();
+        }
         ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<CloseReservationResponse> call = request.endReservation(Preferences.getInstance(context).getUser().getMobileNo(), sensors.getSpotId());
+        Call<CloseReservationResponse> call = request.endReservation(Preferences.getInstance(context).getUser().getMobileNo(), spotUid);
         call.enqueue(new Callback<CloseReservationResponse>() {
             @Override
             public void onResponse(@NonNull Call<CloseReservationResponse> call, @NonNull Response<CloseReservationResponse> response) {
@@ -547,6 +553,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
             e.printStackTrace();
         }
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
