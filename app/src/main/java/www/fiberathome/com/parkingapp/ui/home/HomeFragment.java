@@ -147,7 +147,6 @@ import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
-import www.fiberathome.com.parkingapp.databinding.FragmentHomeBinding;
 import www.fiberathome.com.parkingapp.model.BookedPlace;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
@@ -1125,27 +1124,29 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         String origin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
 
-        if (isRouteDrawn == 1 && !(isBooked && bookedPlace != null)) {
-            if (previousOrigin != null && oldDestination != null && onConnectedLocation != null) {
+        if (isRouteDrawn == 1 ) {
+            if (!(isBooked && bookedPlace != null)) {
+                if (previousOrigin != null && oldDestination != null && onConnectedLocation != null) {
 
-                String[] latlong = previousOrigin.split(",");
-                String[] latlong2 = oldDestination.split(",");
-                double lat = MathUtils.getInstance().convertToDouble(latlong[0].trim());
-                double lon = MathUtils.getInstance().convertToDouble(latlong[1].trim());
-                double lat2 = MathUtils.getInstance().convertToDouble(latlong2[0].trim());
-                double lon2 = MathUtils.getInstance().convertToDouble(latlong2[1].trim());
-                double distanceMoved = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), lat, lon) * 1000;
-                double distanceFromDestination = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), lat2, lon2) * 1000;
-                if (distanceMoved >= 50) {
-                    reDrawRoute(origin);
-                    previousOrigin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
-                } else if ((distanceFromDestination <= 20 && distanceFromDestination >= 10) && distanceMoved >= 9) {
-                    reDrawRoute(origin);
+                    String[] latlong = previousOrigin.split(",");
+                    String[] latlong2 = oldDestination.split(",");
+                    Timber.e("oldDestination: %s->",oldDestination);
+                    double lat = MathUtils.getInstance().convertToDouble(latlong[0].trim());
+                    double lon = MathUtils.getInstance().convertToDouble(latlong[1].trim());
+                    double lat2 = MathUtils.getInstance().convertToDouble(latlong2[0].trim());
+                    double lon2 = MathUtils.getInstance().convertToDouble(latlong2[1].trim());
+                    double distanceMoved = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), lat, lon) * 1000;
+                    double distanceFromDestination = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), lat2, lon2) * 1000;
+                    if (distanceMoved >= 50) {
+                        reDrawRoute(origin);
+                        previousOrigin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
+                    } else if ((distanceFromDestination <= 20 && distanceFromDestination >= 10) && distanceMoved >= 9) {
+                        reDrawRoute(origin);
+                        previousOrigin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
+                    }
+                } else {
                     previousOrigin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
                 }
-            } else {
-                previousOrigin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
-            }
                /* Timber.e("polyline not null-> %s", polyline);
                 boolean isUserOnRoute = PolyUtil.isLocationOnPath(new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude()),
                         polyline.getPoints(), false, 60.0f);
@@ -1241,7 +1242,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         myPreviousLocation = onConnectedLocation;
                     }
                 }*/
-        } else if (isBooked && bookedPlace != null) {
+            }
+        }
+        else if (isBooked && bookedPlace != null) {
             Gson gson = new Gson();
             String json = bookedPlace.getRoute();
             Type type = new TypeToken<List<LatLng>>() {
@@ -3768,8 +3771,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         listener.fragmentChange(new BookingParkFragment());
-                        String arrive = "2021-10-13 06:53:00";
-                        String depart = "2021-10-13 07:23:00";
                     }
                 }
             }

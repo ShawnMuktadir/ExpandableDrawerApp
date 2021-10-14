@@ -123,14 +123,14 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         initView(view);
         listener = (FragmentChangeListener) getActivity();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
-        if (getArguments() != null) {
-            arrived = getArguments().getLong("arrived", 0);
-            departure = getArguments().getLong("departure", 0);
-            difference = departure - arrived;
-        }
-
-        Timber.d("onCreateView: " + arrived + "    " + departure);
-        Timber.d("onCreateView: difference:%s", difference);
+//        if (getArguments() != null) {
+//            arrived = getArguments().getLong("arrived", 0);
+//            departure = getArguments().getLong("departure", 0);
+//            difference = departure - arrived;
+//        }
+//
+//        Timber.d("onCreateView: " + arrived + "    " + departure);
+//        Timber.d("onCreateView: difference:%s", difference);
 
         if (isServicesOk()) {
             supportMapFragment = SupportMapFragment.newInstance();
@@ -142,6 +142,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                 ft.commit();
                 supportMapFragment.getMapAsync(this);
                 if (sensors != null) {
+                    //from HomeActivity
                     tvParkingAreaName.setText(sensors.getParkingArea());
                     tvArrivedTime.setText(sensors.getTimeStart());
                     tvDepartureTime.setText(sensors.getTimeEnd());
@@ -150,6 +151,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                     findDifference(currentDateandTime, sensors.getTimeEnd());
 
                 } else {
+                    //from HomeFragment
                     getBookingParkStatus(Preferences.getInstance(context).getUser().getMobileNo());
                 }
             } else {
@@ -389,6 +391,8 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
             @Override
             public void onResponse(@NonNull Call<CloseReservationResponse> call, @NonNull Response<CloseReservationResponse> response) {
                 hideLoading();
+                countDownTimer.cancel();
+                sensors = null;
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         DialogUtils.getInstance().alertDialog(context,
@@ -401,6 +405,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                                         Timber.e("Positive Button clicked");
                                         Preferences.getInstance(context).setBooked(new BookedPlace());
                                         listener.fragmentChange(new HomeFragment());
+
                                     }
 
                                     @Override
@@ -414,6 +419,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
             @Override
             public void onFailure(@NonNull Call<CloseReservationResponse> call, @NonNull Throwable t) {
                 Timber.e("onFailure -> %s", t.getMessage());
+                countDownTimer.cancel();
                 hideLoading();
                 ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
@@ -432,7 +438,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         mSensors = response.body().getSensors();
-                        if (sensors != null) {
+                        if (mSensors != null) {
                             tvArrivedTime.setText(mSensors.getTimeStart());
                             tvDepartureTime.setText(mSensors.getTimeEnd());
                             tvParkingAreaName.setText(mSensors.getParkingArea());
@@ -551,4 +557,10 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
             e.printStackTrace();
         }
     }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        countDownTimer.cancel();
+    }
+
 }
