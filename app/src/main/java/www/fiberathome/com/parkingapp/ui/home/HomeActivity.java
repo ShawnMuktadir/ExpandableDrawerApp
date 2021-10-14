@@ -254,8 +254,8 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                         toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
                     }
                 }
-                tvTimeToolbar.setVisibility(View.VISIBLE);
-                linearLayoutToolbarTime.setVisibility(View.VISIBLE);
+                tvTimeToolbar.setVisibility(View.GONE);
+                linearLayoutToolbarTime.setVisibility(View.GONE);
                 drawerLayout.closeDrawers();
                 navigationView.getMenu().getItem(0).setChecked(true);
                 navigationView.getMenu().getItem(1).setChecked(false);
@@ -383,16 +383,6 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
             return true;
         } else {
             Timber.e("provider not Enabled");
-
-            /*AlertDialog alertDialog = new AlertDialog.Builder(context)
-                    .setTitle("GPS Permissions")
-                    .setMessage("GPS is required for this app to work. Please enable GPS.")
-                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
-                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        startActivityForResult(intent, GPS_REQUEST_CODE);
-                    }))
-                    .setCancelable(false)
-                    .show();*/
         }
 
         return false;
@@ -435,7 +425,6 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
             @Override
             public void onFailure(@NonNull Call<BookingParkStatusResponse> call, @NonNull Throwable t) {
                 Timber.e("onFailure -> %s", t.getMessage());
-//                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
                 hideLoading();
             }
         });
