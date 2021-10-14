@@ -403,7 +403,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                                     count = baseStringList.get(i);
                                 }
 
-                                fetchDistance =  MathUtils.getInstance().calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
+                                fetchDistance = MathUtils.getInstance().calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
                                         endLat, endLng);
 
                                 if (fetchDistance > 1.9) {
@@ -497,17 +497,15 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                 try {
                     Timber.e("try called");
                     SharedData.getInstance().setSensorArea(this.sensorAreas.get(position));
+                    Bundle bundle = new Bundle();
+                    bundle.putDouble("lat", lat);
+                    bundle.putDouble("lng", lng);
+                    bundle.putString("areaName", parkingAreaName);
+                    bundle.putString("count", count);
+                    context.startActivityWithFinishBundle(HomeActivity.class, bundle);
                 } catch (Exception e) {
                     Timber.e("try catch called -> %s", e.getMessage());
                 }
-                Bundle bundle = new Bundle();
-                bundle.putDouble("lat", lat);
-                Timber.e("lat -> %s", lat);
-                bundle.putDouble("lng", lng);
-                Timber.e("lng -> %s", lng);
-                bundle.putString("areaName", parkingAreaName);
-                bundle.putString("count", count);
-                context.startActivityWithFinishBundle(HomeActivity.class, bundle);
             } else {
                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
             }
