@@ -1136,10 +1136,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         String origin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
 
         if (isRouteDrawn == 1 && !(isBooked && bookedPlace != null)) {
-            if (polyline == null && !points.isEmpty()) {
-                polyline = mMap.addPolyline(getDefaultPolyLines(points));
-                Timber.e("polyline null -> %s", polyline);
-            } else if (polyline != null) {
                 if (previousOrigin != null && oldDestination !=null && onConnectedLocation !=null) {
 
                     String[] latlong = previousOrigin.split(",");
@@ -1255,13 +1251,14 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         myPreviousLocation = onConnectedLocation;
                     }
                 }*/
-            }
         } else if (isBooked && bookedPlace != null) {
             Gson gson = new Gson();
             String json = bookedPlace.getRoute();
             Type type = new TypeToken<List<LatLng>>() {
             }.getType();
             if (json != null && json.length() > 1) {
+                if(polyline!=null)
+                    polyline.remove();
                 polyline = mMap.addPolyline(getDefaultPolyLines(gson.fromJson(json, type)));
                 isRouteDrawn = 1;
                 getDirectionPinMarkerDraw(new LatLng(bookedPlace.getLat(), bookedPlace.getLon()), bookedPlace.getBookedUid());

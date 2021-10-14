@@ -519,4 +519,5 @@
     <string name="parked">Parked</string>
     <string name="booking_cancel_rules"><![CDATA[Booking can be canceled and booking cancellation will lead user to be charged (user can cancel anytime before departure time end). For more, read T&C]]></string>
     <string name="parking_slot_not_available">Sorry, Parking Slot not available right now!</string>
+    <string name="you_are_parked">You Are Parked</string>
 </resources>

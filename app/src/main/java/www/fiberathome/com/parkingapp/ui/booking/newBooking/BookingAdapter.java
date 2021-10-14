@@ -105,7 +105,7 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             bookingViewHolder.tvStatus.setText("Canceled");
             bookingViewHolder.btnCancel.setVisibility(View.GONE);
             bookingViewHolder.tvStatus.setTextColor(Color.RED);
-        } else {
+        } else if(bookedList.getC_status().equalsIgnoreCase("1") && bookedList.getStatus().equalsIgnoreCase("0")) {
             bookingViewHolder.tvStatus.setVisibility(View.VISIBLE);
             bookingViewHolder.tvStatus.setText("Rejected");
             bookingViewHolder.btnCancel.setVisibility(View.GONE);

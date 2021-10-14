@@ -144,9 +144,8 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                    tvArrivedTime.setText(sensors.getTimeStart());
                    tvDepartureTime.setText(sensors.getTimeEnd());
 
-                   DateTimeUtils obj = new DateTimeUtils();
-                   SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
-                   findDifference(sensors.getTimeStart(), sensors.getTimeEnd());
+                   String currentDateandTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+                   findDifference(currentDateandTime, sensors.getTimeEnd());
 
                }
                else{
@@ -472,12 +471,6 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                 //tvCountDown.setText(context.getResources().getString(R.string.please_wait));
             }
         }.start();
-    }
-
-    public Calendar convertLongToCalendar(Long source) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(source);
-        return calendar;
     }
 
     public void findDifference(String start_date,

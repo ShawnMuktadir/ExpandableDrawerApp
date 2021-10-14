@@ -14,7 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="@string/book"
+            android:text="@string/you_are_parked"
             android:textSize="@dimen/dimTex15" />
 
         <TextView
