@@ -1,8 +1,5 @@
 package www.fiberathome.com.parkingapp.ui.schedule;
 
-import static android.content.Context.LOCATION_SERVICE;
-import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
-
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -65,6 +62,9 @@ import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
+
+import static android.content.Context.LOCATION_SERVICE;
+import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
 
 @SuppressLint("NonConstantResourceId")
 @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -293,12 +293,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                     Toast.makeText(requireActivity(), context.getResources().getString(R.string.departure_time_less_thirty_arrive_time), Toast.LENGTH_SHORT).show();
                 }*/
                 else {
-                    storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),getDate(arrivedDate.getTime()),getDate(departedDate.getTime()),markerUid);
-//
-//                    PaymentFragment paymentFragment = PaymentFragment.newInstance(arrivedDate, departedDate, getDate(arrivedDate.getTime()), getDate(departedDate.getTime()),
-//                            getTimeDifference(departedDate.getTime() - arrivedDate.getTime()),
-//                            departedDate.getTime() - arrivedDate.getTime(), markerUid, lat, lon, route, areaName, parkingSlotCount);
-//                    listener.fragmentChange(paymentFragment);
+                    storeReservation(Preferences.getInstance(context).getUser().getMobileNo(), getDate(arrivedDate.getTime()), getDate(departedDate.getTime()), markerUid);
                 }
             }
         });
@@ -466,10 +461,10 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
         return calendar;
     }
 
-    private void storeReservation(String mobileNo, String arrivalTime, String departureTime, String markerUid)  {
+    private void storeReservation(String mobileNo, String arrivalTime, String departureTime, String markerUid) {
         showLoading(context);
         ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<ReservationResponse> call = request.storeReservation(mobileNo, arrivalTime, departureTime, markerUid, "1");
+        Call<ReservationResponse> call = request.storeReservation(mobileNo, arrivalTime, departureTime, markerUid, "1"); // 1 for request availability
         call.enqueue(new Callback<ReservationResponse>() {
             @Override
             public void onResponse(@NonNull Call<ReservationResponse> call,
@@ -477,14 +472,13 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                 hideLoading();
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
-                        if(!response.body().getError()){
+                        if (!response.body().getError()) {
 
                             PaymentFragment paymentFragment = PaymentFragment.newInstance(arrivedDate, departedDate, getDate(arrivedDate.getTime()), getDate(departedDate.getTime()),
                                     getTimeDifference(departedDate.getTime() - arrivedDate.getTime()),
                                     departedDate.getTime() - arrivedDate.getTime(), markerUid, lat, lon, route, areaName, parkingSlotCount);
                             listener.fragmentChange(paymentFragment);
-                        }
-                        else{
+                        } else {
                             DialogUtils.getInstance().showOnlyMessageDialog(response.body().getMessage(), context);
 
                         }

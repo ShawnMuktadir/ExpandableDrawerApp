@@ -1,16 +1,5 @@
 package www.fiberathome.com.parkingapp.ui.home;
 
-import static android.app.Activity.RESULT_OK;
-import static android.content.Context.LOCATION_SERVICE;
-import static android.content.Context.MODE_PRIVATE;
-import static www.fiberathome.com.parkingapp.model.data.preference.Preferences.SHARED_PREF_NAME;
-import static www.fiberathome.com.parkingapp.model.response.searchHistory.SearchConstants.FIRST_TIME_INSTALLED;
-import static www.fiberathome.com.parkingapp.model.response.searchHistory.SearchConstants.HISTORY_PLACE_SELECTED;
-import static www.fiberathome.com.parkingapp.model.response.searchHistory.SearchConstants.NEW_PLACE_SELECTED;
-import static www.fiberathome.com.parkingapp.model.response.searchHistory.SearchConstants.NEW_SEARCH_ACTIVITY_REQUEST_CODE;
-import static www.fiberathome.com.parkingapp.utils.GoogleMapHelper.defaultMapSettings;
-import static www.fiberathome.com.parkingapp.utils.GoogleMapHelper.getDefaultPolyLines;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -45,7 +34,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -128,7 +116,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -157,7 +144,6 @@ import www.fiberathome.com.parkingapp.model.data.AppConstants;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.response.BaseResponse;
-import www.fiberathome.com.parkingapp.model.response.booking.BookingParkStatusResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingSensors;
 import www.fiberathome.com.parkingapp.model.response.booking.CloseReservationResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.ReservationCancelResponse;
@@ -196,6 +182,17 @@ import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 import www.fiberathome.com.parkingapp.utils.ViewUtils;
+
+import static android.app.Activity.RESULT_OK;
+import static android.content.Context.LOCATION_SERVICE;
+import static android.content.Context.MODE_PRIVATE;
+import static www.fiberathome.com.parkingapp.model.data.preference.Preferences.SHARED_PREF_NAME;
+import static www.fiberathome.com.parkingapp.model.response.searchHistory.SearchConstants.FIRST_TIME_INSTALLED;
+import static www.fiberathome.com.parkingapp.model.response.searchHistory.SearchConstants.HISTORY_PLACE_SELECTED;
+import static www.fiberathome.com.parkingapp.model.response.searchHistory.SearchConstants.NEW_PLACE_SELECTED;
+import static www.fiberathome.com.parkingapp.model.response.searchHistory.SearchConstants.NEW_SEARCH_ACTIVITY_REQUEST_CODE;
+import static www.fiberathome.com.parkingapp.utils.GoogleMapHelper.defaultMapSettings;
+import static www.fiberathome.com.parkingapp.utils.GoogleMapHelper.getDefaultPolyLines;
 
 @SuppressLint("NonConstantResourceId")
 @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -1123,13 +1120,13 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         String origin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
 
         try {
-            if (isRouteDrawn == 1 ) {
+            if (isRouteDrawn == 1) {
                 if (!(isBooked && bookedPlace != null)) {
                     if (previousOrigin != null && oldDestination != null && onConnectedLocation != null) {
 
                         String[] latlong = previousOrigin.split(",");
                         String[] latlong2 = oldDestination.split(",");
-                        Timber.e("oldDestination: %s->",oldDestination);
+                        Timber.e("oldDestination: %s->", oldDestination);
                         double lat = MathUtils.getInstance().convertToDouble(latlong[0].trim());
                         double lon = MathUtils.getInstance().convertToDouble(latlong[1].trim());
                         double lat2 = MathUtils.getInstance().convertToDouble(latlong2[0].trim());
@@ -1147,8 +1144,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         previousOrigin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
                     }
                 }
-            }
-            else if (isBooked && bookedPlace != null) {
+            } else if (isBooked && bookedPlace != null) {
                 Gson gson = new Gson();
                 String json = bookedPlace.getRoute();
                 Type type = new TypeToken<List<LatLng>>() {
@@ -1185,15 +1181,17 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         String[] latLng = origin.split(",");
         double lat = Double.parseDouble(latLng[0]);
         double lon = Double.parseDouble(latLng[1]);
-        Timber.e("lat lon -> %s %s", lat, lon);
+        //Timber.e("lat lon -> %s %s", lat, lon);
 
         if (origin.isEmpty() || oldDestination.isEmpty()) {
-            Toast.makeText(context, "Please first fill all the fields!", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, "Please first fill all the fields!", Toast.LENGTH_SHORT).show();
+            Timber.e("Please first fill all the fields!");
             return;
         }
 
         if (!origin.contains(",") || !oldDestination.contains(",")) {
-            Toast.makeText(context, "Invalid data fill in fields!", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, "Invalid data fill in fields!", Toast.LENGTH_SHORT).show();
+            Timber.e("Invalid data fill in fields!");
             return;
         }
 
@@ -1204,7 +1202,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             if (polyline != null)
                 polyline.remove();
 
-            //ToastUtils.getInstance().showToastMessage(context, "Route re-drawn");
             new DirectionFinder(this, origin, oldDestination).execute();
             hideLoading();
         } catch (UnsupportedEncodingException e) {
@@ -1701,34 +1698,33 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 hideLoading();
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
-                       if( !response.body().getError()) {
-                           if(response.body().getSensorAreaStatusArrayList()!=null) {
-                               sensorAreaStatusList = response.body().getSensorAreaStatusArrayList();
-                               Timber.e("list -> %s", new Gson().toJson(sensorAreaStatusList));
+                        if (!response.body().getError()) {
+                            if (response.body().getSensorAreaStatusArrayList() != null) {
+                                sensorAreaStatusList = response.body().getSensorAreaStatusArrayList();
+                                Timber.e("list -> %s", new Gson().toJson(sensorAreaStatusList));
 
-                               sensorAreaStatusResponse = response.body();
-                               sensorStatusList = sensorAreaStatusResponse.getSensorAreaStatusArrayList();
-                               if (sensorStatusList != null) {
-                                   for (List<String> baseStringList : sensorStatusList) {
-                                       for (int i = 0; i < baseStringList.size(); i++) {
-                                           Timber.d("onResponse: i ->  %s", i);
-                                           sensorAreaStatusAreaId = baseStringList.get(0);
-                                           sensorAreaStatusTotalSensorCount = baseStringList.get(1);
-                                           sensorAreaStatusTotalOccupied = baseStringList.get(2);
+                                sensorAreaStatusResponse = response.body();
+                                sensorStatusList = sensorAreaStatusResponse.getSensorAreaStatusArrayList();
+                                if (sensorStatusList != null) {
+                                    for (List<String> baseStringList : sensorStatusList) {
+                                        for (int i = 0; i < baseStringList.size(); i++) {
+                                            Timber.d("onResponse: i ->  %s", i);
+                                            sensorAreaStatusAreaId = baseStringList.get(0);
+                                            sensorAreaStatusTotalSensorCount = baseStringList.get(1);
+                                            sensorAreaStatusTotalOccupied = baseStringList.get(2);
 
-                                           SensorStatus sensorStatus = new SensorStatus();
-                                           sensorStatus.setAreaId(sensorAreaStatusAreaId);
-                                           sensorStatus.setTotalCount(sensorAreaStatusTotalSensorCount);
-                                           sensorStatus.setOccupiedCount(sensorAreaStatusTotalOccupied);
-                                           sensorStatusArrayList.add(sensorStatus);
-                                       }
-                                   }
-                                   commonBackOperation();
-                               }
-                           }
-                           else{
-                               commonBackOperation();
-                           }
+                                            SensorStatus sensorStatus = new SensorStatus();
+                                            sensorStatus.setAreaId(sensorAreaStatusAreaId);
+                                            sensorStatus.setTotalCount(sensorAreaStatusTotalSensorCount);
+                                            sensorStatus.setOccupiedCount(sensorAreaStatusTotalOccupied);
+                                            sensorStatusArrayList.add(sensorStatus);
+                                        }
+                                    }
+                                    commonBackOperation();
+                                }
+                            } else {
+                                commonBackOperation();
+                            }
                         }
                     }
                 }
@@ -1913,12 +1909,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                                 if (i == 2) {
                                     endLat = Double.parseDouble(baseStringList.get(i).trim());
-                                    Timber.e("endLat -> %s", endLat);
                                 }
 
                                 if (i == 3) {
                                     endLng = Double.parseDouble(baseStringList.get(i).trim());
-                                    Timber.e("endLng -> %s", endLng);
                                 }
 
                                 if (i == 4) {
@@ -2625,7 +2619,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         };
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         ParkingApp.getInstance().addToRequestQueue(stringRequest, TAG);
-
         return formatted_address[0];
     }
 
@@ -3826,7 +3819,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             geoFire.setLocation("You", new GeoLocation(lastLocation.getLatitude(),
                     lastLocation.getLongitude()), (key, error) -> {
                 if (currentUser != null) currentUser.remove();
-                Timber.e("currentUser -> %s", currentUser);
+                //Timber.e("currentUser -> %s", currentUser);
                 /*currentUser = mMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(lastLocation.getLatitude(),
                                         lastLocation.getLongitude())).title("You"));
