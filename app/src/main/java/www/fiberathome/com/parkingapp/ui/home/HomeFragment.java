@@ -594,7 +594,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             if (isBooked && bookedPlace != null) {
                 oldDestination = "" + bookedPlace.getLat() + ", " + bookedPlace.getLon();
                 Timber.e("bookedPlace.getLat(), bookedPlace.getLon() -> %s, %s", bookedPlace.getLat(), bookedPlace.getLon());
-                startAlarm(convertLongToCalendar(bookedPlace.getArriveDate()), convertLongToCalendar(bookedPlace.getDepartedDate()));
+//                startAlarm(convertLongToCalendar(bookedPlace.getArriveDate()), convertLongToCalendar(bookedPlace.getDepartedDate()));
             }
             if (getArguments() != null) {
                 if (getArguments().getBoolean("s")) {
@@ -1707,6 +1707,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         ended = true;
+                        Preferences.getInstance(context).clearBooking();
                         Timber.e("Booking closed");
                     }
                 }

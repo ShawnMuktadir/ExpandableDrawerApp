@@ -38,10 +38,19 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.model.api.ApiClient;
+import www.fiberathome.com.parkingapp.model.api.ApiService;
+import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.Constants;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
+import www.fiberathome.com.parkingapp.model.response.booking.ReservationCancelResponse;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
+import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 import static www.fiberathome.com.parkingapp.model.data.Constants.BOOKING_SERVICE_ID;
 
@@ -54,7 +63,7 @@ public class BookingService extends Service {
 
     public Location previousBestLocation = null;
 
-    public static final int LOCATION_CHECK_DELAY = 1000 * 60; // 3 min
+    public static final int BOOKING_CHECK_DELAY = 1000; // 3 min
     public static Boolean isRunning = false;
 
     private CountDownTimer countDownTimer;
@@ -82,35 +91,44 @@ public class BookingService extends Service {
     }
 
     private void startTrackingLocation() {
-        isRunning = true;
         context = getApplicationContext();
+        String currentDateandTime = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date());
+        if(currentDateandTime.equalsIgnoreCase(getDate(Preferences.getInstance(context).getBooked().getArriveDate()))){
+            isRunning = true;
+            notificationCaller(Constants.NOTIFICATION_CHANNEL_BOOKING,"Booking in progress...",2);
+            startForeground(BOOKING_SERVICE_ID, mBuilder.build());
+            findDifference(getDate(Preferences.getInstance(context).getBooked().getArriveDate()), getDate(Preferences.getInstance(context).getBooked().getDepartedDate()));
+        }
+    }
+
+    private void notificationCaller(String NOTIFICATION_CHANNEL_ID, String msg, int requestCode) {
         notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        String NOTIFICATION_CHANNEL_ID = Constants.NOTIFICATION_CHANNEL_BOOKING;
         Intent targetIntent = new Intent(context, HomeActivity.class);
         targetIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent contentIntent = PendingIntent.getActivity(context, 2, targetIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent contentIntent = PendingIntent.getActivity(context, requestCode, targetIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         long[] v = {500, 1000};
         Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
         mBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-                .setAutoCancel(true)
                 .setWhen(System.currentTimeMillis())
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("Booking in progress...")
+                .setContentTitle(msg)
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setAutoCancel(false)
-                .setVibrate(v)
-                .setSound(uri)
+                .setSilent(true)
+//                .setVibrate(v)
+//                .setSound(uri)
                 .setContentIntent(contentIntent);
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "Location Tracking...", NotificationManager.IMPORTANCE_DEFAULT);
-            notificationChannel.setDescription("Location Tracking Channel");
+            NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, msg, NotificationManager.IMPORTANCE_DEFAULT);
+            notificationChannel.setDescription("Booked Time");
             notificationChannel.enableLights(true);
             notificationChannel.setLightColor(Color.BLUE);
-            notificationChannel.setVibrationPattern(new long[]{0, 1000, 500, 1000});
+//            notificationChannel.setVibrationPattern(new long[]{0, 1000, 500, 1000});
+            notificationChannel.setVibrationPattern(null);
             notificationManager.createNotificationChannel(notificationChannel);
         }
 
@@ -145,8 +163,6 @@ public class BookingService extends Service {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        findDifference(getDate(Preferences.getInstance(context).getBooked().getArriveDate()), getDate(Preferences.getInstance(context).getBooked().getDepartedDate()));
-        startForeground(BOOKING_SERVICE_ID, mBuilder.build());
     }
 
     private void stopTrackingLocation() {
@@ -190,8 +206,8 @@ public class BookingService extends Service {
 
         // Check whether the new location fix is newer or older
         long timeDelta = location.getTime() - currentBestLocation.getTime();
-        boolean isSignificantlyNewer = timeDelta > LOCATION_CHECK_DELAY;
-        boolean isSignificantlyOlder = timeDelta < -LOCATION_CHECK_DELAY;
+        boolean isSignificantlyNewer = timeDelta > BOOKING_CHECK_DELAY;
+        boolean isSignificantlyOlder = timeDelta < -BOOKING_CHECK_DELAY;
         boolean isNewer = timeDelta > 0;
 
         // If it's been more than two minutes since the current location, use the new location
@@ -237,7 +253,7 @@ public class BookingService extends Service {
             if (!isRunning) {
                 startTrackingLocation();
             }
-            mHandler.postDelayed(mHandlerTask, LOCATION_CHECK_DELAY);
+            mHandler.postDelayed(mHandlerTask, BOOKING_CHECK_DELAY);
         }
     };
 
@@ -250,8 +266,9 @@ public class BookingService extends Service {
                 mBuilder.setContentText("" + String.format("%d min, %d sec remaining",
                         TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
                         TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
-                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))))  // <-- your timer value
-                        .setNumber(++numMessages);
+                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))))
+                        .setSound(null)
+                        .setVibrate(null);
                 // Because the ID remains unchanged, the existing notification is
                 // updated.
                 notificationManager.notify(
@@ -260,9 +277,36 @@ public class BookingService extends Service {
             }
 
             public void onFinish() {
-                //tvCountDown.setText(context.getResources().getString(R.string.please_wait));
+               endBooking();
             }
         }.start();
+    }
+    private void endBooking() {
+        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+        String user = Preferences.getInstance(context).getUser().getMobileNo();
+        String bookedUid = Preferences.getInstance(context).getBooked().getBookedUid();
+        Timber.e("EndBooking user=> %s and uid=>%s", user, bookedUid);
+        Call<ReservationCancelResponse> call = request.cancelReservation(user, bookedUid);
+        call.enqueue(new Callback<ReservationCancelResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ReservationCancelResponse> call, @NonNull Response<ReservationCancelResponse> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        Preferences.getInstance(context).clearBooking();
+                        notificationCaller("Booking_Time_Ended", "Your Booking Time Has Ended",3);
+                        mBuilder.build();
+                        Timber.e("Booking closed");
+                        stopTrackingLocation();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ReservationCancelResponse> call, @NonNull Throwable t) {
+                Timber.e("onFailure -> %s", t.getMessage());
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+            }
+        });
     }
 
     public void findDifference(String start_date,
@@ -271,8 +315,7 @@ public class BookingService extends Service {
         // SimpleDateFormat converts the
         // string format to date object
         SimpleDateFormat sdf
-                = new SimpleDateFormat(
-                "dd-MM-yyyy HH:mm:ss");
+                = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
         // try Block
         try {
