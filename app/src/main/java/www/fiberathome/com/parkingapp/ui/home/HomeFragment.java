@@ -2312,10 +2312,12 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         double doubleDuration = MathUtils.getInstance().convertToDouble(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(fetchDistance * 2.43));
         String initialNearestDuration = String.valueOf(doubleDuration);
         if (fetchDistance < 7) {
-            for (SensorStatus status : sensorStatusArrayList) {
-                if (sensor.getPlaceId().equalsIgnoreCase(status.getAreaId())) {
-                    sensor.setOccupiedCount(status.getOccupiedCount());
-                    break;
+            if(!sensorStatusArrayList.isEmpty()) {
+                for (SensorStatus status : sensorStatusArrayList) {
+                    if (sensor.getPlaceId().equalsIgnoreCase(status.getAreaId())) {
+                        sensor.setOccupiedCount(status.getOccupiedCount());
+                        break;
+                    }
                 }
             }
             origin = new LatLng(location.getLatitude(), location.getLongitude());
