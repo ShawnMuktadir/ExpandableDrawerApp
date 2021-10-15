@@ -270,7 +270,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                                 public void onPositiveClick() {
                                     Timber.e("Positive Button clicked");
                                     cancelBooking(Preferences.getInstance(context).getUser().getMobileNo(), uid);
-                                    Preferences.getInstance(context).setBooked(new BookedPlace());
+                                    Preferences.getInstance(context).clearBooking();
                                 }
 
                                 @Override
@@ -304,7 +304,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                     if (response.isSuccessful()) {
                         if (response.body() != null) {
                             DialogUtils.getInstance().showMessageDialog(response.body().getMessage(), context);
-                            Preferences.getInstance(context).setBooked(new BookedPlace());
+                            Preferences.getInstance(context).clearBooking();
                             bookedLists.clear();
                             fetchBookedParkingPlace(mobileNo,true);
                             //TODO update bottom sheet and navigate user to payment

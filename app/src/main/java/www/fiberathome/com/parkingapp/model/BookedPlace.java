@@ -15,6 +15,7 @@ public class BookedPlace implements Parcelable {
     private boolean isBooked = false;
     private String placeId;
     private long departedDate;
+    private long arriveDate;
 
     public BookedPlace() {
     }
@@ -144,4 +145,12 @@ public class BookedPlace implements Parcelable {
             return new BookedPlace[size];
         }
     };
+
+    public void setArriveDate(long arriveDate) {
+        this.arriveDate = arriveDate;
+    }
+
+    public long getArriveDate() {
+        return arriveDate;
+    }
 }

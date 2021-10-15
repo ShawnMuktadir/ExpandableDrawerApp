@@ -477,6 +477,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private boolean ended = false;
     private boolean isBackClicked = false;
     private String previousOrigin;
+    private AlarmManager alarmManager;
+    private PendingIntent pendingIntent;
+    private PendingIntent pendingIntent2;
+    private PendingIntent pendingIntent3;
 
     public HomeFragment() {
 
@@ -509,6 +513,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         setHasOptionsMenu(false);
         super.onCreate(savedInstanceState);
         context = (HomeActivity) getActivity();
+
         if (context != null) {
             FirebaseApp.initializeApp(context);
         }
@@ -536,9 +541,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             listener = context;
         }
         unbinder = ButterKnife.bind(this, view);
-        if (Preferences.getInstance(context).getBooked() != null) {
-            isBooked = Preferences.getInstance(context).getBooked().getIsBooked();
-        }
+
         setBroadcast();
         if (isAdded()) {
             initUI(view);
@@ -587,6 +590,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             if (isBooked && bookedPlace != null) {
                 oldDestination = "" + bookedPlace.getLat() + ", " + bookedPlace.getLon();
                 Timber.e("bookedPlace.getLat(), bookedPlace.getLon() -> %s, %s", bookedPlace.getLat(), bookedPlace.getLon());
+                startAlarm(convertLongToCalendar(bookedPlace.getArriveDate()),convertLongToCalendar(bookedPlace.getDepartedDate()));
             }
             if (getArguments() != null) {
                 if (getArguments().getBoolean("s")) {
@@ -1133,7 +1137,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         double lon2 = MathUtils.getInstance().convertToDouble(latlong2[1].trim());
                         double distanceMoved = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), lat, lon) * 1000;
                         double distanceFromDestination = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), lat2, lon2) * 1000;
-                        if (distanceMoved >= 50) {
+                        if (distanceMoved >= 100) {
                             reDrawRoute(origin);
                             previousOrigin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
                         } else if ((distanceFromDestination <= 20 && distanceFromDestination >= 10) && distanceMoved >= 9) {
@@ -1215,6 +1219,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         Timber.e("onStart called");
         super.onStart();
         EventBus.getDefault().register(this);
+        BookedPlace bb=Preferences.getInstance(context).getBooked();
+
+        isBooked = Preferences.getInstance(context).getBooked().getIsBooked();
+
     }
 
     @Override
@@ -1267,7 +1275,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 // Inside The Circle
                 isInAreaEnabled = true;
                 isNotificationSent = true;
-                sendNotification("You Entered parking spot", "You can book parking slot");
+                sendNotification("You are near a parking spot", "You can book parking");
                 if (bookedPlace != null)
                     bookedWiseBottomItemLayout(linearLayoutBottom, imageViewBack, btnGetDirection, mMap, bookedPlace.getLat(), bookedPlace.getLon(),
                             sensorAreaArrayList, bookedPlace.getAreaName(), bookedPlace.getParkingSlotCount(), textViewParkingAreaName, textViewParkingAreaCount, textViewParkingDistance);
@@ -1649,40 +1657,46 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     private void endBooking() {
         ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<CloseReservationResponse> call = request.endReservation(Preferences.getInstance(context).getUser().getMobileNo(), Preferences.getInstance(context).getBooked().getBookedUid());
-        call.enqueue(new Callback<CloseReservationResponse>() {
+        String user= Preferences.getInstance(context).getUser().getMobileNo();
+        String bookedUid= Preferences.getInstance(context).getBooked().getBookedUid();
+
+        Timber.e("EndBooking user=> %s and uid=>%s",user,bookedUid);
+        Call<ReservationCancelResponse> call = request.cancelReservation(user, bookedUid);
+        call.enqueue(new Callback<ReservationCancelResponse>() {
             @Override
-            public void onResponse(@NonNull Call<CloseReservationResponse> call, @NonNull Response<CloseReservationResponse> response) {
+            public void onResponse(@NonNull Call<ReservationCancelResponse> call, @NonNull Response<ReservationCancelResponse> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         ended = true;
-                        DialogUtils.getInstance().alertDialog(context,
-                                (Activity) context,
-                                response.body().getMessage(),
-                                context.getString(R.string.ok), "",
-                                new DialogUtils.DialogClickListener() {
-                                    @Override
-                                    public void onPositiveClick() {
-                                        Timber.e("Positive Button clicked");
-                                        Call<SensorAreaStatusResponse> call = request.getSensorAreaStatus();
-                                        getSensorAreaStatus(call);
-                                        Preferences.getInstance(context).setBooked(new BookedPlace());
-                                    }
 
-                                    @Override
-                                    public void onNegativeClick() {
-                                        /*Timber.e("Negative Button Clicked");
-                                        if (context != null) {
-                                            context.finish();
-                                        }*/
-                                    }
-                                }).show();
+                        Timber.e("Booking closed");
+//                        DialogUtils.getInstance().alertDialog(context,
+//                                (Activity) context,
+//                                response.body().getMessage(),
+//                                context.getString(R.string.ok), "",
+//                                new DialogUtils.DialogClickListener() {
+//                                    @Override
+//                                    public void onPositiveClick() {
+//                                        Timber.e("Positive Button clicked");
+//                                        Call<SensorAreaStatusResponse> call = request.getSensorAreaStatus();
+//                                        getSensorAreaStatus(call);
+//                                        Preferences.getInstance(context).setBooked(new BookedPlace());
+//                                    }
+//
+//                                    @Override
+//                                    public void onNegativeClick() {
+//                                        /*Timber.e("Negative Button Clicked");
+//                                        if (context != null) {
+//                                            context.finish();
+//                                        }*/
+//                                    }
+//                                }).show();
                     }
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<CloseReservationResponse> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<ReservationCancelResponse> call, @NonNull Throwable t) {
                 Timber.e("onFailure -> %s", t.getMessage());
                 ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
@@ -3330,7 +3344,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                     }
                                 }).show();
                         btnGetDirection.setText("Parking");
-                        startAlarm(convertLongToCalendar(bookedPlace.getDepartedDate()));
                     } else if (parkingAreaChanged) {
                         DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.already_booked_msg), context);
                     } else {
@@ -4026,21 +4039,29 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
     }
 
-    private void startAlarm(Calendar c) {
+    private void startAlarm(Calendar arrive, Calendar departure) {
         Timber.e("startAlarm called");
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(context, NotificationPublisher.class);
-        Intent intent2 = new Intent(context, NotificationPublisher.class);
-        intent2.putExtra("ended", "Book Time Up");
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, intent, 0);
-        PendingIntent pendingIntent2 = PendingIntent.getBroadcast(context, 2, intent2, 0);
-        if (c.before(Calendar.getInstance())) {
-            c.add(Calendar.DATE, 1);
+        alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent  firstIntent = new Intent(context, NotificationPublisher.class); // trigger before 15 mins
+        Intent  secondIntent = new Intent(context, NotificationPublisher.class); // trigger at end time
+        Intent thiredIntent = new Intent(context, NotificationPublisher.class); // trigger at end time
+        firstIntent.putExtra("started", "Book Time started");
+        secondIntent.putExtra("ended", "Book Time Up");
+         pendingIntent = PendingIntent.getBroadcast(context, 1, firstIntent, 0);
+         pendingIntent2 = PendingIntent.getBroadcast(context, 2, secondIntent, 0);
+         pendingIntent3 = PendingIntent.getBroadcast(context, 3, thiredIntent, 0);
+        if (arrive.before(Calendar.getInstance())) {
+            arrive.add(Calendar.DATE, 1);
+        }
+        if (departure.before(Calendar.getInstance())) {
+            departure.add(Calendar.DATE, 1);
         }
         Objects.requireNonNull(alarmManager).setExact(AlarmManager.RTC_WAKEUP,
-                c.getTimeInMillis() - 900000, pendingIntent);
+                departure.getTimeInMillis() - 900000, pendingIntent3);
         Objects.requireNonNull(alarmManager).setExact(AlarmManager.RTC_WAKEUP,
-                c.getTimeInMillis(), pendingIntent2);
+                arrive.getTimeInMillis(), pendingIntent);
+        Objects.requireNonNull(alarmManager).setExact(AlarmManager.RTC_WAKEUP,
+                departure.getTimeInMillis(), pendingIntent2);
     }
 
     public Calendar convertLongToCalendar(Long source) {

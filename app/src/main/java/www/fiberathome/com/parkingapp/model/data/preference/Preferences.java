@@ -30,6 +30,7 @@ public class Preferences {
     private static final String KEY_IS_WAITING_FOR_SMS = "isWaitingForSMS22";
     private static final String KEY_IS_UPDATE_REQUIRED = "isUpdateRequired";
     private static final String KEY_CHECKED_ITEM = "checked_item";
+    private static final String SHARED_PREF_NAME_BOOKING = "SHARED_PREF_NAME_BOOKING";
 
 
     private static Preferences instance;
@@ -75,7 +76,7 @@ public class Preferences {
     }
 
     public void setBooked(BookedPlace booked) {
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME_BOOKING, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         editor.putString("uid", booked.getBookedUid());
@@ -85,11 +86,12 @@ public class Preferences {
         editor.putBoolean("isBooked", booked.getIsBooked());
         editor.putString("placeId", booked.getPlaceId());
         editor.putLong("departedDate", booked.getDepartedDate());
+        editor.putLong("arrivedDate", booked.getArriveDate());
         editor.apply();
     }
 
     public BookedPlace getBooked() {
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME_BOOKING, MODE_PRIVATE);
         BookedPlace bookedPlace = new BookedPlace();
         bookedPlace.setBookedUid(sharedPreferences.getString("uid", ""));
         bookedPlace.setRoute(sharedPreferences.getString("route", ""));
@@ -97,9 +99,16 @@ public class Preferences {
         bookedPlace.setLat(sharedPreferences.getLong("lat", 0));
         bookedPlace.setLon(sharedPreferences.getLong("lon", 0));
         bookedPlace.setDepartedDate(sharedPreferences.getLong("departedDate", 0));
+        bookedPlace.setArriveDate(sharedPreferences.getLong("arrivedDate", 0));
         bookedPlace.setIsBooked(sharedPreferences.getBoolean("isBooked", false));
 
         return bookedPlace;
+    }
+    public void clearBooking(){
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME_BOOKING, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+        editor.apply();
     }
 
     // String IO

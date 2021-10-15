@@ -209,7 +209,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                             TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.reservation_successful));
                             //check 15 minutes before departure
                             //ToDo
-                            startAlarm(convertLongToCalendar(arrivedDate.getTime()), convertLongToCalendar(departureDate.getTime()));
+
                             BookedPlace bookedPlace = new BookedPlace();
 
                             bookedPlace.setBookedUid(response.body().getUid());
@@ -219,6 +219,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                             bookedPlace.setAreaName(areaName);
                             bookedPlace.setParkingSlotCount(parkingSlotCount);
                             bookedPlace.setDepartedDate(departureDate.getTime());
+                            bookedPlace.setArriveDate(arrivedDate.getTime());
                             bookedPlace.setPlaceId(markerUid);
                             bookedPlace.setIsBooked(true);
 
@@ -257,34 +258,4 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
         return formatter.format(calendar.getTime());
     }
 
-    private void startAlarm(Calendar arrive, Calendar departure) {
-        Timber.e("startAlarm called");
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        Intent firstIntent = new Intent(context, NotificationPublisher.class); // trigger before 15 mins
-        Intent secondIntent = new Intent(context, NotificationPublisher.class); // trigger at end time
-        Intent thiredIntent = new Intent(context, NotificationPublisher.class); // trigger at end time
-        firstIntent.putExtra("started", "Book Time started");
-        secondIntent.putExtra("ended", "Book Time Up");
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, firstIntent, 0);
-        PendingIntent pendingIntent2 = PendingIntent.getBroadcast(context, 2, secondIntent, 0);
-        PendingIntent pendingIntent3 = PendingIntent.getBroadcast(context, 3, thiredIntent, 0);
-        if (arrive.before(Calendar.getInstance())) {
-            arrive.add(Calendar.DATE, 1);
-        }
-        if (departure.before(Calendar.getInstance())) {
-            departure.add(Calendar.DATE, 1);
-        }
-        Objects.requireNonNull(alarmManager).setExact(AlarmManager.RTC_WAKEUP,
-                departure.getTimeInMillis() - 900000, pendingIntent3);
-        Objects.requireNonNull(alarmManager).setExact(AlarmManager.RTC_WAKEUP,
-                arrive.getTimeInMillis(), pendingIntent);
-        Objects.requireNonNull(alarmManager).setExact(AlarmManager.RTC_WAKEUP,
-                departure.getTimeInMillis(), pendingIntent2);
-    }
-
-    public Calendar convertLongToCalendar(Long source) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(source);
-        return calendar;
-    }
 }
