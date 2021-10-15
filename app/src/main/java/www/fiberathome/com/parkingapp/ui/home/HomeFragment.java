@@ -1701,27 +1701,34 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 hideLoading();
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
-                        sensorAreaStatusList = response.body().getSensorAreaStatusArrayList();
-                        Timber.e("list -> %s", new Gson().toJson(sensorAreaStatusList));
+                       if( !response.body().getError()) {
+                           if(response.body().getSensorAreaStatusArrayList()!=null) {
+                               sensorAreaStatusList = response.body().getSensorAreaStatusArrayList();
+                               Timber.e("list -> %s", new Gson().toJson(sensorAreaStatusList));
 
-                        sensorAreaStatusResponse = response.body();
-                        sensorStatusList = sensorAreaStatusResponse.getSensorAreaStatusArrayList();
-                        if (sensorStatusList != null) {
-                            for (List<String> baseStringList : sensorStatusList) {
-                                for (int i = 0; i < baseStringList.size(); i++) {
-                                    Timber.d("onResponse: i ->  %s", i);
-                                    sensorAreaStatusAreaId = baseStringList.get(0);
-                                    sensorAreaStatusTotalSensorCount = baseStringList.get(1);
-                                    sensorAreaStatusTotalOccupied = baseStringList.get(2);
+                               sensorAreaStatusResponse = response.body();
+                               sensorStatusList = sensorAreaStatusResponse.getSensorAreaStatusArrayList();
+                               if (sensorStatusList != null) {
+                                   for (List<String> baseStringList : sensorStatusList) {
+                                       for (int i = 0; i < baseStringList.size(); i++) {
+                                           Timber.d("onResponse: i ->  %s", i);
+                                           sensorAreaStatusAreaId = baseStringList.get(0);
+                                           sensorAreaStatusTotalSensorCount = baseStringList.get(1);
+                                           sensorAreaStatusTotalOccupied = baseStringList.get(2);
 
-                                    SensorStatus sensorStatus = new SensorStatus();
-                                    sensorStatus.setAreaId(sensorAreaStatusAreaId);
-                                    sensorStatus.setTotalCount(sensorAreaStatusTotalSensorCount);
-                                    sensorStatus.setOccupiedCount(sensorAreaStatusTotalOccupied);
-                                    sensorStatusArrayList.add(sensorStatus);
-                                }
-                            }
-                            commonBackOperation();
+                                           SensorStatus sensorStatus = new SensorStatus();
+                                           sensorStatus.setAreaId(sensorAreaStatusAreaId);
+                                           sensorStatus.setTotalCount(sensorAreaStatusTotalSensorCount);
+                                           sensorStatus.setOccupiedCount(sensorAreaStatusTotalOccupied);
+                                           sensorStatusArrayList.add(sensorStatus);
+                                       }
+                                   }
+                                   commonBackOperation();
+                               }
+                           }
+                           else{
+                               commonBackOperation();
+                           }
                         }
                     }
                 }
