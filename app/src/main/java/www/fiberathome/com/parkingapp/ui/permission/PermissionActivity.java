@@ -1,7 +1,5 @@
 package www.fiberathome.com.parkingapp.ui.permission;
 
-import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
-
 import android.Manifest;
 import android.content.Intent;
 import android.location.LocationManager;
@@ -30,6 +28,8 @@ import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
+
+import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
 
 public class PermissionActivity extends BaseActivity implements PermissionInterface {
 

@@ -1,7 +1,5 @@
 package www.fiberathome.com.parkingapp.utils;
 
-import static android.content.Context.MODE_PRIVATE;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -11,6 +9,8 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class PermissionUtil {
     /*
      * Check if version is marshmallow and above.
@@ -19,15 +19,17 @@ public class PermissionUtil {
     public static boolean shouldAskPermission() {
         return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M);
     }
-    private static boolean shouldAskPermission(Context context, String permission){
+
+    private static boolean shouldAskPermission(Context context, String permission) {
         if (shouldAskPermission()) {
             int permissionResult = ActivityCompat.checkSelfPermission(context, permission);
             return permissionResult != PackageManager.PERMISSION_GRANTED;
         }
         return false;
     }
+
     @RequiresApi(api = Build.VERSION_CODES.M)
-    public static void checkPermission(Context context, String permission, PermissionAskListener listener){
+    public static void checkPermission(Context context, String permission, PermissionAskListener listener) {
         /*
          * If permission is not granted
          * */

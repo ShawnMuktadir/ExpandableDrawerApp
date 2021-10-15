@@ -1,9 +1,5 @@
 package www.fiberathome.com.parkingapp.ui.booking;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,7 +34,6 @@ import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.booking.ReservationResponse;
-import www.fiberathome.com.parkingapp.module.notification.NotificationPublisher;
 import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
@@ -88,7 +83,6 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -146,7 +140,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
 
     private void setListeners() {
         ivBackArrow.setOnClickListener(v -> {
-            ScheduleFragment scheduleFragment = new ScheduleFragment();
+            ScheduleFragment scheduleFragment = ScheduleFragment.newInstance(placeId, areaName);
             listener.fragmentChange(scheduleFragment);
         });
 
@@ -193,10 +187,10 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
         payBtn.setText(new StringBuilder().append("Pay BDT ").append(df.format(perMintBill * minutes)).toString());
     }
 
-    private void storeReservation(String mobileNo, String arrivalTime, String departureTime, String markerUid)  {
+    private void storeReservation(String mobileNo, String arrivalTime, String departureTime, String markerUid) {
         showLoading(context);
         ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<ReservationResponse> call = request.storeReservation(mobileNo, arrivalTime, departureTime, markerUid,"2");
+        Call<ReservationResponse> call = request.storeReservation(mobileNo, arrivalTime, departureTime, markerUid, "2");
         call.enqueue(new Callback<ReservationResponse>() {
             @Override
             public void onResponse(@NonNull Call<ReservationResponse> call,

@@ -92,6 +92,14 @@ public class BookedPlace implements Parcelable {
         return departedDate;
     }
 
+    public void setArriveDate(long arriveDate) {
+        this.arriveDate = arriveDate;
+    }
+
+    public long getArriveDate() {
+        return arriveDate;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -108,6 +116,7 @@ public class BookedPlace implements Parcelable {
         dest.writeByte(this.isBooked ? (byte) 1 : (byte) 0);
         dest.writeString(this.placeId);
         dest.writeDouble(this.departedDate);
+        dest.writeDouble(this.arriveDate);
     }
 
     public void readFromParcel(Parcel source) {
@@ -120,6 +129,7 @@ public class BookedPlace implements Parcelable {
         this.isBooked = source.readByte() != 0;
         this.placeId = source.readString();
         this.departedDate = source.readLong();
+        this.arriveDate = source.readLong();
     }
 
     protected BookedPlace(Parcel in) {
@@ -132,6 +142,7 @@ public class BookedPlace implements Parcelable {
         this.isBooked = in.readByte() != 0;
         this.placeId = in.readString();
         this.departedDate = in.readLong();
+        this.arriveDate = in.readLong();
     }
 
     public static final Creator<BookedPlace> CREATOR = new Creator<BookedPlace>() {
@@ -145,12 +156,4 @@ public class BookedPlace implements Parcelable {
             return new BookedPlace[size];
         }
     };
-
-    public void setArriveDate(long arriveDate) {
-        this.arriveDate = arriveDate;
-    }
-
-    public long getArriveDate() {
-        return arriveDate;
-    }
 }

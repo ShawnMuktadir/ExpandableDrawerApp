@@ -1,8 +1,5 @@
 package www.fiberathome.com.parkingapp.ui.booking;
 
-import static www.fiberathome.com.parkingapp.ui.home.HomeFragment.PLAY_SERVICES_ERROR_CODE;
-import static www.fiberathome.com.parkingapp.utils.MathUtils.getInstance;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -28,7 +25,6 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -62,7 +58,6 @@ import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
-import www.fiberathome.com.parkingapp.model.BookedPlace;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
@@ -73,10 +68,11 @@ import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
-import www.fiberathome.com.parkingapp.utils.DateTimeUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.MathUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
+
+import static www.fiberathome.com.parkingapp.ui.home.HomeFragment.PLAY_SERVICES_ERROR_CODE;
 
 public class BookingParkFragment extends BaseFragment implements OnMapReadyCallback {
     private long arrived, departure;
@@ -326,6 +322,12 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        countDownTimer.cancel();
+    }
+
     private void initView(View view) {
         tvArrivedTime = view.findViewById(R.id.tvArrivedTime);
         tvDepartureTime = view.findViewById(R.id.tvDepartureTime);
@@ -336,15 +338,6 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         btnLiveParking = view.findViewById(R.id.btnLiveParking);
         tvParkingAreaName = view.findViewById(R.id.tvParkingAreaName);
         tvCountDown = view.findViewById(R.id.tvCountDown);
-    }
-
-    @SuppressLint("DefaultLocale")
-    private String getTimeDifference(long difference) {
-        return String.format("%02d:%02d",
-                TimeUnit.MILLISECONDS.toHours(difference),
-                TimeUnit.MILLISECONDS.toMinutes(difference) -
-                        TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(difference)) // The change is in this line
-        );
     }
 
     private String getDate(long milliSeconds) {
@@ -553,11 +546,4 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
             e.printStackTrace();
         }
     }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        countDownTimer.cancel();
-    }
-
 }

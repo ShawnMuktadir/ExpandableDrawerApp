@@ -1,7 +1,5 @@
 package www.fiberathome.com.parkingapp.ui.parking;
 
-import static android.content.Context.LOCATION_SERVICE;
-
 import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.location.Location;
@@ -28,6 +26,8 @@ import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.response.sensors.SensorArea;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
+
+import static android.content.Context.LOCATION_SERVICE;
 
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

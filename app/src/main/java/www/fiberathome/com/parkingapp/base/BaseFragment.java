@@ -16,11 +16,19 @@ public class BaseFragment extends Fragment {
     private ProgressDialog progressDialog;
 
     protected void showLoading(Context context) {
-        progressDialog = DialogUtils.getInstance().progressDialog(context, context.getResources().getString(R.string.please_wait));
+        try {
+            progressDialog = DialogUtils.getInstance().progressDialog(context, context.getResources().getString(R.string.please_wait));
+        } catch (final IllegalArgumentException e) {
+            e.getCause();
+        }
     }
 
     protected void showLoading(Context context, String message) {
-        progressDialog = DialogUtils.getInstance().progressDialog(context, message);
+        try {
+            progressDialog = DialogUtils.getInstance().progressDialog(context, message);
+        } catch (final IllegalArgumentException e) {
+            e.getCause();
+        }
     }
 
     protected void hideLoading() {

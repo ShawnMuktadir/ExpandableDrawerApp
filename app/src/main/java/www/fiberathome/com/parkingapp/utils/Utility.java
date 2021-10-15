@@ -1,8 +1,5 @@
 package www.fiberathome.com.parkingapp.utils;
 
-import static android.content.pm.PackageManager.GET_META_DATA;
-import static android.os.Build.VERSION_CODES.P;
-
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -16,6 +13,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import timber.log.Timber;
+
+import static android.content.pm.PackageManager.GET_META_DATA;
+import static android.os.Build.VERSION_CODES.P;
 
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class Utility {

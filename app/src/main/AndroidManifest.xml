@@ -31,6 +31,8 @@
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
     <application
         android:name=".base.ParkingApp"
         android:allowBackup="true"
@@ -122,7 +124,7 @@
             android:name=".ui.start.StartActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.DefaultActionBar"></activity>
+            android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
             android:name=".ui.splash.SplashActivity"
@@ -201,6 +203,12 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_provider_paths" />
         </provider>
+
+        <service
+            android:name=".module.booking_service.BookingService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
 
         <!-- <receiver android:name=".utils.GeoFenceBroadcastReceiver"/>-->
         <receiver android:name=".module.notification.NotificationPublisher" />
