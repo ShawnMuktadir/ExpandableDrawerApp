@@ -97,7 +97,8 @@ public interface ApiService {
             @Field("mobile_no") String mobileNo,
             @Field("time_start") String startTime,
             @Field("time_end") String endTime,
-            @Field("spot_id") String spotId);
+            @Field("spot_id") String spotId,
+            @Field("stage")String stage);
 
     @FormUrlEncoded
     @POST("visitor_place_tracker_get.php")

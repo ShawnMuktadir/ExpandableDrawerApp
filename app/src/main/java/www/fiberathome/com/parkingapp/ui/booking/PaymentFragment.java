@@ -196,7 +196,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
     private void storeReservation(String mobileNo, String arrivalTime, String departureTime, String markerUid)  {
         showLoading(context);
         ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<ReservationResponse> call = request.storeReservation(mobileNo, arrivalTime, departureTime, markerUid);
+        Call<ReservationResponse> call = request.storeReservation(mobileNo, arrivalTime, departureTime, markerUid,"2");
         call.enqueue(new Callback<ReservationResponse>() {
             @Override
             public void onResponse(@NonNull Call<ReservationResponse> call,
