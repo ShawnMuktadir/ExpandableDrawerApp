@@ -1,7 +1,5 @@
 package www.fiberathome.com.parkingapp.ui.permission;
 
-import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
-
 import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
@@ -35,6 +33,8 @@ import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.permission.listener.DexterPermissionListener;
 import www.fiberathome.com.parkingapp.ui.permission.listener.PermissionInterface;
 import www.fiberathome.com.parkingapp.utils.PermissionUtil;
+
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 
 public class LocationPermissionActivity extends AppCompatActivity implements PermissionInterface {
 

@@ -1,8 +1,5 @@
 package www.fiberathome.com.parkingapp.ui.signUp;
 
-import static android.app.Activity.RESULT_CANCELED;
-import static android.app.Activity.RESULT_OK;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -84,6 +81,9 @@ import www.fiberathome.com.parkingapp.utils.MathUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
+
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
 
 @SuppressLint("NonConstantResourceId")
 @SuppressWarnings({"unused", "RedundantSuppression"})

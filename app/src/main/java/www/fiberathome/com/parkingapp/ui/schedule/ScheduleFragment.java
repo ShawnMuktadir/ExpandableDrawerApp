@@ -121,17 +121,25 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
     private boolean more = false;
     private FragmentChangeListener listener;
     public DialogHelper.PayBtnClickListener payBtnClickListener;
-    private String markerUid = "";
+    public static String markerUid = "";
     public long arrived, departure, difference;
     private double lat;
     private double lon;
-    private String route, areaName, parkingSlotCount;
+    private String route;
+    public static String areaName;
+    private String parkingSlotCount;
 
     public ScheduleFragment() {
         // Required empty public constructor
     }
 
     public static ScheduleFragment newInstance() {
+        return new ScheduleFragment();
+    }
+
+    public static ScheduleFragment newInstance(String placeId, String mAreaName) {
+        markerUid = placeId;
+        areaName = mAreaName;
         return new ScheduleFragment();
     }
 
@@ -473,7 +481,6 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         if (!response.body().getError()) {
-
                             PaymentFragment paymentFragment = PaymentFragment.newInstance(arrivedDate, departedDate, getDate(arrivedDate.getTime()), getDate(departedDate.getTime()),
                                     getTimeDifference(departedDate.getTime() - arrivedDate.getTime()),
                                     departedDate.getTime() - arrivedDate.getTime(), markerUid, lat, lon, route, areaName, parkingSlotCount);

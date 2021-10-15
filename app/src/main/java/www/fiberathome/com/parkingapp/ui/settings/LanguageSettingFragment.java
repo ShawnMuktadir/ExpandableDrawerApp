@@ -1,8 +1,5 @@
 package www.fiberathome.com.parkingapp.ui.settings;
 
-import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_BN;
-import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
-
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -28,6 +25,9 @@ import www.fiberathome.com.parkingapp.model.data.preference.LanguagePreferences;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.ui.settings.adapter.LanguageAdapter;
 import www.fiberathome.com.parkingapp.ui.splash.SplashActivity;
+
+import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_BN;
+import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
 
 @SuppressLint("NonConstantResourceId")
 @SuppressWarnings({"unused", "RedundantSuppression"})

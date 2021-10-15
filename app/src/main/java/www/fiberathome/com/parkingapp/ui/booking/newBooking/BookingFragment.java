@@ -1,8 +1,5 @@
 package www.fiberathome.com.parkingapp.ui.booking.newBooking;
 
-import static android.content.Context.LOCATION_SERVICE;
-import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -35,7 +32,6 @@ import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
-import www.fiberathome.com.parkingapp.model.BookedPlace;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
@@ -50,6 +46,9 @@ import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
+
+import static android.content.Context.LOCATION_SERVICE;
+import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
 
 @SuppressLint("NonConstantResourceId")
 @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -303,12 +302,10 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                     hideLoading();
                     if (response.isSuccessful()) {
                         if (response.body() != null) {
-                            DialogUtils.getInstance().showMessageDialog(response.body().getMessage(), context);
+                            ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                             Preferences.getInstance(context).clearBooking();
                             bookedLists.clear();
                             fetchBookedParkingPlace(mobileNo,true);
-                            //TODO update bottom sheet and navigate user to payment
-
                         }
                     }
                 }

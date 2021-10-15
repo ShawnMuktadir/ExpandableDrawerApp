@@ -27,12 +27,14 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="1.5">
 
             <TextView
                 android:id="@+id/textViewParkingSlot"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_weight="1"
                 android:maxLines="2"
                 android:text="@string/parking_slot"
@@ -40,23 +42,39 @@
                 android:textSize="@dimen/dimTex15"
                 android:textStyle="bold" />
 
-            <Button
-                android:id="@+id/btnCancel"
-                android:layout_width="wrap_content"
+            <FrameLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/red"
-                android:text="@string/cancel"
-                android:textColor="@color/white"
-                android:visibility="gone" />
+                android:layout_gravity="end"
+                android:layout_weight="0.5">
 
-            <TextView
-                android:id="@+id/tvStatus"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/parked"
-                android:textColor="@color/green2"
-                android:textStyle="bold"
-                android:visibility="gone" />
+                <TextView
+                    android:id="@+id/tvCancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:background="@color/red"
+                    android:gravity="center"
+                    android:padding="@dimen/_5sdp"
+                    android:text="@string/cancel"
+                    android:textColor="@color/color_selector_white"
+                    android:textSize="@dimen/dimTex16"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+
+                <TextView
+                    android:id="@+id/tvStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:text="@string/parked"
+                    android:textColor="@color/green2"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+            </FrameLayout>
+
         </LinearLayout>
 
         <TextView
