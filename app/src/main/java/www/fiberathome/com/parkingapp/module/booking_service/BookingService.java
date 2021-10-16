@@ -2,6 +2,7 @@ package www.fiberathome.com.parkingapp.module.booking_service;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -9,6 +10,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
 import android.media.RingtoneManager;
@@ -36,6 +38,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import retrofit2.Call;
@@ -84,7 +87,8 @@ public class BookingService extends Service {
                 //startTrackingLocation();
                 mHandlerTask.run();
             } else if (action.equals(Constants.STOP_BOOKING_TRACKING)) {
-                stopTrackingLocation();
+               if(isRunning)
+                   stopTrackingLocation();
             }
         }
         return super.onStartCommand(intent, flags, startId);
@@ -92,8 +96,8 @@ public class BookingService extends Service {
 
     private void startTrackingLocation() {
         context = getApplicationContext();
-        String currentDateandTime = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date());
-        if(currentDateandTime.equalsIgnoreCase(getDate(Preferences.getInstance(context).getBooked().getArriveDate()))){
+        String currentDateandTime = new SimpleDateFormat("dd-MM-yyyy HH:mm").format(new Date());
+        if(new Date().getTime()>=Preferences.getInstance(context).getBooked().getArriveDate()){
             isRunning = true;
             notificationCaller(Constants.NOTIFICATION_CHANNEL_BOOKING,"Booking in progress...",2);
             startForeground(BOOKING_SERVICE_ID, mBuilder.build());
@@ -169,6 +173,7 @@ public class BookingService extends Service {
         mHandler.removeCallbacks(mHandlerTask);
         isRunning = false;
         fusedLocationProviderClient.removeLocationUpdates(locationCallback);
+        countDownTimer.cancel();
         stopForeground(true);
         stopSelf();
     }
@@ -293,10 +298,9 @@ public class BookingService extends Service {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         Preferences.getInstance(context).clearBooking();
-                        notificationCaller("Booking_Time_Ended", "Your Booking Time Has Ended",3);
-                        mBuilder.build();
+                        sendNotification("Booked Time", "Your Booked Parking Duration Has Ended");
                         Timber.e("Booking closed");
-                        stopTrackingLocation();
+
                     }
                 }
             }
@@ -399,4 +403,47 @@ public class BookingService extends Service {
         calendar.setTimeInMillis(milliSeconds);
         return formatter.format(calendar.getTime());
     }
+    private String getDate2(long milliSeconds) {
+        // Create a DateFormatter object for displaying date in specified format.
+        SimpleDateFormat formatter
+                = new SimpleDateFormat(
+                "dd-MM-yyyy HH:mm");
+        // Create a calendar object that will convert the date and time value in milliseconds to date.
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(milliSeconds);
+        return formatter.format(calendar.getTime());
+    }
+    @SuppressWarnings("SameParameterValue")
+    private void sendNotification(String title, String content) {
+        String NOTIFICATION_CHANNEL_ID = "Shawn_Muktadir";
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "My Notification",
+                    NotificationManager.IMPORTANCE_DEFAULT);
+            //config
+            notificationChannel.setDescription("Parking App Booking Notification");
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.RED);
+            notificationChannel.setVibrationPattern(new long[]{0, 1000, 500, 1000});
+            notificationChannel.enableVibration(true);
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(notificationChannel);
+            }
+        }
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID);
+        builder.setContentTitle(title)
+                .setContentText(content)
+                .setAutoCancel(false)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)
+                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher));
+
+        Notification notification = builder.build();
+        if (notificationManager != null) {
+            notificationManager.notify(new Random().nextInt(), notification);
+        }
+        stopTrackingLocation();
+    }
+
 }

@@ -2,6 +2,9 @@ package www.fiberathome.com.parkingapp.ui.booking.newBooking;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -11,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,10 +39,12 @@ import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
+import www.fiberathome.com.parkingapp.model.data.Constants;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.booking.BookedList;
 import www.fiberathome.com.parkingapp.model.response.booking.BookedResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.ReservationCancelResponse;
+import www.fiberathome.com.parkingapp.module.booking_service.BookingService;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
@@ -306,6 +312,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                             Preferences.getInstance(context).clearBooking();
                             bookedLists.clear();
                             fetchBookedParkingPlace(mobileNo,true);
+                            stopBookingTrackService();
                         }
                     }
                 }
@@ -339,7 +346,29 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
         textViewNoData.setVisibility(View.VISIBLE);
         //textViewNoData.setText(context.getString(R.string.no_record_found));
     }
+    private void stopBookingTrackService() {
+        if (isLocationTrackingServiceRunning()) {
+            Intent intent = new Intent(context, BookingService.class);
+            intent.setAction(Constants.STOP_BOOKING_TRACKING);
+            context.startService(intent);
+            Toast.makeText(context, "Booking Tracking Stopped", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private boolean isLocationTrackingServiceRunning() {
+        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        if (activityManager != null) {
+            for (ActivityManager.RunningServiceInfo serviceInfo : activityManager.getRunningServices(Integer.MAX_VALUE)) {
+                String a = Service.class.getName();
+                serviceInfo.service.getClassName();
+                if (serviceInfo.foreground) {
+                    return true;
+                }
 
+            }
+            return false;
+        }
+        return false;
+    }
     private void hideNoData() {
         textViewNoData.setVisibility(View.GONE);
     }
