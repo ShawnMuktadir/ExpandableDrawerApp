@@ -205,7 +205,6 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                             //ToDo
 
                             BookedPlace bookedPlace = new BookedPlace();
-
                             bookedPlace.setBookedUid(response.body().getUid());
                             bookedPlace.setLat(lat);
                             bookedPlace.setLon(lon);

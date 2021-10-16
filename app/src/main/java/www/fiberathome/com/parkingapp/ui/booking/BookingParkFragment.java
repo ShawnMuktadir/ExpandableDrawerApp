@@ -1,5 +1,7 @@
 package www.fiberathome.com.parkingapp.ui.booking;
 
+import static www.fiberathome.com.parkingapp.ui.home.HomeFragment.PLAY_SERVICES_ERROR_CODE;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -72,8 +74,6 @@ import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.MathUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
-import static www.fiberathome.com.parkingapp.ui.home.HomeFragment.PLAY_SERVICES_ERROR_CODE;
-
 public class BookingParkFragment extends BaseFragment implements OnMapReadyCallback {
     private long arrived, departure;
     private TextView tvArrivedTime, tvDepartureTime, tvTimeDifference, tvTermsCondition, tvParkingAreaName, tvCountDown;
@@ -85,11 +85,11 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
     private CountDownTimer countDownTimer;
 
     private GoogleMap mMap;
-    SupportMapFragment supportMapFragment;
-    LocationRequest mLocationRequest;
-    Location mLastLocation;
-    Marker mCurrLocationMarker;
-    FusedLocationProviderClient mFusedLocationClient;
+    private SupportMapFragment supportMapFragment;
+    private LocationRequest mLocationRequest;
+    private Location mLastLocation;
+    private Marker mCurrLocationMarker;
+    private FusedLocationProviderClient mFusedLocationClient;
     public static BookingParkStatusResponse.Sensors sensors;
     private HomeActivity context;
     private BookingParkStatusResponse.Sensors mSensors;

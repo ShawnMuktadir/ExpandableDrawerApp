@@ -1,5 +1,16 @@
 package www.fiberathome.com.parkingapp.ui.home;
 
+import static android.app.Activity.RESULT_OK;
+import static android.content.Context.LOCATION_SERVICE;
+import static android.content.Context.MODE_PRIVATE;
+import static www.fiberathome.com.parkingapp.model.data.preference.Preferences.SHARED_PREF_NAME;
+import static www.fiberathome.com.parkingapp.model.response.searchHistory.SearchConstants.FIRST_TIME_INSTALLED;
+import static www.fiberathome.com.parkingapp.model.response.searchHistory.SearchConstants.HISTORY_PLACE_SELECTED;
+import static www.fiberathome.com.parkingapp.model.response.searchHistory.SearchConstants.NEW_PLACE_SELECTED;
+import static www.fiberathome.com.parkingapp.model.response.searchHistory.SearchConstants.NEW_SEARCH_ACTIVITY_REQUEST_CODE;
+import static www.fiberathome.com.parkingapp.utils.GoogleMapHelper.defaultMapSettings;
+import static www.fiberathome.com.parkingapp.utils.GoogleMapHelper.getDefaultPolyLines;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -36,7 +47,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -187,17 +197,6 @@ import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 import www.fiberathome.com.parkingapp.utils.ViewUtils;
-
-import static android.app.Activity.RESULT_OK;
-import static android.content.Context.LOCATION_SERVICE;
-import static android.content.Context.MODE_PRIVATE;
-import static www.fiberathome.com.parkingapp.model.data.preference.Preferences.SHARED_PREF_NAME;
-import static www.fiberathome.com.parkingapp.model.response.searchHistory.SearchConstants.FIRST_TIME_INSTALLED;
-import static www.fiberathome.com.parkingapp.model.response.searchHistory.SearchConstants.HISTORY_PLACE_SELECTED;
-import static www.fiberathome.com.parkingapp.model.response.searchHistory.SearchConstants.NEW_PLACE_SELECTED;
-import static www.fiberathome.com.parkingapp.model.response.searchHistory.SearchConstants.NEW_SEARCH_ACTIVITY_REQUEST_CODE;
-import static www.fiberathome.com.parkingapp.utils.GoogleMapHelper.defaultMapSettings;
-import static www.fiberathome.com.parkingapp.utils.GoogleMapHelper.getDefaultPolyLines;
 
 @SuppressLint("NonConstantResourceId")
 @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -547,93 +546,93 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         unbinder = ButterKnife.bind(this, view);
 
         setBroadcast();
-       try{
-           if (isAdded()) {
-               initUI(view);
-               bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
-               bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._92sdp));
-               bottomSheetBehavior.setHideable(false);
-               bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-                   @Override
-                   public void onStateChanged(@NonNull View view, int newState) {
-                       switch (newState) {
-                           case BottomSheetBehavior.STATE_HIDDEN:
-                           case BottomSheetBehavior.STATE_SETTLING:
-                               break;
-                           case BottomSheetBehavior.STATE_EXPANDED:
-                               bottomSheet.requestLayout();
-                               bottomSheet.invalidate();
-                               bottomSheetRecyclerView.smoothScrollToPosition(0);
-                               toolbarAnimVisibility(view, false);
-                               break;
-                           case BottomSheetBehavior.STATE_COLLAPSED:
-                               bottomSheetRecyclerView.smoothScrollToPosition(0);
-                               toolbarAnimVisibility(view, true);
-                               if (bottomSheetAdapter != null)
-                                   bottomSheetAdapter.onAttachedToRecyclerView(bottomSheetRecyclerView);
-                               break;
-                           case BottomSheetBehavior.STATE_DRAGGING:
-                               toolbarAnimVisibility(view, true);
-                               if (bottomSheetAdapter != null)
-                                   bottomSheetAdapter.onAttachedToRecyclerView(bottomSheetRecyclerView);
-                               break;
-                           case BottomSheetBehavior.STATE_HALF_EXPANDED:
-                               break;
-                       }
-                   }
+        try {
+            if (isAdded()) {
+                initUI(view);
+                bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+                bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._92sdp));
+                bottomSheetBehavior.setHideable(false);
+                bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+                    @Override
+                    public void onStateChanged(@NonNull View view, int newState) {
+                        switch (newState) {
+                            case BottomSheetBehavior.STATE_HIDDEN:
+                            case BottomSheetBehavior.STATE_SETTLING:
+                                break;
+                            case BottomSheetBehavior.STATE_EXPANDED:
+                                bottomSheet.requestLayout();
+                                bottomSheet.invalidate();
+                                bottomSheetRecyclerView.smoothScrollToPosition(0);
+                                toolbarAnimVisibility(view, false);
+                                break;
+                            case BottomSheetBehavior.STATE_COLLAPSED:
+                                bottomSheetRecyclerView.smoothScrollToPosition(0);
+                                toolbarAnimVisibility(view, true);
+                                if (bottomSheetAdapter != null)
+                                    bottomSheetAdapter.onAttachedToRecyclerView(bottomSheetRecyclerView);
+                                break;
+                            case BottomSheetBehavior.STATE_DRAGGING:
+                                toolbarAnimVisibility(view, true);
+                                if (bottomSheetAdapter != null)
+                                    bottomSheetAdapter.onAttachedToRecyclerView(bottomSheetRecyclerView);
+                                break;
+                            case BottomSheetBehavior.STATE_HALF_EXPANDED:
+                                break;
+                        }
+                    }
 
-                   @Override
-                   public void onSlide(@NonNull View view, float slideOffset) {
-                       if (isAdded()) {
-                           Timber.e("onSlide called");
-                       }
-                   }
-               });
-               buildLocationRequest();
-               buildLocationCallBack();
-               fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
-               if (isBooked && bookedPlace != null) {
-                   oldDestination = "" + bookedPlace.getLat() + ", " + bookedPlace.getLon();
-                   Timber.e("bookedPlace.getLat(), bookedPlace.getLon() -> %s, %s", bookedPlace.getLat(), bookedPlace.getLon());
+                    @Override
+                    public void onSlide(@NonNull View view, float slideOffset) {
+                        if (isAdded()) {
+                            Timber.e("onSlide called");
+                        }
+                    }
+                });
+                buildLocationRequest();
+                buildLocationCallBack();
+                fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
+                if (isBooked && bookedPlace != null) {
+                    oldDestination = "" + bookedPlace.getLat() + ", " + bookedPlace.getLon();
+                    Timber.e("bookedPlace.getLat(), bookedPlace.getLon() -> %s, %s", bookedPlace.getLat(), bookedPlace.getLon());
 //                startAlarm(convertLongToCalendar(bookedPlace.getArriveDate()), convertLongToCalendar(bookedPlace.getDepartedDate()));
-               }
-               if (getArguments() != null) {
-                   if (getArguments().getBoolean("s")) {
-                       bookedLayout.setVisibility(View.VISIBLE);
-                       arrived = getArguments().getLong("arrived", 0);
-                       departure = getArguments().getLong("departure", 0);
-                       difference = departure - arrived;
-                       setTimer(difference);
-                   }
-               }
+                }
+                if (getArguments() != null) {
+                    if (getArguments().getBoolean("s")) {
+                        bookedLayout.setVisibility(View.VISIBLE);
+                        arrived = getArguments().getLong("arrived", 0);
+                        departure = getArguments().getLong("departure", 0);
+                        difference = departure - arrived;
+                        setTimer(difference);
+                    }
+                }
 
-               if (mMap == null) {
-                   showLoading(context, context.getResources().getString(R.string.please_wait));
-               } else
-                   return;
+                if (mMap == null) {
+                    showLoading(context, context.getResources().getString(R.string.please_wait));
+                } else
+                    return;
 
-               if (isServicesOk()) {
-                   supportMapFragment = SupportMapFragment.newInstance();
+                if (isServicesOk()) {
+                    supportMapFragment = SupportMapFragment.newInstance();
 
-                   if (context != null) {
-                       FragmentTransaction ft = context.getSupportFragmentManager().beginTransaction().
-                               replace(R.id.map, supportMapFragment);
-                       ft.commit();
-                       supportMapFragment.getMapAsync(this);
-                   } else {
-                       ToastUtils.getInstance().showToastMessage(context, "Unable to load map");
-                   }
-               } else {
-                   ToastUtils.getInstance().showToastMessage(context, "Play services are required by this application");
-               }
+                    if (context != null) {
+                        FragmentTransaction ft = context.getSupportFragmentManager().beginTransaction().
+                                replace(R.id.map, supportMapFragment);
+                        ft.commit();
+                        supportMapFragment.getMapAsync(this);
+                    } else {
+                        ToastUtils.getInstance().showToastMessage(context, "Unable to load map");
+                    }
+                } else {
+                    ToastUtils.getInstance().showToastMessage(context, "Play services are required by this application");
+                }
 
-               polyLineList = new ArrayList<>();
+                polyLineList = new ArrayList<>();
 
-               mService = CommonGoogleApi.getGoogleApi();
-           }
-       }catch(Exception e){
-           e.getCause();
-       }
+                mService = CommonGoogleApi.getGoogleApi();
+            }
+        } catch (Exception e) {
+            e.getCause();
+        }
     }
 
     private int countAdd = 0;
@@ -759,286 +758,286 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         if (marker.getTag() != null)
             markerTagObj = (SensorArea) marker.getTag();
 
-       try{
-           if (markerTagObj != null) {
-               Timber.e("marker if UID: -> %s", markerTagObj.getParkingArea());
-           } else {
-               Timber.e("marker else UID: did not work");
-           }
-       }catch(Exception e){
-           e.getCause();
-       }
+        try {
+            if (markerTagObj != null) {
+                Timber.e("marker if UID: -> %s", markerTagObj.getParkingArea());
+            } else {
+                Timber.e("marker else UID: did not work");
+            }
+        } catch (Exception e) {
+            e.getCause();
+        }
 
-       try {
-           if (currentLocationMarker != null && calculateDistance(currentLocationMarker.getPosition().latitude, currentLocationMarker.getPosition().longitude,
-                   marker.getPosition().latitude, marker.getPosition().longitude) * 1000 <= 0.01) {
-               double distance = calculateDistance(currentLocationMarker.getPosition().latitude, currentLocationMarker.getPosition().longitude,
-                       marker.getPosition().latitude, marker.getPosition().longitude);
+        try {
+            if (currentLocationMarker != null && calculateDistance(currentLocationMarker.getPosition().latitude, currentLocationMarker.getPosition().longitude,
+                    marker.getPosition().latitude, marker.getPosition().longitude) * 1000 <= 0.01) {
+                double distance = calculateDistance(currentLocationMarker.getPosition().latitude, currentLocationMarker.getPosition().longitude,
+                        marker.getPosition().latitude, marker.getPosition().longitude);
 
-               marker.setTitle("My Location");
+                marker.setTitle("My Location");
 
-               isMyCurrentLocation = true;
-           } else {
-               isMyCurrentLocation = false;
-           }
-       }catch (Exception e){
-           e.getCause();
-       }
+                isMyCurrentLocation = true;
+            } else {
+                isMyCurrentLocation = false;
+            }
+        } catch (Exception e) {
+            e.getCause();
+        }
 
-       try{
-           if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
+        try {
+            if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
 
-               bookingSensorsArrayList.clear();
-               bookingSensorsMarkerArrayList.clear();
-               bookingSensorsAdapterArrayList.clear();
+                bookingSensorsArrayList.clear();
+                bookingSensorsMarkerArrayList.clear();
+                bookingSensorsAdapterArrayList.clear();
 
-               if (isRouteDrawn == 0) {
-                   if (mMap != null) {
+                if (isRouteDrawn == 0) {
+                    if (mMap != null) {
 
-                       if (marker.getTitle() != null) {
-                           if (!marker.getTitle().equals("My Location")) {
-                               if (previousMarker != null) {
-                                   previousMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
-                                   if (previousSecondMarkerDestinationMarker != null) {
-                                       previousSecondMarkerDestinationMarker.remove();
-                                       previousSecondMarkerDestinationMarker = null;
-                                   }
-                               } else {
-                                   Timber.e("else called");
-                               }
-                               previousMarker = marker;
-                               removeCircle();
-                               marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_gray));
+                        if (marker.getTitle() != null) {
+                            if (!marker.getTitle().equals("My Location")) {
+                                if (previousMarker != null) {
+                                    previousMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
+                                    if (previousSecondMarkerDestinationMarker != null) {
+                                        previousSecondMarkerDestinationMarker.remove();
+                                        previousSecondMarkerDestinationMarker = null;
+                                    }
+                                } else {
+                                    Timber.e("else called");
+                                }
+                                previousMarker = marker;
+                                removeCircle();
+                                marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_gray));
 
-                               cordList.add(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
+                                cordList.add(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
 
-                               markerClicked = marker;
-                               isNotificationSent = false;
-                               isInAreaEnabled = false;
-                           }
-                       }
+                                markerClicked = marker;
+                                isNotificationSent = false;
+                                isInAreaEnabled = false;
+                            }
+                        }
 
-                       if (parkingNumberOfIndividualMarker != null && isAdded()) {
-                           if (parkingNumberOfIndividualMarker.equals("0") && getDirectionMarkerButtonClicked == 1) {
-                               btnMarkerGetDirection.setText(context.getResources().getString(R.string.get_direction));
-                               btnMarkerGetDirection.setEnabled(true);
-                               btnMarkerGetDirection.setFocusable(true);
-                               btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
-                               getDirectionMarkerButtonClicked = 0;
-                           }
-                       }
-                       //calculate Duration
-                       markerPlaceLatLng = new LatLng(marker.getPosition().latitude, marker.getPosition().longitude);
-                       cordList.add(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
-                       getDestinationInfoForDuration(markerPlaceLatLng);
-                       if (marker.getTitle() != null) {
-                           if (!marker.getTitle().equals("My Location")) {
-                               if (geoQuery != null) {
-                                   geoQuery.removeGeoQueryEventListener(this);
-                                   geoQuery.removeAllListeners();
-                               }
-                               geoQuery = geoFire.queryAtLocation(new GeoLocation(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude), 2f); // 500m
-                               geoQuery.addGeoQueryEventListener(this);
-                           }
-                       }
+                        if (parkingNumberOfIndividualMarker != null && isAdded()) {
+                            if (parkingNumberOfIndividualMarker.equals("0") && getDirectionMarkerButtonClicked == 1) {
+                                btnMarkerGetDirection.setText(context.getResources().getString(R.string.get_direction));
+                                btnMarkerGetDirection.setEnabled(true);
+                                btnMarkerGetDirection.setFocusable(true);
+                                btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
+                                getDirectionMarkerButtonClicked = 0;
+                            }
+                        }
+                        //calculate Duration
+                        markerPlaceLatLng = new LatLng(marker.getPosition().latitude, marker.getPosition().longitude);
+                        cordList.add(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
+                        getDestinationInfoForDuration(markerPlaceLatLng);
+                        if (marker.getTitle() != null) {
+                            if (!marker.getTitle().equals("My Location")) {
+                                if (geoQuery != null) {
+                                    geoQuery.removeGeoQueryEventListener(this);
+                                    geoQuery.removeAllListeners();
+                                }
+                                geoQuery = geoFire.queryAtLocation(new GeoLocation(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude), 2f); // 500m
+                                geoQuery.addGeoQueryEventListener(this);
+                            }
+                        }
 
-                       if (!isMyCurrentLocation) {
-                           for (int i = 0; i < sensorAreaArrayList.size(); i++) {
-                               JSONObject jsonObject;
-                               SensorArea sensor = sensorAreaArrayList.get(i);
-                               try {
-                                   uid[0] = sensor.getPlaceId();
-                                   markerAreaName = sensor.getParkingArea();
-                                   double distanceForCount = calculateDistance(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude,
-                                           sensor.getEndLat(),
-                                           sensor.getEndLng());
+                        if (!isMyCurrentLocation) {
+                            for (int i = 0; i < sensorAreaArrayList.size(); i++) {
+                                JSONObject jsonObject;
+                                SensorArea sensor = sensorAreaArrayList.get(i);
+                                try {
+                                    uid[0] = sensor.getPlaceId();
+                                    markerAreaName = sensor.getParkingArea();
+                                    double distanceForCount = calculateDistance(markerPlaceLatLng.latitude, markerPlaceLatLng.longitude,
+                                            sensor.getEndLat(),
+                                            sensor.getEndLng());
 
-                                   if (distanceForCount < 0.001) {
-                                       parkingNumberOfIndividualMarker = sensor.getCount();
-                                       textViewMarkerParkingAreaCount.setText(parkingNumberOfIndividualMarker);
-                                       break;
-                                   }
-                               } catch (Exception e) {
-                                   e.printStackTrace();
-                               }
-                           }
+                                    if (distanceForCount < 0.001) {
+                                        parkingNumberOfIndividualMarker = sensor.getCount();
+                                        textViewMarkerParkingAreaCount.setText(parkingNumberOfIndividualMarker);
+                                        break;
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
 
-                           String finalUid = uid[0];
-                           Timber.e("jsonUid finalUid -> %s", finalUid);
-                           String markerPlaceName = markerAreaName;
-                           double markerDistance;
-                           markerDistance = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
-                                   marker.getPosition().latitude, marker.getPosition().longitude);
-                           layoutMarkerVisible(true, markerAreaName, parkingNumberOfIndividualMarker,
-                                   String.valueOf(markerDistance), marker.getPosition());
-                           if (markerPlaceLatLng != null) {
-                               markerUid = marker.getTitle();
-                               Timber.e("markerUid -> %s", markerUid);
-                               if (markerDistance < 3000) {
-                                   adjustValue = 1;
-                               }
-                               double kim = (markerDistance / 1000) + adjustValue;
-                               double markerDoubleDuration = MathUtils.getInstance().convertToDouble(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(markerDistance * 2.43));
-                               String markerStringDuration = String.valueOf(markerDoubleDuration);
+                            String finalUid = uid[0];
+                            Timber.e("jsonUid finalUid -> %s", finalUid);
+                            String markerPlaceName = markerAreaName;
+                            double markerDistance;
+                            markerDistance = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
+                                    marker.getPosition().latitude, marker.getPosition().longitude);
+                            layoutMarkerVisible(true, markerAreaName, parkingNumberOfIndividualMarker,
+                                    String.valueOf(markerDistance), marker.getPosition());
+                            if (markerPlaceLatLng != null) {
+                                markerUid = marker.getTitle();
+                                Timber.e("markerUid -> %s", markerUid);
+                                if (markerDistance < 3000) {
+                                    adjustValue = 1;
+                                }
+                                double kim = (markerDistance / 1000) + adjustValue;
+                                double markerDoubleDuration = MathUtils.getInstance().convertToDouble(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(markerDistance * 2.43));
+                                String markerStringDuration = String.valueOf(markerDoubleDuration);
 
-                               BookingSensors bookingSensorsMarker = new BookingSensors(markerPlaceName, marker.getPosition().latitude, marker.getPosition().longitude,
-                                       MathUtils.getInstance().round(markerDistance, 1), parkingNumberOfIndividualMarker, markerStringDuration,
-                                       context.getResources().getString(R.string.nearest_parking_from_your_destination),
-                                       BookingSensors.TEXT_INFO_TYPE, 0);
+                                BookingSensors bookingSensorsMarker = new BookingSensors(markerPlaceName, marker.getPosition().latitude, marker.getPosition().longitude,
+                                        MathUtils.getInstance().round(markerDistance, 1), parkingNumberOfIndividualMarker, markerStringDuration,
+                                        context.getResources().getString(R.string.nearest_parking_from_your_destination),
+                                        BookingSensors.TEXT_INFO_TYPE, 0);
 
-                               if (marker.getTitle() != null && bookingSensorsMarker.getCount() != null) {
-                                   if (bookingSensorsMarker.getCount().equals("") || marker.getTitle().equals("My Location")) {
-                                       parkingNumberOfIndividualMarker = "0";
-                                   }
-                               }
-                               String occupied = null;
-                               for (SensorStatus status : sensorStatusArrayList) {
-                                   if (status.getAreaId().equalsIgnoreCase(markerUid)) {
-                                       occupied = status.getOccupiedCount();
-                                   }
-                               }
-                               bookingSensorsMarkerArrayList.add(new BookingSensors(markerPlaceName, marker.getPosition().latitude, marker.getPosition().longitude,
-                                       markerDistance, occupied != null ? occupied + "/" + parkingNumberOfIndividualMarker :
-                                       parkingNumberOfIndividualMarker, markerStringDuration,
-                                       context.getResources().getString(R.string.nearest_parking_from_your_destination),
-                                       BookingSensors.TEXT_INFO_TYPE, 0));
-                               setBottomSheetList(() -> {
-                                   if (bottomSheetAdapter != null) {
-                                       bookingSensorsArrayListGlobal.clear();
-                                       bookingSensorsArrayListGlobal.addAll(bookingSensorsMarkerArrayList);
-                                       bottomSheetAdapter.notifyDataSetChanged();
-                                   } else {
-                                       Timber.e("marker click else -> %s", markerUid);
-                                   }
-                               }, sensorAreaArrayList, marker.getPosition(), bookingSensorsMarkerArrayList, finalUid);
+                                if (marker.getTitle() != null && bookingSensorsMarker.getCount() != null) {
+                                    if (bookingSensorsMarker.getCount().equals("") || marker.getTitle().equals("My Location")) {
+                                        parkingNumberOfIndividualMarker = "0";
+                                    }
+                                }
+                                String occupied = null;
+                                for (SensorStatus status : sensorStatusArrayList) {
+                                    if (status.getAreaId().equalsIgnoreCase(markerUid)) {
+                                        occupied = status.getOccupiedCount();
+                                    }
+                                }
+                                bookingSensorsMarkerArrayList.add(new BookingSensors(markerPlaceName, marker.getPosition().latitude, marker.getPosition().longitude,
+                                        markerDistance, occupied != null ? occupied + "/" + parkingNumberOfIndividualMarker :
+                                        parkingNumberOfIndividualMarker, markerStringDuration,
+                                        context.getResources().getString(R.string.nearest_parking_from_your_destination),
+                                        BookingSensors.TEXT_INFO_TYPE, 0));
+                                setBottomSheetList(() -> {
+                                    if (bottomSheetAdapter != null) {
+                                        bookingSensorsArrayListGlobal.clear();
+                                        bookingSensorsArrayListGlobal.addAll(bookingSensorsMarkerArrayList);
+                                        bottomSheetAdapter.notifyDataSetChanged();
+                                    } else {
+                                        Timber.e("marker click else -> %s", markerUid);
+                                    }
+                                }, sensorAreaArrayList, marker.getPosition(), bookingSensorsMarkerArrayList, finalUid);
 
-                           } else {
-                               ToastUtils.getInstance().showToastMessage(context, "Something went wrong!!! Please check your Internet connection");
-                           }
-                       }
-                   }
-               } else {
-                   DialogUtils.getInstance().alertDialog(context,
-                           context,
-                           context.getString(R.string.you_have_to_exit_from_current_destination),
-                           context.getString(R.string.yes), context.getString(R.string.no),
-                           new DialogUtils.DialogClickListener() {
-                               @Override
-                               public void onPositiveClick() {
-                                   if (marker.getTitle() != null) {
-                                       if (!marker.getTitle().equals("My Location")) {
-                                           if (previousMarker != null) {
-                                               previousMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
-                                           } else {
-                                               Timber.e("else called");
-                                           }
-                                           previousMarker = marker;
-                                           removeCircle();
-                                           marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_gray));
-                                           markerClicked = marker;
-                                           isNotificationSent = false;
-                                           isInAreaEnabled = false;
-                                       }
-                                   }
+                            } else {
+                                ToastUtils.getInstance().showToastMessage(context, "Something went wrong!!! Please check your Internet connection");
+                            }
+                        }
+                    }
+                } else {
+                    DialogUtils.getInstance().alertDialog(context,
+                            context,
+                            context.getString(R.string.you_have_to_exit_from_current_destination),
+                            context.getString(R.string.yes), context.getString(R.string.no),
+                            new DialogUtils.DialogClickListener() {
+                                @Override
+                                public void onPositiveClick() {
+                                    if (marker.getTitle() != null) {
+                                        if (!marker.getTitle().equals("My Location")) {
+                                            if (previousMarker != null) {
+                                                previousMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
+                                            } else {
+                                                Timber.e("else called");
+                                            }
+                                            previousMarker = marker;
+                                            removeCircle();
+                                            marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_gray));
+                                            markerClicked = marker;
+                                            isNotificationSent = false;
+                                            isInAreaEnabled = false;
+                                        }
+                                    }
 
-                                   if (polyline == null || !polyline.isVisible())
-                                       return;
+                                    if (polyline == null || !polyline.isVisible())
+                                        return;
 
-                                   points = polyline.getPoints();
+                                    points = polyline.getPoints();
 
-                                   if (polyline != null) {
-                                       polyline.remove();
-                                   }
+                                    if (polyline != null) {
+                                        polyline.remove();
+                                    }
 
-                                   getDirectionPinMarkerDraw(marker.getPosition(), markerUid);
-                                   cordList.add(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
+                                    getDirectionPinMarkerDraw(marker.getPosition(), markerUid);
+                                    cordList.add(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
 
-                                   if (searchPlaceLatLng != null && isAdded()) {
-                                       btnSearchGetDirection.setText(context.getResources().getString(R.string.confirm_booking));
-                                       btnSearchGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
-                                       btnSearchGetDirection.setEnabled(true);
-                                       btnSearchGetDirection.setFocusable(true);
-                                       bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                                       fromSearchMultipleRouteDrawn = 1;
-                                   }
+                                    if (searchPlaceLatLng != null && isAdded()) {
+                                        btnSearchGetDirection.setText(context.getResources().getString(R.string.confirm_booking));
+                                        btnSearchGetDirection.setBackgroundColor(context.getResources().getColor(R.color.gray3));
+                                        btnSearchGetDirection.setEnabled(true);
+                                        btnSearchGetDirection.setFocusable(true);
+                                        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                                        fromSearchMultipleRouteDrawn = 1;
+                                    }
 
-                                   isDestinationMarkerDrawn = true;
+                                    isDestinationMarkerDrawn = true;
 
-                                   String origin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
+                                    String origin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
 
-                                   String destination = null;
+                                    String destination = null;
 
-                                   if (marker.getPosition() != null) {
-                                       destination = "" + marker.getPosition().latitude + ", " + marker.getPosition().longitude;
-                                   }
+                                    if (marker.getPosition() != null) {
+                                        destination = "" + marker.getPosition().latitude + ", " + marker.getPosition().longitude;
+                                    }
 
-                                   fetchDirections(origin, destination);
+                                    fetchDirections(origin, destination);
 
-                                   fromMarkerRouteDrawn = 1;
+                                    fromMarkerRouteDrawn = 1;
 
-                                   for (int i = 0; i < sensorAreaArrayList.size(); i++) {
-                                       JSONObject jsonObject;
-                                       SensorArea sensor = sensorAreaArrayList.get(i);
-                                       try {
-                                           uid1[0] = sensor.getPlaceId();
-                                           markerAreaName1[0] = sensor.getParkingArea();
-                                           double distanceForCount = calculateDistance(marker.getPosition().latitude, marker.getPosition().longitude,
-                                                   sensor.getEndLat(), sensor.getEndLng());
+                                    for (int i = 0; i < sensorAreaArrayList.size(); i++) {
+                                        JSONObject jsonObject;
+                                        SensorArea sensor = sensorAreaArrayList.get(i);
+                                        try {
+                                            uid1[0] = sensor.getPlaceId();
+                                            markerAreaName1[0] = sensor.getParkingArea();
+                                            double distanceForCount = calculateDistance(marker.getPosition().latitude, marker.getPosition().longitude,
+                                                    sensor.getEndLat(), sensor.getEndLng());
 
-                                           if (distanceForCount < 0.001) {
-                                               parkingNumberOfIndividualMarker = sensor.getCount();
-                                               textViewMarkerParkingAreaCount.setText(parkingNumberOfIndividualMarker);
-                                               break;
-                                           }
-                                       } catch (Exception e) {
-                                           e.printStackTrace();
-                                       }
-                                   }
+                                            if (distanceForCount < 0.001) {
+                                                parkingNumberOfIndividualMarker = sensor.getCount();
+                                                textViewMarkerParkingAreaCount.setText(parkingNumberOfIndividualMarker);
+                                                break;
+                                            }
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
 
-                                   String finalUid = uid1[0];
+                                    String finalUid = uid1[0];
 
-                                   String markerPlaceName = markerAreaName1[0];
+                                    String markerPlaceName = markerAreaName1[0];
 
-                                   double markerDistance;
+                                    double markerDistance;
 
-                                   markerDistance = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
-                                           marker.getPosition().latitude, marker.getPosition().longitude);
+                                    markerDistance = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
+                                            marker.getPosition().latitude, marker.getPosition().longitude);
 
-                                   double kim = (markerDistance / 1000) + adjustValue;
-                                   double markerDoubleDuration = MathUtils.getInstance().convertToDouble(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(markerDistance * 2.43));
-                                   String markerStringDuration = String.valueOf(markerDoubleDuration);
+                                    double kim = (markerDistance / 1000) + adjustValue;
+                                    double markerDoubleDuration = MathUtils.getInstance().convertToDouble(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(markerDistance * 2.43));
+                                    String markerStringDuration = String.valueOf(markerDoubleDuration);
 
-                                   if (markerTagObj != null) {
-                                       bookingSensorsMarkerArrayList.add(new BookingSensors(markerTagObj.getParkingArea(), marker.getPosition().latitude, marker.getPosition().longitude,
-                                               markerDistance, markerTagObj.getCount(), markerStringDuration,
-                                               context.getResources().getString(R.string.nearest_parking_from_your_destination),
-                                               BookingSensors.TEXT_INFO_TYPE, 0));
+                                    if (markerTagObj != null) {
+                                        bookingSensorsMarkerArrayList.add(new BookingSensors(markerTagObj.getParkingArea(), marker.getPosition().latitude, marker.getPosition().longitude,
+                                                markerDistance, markerTagObj.getCount(), markerStringDuration,
+                                                context.getResources().getString(R.string.nearest_parking_from_your_destination),
+                                                BookingSensors.TEXT_INFO_TYPE, 0));
 
-                                       setBottomSheetList(() -> {
-                                           if (bottomSheetAdapter != null) {
-                                               bookingSensorsArrayListGlobal.clear();
-                                               bookingSensorsArrayListGlobal.addAll(bookingSensorsMarkerArrayList);
-                                               bottomSheetAdapter.notifyDataSetChanged();
-                                           } else {
-                                               Timber.e("bottomSheetAdapter null");
-                                           }
-                                       }, sensorAreaArrayList, marker.getPosition(), bookingSensorsMarkerArrayList, finalUid);
-                                       bottomSheetAdapter.setDataList(bookingSensorsMarkerArrayList);
-                                   }
-                               }
+                                        setBottomSheetList(() -> {
+                                            if (bottomSheetAdapter != null) {
+                                                bookingSensorsArrayListGlobal.clear();
+                                                bookingSensorsArrayListGlobal.addAll(bookingSensorsMarkerArrayList);
+                                                bottomSheetAdapter.notifyDataSetChanged();
+                                            } else {
+                                                Timber.e("bottomSheetAdapter null");
+                                            }
+                                        }, sensorAreaArrayList, marker.getPosition(), bookingSensorsMarkerArrayList, finalUid);
+                                        bottomSheetAdapter.setDataList(bookingSensorsMarkerArrayList);
+                                    }
+                                }
 
-                               @Override
-                               public void onNegativeClick() {
-                                   Timber.e("Negative Button Clicked");
-                               }
-                           }).show();
-               }
-           } else {
-               TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
-           }
-       }catch (Exception e){
-           e.getCause();
-       }
+                                @Override
+                                public void onNegativeClick() {
+                                    Timber.e("Negative Button Clicked");
+                                }
+                            }).show();
+                }
+            } else {
+                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
+            }
+        } catch (Exception e) {
+            e.getCause();
+        }
 
         return true;
     }
@@ -1051,66 +1050,66 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         //locationRequest.setSmallestDisplacement(10f); //100 meter
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-     try {
-         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) !=
-                 PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context,
-                 Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-             // TODO: Consider calling
-             // ActivityCompat#requestPermissions
-             // here to request the missing permissions, and then overriding
-             //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-             //                                          int[] grantResults)
-             // to handle the case where the user grants the permission. See the documentation
-             // for ActivityCompat#requestPermissions for more details.
-             return;
-         }
-     }catch (Exception e){
-         e.getCause();
-     }
+        try {
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                    PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context,
+                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                // ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+        } catch (Exception e) {
+            e.getCause();
+        }
 
-      try{
-          LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
-          onConnectedLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-          SharedData.getInstance().setOnConnectedLocation(onConnectedLocation);
+        try {
+            LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+            onConnectedLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+            SharedData.getInstance().setOnConnectedLocation(onConnectedLocation);
 
-      }catch (Exception e){
-          e.getCause();
-      }
+        } catch (Exception e) {
+            e.getCause();
+        }
 
-       try{
-           if (mMap != null && onConnectedLocation != null) {
+        try {
+            if (mMap != null && onConnectedLocation != null) {
 
-               LatLng latLng = new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude());
-               mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13.5f));
+                LatLng latLng = new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude());
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13.5f));
 
-               animateCamera(onConnectedLocation);
+                animateCamera(onConnectedLocation);
 
-               bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._92sdp));
+                bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._92sdp));
 
-               if (ConnectivityUtils.getInstance().checkInternet(context) && isGPSEnabled()) {
-                   //fetchParkingSlotSensors(onConnectedLocation);
-                   ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-                   Call<SensorAreaStatusResponse> call = request.getSensorAreaStatus();
-                   getSensorAreaStatus(call);
-               } else {
-                   ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_gps));
-               }
-           }
-       }catch (Exception e){
-           e.getCause();
-       }
+                if (ConnectivityUtils.getInstance().checkInternet(context) && isGPSEnabled()) {
+                    //fetchParkingSlotSensors(onConnectedLocation);
+                    ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+                    Call<SensorAreaStatusResponse> call = request.getSensorAreaStatus();
+                    getSensorAreaStatus(call);
+                } else {
+                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_gps));
+                }
+            }
+        } catch (Exception e) {
+            e.getCause();
+        }
 
-      try {
-          buildLocationRequest();
+        try {
+            buildLocationRequest();
 
-          buildLocationCallBack();
+            buildLocationCallBack();
 
-          fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
+            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
 
-          settingGeoFire();
-      }catch (Exception e){
-          e.getCause();
-      }
+            settingGeoFire();
+        } catch (Exception e) {
+            e.getCause();
+        }
     }
 
     private List<LatLng> initialRoutePoints;
@@ -1143,17 +1142,13 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         if (markerClicked != null) {
             checkParkingSpotDistance(latLng, markerClicked.getPosition());
-        }
-        else if (adapterPlaceLatLng != null) {
+        } else if (adapterPlaceLatLng != null) {
             checkParkingSpotDistance(latLng, adapterPlaceLatLng);
-        }
-        else if (bottomSheetPlaceLatLng != null) {
+        } else if (bottomSheetPlaceLatLng != null) {
             checkParkingSpotDistance(latLng, bottomSheetPlaceLatLng);
-        }
-        else if (searchPlaceLatLng != null) {
+        } else if (searchPlaceLatLng != null) {
             checkParkingSpotDistance(latLng, searchPlaceLatLng);
-        }
-        else if (Preferences.getInstance(context).getBooked() != null && Preferences.getInstance(context).getBooked().getIsBooked()) {
+        } else if (Preferences.getInstance(context).getBooked() != null && Preferences.getInstance(context).getBooked().getIsBooked()) {
             if (mMap != null) {
                 checkParkingSpotDistance(latLng, new LatLng(Preferences.getInstance(context).getBooked().getLat(),
                         Preferences.getInstance(context).getBooked().getLon()));
@@ -1183,8 +1178,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             reDrawRoute(origin);
                             previousOrigin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
                         }
-                    }
-                    else {
+                    } else {
                         previousOrigin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
                     }
                 }
@@ -1273,7 +1267,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     public void onResume() {
         Timber.e("onResume called");
         super.onResume();
-        isBooked =Preferences.getInstance(context).getBooked().getIsBooked();
+        isBooked = Preferences.getInstance(context).getBooked().getIsBooked();
         if (!isBooked) {
             commonBackOperation();
         }
@@ -1730,14 +1724,14 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         public void onReceive(Context context, Intent intent) {
             // Get extra data included in the Intent
             String message = intent.getStringExtra("message");
-           if(isAdded()&&mMap!=null) {
-              try {
-                  commonBackOperation();
-                  Timber.e("BroadcastReceiver called");
-              }catch (Exception e){
-                  e.getCause();
-              }
-           }
+            if (isAdded() && mMap != null) {
+                try {
+                    commonBackOperation();
+                    Timber.e("BroadcastReceiver called");
+                } catch (Exception e) {
+                    e.getCause();
+                }
+            }
 //            if (!ended) {
 //                ended = true;
 //                endBooking();
@@ -2028,7 +2022,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         new Handler().postDelayed(() -> {
                             if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
                                 isBooked = Preferences.getInstance(context).getBooked().getIsBooked();
-                             if (isBooked && bookedPlace != null) {
+                                if (isBooked && bookedPlace != null) {
 
                                     bookedWiseBottomItemLayout(linearLayoutBottom, imageViewBack, btnGetDirection, mMap, bookedPlace.getLat(), bookedPlace.getLon(),
                                             sensorAreaArrayList, bookedPlace.getAreaName(), bookedPlace.getParkingSlotCount(), textViewParkingAreaName, textViewParkingAreaCount, textViewParkingDistance);
@@ -3146,20 +3140,20 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         this.distance = distance;
         this.markerPlaceLatLng = location;
 
-      try{
-          if (isVisible && isAdded()) {
-              linearLayoutMarkerNameCount.setVisibility(View.GONE);
-              linearLayoutMarkerBottom.setVisibility(View.VISIBLE);
-              btnMarkerGetDirection.setText(context.getResources().getString(R.string.get_direction));
-              btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
-              btnMarkerGetDirection.setEnabled(true);
-              btnMarkerGetDirection.setFocusable(true);
-          } else {
-              linearLayoutMarkerBottom.setVisibility(View.GONE);
-          }
-      }catch(Exception e){
-          e.getCause();
-      }
+        try {
+            if (isVisible && isAdded()) {
+                linearLayoutMarkerNameCount.setVisibility(View.GONE);
+                linearLayoutMarkerBottom.setVisibility(View.VISIBLE);
+                btnMarkerGetDirection.setText(context.getResources().getString(R.string.get_direction));
+                btnMarkerGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
+                btnMarkerGetDirection.setEnabled(true);
+                btnMarkerGetDirection.setFocusable(true);
+            } else {
+                linearLayoutMarkerBottom.setVisibility(View.GONE);
+            }
+        } catch (Exception e) {
+            e.getCause();
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -3172,150 +3166,150 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         this.bottomSheetPlaceLatLng = location;
 
         String uid;
-      try{
-          if (isVisible && isAdded()) {
-              if (bottomSheetPlaceLatLng != null) {
-                  MarkerOptions markerOptions = new MarkerOptions();
-                  markerOptions.position(bottomSheetPlaceLatLng);
-                  cordList.add(new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
-                  for (int i = 0; i < sensorAreaArrayList.size(); i++) {
-                      SensorArea sensor = sensorAreaArrayList.get(i);
-                      try {
-                          uid = sensor.getPlaceId();
-                          double distanceForCount = calculateDistance(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude,
-                                  sensor.getEndLat(),
-                                  sensor.getEndLng());
+        try {
+            if (isVisible && isAdded()) {
+                if (bottomSheetPlaceLatLng != null) {
+                    MarkerOptions markerOptions = new MarkerOptions();
+                    markerOptions.position(bottomSheetPlaceLatLng);
+                    cordList.add(new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
+                    for (int i = 0; i < sensorAreaArrayList.size(); i++) {
+                        SensorArea sensor = sensorAreaArrayList.get(i);
+                        try {
+                            uid = sensor.getPlaceId();
+                            double distanceForCount = calculateDistance(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude,
+                                    sensor.getEndLat(),
+                                    sensor.getEndLng());
 
-                          if (distanceForCount < 0.001) {
-                              bottomUid = uid;
-                              //Timber.e("bottomUid -> %s", bottomUid);
-                              break;
-                          }
-                      } catch (Exception e) {
-                          e.printStackTrace();
-                      }
-                      //Timber.e("clickEventJsonArray for loop sesh hoiche");
-                  }
-                  getDirectionPinMarkerDraw(bottomSheetPlaceLatLng, bottomUid);
-              }
-              linearLayoutBottomSheetBottom.setVisibility(View.VISIBLE);
-              linearLayoutBottomSheetNameCount.setVisibility(View.GONE);
-              textViewBottomSheetParkingAreaCount.setText(count);
-              textViewBottomSheetParkingAreaName.setText(TextUtils.getInstance().capitalizeFirstLetter(name));
-              textViewBottomSheetParkingDistance.setText(distance.substring(0, 3) + " km");
-              getDestinationInfoForDuration(new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
-          } else {
-              linearLayoutBottomSheetBottom.setVisibility(View.GONE);
-          }
-      }catch (Exception e){
-          e.getCause();
-      }
+                            if (distanceForCount < 0.001) {
+                                bottomUid = uid;
+                                //Timber.e("bottomUid -> %s", bottomUid);
+                                break;
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        //Timber.e("clickEventJsonArray for loop sesh hoiche");
+                    }
+                    getDirectionPinMarkerDraw(bottomSheetPlaceLatLng, bottomUid);
+                }
+                linearLayoutBottomSheetBottom.setVisibility(View.VISIBLE);
+                linearLayoutBottomSheetNameCount.setVisibility(View.GONE);
+                textViewBottomSheetParkingAreaCount.setText(count);
+                textViewBottomSheetParkingAreaName.setText(TextUtils.getInstance().capitalizeFirstLetter(name));
+                textViewBottomSheetParkingDistance.setText(distance.substring(0, 3) + " km");
+                getDestinationInfoForDuration(new LatLng(bottomSheetPlaceLatLng.latitude, bottomSheetPlaceLatLng.longitude));
+            } else {
+                linearLayoutBottomSheetBottom.setVisibility(View.GONE);
+            }
+        } catch (Exception e) {
+            e.getCause();
+        }
     }
 
     public void commonBackOperation() {
-       try{
-           if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
-               if (mMap != null && isAdded()) {
-                   if(polyline!=null){
-                       polyline.remove();
-                   }
-                   if(pinMarker!=null){
-                       pinMarker.remove();
-                   }
-                   mMap.clear();
-                   mMap.setTrafficEnabled(true);
-                   previousDestinationMarker = null;
-                   previousGetDestinationMarker = null;
-                   previousMarker = null;
-                   isRouteDrawn = 0;
+        try {
+            if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
+                if (mMap != null && isAdded()) {
+                    if (polyline != null) {
+                        polyline.remove();
+                    }
+                    if (pinMarker != null) {
+                        pinMarker.remove();
+                    }
+                    mMap.clear();
+                    mMap.setTrafficEnabled(true);
+                    previousDestinationMarker = null;
+                    previousGetDestinationMarker = null;
+                    previousMarker = null;
+                    isRouteDrawn = 0;
 
-                   fromMarkerRouteDrawn = 0;
-                   getDirectionButtonClicked = 0;
-                   getDirectionSearchButtonClicked = 0;
-                   getDirectionMarkerButtonClicked = 0;
-                   getDirectionBottomSheetButtonClicked = 0;
-                   if (bottomSheetAdapter != null) {
-                       bottomSheetAdapter.clear();
-                       bottomSheetAdapter = null;
-                   }
-                   bookingSensorsArrayList.clear();
-                   bookingSensorsAdapterArrayList.clear();
-                   bookingSensorsMarkerArrayList.clear();
-                   bookingSensorsBottomSheetArrayList.clear();
-                   if (onConnectedLocation != null) {
-                       fetchParkingSlotSensors(onConnectedLocation);
-                       animateCamera(onConnectedLocation);
-                   }
-                   linearLayoutBottom.setVisibility(View.GONE);
-                   linearLayoutSearchBottom.setVisibility(View.GONE);
-                   linearLayoutMarkerBottom.setVisibility(View.GONE);
-                   linearLayoutBottomSheetBottom.setVisibility(View.GONE);
-                   bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                   bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._92sdp));
-                   buttonSearch.setText(null);
-                   buttonSearch.setVisibility(View.VISIBLE);
-                   if (isBackClicked) {
-                       if (getArguments() != null) {
-                           getArguments().clear();
-                           areaName = null;
-                       }
-                       SharedPreferences preferences = context.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
-                       if (preferences != null) {
-                           preferences.edit().remove("uid").apply();
-                           preferences.edit().remove("route").apply();
-                           preferences.edit().remove("lat").apply();
-                           preferences.edit().remove("lon").apply();
-                           isBooked = false;
-                       }
-                       if (initialRoutePoints != null)
-                           initialRoutePoints.clear();
-                       if (bookedPlace != null) {
-                           bookedPlace.setBookedUid(null);
-                           bookedPlace.setLat(0.0);
-                           bookedPlace.setLon(0.0);
-                           bookedPlace.setRoute(null);
-                       }
-                   }
-                   try {
-                       if (polyline == null || !polyline.isVisible())
-                           return;
-                       points = polyline.getPoints();
-                       polyline.remove();
-                   } catch (Exception e) {
-                       Timber.e("catch called");
-                       e.getCause();
-                   }
-               }
-           } else {
-               DialogUtils.getInstance().alertDialog(context,
-                       context,
-                       context.getString(R.string.connect_to_internet),
-                       context.getString(R.string.retry),
-                       context.getString(R.string.close_app),
-                       new DialogUtils.DialogClickListener() {
-                           @Override
-                           public void onPositiveClick() {
-                               Timber.e("Positive Button clicked");
-                               if (ConnectivityUtils.getInstance().checkInternet(context)) {
-                                   fetchParkingSlotSensors(onConnectedLocation);
-                               } else {
-                                   TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
-                               }
-                           }
+                    fromMarkerRouteDrawn = 0;
+                    getDirectionButtonClicked = 0;
+                    getDirectionSearchButtonClicked = 0;
+                    getDirectionMarkerButtonClicked = 0;
+                    getDirectionBottomSheetButtonClicked = 0;
+                    if (bottomSheetAdapter != null) {
+                        bottomSheetAdapter.clear();
+                        bottomSheetAdapter = null;
+                    }
+                    bookingSensorsArrayList.clear();
+                    bookingSensorsAdapterArrayList.clear();
+                    bookingSensorsMarkerArrayList.clear();
+                    bookingSensorsBottomSheetArrayList.clear();
+                    if (onConnectedLocation != null) {
+                        fetchParkingSlotSensors(onConnectedLocation);
+                        animateCamera(onConnectedLocation);
+                    }
+                    linearLayoutBottom.setVisibility(View.GONE);
+                    linearLayoutSearchBottom.setVisibility(View.GONE);
+                    linearLayoutMarkerBottom.setVisibility(View.GONE);
+                    linearLayoutBottomSheetBottom.setVisibility(View.GONE);
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._92sdp));
+                    buttonSearch.setText(null);
+                    buttonSearch.setVisibility(View.VISIBLE);
+                    if (isBackClicked) {
+                        if (getArguments() != null) {
+                            getArguments().clear();
+                            areaName = null;
+                        }
+                        SharedPreferences preferences = context.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+                        if (preferences != null) {
+                            preferences.edit().remove("uid").apply();
+                            preferences.edit().remove("route").apply();
+                            preferences.edit().remove("lat").apply();
+                            preferences.edit().remove("lon").apply();
+                            isBooked = false;
+                        }
+                        if (initialRoutePoints != null)
+                            initialRoutePoints.clear();
+                        if (bookedPlace != null) {
+                            bookedPlace.setBookedUid(null);
+                            bookedPlace.setLat(0.0);
+                            bookedPlace.setLon(0.0);
+                            bookedPlace.setRoute(null);
+                        }
+                    }
+                    try {
+                        if (polyline == null || !polyline.isVisible())
+                            return;
+                        points = polyline.getPoints();
+                        polyline.remove();
+                    } catch (Exception e) {
+                        Timber.e("catch called");
+                        e.getCause();
+                    }
+                }
+            } else {
+                DialogUtils.getInstance().alertDialog(context,
+                        context,
+                        context.getString(R.string.connect_to_internet),
+                        context.getString(R.string.retry),
+                        context.getString(R.string.close_app),
+                        new DialogUtils.DialogClickListener() {
+                            @Override
+                            public void onPositiveClick() {
+                                Timber.e("Positive Button clicked");
+                                if (ConnectivityUtils.getInstance().checkInternet(context)) {
+                                    fetchParkingSlotSensors(onConnectedLocation);
+                                } else {
+                                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                                }
+                            }
 
-                           @Override
-                           public void onNegativeClick() {
-                               Timber.e("Negative Button Clicked");
-                               if (getActivity() != null) {
-                                   getActivity().finish();
-                                   TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
-                               }
-                           }
-                       }).show();
-           }
-       }catch (Exception e){
-           e.getCause();
-       }
+                            @Override
+                            public void onNegativeClick() {
+                                Timber.e("Negative Button Clicked");
+                                if (getActivity() != null) {
+                                    getActivity().finish();
+                                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                                }
+                            }
+                        }).show();
+            }
+        } catch (Exception e) {
+            e.getCause();
+        }
     }
 
     private void setListeners() {
@@ -3448,8 +3442,27 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                 new DialogUtils.DialogClickListener() {
                                     @Override
                                     public void onPositiveClick() {
-                                        Timber.e("Positive Button clicked");
-                                        getBookingPark(Preferences.getInstance(context).getUser().getMobileNo(), bookedPlace.getBookedUid());
+                                        isBooked = Preferences.getInstance(context).getBooked().getIsBooked();
+                                        if (isBooked) {
+                                            getBookingPark(Preferences.getInstance(context).getUser().getMobileNo(), bookedPlace.getBookedUid());
+                                        } else {
+                                            DialogUtils.getInstance().alertDialog(context,
+                                                    requireActivity(),
+                                                    context.getResources().getString(R.string.booking_already_canceled), context.getResources().getString(R.string.booking_already_canceled_msg),
+                                                    context.getResources().getString(R.string.ok), "",
+                                                    new DialogUtils.DialogClickListener() {
+                                                        @Override
+                                                        public void onPositiveClick() {
+                                                            Timber.e("Positive Button clicked");
+                                                            commonBackOperation();
+                                                        }
+
+                                                        @Override
+                                                        public void onNegativeClick() {
+                                                            Timber.e("Negative Button Clicked");
+                                                        }
+                                                    }).show();
+                                        }
                                     }
 
                                     @Override
