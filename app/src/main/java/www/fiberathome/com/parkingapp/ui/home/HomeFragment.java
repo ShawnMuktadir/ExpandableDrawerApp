@@ -454,7 +454,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     public List<LatLng> points = new ArrayList<>();
 
-    private Double lat, lng;
+    private double lat, lng;
     private String areaName, parkingSlotCount;
 
     public Marker previousGetDestinationMarker;
@@ -752,7 +752,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         final String[] uid = {""};
         final String[] uid1 = {""};
         final String[] markerAreaName1 = {""};
-
         if (marker.getTag() != null)
             markerTagObj = (SensorArea) marker.getTag();
 
@@ -1112,13 +1111,17 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         if (markerClicked != null) {
             checkParkingSpotDistance(latLng, markerClicked.getPosition());
-        } else if (adapterPlaceLatLng != null) {
+        }
+        else if (adapterPlaceLatLng != null) {
             checkParkingSpotDistance(latLng, adapterPlaceLatLng);
-        } else if (bottomSheetPlaceLatLng != null) {
+        }
+        else if (bottomSheetPlaceLatLng != null) {
             checkParkingSpotDistance(latLng, bottomSheetPlaceLatLng);
-        } else if (searchPlaceLatLng != null) {
+        }
+        else if (searchPlaceLatLng != null) {
             checkParkingSpotDistance(latLng, searchPlaceLatLng);
-        } else if (Preferences.getInstance(context).getBooked() != null && Preferences.getInstance(context).getBooked().getIsBooked()) {
+        }
+        else if (Preferences.getInstance(context).getBooked() != null && Preferences.getInstance(context).getBooked().getIsBooked()) {
             if (mMap != null) {
                 checkParkingSpotDistance(latLng, new LatLng(Preferences.getInstance(context).getBooked().getLat(),
                         Preferences.getInstance(context).getBooked().getLon()));
@@ -1148,7 +1151,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             reDrawRoute(origin);
                             previousOrigin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
                         }
-                    } else {
+                    }
+                    else {
                         previousOrigin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
                     }
                 }
@@ -1228,6 +1232,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             startBookingTrackService();
         } else {
             stopBookingTrackService();
+//           if(mMap!=null)
+//               commonBackOperation();
         }
     }
 
@@ -1235,6 +1241,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     public void onResume() {
         Timber.e("onResume called");
         super.onResume();
+        isBooked =Preferences.getInstance(context).getBooked().getIsBooked();
+        if (!isBooked) {
+            commonBackOperation();
+        }
         if (isAdded())
             setListeners();
     }
@@ -1291,7 +1301,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             Intent intent = new Intent(context, BookingService.class);
             intent.setAction(Constants.START_BOOKING_TRACKING);
             context.startService(intent);
-            Toast.makeText(context, "Booking Tracking Started", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, "Booking Tracking Started", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -1300,7 +1310,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             Intent intent = new Intent(context, BookingService.class);
             intent.setAction(Constants.STOP_BOOKING_TRACKING);
             context.startService(intent);
-            Toast.makeText(context, "Booking Tracking Stopped", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, "Booking Tracking Stopped", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -1688,10 +1698,18 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         public void onReceive(Context context, Intent intent) {
             // Get extra data included in the Intent
             String message = intent.getStringExtra("message");
-            if (!ended) {
-                ended = true;
-                endBooking();
-            }
+           if(isAdded()&&mMap!=null) {
+              try {
+                  commonBackOperation();
+                  Timber.e("BroadcastReceiver called");
+              }catch (Exception e){
+                  e.getCause();
+              }
+           }
+//            if (!ended) {
+//                ended = true;
+//                endBooking();
+//            }
         }
     };
 
@@ -1977,11 +1995,13 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                         new Handler().postDelayed(() -> {
                             if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
-                                if (isBooked && bookedPlace != null) {
+                                isBooked = Preferences.getInstance(context).getBooked().getIsBooked();
+                             if (isBooked && bookedPlace != null) {
+
                                     bookedWiseBottomItemLayout(linearLayoutBottom, imageViewBack, btnGetDirection, mMap, bookedPlace.getLat(), bookedPlace.getLon(),
                                             sensorAreaArrayList, bookedPlace.getAreaName(), bookedPlace.getParkingSlotCount(), textViewParkingAreaName, textViewParkingAreaCount, textViewParkingDistance);
                                 }
-                                if (lat != null && lng != null && areaName != null && !areaName.equalsIgnoreCase("") && parkingSlotCount != null) {
+                                if (lat != 0 && lng != 0 && areaName != null && !areaName.equalsIgnoreCase("") && parkingSlotCount != null) {
                                     hideNoData();
                                     getDirectionPinMarkerDraw(new LatLng(lat, lng), adapterUid);
                                     cordList.add(new LatLng(lat, lng));
@@ -3155,12 +3175,19 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     public void commonBackOperation() {
         if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
             if (mMap != null && isAdded()) {
+                if(polyline!=null){
+                    polyline.remove();
+                }
+                if(pinMarker!=null){
+                    pinMarker.remove();
+                }
                 mMap.clear();
                 mMap.setTrafficEnabled(true);
                 previousDestinationMarker = null;
                 previousGetDestinationMarker = null;
                 previousMarker = null;
                 isRouteDrawn = 0;
+
                 fromMarkerRouteDrawn = 0;
                 getDirectionButtonClicked = 0;
                 getDirectionSearchButtonClicked = 0;
