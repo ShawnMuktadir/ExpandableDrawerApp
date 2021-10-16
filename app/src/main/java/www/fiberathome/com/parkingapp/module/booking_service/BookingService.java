@@ -27,6 +27,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -443,7 +444,11 @@ public class BookingService extends Service {
         if (notificationManager != null) {
             notificationManager.notify(new Random().nextInt(), notification);
         }
+        closeBooking();
         stopTrackingLocation();
     }
-
+    private void closeBooking() {
+        Intent intent = new Intent("booking_ended");
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
 }
