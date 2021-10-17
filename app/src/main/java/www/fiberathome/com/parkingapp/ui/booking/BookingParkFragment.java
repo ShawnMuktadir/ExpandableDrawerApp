@@ -380,7 +380,9 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
     public void onDestroy() {
         super.onDestroy();
         if (isAdded()) {
-            countDownTimer.cancel();
+           if(countDownTimer!=null){
+               countDownTimer.cancel();
+           }
             mHandler.removeCallbacks(mHandlerTask);
         }
     }
@@ -429,10 +431,10 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
 
     private void endBooking() {
         showLoading(context);
-        String spotUid;
+        String spotUid="";
         if (mSensors != null) {
             spotUid = mSensors.getSpotId();
-        } else {
+        } else if(sensors!=null) {
             spotUid = sensors.getSpotId();
         }
         ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
@@ -441,7 +443,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
             @Override
             public void onResponse(@NonNull Call<CloseReservationResponse> call, @NonNull Response<CloseReservationResponse> response) {
                 hideLoading();
-                if (isAdded()) {
+                if (isAdded()&&countDownTimer!=null) {
                     countDownTimer.cancel();
                 }
                 sensors = null;
@@ -470,7 +472,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
             @Override
             public void onFailure(@NonNull Call<CloseReservationResponse> call, @NonNull Throwable t) {
                 Timber.e("onFailure -> %s", t.getMessage());
-                if (isAdded()) {
+                if (isAdded()&&countDownTimer!=null) {
                     countDownTimer.cancel();
                 }
                 hideLoading();
