@@ -57,6 +57,7 @@ import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.booking.ReservationCancelResponse;
 import www.fiberathome.com.parkingapp.module.notification.NotificationPublisher;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
+import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 import static www.fiberathome.com.parkingapp.model.data.Constants.BOOKING_SERVICE_ID;
@@ -287,7 +288,9 @@ public class BookingService extends Service {
             }
 
             public void onFinish() {
-               endBooking();
+                if(ConnectivityUtils.getInstance().checkInternet(context)) {
+                    endBooking();
+                }
             }
         }.start();
     }

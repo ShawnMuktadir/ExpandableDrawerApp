@@ -1,9 +1,12 @@
 package www.fiberathome.com.parkingapp.ui.booking;
 
+import static android.content.Context.LOCATION_SERVICE;
+
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -167,15 +170,30 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                 if (minutes > 120) {
                     ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.booking_time_rules));
                 } else {
-                    storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
-                            getDate(arrivedDate.getTime()), getDate(departureDate.getTime()), placeId);
+                  if(isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
+                      storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
+                              getDate(arrivedDate.getTime()), getDate(departureDate.getTime()), placeId);
+                  }
                 }
             } else {
                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
             }
         });
     }
+    private boolean isGPSEnabled() {
 
+        LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
+
+        boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+        if (providerEnabled) {
+            return true;
+        } else {
+            Timber.e("else called");
+        }
+
+        return false;
+    }
     private void setData() {
         tvArrivedTime.setText(arrivedTime);
         tvDepartureTime.setText(departureTime);

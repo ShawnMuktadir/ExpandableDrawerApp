@@ -57,6 +57,7 @@ import www.fiberathome.com.parkingapp.ui.booking.PaymentFragment;
 import www.fiberathome.com.parkingapp.ui.booking.helper.DialogHelper;
 import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
+import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DateTimeUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
@@ -159,7 +160,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
 
             context = getActivity();
 
-            textViewCurrentDate.setText(DateTimeUtils.getInstance().getPSTTimeZoneCurrentDate());
+            textViewCurrentDate.setText(DateTimeUtils.getInstance().getCurrentDayTime());
 
             listener = (FragmentChangeListener) getActivity();
             payBtnClickListener = this;
@@ -301,7 +302,9 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                     Toast.makeText(requireActivity(), context.getResources().getString(R.string.departure_time_less_thirty_arrive_time), Toast.LENGTH_SHORT).show();
                 }*/
                 else {
-                    storeReservation(Preferences.getInstance(context).getUser().getMobileNo(), getDate(arrivedDate.getTime()), getDate(departedDate.getTime()), markerUid);
+                    if(isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
+                        storeReservation(Preferences.getInstance(context).getUser().getMobileNo(), getDate(arrivedDate.getTime()), getDate(departedDate.getTime()), markerUid);
+                    }
                 }
             }
         });

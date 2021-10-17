@@ -1133,13 +1133,14 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             currentLocationMarker.remove();
         }
 
-        currentLocationMarker = mMap.addMarker(new MarkerOptions().position(latLng)
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_car_running))
-                .title("My Location")
-                .rotation(location.getBearing())
-                .flat(false)
-                .zIndex(1)
-                .anchor(0.5f, 0.5f));
+            currentLocationMarker = mMap.addMarker(new MarkerOptions().position(latLng)
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_car_running))
+                    .title("My Location")
+                    .rotation(location.getBearing())
+                    .flat(false)
+                    .zIndex(1)
+                    .anchor(0.5f, 0.5f));
+
 
         if (markerClicked != null) {
             checkParkingSpotDistance(latLng, markerClicked.getPosition());

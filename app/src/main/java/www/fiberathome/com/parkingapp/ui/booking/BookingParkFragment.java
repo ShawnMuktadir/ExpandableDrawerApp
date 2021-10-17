@@ -77,6 +77,7 @@ import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
+import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.MathUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
@@ -162,7 +163,10 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                     }
                 } else {
                     //from HomeFragment
-                    getBookingParkStatus(Preferences.getInstance(context).getUser().getMobileNo());
+
+                    if(ConnectivityUtils.getInstance().checkInternet(context)) {
+                        getBookingParkStatus(Preferences.getInstance(context).getUser().getMobileNo());
+                    }
                 }
             } else {
                 ToastUtils.getInstance().showToastMessage(context, "Unable to load map");
@@ -215,7 +219,9 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         });
 
         btnCarDeparture.setOnClickListener(v -> {
-            endBooking();
+            if(ConnectivityUtils.getInstance().checkInternet(context)) {
+                endBooking();
+            }
         });
 
         btnLiveParking.setOnClickListener(v -> Toast.makeText(context, "Live Parking Coming Soon!!!", Toast.LENGTH_SHORT).show());

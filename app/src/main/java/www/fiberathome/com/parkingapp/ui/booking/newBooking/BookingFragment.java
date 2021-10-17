@@ -274,7 +274,9 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                                 @Override
                                 public void onPositiveClick() {
                                     Timber.e("Positive Button clicked");
-                                    cancelBooking(Preferences.getInstance(context).getUser().getMobileNo(), uid);
+                                    if(isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
+                                        cancelBooking(Preferences.getInstance(context).getUser().getMobileNo(), uid);
+                                    }
                                     Preferences.getInstance(context).clearBooking();
                                 }
 
