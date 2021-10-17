@@ -172,19 +172,19 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         }
         setListeners();
     }
+
     Handler mHandler = new Handler();
     Runnable mHandlerTask = new Runnable() {
         @Override
         public void run() {
-            if(mSensors!=null) {
+            if (mSensors != null) {
                 String extraTime = getTimeDifference(System.currentTimeMillis() - getStringDateToMillis(mSensors.getTimeEnd()) > 0 ? (System.currentTimeMillis() - getStringDateToMillis(mSensors.getTimeEnd())) : 0);
                 tvExtraParkingTime.setText("Exceed Parking Time: " + extraTime);
 
                 if (System.currentTimeMillis() - getStringDateToMillis(mSensors.getTimeEnd()) >= 0) {
                     tvExtraParkingTime.setTextColor(context.getResources().getColor(R.color.red));
                 }
-            }
-            else if(sensors!=null){
+            } else if (sensors != null) {
                 String extraTime = getTimeDifference(System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd()) > 0 ? (System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd())) : 0);
                 tvExtraParkingTime.setText("Exceed Parking Time: " + extraTime);
 
@@ -256,13 +256,13 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
             mMap.addMarker(new MarkerOptions()
                     .position(bookedLocation)
                     .title("Departure Location")
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_gray)));
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_car_running)));
         } else if (sensors != null) {
             LatLng bookedLocation = new LatLng(MathUtils.getInstance().convertToDouble(sensors.getLatitude()), MathUtils.getInstance().convertToDouble(sensors.getLongitude()));
             mMap.addMarker(new MarkerOptions()
                     .position(bookedLocation)
                     .title("Departure Location")
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_gray)));
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_car_running)));
         }
     }
 
