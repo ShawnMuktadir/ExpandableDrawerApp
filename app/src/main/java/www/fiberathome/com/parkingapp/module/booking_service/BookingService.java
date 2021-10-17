@@ -2,6 +2,7 @@ package www.fiberathome.com.parkingapp.module.booking_service;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -39,6 +40,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -53,6 +55,7 @@ import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.Constants;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.booking.ReservationCancelResponse;
+import www.fiberathome.com.parkingapp.module.notification.NotificationPublisher;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
@@ -86,6 +89,8 @@ public class BookingService extends Service {
         if (action != null) {
             if (action.equals(Constants.START_BOOKING_TRACKING)) {
                 //startTrackingLocation();
+                context = getApplicationContext();
+//                startAlarm(convertLongToCalendar(Preferences.getInstance(context).getBooked().getArriveDate()));
                 mHandlerTask.run();
             } else if (action.equals(Constants.STOP_BOOKING_TRACKING)) {
                if(isRunning)
@@ -96,11 +101,10 @@ public class BookingService extends Service {
     }
 
     private void startTrackingLocation() {
-        context = getApplicationContext();
         String currentDateandTime = new SimpleDateFormat("dd-MM-yyyy HH:mm").format(new Date());
         if(new Date().getTime()>=Preferences.getInstance(context).getBooked().getArriveDate()){
             isRunning = true;
-            notificationCaller(Constants.NOTIFICATION_CHANNEL_BOOKING,"Booking in progress...",2);
+            notificationCaller(Constants.NOTIFICATION_CHANNEL_BOOKING,"Booked time Started",2);
             startForeground(BOOKING_SERVICE_ID, mBuilder.build());
             findDifference(getDate(Preferences.getInstance(context).getBooked().getArriveDate()), getDate(Preferences.getInstance(context).getBooked().getDepartedDate()));
         }
@@ -451,4 +455,5 @@ public class BookingService extends Service {
         Intent intent = new Intent("booking_ended");
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
+
 }

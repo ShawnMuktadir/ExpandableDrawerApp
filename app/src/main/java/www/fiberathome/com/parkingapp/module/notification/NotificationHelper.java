@@ -24,10 +24,10 @@ class NotificationHelper extends ContextWrapper {
     public NotificationHelper(Context base, String ended) {
         super(base);
         context = base;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createChannel();
             this.ended = ended;
-        }
+//        }
     }
 
     private void createChannel() {
@@ -57,7 +57,7 @@ class NotificationHelper extends ContextWrapper {
     public NotificationCompat.Builder getChannelNotification() {
         if (ended != null) {
            if(ended.equalsIgnoreCase("Book Time Up")) {
-               closeBooking();
+//               closeBooking();
            }
             return new NotificationCompat.Builder(getApplicationContext(), channelID)
                     .setContentTitle("Booking Scheduled Alert")

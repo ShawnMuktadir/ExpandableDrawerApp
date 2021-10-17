@@ -1324,6 +1324,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         return false;
     }
 
+
     private void startBookingTrackService() {
         if (!isLocationTrackingServiceRunning()) {
             Intent intent = new Intent(context, BookingService.class);

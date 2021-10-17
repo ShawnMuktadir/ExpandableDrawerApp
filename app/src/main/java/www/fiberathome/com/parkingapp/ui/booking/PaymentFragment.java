@@ -1,5 +1,9 @@
 package www.fiberathome.com.parkingapp.ui.booking;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +38,7 @@ import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.booking.ReservationResponse;
+import www.fiberathome.com.parkingapp.module.notification.NotificationPublisher;
 import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
@@ -217,6 +222,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                             bookedPlace.setIsBooked(true);
 
                             Preferences.getInstance(context).setBooked(bookedPlace);
+                            startAlarm(convertLongToCalendar(Preferences.getInstance(context).getBooked().getArriveDate()));
                             if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
                                 actionBarTitle.setText(context.getResources().getString(R.string.booking_payment));
                                 listener.fragmentChange(HomeFragment.newInstance(bookedPlace));
@@ -250,5 +256,23 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(milliSeconds);
         return formatter.format(calendar.getTime());
+    }
+    private void startAlarm(Calendar c) {
+        Timber.e("startAlarm called");
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(context, NotificationPublisher.class);
+        intent.putExtra("Started", "Booked Time About to start for :"+ Preferences.getInstance(context).getBooked().getAreaName());
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, intent, 0);
+        if (c.before(Calendar.getInstance())) {
+            c.add(Calendar.DATE, 1);
+        }
+        Objects.requireNonNull(alarmManager).setExact(AlarmManager.RTC_WAKEUP,
+                c.getTimeInMillis() - 900000, pendingIntent);
+    }
+
+    public Calendar convertLongToCalendar(Long source) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(source);
+        return calendar;
     }
 }

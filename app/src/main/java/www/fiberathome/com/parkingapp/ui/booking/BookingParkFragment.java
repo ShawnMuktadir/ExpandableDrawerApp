@@ -16,6 +16,7 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -124,6 +125,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         super.onViewCreated(view, savedInstanceState);
         context = (HomeActivity) getActivity();
         initView(view);
+        mHandlerTask.run();
         listener = (FragmentChangeListener) getActivity();
         stopBookingTrackService();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
@@ -169,6 +171,36 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
             ToastUtils.getInstance().showToastMessage(context, "Play services are required by this application");
         }
         setListeners();
+    }
+    Handler mHandler = new Handler();
+    Runnable mHandlerTask = new Runnable() {
+        @Override
+        public void run() {
+            if(mSensors!=null) {
+                String extraTime = getTimeDifference(System.currentTimeMillis() - getStringDateToMillis(mSensors.getTimeEnd()) > 0 ? (System.currentTimeMillis() - getStringDateToMillis(mSensors.getTimeEnd())) : 0);
+                tvExtraParkingTime.setText("Exceed Parking Time: " + extraTime);
+
+                if (System.currentTimeMillis() - getStringDateToMillis(mSensors.getTimeEnd()) >= 0) {
+                    tvExtraParkingTime.setTextColor(context.getResources().getColor(R.color.red));
+                }
+            }
+            else if(sensors!=null){
+                String extraTime = getTimeDifference(System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd()) > 0 ? (System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd())) : 0);
+                tvExtraParkingTime.setText("Exceed Parking Time: " + extraTime);
+
+                if (System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd()) >= 0) {
+                    tvExtraParkingTime.setTextColor(context.getResources().getColor(R.color.red));
+                }
+            }
+            mHandler.postDelayed(mHandlerTask, 1000);
+        }
+    };
+
+    @Override
+    public void onResume() {
+
+
+        super.onResume();
     }
 
     private void setListeners() {
@@ -349,6 +381,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         super.onDestroy();
         if (isAdded()) {
             countDownTimer.cancel();
+            mHandler.removeCallbacks(mHandlerTask);
         }
     }
 
