@@ -80,6 +80,9 @@ public class Preferences {
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         editor.putString("uid", booked.getBookedUid());
+        editor.putString("areaName", booked.getAreaName());
+        editor.putString("parkingSlotCount", booked.getParkingSlotCount());
+        editor.putString("uid", booked.getBookedUid());
         editor.putLong("lat", (long) booked.getLat());
         editor.putLong("lon", (long) booked.getLon());
         editor.putString("route", booked.getRoute());
@@ -94,6 +97,8 @@ public class Preferences {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME_BOOKING, MODE_PRIVATE);
         BookedPlace bookedPlace = new BookedPlace();
         bookedPlace.setBookedUid(sharedPreferences.getString("uid", ""));
+        bookedPlace.setAreaName(sharedPreferences.getString("areaName", ""));
+        bookedPlace.setParkingSlotCount(sharedPreferences.getString("parkingSlotCount", ""));
         bookedPlace.setRoute(sharedPreferences.getString("route", ""));
         bookedPlace.setPlaceId(sharedPreferences.getString("placeId", ""));
         bookedPlace.setLat(sharedPreferences.getLong("lat", 0));

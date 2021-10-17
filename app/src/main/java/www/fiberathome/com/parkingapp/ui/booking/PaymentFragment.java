@@ -250,5 +250,4 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
         calendar.setTimeInMillis(milliSeconds);
         return formatter.format(calendar.getTime());
     }
-
 }
