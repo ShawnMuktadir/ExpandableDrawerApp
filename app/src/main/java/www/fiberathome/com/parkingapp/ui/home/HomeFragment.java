@@ -3255,22 +3255,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             getArguments().clear();
                             areaName = null;
                         }
-                        SharedPreferences preferences = context.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
-                        if (preferences != null) {
-                            preferences.edit().remove("uid").apply();
-                            preferences.edit().remove("route").apply();
-                            preferences.edit().remove("lat").apply();
-                            preferences.edit().remove("lon").apply();
-                            isBooked = false;
-                        }
                         if (initialRoutePoints != null)
                             initialRoutePoints.clear();
-                        if (bookedPlace != null) {
-                            bookedPlace.setBookedUid(null);
-                            bookedPlace.setLat(0.0);
-                            bookedPlace.setLon(0.0);
-                            bookedPlace.setRoute(null);
-                        }
                     }
                     try {
                         if (polyline == null || !polyline.isVisible())
@@ -3430,6 +3416,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
                 mMap.setTrafficEnabled(false);
                 isRouteDrawn = 1;
+                isBooked = Preferences.getInstance(context).getBooked().getIsBooked();
                 if (isBooked && bookedPlace != null) {
                     double distanceBetween = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
                             bookedPlace.getLat(), bookedPlace.getLon()) * 1000;
@@ -3444,7 +3431,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                 new DialogUtils.DialogClickListener() {
                                     @Override
                                     public void onPositiveClick() {
-                                        isBooked = Preferences.getInstance(context).getBooked().getIsBooked();
                                         if (isBooked) {
                                             getBookingPark(Preferences.getInstance(context).getUser().getMobileNo(), bookedPlace.getBookedUid());
                                         } else {
@@ -3472,8 +3458,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                                     }
                                 }).show();
-                        btnGetDirection.setText("Parking");
-                    } else if (parkingAreaChanged) {
+                        btnGetDirection.setText(context.getResources().getString(R.string.parking));
+                    } else if (parkingAreaChanged && isBooked) {
                         DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.already_booked_msg), context);
                     } else {
                         DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.park_message), context);
