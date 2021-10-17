@@ -61,6 +61,12 @@ public class BookingParkStatusResponse extends BaseResponse {
         @SerializedName("address")
         @Expose
         private String address;
+        @SerializedName("area_id")
+        @Expose
+        private String area_id;
+        @SerializedName("p_date")
+        @Expose
+        private String p_date;
         @SerializedName("parking_area")
         @Expose
         private String parkingArea;
@@ -181,6 +187,22 @@ public class BookingParkStatusResponse extends BaseResponse {
 
         public void setParkingArea(String parkingArea) {
             this.parkingArea = parkingArea;
+        }
+
+        public String getArea_id() {
+            return area_id;
+        }
+
+        public void setArea_id(String area_id) {
+            this.area_id = area_id;
+        }
+
+        public String getP_date() {
+            return p_date;
+        }
+
+        public void setP_date(String p_date) {
+            this.p_date = p_date;
         }
 
         public String getLatitude() {

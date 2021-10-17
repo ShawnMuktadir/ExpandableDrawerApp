@@ -219,7 +219,8 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                             Preferences.getInstance(context).setBooked(bookedPlace);
                             if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
                                 actionBarTitle.setText(context.getResources().getString(R.string.booking_payment));
-                                ApplicationUtils.replaceFragmentWithAnimation(getParentFragmentManager(), HomeFragment.newInstance(bookedPlace));
+                                listener.fragmentChange(HomeFragment.newInstance(bookedPlace));
+                                //ApplicationUtils.replaceFragmentWithAnimation(getParentFragmentManager(), HomeFragment.newInstance(bookedPlace));
                             } else {
                                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
                             }

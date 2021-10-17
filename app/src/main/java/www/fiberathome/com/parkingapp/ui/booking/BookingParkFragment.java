@@ -5,7 +5,10 @@ import static www.fiberathome.com.parkingapp.ui.home.HomeFragment.PLAY_SERVICES_
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Dialog;
+import android.app.Service;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -14,10 +17,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +43,7 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -63,9 +69,11 @@ import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
+import www.fiberathome.com.parkingapp.model.data.Constants;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingParkStatusResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.CloseReservationResponse;
+import www.fiberathome.com.parkingapp.module.booking_service.BookingService;
 import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
@@ -76,13 +84,14 @@ import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 public class BookingParkFragment extends BaseFragment implements OnMapReadyCallback {
     private long arrived, departure;
-    private TextView tvArrivedTime, tvDepartureTime, tvTimeDifference, tvTermsCondition, tvParkingAreaName, tvCountDown;
+    private TextView tvArrivedTime, tvDepartureTime, tvTimeDifference, tvTermsCondition, tvParkingAreaName, tvCountDown, tvEarlyParkingTime, tvExtraParkingTime;
     private long difference;
     private Button btnMore;
     private Button btnCarDeparture;
     private Button btnLiveParking;
     private FragmentChangeListener listener;
     private CountDownTimer countDownTimer;
+    private Chronometer chronometer;
 
     private GoogleMap mMap;
     private SupportMapFragment supportMapFragment;
@@ -118,6 +127,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         context = (HomeActivity) getActivity();
         initView(view);
         listener = (FragmentChangeListener) getActivity();
+        stopBookingTrackService();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
 
         if (isServicesOk()) {
@@ -131,12 +141,25 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                 supportMapFragment.getMapAsync(this);
                 if (sensors != null) {
                     //from HomeActivity
+                    tvArrivedTime.setText("Booking Time: " + sensors.getTimeStart());
+                    tvDepartureTime.setText("Departure Time: " + sensors.getTimeEnd());
                     tvParkingAreaName.setText(sensors.getParkingArea());
-                    tvArrivedTime.setText(sensors.getTimeStart());
-                    tvDepartureTime.setText(sensors.getTimeEnd());
                     String currentDateandTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-                    findDifference(currentDateandTime, sensors.getTimeEnd());
+                    findDifference(currentDateandTime, sensors.getTimeEnd(), "");
+                    findDifference(sensors.getTimeStart(), sensors.getTimeEnd(), "TimeStart");
 
+                    String earlyParkingTime = getTimeDifference(getStringDateToMillis(sensors.getTimeStart()) - getStringDateToMillis(sensors.getP_date()) >= 0 ? (getStringDateToMillis(sensors.getTimeStart()) - getStringDateToMillis(sensors.getP_date())) : 0);
+                    String extraTime = getTimeDifference(System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd()) > 0 ? (System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd())) : 0);
+                    tvEarlyParkingTime.setText("Early Parking Time: " + earlyParkingTime);
+                    tvExtraParkingTime.setText("Exceed Parking Time: " + extraTime);
+                    if (System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd()) >= 0) {
+                        tvExtraParkingTime.setTextColor(context.getResources().getColor(R.color.red));
+                    } else {
+                        findDifference(currentDateandTime, sensors.getTimeEnd(), "");
+                    }
+                    if (getStringDateToMillis(sensors.getTimeStart()) - getStringDateToMillis(sensors.getP_date()) >= 0) {
+                        tvEarlyParkingTime.setTextColor(context.getResources().getColor(R.color.red));
+                    }
                 } else {
                     //from HomeFragment
                     getBookingParkStatus(Preferences.getInstance(context).getUser().getMobileNo());
@@ -252,6 +275,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         }
     };
 
+
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
     private void checkLocationPermission() {
@@ -338,6 +362,8 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         btnLiveParking = view.findViewById(R.id.btnLiveParking);
         tvParkingAreaName = view.findViewById(R.id.tvParkingAreaName);
         tvCountDown = view.findViewById(R.id.tvCountDown);
+        tvEarlyParkingTime = view.findViewById(R.id.tvEarlyParkingTime);
+        tvExtraParkingTime = view.findViewById(R.id.tvExtraParkingTime);
     }
 
     private String getDate(long milliSeconds) {
@@ -428,10 +454,26 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                     if (response.body() != null) {
                         mSensors = response.body().getSensors();
                         if (mSensors != null) {
-                            tvArrivedTime.setText(mSensors.getTimeStart());
-                            tvDepartureTime.setText(mSensors.getTimeEnd());
+                            tvArrivedTime.setText("Booking Time: " + mSensors.getTimeStart());
+                            tvDepartureTime.setText("Departure Time: " + mSensors.getTimeEnd());
                             tvParkingAreaName.setText(mSensors.getParkingArea());
-                            findDifference(mSensors.getTimeStart(), mSensors.getTimeEnd());
+                            String currentDateandTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+                            findDifference(mSensors.getTimeStart(), mSensors.getTimeEnd(), "TimeStart");
+
+                            String earlyParkingTime = getTimeDifference(getStringDateToMillis(mSensors.getTimeStart()) - getStringDateToMillis(mSensors.getP_date()) >= 0 ? (getStringDateToMillis(mSensors.getTimeStart()) - getStringDateToMillis(mSensors.getP_date())) : 0);
+                            String extraTime = getTimeDifference(System.currentTimeMillis() - getStringDateToMillis(mSensors.getTimeEnd()) > 0 ? (System.currentTimeMillis() - getStringDateToMillis(mSensors.getTimeEnd())) : 0);
+                            tvEarlyParkingTime.setText("Early Parking Time: " + earlyParkingTime);
+                            tvExtraParkingTime.setText("Exceed Parking Time: " + extraTime);
+
+                            if (System.currentTimeMillis() - getStringDateToMillis(mSensors.getTimeEnd()) >= 0) {
+                                tvExtraParkingTime.setTextColor(context.getResources().getColor(R.color.red));
+                            } else {
+                                findDifference(currentDateandTime, mSensors.getTimeEnd(), "");
+                            }
+                            if (getStringDateToMillis(mSensors.getTimeStart()) - getStringDateToMillis(mSensors.getP_date()) >= 0) {
+                                tvEarlyParkingTime.setTextColor(context.getResources().getColor(R.color.red));
+                            }
+
                         } else {
                             //ToastUtils.getInstance().showToast(context, "Sorry, there is no parking");
                         }
@@ -448,26 +490,51 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         });
     }
 
+    private long getStringDateToMillis(String date) {
+        //String givenDateString = "Tue Apr 23 16:08:28 GMT+05:30 2013";
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        long timeInMilliseconds = 0;
+        try {
+            Date mDate = sdf.parse(date);
+            timeInMilliseconds = mDate.getTime();
+            System.out.println("Date in milli :: " + timeInMilliseconds);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return timeInMilliseconds;
+    }
+
+    @SuppressLint("DefaultLocale")
+    private String getTimeDifference(long difference) {
+
+        return String.format("%02d hr: %02d min: %02d sec",
+                TimeUnit.MILLISECONDS.toHours(difference),
+                TimeUnit.MILLISECONDS.toMinutes(difference) -
+                        TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(difference)), TimeUnit.MILLISECONDS.toSeconds(difference) -
+                        TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toMinutes(difference) // The change is in this line
+                        ));
+    }
+
     @SuppressLint("SetTextI18n")
     private void startCountDown(long timerMilliDifference) {
         long millis = Preferences.getInstance(context).getBooked().getDepartedDate();
         countDownTimer = new CountDownTimer(timerMilliDifference, 1000) {
             @SuppressLint("DefaultLocale")
             public void onTick(long millisUntilFinished) {
-                tvCountDown.setText("" + String.format("%d min, %d sec remaining",
+                tvCountDown.setText("" + String.format("Remaining Time %d min, %d sec",
                         TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
                         TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
                                 TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))));
             }
 
             public void onFinish() {
-                //tvCountDown.setText(context.getResources().getString(R.string.please_wait));
+                tvCountDown.setText("Remaining Time 00:00");
             }
         }.start();
     }
 
     public void findDifference(String start_date,
-                               String end_date) {
+                               String end_date, String timeStart) {
 
         // SimpleDateFormat converts the
         // string format to date object
@@ -489,6 +556,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
             if (d1 != null && d2 != null) {
                 long difference_In_Time
                         = d2.getTime() - d1.getTime();
+
 
                 // Calculate time difference in
                 // seconds, minutes, hours, years,
@@ -520,8 +588,11 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                 // Print the date difference in
                 // years, in days, in hours, in
                 // minutes, and in seconds
-                tvTimeDifference.setText(difference_In_Hours + " hr " + difference_In_Minutes + " min " + difference_In_Seconds + " sec");
-                startCountDown(difference_In_Time);
+                if (timeStart.equalsIgnoreCase("TimeStart")) {
+                    tvTimeDifference.setText(difference_In_Hours + " hr " + difference_In_Minutes + " min " + difference_In_Seconds + " sec");
+                } else {
+                    startCountDown(difference_In_Time);
+                }
 
                 System.out.print(
                         "Difference "
@@ -546,4 +617,30 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
             e.printStackTrace();
         }
     }
+
+    private boolean isLocationTrackingServiceRunning() {
+        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        if (activityManager != null) {
+            for (ActivityManager.RunningServiceInfo serviceInfo : activityManager.getRunningServices(Integer.MAX_VALUE)) {
+                String a = Service.class.getName();
+                serviceInfo.service.getClassName();
+                if (serviceInfo.foreground) {
+                    return true;
+                }
+
+            }
+            return false;
+        }
+        return false;
+    }
+
+    private void stopBookingTrackService() {
+        if (isLocationTrackingServiceRunning()) {
+            Intent intent = new Intent(context, BookingService.class);
+            intent.setAction(Constants.STOP_BOOKING_TRACKING);
+            context.startService(intent);
+            //Toast.makeText(context, "Booking Tracking Stopped", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }

@@ -1327,7 +1327,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             Intent intent = new Intent(context, BookingService.class);
             intent.setAction(Constants.START_BOOKING_TRACKING);
             context.startService(intent);
-//            Toast.makeText(context, "Booking Tracking Started", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, "Booking Tracking Started", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -1336,7 +1336,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             Intent intent = new Intent(context, BookingService.class);
             intent.setAction(Constants.STOP_BOOKING_TRACKING);
             context.startService(intent);
-//            Toast.makeText(context, "Booking Tracking Stopped", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, "Booking Tracking Stopped", Toast.LENGTH_SHORT).show();
         }
     }
 
