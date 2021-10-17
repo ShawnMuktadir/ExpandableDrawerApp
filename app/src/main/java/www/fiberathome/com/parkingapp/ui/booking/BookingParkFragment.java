@@ -17,7 +17,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Looper;
-import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +42,6 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -349,7 +347,9 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
     @Override
     public void onDestroy() {
         super.onDestroy();
-        countDownTimer.cancel();
+        if (isAdded()) {
+            countDownTimer.cancel();
+        }
     }
 
     private void initView(View view) {
@@ -364,6 +364,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         tvCountDown = view.findViewById(R.id.tvCountDown);
         tvEarlyParkingTime = view.findViewById(R.id.tvEarlyParkingTime);
         tvExtraParkingTime = view.findViewById(R.id.tvExtraParkingTime);
+        chronometer = view.findViewById(R.id.chronometer);
     }
 
     private String getDate(long milliSeconds) {
@@ -407,7 +408,9 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
             @Override
             public void onResponse(@NonNull Call<CloseReservationResponse> call, @NonNull Response<CloseReservationResponse> response) {
                 hideLoading();
-                countDownTimer.cancel();
+                if (isAdded()) {
+                    countDownTimer.cancel();
+                }
                 sensors = null;
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
@@ -434,7 +437,9 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
             @Override
             public void onFailure(@NonNull Call<CloseReservationResponse> call, @NonNull Throwable t) {
                 Timber.e("onFailure -> %s", t.getMessage());
-                countDownTimer.cancel();
+                if (isAdded()) {
+                    countDownTimer.cancel();
+                }
                 hideLoading();
                 ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
@@ -557,7 +562,6 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                 long difference_In_Time
                         = d2.getTime() - d1.getTime();
 
-
                 // Calculate time difference in
                 // seconds, minutes, hours, years,
                 // and days
@@ -639,8 +643,6 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
             Intent intent = new Intent(context, BookingService.class);
             intent.setAction(Constants.STOP_BOOKING_TRACKING);
             context.startService(intent);
-            //Toast.makeText(context, "Booking Tracking Stopped", Toast.LENGTH_SHORT).show();
         }
     }
-
 }

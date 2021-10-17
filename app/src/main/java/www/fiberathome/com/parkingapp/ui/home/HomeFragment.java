@@ -1107,6 +1107,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
 
             settingGeoFire();
+            showCurrentLocationButton();
         } catch (Exception e) {
             e.getCause();
         }
@@ -1214,6 +1215,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     }
 
     private void reDrawRoute(String origin) {
+        //ToastUtils.getInstance().showToast(context, "reDrawRoute called");
         Timber.e("reDrawRoute called");
 
         String[] latLng = origin.split(",");

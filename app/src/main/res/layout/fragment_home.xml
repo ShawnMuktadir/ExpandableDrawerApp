@@ -65,6 +65,7 @@
                     android:layout_alignParentEnd="true"
                     android:contentDescription="@null"
                     android:visibility="gone"
+                    android:background="@color/transparent"
                     app:srcCompat="@drawable/current_location_vector_icon" />
 
             </RelativeLayout>
