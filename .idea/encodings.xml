@@ -6,11 +6,11 @@
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/model/Language.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/model/Settings.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/model/Spinner.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/module/googleService/directionModules/DirectionFinder.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/module/googleService/directionModules/DirectionFinderListener.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/module/googleService/directionModules/Distance.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/module/googleService/directionModules/Duration.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/module/googleService/directionModules/Route.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/service/googleService/directionModules/DirectionFinder.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/service/googleService/directionModules/DirectionFinderListener.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/service/googleService/directionModules/Distance.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/service/googleService/directionModules/Duration.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/service/googleService/directionModules/Route.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/ui/NavigationActivity.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/ui/changePassword/ChangePasswordActivityForOTPFragment.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/ui/changePassword/URLSpanNoUnderline.java" charset="UTF-8" />

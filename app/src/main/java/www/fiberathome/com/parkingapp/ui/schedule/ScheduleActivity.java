@@ -8,7 +8,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.ui.NavigationActivity;
-import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener;
+import www.fiberathome.com.parkingapp.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 
 public class ScheduleActivity extends NavigationActivity implements FragmentChangeListener {
