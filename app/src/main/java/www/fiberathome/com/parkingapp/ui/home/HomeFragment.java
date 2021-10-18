@@ -1133,13 +1133,13 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             currentLocationMarker.remove();
         }
 
-            currentLocationMarker = mMap.addMarker(new MarkerOptions().position(latLng)
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_car_running))
-                    .title("My Location")
-                    .rotation(location.getBearing())
-                    .flat(false)
-                    .zIndex(1)
-                    .anchor(0.5f, 0.5f));
+        currentLocationMarker = mMap.addMarker(new MarkerOptions().position(latLng)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_car_running))
+                .title("My Location")
+                .rotation(location.getBearing())
+                .flat(false)
+                .zIndex(1)
+                .anchor(0.5f, 0.5f));
 
 
         if (markerClicked != null) {
@@ -3575,7 +3575,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     Timber.e(String.valueOf(circle.getRadius()));
                     if (distanceBetween <= distance) {
                         DialogUtils.getInstance().showOnlyMessageDialog("Your park has been started", context);
-                        btnMarkerGetDirection.setText("Parking");
+                        btnMarkerGetDirection.setText(context.getResources().getString(R.string.parking));
                     } else if (parkingAreaChanged) {
                         DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.already_booked_msg), context);
                     } else {
@@ -3678,7 +3678,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     Timber.e(String.valueOf(circle.getRadius()));
                     if (distanceBetween <= distance) {
                         DialogUtils.getInstance().showOnlyMessageDialog("Your park has been started", context);
-                        btnBottomSheetGetDirection.setText("Parking");
+                        btnBottomSheetGetDirection.setText(context.getResources().getString(R.string.parking));
                     } else if (parkingAreaChanged) {
                         DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.already_booked_msg), context);
                     } else {
