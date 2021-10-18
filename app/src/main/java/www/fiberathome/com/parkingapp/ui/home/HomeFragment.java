@@ -1356,6 +1356,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 isInAreaEnabled = true;
                 isNotificationSent = true;
                 sendNotification("You are near a parking spot", "You can book parking");
+
                 if (bookedPlace != null)
                     bookedWiseBottomItemLayout(linearLayoutBottom, imageViewBack, btnGetDirection, mMap, bookedPlace.getLat(), bookedPlace.getLon(),
                             sensorAreaArrayList, bookedPlace.getAreaName(), bookedPlace.getParkingSlotCount(), textViewParkingAreaName, textViewParkingAreaCount, textViewParkingDistance);
@@ -1764,7 +1765,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             @Override
             public void onFailure(@NonNull Call<ReservationCancelResponse> call, @NonNull Throwable t) {
                 Timber.e("onFailure -> %s", t.getMessage());
-                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+//                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
         });
     }
@@ -1814,7 +1815,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             public void onFailure(@NonNull Call<SensorAreaStatusResponse> call, @NonNull Throwable t) {
                 Timber.e("onFailure -> %s", t.getMessage());
                 hideLoading();
-                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+//                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
         });
     }
@@ -2239,7 +2240,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                             }
                                         } catch (Exception e) {
                                             e.getCause();
-                                            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+//                                            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
                                         }
                                     }
                                 }
@@ -2256,7 +2257,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             public void onFailure(@NonNull Call<ParkingSlotResponse> call, @NonNull Throwable t) {
                 Timber.e("onFailure -> %s", t.getMessage());
                 hideLoading();
-                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+//                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
         });
     }
@@ -2589,7 +2590,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 }
             } catch (Exception e) {
                 e.getCause();
-                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+//                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
         });
         bottomSheetAdapter.setDataList(bookingSensors);
@@ -2981,7 +2982,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     isRouteDrawn = 1;
                 }, 1000);
             } else {
-                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+//                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
         } catch (EventBusException e) {
             e.getCause();
@@ -3802,7 +3803,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             @Override
             public void onFailure(@NonNull Call<ReservationCancelResponse> call, @NonNull Throwable t) {
                 Timber.e("onFailure -> %s", t.getMessage());
-                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+//                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
                 hideLoading();
             }
         });

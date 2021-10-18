@@ -316,7 +316,7 @@ public class BookingService extends Service {
             @Override
             public void onFailure(@NonNull Call<ReservationCancelResponse> call, @NonNull Throwable t) {
                 Timber.e("onFailure -> %s", t.getMessage());
-                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+//                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
         });
     }

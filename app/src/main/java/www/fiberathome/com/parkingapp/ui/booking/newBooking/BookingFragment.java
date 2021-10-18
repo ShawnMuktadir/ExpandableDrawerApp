@@ -254,7 +254,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
             public void onFailure(@NonNull Call<BookedResponse> call, @NonNull Throwable errors) {
                 Timber.e("Throwable Errors: -> %s", errors.toString());
                 hideLoading();
-                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+//                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
         });
     }
@@ -322,7 +322,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                 @Override
                 public void onFailure(@NonNull Call<ReservationCancelResponse> call, @NonNull Throwable t) {
                     Timber.e("onFailure -> %s", t.getMessage());
-                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+//                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
                     hideLoading();
                 }
             });

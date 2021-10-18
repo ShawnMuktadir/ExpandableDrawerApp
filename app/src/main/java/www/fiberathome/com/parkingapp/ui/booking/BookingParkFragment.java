@@ -482,7 +482,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                     countDownTimer.cancel();
                 }
                 hideLoading();
-                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+//                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
         });
     }
@@ -530,7 +530,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
             @Override
             public void onFailure(@NonNull Call<BookingParkStatusResponse> call, @NonNull Throwable t) {
                 Timber.e("onFailure -> %s", t.getMessage());
-                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+//                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
                 hideLoading();
             }
         });

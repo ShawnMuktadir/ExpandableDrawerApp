@@ -262,7 +262,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
             public void onFailure(@NonNull Call<ReservationResponse> call, @NonNull Throwable t) {
                 Timber.e("onFailure -> %s", t.getMessage());
                 hideLoading();
-                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+//                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
         });
     }
