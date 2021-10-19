@@ -106,7 +106,7 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             bookingViewHolder.tvStatus.setTextColor(Color.RED);
         }
 
-        bookingViewHolder.tvCancel.setOnClickListener(v -> bookingAdapterClickListener.onItemClick(bookingViewHolder.getAbsoluteAdapterPosition(), bookedList.getSpotId()));
+        bookingViewHolder.tvCancel.setOnClickListener(v -> bookingAdapterClickListener.onItemClick(bookingViewHolder.getAbsoluteAdapterPosition(), bookedList.getSpotId(),bookedList.getId()));
 
         bookingViewHolder.textViewParkingRateNTip.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
 
@@ -184,6 +184,6 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     public interface BookingAdapterClickListener {
-        void onItemClick(int position, String uid);
+        void onItemClick(int position, String uid, String id);
     }
 }

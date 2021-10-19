@@ -1744,31 +1744,31 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
     };
 
-    private void endBooking() {
-        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        String user = Preferences.getInstance(context).getUser().getMobileNo();
-        String bookedUid = Preferences.getInstance(context).getBooked().getBookedUid();
-        Timber.e("EndBooking user=> %s and uid=>%s", user, bookedUid);
-        Call<ReservationCancelResponse> call = request.cancelReservation(user, bookedUid);
-        call.enqueue(new Callback<ReservationCancelResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<ReservationCancelResponse> call, @NonNull Response<ReservationCancelResponse> response) {
-                if (response.isSuccessful()) {
-                    if (response.body() != null) {
-                        ended = true;
-                        Preferences.getInstance(context).clearBooking();
-                        Timber.e("Booking closed");
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<ReservationCancelResponse> call, @NonNull Throwable t) {
-                Timber.e("onFailure -> %s", t.getMessage());
-//                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
-            }
-        });
-    }
+//    private void endBooking() {
+//        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+//        String user = Preferences.getInstance(context).getUser().getMobileNo();
+//        String bookedUid = Preferences.getInstance(context).getBooked().getBookedUid();
+//        Timber.e("EndBooking user=> %s and uid=>%s", user, bookedUid);
+//        Call<ReservationCancelResponse> call = request.cancelReservation(user, bookedUid);
+//        call.enqueue(new Callback<ReservationCancelResponse>() {
+//            @Override
+//            public void onResponse(@NonNull Call<ReservationCancelResponse> call, @NonNull Response<ReservationCancelResponse> response) {
+//                if (response.isSuccessful()) {
+//                    if (response.body() != null) {
+//                        ended = true;
+//                        Preferences.getInstance(context).clearBooking();
+//                        Timber.e("Booking closed");
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(@NonNull Call<ReservationCancelResponse> call, @NonNull Throwable t) {
+//                Timber.e("onFailure -> %s", t.getMessage());
+////                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+//            }
+//        });
+//    }
 
     private void getSensorAreaStatus(Call<SensorAreaStatusResponse> call) {
         showLoading(context);
@@ -3426,7 +3426,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     double distance = circle != null ? circle.getRadius() : 70;
                     assert circle != null;
                     Timber.e(String.valueOf(circle.getRadius()));
-                    if (distanceBetween <= distance) {
+                    if (distanceBetween <= distance && (bookedPlace.getArriveDate()- System.currentTimeMillis())<= 300000) {
                         DialogUtils.getInstance().alertDialog(context,
                                 (Activity) context,
                                 "Your park has been started",
@@ -3573,8 +3573,41 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     double distance = circle != null ? circle.getRadius() : 70;
                     assert circle != null;
                     Timber.e(String.valueOf(circle.getRadius()));
-                    if (distanceBetween <= distance) {
-                        DialogUtils.getInstance().showOnlyMessageDialog("Your park has been started", context);
+                    if (distanceBetween <= distance && (bookedPlace.getArriveDate()- System.currentTimeMillis())<= 300000) {
+                        DialogUtils.getInstance().alertDialog(context,
+                                (Activity) context,
+                                "Your park has been started",
+                                context.getString(R.string.ok), "",
+                                new DialogUtils.DialogClickListener() {
+                                    @Override
+                                    public void onPositiveClick() {
+                                        if (isBooked) {
+                                            getBookingPark(Preferences.getInstance(context).getUser().getMobileNo(), bookedPlace.getBookedUid());
+                                        } else {
+                                            DialogUtils.getInstance().alertDialog(context,
+                                                    requireActivity(),
+                                                    context.getResources().getString(R.string.booking_already_canceled), context.getResources().getString(R.string.booking_already_canceled_msg),
+                                                    context.getResources().getString(R.string.ok), "",
+                                                    new DialogUtils.DialogClickListener() {
+                                                        @Override
+                                                        public void onPositiveClick() {
+                                                            Timber.e("Positive Button clicked");
+                                                            commonBackOperation();
+                                                        }
+
+                                                        @Override
+                                                        public void onNegativeClick() {
+                                                            Timber.e("Negative Button Clicked");
+                                                        }
+                                                    }).show();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onNegativeClick() {
+
+                                    }
+                                }).show();
                         btnMarkerGetDirection.setText(context.getResources().getString(R.string.parking));
                     } else if (parkingAreaChanged) {
                         DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.already_booked_msg), context);
@@ -3676,8 +3709,41 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     double distance = circle != null ? circle.getRadius() : 70;
                     assert circle != null;
                     Timber.e(String.valueOf(circle.getRadius()));
-                    if (distanceBetween <= distance) {
-                        DialogUtils.getInstance().showOnlyMessageDialog("Your park has been started", context);
+                    if (distanceBetween <= distance && (bookedPlace.getArriveDate()- System.currentTimeMillis())<= 300000) {
+                        DialogUtils.getInstance().alertDialog(context,
+                                (Activity) context,
+                                "Your park has been started",
+                                context.getString(R.string.ok), "",
+                                new DialogUtils.DialogClickListener() {
+                                    @Override
+                                    public void onPositiveClick() {
+                                        if (isBooked) {
+                                            getBookingPark(Preferences.getInstance(context).getUser().getMobileNo(), bookedPlace.getBookedUid());
+                                        } else {
+                                            DialogUtils.getInstance().alertDialog(context,
+                                                    requireActivity(),
+                                                    context.getResources().getString(R.string.booking_already_canceled), context.getResources().getString(R.string.booking_already_canceled_msg),
+                                                    context.getResources().getString(R.string.ok), "",
+                                                    new DialogUtils.DialogClickListener() {
+                                                        @Override
+                                                        public void onPositiveClick() {
+                                                            Timber.e("Positive Button clicked");
+                                                            commonBackOperation();
+                                                        }
+
+                                                        @Override
+                                                        public void onNegativeClick() {
+                                                            Timber.e("Negative Button Clicked");
+                                                        }
+                                                    }).show();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onNegativeClick() {
+
+                                    }
+                                }).show();
                         btnBottomSheetGetDirection.setText(context.getResources().getString(R.string.parking));
                     } else if (parkingAreaChanged) {
                         DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.already_booked_msg), context);

@@ -54,6 +54,7 @@ import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.Constants;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
+import www.fiberathome.com.parkingapp.model.response.booking.CloseReservationResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.ReservationCancelResponse;
 import www.fiberathome.com.parkingapp.module.notification.NotificationPublisher;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
@@ -105,7 +106,7 @@ public class BookingService extends Service {
         String currentDateandTime = new SimpleDateFormat("dd-MM-yyyy HH:mm").format(new Date());
         if(new Date().getTime()>=Preferences.getInstance(context).getBooked().getArriveDate()){
             isRunning = true;
-            notificationCaller(Constants.NOTIFICATION_CHANNEL_BOOKING,"Booked time Started",2);
+            notificationCaller(Constants.NOTIFICATION_CHANNEL_BOOKING,"Booked time Status",2);
             startForeground(BOOKING_SERVICE_ID, mBuilder.build());
             findDifference(getDate(Preferences.getInstance(context).getBooked().getArriveDate()), getDate(Preferences.getInstance(context).getBooked().getDepartedDate()));
         }
@@ -298,11 +299,12 @@ public class BookingService extends Service {
         ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
         String user = Preferences.getInstance(context).getUser().getMobileNo();
         String bookedUid = Preferences.getInstance(context).getBooked().getBookedUid();
+        String reservationId = Preferences.getInstance(context).getBooked().getReservation();
         Timber.e("EndBooking user=> %s and uid=>%s", user, bookedUid);
-        Call<ReservationCancelResponse> call = request.cancelReservation(user, bookedUid);
-        call.enqueue(new Callback<ReservationCancelResponse>() {
+        Call<CloseReservationResponse> call = request.endReservation(user, bookedUid,reservationId);
+        call.enqueue(new Callback<CloseReservationResponse>() {
             @Override
-            public void onResponse(@NonNull Call<ReservationCancelResponse> call, @NonNull Response<ReservationCancelResponse> response) {
+            public void onResponse(@NonNull Call<CloseReservationResponse> call, @NonNull Response<CloseReservationResponse> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         Preferences.getInstance(context).clearBooking();
@@ -314,7 +316,7 @@ public class BookingService extends Service {
             }
 
             @Override
-            public void onFailure(@NonNull Call<ReservationCancelResponse> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<CloseReservationResponse> call, @NonNull Throwable t) {
                 Timber.e("onFailure -> %s", t.getMessage());
 //                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }

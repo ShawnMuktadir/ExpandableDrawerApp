@@ -237,6 +237,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                             bookedPlace.setDepartedDate(departureDate.getTime());
                             bookedPlace.setArriveDate(arrivedDate.getTime());
                             bookedPlace.setPlaceId(markerUid);
+                            bookedPlace.setReservation(response.body().getReservation());
                             bookedPlace.setIsBooked(true);
 
                             Preferences.getInstance(context).setBooked(bookedPlace);

@@ -8,9 +8,11 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Dialog;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
@@ -33,6 +35,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -127,6 +130,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         context = (HomeActivity) getActivity();
         initView(view);
         mHandlerTask.run();
+        setBroadcast();
         listener = (FragmentChangeListener) getActivity();
         stopBookingTrackService();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
@@ -148,7 +152,6 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                     String currentDateandTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
                     findDifference(currentDateandTime, sensors.getTimeEnd(), "");
                     findDifference(sensors.getTimeStart(), sensors.getTimeEnd(), "TimeStart");
-
                     String earlyParkingTime = getTimeDifference(getStringDateToMillis(sensors.getTimeStart()) - getStringDateToMillis(sensors.getP_date()) >= 0 ? (getStringDateToMillis(sensors.getTimeStart()) - getStringDateToMillis(sensors.getP_date())) : 0);
                     String extraTime = getTimeDifference(System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd()) > 0 ? (System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd())) : 0);
                     tvEarlyParkingTime.setText("Early Parking Time: " + earlyParkingTime);
@@ -206,6 +209,31 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
 
         super.onResume();
     }
+    private void setBroadcast() {
+        LocalBroadcastManager.getInstance(context).registerReceiver(bookingEndedReceiver,
+                new IntentFilter("booking_ended"));
+    }
+
+    private final BroadcastReceiver bookingEndedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Get extra data included in the Intent
+            String message = intent.getStringExtra("message");
+            if (isAdded() && mMap != null) {
+                try {
+                    Preferences.getInstance(context).clearBooking();
+                    listener.fragmentChange(new HomeFragment());
+                    Timber.e("BroadcastReceiver called");
+                } catch (Exception e) {
+                    e.getCause();
+                }
+            }
+//            if (!ended) {
+//                ended = true;
+//                endBooking();
+//            }
+        }
+    };
 
     private void setListeners() {
         btnMore.setOnClickListener(v -> {
@@ -438,13 +466,16 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
     private void endBooking() {
         showLoading(context);
         String spotUid="";
+        String reservationId="";
         if (mSensors != null) {
             spotUid = mSensors.getSpotId();
+            reservationId = mSensors.getId();
         } else if(sensors!=null) {
             spotUid = sensors.getSpotId();
+            reservationId = sensors.getId();
         }
         ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<CloseReservationResponse> call = request.endReservation(Preferences.getInstance(context).getUser().getMobileNo(), spotUid);
+        Call<CloseReservationResponse> call = request.endReservation(Preferences.getInstance(context).getUser().getMobileNo(), spotUid,reservationId);
         call.enqueue(new Callback<CloseReservationResponse>() {
             @Override
             public void onResponse(@NonNull Call<CloseReservationResponse> call, @NonNull Response<CloseReservationResponse> response) {
@@ -686,4 +717,12 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
             context.startService(intent);
         }
     }
+    private void startBookingExceedService() {
+//        if (isLocationTrackingServiceRunning()) {
+            Intent intent = new Intent(context, BookingService.class);
+            intent.setAction(Constants.BOOKING_EXCEED_CHECK);
+            context.startService(intent);
+//        }
+    }
+
 }

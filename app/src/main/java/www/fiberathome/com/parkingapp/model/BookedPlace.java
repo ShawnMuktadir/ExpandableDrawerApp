@@ -14,6 +14,7 @@ public class BookedPlace implements Parcelable {
     private String parkingSlotCount;
     private boolean isBooked = false;
     private String placeId;
+    private String reservation;
     private long departedDate;
     private long arriveDate;
 
@@ -100,6 +101,15 @@ public class BookedPlace implements Parcelable {
         return arriveDate;
     }
 
+
+    public String getReservation() {
+        return reservation;
+    }
+
+    public void setReservation(String reservation) {
+        this.reservation = reservation;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -113,6 +123,7 @@ public class BookedPlace implements Parcelable {
         dest.writeString(this.route);
         dest.writeString(this.areaName);
         dest.writeString(this.parkingSlotCount);
+        dest.writeString(this.reservation);
         dest.writeByte(this.isBooked ? (byte) 1 : (byte) 0);
         dest.writeString(this.placeId);
         dest.writeDouble(this.departedDate);
@@ -128,6 +139,7 @@ public class BookedPlace implements Parcelable {
         this.parkingSlotCount = source.readString();
         this.isBooked = source.readByte() != 0;
         this.placeId = source.readString();
+        this.reservation = source.readString();
         this.departedDate = source.readLong();
         this.arriveDate = source.readLong();
     }
@@ -141,6 +153,7 @@ public class BookedPlace implements Parcelable {
         this.parkingSlotCount = in.readString();
         this.isBooked = in.readByte() != 0;
         this.placeId = in.readString();
+        this.reservation = in.readString();
         this.departedDate = in.readLong();
         this.arriveDate = in.readLong();
     }
