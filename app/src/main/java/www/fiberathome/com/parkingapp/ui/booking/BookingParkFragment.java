@@ -146,6 +146,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
             mHandler.postDelayed(mHandlerTask, 1000);
         }
     };
+
     public BookingParkFragment() {
         // Required empty public constructor
     }
@@ -246,6 +247,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         LocalBroadcastManager.getInstance(context).registerReceiver(bookingEndedReceiver,
                 new IntentFilter("booking_ended"));
     }
+
     private final BroadcastReceiver bookingEndedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context mContext, Intent intent) {
@@ -253,11 +255,9 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
             String message = intent.getStringExtra("message");
             if (isAdded() && mMap != null) {
                 try {
-//                    Preferences.getInstance(context).clearBooking();
-//                    listener.fragmentChange(new HomeFragment());
                     DialogUtils.getInstance().alertDialog(context,
                             (Activity) context,
-                           "As your reservation time had exceed over 5 mins, your booking has been closed. Thank you.",
+                            "As your reservation time had exceed over 5 mins, your booking has been closed. Thank you.",
                             context.getString(R.string.ok), "",
                             new DialogUtils.DialogClickListener() {
                                 @Override
@@ -276,12 +276,9 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                     e.getCause();
                 }
             }
-//            if (!ended) {
-//                ended = true;
-//                endBooking();
-//            }
         }
     };
+
     private void setListeners() {
         btnMore.setOnClickListener(v -> {
             ScheduleFragment scheduleFragment = new ScheduleFragment();

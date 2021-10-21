@@ -132,15 +132,14 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
             fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Objects.requireNonNull(Looper.myLooper()));
         }
 
-       lat = getIntent().getDoubleExtra("lat", 0.0);
-         lng = getIntent().getDoubleExtra("lng", 0.0);
-         areaName = getIntent().getStringExtra("areaName");
-         count = getIntent().getStringExtra("count");
+        lat = getIntent().getDoubleExtra("lat", 0.0);
+        lng = getIntent().getDoubleExtra("lng", 0.0);
+        areaName = getIntent().getStringExtra("areaName");
+        count = getIntent().getStringExtra("count");
 
         if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
             //initialize home fragment
             getBookingParkStatus(Preferences.getInstance(context).getUser().getMobileNo());
-
             linearLayoutToolbarTime.setVisibility(View.GONE);
             navigationView.getMenu().getItem(0).setChecked(true);
         }
@@ -420,7 +419,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                             BookingParkStatusResponse.Sensors sensors = response.body().getSensors();
                             ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
                                     BookingParkFragment.newInstance(sensors), R.id.nav_host_fragment);
-                        }else{
+                        } else {
                             ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
                                     HomeFragment.newInstance(lat, lng, areaName, count), R.id.nav_host_fragment);
                         }

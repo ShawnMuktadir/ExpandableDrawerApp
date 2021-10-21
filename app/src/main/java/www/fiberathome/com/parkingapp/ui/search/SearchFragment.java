@@ -460,7 +460,9 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
                                     searchVisitorDataList.add(searchVisitorData);
                                     Timber.e("searchVisitorData -> %s", new Gson().toJson(searchVisitorData));
                                 }
-                                setFragmentControls(searchVisitorDataList);
+                                if (isAdded()) {
+                                    setFragmentControls(searchVisitorDataList);
+                                }
                             }
 
                         } else {

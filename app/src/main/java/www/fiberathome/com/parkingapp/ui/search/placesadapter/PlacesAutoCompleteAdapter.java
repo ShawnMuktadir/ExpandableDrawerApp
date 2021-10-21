@@ -307,12 +307,7 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
                         }
 
                         final Handler handler = new Handler();
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                clickListener.onClick(visitorData);
-                            }
-                        }, 100);
+                        handler.postDelayed(() -> clickListener.onClick(visitorData), 100);
                     } else {
                         TastyToastUtils.showTastyWarningToast(mContext, mContext.getResources().getString(R.string.connect_to_internet_gps));
                     }
