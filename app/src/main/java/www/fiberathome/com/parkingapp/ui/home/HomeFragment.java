@@ -608,8 +608,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                 if (mMap == null) {
                     showLoading(context, context.getResources().getString(R.string.please_wait));
-                } else
-                    return;
+                } else {
+                    hideLoading();
+                    //return;
+                }
 
                 if (isServicesOk()) {
                     supportMapFragment = SupportMapFragment.newInstance();
@@ -3426,7 +3428,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     double distance = circle != null ? circle.getRadius() : 70;
                     assert circle != null;
                     Timber.e(String.valueOf(circle.getRadius()));
-                    if (distanceBetween <= distance && (bookedPlace.getArriveDate()- System.currentTimeMillis())<= 300000) {
+                    if (distanceBetween <= distance && (bookedPlace.getArriveDate() - System.currentTimeMillis()) <= 300000) {
                         DialogUtils.getInstance().alertDialog(context,
                                 (Activity) context,
                                 "Your park has been started",
@@ -3573,7 +3575,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     double distance = circle != null ? circle.getRadius() : 70;
                     assert circle != null;
                     Timber.e(String.valueOf(circle.getRadius()));
-                    if (distanceBetween <= distance && (bookedPlace.getArriveDate()- System.currentTimeMillis())<= 300000) {
+                    if (distanceBetween <= distance && (bookedPlace.getArriveDate() - System.currentTimeMillis()) <= 300000) {
                         DialogUtils.getInstance().alertDialog(context,
                                 (Activity) context,
                                 "Your park has been started",
@@ -3709,7 +3711,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     double distance = circle != null ? circle.getRadius() : 70;
                     assert circle != null;
                     Timber.e(String.valueOf(circle.getRadius()));
-                    if (distanceBetween <= distance && (bookedPlace.getArriveDate()- System.currentTimeMillis())<= 300000) {
+                    if (distanceBetween <= distance && (bookedPlace.getArriveDate() - System.currentTimeMillis()) <= 300000) {
                         DialogUtils.getInstance().alertDialog(context,
                                 (Activity) context,
                                 "Your park has been started",
