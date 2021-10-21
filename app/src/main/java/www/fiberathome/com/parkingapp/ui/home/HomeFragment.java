@@ -610,7 +610,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     showLoading(context, context.getResources().getString(R.string.please_wait));
                 } else {
                     hideLoading();
-                    //return;
                 }
 
                 if (isServicesOk()) {
