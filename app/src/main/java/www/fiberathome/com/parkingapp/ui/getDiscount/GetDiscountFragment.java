@@ -1,5 +1,7 @@
 package www.fiberathome.com.parkingapp.ui.getDiscount;
 
+import static android.content.Context.LOCATION_SERVICE;
+
 import android.content.Context;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -15,8 +17,6 @@ import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
-
-import static android.content.Context.LOCATION_SERVICE;
 
 
 public class GetDiscountFragment extends BaseFragment implements IOnBackPressListener {

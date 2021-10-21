@@ -1,5 +1,7 @@
 package www.fiberathome.com.parkingapp.utils;
 
+import static www.fiberathome.com.parkingapp.R.layout.bottom_sheet_dialog_app_update_options;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Application;
@@ -30,8 +32,6 @@ import timber.log.Timber;
 import www.fiberathome.com.parkingapp.BuildConfig;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
-
-import static www.fiberathome.com.parkingapp.R.layout.bottom_sheet_dialog_app_update_options;
 
 public class ForceUpgradeManager implements LifecycleObserver {
 

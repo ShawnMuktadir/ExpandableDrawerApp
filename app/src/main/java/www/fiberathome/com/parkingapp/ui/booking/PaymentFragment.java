@@ -46,7 +46,6 @@ import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
@@ -280,7 +279,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
         Timber.e("startAlarm called");
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, NotificationPublisher.class);
-        intent.putExtra("Started", "Booked Time About to start for :"+ Preferences.getInstance(context).getBooked().getAreaName());
+        intent.putExtra("Started", "Booked Time About to start for : \n"+ Preferences.getInstance(context).getBooked().getAreaName());
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, intent, 0);
         if (c.before(Calendar.getInstance())) {
             c.add(Calendar.DATE, 1);

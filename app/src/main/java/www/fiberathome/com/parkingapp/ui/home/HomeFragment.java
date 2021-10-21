@@ -3863,6 +3863,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 hideLoading();
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
+                        stopBookingTrackService();
                         listener.fragmentChange(new BookingParkFragment());
                     }
                 }

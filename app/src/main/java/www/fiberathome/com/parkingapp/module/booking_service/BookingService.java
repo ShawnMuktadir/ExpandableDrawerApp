@@ -1,8 +1,9 @@
 package www.fiberathome.com.parkingapp.module.booking_service;
 
+import static www.fiberathome.com.parkingapp.model.data.Constants.BOOKING_SERVICE_ID;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -22,7 +23,6 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -40,7 +40,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -55,13 +54,8 @@ import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.Constants;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.booking.CloseReservationResponse;
-import www.fiberathome.com.parkingapp.model.response.booking.ReservationCancelResponse;
-import www.fiberathome.com.parkingapp.module.notification.NotificationPublisher;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
-import www.fiberathome.com.parkingapp.utils.ToastUtils;
-
-import static www.fiberathome.com.parkingapp.model.data.Constants.BOOKING_SERVICE_ID;
 
 public class BookingService extends Service {
 
@@ -78,6 +72,9 @@ public class BookingService extends Service {
     private CountDownTimer countDownTimer;
     private NotificationManager notificationManager;
     private NotificationCompat.Builder mBuilder;
+    private boolean exceedServiceStarted = false;
+    private boolean isExceedRunned = false;
+    private boolean warringShowed = false;
 
     @Nullable
     @Override
@@ -87,16 +84,21 @@ public class BookingService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
+        context = getApplicationContext();
         String action = intent.getAction();
         if (action != null) {
             if (action.equals(Constants.START_BOOKING_TRACKING)) {
                 //startTrackingLocation();
-                context = getApplicationContext();
 //                startAlarm(convertLongToCalendar(Preferences.getInstance(context).getBooked().getArriveDate()));
                 mHandlerTask.run();
-            } else if (action.equals(Constants.STOP_BOOKING_TRACKING)) {
+            }
+            else if (action.equals(Constants.STOP_BOOKING_TRACKING)) {
                if(isRunning)
                    stopTrackingLocation();
+            }
+            else if(action.equals(Constants.BOOKING_EXCEED_CHECK)){
+                exceedHandlerTask.run();
             }
         }
         return super.onStartCommand(intent, flags, startId);
@@ -110,6 +112,22 @@ public class BookingService extends Service {
             startForeground(BOOKING_SERVICE_ID, mBuilder.build());
             findDifference(getDate(Preferences.getInstance(context).getBooked().getArriveDate()), getDate(Preferences.getInstance(context).getBooked().getDepartedDate()));
         }
+    }
+    private void startExceedTimeTracking() {
+       if(!isExceedRunned) {
+           notificationCaller(Constants.NOTIFICATION_CHANNEL_EXCEED_BOOKING, "Car Parked", 3);
+           startForeground(Constants.BOOKING_Exceed_SERVICE_ID, mBuilder.build());
+           isExceedRunned = true;
+       }
+       if(!warringShowed && new Date().getTime()>=Preferences.getInstance(context).getBooked().getDepartedDate()){
+           warringShowed = true;
+           sendNotification("Booked Time","Parking Duration About To End",false);
+       }
+
+        if(new Date().getTime()>=Preferences.getInstance(context).getBooked().getDepartedDate()+300000){
+            isExceedRunning = true;
+            endBooking();
+         }
     }
 
     private void notificationCaller(String NOTIFICATION_CHANNEL_ID, String msg, int requestCode) {
@@ -180,7 +198,9 @@ public class BookingService extends Service {
         mHandler.removeCallbacks(mHandlerTask);
         isRunning = false;
         fusedLocationProviderClient.removeLocationUpdates(locationCallback);
-        countDownTimer.cancel();
+       if(countDownTimer!=null){
+           countDownTimer.cancel();
+        }
         stopForeground(true);
         stopSelf();
     }
@@ -193,7 +213,7 @@ public class BookingService extends Service {
                 previousBestLocation = locationResult.getLastLocation();
                 double latitude = locationResult.getLastLocation().getLatitude();
                 double longitude = locationResult.getLastLocation().getLongitude();
-                Log.d(TAG, "LocationResult- lat" + latitude + " -lon" + longitude);
+                Timber.d("LocationResult- lat" + latitude + " -lon" + longitude);
                 sendLocationUpdate(locationResult.getLastLocation());
             }
         }
@@ -259,6 +279,7 @@ public class BookingService extends Service {
     }
 
     Handler mHandler = new Handler();
+    Handler exceedHandler = new Handler();
     Runnable mHandlerTask = new Runnable() {
         @Override
         public void run() {
@@ -266,6 +287,17 @@ public class BookingService extends Service {
                 startTrackingLocation();
             }
             mHandler.postDelayed(mHandlerTask, BOOKING_CHECK_DELAY);
+        }
+    };
+
+    private boolean isExceedRunning = false;
+    private Runnable exceedHandlerTask = new Runnable() {
+        @Override
+        public void run() {
+            if (!isExceedRunning) {
+                startExceedTimeTracking();
+            }
+            exceedHandler.postDelayed(exceedHandlerTask, BOOKING_CHECK_DELAY);
         }
     };
 
@@ -308,7 +340,7 @@ public class BookingService extends Service {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         Preferences.getInstance(context).clearBooking();
-                        sendNotification("Booked Time", "Your Booked Parking Duration Has Ended");
+                        sendNotification("Booked Time", "Your Booked Parking Duration Has Ended",true);
                         Timber.e("Booking closed");
 
                     }
@@ -328,8 +360,7 @@ public class BookingService extends Service {
 
         // SimpleDateFormat converts the
         // string format to date object
-        SimpleDateFormat sdf
-                = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
         // try Block
         try {
@@ -405,9 +436,7 @@ public class BookingService extends Service {
 
     private String getDate(long milliSeconds) {
         // Create a DateFormatter object for displaying date in specified format.
-        SimpleDateFormat formatter
-                = new SimpleDateFormat(
-                "dd-MM-yyyy HH:mm:ss");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         // Create a calendar object that will convert the date and time value in milliseconds to date.
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(milliSeconds);
@@ -415,16 +444,14 @@ public class BookingService extends Service {
     }
     private String getDate2(long milliSeconds) {
         // Create a DateFormatter object for displaying date in specified format.
-        SimpleDateFormat formatter
-                = new SimpleDateFormat(
-                "dd-MM-yyyy HH:mm");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         // Create a calendar object that will convert the date and time value in milliseconds to date.
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(milliSeconds);
         return formatter.format(calendar.getTime());
     }
     @SuppressWarnings("SameParameterValue")
-    private void sendNotification(String title, String content) {
+    private void sendNotification(String title, String content,boolean close) {
         String NOTIFICATION_CHANNEL_ID = "Shawn_Muktadir";
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -453,8 +480,10 @@ public class BookingService extends Service {
         if (notificationManager != null) {
             notificationManager.notify(new Random().nextInt(), notification);
         }
-        closeBooking();
-        stopTrackingLocation();
+       if(close) {
+           closeBooking();
+           stopTrackingLocation();
+       }
     }
     private void closeBooking() {
         Intent intent = new Intent("booking_ended");

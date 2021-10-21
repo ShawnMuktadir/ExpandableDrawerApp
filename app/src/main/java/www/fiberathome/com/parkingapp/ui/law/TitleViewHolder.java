@@ -1,5 +1,7 @@
 package www.fiberathome.com.parkingapp.ui.law;
 
+import static android.view.animation.Animation.RELATIVE_TO_SELF;
+
 import android.view.View;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
@@ -9,8 +11,6 @@ import com.thoughtbot.expandablerecyclerview.viewholders.GroupViewHolder;
 
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.response.law.LawItem;
-
-import static android.view.animation.Animation.RELATIVE_TO_SELF;
 
 /*
  * Copyright (C) 2018 Levi Rizki Saputra (levirs565@gmail.com).
