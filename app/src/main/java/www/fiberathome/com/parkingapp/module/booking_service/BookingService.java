@@ -123,7 +123,7 @@ public class BookingService extends Service {
             sendNotification("Booked Time", "Parking Duration About To End", false);
         }
 
-        if (new Date().getTime() >= Preferences.getInstance(context).getBooked().getDepartedDate() + 120000) {
+        if (new Date().getTime() >= Preferences.getInstance(context).getBooked().getDepartedDate() + 300000) {
             isExceedRunning = true;
             if (Preferences.getInstance(context).getBooked().getIsBooked())
                 endBooking();
