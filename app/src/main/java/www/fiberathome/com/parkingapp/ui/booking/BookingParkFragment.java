@@ -86,6 +86,9 @@ import www.fiberathome.com.parkingapp.utils.MathUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 public class BookingParkFragment extends BaseFragment implements OnMapReadyCallback {
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+    public static BookingParkStatusResponse.Sensors sensors;
+    Handler mHandler = new Handler();
     private long arrived, departure;
     private TextView tvArrivedTime, tvDepartureTime, tvTimeDifference, tvTermsCondition, tvParkingAreaName, tvCountDown, tvEarlyParkingTime, tvExtraParkingTime;
     private long difference;
@@ -95,17 +98,54 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
     private FragmentChangeListener listener;
     private CountDownTimer countDownTimer;
     private Chronometer chronometer;
-
     private GoogleMap mMap;
     private SupportMapFragment supportMapFragment;
     private LocationRequest mLocationRequest;
     private Location mLastLocation;
     private Marker mCurrLocationMarker;
+    LocationCallback mLocationCallback = new LocationCallback() {
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+            List<Location> locationList = locationResult.getLocations();
+            if (locationList.size() > 0) {
+                //The last location in the list is the newest
+                Location location = locationList.get(locationList.size() - 1);
+                mLastLocation = location;
+                if (mCurrLocationMarker != null) {
+                    mCurrLocationMarker.remove();
+                }
+
+                //move map camera
+                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(latLng.latitude, latLng.longitude)).zoom(13.5f).build();
+                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            }
+        }
+    };
     private FusedLocationProviderClient mFusedLocationClient;
-    public static BookingParkStatusResponse.Sensors sensors;
     private HomeActivity context;
     private BookingParkStatusResponse.Sensors mSensors;
+    Runnable mHandlerTask = new Runnable() {
+        @Override
+        public void run() {
+            if (mSensors != null) {
+                String extraTime = getTimeDifference(System.currentTimeMillis() - getStringDateToMillis(mSensors.getTimeEnd()) > 0 ? (System.currentTimeMillis() - getStringDateToMillis(mSensors.getTimeEnd())) : 0);
+                tvExtraParkingTime.setText("Exceed Parking Time: " + extraTime);
 
+                if (System.currentTimeMillis() - getStringDateToMillis(mSensors.getTimeEnd()) >= 0) {
+                    tvExtraParkingTime.setTextColor(context.getResources().getColor(R.color.red));
+                }
+            } else if (sensors != null) {
+                String extraTime = getTimeDifference(System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd()) > 0 ? (System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd())) : 0);
+                tvExtraParkingTime.setText("Exceed Parking Time: " + extraTime);
+
+                if (System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd()) >= 0) {
+                    tvExtraParkingTime.setTextColor(context.getResources().getColor(R.color.red));
+                }
+            }
+            mHandler.postDelayed(mHandlerTask, 1000);
+        }
+    };
     public BookingParkFragment() {
         // Required empty public constructor
     }
@@ -132,9 +172,8 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         mHandlerTask.run();
         setBroadcast();
         listener = (FragmentChangeListener) getActivity();
-        stopBookingTrackService();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
-
+        startBookingExceedService();
         if (isServicesOk()) {
             supportMapFragment = SupportMapFragment.newInstance();
 
@@ -167,7 +206,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                 } else {
                     //from HomeFragment
 
-                    if(ConnectivityUtils.getInstance().checkInternet(context)) {
+                    if (ConnectivityUtils.getInstance().checkInternet(context)) {
                         getBookingParkStatus(Preferences.getInstance(context).getUser().getMobileNo());
                     }
                 }
@@ -180,49 +219,58 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         setListeners();
     }
 
-    Handler mHandler = new Handler();
-    Runnable mHandlerTask = new Runnable() {
-        @Override
-        public void run() {
-            if (mSensors != null) {
-                String extraTime = getTimeDifference(System.currentTimeMillis() - getStringDateToMillis(mSensors.getTimeEnd()) > 0 ? (System.currentTimeMillis() - getStringDateToMillis(mSensors.getTimeEnd())) : 0);
-                tvExtraParkingTime.setText("Exceed Parking Time: " + extraTime);
-
-                if (System.currentTimeMillis() - getStringDateToMillis(mSensors.getTimeEnd()) >= 0) {
-                    tvExtraParkingTime.setTextColor(context.getResources().getColor(R.color.red));
-                }
-            } else if (sensors != null) {
-                String extraTime = getTimeDifference(System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd()) > 0 ? (System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd())) : 0);
-                tvExtraParkingTime.setText("Exceed Parking Time: " + extraTime);
-
-                if (System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd()) >= 0) {
-                    tvExtraParkingTime.setTextColor(context.getResources().getColor(R.color.red));
-                }
-            }
-            mHandler.postDelayed(mHandlerTask, 1000);
-        }
-    };
-
     @Override
     public void onResume() {
-
-
         super.onResume();
+
+//        if(!Preferences.getInstance(context).getBooked().getIsBooked()) {
+//            DialogUtils.getInstance().alertDialog(context,
+//                    (Activity) context,
+//                    "As your reservation time had exceed over 5 mins, your booking has been closed. Thank you.",
+//                    context.getString(R.string.ok), "",
+//                    new DialogUtils.DialogClickListener() {
+//                        @Override
+//                        public void onPositiveClick() {
+//                            Timber.e("Positive Button clicked");
+//                            listener.fragmentChange(new HomeFragment());
+//                        }
+//
+//                        @Override
+//                        public void onNegativeClick() {
+//                        }
+//                    }).show();
+//        }
     }
+
     private void setBroadcast() {
         LocalBroadcastManager.getInstance(context).registerReceiver(bookingEndedReceiver,
                 new IntentFilter("booking_ended"));
     }
-
     private final BroadcastReceiver bookingEndedReceiver = new BroadcastReceiver() {
         @Override
-        public void onReceive(Context context, Intent intent) {
+        public void onReceive(Context mContext, Intent intent) {
             // Get extra data included in the Intent
             String message = intent.getStringExtra("message");
             if (isAdded() && mMap != null) {
                 try {
-                    Preferences.getInstance(context).clearBooking();
-                    listener.fragmentChange(new HomeFragment());
+//                    Preferences.getInstance(context).clearBooking();
+//                    listener.fragmentChange(new HomeFragment());
+                    DialogUtils.getInstance().alertDialog(context,
+                            (Activity) context,
+                           "As your reservation time had exceed over 5 mins, your booking has been closed. Thank you.",
+                            context.getString(R.string.ok), "",
+                            new DialogUtils.DialogClickListener() {
+                                @Override
+                                public void onPositiveClick() {
+                                    Timber.e("Positive Button clicked");
+                                    Preferences.getInstance(context).clearBooking();
+                                    listener.fragmentChange(new HomeFragment());
+                                }
+
+                                @Override
+                                public void onNegativeClick() {
+                                }
+                            }).show();
                     Timber.e("BroadcastReceiver called");
                 } catch (Exception e) {
                     e.getCause();
@@ -234,7 +282,6 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
 //            }
         }
     };
-
     private void setListeners() {
         btnMore.setOnClickListener(v -> {
             ScheduleFragment scheduleFragment = new ScheduleFragment();
@@ -247,7 +294,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         });
 
         btnCarDeparture.setOnClickListener(v -> {
-            if(ConnectivityUtils.getInstance().checkInternet(context)) {
+            if (ConnectivityUtils.getInstance().checkInternet(context)) {
                 endBooking();
             }
         });
@@ -319,29 +366,6 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         mMap.getUiSettings().setMyLocationButtonEnabled(false);
     }
 
-    LocationCallback mLocationCallback = new LocationCallback() {
-        @Override
-        public void onLocationResult(LocationResult locationResult) {
-            List<Location> locationList = locationResult.getLocations();
-            if (locationList.size() > 0) {
-                //The last location in the list is the newest
-                Location location = locationList.get(locationList.size() - 1);
-                mLastLocation = location;
-                if (mCurrLocationMarker != null) {
-                    mCurrLocationMarker.remove();
-                }
-
-                //move map camera
-                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(latLng.latitude, latLng.longitude)).zoom(13.5f).build();
-                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-            }
-        }
-    };
-
-
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
-
     private void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -379,7 +403,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
@@ -414,9 +438,9 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
     public void onDestroy() {
         super.onDestroy();
         if (isAdded()) {
-           if(countDownTimer!=null){
-               countDownTimer.cancel();
-           }
+            if (countDownTimer != null) {
+                countDownTimer.cancel();
+            }
             mHandler.removeCallbacks(mHandlerTask);
         }
     }
@@ -465,22 +489,22 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
 
     private void endBooking() {
         showLoading(context);
-        String spotUid="";
-        String reservationId="";
+        String spotUid = "";
+        String reservationId = "";
         if (mSensors != null) {
             spotUid = mSensors.getSpotId();
             reservationId = mSensors.getId();
-        } else if(sensors!=null) {
+        } else if (sensors != null) {
             spotUid = sensors.getSpotId();
             reservationId = sensors.getId();
         }
         ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<CloseReservationResponse> call = request.endReservation(Preferences.getInstance(context).getUser().getMobileNo(), spotUid,reservationId);
+        Call<CloseReservationResponse> call = request.endReservation(Preferences.getInstance(context).getUser().getMobileNo(), spotUid, reservationId);
         call.enqueue(new Callback<CloseReservationResponse>() {
             @Override
             public void onResponse(@NonNull Call<CloseReservationResponse> call, @NonNull Response<CloseReservationResponse> response) {
                 hideLoading();
-                if (isAdded()&&countDownTimer!=null) {
+                if (isAdded() && countDownTimer != null) {
                     countDownTimer.cancel();
                 }
                 sensors = null;
@@ -509,7 +533,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
             @Override
             public void onFailure(@NonNull Call<CloseReservationResponse> call, @NonNull Throwable t) {
                 Timber.e("onFailure -> %s", t.getMessage());
-                if (isAdded()&&countDownTimer!=null) {
+                if (isAdded() && countDownTimer != null) {
                     countDownTimer.cancel();
                 }
                 hideLoading();
@@ -717,12 +741,13 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
             context.startService(intent);
         }
     }
+
     private void startBookingExceedService() {
-//        if (isLocationTrackingServiceRunning()) {
+        if (!isLocationTrackingServiceRunning()) {
             Intent intent = new Intent(context, BookingService.class);
             intent.setAction(Constants.BOOKING_EXCEED_CHECK);
             context.startService(intent);
-//        }
+        }
     }
 
 }

@@ -1,5 +1,7 @@
 package www.fiberathome.com.parkingapp.ui.search.placesadapter;
 
+import static android.content.Context.LOCATION_SERVICE;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
@@ -49,8 +51,6 @@ import www.fiberathome.com.parkingapp.ui.parking.EmptyViewHolder;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
-
-import static android.content.Context.LOCATION_SERVICE;
 
 public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
