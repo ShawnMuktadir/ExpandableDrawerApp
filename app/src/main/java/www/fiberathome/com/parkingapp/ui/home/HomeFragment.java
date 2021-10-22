@@ -11,7 +11,6 @@ import static www.fiberathome.com.parkingapp.utils.GoogleMapHelper.getDefaultPol
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.Dialog;
@@ -143,6 +142,7 @@ import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.base.ParkingApp;
+import www.fiberathome.com.parkingapp.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.model.BookedPlace;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
@@ -170,7 +170,6 @@ import www.fiberathome.com.parkingapp.service.googleService.directionModules.Dir
 import www.fiberathome.com.parkingapp.service.googleService.directionModules.DirectionFinderListener;
 import www.fiberathome.com.parkingapp.service.notification.NotificationPublisher;
 import www.fiberathome.com.parkingapp.ui.booking.BookingParkFragment;
-import www.fiberathome.com.parkingapp.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.ui.bottomSheet.BottomSheetAdapter;
 import www.fiberathome.com.parkingapp.ui.bottomSheet.CustomLinearLayoutManager;
 import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
@@ -939,7 +938,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             } else {
                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
             }
-        } catch (Exception e) {
+        } catch (Resources.NotFoundException e) {
             e.getCause();
         }
 
@@ -999,7 +998,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_gps));
                 }
             }
-        } catch (Exception e) {
+        } catch (Resources.NotFoundException e) {
             e.getCause();
         }
 
@@ -1050,13 +1049,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             checkParkingSpotDistance(latLng, markerClicked.getPosition());
         } else if (parkingSpotLatLng != null) {
             checkParkingSpotDistance(latLng, parkingSpotLatLng);
-        }
-        /*else if (bottomSheetPlaceLatLng != null) {
-            checkParkingSpotDistance(latLng, bottomSheetPlaceLatLng);
-        } else if (searchPlaceLatLng != null) {
-            checkParkingSpotDistance(latLng, searchPlaceLatLng);
-        } */
-        else if (Preferences.getInstance(context).getBooked() != null && Preferences.getInstance(context).getBooked().getIsBooked()) {
+        } else if (Preferences.getInstance(context).getBooked() != null && Preferences.getInstance(context).getBooked().getIsBooked()) {
             if (mMap != null) {
                 checkParkingSpotDistance(latLng, new LatLng(Preferences.getInstance(context).getBooked().getLat(),
                         Preferences.getInstance(context).getBooked().getLon()));
@@ -1299,7 +1292,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                 buttonSearch.setVisibility(View.GONE);
                 linearLayoutBottom.setVisibility(View.VISIBLE);
-                //linearLayoutSearchBottomButton.setVisibility(View.VISIBLE);
                 btnGetDirection.setVisibility(View.VISIBLE);
                 btnGetDirection.setEnabled(true);
                 imageViewBack.setVisibility(View.VISIBLE);
@@ -1385,7 +1377,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                 buttonSearch.setVisibility(View.GONE);
                 linearLayoutBottom.setVisibility(View.VISIBLE);
-                //linearLayoutSearchBottomButton.setVisibility(View.VISIBLE);
                 btnGetDirection.setVisibility(View.VISIBLE);
                 btnGetDirection.setEnabled(true);
                 imageViewBack.setVisibility(View.VISIBLE);
