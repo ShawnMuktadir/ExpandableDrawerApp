@@ -113,20 +113,25 @@ public class BookingService extends Service {
     }
 
     private void startExceedTimeTracking() {
+        //service starts when car is on parking spot and user clicks on park button
         if (!isExceedRunned) {
+            Timber.e("car parked");
             notificationCaller(Constants.NOTIFICATION_CHANNEL_EXCEED_BOOKING, "Car Parked", 3);
             startForeground(Constants.BOOKING_Exceed_SERVICE_ID, mBuilder.build());
             isExceedRunned = true;
         }
+        //executes when booking time ends
         if (!warringShowed && new Date().getTime() >= Preferences.getInstance(context).getBooked().getDepartedDate()) {
             warringShowed = true;
             sendNotification("Booked Time", "Parking Duration About To End", false);
+            Timber.e("car Parking Duration End -> %s %s", new Date().getTime(), Preferences.getInstance(context).getBooked().getDepartedDate());
         }
-
-        if (new Date().getTime() >= Preferences.getInstance(context).getBooked().getDepartedDate() + 300000) {
+        //executes after 5 mins of departure booking time
+        if (new Date().getTime() >= Preferences.getInstance(context).getBooked().getDepartedDate() + 120000) {
             isExceedRunning = true;
             if (Preferences.getInstance(context).getBooked().getIsBooked())
                 endBooking();
+            Timber.e("car Parking time exceed 5 min -> %s %s", new Date().getTime(), Preferences.getInstance(context).getBooked().getDepartedDate() + 300000);
         }
     }
 

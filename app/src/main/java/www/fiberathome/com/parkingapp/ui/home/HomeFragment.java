@@ -1272,7 +1272,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         Timber.e("onResume called");
         super.onResume();
         isBooked = Preferences.getInstance(context).getBooked().getIsBooked();
-        if (!isBooked) {
+        if (!isBooked && searchPlaceLatLng == null) {
             commonBackOperation();
         }
         if (isAdded())
@@ -3149,7 +3149,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        //Timber.e("clickEventJsonArray for loop sesh hoiche");
                     }
                     getDirectionPinMarkerDraw(bottomSheetPlaceLatLng, bottomUid);
                 }

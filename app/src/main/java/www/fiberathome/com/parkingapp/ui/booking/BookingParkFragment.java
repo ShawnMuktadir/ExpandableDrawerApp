@@ -333,13 +333,13 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
             LatLng bookedLocation = new LatLng(MathUtils.getInstance().convertToDouble(mSensors.getLatitude()), MathUtils.getInstance().convertToDouble(mSensors.getLongitude()));
             mMap.addMarker(new MarkerOptions()
                     .position(bookedLocation)
-                    .title("Departure Location")
+                    .title("Car Parked Location")
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_car_running)));
         } else if (sensors != null) {
             LatLng bookedLocation = new LatLng(MathUtils.getInstance().convertToDouble(sensors.getLatitude()), MathUtils.getInstance().convertToDouble(sensors.getLongitude()));
             mMap.addMarker(new MarkerOptions()
                     .position(bookedLocation)
-                    .title("Departure Location")
+                    .title("Car Parked Location")
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_car_running)));
         }
     }
