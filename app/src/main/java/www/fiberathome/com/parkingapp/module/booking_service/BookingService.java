@@ -23,6 +23,7 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -56,6 +57,7 @@ import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.booking.CloseReservationResponse;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
+import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 public class BookingService extends Service {
 
@@ -116,6 +118,7 @@ public class BookingService extends Service {
         //service starts when car is on parking spot and user clicks on park button
         if (!isExceedRunned) {
             Timber.e("car parked");
+//            Toast.makeText(context, "car parked", Toast.LENGTH_LONG).show();
             notificationCaller(Constants.NOTIFICATION_CHANNEL_EXCEED_BOOKING, "Car Parked", 3);
             startForeground(Constants.BOOKING_Exceed_SERVICE_ID, mBuilder.build());
             isExceedRunned = true;
@@ -123,12 +126,14 @@ public class BookingService extends Service {
         //executes when booking time ends
         if (!warringShowed && new Date().getTime() >= Preferences.getInstance(context).getBooked().getDepartedDate()) {
             warringShowed = true;
+//            Toast.makeText(context, "car Parking Duration End:"+ new Date().getTime()+"," +Preferences.getInstance(context).getBooked().getDepartedDate(), Toast.LENGTH_LONG).show();
             sendNotification("Booked Time", "Parking Duration About To End", false);
             Timber.e("car Parking Duration End -> %s %s", new Date().getTime(), Preferences.getInstance(context).getBooked().getDepartedDate());
         }
         //executes after 5 mins of departure booking time
-        if (new Date().getTime() >= Preferences.getInstance(context).getBooked().getDepartedDate() + 120000) {
+        if (new Date().getTime() >= (Preferences.getInstance(context).getBooked().getDepartedDate() + 300000)) {
             isExceedRunning = true;
+//            Toast.makeText(context, "car Parking time exceed 5 min: "+ new Date().getTime()+"," +(Preferences.getInstance(context).getBooked().getDepartedDate()+ 120000), Toast.LENGTH_LONG).show();
             if (Preferences.getInstance(context).getBooked().getIsBooked())
                 endBooking();
             Timber.e("car Parking time exceed 5 min -> %s %s", new Date().getTime(), Preferences.getInstance(context).getBooked().getDepartedDate() + 300000);
