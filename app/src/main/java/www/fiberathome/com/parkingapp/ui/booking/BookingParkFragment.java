@@ -174,7 +174,6 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         setBroadcast();
         listener = (FragmentChangeListener) getActivity();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
-        startBookingExceedService();
         if (isServicesOk()) {
             supportMapFragment = SupportMapFragment.newInstance();
 
@@ -186,6 +185,8 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                 supportMapFragment.getMapAsync(this);
                 if (sensors != null) {
                     //from HomeActivity
+
+                    startBookingExceedService(getStringDateToMillis(sensors.getTimeEnd()));
                     tvArrivedTime.setText("Booking Time: " + sensors.getTimeStart());
                     tvDepartureTime.setText("Departure Time: " + sensors.getTimeEnd());
                     tvParkingAreaName.setText(sensors.getParkingArea());
@@ -255,6 +256,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
             String message = intent.getStringExtra("message");
             if (isAdded() && mMap != null) {
                 try {
+                    mHandler.removeCallbacks(mHandlerTask);
                     DialogUtils.getInstance().alertDialog(context,
                             (Activity) context,
                             "As your reservation time had exceed over 5 mins, your booking has been closed. Thank you.",
@@ -552,6 +554,8 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                     if (response.body() != null) {
                         mSensors = response.body().getSensors();
                         if (mSensors != null) {
+
+                            startBookingExceedService(getStringDateToMillis(mSensors.getTimeEnd()));
                             tvArrivedTime.setText("Booking Time: " + mSensors.getTimeStart());
                             tvDepartureTime.setText("Departure Time: " + mSensors.getTimeEnd());
                             tvParkingAreaName.setText(mSensors.getParkingArea());
@@ -739,9 +743,10 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         }
     }
 
-    private void startBookingExceedService() {
+    private void startBookingExceedService(long departureDate) {
         if (!isLocationTrackingServiceRunning()) {
             Intent intent = new Intent(context, BookingService.class);
+            intent.putExtra("departureDate",departureDate);
             intent.setAction(Constants.BOOKING_EXCEED_CHECK);
             context.startService(intent);
         }

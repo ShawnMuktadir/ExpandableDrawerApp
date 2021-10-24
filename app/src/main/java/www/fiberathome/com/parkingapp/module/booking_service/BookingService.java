@@ -77,6 +77,9 @@ public class BookingService extends Service {
     private boolean exceedServiceStarted = false;
     private boolean isExceedRunned = false;
     private boolean warringShowed = false;
+    private long departureDate;
+    private long exceedTime = 120000;
+
 
     @Nullable
     @Override
@@ -98,6 +101,7 @@ public class BookingService extends Service {
                 if (isRunning)
                     stopTrackingLocation();
             } else if (action.equals(Constants.BOOKING_EXCEED_CHECK)) {
+                departureDate = intent.getLongExtra("departureDate",0);
                 exceedHandlerTask.run();
             }
         }
@@ -118,22 +122,22 @@ public class BookingService extends Service {
         //service starts when car is on parking spot and user clicks on park button
         if (!isExceedRunned) {
             Timber.e("car parked");
-//            Toast.makeText(context, "car parked", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "car parked", Toast.LENGTH_LONG).show();
             notificationCaller(Constants.NOTIFICATION_CHANNEL_EXCEED_BOOKING, "Car Parked", 3);
             startForeground(Constants.BOOKING_Exceed_SERVICE_ID, mBuilder.build());
             isExceedRunned = true;
         }
         //executes when booking time ends
-        if (!warringShowed && new Date().getTime() >= Preferences.getInstance(context).getBooked().getDepartedDate()) {
+        if (!warringShowed && new Date().getTime() >= departureDate) {
             warringShowed = true;
-//            Toast.makeText(context, "car Parking Duration End:"+ new Date().getTime()+"," +Preferences.getInstance(context).getBooked().getDepartedDate(), Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "car Parking Duration End:"+ new Date().getTime()+"," +Preferences.getInstance(context).getBooked().getDepartedDate(), Toast.LENGTH_LONG).show();
             sendNotification("Booked Time", "Parking Duration About To End", false);
             Timber.e("car Parking Duration End -> %s %s", new Date().getTime(), Preferences.getInstance(context).getBooked().getDepartedDate());
         }
         //executes after 5 mins of departure booking time
-        if (new Date().getTime() >= (Preferences.getInstance(context).getBooked().getDepartedDate() + 300000)) {
+        if (new Date().getTime() >= (departureDate + exceedTime)) {
             isExceedRunning = true;
-//            Toast.makeText(context, "car Parking time exceed 5 min: "+ new Date().getTime()+"," +(Preferences.getInstance(context).getBooked().getDepartedDate()+ 120000), Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "car Parking time exceed 5 min: "+ new Date().getTime()+"," +(Preferences.getInstance(context).getBooked().getDepartedDate()+ 120000), Toast.LENGTH_LONG).show();
             if (Preferences.getInstance(context).getBooked().getIsBooked())
                 endBooking();
             Timber.e("car Parking time exceed 5 min -> %s %s", new Date().getTime(), Preferences.getInstance(context).getBooked().getDepartedDate() + 300000);
