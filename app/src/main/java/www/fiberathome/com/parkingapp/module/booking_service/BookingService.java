@@ -97,7 +97,7 @@ public class BookingService extends Service {
                 //startTrackingLocation();
                 mHandlerTask.run();
             } else if (action.equals(Constants.STOP_BOOKING_TRACKING)) {
-                if (isRunning)
+//                if (isRunning)
                     stopTrackingLocation();
             } else if (action.equals(Constants.BOOKING_EXCEED_CHECK)) {
                 departureDate = intent.getLongExtra("departureDate", 0);
@@ -132,16 +132,17 @@ public class BookingService extends Service {
             Toast.makeText(context, "car Parking Duration End:" + new Date().getTime() + "," + departureDate, Toast.LENGTH_LONG).show();
             warringShowed = true;
             sendNotification("Booked Time", "Parking Duration About To End", false);
+            startCountDown((exceedTime-(new Date().getTime()-departureDate))>=0?(exceedTime-(new Date().getTime()-departureDate)):0,true);
         }
         //executes after 5 mins of departure booking time
-        if (new Date().getTime() >= departureDate + exceedTime) {
-            Timber.e("car Parking time exceed 5 min -> %s %s", new Date().getTime(), departureDate + exceedTime);
-            Toast.makeText(context, "car Parking time exceed 5 min: " + new Date().getTime() + "," + (departureDate + exceedTime), Toast.LENGTH_LONG).show();
-            isExceedRunning = true;
-            if (Preferences.getInstance(context).getBooked().getIsBooked()) {
-                endBooking();
-            }
-        }
+//        if (new Date().getTime() >= departureDate + exceedTime) {
+//            Timber.e("car Parking time exceed 5 min -> %s %s", new Date().getTime(), departureDate + exceedTime);
+//            Toast.makeText(context, "car Parking time exceed 5 min: " + new Date().getTime() + "," + (departureDate + exceedTime), Toast.LENGTH_LONG).show();
+//            isExceedRunning = true;
+//            if (Preferences.getInstance(context).getBooked().getIsBooked()) {
+//                endBooking();
+//            }
+//        }
     }
 
     private void notificationCaller(String NOTIFICATION_CHANNEL_ID, String msg, int requestCode) {
@@ -316,7 +317,7 @@ public class BookingService extends Service {
     };
 
     @SuppressLint("SetTextI18n")
-    private void startCountDown(long timerMilliDifference) {
+    private void startCountDown(long timerMilliDifference,boolean exceedCounter) {
         countDownTimer = new CountDownTimer(timerMilliDifference, 1000) {
             @SuppressLint("DefaultLocale")
             public void onTick(long millisUntilFinished) {
@@ -329,9 +330,16 @@ public class BookingService extends Service {
                         .setVibrate(null);
                 // Because the ID remains unchanged, the existing notification is
                 // updated.
-                notificationManager.notify(
-                        BOOKING_SERVICE_ID,  // <-- Place your notification id here
-                        mBuilder.build());
+              if(exceedCounter){
+                  notificationManager.notify(
+                          Constants.BOOKING_Exceed_SERVICE_ID,  // <-- Place your notification id here
+                          mBuilder.build());
+              }
+              else{
+                  notificationManager.notify(
+                          BOOKING_SERVICE_ID,  // <-- Place your notification id here
+                          mBuilder.build());
+              }
             }
 
             public void onFinish() {
@@ -424,7 +432,7 @@ public class BookingService extends Service {
                 // years, in days, in hours, in
                 // minutes, and in seconds
                 //tvTimeDifference.setText(difference_In_Hours + " hr " + difference_In_Minutes + " min " + difference_In_Seconds + " sec");
-                startCountDown(difference_In_Time);
+                startCountDown(difference_In_Time,false);
 
                 System.out.print(
                         "Difference "
