@@ -100,7 +100,7 @@ public class BookingService extends Service {
 //                if (isRunning)
                     stopTrackingLocation();
             } else if (action.equals(Constants.BOOKING_EXCEED_CHECK)) {
-                departureDate = intent.getLongExtra("departureDate", 0);
+                departureDate = Preferences.getInstance(context).getBooked().getDepartedDate();
                 exceedHandlerTask.run();
             }
         }

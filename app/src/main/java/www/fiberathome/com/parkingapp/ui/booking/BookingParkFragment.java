@@ -193,8 +193,10 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                     String currentDateandTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
                     findDifference(currentDateandTime, sensors.getTimeEnd(), "");
                     findDifference(sensors.getTimeStart(), sensors.getTimeEnd(), "TimeStart");
-                    String earlyParkingTime = getTimeDifference(getStringDateToMillis(sensors.getTimeStart()) - getStringDateToMillis(sensors.getP_date()) >= 0 ? (getStringDateToMillis(sensors.getTimeStart()) - getStringDateToMillis(sensors.getP_date())) : 0);
-                    String extraTime = getTimeDifference(System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd()) > 0 ? (System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd())) : 0);
+                    String extraTime;
+                    String earlyParkingTime;
+                    earlyParkingTime  = getTimeDifference(getStringDateToMillis(sensors.getTimeStart()) - getStringDateToMillis(sensors.getP_date()) >= 0 ? (getStringDateToMillis(sensors.getTimeStart()) - getStringDateToMillis(sensors.getP_date())) : 0);
+                    extraTime = getTimeDifference(System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd()) > 0 ? (System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd())) : 0);
                     tvEarlyParkingTime.setText("Early Parking Time: " + earlyParkingTime);
                     tvExtraParkingTime.setText("Exceed Parking Time: " + extraTime);
                     if (System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd()) >= 0) {
@@ -331,7 +333,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
             mMap.setMyLocationEnabled(true);
         }
 
-        if (mSensors != null) {
+      try{  if (mSensors != null) {
             LatLng bookedLocation = new LatLng(MathUtils.getInstance().convertToDouble(mSensors.getLatitude()), MathUtils.getInstance().convertToDouble(mSensors.getLongitude()));
             mMap.addMarker(new MarkerOptions()
                     .position(bookedLocation)
@@ -344,6 +346,11 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                     .title("Car Parked Location")
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_car_running)));
         }
+      }
+      catch (Exception e){
+          e.getCause();
+      }
+
     }
 
     private void setMapSettings(GoogleMap mMap) {
@@ -561,9 +568,10 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                             tvParkingAreaName.setText(mSensors.getParkingArea());
                             String currentDateandTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
                             findDifference(mSensors.getTimeStart(), mSensors.getTimeEnd(), "TimeStart");
-
-                            String earlyParkingTime = getTimeDifference(getStringDateToMillis(mSensors.getTimeStart()) - getStringDateToMillis(mSensors.getP_date()) >= 0 ? (getStringDateToMillis(mSensors.getTimeStart()) - getStringDateToMillis(mSensors.getP_date())) : 0);
-                            String extraTime = getTimeDifference(System.currentTimeMillis() - getStringDateToMillis(mSensors.getTimeEnd()) > 0 ? (System.currentTimeMillis() - getStringDateToMillis(mSensors.getTimeEnd())) : 0);
+                            String extraTime;
+                            String earlyParkingTime;
+                            earlyParkingTime = getTimeDifference(getStringDateToMillis(mSensors.getTimeStart()) - getStringDateToMillis(mSensors.getP_date()) >= 0 ? (getStringDateToMillis(mSensors.getTimeStart()) - getStringDateToMillis(mSensors.getP_date())) : 0);
+                            extraTime = getTimeDifference(System.currentTimeMillis() - getStringDateToMillis(mSensors.getTimeEnd()) > 0 ? (System.currentTimeMillis() - getStringDateToMillis(mSensors.getTimeEnd())) : 0);
                             tvEarlyParkingTime.setText("Early Parking Time: " + earlyParkingTime);
                             tvExtraParkingTime.setText("Exceed Parking Time: " + extraTime);
 
