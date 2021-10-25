@@ -121,14 +121,16 @@ public interface ApiService {
     Call<BookedResponse> getBookedPlace(@Field("user_id") String mobileNo);
 
     @FormUrlEncoded
-    @POST("booking_closed.php")
+    @POST("booking_closed_new.php")
     Call<CloseReservationResponse> endReservation(@Field("mobile_no") String mobileNo,
-                                                  @Field("spot_id") String bookedUid);
+                                                  @Field("spot_id") String bookedUid,
+                                                  @Field("tbl_id") String tbl_id);
 
     @FormUrlEncoded
-    @POST("booking_cancel.php")
+    @POST("booking_cancel_new.php")
     Call<ReservationCancelResponse> cancelReservation(@Field("mobile_no") String mobileNo,
-                                                      @Field("spot_id") String bookedUid);
+                                                      @Field("spot_id") String bookedUid,
+                                                      @Field("tbl_id") String tbl_id);
 
     @FormUrlEncoded
     @POST("booking_park_status.php")
@@ -136,6 +138,6 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("booking_park.php")
-    Call<ReservationCancelResponse> getBookingPark(@Field("mobile_no") String mobileNo,
+    Call<ReservationCancelResponse> setBookingPark(@Field("mobile_no") String mobileNo,
                                                    @Field("spot_id") String bookedUid);
 }

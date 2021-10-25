@@ -12,6 +12,9 @@ public class ReservationCancelResponse extends BaseResponse {
 	@SerializedName("mobile_no")
 	private String mobileNo;
 
+	@SerializedName("tbl_id")
+	private String tbl_id;
+
 	public void setUid(String uid){
 		this.uid = uid;
 	}
@@ -26,5 +29,13 @@ public class ReservationCancelResponse extends BaseResponse {
 
 	public String getMobileNo(){
 		return mobileNo;
+	}
+
+	public String getTbl_id() {
+		return tbl_id;
+	}
+
+	public void setTbl_id(String tbl_id) {
+		this.tbl_id = tbl_id;
 	}
 }

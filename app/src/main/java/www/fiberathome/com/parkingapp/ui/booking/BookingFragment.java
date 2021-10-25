@@ -1,5 +1,8 @@
 package www.fiberathome.com.parkingapp.ui.booking;
 
+import static android.content.Context.LOCATION_SERVICE;
+import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -52,9 +55,6 @@ import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
-
-import static android.content.Context.LOCATION_SERVICE;
-import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
 
 @SuppressLint("NonConstantResourceId")
 @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -265,7 +265,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
             recyclerViewBooking.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
             bookingAdapter = new BookingAdapter(context, bookedLists, new BookingAdapter.BookingAdapterClickListener() {
                 @Override
-                public void onItemClick(int position, String uid) {
+                public void onItemClick(int position, String uid, String id) {
                     DialogUtils.getInstance().alertDialog(context,
                             (Activity) context,
                             "Do you want to cancel booking?",
@@ -275,7 +275,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                                 public void onPositiveClick() {
                                     Timber.e("Positive Button clicked");
                                     if(isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
-                                        cancelBooking(Preferences.getInstance(context).getUser().getMobileNo(), uid);
+                                        cancelBooking(Preferences.getInstance(context).getUser().getMobileNo(), uid,id);
                                     }
                                     Preferences.getInstance(context).clearBooking();
                                 }
@@ -300,10 +300,10 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
         }
     }
 
-    private void cancelBooking(String mobileNo, String uid) {
+    private void cancelBooking(String mobileNo, String uid, String id) {
         showLoading(context);
             ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-            Call<ReservationCancelResponse> call = request.cancelReservation(Preferences.getInstance(context).getUser().getMobileNo(), uid);
+            Call<ReservationCancelResponse> call = request.cancelReservation(Preferences.getInstance(context).getUser().getMobileNo(), uid,id);
             call.enqueue(new Callback<ReservationCancelResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<ReservationCancelResponse> call, @NonNull Response<ReservationCancelResponse> response) {

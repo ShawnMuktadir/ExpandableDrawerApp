@@ -92,6 +92,10 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
     public static final int GPS_REQUEST_CODE = 9003;
 
     private Context context;
+    private double lat;
+    private double lng;
+    private String areaName;
+    private String count;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,16 +132,14 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
             fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Objects.requireNonNull(Looper.myLooper()));
         }
 
-        double lat = getIntent().getDoubleExtra("lat", 0.0);
-        double lng = getIntent().getDoubleExtra("lng", 0.0);
-        String areaName = getIntent().getStringExtra("areaName");
-        String count = getIntent().getStringExtra("count");
+        lat = getIntent().getDoubleExtra("lat", 0.0);
+        lng = getIntent().getDoubleExtra("lng", 0.0);
+        areaName = getIntent().getStringExtra("areaName");
+        count = getIntent().getStringExtra("count");
 
         if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
             //initialize home fragment
             getBookingParkStatus(Preferences.getInstance(context).getUser().getMobileNo());
-            ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
-                    HomeFragment.newInstance(lat, lng, areaName, count), R.id.nav_host_fragment);
             linearLayoutToolbarTime.setVisibility(View.GONE);
             navigationView.getMenu().getItem(0).setChecked(true);
         }
@@ -417,6 +419,9 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                             BookingParkStatusResponse.Sensors sensors = response.body().getSensors();
                             ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
                                     BookingParkFragment.newInstance(sensors), R.id.nav_host_fragment);
+                        } else {
+                            ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
+                                    HomeFragment.newInstance(lat, lng, areaName, count), R.id.nav_host_fragment);
                         }
                     }
                 }

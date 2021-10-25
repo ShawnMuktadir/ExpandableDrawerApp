@@ -236,6 +236,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                             bookedPlace.setDepartedDate(departureDate.getTime());
                             bookedPlace.setArriveDate(arrivedDate.getTime());
                             bookedPlace.setPlaceId(markerUid);
+                            bookedPlace.setReservation(response.body().getReservation());
                             bookedPlace.setIsBooked(true);
 
                             Preferences.getInstance(context).setBooked(bookedPlace);
@@ -278,7 +279,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
         Timber.e("startAlarm called");
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, NotificationPublisher.class);
-        intent.putExtra("Started", "Booked Time About to start for :"+ Preferences.getInstance(context).getBooked().getAreaName());
+        intent.putExtra("Started", "Booked Time About to start for : \n"+ Preferences.getInstance(context).getBooked().getAreaName());
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, intent, 0);
         if (c.before(Calendar.getInstance())) {
             c.add(Calendar.DATE, 1);

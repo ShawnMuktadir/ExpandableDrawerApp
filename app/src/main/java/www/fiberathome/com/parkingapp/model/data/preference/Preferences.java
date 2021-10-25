@@ -1,5 +1,8 @@
 package www.fiberathome.com.parkingapp.model.data.preference;
 
+import static android.content.Context.MODE_PRIVATE;
+import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -7,9 +10,6 @@ import android.content.SharedPreferences;
 import www.fiberathome.com.parkingapp.model.BookedPlace;
 import www.fiberathome.com.parkingapp.model.data.Constants;
 import www.fiberathome.com.parkingapp.model.user.User;
-
-import static android.content.Context.MODE_PRIVATE;
-import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
 
 @SuppressLint("StaticFieldLeak")
 @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -88,6 +88,7 @@ public class Preferences {
         editor.putString("route", booked.getRoute());
         editor.putBoolean("isBooked", booked.getIsBooked());
         editor.putString("placeId", booked.getPlaceId());
+        editor.putString("reservation", booked.getReservation());
         editor.putLong("departedDate", booked.getDepartedDate());
         editor.putLong("arrivedDate", booked.getArriveDate());
         editor.apply();
@@ -101,6 +102,7 @@ public class Preferences {
         bookedPlace.setParkingSlotCount(sharedPreferences.getString("parkingSlotCount", ""));
         bookedPlace.setRoute(sharedPreferences.getString("route", ""));
         bookedPlace.setPlaceId(sharedPreferences.getString("placeId", ""));
+        bookedPlace.setReservation(sharedPreferences.getString("reservation", ""));
         bookedPlace.setLat(sharedPreferences.getLong("lat", 0));
         bookedPlace.setLon(sharedPreferences.getLong("lon", 0));
         bookedPlace.setDepartedDate(sharedPreferences.getLong("departedDate", 0));

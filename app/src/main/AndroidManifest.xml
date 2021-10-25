@@ -47,7 +47,7 @@
         android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup,LockedOrientationActivity"
         tools:targetApi="q"
-        android:resizeableActivity="false">
+        android:resizeableActivity="true">
         <activity
             android:name=".ui.getDiscount.GetDiscountActivity"
             android:screenOrientation="portrait"

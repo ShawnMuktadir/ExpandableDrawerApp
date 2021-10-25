@@ -63,7 +63,6 @@
                 android:layout_centerInParent="true"
                 android:layout_margin="2dp"
                 android:padding="2dp"
-                android:text="2:30h"
                 android:textSize="@dimen/dimTex16" />
         </RelativeLayout>
 
@@ -142,7 +141,6 @@
             android:gravity="center"
             android:layout_margin="2dp"
             android:padding="2dp"
-            android:text="2:30h"
             android:textSize="@dimen/dimTex14" />
 
         <TextView
@@ -152,8 +150,7 @@
             android:gravity="center"
             android:layout_marginTop="@dimen/dim5"
             android:layout_marginBottom="@dimen/dim5"
-            android:padding="2dp"
-            android:text="2:30h"
+            android:padding="@dimen/dim2"
             android:textSize="@dimen/dimTex14" />
 
         <View
