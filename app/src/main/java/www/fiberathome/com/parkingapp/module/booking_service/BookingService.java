@@ -68,7 +68,7 @@ public class BookingService extends Service {
 
     public Location previousBestLocation = null;
 
-    public static final int BOOKING_CHECK_DELAY = 1000; // 3 min
+    public static final int BOOKING_CHECK_DELAY = 1000; // 1 sec
     public static Boolean isRunning = false;
 
     private CountDownTimer countDownTimer;
@@ -122,7 +122,7 @@ public class BookingService extends Service {
         //service starts when car is on parking spot and user clicks on park button
         if (!isExceedRunned) {
             Timber.e("car parked");
-            Toast.makeText(context, "car parked", Toast.LENGTH_LONG).show();
+//            Toast.makeText(context, "car parked", Toast.LENGTH_LONG).show();
             notificationCaller(Constants.NOTIFICATION_CHANNEL_EXCEED_BOOKING, "Car Parked", 3);
             startForeground(Constants.BOOKING_Exceed_SERVICE_ID, mBuilder.build());
             isExceedRunned = true;
@@ -130,7 +130,7 @@ public class BookingService extends Service {
         //executes when booking time ends
         if (!warringShowed && new Date().getTime() >= departureDate) {
             Timber.e("car Parking Duration End -> %s %s", new Date().getTime(), departureDate);
-            Toast.makeText(context, "car Parking Duration End:" + new Date().getTime() + "," + departureDate, Toast.LENGTH_LONG).show();
+//            Toast.makeText(context, "car Parking Duration End:" + new Date().getTime() + "," + departureDate, Toast.LENGTH_LONG).show();
             warringShowed = true;
             sendNotification("Booked Time", "Parking Duration About To End", false);
             startCountDown((exceedTime-(new Date().getTime()-departureDate))>=0?(exceedTime-(new Date().getTime()-departureDate)):0,true);
@@ -380,7 +380,6 @@ public class BookingService extends Service {
                         Preferences.getInstance(context).clearBooking();
                         sendNotification("Booked Time", "Your Booked Parking Duration Has Ended", true);
                         Timber.e("Booking closed");
-
                     }
                 }
             }
