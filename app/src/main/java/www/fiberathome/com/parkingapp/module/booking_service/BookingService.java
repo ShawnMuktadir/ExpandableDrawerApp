@@ -78,7 +78,7 @@ public class BookingService extends Service {
     private boolean isExceedRunned = false;
     private boolean warringShowed = false;
     private long departureDate;
-    private long exceedTime = 120000;
+    private long exceedTime = 300000;
 
 
     @Nullable

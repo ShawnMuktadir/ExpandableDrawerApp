@@ -49,6 +49,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.adapter.UniversalSpinnerAdapter;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
@@ -111,6 +112,8 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
 
     @BindView(R.id.departurePicker)
     SingleDateAndTimePicker departurePicker;
+    @BindView(R.id.classSpinner)
+    Spinner classSpinner;
 
     private Unbinder unbinder;
 
@@ -128,6 +131,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
     private String route;
     public static String areaName;
     private String parkingSlotCount;
+    private List<www.fiberathome.com.parkingapp.model.Spinner> classDataList = new ArrayList<>();
 
     public ScheduleFragment() {
         // Required empty public constructor
@@ -160,6 +164,8 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
             context = getActivity();
 
             textViewCurrentDate.setText(DateTimeUtils.getInstance().getCurrentDayTime());
+
+
 
             listener = (FragmentChangeListener) getActivity();
             payBtnClickListener = this;
@@ -267,8 +273,35 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
 
             setListeners();
         }
-    }
+//        UniversalSpinnerAdapter vehicleClassAdapter = new UniversalSpinnerAdapter(context,
+//                android.R.layout.simple_spinner_item,
+//                populateVehicleClassData());
+//
+//        classSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//
+//            }
+//        });
+//
+//        classSpinner.setAdapter(vehicleClassAdapter);
 
+    }
+    private List<www.fiberathome.com.parkingapp.model.Spinner> populateVehicleClassData() {
+        classDataList = new ArrayList<>();
+
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(1, "2 Hour"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(2, "1 Hour 30 Min"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(3, "1 hour"));
+        classDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(4, "30 Min"));
+
+        return classDataList;
+    }
     private void setListeners() {
         ivBackArrow.setOnClickListener(v -> onBackPressed());
 
