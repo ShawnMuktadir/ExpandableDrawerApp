@@ -100,7 +100,8 @@ public class BookingService extends Service {
 //                if (isRunning)
                     stopTrackingLocation();
             } else if (action.equals(Constants.BOOKING_EXCEED_CHECK)) {
-                departureDate = Preferences.getInstance(context).getBooked().getDepartedDate();
+                departureDate = 0;
+                departureDate = intent.getLongExtra("departureDate",0);
                 exceedHandlerTask.run();
             }
         }
@@ -210,14 +211,27 @@ public class BookingService extends Service {
     }
 
     private void stopTrackingLocation() {
-        mHandler.removeCallbacks(mHandlerTask);
+       if(mHandler!=null && mHandlerTask!=null){
+           mHandler.removeCallbacks(mHandlerTask);
+       }
+       if(exceedHandler !=null && exceedHandlerTask!=null){
+           exceedHandler.removeCallbacks(exceedHandlerTask);
+       }
         isRunning = false;
-        fusedLocationProviderClient.removeLocationUpdates(locationCallback);
+       warringShowed = false;
+       departureDate = 0;
+      if(fusedLocationProviderClient!=null && locationCallback!=null){
+          fusedLocationProviderClient.removeLocationUpdates(locationCallback);
+      }
         if (countDownTimer != null) {
             countDownTimer.cancel();
         }
-        stopForeground(true);
-        stopSelf();
+       try {
+           stopForeground(true);
+           stopSelf();
+       }catch (Exception e){
+           e.getCause();
+       }
     }
 
     private final LocationCallback locationCallback = new LocationCallback() {

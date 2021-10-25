@@ -124,18 +124,10 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
     };
     private FusedLocationProviderClient mFusedLocationClient;
     private HomeActivity context;
-    private BookingParkStatusResponse.Sensors mSensors;
     Runnable mHandlerTask = new Runnable() {
         @Override
         public void run() {
-            if (mSensors != null) {
-                String extraTime = getTimeDifference(System.currentTimeMillis() - getStringDateToMillis(mSensors.getTimeEnd()) > 0 ? (System.currentTimeMillis() - getStringDateToMillis(mSensors.getTimeEnd())) : 0);
-                tvExtraParkingTime.setText("Exceed Parking Time: " + extraTime);
-
-                if (System.currentTimeMillis() - getStringDateToMillis(mSensors.getTimeEnd()) >= 0) {
-                    tvExtraParkingTime.setTextColor(context.getResources().getColor(R.color.red));
-                }
-            } else if (sensors != null) {
+         if (sensors != null) {
                 String extraTime = getTimeDifference(System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd()) > 0 ? (System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd())) : 0);
                 tvExtraParkingTime.setText("Exceed Parking Time: " + extraTime);
 
@@ -207,12 +199,9 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                     if (getStringDateToMillis(sensors.getTimeStart()) - getStringDateToMillis(sensors.getP_date()) >= 0) {
                         tvEarlyParkingTime.setTextColor(context.getResources().getColor(R.color.red));
                     }
-                } else {
-                    //from HomeFragment
+                } else{
 
-                    if (ConnectivityUtils.getInstance().checkInternet(context)) {
-                        getBookingParkStatus(Preferences.getInstance(context).getUser().getMobileNo());
-                    }
+                    ToastUtils.getInstance().showToastMessage(context, "sensor null");
                 }
             } else {
                 ToastUtils.getInstance().showToastMessage(context, "Unable to load map");
@@ -259,6 +248,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
             if (isAdded() && mMap != null) {
                 try {
                     mHandler.removeCallbacks(mHandlerTask);
+                    sensors = null;
                     DialogUtils.getInstance().alertDialog(context,
                             (Activity) context,
                             "As your reservation time had exceed over 5 mins, your booking has been closed. Thank you.",
@@ -333,13 +323,8 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
             mMap.setMyLocationEnabled(true);
         }
 
-      try{  if (mSensors != null) {
-            LatLng bookedLocation = new LatLng(MathUtils.getInstance().convertToDouble(mSensors.getLatitude()), MathUtils.getInstance().convertToDouble(mSensors.getLongitude()));
-            mMap.addMarker(new MarkerOptions()
-                    .position(bookedLocation)
-                    .title("Car Parked Location")
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_car_running)));
-        } else if (sensors != null) {
+      try{
+          if (sensors != null) {
             LatLng bookedLocation = new LatLng(MathUtils.getInstance().convertToDouble(sensors.getLatitude()), MathUtils.getInstance().convertToDouble(sensors.getLongitude()));
             mMap.addMarker(new MarkerOptions()
                     .position(bookedLocation)
@@ -497,10 +482,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         showLoading(context);
         String spotUid = "";
         String reservationId = "";
-        if (mSensors != null) {
-            spotUid = mSensors.getSpotId();
-            reservationId = mSensors.getId();
-        } else if (sensors != null) {
+        if (sensors != null) {
             spotUid = sensors.getSpotId();
             reservationId = sensors.getId();
         }
@@ -513,7 +495,9 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                 if (isAdded() && countDownTimer != null) {
                     countDownTimer.cancel();
                 }
+                mHandler.removeCallbacks(mHandlerTask);
                 sensors = null;
+                stopBookingTrackService();
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         DialogUtils.getInstance().alertDialog(context,
@@ -548,57 +532,6 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         });
     }
 
-    private void getBookingParkStatus(String mobileNo) {
-        showLoading(context);
-        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<BookingParkStatusResponse> call = request.getBookingParkStatus(mobileNo);
-        call.enqueue(new Callback<BookingParkStatusResponse>() {
-            @RequiresApi(api = Build.VERSION_CODES.O)
-            @Override
-            public void onResponse(@NonNull Call<BookingParkStatusResponse> call, @NonNull Response<BookingParkStatusResponse> response) {
-                hideLoading();
-                if (response.isSuccessful()) {
-                    if (response.body() != null) {
-                        mSensors = response.body().getSensors();
-                        if (mSensors != null) {
-
-                            startBookingExceedService(getStringDateToMillis(mSensors.getTimeEnd()));
-                            tvArrivedTime.setText("Booking Time: " + mSensors.getTimeStart());
-                            tvDepartureTime.setText("Departure Time: " + mSensors.getTimeEnd());
-                            tvParkingAreaName.setText(mSensors.getParkingArea());
-                            String currentDateandTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-                            findDifference(mSensors.getTimeStart(), mSensors.getTimeEnd(), "TimeStart");
-                            String extraTime;
-                            String earlyParkingTime;
-                            earlyParkingTime = getTimeDifference(getStringDateToMillis(mSensors.getTimeStart()) - getStringDateToMillis(mSensors.getP_date()) >= 0 ? (getStringDateToMillis(mSensors.getTimeStart()) - getStringDateToMillis(mSensors.getP_date())) : 0);
-                            extraTime = getTimeDifference(System.currentTimeMillis() - getStringDateToMillis(mSensors.getTimeEnd()) > 0 ? (System.currentTimeMillis() - getStringDateToMillis(mSensors.getTimeEnd())) : 0);
-                            tvEarlyParkingTime.setText("Early Parking Time: " + earlyParkingTime);
-                            tvExtraParkingTime.setText("Exceed Parking Time: " + extraTime);
-
-                            if (System.currentTimeMillis() - getStringDateToMillis(mSensors.getTimeEnd()) >= 0) {
-                                tvExtraParkingTime.setTextColor(context.getResources().getColor(R.color.red));
-                            } else {
-                                findDifference(currentDateandTime, mSensors.getTimeEnd(), "");
-                            }
-                            if (getStringDateToMillis(mSensors.getTimeStart()) - getStringDateToMillis(mSensors.getP_date()) >= 0) {
-                                tvEarlyParkingTime.setTextColor(context.getResources().getColor(R.color.red));
-                            }
-
-                        } else {
-                            //ToastUtils.getInstance().showToast(context, "Sorry, there is no parking");
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<BookingParkStatusResponse> call, @NonNull Throwable t) {
-                Timber.e("onFailure -> %s", t.getMessage());
-//                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
-                hideLoading();
-            }
-        });
-    }
 
     private long getStringDateToMillis(String date) {
         //String givenDateString = "Tue Apr 23 16:08:28 GMT+05:30 2013";
@@ -744,11 +677,11 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
     }
 
     private void stopBookingTrackService() {
-        if (isLocationTrackingServiceRunning()) {
+//        if (isLocationTrackingServiceRunning()) {
             Intent intent = new Intent(context, BookingService.class);
             intent.setAction(Constants.STOP_BOOKING_TRACKING);
             context.startService(intent);
-        }
+//        }
     }
 
     private void startBookingExceedService(long departureDate) {

@@ -159,6 +159,7 @@ import www.fiberathome.com.parkingapp.model.data.Constants;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.response.BaseResponse;
+import www.fiberathome.com.parkingapp.model.response.booking.BookingParkStatusResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingSensors;
 import www.fiberathome.com.parkingapp.model.response.booking.ReservationCancelResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.SensorAreaStatusResponse;
@@ -1337,12 +1338,12 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     }
 
     private void stopBookingTrackService() {
-        if (isLocationTrackingServiceRunning()) {
+//        if (isLocationTrackingServiceRunning()) {
             Intent intent = new Intent(context, BookingService.class);
             intent.setAction(Constants.STOP_BOOKING_TRACKING);
             context.startService(intent);
             //Toast.makeText(context, "Booking Tracking Stopped", Toast.LENGTH_SHORT).show();
-        }
+//        }
     }
 
     private void checkParkingSpotDistance(LatLng car, LatLng spot) {
@@ -3389,7 +3390,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                     @Override
                                     public void onPositiveClick() {
                                         if (isBooked) {
-                                            getBookingPark(Preferences.getInstance(context).getUser().getMobileNo(), bookedPlace.getBookedUid());
+                                            setBookingPark(Preferences.getInstance(context).getUser().getMobileNo(), bookedPlace.getBookedUid());
                                         } else {
                                             DialogUtils.getInstance().alertDialog(context,
                                                     requireActivity(),
@@ -3536,7 +3537,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                     @Override
                                     public void onPositiveClick() {
                                         if (isBooked) {
-                                            getBookingPark(Preferences.getInstance(context).getUser().getMobileNo(), bookedPlace.getBookedUid());
+                                            setBookingPark(Preferences.getInstance(context).getUser().getMobileNo(), bookedPlace.getBookedUid());
                                         } else {
                                             DialogUtils.getInstance().alertDialog(context,
                                                     requireActivity(),
@@ -3672,7 +3673,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                     @Override
                                     public void onPositiveClick() {
                                         if (isBooked) {
-                                            getBookingPark(Preferences.getInstance(context).getUser().getMobileNo(), bookedPlace.getBookedUid());
+                                            setBookingPark(Preferences.getInstance(context).getUser().getMobileNo(), bookedPlace.getBookedUid());
                                         } else {
                                             DialogUtils.getInstance().alertDialog(context,
                                                     requireActivity(),
@@ -3804,10 +3805,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         textViewTermsCondition.setOnClickListener(v -> ToastUtils.getInstance().showToastMessage(context, "Coming Soon..."));
     }
 
-    private void getBookingPark(String mobileNo, String uid) {
+    private void setBookingPark(String mobileNo, String uid) {
         showLoading(context);
         ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<ReservationCancelResponse> call = request.getBookingPark(mobileNo, uid);
+        Call<ReservationCancelResponse> call = request.setBookingPark(mobileNo, uid);
         call.enqueue(new Callback<ReservationCancelResponse>() {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
@@ -3816,7 +3817,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         stopBookingTrackService();
-                        listener.fragmentChange(new BookingParkFragment());
+                        getBookingParkStatus(Preferences.getInstance(context).getUser().getMobileNo());
                     }
                 }
             }
@@ -4207,5 +4208,32 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(source);
         return calendar;
+    }
+
+    private void getBookingParkStatus(String mobileNo) {
+        showLoading(context);
+        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+        Call<BookingParkStatusResponse> call = request.getBookingParkStatus(mobileNo);
+        call.enqueue(new Callback<BookingParkStatusResponse>() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onResponse(@NonNull Call<BookingParkStatusResponse> call, @NonNull Response<BookingParkStatusResponse> response) {
+                hideLoading();
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        if (response.body().getSensors() != null) {
+                            BookingParkStatusResponse.Sensors sensors = response.body().getSensors();
+                                   listener.fragmentChange(BookingParkFragment.newInstance(sensors));
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<BookingParkStatusResponse> call, @NonNull Throwable t) {
+                Timber.e("onFailure -> %s", t.getMessage());
+                hideLoading();
+            }
+        });
     }
 }

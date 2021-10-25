@@ -138,6 +138,6 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("booking_park.php")
-    Call<ReservationCancelResponse> getBookingPark(@Field("mobile_no") String mobileNo,
+    Call<ReservationCancelResponse> setBookingPark(@Field("mobile_no") String mobileNo,
                                                    @Field("spot_id") String bookedUid);
 }
