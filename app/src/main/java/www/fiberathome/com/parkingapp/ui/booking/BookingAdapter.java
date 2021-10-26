@@ -7,13 +7,10 @@ import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -25,9 +22,8 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.databinding.BookingsRowBinding;
 import www.fiberathome.com.parkingapp.model.response.booking.BookedList;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingArea;
 
@@ -49,12 +45,10 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView;
-        itemView = LayoutInflater.
-                from(parent.getContext()).
-                inflate(R.layout.bookings_row, parent, false);
         context = parent.getContext();
-        return new BookingViewHolder(itemView);
+        LayoutInflater layoutInflater = LayoutInflater.from(context);
+        BookingsRowBinding itemBinding = BookingsRowBinding.inflate(layoutInflater, parent, false);
+        return new BookingViewHolder(itemBinding);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -64,8 +58,8 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         BookingViewHolder bookingViewHolder = (BookingViewHolder) viewHolder;
 
         BookedList bookedList = bookedLists.get(position);
-        bookingViewHolder.textViewParkingSlot.setText(bookedList.getAddress());
-        bookingViewHolder.textViewParkingTime.setText("Arrival " + bookedList.getTimeStart() + " - \n" + "Departure " + bookedList.getTimeEnd());
+        bookingViewHolder.binding.textViewParkingSlot.setText(bookedList.getAddress());
+        bookingViewHolder.binding.textViewParkingTime.setText("Arrival " + bookedList.getTimeStart() + " - \n" + "Departure " + bookedList.getTimeEnd());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
 
         try {
@@ -76,43 +70,43 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             if (date1 != null && date2 != null) {
                 difference = date1.getTime() - date2.getTime();
             }
-            bookingViewHolder.textViewParkingTotalTime.setText(getTimeDifference(difference));
+            bookingViewHolder.binding.textViewParkingTotalTime.setText(getTimeDifference(difference));
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
         if (bookedList.getC_status().equalsIgnoreCase("0") && bookedList.getStatus().equalsIgnoreCase("0") && bookedList.getP_status().equalsIgnoreCase("1")) {
-            bookingViewHolder.tvStatus.setVisibility(View.VISIBLE);
-            bookingViewHolder.tvCancel.setVisibility(View.GONE);
-            bookingViewHolder.tvStatus.setText("Parking");
-            bookingViewHolder.tvStatus.setTextColor(context.getColor(R.color.green2));
+            bookingViewHolder.binding.tvStatus.setVisibility(View.VISIBLE);
+            bookingViewHolder.binding.tvCancel.setVisibility(View.GONE);
+            bookingViewHolder.binding.tvStatus.setText("Parking");
+            bookingViewHolder.binding.tvStatus.setTextColor(context.getColor(R.color.green2));
         } else if (bookedList.getC_status().equalsIgnoreCase("0") && bookedList.getStatus().equalsIgnoreCase("0")) {
-            bookingViewHolder.tvCancel.setVisibility(View.VISIBLE);
-            bookingViewHolder.tvStatus.setVisibility(View.GONE);
+            bookingViewHolder.binding.tvCancel.setVisibility(View.VISIBLE);
+            bookingViewHolder.binding.tvStatus.setVisibility(View.GONE);
         } else if (bookedList.getC_status().equalsIgnoreCase("0") && bookedList.getStatus().equalsIgnoreCase("1")) {
-            bookingViewHolder.tvStatus.setVisibility(View.VISIBLE);
-            bookingViewHolder.tvCancel.setVisibility(View.GONE);
-            bookingViewHolder.tvStatus.setText("Completed");
-            bookingViewHolder.tvStatus.setTextColor(context.getColor(R.color.green2));
+            bookingViewHolder.binding.tvStatus.setVisibility(View.VISIBLE);
+            bookingViewHolder.binding.tvCancel.setVisibility(View.GONE);
+            bookingViewHolder.binding.tvStatus.setText("Completed");
+            bookingViewHolder.binding.tvStatus.setTextColor(context.getColor(R.color.green2));
         } else if (bookedList.getC_status().equalsIgnoreCase("1") && bookedList.getStatus().equalsIgnoreCase("1")) {
-            bookingViewHolder.tvStatus.setVisibility(View.VISIBLE);
-            bookingViewHolder.tvStatus.setText("Canceled");
-            bookingViewHolder.tvCancel.setVisibility(View.GONE);
-            bookingViewHolder.tvStatus.setTextColor(Color.RED);
-        } else if(bookedList.getC_status().equalsIgnoreCase("1") && bookedList.getStatus().equalsIgnoreCase("0")) {
-            bookingViewHolder.tvStatus.setVisibility(View.VISIBLE);
-            bookingViewHolder.tvStatus.setText("Rejected");
-            bookingViewHolder.tvCancel.setVisibility(View.GONE);
-            bookingViewHolder.tvStatus.setTextColor(Color.RED);
+            bookingViewHolder.binding.tvStatus.setVisibility(View.VISIBLE);
+            bookingViewHolder.binding.tvStatus.setText("Canceled");
+            bookingViewHolder.binding.tvCancel.setVisibility(View.GONE);
+            bookingViewHolder.binding.tvStatus.setTextColor(Color.RED);
+        } else if (bookedList.getC_status().equalsIgnoreCase("1") && bookedList.getStatus().equalsIgnoreCase("0")) {
+            bookingViewHolder.binding.tvStatus.setVisibility(View.VISIBLE);
+            bookingViewHolder.binding.tvStatus.setText("Rejected");
+            bookingViewHolder.binding.tvCancel.setVisibility(View.GONE);
+            bookingViewHolder.binding.tvStatus.setTextColor(Color.RED);
         }
 
-        bookingViewHolder.tvCancel.setOnClickListener(v -> bookingAdapterClickListener.onItemClick(bookingViewHolder.getAbsoluteAdapterPosition(), bookedList.getSpotId(),bookedList.getId()));
+        bookingViewHolder.binding.tvCancel.setOnClickListener(v -> bookingAdapterClickListener.onItemClick(bookingViewHolder.getAbsoluteAdapterPosition(), bookedList.getSpotId(), bookedList.getId()));
 
-        bookingViewHolder.textViewParkingRateNTip.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
+        bookingViewHolder.binding.textViewParkingRateNTip.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
 
-        bookingViewHolder.btnViewReceipt.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
+        bookingViewHolder.binding.btnViewReceipt.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
 
-        bookingViewHolder.btnGetHelp.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
+        bookingViewHolder.binding.btnGetHelp.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
     }
 
     public void setDataList(ArrayList<BookedList> dataList) {
@@ -143,43 +137,11 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @SuppressLint("NonConstantResourceId")
     public static class BookingViewHolder extends RecyclerView.ViewHolder {
+        BookingsRowBinding binding;
 
-        @BindView(R.id.textViewParkingSlot)
-        TextView textViewParkingSlot;
-
-        @BindView(R.id.textViewParkingSlotAddress)
-        TextView textViewParkingSlotAddress;
-
-        @BindView(R.id.textViewParkingTime)
-        TextView textViewParkingTime;
-
-        @BindView(R.id.textViewParkingTotalTime)
-        TextView textViewParkingTotalTime;
-
-        @BindView(R.id.textViewParkingTotalPaymentAmount)
-        TextView textViewParkingTotalPaymentAmount;
-
-        @BindView(R.id.textViewParkingRateNTip)
-        TextView textViewParkingRateNTip;
-
-        @BindView(R.id.tvStatus)
-        TextView tvStatus;
-
-        @BindView(R.id.btnViewReceipt)
-        Button btnViewReceipt;
-
-        @BindView(R.id.btnGetHelp)
-        Button btnGetHelp;
-
-        @BindView(R.id.tvCancel)
-        TextView tvCancel;
-
-        @BindView(R.id.card_view)
-        CardView card_view;
-
-        public BookingViewHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
+        public BookingViewHolder(BookingsRowBinding itemView) {
+            super(itemView.getRoot());
+            this.binding = itemView;
         }
     }
 

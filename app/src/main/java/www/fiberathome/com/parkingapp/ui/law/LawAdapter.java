@@ -110,16 +110,14 @@ public class LawAdapter extends ExpandableRecyclerViewAdapter<TitleViewHolder, L
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             List groups = (ArrayList<? extends ExpandableGroup>) results.values; // has the filtered values
-            if (groups.size() == 0){
+            if (groups.size() == 0) {
                 Timber.e("LawAdapter no data found");
-//                Toast.makeText(context, "No Record found", Toast.LENGTH_SHORT).show();
                 lawFragment.setNoData();
-            }else {
+            } else {
                 lawFragment.hideNoData();
             }
             getGroups().clear();
             getGroups().addAll(groups);
-
             notifyDataSetChanged();
         }
     };

@@ -9,9 +9,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,11 +16,9 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.databinding.FragmentProfileBinding;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.user.User;
@@ -37,30 +32,9 @@ import www.fiberathome.com.parkingapp.utils.TextUtils;
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class ProfileFragment extends Fragment implements IOnBackPressListener {
 
-    @BindView(R.id.tvUserName)
-    TextView tvUserName;
-
-    @BindView(R.id.tvUserMobileNo)
-    TextView tvUserMobileNo;
-
-    @BindView(R.id.tvUserVehicleNo)
-    TextView tvUserVehicleNo;
-
-    @BindView(R.id.tvUserVehicleNoArmy)
-    TextView tvUserVehicleNoArmy;
-
-    @BindView(R.id.ivUserProfilePic)
-    ImageView ivUserProfilePic;
-
-    @BindView(R.id.btn_update_info)
-    Button btnUpdateInfo;
-
-    @BindView(R.id.ivVehicleProfilePlatePreview)
-    ImageView ivVehicleProfilePlatePreview;
-
-    private Unbinder unbinder;
-
     private ProfileActivity context;
+
+    FragmentProfileBinding binding;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -78,20 +52,16 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
 
     @SuppressLint("SetTextI18n")
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_profile, container, false);
-
-        unbinder = ButterKnife.bind(this, view);
-
-        context = (ProfileActivity) getActivity();
-
-        return view;
+        binding = FragmentProfileBinding.inflate(getLayoutInflater());
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        context = (ProfileActivity) getActivity();
         setListeners();
     }
 
@@ -103,14 +73,11 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
     }
 
     private void setListeners() {
-        btnUpdateInfo.setOnClickListener(v -> startActivity(new Intent(context, EditProfileActivity.class)));
+        binding.btnUpdateInfo.setOnClickListener(v -> startActivity(new Intent(context, EditProfileActivity.class)));
     }
 
     @Override
     public void onDestroyView() {
-        if (unbinder != null) {
-            unbinder.unbind();
-        }
         super.onDestroyView();
     }
 
@@ -136,45 +103,42 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
 
         String name = user.getFullName();
         name = TextUtils.getInstance().capitalizeFirstLetter(name);
-        tvUserName.setText(name);
+        binding.tvUserName.setText(name);
 
-        tvUserMobileNo.setText(TextUtils.getInstance().addCountryPrefixWithPlus(user.getMobileNo()));
+        binding.tvUserMobileNo.setText(TextUtils.getInstance().addCountryPrefixWithPlus(user.getMobileNo()));
         Timber.e("Mobile no -> %s", user.getMobileNo());
 
         if (TextUtils.getInstance().isNumeric(Preferences.getInstance(context).getUser().getVehicleNo())) {
-            tvUserVehicleNoArmy.setVisibility(View.VISIBLE);
-            tvUserVehicleNo.setText(String.format("^%s", user.getVehicleNo().substring(0, 2)));
-            tvUserVehicleNoArmy.setText(user.getVehicleNo().substring(2, 6));
+            binding.tvUserVehicleNoArmy.setVisibility(View.VISIBLE);
+            binding.tvUserVehicleNo.setText(String.format("^%s", user.getVehicleNo().substring(0, 2)));
+            binding.tvUserVehicleNoArmy.setText(user.getVehicleNo().substring(2, 6));
         } else {
-            tvUserVehicleNo.setText(user.getVehicleNo());
-            tvUserVehicleNoArmy.setVisibility(View.GONE);
+            binding.tvUserVehicleNo.setText(user.getVehicleNo());
+            binding.tvUserVehicleNoArmy.setVisibility(View.GONE);
         }
 
         if (!user.getImage().endsWith(".jpg")) {
             String url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
             Timber.e("Image URL -> %s", url);
-            Glide.with(context).load(url).placeholder(R.drawable.blank_profile).dontAnimate().into(ivUserProfilePic);
+            Glide.with(context).load(url).placeholder(R.drawable.blank_profile).dontAnimate().into(binding.ivUserProfilePic);
 
             String vehicleUrl = AppConfig.IMAGES_URL + user.getVehicleImage() + ".jpg";
             Timber.e("Vehicle Image URL -> %s", vehicleUrl);
-            Glide.with(context).load(vehicleUrl).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(ivVehicleProfilePlatePreview);
+            Glide.with(context).load(vehicleUrl).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(binding.ivVehicleProfilePlatePreview);
         } else {
             String url = AppConfig.IMAGES_URL + user.getImage();
             Timber.e("Image URL -> %s", url);
-            Glide.with(context).load(url).placeholder(R.drawable.blank_profile).dontAnimate().into(ivUserProfilePic);
+            Glide.with(context).load(url).placeholder(R.drawable.blank_profile).dontAnimate().into(binding.ivUserProfilePic);
 
             String vehicleUrl = AppConfig.IMAGES_URL + user.getVehicleImage();
             Timber.e("Vehicle Image URL -> %s", vehicleUrl);
-            Glide.with(context).load(vehicleUrl).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(ivVehicleProfilePlatePreview);
+            Glide.with(context).load(vehicleUrl).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(binding.ivVehicleProfilePlatePreview);
         }
     }
 
     private boolean isGPSEnabled() {
-
         LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-
         boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
         if (providerEnabled) {
             return true;
         } else {

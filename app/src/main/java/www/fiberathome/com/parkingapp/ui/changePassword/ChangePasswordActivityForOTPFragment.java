@@ -15,26 +15,21 @@ import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
-import com.poovam.pinedittextfield.SquarePinField;
 
 import java.util.concurrent.TimeUnit;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
+import www.fiberathome.com.parkingapp.databinding.FragmentVerifyPhoneBinding;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
@@ -51,21 +46,9 @@ import www.fiberathome.com.parkingapp.utils.ToastUtils;
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class ChangePasswordActivityForOTPFragment extends BaseFragment {
 
-    @BindView(R.id.btn_verify_otp)
-    Button btnVerifyOtp;
-
-    @BindView(R.id.tv_count_down)
-    TextView tvCountdown;
-
-    @BindView(R.id.textViewResentOtp)
-    TextView textViewResentOtp;
-
-    @BindView(R.id.txt_pin_entry)
-    SquarePinField txtPinEntry;
-
-    private Unbinder unbinder;
-
     private ChangePasswordActivityForOTPNew context;
+
+    FragmentVerifyPhoneBinding binding;
 
     public ChangePasswordActivityForOTPFragment() {
         // Required empty public constructor
@@ -79,27 +62,20 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.layout_verify_phone_otp, container, false);
+        binding = FragmentVerifyPhoneBinding.inflate(getLayoutInflater());
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        unbinder = ButterKnife.bind(this, view);
-
         context = (ChangePasswordActivityForOTPNew) getActivity();
-
         setListeners();
-
         startCountDown();
     }
 
     @Override
     public void onDestroyView() {
-        if (unbinder != null) {
-            unbinder.unbind();
-        }
         super.onDestroyView();
     }
 
@@ -110,7 +86,7 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
     }
 
     private void setListeners() {
-        txtPinEntry.addTextChangedListener(new TextWatcher() {
+        binding.txtPinEntry.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -123,19 +99,13 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                /*if (s.toString().equals("1234")) {
-                    Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show();
-                } else if (s.length() == "1234".length()) {
-                    Toast.makeText(context, "Incorrect", Toast.LENGTH_SHORT).show();
-                    txtPinEntry.setText(null);
-                }*/
             }
         });
 
-        btnVerifyOtp.setOnClickListener(v -> {
-            if (txtPinEntry.getText() != null) {
-                if (txtPinEntry.getText().length() == 4) {
-                    String otp = txtPinEntry.getText().toString();
+        binding.btnVerifyOtp.setOnClickListener(v -> {
+            if (binding.txtPinEntry.getText() != null) {
+                if (binding.txtPinEntry.getText().length() == 4) {
+                    String otp = binding.txtPinEntry.getText().toString();
                     submitOTPVerification(otp);
                 }
             } else {
@@ -192,15 +162,15 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
 
             @SuppressLint("DefaultLocale")
             public void onTick(long millisUntilFinished) {
-                tvCountdown.setText("" + String.format("%d min, %d sec remaining",
+                binding.tvCountDown.setText("" + String.format("%d min, %d sec remaining",
                         TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
                         TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
                                 TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))));
             }
 
             public void onFinish() {
-                tvCountdown.setText(context.getResources().getString(R.string.please_wait));
-                btnVerifyOtp.setVisibility(View.VISIBLE);
+                binding.tvCountDown.setText(context.getResources().getString(R.string.please_wait));
+                binding.btnVerifyOtp.setVisibility(View.VISIBLE);
                 clickableSpanResendOTP();
             }
         }.start();
@@ -274,14 +244,14 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
                     checkForgetPassword(mobileNo);
                 }
 
-                btnVerifyOtp.setVisibility(View.VISIBLE);
+                binding.btnVerifyOtp.setVisibility(View.VISIBLE);
                 startCountDown();
-                textViewResentOtp.setMovementMethod(null);
-                textViewResentOtp.setClickable(false);
+                binding.textViewResentOtp.setMovementMethod(null);
+                binding.textViewResentOtp.setClickable(false);
 
                 NoUnderlineSpan mNoUnderlineSpan = new NoUnderlineSpan(context);
-                if (textViewResentOtp.getText() instanceof Spannable) {
-                    Spannable s = (Spannable) textViewResentOtp.getText();
+                if (binding.textViewResentOtp.getText() instanceof Spannable) {
+                    Spannable s = (Spannable) binding.textViewResentOtp.getText();
                     if (s1 >= 0x0980 && s1 <= 0x09E0) {
                         s.setSpan(mNoUnderlineSpan, 70, s.length(), Spanned.SPAN_MARK_MARK);
                         s.setSpan(foregroundSpan, 70, s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -310,7 +280,7 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
             spannableString.setSpan(clickableSpan, 63, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             spannableString.setSpan(foregroundSpan, 63, spannableString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
-        textViewResentOtp.setText(spannableString);
-        textViewResentOtp.setMovementMethod(LinkMovementMethod.getInstance());
+        binding.textViewResentOtp.setText(spannableString);
+        binding.textViewResentOtp.setMovementMethod(LinkMovementMethod.getInstance());
     }
 }

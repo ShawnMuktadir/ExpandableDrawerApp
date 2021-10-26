@@ -161,7 +161,7 @@ import www.fiberathome.com.parkingapp.model.response.search.SelectedPlace;
 import www.fiberathome.com.parkingapp.model.response.sensors.Sensor;
 import www.fiberathome.com.parkingapp.model.response.sensors.SensorArea;
 import www.fiberathome.com.parkingapp.model.response.sensors.SensorStatus;
-import www.fiberathome.com.parkingapp.module.booking_service.BookingService;
+import www.fiberathome.com.parkingapp.service.booking_service.BookingService;
 import www.fiberathome.com.parkingapp.service.geoFenceInterface.IOnLoadLocationListener;
 import www.fiberathome.com.parkingapp.service.geoFenceInterface.MyLatLng;
 import www.fiberathome.com.parkingapp.service.googleService.directionModules.DirectionFinder;
@@ -282,8 +282,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     private final ArrayList<BookingSensors> bookingSensorsAdapterArrayList = new ArrayList<>();
 
-    //private String adapterUid;
-    //private String bottomUid;
     private String markerUid;
     private Marker markerClicked;
 
@@ -957,25 +955,25 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             if (isRouteDrawn == 1) {
                 if (!(isBooked && bookedPlace != null)) {
                     if (previousOrigin != null && oldDestination != null && onConnectedLocation != null) {
-
                         String[] latlong = previousOrigin.split(",");
                         String[] latlong2 = oldDestination.split(",");
-                        //Timber.e("oldDestination: %s->", oldDestination);
-                        double lat = MathUtils.getInstance().convertToDouble(latlong[0].trim());
-                        double lon = MathUtils.getInstance().convertToDouble(latlong[1].trim());
-                        double lat2 = MathUtils.getInstance().convertToDouble(latlong2[0].trim());
-                        double lon2 = MathUtils.getInstance().convertToDouble(latlong2[1].trim());
-                        double distanceMoved = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), lat, lon) * 1000;
-                        double distanceFromDestination = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), lat2, lon2) * 1000;
-                        if (distanceMoved >= 100) {
-                            reDrawRoute(origin);
-                            previousOrigin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
-                        } else if ((distanceFromDestination <= 20 && distanceFromDestination >= 10) && distanceMoved >= 9) {
-                            reDrawRoute(origin);
+                        if (!oldDestination.equals("")) {
+                            double lat = MathUtils.getInstance().convertToDouble(latlong[0].trim());
+                            double lon = MathUtils.getInstance().convertToDouble(latlong[1].trim());
+                            double lat2 = MathUtils.getInstance().convertToDouble(latlong2[0].trim());
+                            double lon2 = MathUtils.getInstance().convertToDouble(latlong2[1].trim());
+                            double distanceMoved = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), lat, lon) * 1000;
+                            double distanceFromDestination = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), lat2, lon2) * 1000;
+                            if (distanceMoved >= 100) {
+                                reDrawRoute(origin);
+                                previousOrigin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
+                            } else if ((distanceFromDestination <= 20 && distanceFromDestination >= 10) && distanceMoved >= 9) {
+                                reDrawRoute(origin);
+                                previousOrigin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
+                            }
+                        } else {
                             previousOrigin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
                         }
-                    } else {
-                        previousOrigin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
                     }
                 }
             } else if (isBooked && bookedPlace != null) {

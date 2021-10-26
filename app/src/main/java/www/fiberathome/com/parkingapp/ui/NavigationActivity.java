@@ -22,7 +22,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.ColorInt;
@@ -47,12 +46,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
+import www.fiberathome.com.parkingapp.databinding.ActivityNavigationBinding;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
@@ -76,23 +73,14 @@ import www.fiberathome.com.parkingapp.utils.TextUtils;
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class NavigationActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    @BindView(R.id.tvTimeToolbar)
-    public TextView tvTimeToolbar;
-
-    @BindView(R.id.toolbar_title)
-    public TextView tvTimeTitle;
-
-    @BindView(R.id.linearLayoutToolbarTime)
-    public LinearLayout linearLayoutToolbarTime;
-
     public DrawerLayout drawerLayout;
     public NavigationView navigationView;
     public ActionBarDrawerToggle actionBarDrawerToggle;
     public Toolbar toolbar;
 
-    private Unbinder unbinder;
-
     private Context context;
+
+    ActivityNavigationBinding binding;
 
     public static Drawable getTintedDrawable(@NonNull Context context, @NonNull Drawable inputDrawable,
                                              @ColorInt int color) {
@@ -105,9 +93,9 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_navigation);
-
-        unbinder = ButterKnife.bind(this);
+        binding = ActivityNavigationBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
         context = this;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -197,9 +185,6 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
 
     @Override
     protected void onDestroy() {
-        if (unbinder != null) {
-            unbinder.unbind();
-        }
         super.onDestroy();
     }
 
@@ -394,8 +379,8 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
     public void setActionToolBarVisibilityGone() {
         toolbar.setNavigationIcon(null);
         toolbar.setTitle("");
-        tvTimeTitle.setVisibility(View.VISIBLE);
-        linearLayoutToolbarTime.setVisibility(View.GONE);
+        binding.appBarMain.toolbarTitle.setVisibility(View.VISIBLE);
+        binding.appBarMain.linearLayoutToolbarTime.setVisibility(View.GONE);
     }
 
     //toolbar menu overflow icon change method

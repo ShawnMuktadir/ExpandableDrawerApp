@@ -53,7 +53,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView2">
 
         <EditText
-            android:id="@+id/editTextMobileNumber"
+            android:id="@+id/editTextMobile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:imeOptions="actionNext"
@@ -194,7 +194,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <RelativeLayout
-        android:id="@+id/login_rl_invisible"
+        android:id="@+id/relative_layout_invisible"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/transparent_gray"

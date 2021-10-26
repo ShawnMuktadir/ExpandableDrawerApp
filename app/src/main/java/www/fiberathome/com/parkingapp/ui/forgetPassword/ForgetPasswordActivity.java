@@ -7,31 +7,25 @@ import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
+import www.fiberathome.com.parkingapp.databinding.ActivityBaseBinding;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 
 @SuppressLint("NonConstantResourceId")
 public class ForgetPasswordActivity extends BaseActivity {
 
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
-
-    private Unbinder unbinder;
+    ActivityBaseBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_base);
+        binding = ActivityBaseBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
 
         Context context = this;
-
-        unbinder = ButterKnife.bind(this);
 
         setToolbar(context);
 
@@ -51,17 +45,13 @@ public class ForgetPasswordActivity extends BaseActivity {
 
     @Override
     public void onDestroy() {
-        if (unbinder != null) {
-            unbinder.unbind();
-        }
         super.onDestroy();
     }
 
     private void setToolbar(Context context) {
-        setSupportActionBar(toolbar);
-        toolbar.setTitle(context.getResources().getString(R.string.title_forget_password));
-        toolbar.setVisibility(View.VISIBLE);
-
+        setSupportActionBar(binding.toolbar);
+        binding.toolbar.setTitle(context.getResources().getString(R.string.title_forget_password));
+        binding.toolbar.setVisibility(View.VISIBLE);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
     }

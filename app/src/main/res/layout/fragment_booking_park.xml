@@ -78,7 +78,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_300sdp"
             tools:ignore="FragmentTagUsage"
-            tools:layout="@layout/fragment_booked" />
+            tools:layout="@layout/fragment_booking_park" />
 
         <LinearLayout
             android:layout_width="match_parent"

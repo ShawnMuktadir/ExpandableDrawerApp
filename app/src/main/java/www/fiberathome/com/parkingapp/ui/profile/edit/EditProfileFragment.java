@@ -21,15 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -39,7 +31,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
-import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
 
 import java.io.ByteArrayOutputStream;
@@ -48,10 +39,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
-import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -59,6 +46,7 @@ import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.adapter.UniversalSpinnerAdapter;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
+import www.fiberathome.com.parkingapp.databinding.FragmentProfileEditBinding;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
@@ -85,74 +73,6 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
     private static final int REQUEST_PICK_GALLERY = 1001;
     private static final int REQUEST_PICK_CAMERA = 1002;
 
-    @BindView(R.id.textInputLayoutFullName)
-    TextInputLayout textInputLayoutFullName;
-
-    @BindView(R.id.editTextFullName)
-    EditText editTextFullName;
-
-    @BindView(R.id.classSpinner)
-    Spinner classSpinner;
-
-    @BindView(R.id.divSpinner)
-    Spinner divSpinner;
-
-    @BindView(R.id.textInputLayoutCarNumber)
-    TextInputLayout textInputLayoutCarNumber;
-
-    @BindView(R.id.editTextCarNumber)
-    EditText editTextCarNumber;
-
-    @BindView(R.id.textInputLayoutVehicleMilitaryFirstTwoDigit)
-    TextInputLayout textInputLayoutVehicleMilitaryFirstTwoDigit;
-
-    @BindView(R.id.editTextVehicleRegNumberMilitaryFirstTwoDigit)
-    EditText editTextVehicleRegNumberMilitaryFirstTwoDigit;
-
-    @BindView(R.id.textInputLayoutVehicleMilitaryLastFourDigit)
-    TextInputLayout textInputLayoutVehicleMilitaryLastFourDigit;
-
-    @BindView(R.id.editTextVehicleRegNumberMilitaryLastFourDigit)
-    EditText editTextVehicleRegNumberMilitaryLastFourDigit;
-
-    @BindView(R.id.tvUserMobileNo)
-    TextView tvUserMobileNo;
-
-    @BindView(R.id.imageViewEditProfileImage)
-    CircleImageView imageViewEditProfileImage;
-
-    @BindView(R.id.ivVehiclePlateEdit)
-    CircleImageView ivVehiclePlateEdit;
-
-    @BindView(R.id.ivVehicleEditPlatePreview)
-    ImageView ivVehicleEditPlatePreview;
-
-    @BindView(R.id.imageViewCaptureImage)
-    ImageView imageViewCaptureImage;
-
-    @BindView(R.id.btn_update_info)
-    Button btnUpdateInfo;
-
-    @BindView(R.id.login_rl_invisible)
-    RelativeLayout relativeLayoutInvisible;
-
-    @BindView(R.id.radioGroup)
-    RadioGroup radioGroup;
-
-    @BindView(R.id.radioGeneral)
-    RadioButton radioGeneral;
-
-    @BindView(R.id.radioMilitary)
-    RadioButton radioMilitary;
-
-    @BindView(R.id.linearLayoutGeneralFormat)
-    LinearLayout linearLayoutGeneralFormat;
-
-    @BindView(R.id.linearLayoutMilitaryFormat)
-    LinearLayout linearLayoutMilitaryFormat;
-
-    private Unbinder unbinder;
-
     private EditProfileActivity context;
 
     private String vehicleClass = "";
@@ -164,6 +84,8 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
     private User user;
     private Bitmap bitmap2;
     private boolean vehicleImage = false;
+
+    FragmentProfileEditBinding binding;
 
     public EditProfileFragment() {
         // Required empty public constructor
@@ -181,68 +103,63 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
 
     @SuppressLint("SetTextI18n")
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_profile_edit, container, false);
-
-        unbinder = ButterKnife.bind(this, view);
-
-        context = (EditProfileActivity) getActivity();
-
-        return view;
+        binding = FragmentProfileEditBinding.inflate(getLayoutInflater());
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        context = (EditProfileActivity) getActivity();
         user = Preferences.getInstance(context).getUser();
 
         setVehicleClassCategory();
         setVehicleDivCategory();
 
         setData(user);
-        editTextFullName.setSelection(editTextFullName.getText().length());
+        binding.editTextFullName.setSelection(binding.editTextFullName.getText().length());
 
         setListeners();
 
-        btnUpdateInfo.setOnClickListener(this);
-        imageViewEditProfileImage.setOnClickListener(this);
-        imageViewCaptureImage.setOnClickListener(this);
-        ivVehiclePlateEdit.setOnClickListener(this);
-        ivVehicleEditPlatePreview.setOnClickListener(this);
+        binding.btnUpdateInfo.setOnClickListener(this);
+        binding.imageViewEditProfileImage.setOnClickListener(this);
+        binding.imageViewCaptureImage.setOnClickListener(this);
+        binding.ivVehiclePlateEdit.setOnClickListener(this);
+        binding.ivVehicleEditPlatePreview.setOnClickListener(this);
     }
 
     private void setListeners() {
-        radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+        binding.radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             switch (checkedId) {
                 case R.id.radioGeneral:
                     // do operations specific to this selection
-                    linearLayoutGeneralFormat.setVisibility(View.VISIBLE);
-                    linearLayoutMilitaryFormat.setVisibility(View.GONE);
+                    binding.linearLayoutGeneralFormat.setVisibility(View.VISIBLE);
+                    binding.linearLayoutMilitaryFormat.setVisibility(View.GONE);
                     break;
                 case R.id.radioMilitary:
                     // do operations specific to this selection
-                    linearLayoutGeneralFormat.setVisibility(View.GONE);
-                    linearLayoutMilitaryFormat.setVisibility(View.VISIBLE);
+                    binding.linearLayoutGeneralFormat.setVisibility(View.GONE);
+                    binding.linearLayoutMilitaryFormat.setVisibility(View.VISIBLE);
                     break;
             }
         });
 
         if (TextUtils.getInstance().isNumeric(Preferences.getInstance(context).getUser().getVehicleNo())) {
-            radioMilitary.setChecked(true);
-            linearLayoutMilitaryFormat.setVisibility(View.VISIBLE);
-            linearLayoutGeneralFormat.setVisibility(View.GONE);
+            binding.radioMilitary.setChecked(true);
+            binding.linearLayoutMilitaryFormat.setVisibility(View.VISIBLE);
+            binding.linearLayoutGeneralFormat.setVisibility(View.GONE);
         } else {
-            radioGeneral.setChecked(true);
-            linearLayoutGeneralFormat.setVisibility(View.VISIBLE);
-            linearLayoutMilitaryFormat.setVisibility(View.GONE);
+            binding.radioGeneral.setChecked(true);
+            binding.linearLayoutGeneralFormat.setVisibility(View.VISIBLE);
+            binding.linearLayoutMilitaryFormat.setVisibility(View.GONE);
         }
 
-        radioGeneral.setOnCheckedChangeListener((buttonView, isChecked) -> Preferences.getInstance(context).setRadioButtonVehicleFormat("general", isChecked));
-        radioMilitary.setOnCheckedChangeListener((buttonView, isChecked) -> Preferences.getInstance(context).setRadioButtonVehicleFormat("military", isChecked));
+        binding.radioGeneral.setOnCheckedChangeListener((buttonView, isChecked) -> Preferences.getInstance(context).setRadioButtonVehicleFormat("general", isChecked));
+        binding.radioMilitary.setOnCheckedChangeListener((buttonView, isChecked) -> Preferences.getInstance(context).setRadioButtonVehicleFormat("military", isChecked));
 
-        Objects.requireNonNull(textInputLayoutFullName.getEditText()).addTextChangedListener(new TextWatcher() {
+        Objects.requireNonNull(binding.textInputLayoutFullName.getEditText()).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -251,13 +168,13 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() < 1) {
-                    textInputLayoutFullName.setErrorEnabled(true);
-                    textInputLayoutFullName.setError(context.getString(R.string.err_msg_fullname));
+                    binding.textInputLayoutFullName.setErrorEnabled(true);
+                    binding.textInputLayoutFullName.setError(context.getString(R.string.err_msg_fullname));
                 }
 
                 if (s.length() > 0) {
-                    textInputLayoutFullName.setError(null);
-                    textInputLayoutFullName.setErrorEnabled(false);
+                    binding.textInputLayoutFullName.setError(null);
+                    binding.textInputLayoutFullName.setErrorEnabled(false);
                 }
             }
 
@@ -267,7 +184,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
             }
         });
 
-        Objects.requireNonNull(textInputLayoutCarNumber.getEditText()).addTextChangedListener(new TextWatcher() {
+        Objects.requireNonNull(binding.textInputLayoutCarNumber.getEditText()).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -276,13 +193,13 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() < 1) {
-                    textInputLayoutCarNumber.setErrorEnabled(true);
-                    textInputLayoutCarNumber.setError(context.getString(R.string.err_msg_vehicle));
+                    binding.textInputLayoutCarNumber.setErrorEnabled(true);
+                    binding.textInputLayoutCarNumber.setError(context.getString(R.string.err_msg_vehicle));
                 }
 
                 if (s.length() > 0) {
-                    textInputLayoutCarNumber.setError(null);
-                    textInputLayoutCarNumber.setErrorEnabled(false);
+                    binding.textInputLayoutCarNumber.setError(null);
+                    binding.textInputLayoutCarNumber.setErrorEnabled(false);
                 }
             }
 
@@ -292,7 +209,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
             }
         });
 
-        Objects.requireNonNull(textInputLayoutVehicleMilitaryFirstTwoDigit.getEditText()).addTextChangedListener(new TextWatcher() {
+        Objects.requireNonNull(binding.textInputLayoutVehicleMilitaryFirstTwoDigit.getEditText()).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -301,12 +218,12 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() < 1) {
-                    textInputLayoutVehicleMilitaryFirstTwoDigit.setErrorEnabled(true);
-                    textInputLayoutVehicleMilitaryFirstTwoDigit.setError(context.getString(R.string.err_msg_vehicle));
+                    binding.textInputLayoutVehicleMilitaryFirstTwoDigit.setErrorEnabled(true);
+                    binding.textInputLayoutVehicleMilitaryFirstTwoDigit.setError(context.getString(R.string.err_msg_vehicle));
                 }
                 if (s.length() > 0) {
-                    textInputLayoutVehicleMilitaryFirstTwoDigit.setError(null);
-                    textInputLayoutVehicleMilitaryFirstTwoDigit.setErrorEnabled(false);
+                    binding.textInputLayoutVehicleMilitaryFirstTwoDigit.setError(null);
+                    binding.textInputLayoutVehicleMilitaryFirstTwoDigit.setErrorEnabled(false);
                 }
             }
 
@@ -316,7 +233,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
             }
         });
 
-        Objects.requireNonNull(textInputLayoutVehicleMilitaryLastFourDigit.getEditText()).addTextChangedListener(new TextWatcher() {
+        Objects.requireNonNull(binding.textInputLayoutVehicleMilitaryLastFourDigit.getEditText()).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -325,12 +242,12 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() < 1) {
-                    textInputLayoutVehicleMilitaryLastFourDigit.setErrorEnabled(true);
-                    textInputLayoutVehicleMilitaryLastFourDigit.setError(context.getString(R.string.err_msg_vehicle));
+                    binding.textInputLayoutVehicleMilitaryLastFourDigit.setErrorEnabled(true);
+                    binding.textInputLayoutVehicleMilitaryLastFourDigit.setError(context.getString(R.string.err_msg_vehicle));
                 }
                 if (s.length() > 0) {
-                    textInputLayoutVehicleMilitaryLastFourDigit.setError(null);
-                    textInputLayoutVehicleMilitaryLastFourDigit.setErrorEnabled(false);
+                    binding.textInputLayoutVehicleMilitaryLastFourDigit.setError(null);
+                    binding.textInputLayoutVehicleMilitaryLastFourDigit.setErrorEnabled(false);
                 }
             }
 
@@ -343,9 +260,6 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
 
     @Override
     public void onDestroyView() {
-        if (unbinder != null) {
-            unbinder.unbind();
-        }
         super.onDestroyView();
     }
 
@@ -363,11 +277,11 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                 if (!vehicleImage) {
                     bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), contentURI);
                     Bitmap convertedImage = getResizedBitmap(bitmap, 500);
-                    imageViewEditProfileImage.setImageBitmap(convertedImage);
+                    binding.imageViewEditProfileImage.setImageBitmap(convertedImage);
                 } else {
                     bitmap2 = MediaStore.Images.Media.getBitmap(context.getContentResolver(), contentURI);
                     Bitmap convertedImage = getResizedBitmap(bitmap2, 500);
-                    ivVehicleEditPlatePreview.setImageBitmap(convertedImage);
+                    binding.ivVehicleEditPlatePreview.setImageBitmap(convertedImage);
                 }
                 //Toast.makeText(SignUpActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
             } catch (IOException e) {
@@ -379,10 +293,10 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                 if (data.getExtras() != null) {
                     if (!vehicleImage) {
                         bitmap = (Bitmap) data.getExtras().get("data");
-                        imageViewEditProfileImage.setImageBitmap(bitmap);
+                        binding.imageViewEditProfileImage.setImageBitmap(bitmap);
                     } else {
                         bitmap2 = (Bitmap) data.getExtras().get("data");
-                        ivVehicleEditPlatePreview.setImageBitmap(bitmap2);
+                        binding.ivVehicleEditPlatePreview.setImageBitmap(bitmap2);
                     }
                 }
             } catch (Exception e) {
@@ -463,43 +377,41 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
 
         String name = user.getFullName();
         name = TextUtils.getInstance().capitalizeFirstLetter(name);
-        editTextFullName.setText(name);
+        binding.editTextFullName.setText(name);
 
-        tvUserMobileNo.setText(TextUtils.getInstance().addCountryPrefixWithPlus(user.getMobileNo()));
+        binding.tvUserMobileNo.setText(TextUtils.getInstance().addCountryPrefixWithPlus(user.getMobileNo()));
         //Timber.e("Mobile no -> %s", user.getMobileNo());
 
         if (TextUtils.getInstance().isNumeric(Preferences.getInstance(context).getUser().getVehicleNo())) {
-            editTextVehicleRegNumberMilitaryFirstTwoDigit.setText(user.getVehicleNo().substring(0, 2));
-            editTextVehicleRegNumberMilitaryLastFourDigit.setText(user.getVehicleNo().substring(2, 6));
+            binding.editTextVehicleRegNumberMilitaryFirstTwoDigit.setText(user.getVehicleNo().substring(0, 2));
+            binding.editTextVehicleRegNumberMilitaryLastFourDigit.setText(user.getVehicleNo().substring(2, 6));
         }
 
         try {
             String currentString = user.getVehicleNo().trim();
             String[] separated = currentString.split(" ");
-
             String carPlateNumber = separated[2];
-
-            editTextCarNumber.setText(carPlateNumber);
+            binding.editTextCarNumber.setText(carPlateNumber);
         } catch (Exception e) {
-            editTextCarNumber.setText(user.getVehicleNo().trim());
+            binding.editTextCarNumber.setText(user.getVehicleNo().trim());
         }
 
-        selectSpinnerItemByValue(classSpinner, Preferences.getInstance(context).getVehicleClassData());
+        selectSpinnerItemByValue(binding.classSpinner, Preferences.getInstance(context).getVehicleClassData());
 
-        selectSpinnerItemByValue(divSpinner, Preferences.getInstance(context).getVehicleDivData());
+        selectSpinnerItemByValue(binding.divSpinner, Preferences.getInstance(context).getVehicleDivData());
 
         if (!user.getImage().endsWith(".jpg")) {
             if (user.getImage() != null) {
                 String url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
                 Timber.e("Image URL -> %s", url);
-                Glide.with(context).load(url).placeholder(R.drawable.ic_account_settings).dontAnimate().into(imageViewEditProfileImage);
+                Glide.with(context).load(url).placeholder(R.drawable.ic_account_settings).dontAnimate().into(binding.imageViewEditProfileImage);
             } else {
                 Timber.e("Image value -> %s", user.getImage());
             }
             if (user.getVehicleImage() != null) {
                 String url = AppConfig.IMAGES_URL + user.getVehicleImage() + ".jpg";
                 Timber.e("Vehicle Image URL -> %s", url);
-                Glide.with(context).load(url).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(ivVehicleEditPlatePreview);
+                Glide.with(context).load(url).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(binding.ivVehicleEditPlatePreview);
             } else {
                 Timber.e("Vehicle Image value -> %s", user.getVehicleImage());
             }
@@ -507,7 +419,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
             if (user.getImage() != null) {
                 String url = AppConfig.IMAGES_URL + user.getImage();
                 Timber.e("Image URL -> %s", url);
-                Glide.with(context).load(url).placeholder(R.drawable.ic_account_settings).dontAnimate().into(imageViewEditProfileImage);
+                Glide.with(context).load(url).placeholder(R.drawable.ic_account_settings).dontAnimate().into(binding.imageViewEditProfileImage);
             } else {
                 Timber.e("Image value -> %s", user.getImage());
             }
@@ -515,7 +427,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
             if (user.getVehicleImage() != null) {
                 String url = AppConfig.IMAGES_URL + user.getVehicleImage();
                 Timber.e("Vehicle Image URL -> %s", url);
-                Glide.with(context).load(url).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(ivVehicleEditPlatePreview);
+                Glide.with(context).load(url).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(binding.ivVehicleEditPlatePreview);
             } else {
                 Timber.e("Vehicle Image value -> %s", user.getVehicleImage());
             }
@@ -540,7 +452,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                 android.R.layout.simple_spinner_item,
                 populateVehicleClassData());
 
-        classSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        binding.classSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
@@ -554,8 +466,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
 
             }
         });
-
-        classSpinner.setAdapter(vehicleClassAdapter);
+        binding.classSpinner.setAdapter(vehicleClassAdapter);
     }
 
     private List<www.fiberathome.com.parkingapp.model.Spinner> populateVehicleClassData() {
@@ -637,7 +548,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                 android.R.layout.simple_spinner_item,
                 populateVehicleDivData());
 
-        divSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        binding.divSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
@@ -652,7 +563,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
             }
         });
 
-        divSpinner.setAdapter(vehicleDivAdapter);
+        binding.divSpinner.setAdapter(vehicleDivAdapter);
     }
 
     private List<www.fiberathome.com.parkingapp.model.Spinner> populateVehicleDivData() {
@@ -768,10 +679,10 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                 user.getMobileNo(),
                 vehicleNo,
                 bitmap != null ? imageToString(bitmap) :
-                        imageToString(((BitmapDrawable) imageViewEditProfileImage.getDrawable()).getBitmap()),
+                        imageToString(((BitmapDrawable) binding.imageViewEditProfileImage.getDrawable()).getBitmap()),
                 mobileNo + "_" + DateTimeUtils.getInstance().getCurrentTimeStamp(),
                 bitmap2 != null ? imageToString(bitmap2) :
-                        imageToString(((BitmapDrawable) ivVehicleEditPlatePreview.getDrawable()).getBitmap()),
+                        imageToString(((BitmapDrawable) binding.ivVehicleEditPlatePreview.getDrawable()).getBitmap()),
                 mobileNo + "vehicle_" + DateTimeUtils.getInstance().getCurrentTimeStamp());
 
         call.enqueue(new Callback<LoginResponse>() {
@@ -858,13 +769,13 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
 
     private void submitEditProfileInfo() {
         if (checkFields()) {
-            String fullName = editTextFullName.getText().toString().trim();
-            String vehicleNo = editTextCarNumber.getText().toString().trim();
+            String fullName = binding.editTextFullName.getText().toString().trim();
+            String vehicleNo = binding.editTextCarNumber.getText().toString().trim();
             String licencePlateInfo;
             String password = SharedData.getInstance().getPassword();
             String mobileNo = user.getMobileNo();
 
-            if (radioGroup.getCheckedRadioButtonId() == R.id.radioGeneral) {
+            if (binding.radioGroup.getCheckedRadioButtonId() == R.id.radioGeneral) {
                 licencePlateInfo = vehicleClass + " " + vehicleDiv + " " + vehicleNo;
                 String temp = "" + vehicleNo.charAt(0) + vehicleNo.charAt(1);
                 int vehicleNoInt = MathUtils.getInstance().convertToInt(temp);
@@ -879,9 +790,9 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                 } else {
                     editProfile(fullName, password, mobileNo, licencePlateInfo);
                 }
-            } else if (radioGroup.getCheckedRadioButtonId() == R.id.radioMilitary) {
-                licencePlateInfo = editTextVehicleRegNumberMilitaryFirstTwoDigit.getText().toString().trim() +
-                        editTextVehicleRegNumberMilitaryLastFourDigit.getText().toString().trim();
+            } else if (binding.radioGroup.getCheckedRadioButtonId() == R.id.radioMilitary) {
+                licencePlateInfo = binding.editTextVehicleRegNumberMilitaryFirstTwoDigit.getText().toString().trim() +
+                        binding.editTextVehicleRegNumberMilitaryLastFourDigit.getText().toString().trim();
                 editProfile(fullName, password, mobileNo, licencePlateInfo);
 
             }
@@ -894,34 +805,34 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
         boolean isVehicleRegValid = false;
         boolean isVehicleRegValidForFirstTwoDigit = false;
         boolean isVehicleRegValidForLastFourDigit = false;
-        boolean isNameValid = Validator.checkValidity(textInputLayoutFullName, editTextFullName.getText().toString(), context.getString(R.string.err_msg_fullname), "text");
+        boolean isNameValid = Validator.checkValidity(binding.textInputLayoutFullName, binding.editTextFullName.getText().toString(), context.getString(R.string.err_msg_fullname), "text");
         boolean isLicencePlateValid = false;
 
-        if (radioGroup.getCheckedRadioButtonId() == R.id.radioGeneral) {
-            isVehicleRegValid = Validator.checkValidity(textInputLayoutCarNumber, editTextCarNumber.getText().toString(), context.getString(R.string.err_msg_vehicle), "vehicleNumber");
+        if (binding.radioGroup.getCheckedRadioButtonId() == R.id.radioGeneral) {
+            isVehicleRegValid = Validator.checkValidity(binding.textInputLayoutCarNumber, binding.editTextCarNumber.getText().toString(), context.getString(R.string.err_msg_vehicle), "vehicleNumber");
         } else {
-            isVehicleRegValidForFirstTwoDigit = Validator.checkValidity(textInputLayoutVehicleMilitaryFirstTwoDigit, editTextVehicleRegNumberMilitaryFirstTwoDigit.getText().toString(), context.getString(R.string.err_msg_vehicle), "vehicleMilitaryNumberForFirstTwo");
-            isVehicleRegValidForLastFourDigit = Validator.checkValidity(textInputLayoutVehicleMilitaryLastFourDigit, editTextVehicleRegNumberMilitaryLastFourDigit.getText().toString(), context.getString(R.string.err_msg_vehicle), "vehicleMilitaryNumberForLastFour");
+            isVehicleRegValidForFirstTwoDigit = Validator.checkValidity(binding.textInputLayoutVehicleMilitaryFirstTwoDigit, binding.editTextVehicleRegNumberMilitaryFirstTwoDigit.getText().toString(), context.getString(R.string.err_msg_vehicle), "vehicleMilitaryNumberForFirstTwo");
+            isVehicleRegValidForLastFourDigit = Validator.checkValidity(binding.textInputLayoutVehicleMilitaryLastFourDigit, binding.editTextVehicleRegNumberMilitaryLastFourDigit.getText().toString(), context.getString(R.string.err_msg_vehicle), "vehicleMilitaryNumberForLastFour");
         }
 
-        if (radioGroup.getCheckedRadioButtonId() == R.id.radioMilitary) {
-            licencePlateInfo = editTextVehicleRegNumberMilitaryFirstTwoDigit.getText().toString().trim() +
-                    editTextVehicleRegNumberMilitaryLastFourDigit.getText().toString().trim();
+        if (binding.radioGroup.getCheckedRadioButtonId() == R.id.radioMilitary) {
+            licencePlateInfo = binding.editTextVehicleRegNumberMilitaryFirstTwoDigit.getText().toString().trim() +
+                    binding.editTextVehicleRegNumberMilitaryLastFourDigit.getText().toString().trim();
         }
 
-        if (radioGroup.getCheckedRadioButtonId() == R.id.radioGeneral) {
+        if (binding.radioGroup.getCheckedRadioButtonId() == R.id.radioGeneral) {
             if (!vehicleClass.isEmpty() && !vehicleClass.equalsIgnoreCase("Select") && !vehicleDiv.isEmpty() && !vehicleDiv.equalsIgnoreCase("Select")) {
                 isLicencePlateValid = true;
             }
-        } else if (radioGroup.getCheckedRadioButtonId() == R.id.radioMilitary) {
+        } else if (binding.radioGroup.getCheckedRadioButtonId() == R.id.radioMilitary) {
             isLicencePlateValid = !licencePlateInfo.equalsIgnoreCase("000000");
         } else {
             Toast.makeText(context, "Please give valid vehicle number", Toast.LENGTH_SHORT).show();
         }
 
-        if (radioGroup.getCheckedRadioButtonId() == R.id.radioGeneral) {
+        if (binding.radioGroup.getCheckedRadioButtonId() == R.id.radioGeneral) {
             return isNameValid && isVehicleRegValid && isLicencePlateValid;
-        } else if (radioGroup.getCheckedRadioButtonId() == R.id.radioMilitary) {
+        } else if (binding.radioGroup.getCheckedRadioButtonId() == R.id.radioMilitary) {
             return isNameValid && isVehicleRegValidForFirstTwoDigit && isVehicleRegValidForLastFourDigit && isLicencePlateValid;
         } else {
             return false;
@@ -930,19 +841,19 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
 
     @Override
     public void showProgress() {
-        relativeLayoutInvisible.setVisibility(View.VISIBLE);
-        editTextFullName.setEnabled(false);
-        editTextCarNumber.setEnabled(false);
-        btnUpdateInfo.setEnabled(false);
-        btnUpdateInfo.setClickable(false);
+        binding.relativeLayoutInvisible.setVisibility(View.VISIBLE);
+        binding.editTextFullName.setEnabled(false);
+        binding.editTextCarNumber.setEnabled(false);
+        binding.btnUpdateInfo.setEnabled(false);
+        binding.btnUpdateInfo.setClickable(false);
     }
 
     @Override
     public void hideProgress() {
-        relativeLayoutInvisible.setVisibility(View.GONE);
-        editTextFullName.setEnabled(true);
-        editTextCarNumber.setEnabled(true);
-        btnUpdateInfo.setEnabled(true);
-        btnUpdateInfo.setClickable(true);
+        binding.relativeLayoutInvisible.setVisibility(View.GONE);
+        binding.editTextFullName.setEnabled(true);
+        binding.editTextCarNumber.setEnabled(true);
+        binding.btnUpdateInfo.setEnabled(true);
+        binding.btnUpdateInfo.setClickable(true);
     }
 }

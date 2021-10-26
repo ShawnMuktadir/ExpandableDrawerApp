@@ -10,26 +10,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
-import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
 
 import java.util.Objects;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
+import www.fiberathome.com.parkingapp.databinding.FragmentForgetPasswordBinding;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
@@ -45,18 +40,9 @@ import www.fiberathome.com.parkingapp.utils.Validator;
 @SuppressLint("NonConstantResourceId")
 public class ForgetPasswordFragment extends BaseFragment {
 
-    @BindView(R.id.textInputLayoutMobile)
-    TextInputLayout textInputLayoutMobile;
-
-    @BindView(R.id.editTextMobileNumber)
-    EditText editTextMobileNumber;
-
-    @BindView(R.id.btnForgetPassword)
-    Button btnForgetPassword;
-
-    private Unbinder unbinder;
-
     private ForgetPasswordActivity context;
+
+    FragmentForgetPasswordBinding binding;
 
     public ForgetPasswordFragment() {
         // Required empty public constructor
@@ -70,33 +56,27 @@ public class ForgetPasswordFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_forget_password, container, false);
+        binding = FragmentForgetPasswordBinding.inflate(getLayoutInflater());
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        unbinder = ButterKnife.bind(this, view);
         context = (ForgetPasswordActivity) getActivity();
-
-        editTextMobileNumber.requestFocus();
-        editTextMobileNumber.requestLayout();
-
+        binding.editTextMobileNumber.requestFocus();
+        binding.editTextMobileNumber.requestLayout();
         setListener();
     }
 
     @Override
     public void onDestroyView() {
-        if (unbinder != null) {
-            unbinder.unbind();
-        }
         super.onDestroyView();
     }
 
     private void setListener() {
 
-        Objects.requireNonNull(textInputLayoutMobile.getEditText()).addTextChangedListener(new TextWatcher() {
+        Objects.requireNonNull(binding.textInputLayoutMobile.getEditText()).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -105,13 +85,13 @@ public class ForgetPasswordFragment extends BaseFragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() < 1) {
-                    textInputLayoutMobile.setErrorEnabled(true);
-                    textInputLayoutMobile.setError(context.getString(R.string.err_msg_mobile));
+                    binding.textInputLayoutMobile.setErrorEnabled(true);
+                    binding.textInputLayoutMobile.setError(context.getString(R.string.err_msg_mobile));
                 }
 
                 if (s.length() > 0) {
-                    textInputLayoutMobile.setError(null);
-                    textInputLayoutMobile.setErrorEnabled(false);
+                    binding.textInputLayoutMobile.setError(null);
+                    binding.textInputLayoutMobile.setErrorEnabled(false);
                 }
 
             }
@@ -122,7 +102,7 @@ public class ForgetPasswordFragment extends BaseFragment {
             }
         });
 
-        editTextMobileNumber.setOnEditorActionListener(
+        binding.editTextMobileNumber.setOnEditorActionListener(
                 (v, actionId, event) -> {
                     if (actionId == EditorInfo.IME_ACTION_SEARCH
                             || actionId == EditorInfo.IME_ACTION_DONE
@@ -161,7 +141,7 @@ public class ForgetPasswordFragment extends BaseFragment {
                     return false;
                 });
 
-        btnForgetPassword.setOnClickListener(v -> {
+        binding.btnForgetPassword.setOnClickListener(v -> {
             if (ConnectivityUtils.getInstance().checkInternet(context)) {
                 submitLogin();
             } else {
@@ -193,13 +173,13 @@ public class ForgetPasswordFragment extends BaseFragment {
     }
 
     private boolean checkFields() {
-        return Validator.checkValidity(textInputLayoutMobile, editTextMobileNumber.getText().toString(), context.getString(R.string.err_msg_mobile), "phone");
+        return Validator.checkValidity(binding.textInputLayoutMobile, binding.editTextMobileNumber.getText().toString(), context.getString(R.string.err_msg_mobile), "phone");
 
     }
 
     private void submitLogin() {
         if (checkFields()) {
-            String mobileNo = editTextMobileNumber.getText().toString().trim();
+            String mobileNo = binding.editTextMobileNumber.getText().toString().trim();
             checkForgetPassword(mobileNo);
         }
     }

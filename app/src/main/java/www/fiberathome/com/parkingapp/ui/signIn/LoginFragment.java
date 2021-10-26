@@ -19,31 +19,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 
-import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
 
 import java.util.Locale;
 import java.util.Objects;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
+import www.fiberathome.com.parkingapp.databinding.FragmentLoginBinding;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
@@ -66,39 +58,9 @@ import www.fiberathome.com.parkingapp.utils.Validator;
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class LoginFragment extends BaseFragment implements View.OnClickListener, ProgressView {
 
-    @BindView(R.id.btnSignIn)
-    Button btnSignIn;
-
-    @BindView(R.id.btnOTP)
-    Button btnOTP;
-
-    @BindView(R.id.tvForgetPassword)
-    TextView tvForgetPassword;
-
-    @BindView(R.id.textViewSignUp)
-    TextView textViewSignUp;
-
-    @BindView(R.id.textInputLayoutMobile)
-    TextInputLayout textInputLayoutMobile;
-
-    @BindView(R.id.editTextMobileNumber)
-    EditText editTextMobile;
-
-    @BindView(R.id.textInputLayoutPassword)
-    TextInputLayout textInputLayoutPassword;
-
-    @BindView(R.id.editTextPassword)
-    EditText editTextPassword;
-
-    @BindView(R.id.relativeLayoutLogin)
-    ConstraintLayout relativeLayoutLogin;
-
-    @BindView(R.id.login_rl_invisible)
-    RelativeLayout relativeLayoutInvisible;
-
-    private Unbinder unbinder;
-
     private LoginActivity context;
+
+    FragmentLoginBinding binding;
 
     public LoginFragment() {
         // Required empty public constructor
@@ -110,17 +72,16 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_login, container, false);
+        binding = FragmentLoginBinding.inflate(getLayoutInflater());
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        unbinder = ButterKnife.bind(this, view);
 
         context = (LoginActivity) getActivity();
 
@@ -160,13 +121,13 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
         if (Locale.getDefault().getLanguage().equalsIgnoreCase(LANGUAGE_EN)) {
             //spannableString.setSpan(clickableSpan, 87, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             spannableString.setSpan(clickableSpan, 16, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            textViewSignUp.setText(spannableString);
-            textViewSignUp.setMovementMethod(LinkMovementMethod.getInstance());
+            binding.textViewSignUp.setText(spannableString);
+            binding.textViewSignUp.setMovementMethod(LinkMovementMethod.getInstance());
         } else if (Locale.getDefault().getLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
             //spannableString.setSpan(clickableSpan, 50, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             spannableString.setSpan(clickableSpan, 16, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            textViewSignUp.setText(spannableString);
-            textViewSignUp.setMovementMethod(LinkMovementMethod.getInstance());
+            binding.textViewSignUp.setText(spannableString);
+            binding.textViewSignUp.setMovementMethod(LinkMovementMethod.getInstance());
         }
 
         //makes an underline on Forgot Password Click Here
@@ -186,13 +147,13 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
             ss.setSpan(span, 17, ss.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         }
-        tvForgetPassword.setText(ss);
-        tvForgetPassword.setMovementMethod(LinkMovementMethod.getInstance());
+        binding.tvForgetPassword.setText(ss);
+        binding.tvForgetPassword.setMovementMethod(LinkMovementMethod.getInstance());
 
-        btnSignIn.setOnClickListener(this);
-        textViewSignUp.setOnClickListener(this);
-        btnOTP.setOnClickListener(this);
-        tvForgetPassword.setOnClickListener(this);
+        binding.btnSignIn.setOnClickListener(this);
+        binding.textViewSignUp.setOnClickListener(this);
+        binding.btnOTP.setOnClickListener(this);
+        binding.tvForgetPassword.setOnClickListener(this);
     }
 
     @Override
@@ -239,32 +200,29 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
 
     @Override
     public void onDestroyView() {
-        if (unbinder != null) {
-            unbinder.unbind();
-        }
         super.onDestroyView();
     }
 
     @Override
     public void showProgress() {
-        relativeLayoutInvisible.setVisibility(View.VISIBLE);
-        editTextMobile.setEnabled(false);
-        editTextPassword.setEnabled(false);
-        btnSignIn.setEnabled(false);
-        btnSignIn.setClickable(false);
+        binding.relativeLayoutInvisible.setVisibility(View.VISIBLE);
+        binding.editTextMobile.setEnabled(false);
+        binding.editTextPassword.setEnabled(false);
+        binding.btnSignIn.setEnabled(false);
+        binding.btnSignIn.setClickable(false);
     }
 
     @Override
     public void hideProgress() {
-        relativeLayoutInvisible.setVisibility(View.GONE);
-        editTextMobile.setEnabled(true);
-        editTextPassword.setEnabled(true);
-        btnSignIn.setEnabled(true);
-        btnSignIn.setClickable(true);
+        binding.relativeLayoutInvisible.setVisibility(View.GONE);
+        binding.editTextMobile.setEnabled(true);
+        binding.editTextPassword.setEnabled(true);
+        binding.btnSignIn.setEnabled(true);
+        binding.btnSignIn.setClickable(true);
     }
 
     private void setListeners() {
-        editTextPassword.setOnEditorActionListener(
+        binding.editTextPassword.setOnEditorActionListener(
                 (v, actionId, event) -> {
                     if (actionId == EditorInfo.IME_ACTION_SEARCH
                             || actionId == EditorInfo.IME_ACTION_DONE
@@ -304,7 +262,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                     return false;
                 });
 
-        Objects.requireNonNull(textInputLayoutMobile.getEditText()).addTextChangedListener(new TextWatcher() {
+        Objects.requireNonNull(binding.textInputLayoutMobile.getEditText()).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -313,13 +271,13 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() < 1) {
-                    textInputLayoutMobile.setErrorEnabled(true);
-                    textInputLayoutMobile.setError(context.getString(R.string.err_msg_mobile));
+                    binding.textInputLayoutMobile.setErrorEnabled(true);
+                    binding.textInputLayoutMobile.setError(context.getString(R.string.err_msg_mobile));
                 }
 
                 if (s.length() > 0) {
-                    textInputLayoutMobile.setError(null);
-                    textInputLayoutMobile.setErrorEnabled(false);
+                    binding.textInputLayoutMobile.setError(null);
+                    binding.textInputLayoutMobile.setErrorEnabled(false);
                 }
 
             }
@@ -330,7 +288,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
             }
         });
 
-        Objects.requireNonNull(textInputLayoutPassword.getEditText()).addTextChangedListener(new TextWatcher() {
+        Objects.requireNonNull(binding.textInputLayoutPassword.getEditText()).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -339,13 +297,13 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() < 1) {
-                    textInputLayoutPassword.setErrorEnabled(true);
-                    textInputLayoutPassword.setError(context.getString(R.string.err_msg_password));
+                    binding.textInputLayoutPassword.setErrorEnabled(true);
+                    binding.textInputLayoutPassword.setError(context.getString(R.string.err_msg_password));
                 }
 
                 if (s.length() > 0) {
-                    textInputLayoutPassword.setError(null);
-                    textInputLayoutPassword.setErrorEnabled(false);
+                    binding.textInputLayoutPassword.setError(null);
+                    binding.textInputLayoutPassword.setErrorEnabled(false);
                 }
             }
             @Override
@@ -357,16 +315,16 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
 
     private void submitLogin() {
         if (checkFields()) {
-            String mobileNo = editTextMobile.getText().toString().trim();
-            String password = editTextPassword.getText().toString().trim();
+            String mobileNo = binding.editTextMobile.getText().toString().trim();
+            String password = binding.editTextPassword.getText().toString().trim();
 
             checkLogin(mobileNo, password);
         }
     }
 
     private boolean checkFields() {
-        boolean isPhoneValid = Validator.checkValidity(textInputLayoutMobile, editTextMobile.getText().toString(), context.getString(R.string.err_msg_mobile), "phone");
-        boolean isPasswordValid = Validator.checkValidity(textInputLayoutPassword, editTextPassword.getText().toString(), context.getString(R.string.err_msg_password), "textPassword");
+        boolean isPhoneValid = Validator.checkValidity(binding.textInputLayoutMobile, binding.editTextMobile.getText().toString(), context.getString(R.string.err_msg_mobile), "phone");
+        boolean isPasswordValid = Validator.checkValidity(binding.textInputLayoutPassword, binding.editTextPassword.getText().toString(), context.getString(R.string.err_msg_password), "textPassword");
 
         return isPhoneValid && isPasswordValid;
     }
@@ -451,7 +409,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                             // IF ERROR OCCURS AND AUTHENTICATION IS INVALID
                             if (response.body().getMessage().equalsIgnoreCase("Please verify Your Account by OTP")) {
                                 ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
-                                btnOTP.setVisibility(View.GONE);
+                                binding.btnOTP.setVisibility(View.GONE);
                                 Intent verifyPhoneIntent = new Intent(context, VerifyPhoneActivity.class);
                                 verifyPhoneIntent.putExtra("mobile_no", mobileNo);
                                 verifyPhoneIntent.putExtra("password", password);

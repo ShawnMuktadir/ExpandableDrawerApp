@@ -25,15 +25,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -42,7 +33,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
@@ -54,10 +44,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
-import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -65,6 +51,7 @@ import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.adapter.UniversalSpinnerAdapter;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
+import www.fiberathome.com.parkingapp.databinding.FragmentSignUpBinding;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
@@ -94,92 +81,6 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     private static final int REQUEST_PICK_GALLERY = 1001;
     private static final int REQUEST_PICK_CAMERA = 1002;
 
-    @BindView(R.id.tvLogin)
-    TextView tvLogin;
-
-    @BindView(R.id.btnSignup)
-    Button btnSignup;
-
-    @BindView(R.id.tvSelectVehicleCityClass)
-    TextView tvSelectVehicleCityClass;
-
-    @BindView(R.id.textInputLayoutFullName)
-    TextInputLayout textInputLayoutFullName;
-
-    @BindView(R.id.editTextFullName)
-    EditText editTextFullName;
-
-    @BindView(R.id.textInputLayoutMobile)
-    TextInputLayout textInputLayoutMobile;
-
-    @BindView(R.id.editTextMobileNumber)
-    EditText editTextMobileNumber;
-
-    @BindView(R.id.textInputLayoutVehicle)
-    TextInputLayout textInputLayoutVehicle;
-
-    @BindView(R.id.editTextVehicleRegNumber)
-    EditText editTextVehicleRegNumber;
-
-    @BindView(R.id.textInputLayoutVehicleMilitaryFirstTwoDigit)
-    TextInputLayout textInputLayoutVehicleMilitaryFirstTwoDigit;
-
-    @BindView(R.id.editTextVehicleRegNumberMilitaryFirstTwoDigit)
-    EditText editTextVehicleRegNumberMilitaryFirstTwoDigit;
-
-    @BindView(R.id.textInputLayoutVehicleMilitaryLastFourDigit)
-    TextInputLayout textInputLayoutVehicleMilitaryLastFourDigit;
-
-    @BindView(R.id.editTextVehicleRegNumberMilitaryLastFourDigit)
-    EditText editTextVehicleRegNumberMilitaryLastFourDigit;
-
-    @BindView(R.id.textInputLayoutPassword)
-    TextInputLayout textInputLayoutPassword;
-
-    @BindView(R.id.editTextPassword)
-    EditText editTextPassword;
-
-    @BindView(R.id.imageViewUploadProfileImage)
-    CircleImageView imageViewUploadProfileImage;
-
-    @BindView(R.id.imageViewCaptureImage)
-    CircleImageView imageViewCaptureImage;
-
-    @BindView(R.id.ivVehiclePlate)
-    CircleImageView ivVehiclePlate;
-
-    @BindView(R.id.ivVehiclePlatePreview)
-    ImageView ivVehiclePlatePreview;
-
-    @BindView(R.id.textViewTermsConditions)
-    TextView textViewTermsConditions;
-
-    @BindView(R.id.login_rl_invisible)
-    RelativeLayout relativeLayoutInvisible;
-
-    @BindView(R.id.linearLayoutGeneralFormat)
-    LinearLayout linearLayoutGeneralFormat;
-
-    @BindView(R.id.linearLayoutMilitaryFormat)
-    LinearLayout linearLayoutMilitaryFormat;
-
-    @BindView(R.id.classSpinner)
-    Spinner classSpinner;
-
-    @BindView(R.id.divSpinner)
-    Spinner divSpinner;
-
-    @BindView(R.id.radioGroup)
-    RadioGroup radioGroup;
-
-    @BindView(R.id.radioGeneral)
-    RadioButton radioGeneral;
-
-    @BindView(R.id.radioMilitary)
-    RadioButton radioMilitary;
-
-    private Unbinder unbinder;
-
     private SignUpActivity context;
 
     private String vehicleClass = "";
@@ -188,6 +89,8 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     private Bitmap profileBitmap;
     private Bitmap vehicleBitmap;
     private boolean vehicleImage = false;
+
+    FragmentSignUpBinding binding;
 
     public SignUpFragment() {
         // Required empty public constructor
@@ -198,18 +101,16 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_sign_up, container, false);
+        binding = FragmentSignUpBinding.inflate(getLayoutInflater());
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        unbinder = ButterKnife.bind(this, view);
-
         context = (SignUpActivity) getActivity();
 
         setListeners();
@@ -245,19 +146,18 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
         }
 
-        tvLogin.setText(spannableString);
-        tvLogin.setMovementMethod(LinkMovementMethod.getInstance());
+        binding.tvLogin.setText(spannableString);
+        binding.tvLogin.setMovementMethod(LinkMovementMethod.getInstance());
 
-        textViewTermsConditions.setMovementMethod(LinkMovementMethod.getInstance());
-        textViewTermsConditions.setText(addMultipleClickablePart(context.getResources().getString(R.string.by_using_this_app_you_agree_to_our_terms_and_conditions_amp_privacy_policy)));
+        binding.textViewTermsConditions.setMovementMethod(LinkMovementMethod.getInstance());
+        binding.textViewTermsConditions.setText(addMultipleClickablePart(context.getResources().getString(R.string.by_using_this_app_you_agree_to_our_terms_and_conditions_amp_privacy_policy)));
 
-
-        btnSignup.setOnClickListener(this);
-        tvLogin.setOnClickListener(this);
-        imageViewUploadProfileImage.setOnClickListener(this);
-        imageViewCaptureImage.setOnClickListener(this);
-        ivVehiclePlate.setOnClickListener(this);
-        ivVehiclePlatePreview.setOnClickListener(this);
+        binding.btnSignup.setOnClickListener(this);
+        binding.tvLogin.setOnClickListener(this);
+        binding.imageViewUploadProfileImage.setOnClickListener(this);
+        binding.imageViewCaptureImage.setOnClickListener(this);
+        binding.ivVehiclePlate.setOnClickListener(this);
+        binding.ivVehiclePlatePreview.setOnClickListener(this);
     }
 
     private List<www.fiberathome.com.parkingapp.model.Spinner> classDataList;
@@ -268,7 +168,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                 android.R.layout.simple_spinner_item,
                 populateVehicleClassData());
 
-        classSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        binding.classSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
@@ -282,8 +182,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
             }
         });
-
-        classSpinner.setAdapter(vehicleClassAdapter);
+        binding.classSpinner.setAdapter(vehicleClassAdapter);
     }
 
     private List<www.fiberathome.com.parkingapp.model.Spinner> populateVehicleClassData() {
@@ -364,7 +263,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                 android.R.layout.simple_spinner_item,
                 populateVehicleDivData());
 
-        divSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        binding.divSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
@@ -378,8 +277,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
             }
         });
-
-        divSpinner.setAdapter(vehicleDivAdapter);
+        binding.divSpinner.setAdapter(vehicleDivAdapter);
     }
 
     private List<www.fiberathome.com.parkingapp.model.Spinner> populateVehicleDivData() {
@@ -423,9 +321,6 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
     @Override
     public void onDestroyView() {
-        if (unbinder != null) {
-            unbinder.unbind();
-        }
         super.onDestroyView();
     }
 
@@ -497,12 +392,12 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                     profileBitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), contentURI);
                     Bitmap convertedImage = Bitmap.createScaledBitmap(profileBitmap, 828, 828, true);
                     profileBitmap = convertedImage;
-                    imageViewUploadProfileImage.setImageBitmap(convertedImage);
+                    binding.imageViewUploadProfileImage.setImageBitmap(convertedImage);
                 } else {
                     vehicleBitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), contentURI);
                     Bitmap convertedImage = Bitmap.createScaledBitmap(vehicleBitmap, 828, 828, true);
                     vehicleBitmap = convertedImage;
-                    ivVehiclePlatePreview.setImageBitmap(convertedImage);
+                    binding.ivVehiclePlatePreview.setImageBitmap(convertedImage);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -514,11 +409,11 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                     if (!vehicleImage) {
                         profileBitmap = (Bitmap) data.getExtras().get("data");
                         profileBitmap = Bitmap.createScaledBitmap(profileBitmap, 828, 828, true);
-                        imageViewUploadProfileImage.setImageBitmap(profileBitmap);
+                        binding.imageViewUploadProfileImage.setImageBitmap(profileBitmap);
                     } else {
                         vehicleBitmap = (Bitmap) data.getExtras().get("data");
                         vehicleBitmap = Bitmap.createScaledBitmap(vehicleBitmap, 828, 828, true);
-                        ivVehiclePlatePreview.setImageBitmap(vehicleBitmap);
+                        binding.ivVehiclePlatePreview.setImageBitmap(vehicleBitmap);
                     }
                 }
             } catch (Exception e) {
@@ -531,25 +426,25 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     @Override
     public void showProgress() {
         //progressBarLogin.setVisibility(View.VISIBLE);
-        relativeLayoutInvisible.setVisibility(View.VISIBLE);
-        editTextFullName.setEnabled(false);
-        editTextMobileNumber.setEnabled(false);
-        editTextVehicleRegNumber.setEnabled(false);
-        editTextPassword.setEnabled(false);
-        btnSignup.setEnabled(false);
-        btnSignup.setClickable(false);
+        binding.relativeLayoutInvisible.setVisibility(View.VISIBLE);
+        binding.editTextFullName.setEnabled(false);
+        binding.editTextMobileNumber.setEnabled(false);
+        binding.editTextVehicleRegNumber.setEnabled(false);
+        binding.editTextPassword.setEnabled(false);
+        binding.btnSignup.setEnabled(false);
+        binding.btnSignup.setClickable(false);
     }
 
     @Override
     public void hideProgress() {
         //progressBarLogin.setVisibility(View.INVISIBLE);
-        relativeLayoutInvisible.setVisibility(View.GONE);
-        editTextFullName.setEnabled(true);
-        editTextMobileNumber.setEnabled(true);
-        editTextVehicleRegNumber.setEnabled(true);
-        editTextPassword.setEnabled(true);
-        btnSignup.setEnabled(true);
-        btnSignup.setClickable(true);
+        binding.relativeLayoutInvisible.setVisibility(View.GONE);
+        binding.editTextFullName.setEnabled(true);
+        binding.editTextMobileNumber.setEnabled(true);
+        binding.editTextVehicleRegNumber.setEnabled(true);
+        binding.editTextPassword.setEnabled(true);
+        binding.btnSignup.setEnabled(true);
+        binding.btnSignup.setClickable(true);
     }
 
     private SpannableStringBuilder addMultipleClickablePart(String str) {
@@ -599,22 +494,22 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
     private void setListeners() {
 
-        radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+        binding.radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             switch (checkedId) {
                 case R.id.radioGeneral:
                     // do operations specific to this selection
-                    linearLayoutGeneralFormat.setVisibility(View.VISIBLE);
-                    linearLayoutMilitaryFormat.setVisibility(View.GONE);
+                    binding.linearLayoutGeneralFormat.setVisibility(View.VISIBLE);
+                    binding.linearLayoutMilitaryFormat.setVisibility(View.GONE);
                     break;
                 case R.id.radioMilitary:
                     // do operations specific to this selection
-                    linearLayoutGeneralFormat.setVisibility(View.GONE);
-                    linearLayoutMilitaryFormat.setVisibility(View.VISIBLE);
+                    binding.linearLayoutGeneralFormat.setVisibility(View.GONE);
+                    binding.linearLayoutMilitaryFormat.setVisibility(View.VISIBLE);
                     break;
             }
         });
 
-        editTextPassword.setOnEditorActionListener(
+        binding.editTextPassword.setOnEditorActionListener(
                 (v, actionId, event) -> {
                     if (actionId == EditorInfo.IME_ACTION_SEARCH
                             || actionId == EditorInfo.IME_ACTION_DONE
@@ -654,7 +549,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                     return false;
                 });
 
-        Objects.requireNonNull(textInputLayoutFullName.getEditText()).addTextChangedListener(new TextWatcher() {
+        Objects.requireNonNull(binding.textInputLayoutFullName.getEditText()).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -663,13 +558,13 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() < 1) {
-                    textInputLayoutFullName.setErrorEnabled(true);
-                    textInputLayoutFullName.setError(context.getString(R.string.err_msg_fullname));
+                    binding.textInputLayoutFullName.setErrorEnabled(true);
+                    binding.textInputLayoutFullName.setError(context.getString(R.string.err_msg_fullname));
                 }
 
                 if (s.length() > 0) {
-                    textInputLayoutFullName.setError(null);
-                    textInputLayoutFullName.setErrorEnabled(false);
+                    binding.textInputLayoutFullName.setError(null);
+                    binding.textInputLayoutFullName.setErrorEnabled(false);
                 }
             }
 
@@ -679,7 +574,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             }
         });
 
-        Objects.requireNonNull(textInputLayoutMobile.getEditText()).addTextChangedListener(new TextWatcher() {
+        Objects.requireNonNull(binding.textInputLayoutMobile.getEditText()).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -688,39 +583,13 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() < 1) {
-                    textInputLayoutMobile.setErrorEnabled(true);
-                    textInputLayoutMobile.setError(context.getString(R.string.err_msg_mobile));
+                    binding.textInputLayoutMobile.setErrorEnabled(true);
+                    binding.textInputLayoutMobile.setError(context.getString(R.string.err_msg_mobile));
                 }
 
                 if (s.length() > 0) {
-                    textInputLayoutMobile.setError(null);
-                    textInputLayoutMobile.setErrorEnabled(false);
-                }
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-
-        Objects.requireNonNull(textInputLayoutVehicle.getEditText()).addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() < 1) {
-                    textInputLayoutVehicle.setErrorEnabled(true);
-                    textInputLayoutVehicle.setError(context.getString(R.string.err_msg_vehicle));
-                }
-
-                if (s.length() > 0) {
-                    textInputLayoutVehicle.setError(null);
-                    textInputLayoutVehicle.setErrorEnabled(false);
+                    binding.textInputLayoutMobile.setError(null);
+                    binding.textInputLayoutMobile.setErrorEnabled(false);
                 }
 
             }
@@ -731,7 +600,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             }
         });
 
-        Objects.requireNonNull(textInputLayoutPassword.getEditText()).addTextChangedListener(new TextWatcher() {
+        Objects.requireNonNull(binding.textInputLayoutVehicle.getEditText()).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -740,13 +609,13 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() < 1) {
-                    textInputLayoutPassword.setErrorEnabled(true);
-                    textInputLayoutPassword.setError(context.getString(R.string.err_msg_password));
+                    binding.textInputLayoutVehicle.setErrorEnabled(true);
+                    binding.textInputLayoutVehicle.setError(context.getString(R.string.err_msg_vehicle));
                 }
 
                 if (s.length() > 0) {
-                    textInputLayoutPassword.setError(null);
-                    textInputLayoutPassword.setErrorEnabled(false);
+                    binding.textInputLayoutVehicle.setError(null);
+                    binding.textInputLayoutVehicle.setErrorEnabled(false);
                 }
 
             }
@@ -757,7 +626,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             }
         });
 
-        Objects.requireNonNull(textInputLayoutVehicleMilitaryFirstTwoDigit.getEditText()).addTextChangedListener(new TextWatcher() {
+        Objects.requireNonNull(binding.textInputLayoutPassword.getEditText()).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -766,13 +635,13 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() < 1) {
-                    textInputLayoutVehicleMilitaryFirstTwoDigit.setErrorEnabled(true);
-                    textInputLayoutVehicleMilitaryFirstTwoDigit.setError(context.getString(R.string.err_msg_vehicle));
+                    binding.textInputLayoutPassword.setErrorEnabled(true);
+                    binding.textInputLayoutPassword.setError(context.getString(R.string.err_msg_password));
                 }
 
                 if (s.length() > 0) {
-                    textInputLayoutVehicleMilitaryFirstTwoDigit.setError(null);
-                    textInputLayoutVehicleMilitaryFirstTwoDigit.setErrorEnabled(false);
+                    binding.textInputLayoutPassword.setError(null);
+                    binding.textInputLayoutPassword.setErrorEnabled(false);
                 }
 
             }
@@ -783,7 +652,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             }
         });
 
-        Objects.requireNonNull(textInputLayoutVehicleMilitaryLastFourDigit.getEditText()).addTextChangedListener(new TextWatcher() {
+        Objects.requireNonNull(binding.textInputLayoutVehicleMilitaryFirstTwoDigit.getEditText()).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -792,15 +661,40 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() < 1) {
-                    textInputLayoutVehicleMilitaryLastFourDigit.setErrorEnabled(true);
-                    textInputLayoutVehicleMilitaryLastFourDigit.setError(context.getString(R.string.err_msg_vehicle));
+                    binding.textInputLayoutVehicleMilitaryFirstTwoDigit.setErrorEnabled(true);
+                    binding.textInputLayoutVehicleMilitaryFirstTwoDigit.setError(context.getString(R.string.err_msg_vehicle));
                 }
 
                 if (s.length() > 0) {
-                    textInputLayoutVehicleMilitaryLastFourDigit.setError(null);
-                    textInputLayoutVehicleMilitaryLastFourDigit.setErrorEnabled(false);
+                    binding.textInputLayoutVehicleMilitaryFirstTwoDigit.setError(null);
+                    binding.textInputLayoutVehicleMilitaryFirstTwoDigit.setErrorEnabled(false);
                 }
 
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        Objects.requireNonNull(binding.textInputLayoutVehicleMilitaryLastFourDigit.getEditText()).addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() < 1) {
+                    binding.textInputLayoutVehicleMilitaryLastFourDigit.setErrorEnabled(true);
+                    binding.textInputLayoutVehicleMilitaryLastFourDigit.setError(context.getString(R.string.err_msg_vehicle));
+                }
+
+                if (s.length() > 0) {
+                    binding.textInputLayoutVehicleMilitaryLastFourDigit.setError(null);
+                    binding.textInputLayoutVehicleMilitaryLastFourDigit.setErrorEnabled(false);
+                }
             }
 
             @Override
@@ -884,12 +778,12 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
     private void submitRegistration() {
         if (checkFields()) {
-            String fullName = editTextFullName.getText().toString().trim();
-            String mobileNo = editTextMobileNumber.getText().toString().trim();
-            String vehicleNo = editTextVehicleRegNumber.getText().toString().trim();
-            String password = editTextPassword.getText().toString().trim();
+            String fullName = binding.editTextFullName.getText().toString().trim();
+            String mobileNo = binding.editTextMobileNumber.getText().toString().trim();
+            String vehicleNo = binding.editTextVehicleRegNumber.getText().toString().trim();
+            String password = binding.editTextPassword.getText().toString().trim();
 
-            if (radioGroup.getCheckedRadioButtonId() == R.id.radioGeneral) {
+            if (binding.radioGroup.getCheckedRadioButtonId() == R.id.radioGeneral) {
                 licencePlateInfo = vehicleClass + " " + vehicleDiv + " " + vehicleNo;
                 String temp = "" + vehicleNo.charAt(0) + vehicleNo.charAt(1);
                 int vehicleNoInt = MathUtils.getInstance().convertToInt(temp);
@@ -910,9 +804,9 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                         TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.upload_profile_photo));
                     }
                 }
-            } else if (radioGroup.getCheckedRadioButtonId() == R.id.radioMilitary) {
-                licencePlateInfo = editTextVehicleRegNumberMilitaryFirstTwoDigit.getText().toString().trim() +
-                        editTextVehicleRegNumberMilitaryLastFourDigit.getText().toString().trim();
+            } else if (binding.radioGroup.getCheckedRadioButtonId() == R.id.radioMilitary) {
+                licencePlateInfo = binding.editTextVehicleRegNumberMilitaryFirstTwoDigit.getText().toString().trim() +
+                        binding.editTextVehicleRegNumberMilitaryLastFourDigit.getText().toString().trim();
                 if (profileBitmap != null && vehicleBitmap != null) {
                     registerUser(fullName, password, mobileNo, licencePlateInfo);
                 } else if (vehicleBitmap == null) {
@@ -960,11 +854,6 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                         Timber.e("jsonObject else called");
                         ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                         Timber.e("Error ->%s", new Gson().toJson(response.body()));
-                        /*if (response.body().getMessage().equalsIgnoreCase("Sorry! mobile number is not valid or missing mate")) {
-                            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
-                        } else if (!response.body().getMessage().equalsIgnoreCase("Sorry! mobile number is not valid or missing mate")) {
-                            ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
-                        }*/
                     }
                 } else {
                     ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
@@ -975,25 +864,17 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             public void onFailure(@NonNull Call<BaseResponse> call, @NonNull Throwable errors) {
                 Timber.e("Throwable Errors: -> %s", errors.toString());
                 ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
-                if (errors instanceof SocketTimeoutException)
-                {
+                if (errors instanceof SocketTimeoutException) {
                     // "Connection Timeout";
                     Timber.e("Throwable Errors: -> %s", errors.toString());
-                }
-                else if (errors instanceof IOException)
-                {
+                } else if (errors instanceof IOException) {
                     // "Timeout";
                     Timber.e("Throwable Errors: -> %s", errors.toString());
-                }
-                else
-                {
+                } else {
                     //Call was cancelled by user
-                    if(call.isCanceled())
-                    {
+                    if (call.isCanceled()) {
                         Timber.e("Call was cancelled forcefully");
-                    }
-                    else
-                    {
+                    } else {
                         //Generic error handling
                         Timber.e("Network Error :: -> %s", errors.getLocalizedMessage());
                     }
@@ -1008,36 +889,36 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         boolean isVehicleRegValid = false;
         boolean isVehicleRegValidForFirstTwoDigit = false;
         boolean isVehicleRegValidForLastFourDigit = false;
-        boolean isNameValid = Validator.checkValidity(textInputLayoutFullName, editTextFullName.getText().toString(), context.getString(R.string.err_msg_fullname), "text");
-        boolean isPhoneValid = Validator.checkValidity(textInputLayoutMobile, editTextMobileNumber.getText().toString(), context.getString(R.string.err_msg_mobile), "phone");
-        boolean isPasswordValid = Validator.checkValidity(textInputLayoutPassword, editTextPassword.getText().toString(), context.getString(R.string.err_msg_password_signup), "textPassword");
+        boolean isNameValid = Validator.checkValidity(binding.textInputLayoutFullName, binding.editTextFullName.getText().toString(), context.getString(R.string.err_msg_fullname), "text");
+        boolean isPhoneValid = Validator.checkValidity(binding.textInputLayoutMobile, binding.editTextMobileNumber.getText().toString(), context.getString(R.string.err_msg_mobile), "phone");
+        boolean isPasswordValid = Validator.checkValidity(binding.textInputLayoutPassword, binding.editTextPassword.getText().toString(), context.getString(R.string.err_msg_password_signup), "textPassword");
         boolean isLicencePlateValid = false;
 
-        if (radioGroup.getCheckedRadioButtonId() == R.id.radioGeneral) {
-            isVehicleRegValid = Validator.checkValidity(textInputLayoutVehicle, editTextVehicleRegNumber.getText().toString(), context.getString(R.string.err_msg_vehicle), "vehicleNumber");
+        if (binding.radioGroup.getCheckedRadioButtonId() == R.id.radioGeneral) {
+            isVehicleRegValid = Validator.checkValidity(binding.textInputLayoutVehicle, binding.editTextVehicleRegNumber.getText().toString(), context.getString(R.string.err_msg_vehicle), "vehicleNumber");
         } else {
-            isVehicleRegValidForFirstTwoDigit = Validator.checkValidity(textInputLayoutVehicleMilitaryFirstTwoDigit, editTextVehicleRegNumberMilitaryFirstTwoDigit.getText().toString(), context.getString(R.string.err_msg_vehicle), "vehicleMilitaryNumberForFirstTwo");
-            isVehicleRegValidForLastFourDigit = Validator.checkValidity(textInputLayoutVehicleMilitaryLastFourDigit, editTextVehicleRegNumberMilitaryLastFourDigit.getText().toString(), context.getString(R.string.err_msg_vehicle), "vehicleMilitaryNumberForLastFour");
+            isVehicleRegValidForFirstTwoDigit = Validator.checkValidity(binding.textInputLayoutVehicleMilitaryFirstTwoDigit, binding.editTextVehicleRegNumberMilitaryFirstTwoDigit.getText().toString(), context.getString(R.string.err_msg_vehicle), "vehicleMilitaryNumberForFirstTwo");
+            isVehicleRegValidForLastFourDigit = Validator.checkValidity(binding.textInputLayoutVehicleMilitaryLastFourDigit, binding.editTextVehicleRegNumberMilitaryLastFourDigit.getText().toString(), context.getString(R.string.err_msg_vehicle), "vehicleMilitaryNumberForLastFour");
         }
 
-        if (radioGroup.getCheckedRadioButtonId() == R.id.radioMilitary) {
-            licencePlateInfo = editTextVehicleRegNumberMilitaryFirstTwoDigit.getText().toString().trim() +
-                    editTextVehicleRegNumberMilitaryLastFourDigit.getText().toString().trim();
+        if (binding.radioGroup.getCheckedRadioButtonId() == R.id.radioMilitary) {
+            licencePlateInfo = binding.editTextVehicleRegNumberMilitaryFirstTwoDigit.getText().toString().trim() +
+                    binding.editTextVehicleRegNumberMilitaryLastFourDigit.getText().toString().trim();
         }
 
-        if (radioGroup.getCheckedRadioButtonId() == R.id.radioGeneral) {
+        if (binding.radioGroup.getCheckedRadioButtonId() == R.id.radioGeneral) {
             if (!vehicleClass.isEmpty() && !vehicleClass.equalsIgnoreCase("Select") && !vehicleDiv.isEmpty() && !vehicleDiv.equalsIgnoreCase("Select")) {
                 isLicencePlateValid = true;
             }
-        } else if (radioGroup.getCheckedRadioButtonId() == R.id.radioMilitary) {
+        } else if (binding.radioGroup.getCheckedRadioButtonId() == R.id.radioMilitary) {
             isLicencePlateValid = !licencePlateInfo.equalsIgnoreCase("000000");
         } else {
             Toast.makeText(context, "Please give valid vehicle number", Toast.LENGTH_SHORT).show();
         }
 
-        if (radioGroup.getCheckedRadioButtonId() == R.id.radioGeneral) {
+        if (binding.radioGroup.getCheckedRadioButtonId() == R.id.radioGeneral) {
             return isNameValid && isPhoneValid && isVehicleRegValid && isPasswordValid && isLicencePlateValid;
-        } else if (radioGroup.getCheckedRadioButtonId() == R.id.radioMilitary) {
+        } else if (binding.radioGroup.getCheckedRadioButtonId() == R.id.radioMilitary) {
             return isNameValid && isPhoneValid && isVehicleRegValidForFirstTwoDigit && isVehicleRegValidForLastFourDigit && isPasswordValid && isLicencePlateValid;
         } else {
             return false;

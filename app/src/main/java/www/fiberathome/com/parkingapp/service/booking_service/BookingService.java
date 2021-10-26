@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.module.booking_service;
+package www.fiberathome.com.parkingapp.service.booking_service;
 
 import static www.fiberathome.com.parkingapp.model.data.Constants.BOOKING_SERVICE_ID;
 
@@ -57,7 +57,6 @@ import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.booking.CloseReservationResponse;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
-import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 public class BookingService extends Service {
 
