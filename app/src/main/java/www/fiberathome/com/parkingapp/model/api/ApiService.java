@@ -1,5 +1,7 @@
 package www.fiberathome.com.parkingapp.model.api;
 
+import com.google.gson.JsonObject;
+
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -12,6 +14,7 @@ import www.fiberathome.com.parkingapp.model.response.booking.CloseReservationRes
 import www.fiberathome.com.parkingapp.model.response.booking.ReservationCancelResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.ReservationResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.SensorAreaStatusResponse;
+import www.fiberathome.com.parkingapp.model.response.booking.TimeSlotsResponse;
 import www.fiberathome.com.parkingapp.model.response.login.LoginResponse;
 import www.fiberathome.com.parkingapp.model.response.parkingSlot.ParkingSlotResponse;
 import www.fiberathome.com.parkingapp.model.response.search.SearchVisitedPlaceResponse;
@@ -140,4 +143,7 @@ public interface ApiService {
     @POST("booking_park.php")
     Call<ReservationCancelResponse> setBookingPark(@Field("mobile_no") String mobileNo,
                                                    @Field("spot_id") String bookedUid);
+
+    @GET("time_slot.php")
+    Call<TimeSlotsResponse> getTimeSlots();
 }

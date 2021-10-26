@@ -2554,7 +2554,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         bottomSheetRecyclerView.setAdapter(bottomSheetAdapter);
         if (bookingSensors.size() == 0) {
             setNoData();
-        } else {
+        }
+        else {
             hideNoData();
         }
     }
@@ -4223,7 +4224,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     if (response.body() != null) {
                         if (response.body().getSensors() != null) {
                             BookingParkStatusResponse.Sensors sensors = response.body().getSensors();
-                                   listener.fragmentChange(BookingParkFragment.newInstance(sensors));
+                            listener.fragmentChange(BookingParkFragment.newInstance(sensors));
                         }
                     }
                 }

@@ -191,7 +191,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <Spinner
-                        android:visibility="gone"
                         android:id="@+id/classSpinner"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
@@ -201,6 +200,7 @@
                         android:id="@+id/departurePicker"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:visibility="gone"
                         app:picker_curved="true"
                         app:picker_cyclic="true"
                         app:picker_selectorColor="@android:color/transparent"
