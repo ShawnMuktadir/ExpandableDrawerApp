@@ -30,7 +30,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -68,6 +67,7 @@ import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
+import www.fiberathome.com.parkingapp.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
@@ -75,8 +75,6 @@ import www.fiberathome.com.parkingapp.model.data.Constants;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingParkStatusResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.CloseReservationResponse;
-import www.fiberathome.com.parkingapp.service.booking_service.BookingService;
-import www.fiberathome.com.parkingapp.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
@@ -678,7 +676,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
 
     private void stopBookingTrackService() {
 //        if (isLocationTrackingServiceRunning()) {
-            Intent intent = new Intent(context, BookingService.class);
+        Intent intent = new Intent(context, www.fiberathome.com.parkingapp.module.booking_service.BookingService.class);
             intent.setAction(Constants.STOP_BOOKING_TRACKING);
             context.startService(intent);
 //        }
@@ -686,7 +684,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
 
     private void startBookingExceedService(long departureDate) {
         if (!isLocationTrackingServiceRunning()) {
-            Intent intent = new Intent(context, BookingService.class);
+            Intent intent = new Intent(context, www.fiberathome.com.parkingapp.module.booking_service.BookingService.class);
             intent.putExtra("departureDate",departureDate);
             intent.setAction(Constants.BOOKING_EXCEED_CHECK);
             context.startService(intent);

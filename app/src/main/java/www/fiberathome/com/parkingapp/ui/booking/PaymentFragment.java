@@ -35,6 +35,7 @@ import retrofit2.Callback;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
+import www.fiberathome.com.parkingapp.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.model.BookedPlace;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
@@ -42,7 +43,6 @@ import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.booking.ReservationResponse;
 import www.fiberathome.com.parkingapp.service.notification.NotificationPublisher;
-import www.fiberathome.com.parkingapp.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
@@ -71,7 +71,8 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
 
     public static PaymentFragment newInstance(Date mArrivedDate, Date mDepartedDate, String mArrivedTime,
                                               String mDepartureTime, String mTimeDifference, long mDifferenceUnit,
-                                              String mMarkerUid, double mLat, double mLon, String mRoute, String mAreaName, String mParkingSlotCount) {
+                                              String mMarkerUid, double mLat, double mLon, String mRoute, String mAreaName,
+                                              String mParkingSlotCount) {
         arrivedDate = mArrivedDate;
         departureDate = mDepartedDate;
         arrivedTime = mArrivedTime;

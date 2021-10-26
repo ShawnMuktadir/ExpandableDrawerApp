@@ -47,7 +47,6 @@ import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.booking.BookedList;
 import www.fiberathome.com.parkingapp.model.response.booking.BookedResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.ReservationCancelResponse;
-import www.fiberathome.com.parkingapp.service.booking_service.BookingService;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
@@ -350,7 +349,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
     }
     private void stopBookingTrackService() {
         if (isLocationTrackingServiceRunning()) {
-            Intent intent = new Intent(context, BookingService.class);
+            Intent intent = new Intent(context, www.fiberathome.com.parkingapp.module.booking_service.BookingService.class);
             intent.setAction(Constants.STOP_BOOKING_TRACKING);
             context.startService(intent);
             Toast.makeText(context, "Booking Tracking Stopped", Toast.LENGTH_SHORT).show();

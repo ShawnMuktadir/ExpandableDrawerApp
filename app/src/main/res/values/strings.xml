@@ -522,4 +522,5 @@
     <string name="you_are_parked">You Are Parked</string>
     <string name="booking_already_canceled">Booking already canceled</string>
     <string name="booking_already_canceled_msg">Your reserve time is over. Your parking has been canceled.</string>
+    <string name="back">Back</string>
 </resources>

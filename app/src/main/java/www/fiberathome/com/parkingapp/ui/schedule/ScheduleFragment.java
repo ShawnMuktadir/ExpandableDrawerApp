@@ -50,15 +50,15 @@ import retrofit2.Callback;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
+import www.fiberathome.com.parkingapp.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.booking.ReservationResponse;
-import www.fiberathome.com.parkingapp.module.notification.NotificationPublisher;
+import www.fiberathome.com.parkingapp.service.notification.NotificationPublisher;
 import www.fiberathome.com.parkingapp.ui.booking.PaymentFragment;
 import www.fiberathome.com.parkingapp.ui.booking.helper.DialogHelper;
-import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DateTimeUtils;
@@ -264,7 +264,6 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                     vibrator.vibrate(10);
                 }
             });
-
             setListeners();
         }
     }
@@ -295,11 +294,6 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                 if (diff < 0) {
                     Toast.makeText(requireActivity(), context.getResources().getString(R.string.departure_time_less_arrive_time), Toast.LENGTH_SHORT).show();
                 }
-                /*else if (departedDate.getTime() < mFutureTime.getTime() - arrivedDate.getTime()) {
-                    Timber.e(String.valueOf(departedDate.getTime()));
-                    Timber.e(String.valueOf(mFutureTime.getTime() - arrivedDate.getTime()));
-                    Toast.makeText(requireActivity(), context.getResources().getString(R.string.departure_time_less_thirty_arrive_time), Toast.LENGTH_SHORT).show();
-                }*/
                 else {
                     if(isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
                         storeReservation(Preferences.getInstance(context).getUser().getMobileNo(), getDate(arrivedDate.getTime()), getDate(departedDate.getTime()), markerUid);
@@ -369,7 +363,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
 
     @Override
     public void payBtnClick() {
-//        storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),getDate(arrivedDate.getTime()),getDate(departedDate.getTime()),markerUid);
+        //storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),getDate(arrivedDate.getTime()),getDate(departedDate.getTime()),markerUid);
     }
 
     @Override
@@ -398,7 +392,6 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                 TimeUnit.MILLISECONDS.toMinutes(difference) -
                         TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(difference)) // The change is in this line
         );
-
     }
 
     public long diffTime() {
@@ -444,7 +437,6 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                     .setCancelable(false)
                     .show();
         }
-
         return false;
     }
 
@@ -489,9 +481,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                             listener.fragmentChange(paymentFragment);
                         } else {
                             DialogUtils.getInstance().showOnlyMessageDialog(response.body().getMessage(), context);
-
                         }
-
                     } else {
                         Toast.makeText(getContext(), context.getResources().getString(R.string.reservation_failed), Toast.LENGTH_SHORT).show();
                     }
@@ -502,9 +492,8 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
             public void onFailure(@NonNull Call<ReservationResponse> call, @NonNull Throwable t) {
                 Timber.e("onFailure -> %s", t.getMessage());
                 hideLoading();
-//                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+                //ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
         });
     }
-
 }
