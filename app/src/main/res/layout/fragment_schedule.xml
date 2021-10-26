@@ -119,27 +119,6 @@
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/dimTex14" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="@dimen/dim5"
-                    android:visibility="gone">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="Vehicle No: "
-                        android:textColor="@color/black" />
-
-                    <Spinner
-                        android:id="@+id/spinner"
-                        android:layout_width="@dimen/dim150"
-                        android:layout_height="@dimen/dim50"
-                        android:prompt="@string/spinner_title" />
-                </LinearLayout>
-
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
@@ -189,13 +168,17 @@
                 <LinearLayout
                     android:id="@+id/departureDisableLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_margin="@dimen/dim5"
+                    android:background="@drawable/rect_white_bg_gray_border_rounded">
+
                     <Spinner
                         android:id="@+id/classSpinner"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_gravity="center_vertical"
                         android:layout_weight="1" />
+
                     <com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker
                         android:id="@+id/departurePicker"
                         android:layout_width="match_parent"
@@ -211,7 +194,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dim3"
+                    android:layout_marginTop="@dimen/dim5"
                     android:orientation="horizontal"
                     android:weightSum="2">
 
