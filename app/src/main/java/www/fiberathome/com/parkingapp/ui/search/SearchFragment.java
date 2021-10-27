@@ -1,5 +1,11 @@
 package www.fiberathome.com.parkingapp.ui.search;
 
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
+import static android.content.Context.LOCATION_SERVICE;
+import static www.fiberathome.com.parkingapp.model.data.AppConstants.HISTORY_PLACE_SELECTED;
+import static www.fiberathome.com.parkingapp.model.data.AppConstants.NEW_PLACE_SELECTED;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.location.LocationManager;
@@ -58,12 +64,6 @@ import www.fiberathome.com.parkingapp.ui.search.placesadapter.PlacesAutoComplete
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.KeyboardUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
-
-import static android.app.Activity.RESULT_CANCELED;
-import static android.app.Activity.RESULT_OK;
-import static android.content.Context.LOCATION_SERVICE;
-import static www.fiberathome.com.parkingapp.model.data.AppConstants.HISTORY_PLACE_SELECTED;
-import static www.fiberathome.com.parkingapp.model.data.AppConstants.NEW_PLACE_SELECTED;
 
 @SuppressLint("NonConstantResourceId")
 @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -159,8 +159,6 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
 
         setListeners();
 
-        //this.getSupportActionBar().hide();
-
         Places.initialize(context, context.getResources().getString(R.string.google_maps_key));
         placesClient = Places.createClient(context);
 
@@ -171,9 +169,7 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
             Timber.e("searchActivity mobileNo -> %s", Preferences.getInstance(context).getUser().getMobileNo());
 
             editTextSearch.addTextChangedListener(filterTextWatcher);
-
             editTextSearch.requestFocus();
-
             editTextSearch.requestLayout();
         } else {
             TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
@@ -464,7 +460,9 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
                                     searchVisitorDataList.add(searchVisitorData);
                                     Timber.e("searchVisitorData -> %s", new Gson().toJson(searchVisitorData));
                                 }
-                                setFragmentControls(searchVisitorDataList);
+                                if (isAdded()) {
+                                    setFragmentControls(searchVisitorDataList);
+                                }
                             }
 
                         } else {

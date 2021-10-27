@@ -21,56 +21,100 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/dim5"
-        android:padding="@dimen/dim10"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="@dimen/dim10">
 
-        <TextView
-            android:id="@+id/textViewParkingSlot"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/parking_slot"
-            android:textColor="@color/black"
-            android:textStyle="bold"
-            android:textSize="@dimen/dimTex15"/>
+            android:orientation="horizontal"
+            android:weightSum="1.5">
+
+            <TextView
+                android:id="@+id/textViewParkingSlot"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:maxLines="2"
+                android:text="@string/parking_slot"
+                android:textColor="@color/black"
+                android:textSize="@dimen/dimTex15"
+                android:textStyle="bold" />
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_weight="0.5">
+
+                <TextView
+                    android:id="@+id/tvCancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:background="@color/red"
+                    android:gravity="center"
+                    android:padding="@dimen/_5sdp"
+                    android:text="@string/cancel"
+                    android:textColor="@color/color_selector_white"
+                    android:textSize="@dimen/dimTex16"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+
+                <TextView
+                    android:id="@+id/tvStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:text="@string/parked"
+                    android:textColor="@color/green2"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+            </FrameLayout>
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/textViewParkingSlotAddress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/address"
-            android:visibility="gone"
+            android:textColor="@color/gray"
             android:textSize="@dimen/_12ssp"
             android:textStyle="normal"
-            android:textColor="@color/gray"/>
+            android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_marginTop="@dimen/dim5"
+            android:orientation="horizontal"
             android:weightSum="2">
 
             <TextView
                 android:id="@+id/textViewParkingTime"
                 android:layout_width="0dp"
-                android:layout_weight="1.5"
                 android:layout_height="wrap_content"
+                android:layout_weight="1.5"
                 android:text="@string/parking_time"
                 android:textColor="@color/gray"
-                android:textStyle="normal"
-                android:textSize="@dimen/dimTex12"/>
+                android:textSize="@dimen/dimTex12"
+                android:textStyle="normal" />
 
             <TextView
                 android:id="@+id/textViewParkingTotalTime"
                 android:layout_width="0dp"
-                android:layout_weight="0.5"
                 android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_weight="0.5"
+                android:gravity="end"
                 android:text="@string/total_time"
                 android:textColor="@color/gray"
-                android:layout_gravity="end"
-                android:gravity="end"
-                android:textStyle="normal"
-                android:textSize="@dimen/dimTex12"/>
+                android:textSize="@dimen/dimTex12"
+                android:textStyle="normal" />
 
         </LinearLayout>
 
@@ -81,8 +125,8 @@
             android:layout_marginTop="@dimen/dim5"
             android:layout_marginBottom="@dimen/dim5"
             android:background="@color/quantum_grey"
-            android:visibility="gone"
-            android:padding="@dimen/dim2" />
+            android:padding="@dimen/dim2"
+            android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -99,29 +143,29 @@
                 <TextView
                     android:id="@+id/textViewParkingTotalPaymentAmount"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:text="@string/total_fair"
+                    android:textColor="@color/black"
                     android:textSize="@dimen/dimTex20"
-                    android:textStyle="normal"
-                    android:textColor="@color/black"/>
+                    android:textStyle="normal" />
 
                 <LinearLayout
                     android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:gravity="end"
-                    android:layout_height="wrap_content">
+                    android:gravity="end">
 
                     <TextView
                         android:id="@+id/textViewParkingRateNTip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
-                        android:text="@string/rate_tip"
-                        android:textSize="@dimen/_12ssp"
-                        android:textStyle="normal"
                         android:background="@drawable/border"
-                        android:textColor="@color/black"/>
+                        android:text="@string/rate_tip"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_12ssp"
+                        android:textStyle="normal" />
 
                 </LinearLayout>
 
@@ -131,32 +175,32 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:layout_marginTop="@dimen/dim5"
+                android:orientation="horizontal"
                 android:visibility="gone"
                 android:weightSum="2">
 
                 <Button
                     android:id="@+id/btnViewReceipt"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_margin="@dimen/dim2"
                     android:layout_height="wrap_content"
-                    android:text="@string/view_receipt"
+                    android:layout_margin="@dimen/dim2"
+                    android:layout_weight="1"
                     android:background="#eeeeee"
                     android:backgroundTint="#eeeeee"
-                    android:textAllCaps="false"/>
+                    android:text="@string/view_receipt"
+                    android:textAllCaps="false" />
 
                 <Button
                     android:id="@+id/btnGetHelp"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/dim2"
+                    android:layout_weight="1"
                     android:background="#eeeeee"
                     android:backgroundTint="#eeeeee"
                     android:text="@string/get_help"
-                    android:textAllCaps="false"/>
+                    android:textAllCaps="false" />
 
             </LinearLayout>
 

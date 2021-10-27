@@ -67,4 +67,14 @@ public class DateTimeUtils {
             return null;
         }
     }
+    @SuppressLint("SimpleDateFormat")
+    public String getCurrentDayTime() {
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMMM yyyy");
+            return dateFormat.format(new Date());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

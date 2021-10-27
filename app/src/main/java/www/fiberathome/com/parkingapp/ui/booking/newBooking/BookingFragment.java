@@ -1,6 +1,13 @@
 package www.fiberathome.com.parkingapp.ui.booking.newBooking;
 
+import static android.content.Context.LOCATION_SERVICE;
+import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
+
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -10,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -34,9 +42,12 @@ import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
+import www.fiberathome.com.parkingapp.model.data.Constants;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.booking.BookedList;
 import www.fiberathome.com.parkingapp.model.response.booking.BookedResponse;
+import www.fiberathome.com.parkingapp.model.response.booking.ReservationCancelResponse;
+import www.fiberathome.com.parkingapp.module.booking_service.BookingService;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
@@ -44,9 +55,6 @@ import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
-
-import static android.content.Context.LOCATION_SERVICE;
-import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
 
 @SuppressLint("NonConstantResourceId")
 @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -68,6 +76,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
     private ArrayList<BookedList> bookedLists;
 
     private BookedResponse bookedResponse;
+    private BookingAdapter bookingAdapter;
 
     public BookingFragment() {
         // Required empty public constructor
@@ -101,7 +110,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
 
         String mobileNo = Preferences.getInstance(context).getUser().getMobileNo();
         if (ConnectivityUtils.getInstance().checkInternet(context)) {
-            fetchBookedParkingPlace(mobileNo);
+            fetchBookedParkingPlace(mobileNo,false);
         } else {
             DialogUtils.getInstance().alertDialog(context,
                     context,
@@ -110,7 +119,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                         @Override
                         public void onPositiveClick() {
                             if (ConnectivityUtils.getInstance().checkInternet(context)) {
-                                fetchBookedParkingPlace(mobileNo);
+                                fetchBookedParkingPlace(mobileNo,false);
                             } else {
                                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                             }
@@ -206,7 +215,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
         return false;
     }
 
-    private void fetchBookedParkingPlace(String mobileNo) {
+    private void fetchBookedParkingPlace(String mobileNo,boolean refresh) {
 
         Timber.e("fetchBookedParkingPlace mobileNo -> %s,", mobileNo);
 
@@ -227,13 +236,10 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                 if (response.body() != null && !response.body().getError()) {
                     if (response.isSuccessful()) {
                         bookedResponse = response.body();
-
                         bookedLists = bookedResponse.getBookedLists();
-
                         Timber.e("bookedLists -> %s", new Gson().toJson(bookedLists));
-
                         if (bookedLists != null && !bookedLists.isEmpty()) {
-                            setFragmentControls(bookedLists);
+                            setFragmentControls(bookedLists,refresh);
                             hideNoData();
                         } else {
                             setNoData();
@@ -248,16 +254,78 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
             public void onFailure(@NonNull Call<BookedResponse> call, @NonNull Throwable errors) {
                 Timber.e("Throwable Errors: -> %s", errors.toString());
                 hideLoading();
-                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+//                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
         });
     }
 
-    private void setFragmentControls(ArrayList<BookedList> bookedLists) {
-        recyclerViewBooking.setHasFixedSize(true);
-        recyclerViewBooking.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
-        BookingAdapter bookingAdapter = new BookingAdapter(context, bookedLists);
-        recyclerViewBooking.setAdapter(bookingAdapter);
+    private void setFragmentControls(ArrayList<BookedList> bookedLists,boolean refresh) {
+        if(!refresh && isAdded()) {
+            recyclerViewBooking.setHasFixedSize(true);
+            recyclerViewBooking.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
+            bookingAdapter = new BookingAdapter(context, bookedLists, new BookingAdapter.BookingAdapterClickListener() {
+                @Override
+                public void onItemClick(int position, String uid, String id) {
+                    DialogUtils.getInstance().alertDialog(context,
+                            (Activity) context,
+                            "Do you want to cancel booking?",
+                            context.getString(R.string.ok), context.getString(R.string.cancel),
+                            new DialogUtils.DialogClickListener() {
+                                @Override
+                                public void onPositiveClick() {
+                                    Timber.e("Positive Button clicked");
+                                    if(isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
+                                        cancelBooking(Preferences.getInstance(context).getUser().getMobileNo(), uid,id);
+                                    }
+                                    Preferences.getInstance(context).clearBooking();
+                                }
+
+                                @Override
+                                public void onNegativeClick() {
+                                    Timber.e("Negative Button Clicked");
+                                    if (context != null) {
+
+                                    }
+                                }
+                            }).show();
+
+
+
+                }
+            });
+            recyclerViewBooking.setAdapter(bookingAdapter);
+        }
+        else{
+            bookingAdapter.updateList(bookedLists);
+        }
+    }
+
+    private void cancelBooking(String mobileNo, String uid, String id) {
+        showLoading(context);
+            ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+            Call<ReservationCancelResponse> call = request.cancelReservation(Preferences.getInstance(context).getUser().getMobileNo(), uid,id);
+            call.enqueue(new Callback<ReservationCancelResponse>() {
+                @Override
+                public void onResponse(@NonNull Call<ReservationCancelResponse> call, @NonNull Response<ReservationCancelResponse> response) {
+                    hideLoading();
+                    if (response.isSuccessful()) {
+                        if (response.body() != null) {
+                            ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
+                            Preferences.getInstance(context).clearBooking();
+                            bookedLists.clear();
+                            fetchBookedParkingPlace(mobileNo,true);
+                            stopBookingTrackService();
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<ReservationCancelResponse> call, @NonNull Throwable t) {
+                    Timber.e("onFailure -> %s", t.getMessage());
+//                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+                    hideLoading();
+                }
+            });
     }
 
     private void setListeners() {
@@ -280,7 +348,29 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
         textViewNoData.setVisibility(View.VISIBLE);
         //textViewNoData.setText(context.getString(R.string.no_record_found));
     }
+    private void stopBookingTrackService() {
+        if (isLocationTrackingServiceRunning()) {
+            Intent intent = new Intent(context, BookingService.class);
+            intent.setAction(Constants.STOP_BOOKING_TRACKING);
+            context.startService(intent);
+            Toast.makeText(context, "Booking Tracking Stopped", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private boolean isLocationTrackingServiceRunning() {
+        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        if (activityManager != null) {
+            for (ActivityManager.RunningServiceInfo serviceInfo : activityManager.getRunningServices(Integer.MAX_VALUE)) {
+                String a = Service.class.getName();
+                serviceInfo.service.getClassName();
+                if (serviceInfo.foreground) {
+                    return true;
+                }
 
+            }
+            return false;
+        }
+        return false;
+    }
     private void hideNoData() {
         textViewNoData.setVisibility(View.GONE);
     }

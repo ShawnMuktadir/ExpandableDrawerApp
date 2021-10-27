@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
@@ -107,8 +108,14 @@ public class DialogUtils {
         ProgressDialog progressDialog = new ProgressDialog(context, R.style.MyAlertDialogStyle);
         progressDialog.setMessage(message);
         progressDialog.setCancelable(false);
-        progressDialog.show();
-
+        try {
+            if (!((Activity) context).isFinishing()) {
+                progressDialog.show();
+            }
+        } catch (WindowManager.BadTokenException e) {
+            //use a log message
+            e.getCause();
+        }
         return progressDialog;
     }
 
@@ -137,7 +144,14 @@ public class DialogUtils {
                             }));
             builder.setNegativeButton(context.getResources().getString(R.string.ok), (dialog, which) -> dialog.dismiss());
             AlertDialog alertDialog = builder.create();
-            alertDialog.show();
+            try {
+                if (!((Activity) context).isFinishing()) {
+                    alertDialog.show();
+                }
+            } catch (WindowManager.BadTokenException e) {
+                //use a log message
+                e.getCause();
+            }
 
             // Let's start with animation work. We just need to create a style and use it here as follows.
             /*if (alertDialog.getWindow() != null)
@@ -153,7 +167,14 @@ public class DialogUtils {
             builder.setCancelable(true);
             builder.setPositiveButton(context.getResources().getString(R.string.ok), (dialog, which) -> dialog.dismiss());
             AlertDialog alertDialog = builder.create();
-            alertDialog.show();
+            try {
+                if (!((Activity) context).isFinishing()) {
+                    alertDialog.show();
+                }
+            } catch (WindowManager.BadTokenException e) {
+                //use a log message
+                e.getCause();
+            }
 
             // Let's start with animation work. We just need to create a style and use it here as follows.
             /*if (alertDialog.getWindow() != null)
@@ -234,8 +255,13 @@ public class DialogUtils {
         AlertDialog alertDialog = builder.create();
         alertDialog.setOnShowListener(arg0 -> alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(context.getResources().getColor(R.color.red)));
         alertDialog.setCancelable(false);
-        if (!((Activity) context).isFinishing()) {
-            alertDialog.show();
+        try {
+            if (!((Activity) context).isFinishing()) {
+                alertDialog.show();
+            }
+        } catch (WindowManager.BadTokenException e) {
+            //use a log message
+            e.getCause();
         }
     }
 
@@ -256,8 +282,13 @@ public class DialogUtils {
         alertDialog.setOnShowListener(arg0 -> alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(context.getResources().getColor(R.color.red)));
         alertDialog.setCancelable(false);
 
-        if (!((Activity) context).isFinishing()) {
-            alertDialog.show();
+        try {
+            if (!((Activity) context).isFinishing()) {
+                alertDialog.show();
+            }
+        } catch (WindowManager.BadTokenException e) {
+            //use a log message
+            e.getCause();
         }
     }
 }

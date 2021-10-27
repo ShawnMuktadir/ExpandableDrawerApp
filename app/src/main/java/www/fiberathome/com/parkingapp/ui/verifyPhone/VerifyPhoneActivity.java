@@ -2,7 +2,6 @@ package www.fiberathome.com.parkingapp.ui.verifyPhone;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,7 +17,6 @@ import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 
 @SuppressLint("NonConstantResourceId")
 public class VerifyPhoneActivity extends BaseActivity {
-
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
@@ -32,12 +30,8 @@ public class VerifyPhoneActivity extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
-
         context = this;
-
         ButterKnife.bind(this);
-
-        //setToolbar();
 
         setTitle(context.getResources().getString(R.string.verify_otp));
 
@@ -62,19 +56,6 @@ public class VerifyPhoneActivity extends BaseActivity {
     public void onBackPressed() {
         //super.onBackPressed();
         startActivityWithFinishAffinity(LoginActivity.class);
-    }
-
-    private void setToolbar() {
-        toolbar.setVisibility(View.VISIBLE);
-        view.setVisibility(View.VISIBLE);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        //getSupportActionBar().setTitle(context.getResources().getString(R.string.verify_otp));
-        toolbar.setTitleTextColor(context.getResources().getColor(R.color.black));
-        if (toolbar.getNavigationIcon() != null) {
-            toolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.black), PorterDuff.Mode.SRC_ATOP);
-        }
     }
 }
 

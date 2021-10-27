@@ -1,20 +1,21 @@
 package www.fiberathome.com.parkingapp.model.data.preference;
 
+import static android.content.Context.MODE_PRIVATE;
+import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import www.fiberathome.com.parkingapp.model.BookedPlace;
 import www.fiberathome.com.parkingapp.model.data.Constants;
 import www.fiberathome.com.parkingapp.model.user.User;
-
-import static android.content.Context.MODE_PRIVATE;
-import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
 
 @SuppressLint("StaticFieldLeak")
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class Preferences {
 
-    private static final String SHARED_PREF_NAME = "PARKINGAPP";
+    public static final String SHARED_PREF_NAME = "PARKINGAPP";
     private static final String KEY_FULLNAME = "fullname";
     private static final String KEY_MOBILE_NO = "mobile_no";
     private static final String KEY_VEHICLE_NO = "vehicle_no";
@@ -29,6 +30,7 @@ public class Preferences {
     private static final String KEY_IS_WAITING_FOR_SMS = "isWaitingForSMS22";
     private static final String KEY_IS_UPDATE_REQUIRED = "isUpdateRequired";
     private static final String KEY_CHECKED_ITEM = "checked_item";
+    private static final String SHARED_PREF_NAME_BOOKING = "SHARED_PREF_NAME_BOOKING";
 
 
     private static Preferences instance;
@@ -47,7 +49,7 @@ public class Preferences {
         return instance;
     }
 
-    public void userLogin(User user) {
+    public void setUser(User user) {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -57,6 +59,62 @@ public class Preferences {
         editor.putString(KEY_VEHICLE_NO, user.getVehicleNo());
         editor.putString(KEY_PROFILE_PIC, user.getImage());
         editor.putString(KEY_VEHICLE_PIC, user.getVehicleImage());
+        editor.apply();
+    }
+
+    public User getUser() {
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        User user = new User();
+        user.setId(sharedPreferences.getInt(KEY_ID, -1));
+        user.setFullName(sharedPreferences.getString(KEY_FULLNAME, null));
+        user.setMobileNo(sharedPreferences.getString(KEY_MOBILE_NO, null));
+        user.setVehicleNo(sharedPreferences.getString(KEY_VEHICLE_NO, null));
+        user.setImage(sharedPreferences.getString(KEY_PROFILE_PIC, null));
+        user.setVehicleImage(sharedPreferences.getString(KEY_VEHICLE_PIC, null));
+
+        return user;
+    }
+
+    public void setBooked(BookedPlace booked) {
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME_BOOKING, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putString("uid", booked.getBookedUid());
+        editor.putString("areaName", booked.getAreaName());
+        editor.putString("parkingSlotCount", booked.getParkingSlotCount());
+        editor.putString("uid", booked.getBookedUid());
+        editor.putLong("lat", (long) booked.getLat());
+        editor.putLong("lon", (long) booked.getLon());
+        editor.putString("route", booked.getRoute());
+        editor.putBoolean("isBooked", booked.getIsBooked());
+        editor.putString("placeId", booked.getPlaceId());
+        editor.putString("reservation", booked.getReservation());
+        editor.putLong("departedDate", booked.getDepartedDate());
+        editor.putLong("arrivedDate", booked.getArriveDate());
+        editor.apply();
+    }
+
+    public BookedPlace getBooked() {
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME_BOOKING, MODE_PRIVATE);
+        BookedPlace bookedPlace = new BookedPlace();
+        bookedPlace.setBookedUid(sharedPreferences.getString("uid", ""));
+        bookedPlace.setAreaName(sharedPreferences.getString("areaName", ""));
+        bookedPlace.setParkingSlotCount(sharedPreferences.getString("parkingSlotCount", ""));
+        bookedPlace.setRoute(sharedPreferences.getString("route", ""));
+        bookedPlace.setPlaceId(sharedPreferences.getString("placeId", ""));
+        bookedPlace.setReservation(sharedPreferences.getString("reservation", ""));
+        bookedPlace.setLat(sharedPreferences.getLong("lat", 0));
+        bookedPlace.setLon(sharedPreferences.getLong("lon", 0));
+        bookedPlace.setDepartedDate(sharedPreferences.getLong("departedDate", 0));
+        bookedPlace.setArriveDate(sharedPreferences.getLong("arrivedDate", 0));
+        bookedPlace.setIsBooked(sharedPreferences.getBoolean("isBooked", false));
+
+        return bookedPlace;
+    }
+    public void clearBooking(){
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME_BOOKING, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
         editor.apply();
     }
 
@@ -91,6 +149,13 @@ public class Preferences {
 
     public void saveVehicleDivData(String vehicleDivData) {
         saveValue(Constants.KEY_VEHICLE_DIV_DATA, vehicleDivData);
+    }
+   public String getBookedParkingData() {
+        return getValue(Constants.KEY_Booked_Parking_DATA, null);
+    }
+
+    public void setBookedParkingData(String value) {
+        saveValue(Constants.KEY_Booked_Parking_DATA, value);
     }
 
     public void setRadioButtonVehicleFormat(String key, boolean radioButtonValue) {
@@ -128,19 +193,6 @@ public class Preferences {
     public boolean isLoggedIn() {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         return sharedPreferences.getString(KEY_MOBILE_NO, null) != null;
-    }
-
-    public User getUser() {
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
-        User user = new User();
-        user.setId(sharedPreferences.getInt(KEY_ID, -1));
-        user.setFullName(sharedPreferences.getString(KEY_FULLNAME, null));
-        user.setMobileNo(sharedPreferences.getString(KEY_MOBILE_NO, null));
-        user.setVehicleNo(sharedPreferences.getString(KEY_VEHICLE_NO, null));
-        user.setImage(sharedPreferences.getString(KEY_PROFILE_PIC, null));
-        user.setVehicleImage(sharedPreferences.getString(KEY_VEHICLE_PIC, null));
-
-        return user;
     }
 
     public void logout() {

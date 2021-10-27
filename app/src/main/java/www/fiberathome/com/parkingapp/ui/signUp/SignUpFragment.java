@@ -1,5 +1,8 @@
 package www.fiberathome.com.parkingapp.ui.signUp;
 
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -81,9 +84,6 @@ import www.fiberathome.com.parkingapp.utils.MathUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
-
-import static android.app.Activity.RESULT_CANCELED;
-import static android.app.Activity.RESULT_OK;
 
 @SuppressLint("NonConstantResourceId")
 @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -495,37 +495,32 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             try {
                 if (!vehicleImage) {
                     profileBitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), contentURI);
-                    Bitmap convertedImage = getResizedBitmap(profileBitmap, 500);
+                    Bitmap convertedImage = Bitmap.createScaledBitmap(profileBitmap, 828, 828, true);
+                    profileBitmap = convertedImage;
                     imageViewUploadProfileImage.setImageBitmap(convertedImage);
                 } else {
                     vehicleBitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), contentURI);
-                    Bitmap convertedImage = getResizedBitmap(vehicleBitmap, 500);
+                    Bitmap convertedImage = Bitmap.createScaledBitmap(vehicleBitmap, 828, 828, true);
+                    vehicleBitmap = convertedImage;
                     ivVehiclePlatePreview.setImageBitmap(convertedImage);
                 }
-
-                //Toast.makeText(SignUpActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
-
-
             } catch (IOException e) {
                 e.printStackTrace();
                 ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
-
         } else if (requestCode == REQUEST_PICK_CAMERA && resultCode == RESULT_OK && data != null) {
-
             try {
                 if (data.getExtras() != null) {
-
                     if (!vehicleImage) {
                         profileBitmap = (Bitmap) data.getExtras().get("data");
+                        profileBitmap = Bitmap.createScaledBitmap(profileBitmap, 828, 828, true);
                         imageViewUploadProfileImage.setImageBitmap(profileBitmap);
                     } else {
                         vehicleBitmap = (Bitmap) data.getExtras().get("data");
+                        vehicleBitmap = Bitmap.createScaledBitmap(vehicleBitmap, 828, 828, true);
                         ivVehiclePlatePreview.setImageBitmap(vehicleBitmap);
                     }
                 }
-                /*saveImage(thumbnail);
-                 Toast.makeText(SignUpActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();*/
             } catch (Exception e) {
                 e.printStackTrace();
                 Toast.makeText(context, context.getResources().getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show();

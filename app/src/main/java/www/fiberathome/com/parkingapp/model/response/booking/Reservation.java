@@ -25,7 +25,6 @@ public class Reservation {
 
     }
 
-
     public Reservation( String mobileNo, String timeStart, String timeEnd, String spotId) {
         this.mobileNo = mobileNo;
         this.timeStart = timeStart;

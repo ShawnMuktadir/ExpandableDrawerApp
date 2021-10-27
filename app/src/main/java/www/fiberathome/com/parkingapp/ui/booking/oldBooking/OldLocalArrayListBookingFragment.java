@@ -1,6 +1,8 @@
 package www.fiberathome.com.parkingapp.ui.booking.oldBooking;
 
 
+import static com.android.volley.VolleyLog.TAG;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,8 +35,6 @@ import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.user.User;
 import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
-
-import static com.android.volley.VolleyLog.TAG;
 
 /**
  * A simple {@link Fragment} subclass.

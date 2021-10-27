@@ -1,8 +1,9 @@
 package www.fiberathome.com.parkingapp.ui.schedule;
 
+import static android.content.Context.LOCATION_SERVICE;
+import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
+
 import android.annotation.SuppressLint;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
@@ -15,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -28,106 +28,96 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.toolbox.StringRequest;
 import com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker;
-import com.google.gson.Gson;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import retrofit2.Call;
+import retrofit2.Callback;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.adapter.UniversalSpinnerAdapter;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
-import www.fiberathome.com.parkingapp.base.ParkingApp;
+import www.fiberathome.com.parkingapp.model.api.ApiClient;
+import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
-import www.fiberathome.com.parkingapp.model.response.booking.Reservation;
-import www.fiberathome.com.parkingapp.module.notification.NotificationPublisher;
+import www.fiberathome.com.parkingapp.model.response.booking.ReservationResponse;
+import www.fiberathome.com.parkingapp.model.response.booking.TimeSlotsResponse;
 import www.fiberathome.com.parkingapp.ui.booking.PaymentFragment;
 import www.fiberathome.com.parkingapp.ui.booking.helper.DialogHelper;
 import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DateTimeUtils;
-import www.fiberathome.com.parkingapp.utils.HttpsTrustManager;
+import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
+import www.fiberathome.com.parkingapp.utils.MathUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
-import www.fiberathome.com.parkingapp.utils.ToastUtils;
-
-import static android.content.Context.LOCATION_SERVICE;
-import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
 
 @SuppressLint("NonConstantResourceId")
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBtnClickListener,
-        IOnBackPressListener, AdapterView.OnItemSelectedListener {
+        IOnBackPressListener {
 
+    public static String markerUid = "";
+    public static String areaName;
     private final String TAG = getClass().getSimpleName();
-
+    public DialogHelper.PayBtnClickListener payBtnClickListener;
+    public long arrived, departure, difference;
+    @BindView(R.id.overlay)
+    View overlay;
     @BindView(R.id.textViewCurrentDate)
     TextView textViewCurrentDate;
-
     @BindView(R.id.ivBackArrow)
     ImageView ivBackArrow;
-
     @BindView(R.id.action_bar_title)
     TextView textViewActionBarTitle;
-
     @BindView(R.id.action_bar_sub_title)
     TextView textViewActionBarSubTitle;
-
     @BindView(R.id.tvTotalParkingTime)
-    TextView textViewTotalParkingTime;
-
-    @BindView(R.id.spinner)
-    Spinner spinner;
+    TextView tvTotalParkingTime;
 
     @BindView(R.id.setBtn)
     Button setBtn;
-
     @BindView(R.id.cancelBtn)
     Button cancelBtn;
-
     @BindView(R.id.arriveDisableLayout)
     LinearLayout arriveDisableLayout;
-
     @BindView(R.id.departureDisableLayout)
     LinearLayout departureDisableLayout;
-
     @BindView(R.id.arrivedPicker)
     SingleDateAndTimePicker arrivedPicker;
-
     @BindView(R.id.departurePicker)
     SingleDateAndTimePicker departurePicker;
-
+    @BindView(R.id.classSpinner)
+    Spinner departureTimeSpinner;
     private Unbinder unbinder;
-
     private Context context;
-
-    private Date arrivedDate, departedDate;
+    private Date arrivedDate, departedDate, mFutureTime;
     private boolean setArrivedDate = false;
     private boolean more = false;
     private FragmentChangeListener listener;
-    public DialogHelper.PayBtnClickListener payBtnClickListener;
-    private String markerUid = "";
-    public long arrived, departure, difference;
+    private double lat;
+    private double lon;
+    private String route;
+    private String parkingSlotCount;
+    private final List<www.fiberathome.com.parkingapp.model.Spinner> departureTimeDataList = new ArrayList<>();
+    private List<List<String>> sensorAreaStatusList = new ArrayList<>();
+    private UniversalSpinnerAdapter departureTimeAdapter;
+
+    private String time = "";
+    private String timeValue = "";
 
     public ScheduleFragment() {
         // Required empty public constructor
@@ -137,134 +127,121 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
         return new ScheduleFragment();
     }
 
+    public static ScheduleFragment newInstance(String placeId, String mAreaName) {
+        markerUid = placeId;
+        areaName = mAreaName;
+        return new ScheduleFragment();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_schedule, container, false);
-        unbinder = ButterKnife.bind(this, view);
-
-        context = getActivity();
-
-        textViewCurrentDate.setText(DateTimeUtils.getInstance().getPSTTimeZoneCurrentDate());
-
-        listener = (FragmentChangeListener) getActivity();
-        payBtnClickListener = this;
-
-        // Spinner click listener
-        spinner.setOnItemSelectedListener(this);
-
-        // Spinner Drop down elements
-        List<String> categories = new ArrayList<>();
-        categories.add("Item 1");
-        categories.add("Item 2");
-        categories.add("Item 3");
-        categories.add("Item 4");
-        categories.add("Item 5");
-        categories.add("Item 6");
-
-        // Creating adapter for spinner
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, categories);
-
-        // Drop down layout style - list view with radio button
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        // attaching data adapter to spinner
-        spinner.setAdapter(dataAdapter);
-
-        return view;
+        return inflater.inflate(R.layout.fragment_schedule, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Timber.e("onViewCreated called ");
-        Date currentTime = Calendar.getInstance().getTime();
+        if (isAdded()) {
+            unbinder = ButterKnife.bind(this, view);
 
+            context = getActivity();
 
-        if (getArguments() != null) {
-            more = getArguments().getBoolean("m");
-        }
+            textViewCurrentDate.setText(DateTimeUtils.getInstance().getCurrentDayTime());
 
-        if (getArguments() != null) {
-            markerUid = getArguments().getString("markerUid");
-            Timber.e("markerUid -> %s", markerUid);
-        }
-        arrivedPicker.setIsAmPm(true);
-        departurePicker.setIsAmPm(true);
-        arrivedPicker.setDefaultDate(currentTime);
-        departurePicker.setDefaultDate(currentTime);
+            listener = (FragmentChangeListener) getActivity();
 
-        if (more) {
-            setArrivedDate = true;
-            arrivedPicker.setEnabled(false);
-            arriveDisableLayout.setBackgroundColor(getResources().getColor(R.color.disableColor));
-            Date arrived = new Date(getArguments().getLong("a"));
-            Date departure = new Date(getArguments().getLong("d"));
+            payBtnClickListener = this;
 
-            arrivedDate = arrived;
-            departedDate = departure;
-
-            arrivedPicker.setDefaultDate(arrived);
-            departurePicker.setDefaultDate(departure);
-
-        }
-        else {
-            departurePicker.setEnabled(false);
-            departureDisableLayout.setBackgroundColor(getResources().getColor(R.color.disableColor));
-
-            arrivedDate = arrivedPicker.getDate();
-            Timber.d("arrived date before scrolling -> %s", arrivedDate);
-            departedDate = departurePicker.getDate();
-            Timber.d("departure date before scrolling -> %s", departedDate);
-            arrived = arrivedDate.getTime();
-            departure = departedDate.getTime();
-            difference = arrived - departure;
-            Timber.e("difference -> %s", difference);
-        }
-
-        arrivedPicker.addOnDateChangedListener((displayed, date) -> {
-            arrivedDate = date;
-            Timber.e("onDateChanged: -> %s", date);
-            Timber.e("onDateChanged: departureDate: -> %s", arrivedDate);
-
-            Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-            final long[] pattern = {0, 10};
-            final int[] amplitudes = {50, 50};
-
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                VibrationEffect effect = VibrationEffect.createWaveform(pattern, amplitudes, 0);
-                assert vibrator != null;
-                vibrator.vibrate(effect);
-                (new Handler()).postDelayed(vibrator::cancel, 50);
-            } else {
-                assert vibrator != null;
-                vibrator.vibrate(10);
+            Date currentTime = Calendar.getInstance().getTime();
+            //add 30 minutes to date
+            mFutureTime = new Date(); // Instantiate a Date object
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(mFutureTime);
+            cal.add(Calendar.MINUTE, 30);
+            mFutureTime = cal.getTime();
+            Date futureTime = mFutureTime;
+            if (getArguments() != null) {
+                more = getArguments().getBoolean("m");
+                markerUid = getArguments().getString("markerUid");
+                lat = getArguments().getDouble("lat");
+                lon = getArguments().getDouble("long");
+                route = getArguments().getString("route");
+                areaName = getArguments().getString("areaName");
+                parkingSlotCount = getArguments().getString("parkingSlotCount");
+                Timber.e("markerUid -> %s", markerUid);
             }
-        });
+            arrivedPicker.setIsAmPm(true);
+            departurePicker.setIsAmPm(true);
+            arrivedPicker.setDefaultDate(currentTime);
+            departurePicker.setDefaultDate(mFutureTime);
 
-        departurePicker.addOnDateChangedListener((displayed, date) -> {
-            departedDate = date;
-            Timber.e("onDateChanged: -> %s", date);
-            Timber.e("onDateChanged: departureDate: -> %s", departedDate);
+            if (more) {
+                setArrivedDate = true;
+                arrivedPicker.setEnabled(false);
+                arriveDisableLayout.setBackgroundColor(getResources().getColor(R.color.disableColor));
+                Date arrived = new Date(getArguments().getLong("a"));
+                Date departure = new Date(getArguments().getLong("d"));
 
-            Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-            final long[] pattern = {0, 10};
-            final int[] amplitudes = {50, 50};
+                arrivedDate = arrived;
+                departedDate = departure;
 
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                VibrationEffect effect = VibrationEffect.createWaveform(pattern, amplitudes, 0);
-                assert vibrator != null;
-                vibrator.vibrate(effect);
-                (new Handler()).postDelayed(vibrator::cancel, 50);
+                arrivedPicker.setDefaultDate(arrived);
+                departurePicker.setDefaultDate(departure);
+
             } else {
-                assert vibrator != null;
-                vibrator.vibrate(10);
-            }
-        });
+                departurePicker.setEnabled(false);
+                departureDisableLayout.setBackgroundColor(getResources().getColor(R.color.disableColor));
 
-        setListeners();
+                arrivedDate = arrivedPicker.getDate();
+                Timber.d("arrived date before scrolling -> %s", arrivedDate);
+                departedDate = departurePicker.getDate();
+                Timber.d("departure date before scrolling -> %s", departedDate);
+                arrived = arrivedDate.getTime();
+                departure = departedDate.getTime();
+                difference = arrived - departure;
+                Timber.e("difference -> %s", difference);
+            }
+
+            arrivedPicker.addOnDateChangedListener((displayed, date) -> {
+                arrivedDate = date;
+                Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+                final long[] pattern = {0, 10};
+                final int[] amplitudes = {50, 50};
+
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    VibrationEffect effect = VibrationEffect.createWaveform(pattern, amplitudes, 0);
+                    assert vibrator != null;
+                    vibrator.vibrate(effect);
+                    (new Handler()).postDelayed(vibrator::cancel, 50);
+                } else {
+                    assert vibrator != null;
+                    vibrator.vibrate(10);
+                }
+            });
+
+            departurePicker.addOnDateChangedListener((displayed, date) -> {
+                departedDate = date;
+                Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+                final long[] pattern = {0, 10};
+                final int[] amplitudes = {50, 50};
+
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    VibrationEffect effect = VibrationEffect.createWaveform(pattern, amplitudes, 0);
+                    assert vibrator != null;
+                    vibrator.vibrate(effect);
+                    (new Handler()).postDelayed(vibrator::cancel, 50);
+                } else {
+                    assert vibrator != null;
+                    vibrator.vibrate(10);
+                }
+            });
+
+            setListeners();
+            getTimeSlots();
+        }
 
     }
 
@@ -283,48 +260,22 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
 
                 setArrivedDate = true;
             } else {
-                Timber.d("onClick: didnot entered to else");
-                if (departedDate.getTime() - arrivedDate.getTime() < 0) {
-                    Toast.makeText(requireActivity(), "Departure time can't less than arrived time", Toast.LENGTH_SHORT).show();
-                } else {
-                    /*Bundle bundle = new Bundle();
-                    Log.d(TAG, "onClick: " + arrivedDate.getTime());
-                    Log.d(TAG, "onClick: " + departerDate.getTime());
-                    bundle.putBoolean("s", true);
-                    bundle.putLong("arrived", arrivedDate.getTime());
-                    bundle.putLong("departure", departerDate.getTime());
-                    //BookedFragment bookedFragment=new BookedFragment();
-                    //bookedFragment.setArguments(bundle);
-                    HomeFragment homeFragment = new HomeFragment();
-                    homeFragment.setArguments(bundle);
-                    listener.FragmentChange(homeFragment);*/
-
-                    //open DialogHelper with total amount, time difference
-
-                    /*Dialog dialog = new Dialog(requireActivity());
-                        dialog.setContentView(R.layout.voucher_dialog);
-                        DialogHelper dialogHelper = new DialogHelper(dialog, requireActivity(), getDate(arrivedDate.getTime()), getDate(departerDate.getTime()),
-                                getTimeDiffrence(departerDate.getTime() - arrivedDate.getTime()),
-                                departerDate.getTime() - arrivedDate.getTime(), payBtnClickListener);
-                        dialogHelper.initDialog();
-                        dialog.show();*/
-
-                    if (ConnectivityUtils.getInstance().checkInternet(context)) {
-                        long diff = departedDate.getTime() - arrivedDate.getTime();
-                        long seconds = diff / 1000;
-                        long minutes = seconds / 60;
-                        long hours = minutes / 60;
-                        long days = hours / 24;
-                        Timber.e("hours -> %s", hours);
-                        Timber.e("minutes -> %s", minutes);
-                        if (minutes > 120) {
-                            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.booking_time_rules));
-                        } else {
-                            storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
-                                    getDate(arrivedDate.getTime()), getDate(departedDate.getTime()), markerUid);
+                if (departure != 0) {
+                    long diff = (departure + arrivedDate.getTime()) - arrivedDate.getTime();
+                    long seconds = diff / 1000;
+                    long minutes = seconds / 60;
+                    long hours = minutes / 60;
+                    long days = hours / 24;
+                    Timber.d("onClick: did not entered to else");
+                    Timber.d("seconds-> %s", seconds);
+                    Timber.d("minutes-> %s", minutes);
+                    if (diff < 0) {
+                        Toast.makeText(requireActivity(), context.getResources().getString(R.string.departure_time_less_arrive_time), Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
+                            storeReservation(Preferences.getInstance(context).getUser().getMobileNo(), getDate(arrivedDate.getTime()), getDate((departure + arrivedDate.getTime())), markerUid);
                         }
-                    } else {
-                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
                     }
                 }
             }
@@ -391,92 +342,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
 
     @Override
     public void payBtnClick() {
-        Bundle bundle = new Bundle();
-        Timber.d("onClick: -> %s", arrivedDate.getTime());
-        Timber.d("onClick: -> %s", departedDate.getTime());
-        //bundle.putBoolean("s", true);
-        bundle.putLong("arrived", arrivedDate.getTime());
-        bundle.putLong("departure", departedDate.getTime());
-        PaymentFragment paymentFragment = new PaymentFragment();
-        paymentFragment.setArguments(bundle);
-        listener.fragmentChange(paymentFragment);
-    }
-
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
-    }
-
-    private void storeReservation(String mobileNo, String arrivalTime, String departureTime, String markerUid) {
-        Timber.e("storeReservation post method e dhukche");
-        showLoading(context);
-        HttpsTrustManager.allowAllSSL();
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_STORE_RESERVATION, response -> {
-            //progressDialog.dismiss();
-            hideLoading();
-            Timber.e("response -> %s", new Gson().toJson(response));
-            try {
-                JSONObject jsonObject = new JSONObject(response);
-                Timber.e(jsonObject.toString());
-                if (!jsonObject.getBoolean("error")) {
-                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.reservation_successful));
-                    //check 15 minutes before departure
-                    //ToDo
-                    startAlarm(convertLongToCalendar(departedDate.getTime()));
-                    if (getActivity() != null)
-                        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
-
-                    Timber.e("response no error called");
-                    Timber.e(jsonObject.getString("reservation"));
-                    Timber.e(jsonObject.getString("bill"));
-
-                    // creating a new user object
-                    Reservation reservation = new Reservation();
-                    // getting the reservation from the response
-                    //JSONObject reservationJson = jsonObject.getJSONObject("reservation");
-
-                    JSONObject reservationJson = new JSONObject(response);
-                    Timber.e("reservationJson -> %s", new Gson().toJson(reservationJson));
-
-                    reservation.setId(reservationJson.getInt("reservation"));
-                    /*reservation.setMobileNo(reservationJson.getString("mobile_no"));
-                    reservation.setTimeStart(reservationJson.getString("time_start"));
-                    reservation.setTimeEnd(reservationJson.getString("time_end"));
-                    reservation.setSpotId(reservationJson.getString("spot_id"));*/
-                    if (isGPSEnabled()) {
-                        ApplicationUtils.replaceFragmentWithAnimation(getParentFragmentManager(), HomeFragment.newInstance());
-                    } else {
-                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
-                    }
-                } else {
-                    hideLoading();
-                    Toast.makeText(getContext(), "Reservation Failed! Please Try Again. ", Toast.LENGTH_SHORT).show();
-                }
-
-            } catch (JSONException e) {
-                hideLoading();
-                e.printStackTrace();
-            }
-        }, error -> {
-            hideLoading();
-            Timber.e("Volley Error -> %s", error.getMessage());
-        }) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("mobile_no", mobileNo);
-                params.put("time_start", arrivalTime);
-                params.put("time_end", departureTime);
-                params.put("spot_id", markerUid);
-                return params;
-            }
-        };
-        ParkingApp.getInstance().addToRequestQueue(stringRequest, TAG);
+        //storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),getDate(arrivedDate.getTime()),getDate(departedDate.getTime()),markerUid);
     }
 
     private String getDate(long milliSeconds) {
@@ -506,7 +372,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm aa", Locale.US); // for 12-hour system, hh should be used instead of HH
             // There is no minute different between the two, only 8 hours difference. We are not considering Date, So minute will always remain 0
             Date date1 = simpleDateFormat.parse(String.valueOf(arrived));
-            Date date2 = simpleDateFormat.parse(String.valueOf(departure));
+            Date date2 = simpleDateFormat.parse(String.valueOf((departure + arrivedDate.getTime())));
 
             assert date1 != null;
             assert date2 != null;
@@ -523,15 +389,11 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
     }
 
     private boolean isGPSEnabled() {
-
         LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-
         boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
         if (providerEnabled) {
             return true;
         } else {
-
             AlertDialog alertDialog = new AlertDialog.Builder(context)
                     .setTitle("GPS Permissions")
                     .setMessage("GPS is required for this app to work. Please enable GPS.")
@@ -546,26 +408,104 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
         return false;
     }
 
-    private void startAlarm(Calendar c) {
-        Timber.e("startAlarm called");
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(context, NotificationPublisher.class);
-        Intent intent2 = new Intent(context, NotificationPublisher.class);
-        intent2.putExtra("ended", "Book Time Up");
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, intent, 0);
-        PendingIntent pendingIntent2 = PendingIntent.getBroadcast(context, 2, intent2, 0);
-        if (c.before(Calendar.getInstance())) {
-            c.add(Calendar.DATE, 1);
-        }
-        Objects.requireNonNull(alarmManager).setExact(AlarmManager.RTC_WAKEUP,
-                c.getTimeInMillis() - 900000, pendingIntent);
-        Objects.requireNonNull(alarmManager).setExact(AlarmManager.RTC_WAKEUP,
-                c.getTimeInMillis(), pendingIntent2);
+    private void storeReservation(String mobileNo, String arrivalTime, String departureTime, String markerUid) {
+        showLoading(context);
+        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+        Call<ReservationResponse> call = request.storeReservation(mobileNo, arrivalTime, departureTime, markerUid, "1"); // 1 for request availability
+        call.enqueue(new Callback<ReservationResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ReservationResponse> call,
+                                   @NonNull retrofit2.Response<ReservationResponse> response) {
+                hideLoading();
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        if (!response.body().getError()) {
+                            PaymentFragment paymentFragment = PaymentFragment.newInstance(arrivedDate, new Date((departure + arrivedDate.getTime())), getDate(arrivedDate.getTime()), getDate((departure + arrivedDate.getTime())),
+                                    getTimeDifference((departure + arrivedDate.getTime()) - arrivedDate.getTime()),
+                                    (departure + arrivedDate.getTime()) - arrivedDate.getTime(), markerUid, lat, lon, route, areaName, parkingSlotCount);
+                            listener.fragmentChange(paymentFragment);
+                        } else {
+                            DialogUtils.getInstance().showOnlyMessageDialog(response.body().getMessage(), context);
+                        }
+                    } else {
+                        Toast.makeText(getContext(), context.getResources().getString(R.string.reservation_failed), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ReservationResponse> call, @NonNull Throwable t) {
+                Timber.e("onFailure -> %s", t.getMessage());
+                hideLoading();
+                //ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+            }
+        });
     }
 
-    public Calendar convertLongToCalendar(Long source) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(source);
-        return calendar;
+    private void getTimeSlots() {
+        showLoading(context);
+        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+        Call<TimeSlotsResponse> call = request.getTimeSlots();
+        call.enqueue(new Callback<TimeSlotsResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<TimeSlotsResponse> call,
+                                   @NonNull retrofit2.Response<TimeSlotsResponse> response) {
+                hideLoading();
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        if (!response.body().isError()) {
+                            if (response.body().getSensors() != null) {
+                                sensorAreaStatusList = response.body().getSensors();
+                                if (sensorAreaStatusList != null) {
+                                    for (List<String> baseStringList : sensorAreaStatusList) {
+                                        for (int i = 0; i < baseStringList.size(); i++) {
+                                            if (i == 1) {
+                                                time = baseStringList.get(i);
+                                            }
+
+                                            if (i == 2) {
+                                                timeValue = baseStringList.get(i);
+                                            }
+                                        }
+                                        try {
+                                            departureTimeDataList.add(new www.fiberathome.com.parkingapp.model.Spinner(MathUtils.getInstance().convertToInt(timeValue), time));
+                                        } catch (NumberFormatException e) {
+                                            e.getCause();
+                                        }
+                                    }
+                                    setSpinner(departureTimeDataList);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<TimeSlotsResponse> call, @NonNull Throwable t) {
+                Timber.e("onFailure -> %s", t.getMessage());
+                hideLoading();
+            }
+        });
     }
+
+    private void setSpinner(List<www.fiberathome.com.parkingapp.model.Spinner> departureTimeDataList) {
+        departureTimeAdapter = new UniversalSpinnerAdapter(context,
+                android.R.layout.simple_spinner_item,
+                departureTimeDataList);
+
+        departure = departureTimeDataList.get(0).getId() * 3600000L;
+        departureTimeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                departure = departureTimeDataList.get(position).getId() * 3600000L;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+        departureTimeSpinner.setAdapter(departureTimeAdapter);
+    }
+
 }

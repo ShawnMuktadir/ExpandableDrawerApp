@@ -8,6 +8,9 @@
 
 package www.fiberathome.com.parkingapp.utils;
 
+import static android.os.Build.VERSION_CODES.JELLY_BEAN_MR1;
+import static android.os.Build.VERSION_CODES.N;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -22,16 +25,13 @@ import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Set;
 
-import static android.os.Build.VERSION_CODES.JELLY_BEAN_MR1;
-import static android.os.Build.VERSION_CODES.N;
-
 public class LocaleManager {
 
-    public static final String LANGUAGE_ENGLISH   = "en";
-    public static final String LANGUAGE_BANGLA   = "bn";
+    public static final String LANGUAGE_ENGLISH = "en";
+    public static final String LANGUAGE_BANGLA = "bn";
     public static final String LANGUAGE_UKRAINIAN = "uk";
-    public static final String LANGUAGE_RUSSIAN   = "ru";
-    private static final String LANGUAGE_KEY       = "language_key";
+    public static final String LANGUAGE_RUSSIAN = "ru";
+    private static final String LANGUAGE_KEY = "language_key";
 
     private final SharedPreferences prefs;
 

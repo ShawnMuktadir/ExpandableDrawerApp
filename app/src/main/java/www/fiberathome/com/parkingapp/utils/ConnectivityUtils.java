@@ -1,5 +1,7 @@
 package www.fiberathome.com.parkingapp.utils;
 
+import static android.content.Context.LOCATION_SERVICE;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,8 +14,6 @@ import androidx.appcompat.app.AlertDialog;
 
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
-
-import static android.content.Context.LOCATION_SERVICE;
 
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class ConnectivityUtils {

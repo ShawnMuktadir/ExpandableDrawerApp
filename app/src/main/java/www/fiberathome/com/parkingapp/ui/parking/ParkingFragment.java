@@ -1,5 +1,10 @@
 package www.fiberathome.com.parkingapp.ui.parking;
 
+import static android.content.Context.LOCATION_SERVICE;
+import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_BN;
+import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
+import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -62,11 +67,6 @@ import www.fiberathome.com.parkingapp.utils.RecyclerTouchListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
-
-import static android.content.Context.LOCATION_SERVICE;
-import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_BN;
-import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
-import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
 
 @SuppressLint("NonConstantResourceId")
 @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -403,7 +403,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                                     count = baseStringList.get(i);
                                 }
 
-                                fetchDistance =  MathUtils.getInstance().calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
+                                fetchDistance = MathUtils.getInstance().calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
                                         endLat, endLng);
 
                                 if (fetchDistance > 1.9) {
@@ -426,9 +426,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
 
                             sensorAreaArrayList.add(sensorArea);
                         }
-
                         Collections.sort(sensorAreaArrayList, (c1, c2) -> Double.compare(c1.getDistance(), c2.getDistance()));
-
                         setFragmentControls(sensorAreaArrayList);
                     }
                 }
@@ -456,11 +454,8 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
         recyclerViewParking.addOnItemTouchListener(new RecyclerTouchListener(context, recyclerViewParking, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-
                 if (context != null) {
-
                     context.navigationView.getMenu().getItem(1).setChecked(false);
-
                     KeyboardUtils.getInstance().hideKeyboard(context, editTextParking);
                 }
             }
@@ -482,7 +477,6 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
 
     private void setAdapter(ArrayList<SensorArea> sensorAreas) {
         this.sensorAreas = sensorAreas;
-
         parkingAdapter = new ParkingAdapter(context, sensorAreas, onConnectedLocation, (position, lat, lng, parkingAreaName, count) -> {
 
             long now = System.currentTimeMillis();
@@ -497,23 +491,19 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                 try {
                     Timber.e("try called");
                     SharedData.getInstance().setSensorArea(this.sensorAreas.get(position));
+                    Bundle bundle = new Bundle();
+                    bundle.putDouble("lat", lat);
+                    bundle.putDouble("lng", lng);
+                    bundle.putString("areaName", parkingAreaName);
+                    bundle.putString("count", count);
+                    context.startActivityWithFinishBundle(HomeActivity.class, bundle);
                 } catch (Exception e) {
                     Timber.e("try catch called -> %s", e.getMessage());
                 }
-                Bundle bundle = new Bundle();
-                bundle.putDouble("lat", lat);
-                Timber.e("lat -> %s", lat);
-                bundle.putDouble("lng", lng);
-                Timber.e("lng -> %s", lng);
-                bundle.putString("areaName", parkingAreaName);
-                bundle.putString("count", count);
-
-                context.startActivityWithFinishBundle(HomeActivity.class, bundle);
             } else {
                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
             }
         });
-
         recyclerViewParking.setAdapter(parkingAdapter);
     }
 

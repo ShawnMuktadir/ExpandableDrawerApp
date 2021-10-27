@@ -1,5 +1,7 @@
 package www.fiberathome.com.parkingapp.ui.privacyPolicy;
 
+import static android.content.Context.LOCATION_SERVICE;
+
 import android.annotation.SuppressLint;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -41,8 +43,6 @@ import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
-
-import static android.content.Context.LOCATION_SERVICE;
 
 @SuppressLint("NonConstantResourceId")
 @SuppressWarnings({"unused", "RedundantSuppression"})

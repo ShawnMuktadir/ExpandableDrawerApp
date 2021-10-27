@@ -1,5 +1,7 @@
 package www.fiberathome.com.parkingapp.model.api;
 
+import com.google.gson.JsonObject;
+
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -7,6 +9,12 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.BookedResponse;
+import www.fiberathome.com.parkingapp.model.response.booking.BookingParkStatusResponse;
+import www.fiberathome.com.parkingapp.model.response.booking.CloseReservationResponse;
+import www.fiberathome.com.parkingapp.model.response.booking.ReservationCancelResponse;
+import www.fiberathome.com.parkingapp.model.response.booking.ReservationResponse;
+import www.fiberathome.com.parkingapp.model.response.booking.SensorAreaStatusResponse;
+import www.fiberathome.com.parkingapp.model.response.booking.TimeSlotsResponse;
 import www.fiberathome.com.parkingapp.model.response.login.LoginResponse;
 import www.fiberathome.com.parkingapp.model.response.parkingSlot.ParkingSlotResponse;
 import www.fiberathome.com.parkingapp.model.response.search.SearchVisitedPlaceResponse;
@@ -47,7 +55,6 @@ public interface ApiService {
     );
 
     @FormUrlEncoded
-    //@POST("test1.php")
     @POST("edit_U_info.php")
     Call<LoginResponse> editProfile(
             @Field("fullname") String name,
@@ -88,6 +95,15 @@ public interface ApiService {
     );
 
     @FormUrlEncoded
+    @POST("reservation_fnc.php")
+    Call<ReservationResponse> storeReservation(
+            @Field("mobile_no") String mobileNo,
+            @Field("time_start") String startTime,
+            @Field("time_end") String endTime,
+            @Field("spot_id") String spotId,
+            @Field("stage") String stage);
+
+    @FormUrlEncoded
     @POST("visitor_place_tracker_get.php")
     Call<SearchVisitedPlaceResponse> getSearchHistory(@Field("mobile_number") String mobileNo);
 
@@ -100,13 +116,34 @@ public interface ApiService {
     @GET("terms_condition.php")
     Call<TermsConditionResponse> getTermCondition();
 
-    @FormUrlEncoded
-    @POST("bookings.php")
-    Call<BookedResponse> storeBookingPlace(
-            @Field("mobile_number") String mobileNo
-    );
+    @GET("sensor_area_status.php")
+    Call<SensorAreaStatusResponse> getSensorAreaStatus();
 
     @FormUrlEncoded
     @POST("bookings.php")
     Call<BookedResponse> getBookedPlace(@Field("user_id") String mobileNo);
+
+    @FormUrlEncoded
+    @POST("booking_closed_new.php")
+    Call<CloseReservationResponse> endReservation(@Field("mobile_no") String mobileNo,
+                                                  @Field("spot_id") String bookedUid,
+                                                  @Field("tbl_id") String tbl_id);
+
+    @FormUrlEncoded
+    @POST("booking_cancel_new.php")
+    Call<ReservationCancelResponse> cancelReservation(@Field("mobile_no") String mobileNo,
+                                                      @Field("spot_id") String bookedUid,
+                                                      @Field("tbl_id") String tbl_id);
+
+    @FormUrlEncoded
+    @POST("booking_park_status.php")
+    Call<BookingParkStatusResponse> getBookingParkStatus(@Field("mobile_no") String mobileNo);
+
+    @FormUrlEncoded
+    @POST("booking_park.php")
+    Call<ReservationCancelResponse> setBookingPark(@Field("mobile_no") String mobileNo,
+                                                   @Field("spot_id") String bookedUid);
+
+    @GET("time_slot.php")
+    Call<TimeSlotsResponse> getTimeSlots();
 }

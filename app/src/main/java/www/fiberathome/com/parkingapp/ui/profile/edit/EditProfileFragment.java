@@ -1,5 +1,9 @@
 package www.fiberathome.com.parkingapp.ui.profile.edit;
 
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
+import static android.content.Context.LOCATION_SERVICE;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -73,10 +77,6 @@ import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
-
-import static android.app.Activity.RESULT_CANCELED;
-import static android.app.Activity.RESULT_OK;
-import static android.content.Context.LOCATION_SERVICE;
 
 @SuppressLint("NonConstantResourceId")
 @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -798,7 +798,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                             user.setVehicleImage(response.body().getUser().getVehicleImage());
 
                             // storing the user in sharedPreference
-                            Preferences.getInstance(context).userLogin(user);
+                            Preferences.getInstance(context).setUser(user);
                             Timber.e("user after update -> %s", new Gson().toJson(user));
                             Toast.makeText(context, response.body().getMessage(), Toast.LENGTH_SHORT).show();
                             context.onBackPressed();

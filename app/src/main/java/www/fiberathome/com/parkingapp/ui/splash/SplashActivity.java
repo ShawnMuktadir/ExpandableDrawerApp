@@ -1,5 +1,7 @@
 package www.fiberathome.com.parkingapp.ui.splash;
 
+import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_BN;
+
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -11,8 +13,6 @@ import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
-
-import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_BN;
 
 public class SplashActivity extends BaseActivity {
 

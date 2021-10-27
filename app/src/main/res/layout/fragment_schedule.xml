@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.schedule.ScheduleFragment">
 
-    <ScrollView
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        tools:context=".ui.schedule.ScheduleFragment">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_centerInParent="true"
             android:orientation="vertical">
 
             <RelativeLayout
@@ -26,13 +26,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:weightSum="2.5">
+                    android:weightSum="3.2">
 
                     <ImageView
                         android:id="@+id/ivBackArrow"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:layout_weight=".2"
+                        android:contentDescription="arrow"
                         app:srcCompat="@drawable/ic_action_back" />
 
                     <LinearLayout
@@ -50,7 +51,7 @@
                             android:maxLines="2"
                             android:text="@string/schedule_fragment_title"
                             android:textColor="@color/black"
-                            android:textSize="@dimen/dimTex16"
+                            android:textSize="@dimen/dimTex14"
                             android:textStyle="bold" />
 
                         <TextView
@@ -70,11 +71,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
-                        android:layout_weight=".3"
-                        android:gravity="end"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:maxLines="3"
                         android:text="@string/parking_total_time"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/dimTex14"
+                        android:textSize="@dimen/dimTex12"
                         android:textStyle="bold" />
 
                 </LinearLayout>
@@ -94,7 +96,17 @@
                     android:layout_margin="@dimen/app_radius"
                     android:text="@string/schedule_parking"
                     android:textColor="@android:color/black"
-                    android:textSize="@dimen/dimTex16"
+                    android:textSize="@dimen/dimTex14"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="@dimen/app_radius"
+                    android:text="@string/terms_condition_booking"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/dimTex12"
                     android:textStyle="normal" />
 
                 <TextView
@@ -106,27 +118,6 @@
                     android:text="@string/date"
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/dimTex14" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="@dimen/dim5"
-                    android:visibility="gone">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="Vehicle No: "
-                        android:textColor="@color/black" />
-
-                    <Spinner
-                        android:id="@+id/spinner"
-                        android:layout_width="@dimen/dim150"
-                        android:layout_height="@dimen/dim50"
-                        android:prompt="@string/spinner_title" />
-                </LinearLayout>
 
                 <View
                     android:layout_width="match_parent"
@@ -141,7 +132,7 @@
                     android:text="@string/arrived"
                     android:textColor="@color/arrived"
                     android:textSize="@dimen/dimTex14" />
-                <!--android:background="#37636262"-->
+
                 <LinearLayout
                     android:id="@+id/arriveDisableLayout"
                     android:layout_width="wrap_content"
@@ -155,7 +146,7 @@
                         app:picker_cyclic="true"
                         app:picker_mustBeOnFuture="true"
                         app:picker_selectorColor="@android:color/transparent"
-                        app:picker_textSize="18dp"
+                        app:picker_textSize="@dimen/dimTex14"
                         app:picker_visibleItemCount="5" />
                 </LinearLayout>
 
@@ -177,23 +168,33 @@
                 <LinearLayout
                     android:id="@+id/departureDisableLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_margin="@dimen/dim5"
+                    android:background="@drawable/rect_white_bg_gray_border_rounded">
+
+                    <Spinner
+                        android:id="@+id/classSpinner"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1" />
 
                     <com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker
                         android:id="@+id/departurePicker"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:visibility="gone"
                         app:picker_curved="true"
                         app:picker_cyclic="true"
                         app:picker_selectorColor="@android:color/transparent"
-                        app:picker_textSize="18dp"
+                        app:picker_textSize="@dimen/dimTex14"
                         app:picker_visibleItemCount="5" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dim3"
+                    android:layout_marginTop="@dimen/dim5"
                     android:orientation="horizontal"
                     android:weightSum="2">
 
@@ -203,8 +204,8 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/dim3"
                         android:layout_weight="1"
-                        android:background="#aaaaaa"
-                        android:text="@string/cancel"
+                        android:background="@color/red"
+                        android:text="@string/reset"
                         android:textAllCaps="false"
                         android:textColor="@color/white"
                         android:textSize="@dimen/dimTex16" />
@@ -226,6 +227,15 @@
 
         </LinearLayout>
 
-    </ScrollView>
+        <View
+            android:id="@+id/overlay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent_gray"
+            android:clickable="false"
+            android:focusable="false"
+            android:visibility="gone" />
 
-</RelativeLayout>
+    </FrameLayout>
+
+</ScrollView>

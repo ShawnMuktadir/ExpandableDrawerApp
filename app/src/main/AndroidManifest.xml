@@ -31,6 +31,8 @@
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
     <application
         android:name=".base.ParkingApp"
         android:allowBackup="true"
@@ -40,94 +42,95 @@
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:testOnly="false"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
-        android:testOnly="false"
-        tools:ignore="AllowBackup"
-        tools:targetApi="q">
-        <activity android:name=".ui.getDiscount.GetDiscountActivity"
-            android:screenOrientation="unspecified"
+        tools:ignore="AllowBackup,LockedOrientationActivity"
+        tools:targetApi="q"
+        android:resizeableActivity="false">
+        <activity
+            android:name=".ui.getDiscount.GetDiscountActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
             android:name=".ui.followUs.FollowUsActivity"
-            android:screenOrientation="unspecified"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
             android:name=".ui.profile.ProfileActivity"
-            android:screenOrientation="unspecified"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
             android:name=".ui.profile.edit.EditProfileActivity"
-            android:screenOrientation="unspecified"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
             android:name=".ui.law.LawActivity"
-            android:screenOrientation="unspecified"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
             android:name=".ui.booking.newBooking.BookingActivity"
-            android:screenOrientation="unspecified"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
             android:name=".ui.parking.ParkingActivity"
-            android:screenOrientation="unspecified"
-            android:windowSoftInputMode="stateAlwaysHidden"
-            android:theme="@style/AppTheme.DefaultActionBar"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.DefaultActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
             android:name=".ui.home.HomeActivity"
-            android:screenOrientation="unspecified"
             android:launchMode="singleTop"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
             android:name=".ui.changePassword.newPassword.ChangeNewPasswordActivity"
-            android:screenOrientation="unspecified"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
             android:name=".ui.changePassword.ChangePasswordActivityForOTPNew"
-            android:screenOrientation="unspecified"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
             android:name=".ui.permission.PermissionActivity"
-            android:screenOrientation="unspecified"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
             android:name=".ui.permission.LocationPermissionActivity"
-            android:screenOrientation="unspecified"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
             android:name=".ui.location.LocationActivity"
-            android:screenOrientation="unspecified"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
             android:name=".ui.search.SearchActivity"
-            android:screenOrientation="unspecified"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.DefaultActionBar"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".ui.start.StartActivity"
             android:label="@string/app_name"
-            android:screenOrientation="unspecified"
-            android:theme="@style/AppTheme.DefaultActionBar">
-        </activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
             android:name=".ui.splash.SplashActivity"
             android:label="@string/app_name"
-            android:screenOrientation="unspecified"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -138,44 +141,44 @@
 
         <activity
             android:name=".ui.signUp.SignUpActivity"
-            android:screenOrientation="unspecified"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
             android:name=".ui.verifyPhone.VerifyPhoneActivity"
             android:parentActivityName=".ui.signIn.LoginActivity"
-            android:screenOrientation="unspecified"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
             android:name=".ui.signIn.LoginActivity"
-            android:screenOrientation="unspecified"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
             android:name=".ui.forgetPassword.ForgetPasswordActivity"
-            android:screenOrientation="unspecified"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
             android:name=".ui.reserveSpot.ReserveSpotActivity"
-            android:screenOrientation="unspecified"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
             android:name=".ui.privacyPolicy.PrivacyPolicyActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="unspecified"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
             android:name=".ui.termsConditions.TermsConditionsActivity"
-            android:screenOrientation="unspecified"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
             android:name=".ui.settings.SettingsActivity"
-            android:screenOrientation="unspecified"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
@@ -201,6 +204,12 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_provider_paths" />
         </provider>
+
+        <service
+            android:name=".module.booking_service.BookingService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
 
         <!-- <receiver android:name=".utils.GeoFenceBroadcastReceiver"/>-->
         <receiver android:name=".module.notification.NotificationPublisher" />

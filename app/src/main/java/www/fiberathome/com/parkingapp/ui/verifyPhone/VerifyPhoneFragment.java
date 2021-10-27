@@ -86,13 +86,9 @@ public class VerifyPhoneFragment extends BaseFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         unbinder = ButterKnife.bind(this, view);
-
         context = (VerifyPhoneActivity) getActivity();
-
         setListeners();
-
         startCountDown();
     }
 

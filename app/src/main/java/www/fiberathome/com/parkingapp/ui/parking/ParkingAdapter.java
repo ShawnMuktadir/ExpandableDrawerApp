@@ -1,5 +1,7 @@
 package www.fiberathome.com.parkingapp.ui.parking;
 
+import static android.content.Context.LOCATION_SERVICE;
+
 import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.location.Location;
@@ -26,8 +28,6 @@ import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.response.sensors.SensorArea;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
-
-import static android.content.Context.LOCATION_SERVICE;
 
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -68,7 +68,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, @SuppressLint("RecyclerView") int position) {
         ParkingViewHolder parkingViewHolder = (ParkingViewHolder) viewHolder;
 
         SensorArea sensorArea = sensorAreas.get(position);
@@ -117,11 +117,8 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     private boolean isGPSEnabled() {
-
         LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-
         boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
         if (providerEnabled) {
             return true;
         } else {

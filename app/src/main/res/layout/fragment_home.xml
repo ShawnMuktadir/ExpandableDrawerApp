@@ -65,6 +65,7 @@
                     android:layout_alignParentEnd="true"
                     android:contentDescription="@null"
                     android:visibility="gone"
+                    android:background="@color/transparent"
                     app:srcCompat="@drawable/current_location_vector_icon" />
 
             </RelativeLayout>
@@ -72,6 +73,14 @@
 
         <include layout="@layout/layout_bottom_sheet" />
 
+        <View
+            android:id="@+id/overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/transparent_gray"
+            android:clickable="false"
+            android:focusable="false"
+            android:visibility="gone" />
     </FrameLayout>
 
     <FrameLayout
@@ -767,9 +776,7 @@
                     android:textAllCaps="false"
                     android:textColor="#fff" />
             </LinearLayout>
-
         </LinearLayout>
-
     </FrameLayout>
 
     <FrameLayout
@@ -830,7 +837,7 @@
                     android:layout_height="wrap_content">
 
                     <TextView
-                        android:id="@+id/arrivedtimeTV"
+                        android:id="@+id/tvArrivedTime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
@@ -841,17 +848,17 @@
                         android:textSize="15sp" />
 
                     <TextView
-                        android:id="@+id/departureTimeTV"
+                        android:id="@+id/tvDepartureTime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/black"
                         android:layout_margin="@dimen/dim2"
                         android:padding="@dimen/dim2"
-                        android:layout_below="@+id/arrivedtimeTV"
+                        android:layout_below="@+id/tvArrivedTime"
                         android:text="Departure-04:30pm" />
 
                     <TextView
-                        android:id="@+id/timeDifferenceTV"
+                        android:id="@+id/tvDifferenceTime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/black"
@@ -876,7 +883,8 @@
                 android:layout_margin="2dp"
                 android:padding="3dp"
                 android:scaleType="fitXY"
-                android:src="@color/transparent" />
+                android:src="@color/transparent"
+                tools:ignore="ContentDescription" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -885,15 +893,16 @@
                 android:weightSum="2">
 
                 <Button
-                    android:id="@+id/moreBtn"
+                    android:id="@+id/btnMore"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="3dp"
                     android:layout_weight="1"
                     android:background="@android:color/black"
                     android:padding="2dp"
-                    android:text="More Time"
-                    android:textColor="@android:color/white" />
+                    android:text="@string/more_time"
+                    android:textColor="@android:color/white"
+                    tools:ignore="ButtonStyle" />
 
                 <Button
                     android:id="@+id/btnLiveParking"
@@ -903,7 +912,7 @@
                     android:layout_weight="1"
                     android:background="@android:color/black"
                     android:padding="2dp"
-                    android:text="Live Parking"
+                    android:text="@string/live_parking"
                     android:textColor="@android:color/white" />
             </LinearLayout>
 
@@ -974,7 +983,6 @@
                 android:textSize="16sp" />
 
         </LinearLayout>
-
     </FrameLayout>
 
 </RelativeLayout>

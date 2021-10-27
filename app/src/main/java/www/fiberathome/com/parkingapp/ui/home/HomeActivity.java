@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.view.View;
@@ -16,9 +17,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -28,8 +29,6 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.karumi.dexter.PermissionToken;
 
 import java.util.List;
@@ -38,11 +37,19 @@ import java.util.Objects;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.model.api.ApiClient;
+import www.fiberathome.com.parkingapp.model.api.ApiService;
+import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
+import www.fiberathome.com.parkingapp.model.response.booking.BookingParkStatusResponse;
 import www.fiberathome.com.parkingapp.ui.NavigationActivity;
+import www.fiberathome.com.parkingapp.ui.booking.BookingParkFragment;
 import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.ui.booking.newBooking.BookingFragment;
 import www.fiberathome.com.parkingapp.ui.followUs.FollowUsFragment;
@@ -85,6 +92,10 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
     public static final int GPS_REQUEST_CODE = 9003;
 
     private Context context;
+    private double lat;
+    private double lng;
+    private String areaName;
+    private String count;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +106,6 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
         unbinder = ButterKnife.bind(this);
 
         setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
-        //setTitle(ApplicationUtils.getGreetingsMessage());
 
         //location permission check
         handleLocationPermissionCheck(context);
@@ -122,18 +132,15 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
             fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Objects.requireNonNull(Looper.myLooper()));
         }
 
-        double lat = getIntent().getDoubleExtra("lat", 0.0);
-        //Timber.e("lat parking activity -> %s",lat);
-        double lng = getIntent().getDoubleExtra("lng", 0.0);
-        //Timber.e("lng parking activity -> %s",lng);
-        String areaName = getIntent().getStringExtra("areaName");
-        String count = getIntent().getStringExtra("count");
+        lat = getIntent().getDoubleExtra("lat", 0.0);
+        lng = getIntent().getDoubleExtra("lng", 0.0);
+        areaName = getIntent().getStringExtra("areaName");
+        count = getIntent().getStringExtra("count");
 
         if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
             //initialize home fragment
-            ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
-                    HomeFragment.newInstance(lat, lng, areaName, count), R.id.nav_host_fragment);
-            linearLayoutToolbarTime.setVisibility(View.VISIBLE);
+            getBookingParkStatus(Preferences.getInstance(context).getUser().getMobileNo());
+            linearLayoutToolbarTime.setVisibility(View.GONE);
             navigationView.getMenu().getItem(0).setChecked(true);
         }
 
@@ -176,7 +183,6 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
         if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
             navigationView.getMenu().getItem(0).setChecked(true);
             drawerLayout.closeDrawers();
-            //toolbar.setSubtitle("");
             //super.onBackPressed(); delete this line
             // and start your fragment:
 
@@ -250,8 +256,8 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                         toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
                     }
                 }
-                tvTimeToolbar.setVisibility(View.VISIBLE);
-                linearLayoutToolbarTime.setVisibility(View.VISIBLE);
+                tvTimeToolbar.setVisibility(View.GONE);
+                linearLayoutToolbarTime.setVisibility(View.GONE);
                 drawerLayout.closeDrawers();
                 navigationView.getMenu().getItem(0).setChecked(true);
                 navigationView.getMenu().getItem(1).setChecked(false);
@@ -379,16 +385,6 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
             return true;
         } else {
             Timber.e("provider not Enabled");
-
-            /*AlertDialog alertDialog = new AlertDialog.Builder(context)
-                    .setTitle("GPS Permissions")
-                    .setMessage("GPS is required for this app to work. Please enable GPS.")
-                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
-                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        startActivityForResult(intent, GPS_REQUEST_CODE);
-                    }))
-                    .setCancelable(false)
-                    .show();*/
         }
 
         return false;
@@ -406,5 +402,36 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                 //}
             }
         };
+    }
+
+    private void getBookingParkStatus(String mobileNo) {
+        showLoading(context);
+        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+        Call<BookingParkStatusResponse> call = request.getBookingParkStatus(mobileNo);
+        call.enqueue(new Callback<BookingParkStatusResponse>() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onResponse(@NonNull Call<BookingParkStatusResponse> call, @NonNull Response<BookingParkStatusResponse> response) {
+                hideLoading();
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        if (response.body().getSensors() != null) {
+                            BookingParkStatusResponse.Sensors sensors = response.body().getSensors();
+                            ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
+                                    BookingParkFragment.newInstance(sensors), R.id.nav_host_fragment);
+                        } else {
+                            ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
+                                    HomeFragment.newInstance(lat, lng, areaName, count), R.id.nav_host_fragment);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<BookingParkStatusResponse> call, @NonNull Throwable t) {
+                Timber.e("onFailure -> %s", t.getMessage());
+                hideLoading();
+            }
+        });
     }
 }

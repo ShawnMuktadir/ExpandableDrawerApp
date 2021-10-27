@@ -79,6 +79,9 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
     @BindView(R.id.tvTimeToolbar)
     public TextView tvTimeToolbar;
 
+    @BindView(R.id.toolbar_title)
+    public TextView tvTimeTitle;
+
     @BindView(R.id.linearLayoutToolbarTime)
     public LinearLayout linearLayoutToolbarTime;
 
@@ -386,6 +389,13 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
                 drawerLayout.openDrawer(GravityCompat.START);
             }
         });
+    }
+
+    public void setActionToolBarVisibilityGone() {
+        toolbar.setNavigationIcon(null);
+        toolbar.setTitle("");
+        tvTimeTitle.setVisibility(View.VISIBLE);
+        linearLayoutToolbarTime.setVisibility(View.GONE);
     }
 
     //toolbar menu overflow icon change method

@@ -5,28 +5,30 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import www.fiberathome.com.parkingapp.R;
 
 class NotificationHelper extends ContextWrapper {
     public static final String channelID = "channelID";
     public static final String channelName = "Channel Name";
+    private final Context context;
     private String ended;
     private NotificationManager notificationManager;
 
     public NotificationHelper(Context base, String ended) {
         super(base);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        context = base;
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createChannel();
             this.ended = ended;
-        }
+//        }
     }
 
-    //@TargetApi(Build.VERSION_CODES.O)
     private void createChannel() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel;
@@ -53,6 +55,9 @@ class NotificationHelper extends ContextWrapper {
 
     public NotificationCompat.Builder getChannelNotification() {
         if (ended != null) {
+           if(ended.equalsIgnoreCase("Book Time Up")) {
+//               closeBooking();
+           }
             return new NotificationCompat.Builder(getApplicationContext(), channelID)
                     .setContentTitle("Booking Scheduled Alert")
                     .setContentText(ended)
@@ -65,5 +70,10 @@ class NotificationHelper extends ContextWrapper {
                     .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)
                     .setSmallIcon(R.mipmap.ic_launcher);
         }
+    }
+
+    private void closeBooking() {
+        Intent intent = new Intent("booking_ended");
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 }

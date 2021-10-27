@@ -2,6 +2,7 @@ package www.fiberathome.com.parkingapp.ui.booking.newBooking;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +17,6 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.gson.Gson;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -27,7 +27,6 @@ import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.response.booking.BookedList;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingArea;
@@ -39,10 +38,12 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public LatLng location;
     private final ArrayList<BookingArea> bookingAreas = new ArrayList<>();
     private ArrayList<BookedList> bookedLists;
+    BookingAdapterClickListener bookingAdapterClickListener;
 
-    public BookingAdapter(BookingActivity context, ArrayList<BookedList> bookedLists) {
+    public BookingAdapter(BookingActivity context, ArrayList<BookedList> bookedLists, BookingAdapterClickListener bookingAdapterClickListener) {
         this.context = context;
         this.bookedLists = bookedLists;
+        this.bookingAdapterClickListener = bookingAdapterClickListener;
     }
 
     @NonNull
@@ -63,12 +64,8 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         BookingViewHolder bookingViewHolder = (BookingViewHolder) viewHolder;
 
         BookedList bookedList = bookedLists.get(position);
-        Timber.e("bookedList adapter -> %s", new Gson().toJson(bookedList));
-
         bookingViewHolder.textViewParkingSlot.setText(bookedList.getAddress());
-
         bookingViewHolder.textViewParkingTime.setText("Arrival " + bookedList.getTimeStart() + " - \n" + "Departure " + bookedList.getTimeEnd());
-
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
 
         try {
@@ -78,20 +75,38 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             long difference = 0;
             if (date1 != null && date2 != null) {
                 difference = date1.getTime() - date2.getTime();
-
             }
-
-            //String result = substractDates(date1, date2, new SimpleDateFormat("HH:mm:ss"));
             bookingViewHolder.textViewParkingTotalTime.setText(getTimeDifference(difference));
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
-        /*bookingViewHolder.textViewParkingTotalPaymentAmount.setText(context.getResources().getString(R.string.total_fair));
+        if (bookedList.getC_status().equalsIgnoreCase("0") && bookedList.getStatus().equalsIgnoreCase("0") && bookedList.getP_status().equalsIgnoreCase("1")) {
+            bookingViewHolder.tvStatus.setVisibility(View.VISIBLE);
+            bookingViewHolder.tvCancel.setVisibility(View.GONE);
+            bookingViewHolder.tvStatus.setText("Parking");
+            bookingViewHolder.tvStatus.setTextColor(context.getColor(R.color.green2));
+        } else if (bookedList.getC_status().equalsIgnoreCase("0") && bookedList.getStatus().equalsIgnoreCase("0")) {
+            bookingViewHolder.tvCancel.setVisibility(View.VISIBLE);
+            bookingViewHolder.tvStatus.setVisibility(View.GONE);
+        } else if (bookedList.getC_status().equalsIgnoreCase("0") && bookedList.getStatus().equalsIgnoreCase("1")) {
+            bookingViewHolder.tvStatus.setVisibility(View.VISIBLE);
+            bookingViewHolder.tvCancel.setVisibility(View.GONE);
+            bookingViewHolder.tvStatus.setText("Completed");
+            bookingViewHolder.tvStatus.setTextColor(context.getColor(R.color.green2));
+        } else if (bookedList.getC_status().equalsIgnoreCase("1") && bookedList.getStatus().equalsIgnoreCase("1")) {
+            bookingViewHolder.tvStatus.setVisibility(View.VISIBLE);
+            bookingViewHolder.tvStatus.setText("Canceled");
+            bookingViewHolder.tvCancel.setVisibility(View.GONE);
+            bookingViewHolder.tvStatus.setTextColor(Color.RED);
+        } else if(bookedList.getC_status().equalsIgnoreCase("1") && bookedList.getStatus().equalsIgnoreCase("0")) {
+            bookingViewHolder.tvStatus.setVisibility(View.VISIBLE);
+            bookingViewHolder.tvStatus.setText("Rejected");
+            bookingViewHolder.tvCancel.setVisibility(View.GONE);
+            bookingViewHolder.tvStatus.setTextColor(Color.RED);
+        }
 
-        bookingViewHolder.card_view.setOnClickListener(v -> {
-            Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show();
-        });*/
+        bookingViewHolder.tvCancel.setOnClickListener(v -> bookingAdapterClickListener.onItemClick(bookingViewHolder.getAbsoluteAdapterPosition(), bookedList.getSpotId(),bookedList.getId()));
 
         bookingViewHolder.textViewParkingRateNTip.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
 
@@ -119,6 +134,13 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return bookedLists.size();
     }
 
+    public void updateList(ArrayList<BookedList> mBookedLists) {
+        bookedLists.clear();
+        bookedLists.addAll(mBookedLists);
+        notifyDataSetChanged();
+
+    }
+
     @SuppressLint("NonConstantResourceId")
     public static class BookingViewHolder extends RecyclerView.ViewHolder {
 
@@ -140,11 +162,17 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         @BindView(R.id.textViewParkingRateNTip)
         TextView textViewParkingRateNTip;
 
+        @BindView(R.id.tvStatus)
+        TextView tvStatus;
+
         @BindView(R.id.btnViewReceipt)
         Button btnViewReceipt;
 
         @BindView(R.id.btnGetHelp)
         Button btnGetHelp;
+
+        @BindView(R.id.tvCancel)
+        TextView tvCancel;
 
         @BindView(R.id.card_view)
         CardView card_view;
@@ -153,5 +181,9 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
+    }
+
+    public interface BookingAdapterClickListener {
+        void onItemClick(int position, String uid, String id);
     }
 }
