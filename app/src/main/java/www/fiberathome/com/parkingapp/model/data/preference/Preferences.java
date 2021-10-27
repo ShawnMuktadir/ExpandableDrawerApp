@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import www.fiberathome.com.parkingapp.model.BookedPlace;
 import www.fiberathome.com.parkingapp.model.data.Constants;
 import www.fiberathome.com.parkingapp.model.user.User;
+import www.fiberathome.com.parkingapp.utils.MathUtils;
 
 @SuppressLint("StaticFieldLeak")
 @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -83,8 +84,8 @@ public class Preferences {
         editor.putString("areaName", booked.getAreaName());
         editor.putString("parkingSlotCount", booked.getParkingSlotCount());
         editor.putString("uid", booked.getBookedUid());
-        editor.putLong("lat", (long) booked.getLat());
-        editor.putLong("lon", (long) booked.getLon());
+        editor.putString("lat", String.valueOf(booked.getLat()));
+        editor.putString("lon",   String.valueOf(booked.getLon()));
         editor.putString("route", booked.getRoute());
         editor.putBoolean("isBooked", booked.getIsBooked());
         editor.putString("placeId", booked.getPlaceId());
@@ -103,8 +104,10 @@ public class Preferences {
         bookedPlace.setRoute(sharedPreferences.getString("route", ""));
         bookedPlace.setPlaceId(sharedPreferences.getString("placeId", ""));
         bookedPlace.setReservation(sharedPreferences.getString("reservation", ""));
-        bookedPlace.setLat(sharedPreferences.getLong("lat", 0));
-        bookedPlace.setLon(sharedPreferences.getLong("lon", 0));
+        double lat = Double.parseDouble(sharedPreferences.getString("lat", "0"));
+        double lon = Double.parseDouble(sharedPreferences.getString("lon", "0"));
+        bookedPlace.setLat(lat);
+        bookedPlace.setLon(lon);
         bookedPlace.setDepartedDate(sharedPreferences.getLong("departedDate", 0));
         bookedPlace.setArriveDate(sharedPreferences.getLong("arrivedDate", 0));
         bookedPlace.setIsBooked(sharedPreferences.getBoolean("isBooked", false));
