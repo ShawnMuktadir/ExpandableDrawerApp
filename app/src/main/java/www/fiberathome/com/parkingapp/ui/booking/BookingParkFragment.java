@@ -602,7 +602,6 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                 if (serviceInfo.foreground) {
                     return true;
                 }
-
             }
             return false;
         }
@@ -625,5 +624,4 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
             context.startService(intent);
         }
     }
-
 }
