@@ -272,7 +272,7 @@
                     android:layout_weight="1.7"
                     android:background="#000"
                     android:foreground="?attr/selectableItemBackground"
-                    android:text="@string/get_direction"
+                    android:text="@string/confirm_booking"
                     android:textAllCaps="false"
                     android:textColor="#fff"
                     tools:ignore="UnusedAttribute" />

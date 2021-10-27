@@ -240,7 +240,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     //flags
     private int getDirectionButtonClicked = 0;
 
-    public int fromMarkerRouteDrawn = 0;
+//    public int fromMarkerRouteDrawn = 0;
 
     //route flag
     private final int flag = 0;
@@ -388,7 +388,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             context.changeDefaultActionBarDrawerToogleIcon();
             listener = context;
         }
-
+        bookedPlace = Preferences.getInstance(context).getBooked();
         setBroadcast();
         try {
             if (isAdded()) {
@@ -625,7 +625,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                         if (parkingNumberOfIndividualMarker != null && isAdded()) {
                             if (parkingNumberOfIndividualMarker.equals("0") && getDirectionButtonClicked == 1) {
-                                binding.btnGetDirection.setText(context.getResources().getString(R.string.get_direction));
+                                binding.btnGetDirection.setText(context.getResources().getString(R.string.confirm_booking));
                                 binding.btnGetDirection.setEnabled(true);
                                 binding.btnGetDirection.setFocusable(true);
                                 binding.btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
@@ -722,7 +722,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             }
                         }
                     }
-                } else {
+                }
+                else {
                     DialogUtils.getInstance().alertDialog(context,
                             context,
                             context.getString(R.string.you_have_to_exit_from_current_destination),
@@ -769,9 +770,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                     marker.getPosition();
                                     destination = "" + parkingSpotLatLng.latitude + ", " + parkingSpotLatLng.longitude;
 
-                                    fetchDirections(origin, destination);
+//                                    fetchDirections(origin, destination);
 
-                                    fromMarkerRouteDrawn = 1;
+//                                    fromMarkerRouteDrawn = 1;
 
                                     for (int i = 0; i < sensorAreaArrayList.size(); i++) {
                                         JSONObject jsonObject;
@@ -977,21 +978,22 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         }
                     }
                 }
-            } else if (isBooked && bookedPlace != null) {
-                Gson gson = new Gson();
-                String json = bookedPlace.getRoute();
-                Type type = new TypeToken<List<LatLng>>() {
-                }.getType();
-                if (json != null && json.length() > 1) {
-                    if (polyline != null)
-                        polyline.remove();
-                    polyline = mMap.addPolyline(getDefaultPolyLines(gson.fromJson(json, type)));
-                    isRouteDrawn = 1;
-                    getDirectionPinMarkerDraw(new LatLng(bookedPlace.getLat(), bookedPlace.getLon()), bookedPlace.getBookedUid());
-                    zoomRoute(mMap, polyline.getPoints());
-                }
             }
-        } catch (JsonSyntaxException e) {
+//            else if (isBooked && bookedPlace != null) {
+//                Gson gson = new Gson();
+//                String json = bookedPlace.getRoute();
+//                Type type = new TypeToken<List<LatLng>>() {
+//                }.getType();
+//                if (json != null && json.length() > 1 && !json.equals("")) {
+//                    if (polyline != null)
+//                        polyline.remove();
+//                    polyline = mMap.addPolyline(getDefaultPolyLines(gson.fromJson(json, type)));
+//                    isRouteDrawn = 1;
+//                    getDirectionPinMarkerDraw(new LatLng(bookedPlace.getLat(), bookedPlace.getLon()), bookedPlace.getBookedUid());
+//                    zoomRoute(mMap, polyline.getPoints());
+//                }
+//            }
+        } catch (Exception e) {
             e.getCause();
         }
     }
@@ -1059,9 +1061,15 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     public void onResume() {
         Timber.e("onResume called");
         super.onResume();
+        bookedPlace = Preferences.getInstance(context).getBooked();
         isBooked = Preferences.getInstance(context).getBooked().getIsBooked();
         if (!isBooked && parkingSpotLatLng == null) {
             commonBackOperation();
+        }
+        if (isBooked){
+            binding.fabGetDirection.setVisibility(View.VISIBLE);
+        }else{
+            binding.fabGetDirection.setVisibility(View.GONE);
         }
         if (isAdded())
             setListeners();
@@ -1844,7 +1852,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                                                 if (parkingSpotLatLng != null) {
                                                                     destination = "" + parkingSpotLatLng.latitude + ", " + parkingSpotLatLng.longitude;
                                                                 }
-                                                                fetchDirections(origin, destination);
+//                                                                fetchDirections(origin, destination);
                                                                 bookingSensorsArrayList.clear();
                                                                 String bottomSheetPlaceName = null;
                                                                 for (int i = 0; i < sensorAreaArrayList.size(); i++) {
@@ -2176,7 +2184,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                     if (parkingSpotLatLng != null) {
                                         destination = "" + parkingSpotLatLng.latitude + ", " + parkingSpotLatLng.longitude;
                                     }
-                                    fetchDirections(origin, destination);
+//                                    fetchDirections(origin, destination);
                                     bookingSensorsBottomSheetArrayList.clear();
                                     String bottomSheetPlaceName = null;
                                     for (int i = 0; i < sensorAreaArrayList.size(); i++) {
@@ -2637,6 +2645,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 if (mMap != null && isAdded()) {
                     if (polyline != null) {
                         polyline.remove();
+                        polyline=null;
                     }
                     if (pinMarker != null) {
                         pinMarker.remove();
@@ -2646,7 +2655,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     previousGetDestinationMarker = null;
                     previousMarker = null;
                     isRouteDrawn = 0;
-                    fromMarkerRouteDrawn = 0;
+//                    fromMarkerRouteDrawn = 0;
                     searchPlaceCount = "";
                     getDirectionButtonClicked = 0;
                     if (bottomSheetAdapter != null) {
@@ -2724,7 +2733,14 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         });
 
         binding.fabGetDirection.setOnClickListener(v -> {
-            Toast.makeText(context, "Clicked", Toast.LENGTH_SHORT).show();
+           try {
+               String origin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
+               String bookedDestination = "" + bookedPlace.getLat() + ", " + bookedPlace.getLon();
+               fetchDirections(origin, bookedDestination);
+               isRouteDrawn=1;
+           }catch(Exception e){
+               e.getCause();
+           }
         });
 
         binding.buttonSearch.setOnClickListener(v -> {
@@ -2785,7 +2801,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             layoutVisible(false, "", "", " ", null);
             SharedData.getInstance().setParkingLocation(null);
             SharedData.getInstance().setSensorArea(null);
-            binding.btnGetDirection.setText(context.getResources().getString(R.string.get_direction));
+            binding.btnGetDirection.setText(context.getResources().getString(R.string.confirm_booking));
             binding.btnGetDirection.setBackgroundColor(context.getResources().getColor(R.color.black));
             binding.btnGetDirection.setEnabled(true);
             binding.btnGetDirection.setFocusable(true);
@@ -2812,7 +2828,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     } else {
                         DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.park_message), context);
                     }
-                } else {
+                }
+                else {
+                    getDirectionButtonClicked = 1;
                     if (getDirectionButtonClicked == 0) {
                         getDirectionButtonClicked++;
                         if (searchPlaceCount.equals("0")) {
@@ -2833,8 +2851,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             if (parkingSpotLatLng != null) {
                                 destination = "" + parkingSpotLatLng.latitude + ", " + parkingSpotLatLng.longitude;
                             }
-                            fetchDirections(origin, destination);
-                            fromMarkerRouteDrawn = 1;
+//                            fetchDirections(origin, destination);
+//                            fromMarkerRouteDrawn = 1;
                             getDirectionPinMarkerDraw(parkingSpotLatLng, markerUid);
                             binding.linearLayoutNameCount.setVisibility(View.GONE);
 
@@ -2873,7 +2891,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             }
                             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                         }
-                    } else if (getDirectionButtonClicked == 1) {
+                    }
+                    else if (getDirectionButtonClicked == 1) {
                         if (parkingNumberOfIndividualMarker.equals("0") || searchPlaceCount.equals("0")) {
                             DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.no_parking_spot_message), context);
                             binding.btnGetDirection.setText(context.getResources().getString(R.string.unavailable_parking_spot));
@@ -3153,11 +3172,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     public void fetchDirections(String origin, String destination) {
 
-        polyline = mMap.addPolyline(getDefaultPolyLines(points));
+//        polyline = mMap.addPolyline(getDefaultPolyLines(points));
 
         if (isBooked && bookedPlace != null) {
-            binding.btnGetDirection.setText(context.getResources().getString(R.string.confirm_booking));
-            parkingAreaChanged = true;
+//            binding.btnGetDirection.setText(context.getResources().getString(R.string.confirm_booking));
+//            parkingAreaChanged = true;
         }
 
         if (!oldDestination.equalsIgnoreCase(destination))
@@ -3172,21 +3191,23 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             ToastUtils.getInstance().showToastMessage(context, "Invalid data fill in fields!");
             return;
         }
-
-        if (!polyline.isVisible())
+//
+//        if (!polyline.isVisible())
+//            return;
+//
+//        points = polyline.getPoints();
+//
+        if (polyline != null){
             return;
-
-        points = polyline.getPoints();
-
-        polyline.remove();
+        }
 
         try {
-            if (polyline == null || !polyline.isVisible())
-                return;
+//            if (polyline == null || !polyline.isVisible())
+//                return;
 
-            points = polyline.getPoints();
+//            points = polyline.getPoints();
 
-            polyline.remove();
+//            polyline.remove();
             new DirectionFinder(this, origin, destination).execute();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
