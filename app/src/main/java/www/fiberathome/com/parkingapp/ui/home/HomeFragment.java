@@ -43,6 +43,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
@@ -2717,9 +2718,13 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     private void setListeners() {
 
-        binding.currentLocationImageButton.setOnClickListener(v -> {
+        binding.fabCurrentLocation.setOnClickListener(v -> {
             if (mMap != null && onConnectedLocation != null)
                 animateCamera(onConnectedLocation);
+        });
+
+        binding.fabGetDirection.setOnClickListener(v -> {
+            Toast.makeText(context, "Clicked", Toast.LENGTH_SHORT).show();
         });
 
         binding.buttonSearch.setOnClickListener(v -> {
