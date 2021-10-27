@@ -467,7 +467,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                         if (position == 0) {
                             departure = 1800000L;
                         } else {
-                            departure = departureTimeDataList.get(position).getId() * 3600000L;
+                            departure = departureTimeDataList.get(position).getTimeValue() * 3600000L;
                         }
                     }
 
