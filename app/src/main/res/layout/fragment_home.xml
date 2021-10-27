@@ -68,6 +68,17 @@
                     android:background="@color/transparent"
                     app:srcCompat="@drawable/current_location_vector_icon" />
 
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fabGetDirection"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/currentLocationImageButton"
+                    android:layout_alignParentEnd="true"
+                    android:contentDescription="@null"
+                    android:visibility="visible"
+                    android:background="@color/transparent"
+                    app:srcCompat="@drawable/ic_direction" />
+
             </RelativeLayout>
         </fragment>
 
