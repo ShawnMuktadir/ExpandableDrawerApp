@@ -128,7 +128,7 @@
     <string name="date">wed,5 Feb</string>
     <string name="schedule_heading">Schedule</string>
     <string name="arrived">Arrived at the parking spot:</string>
-    <string name="departure">Departure at the parking spot:</string>
+    <string name="departure">Select how long you want to book</string>
     <string name="book">Your book</string>
     <string name="gps_network_not_enabled">GPS network not enabled!</string>
     <string name="open_location_settings">Open Location Settings</string>

@@ -130,6 +130,7 @@
                     android:layout_height="wrap_content"
                     android:padding="@dimen/dim5"
                     android:text="@string/arrived"
+                    android:textStyle="bold"
                     android:textColor="@color/arrived"
                     android:textSize="@dimen/dimTex14" />
 
@@ -163,6 +164,7 @@
                     android:padding="@dimen/dim5"
                     android:text="@string/departure"
                     android:textColor="@color/arrived"
+                    android:textStyle="bold"
                     android:textSize="@dimen/dimTex14" />
 
                 <LinearLayout

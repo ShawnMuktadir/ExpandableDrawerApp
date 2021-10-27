@@ -113,15 +113,10 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
         super.onViewCreated(view, savedInstanceState);
 
         if (isAdded()) {
-
             context = getActivity();
-
             binding.textViewCurrentDate.setText(DateTimeUtils.getInstance().getCurrentDayTime());
-
             listener = (FragmentChangeListener) getActivity();
-
             payBtnClickListener = this;
-
             Date currentTime = Calendar.getInstance().getTime();
             //add 30 minutes to date
             Date mFutureTime = new Date(); // Instantiate a Date object
@@ -166,8 +161,8 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                 departedDate = binding.departurePicker.getDate();
                 Timber.d("departure date before scrolling -> %s", departedDate);
                 arrived = arrivedDate.getTime();
-                departure = departedDate.getTime();
-                difference = arrived - departure;
+                //departure = departedDate.getTime();
+                //difference = arrived - departure;
                 Timber.e("difference -> %s", difference);
             }
 
@@ -204,18 +199,62 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                     vibrator.vibrate(10);
                 }
             });
-
             setListeners();
-            getTimeSlots();
         }
+    }
 
+    @Override
+    public void onStart() {
+        if (getArguments() != null) {
+            more = getArguments().getBoolean("m");
+        }
+        setArrivedDate = more;
+        super.onStart();
+        Timber.e("onStart called ");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).hide();
+        getTimeSlots();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).show();
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        if (isGPSEnabled()) {
+            if (getActivity() != null) {
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.nav_host_fragment, HomeFragment.newInstance())
+                        .addToBackStack(null)
+                        .commit();
+            } else {
+                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
+
+    @Override
+    public void payBtnClick() {
     }
 
     private void setListeners() {
         binding.ivBackArrow.setOnClickListener(v -> onBackPressed());
 
         binding.setBtn.setOnClickListener(v -> {
-            Timber.d("onClick: did not entered to condition");
+            //Timber.d("onClick: did not entered to condition");
             if (!setArrivedDate) {
                 Timber.d("onClick:  entered to if");
                 binding.arrivedPicker.setEnabled(false);
@@ -257,52 +296,6 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                 Timber.e("else called");
             }
         });
-    }
-
-    @Override
-    public void onStart() {
-        if (getArguments() != null) {
-            more = getArguments().getBoolean("m");
-        }
-        setArrivedDate = more;
-        super.onStart();
-        Timber.e("onStart called ");
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).hide();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).show();
-    }
-
-    @Override
-    public boolean onBackPressed() {
-        if (isGPSEnabled()) {
-            if (getActivity() != null) {
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.nav_host_fragment, HomeFragment.newInstance())
-                        .addToBackStack(null)
-                        .commit();
-            } else {
-                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-    }
-
-    @Override
-    public void payBtnClick() {
     }
 
     private String getDate(long milliSeconds) {
@@ -428,7 +421,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                                             }
                                         }
                                         try {
-                                            departureTimeDataList.add(new Spinner(MathUtils.getInstance().convertToInt(timeValue), time));
+                                            departureTimeDataList.add(new Spinner(MathUtils.getInstance().convertToLong(timeValue), time));
                                         } catch (NumberFormatException e) {
                                             e.getCause();
                                         }
@@ -454,15 +447,34 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                 android.R.layout.simple_spinner_item,
                 departureTimeDataList);
 
-        departure = departureTimeDataList.get(0).getId() * 3600000L;
+        departure = 1800000L;
         binding.spinnerDepartureTime.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                departure = departureTimeDataList.get(position).getId() * 3600000L;
+                if (position == 0) {
+                    departure = 1800000L;
+                } else {
+                    departure = departureTimeDataList.get(position).getTimeValue() * 3600000L;
+                }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
+                departure = 1800000L;
+                binding.spinnerDepartureTime.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        if (position == 0) {
+                            departure = 1800000L;
+                        } else {
+                            departure = departureTimeDataList.get(position).getId() * 3600000L;
+                        }
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+                    }
+                });
             }
         });
         binding.spinnerDepartureTime.setAdapter(departureTimeAdapter);

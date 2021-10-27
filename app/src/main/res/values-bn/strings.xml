@@ -132,7 +132,7 @@
     <string name="date">বুধবার,৫ ফেব্রুয়ারি</string>
     <string name="schedule_heading">পরিকল্পনা</string>
     <string name="arrived">পার্কিং এর স্থানে পৌঁছেছেঃ</string>
-    <string name="departure">পার্কিং এর স্থান প্রস্থান করেছেঃ</string>
+    <string name="departure">আপনি কতক্ষণ বুক করতে চান তা নির্বাচন করুন</string>
     <string name="book">আপনার বুকিং</string>
     <string name="gps_network_not_enabled">জিপিএস নেটওয়ার্ক সক্রিয় করুন!</string>
     <string name="open_location_settings">লোকেশান সেটিং ওপেন করুন</string>
