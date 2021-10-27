@@ -460,21 +460,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                departure = 1800000L;
-                binding.spinnerDepartureTime.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        if (position == 0) {
-                            departure = 1800000L;
-                        } else {
-                            departure = departureTimeDataList.get(position).getTimeValue() * 3600000L;
-                        }
-                    }
 
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-                    }
-                });
             }
         });
         binding.spinnerDepartureTime.setAdapter(departureTimeAdapter);
