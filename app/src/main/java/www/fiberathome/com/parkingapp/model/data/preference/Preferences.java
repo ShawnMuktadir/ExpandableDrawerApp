@@ -10,7 +10,6 @@ import android.content.SharedPreferences;
 import www.fiberathome.com.parkingapp.model.BookedPlace;
 import www.fiberathome.com.parkingapp.model.data.Constants;
 import www.fiberathome.com.parkingapp.model.user.User;
-import www.fiberathome.com.parkingapp.utils.MathUtils;
 
 @SuppressLint("StaticFieldLeak")
 @SuppressWarnings({"unused", "RedundantSuppression"})

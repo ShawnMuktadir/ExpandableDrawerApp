@@ -54,7 +54,6 @@ import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DateTimeUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
-import www.fiberathome.com.parkingapp.utils.MathUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
 @SuppressLint("NonConstantResourceId")
@@ -139,7 +138,6 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
             binding.departurePicker.setIsAmPm(true);
             binding.arrivedPicker.setDefaultDate(currentTime);
             binding.departurePicker.setDefaultDate(mFutureTime);
-
             if (more) {
                 setArrivedDate = true;
                 binding.arrivedPicker.setEnabled(false);
@@ -165,7 +163,6 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                 //difference = arrived - departure;
                 Timber.e("difference -> %s", difference);
             }
-
             binding.arrivedPicker.addOnDateChangedListener((displayed, date) -> {
                 arrivedDate = date;
                 Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
@@ -182,7 +179,6 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                     vibrator.vibrate(10);
                 }
             });
-
             binding.departurePicker.addOnDateChangedListener((displayed, date) -> {
                 departedDate = date;
                 Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);

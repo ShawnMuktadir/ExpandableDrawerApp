@@ -77,7 +77,7 @@ public class BookingService extends Service {
     private boolean isExceedRunned = false;
     private boolean warringShowed = false;
     private long departureDate;
-    private long exceedTime = 120000;
+    private long exceedTime = 300000;
 
 
     @Nullable
@@ -93,14 +93,12 @@ public class BookingService extends Service {
         String action = intent.getAction();
         if (action != null) {
             if (action.equals(Constants.START_BOOKING_TRACKING)) {
-                //startTrackingLocation();
                 mHandlerTask.run();
             } else if (action.equals(Constants.STOP_BOOKING_TRACKING)) {
-//                if (isRunning)
-                    stopTrackingLocation();
+                stopTrackingLocation();
             } else if (action.equals(Constants.BOOKING_EXCEED_CHECK)) {
                 departureDate = 0;
-                departureDate = intent.getLongExtra("departureDate",0);
+                departureDate = intent.getLongExtra("departureDate", 0);
                 exceedHandlerTask.run();
             }
         }
@@ -132,17 +130,8 @@ public class BookingService extends Service {
             Toast.makeText(context, "car Parking Duration End:" + new Date().getTime() + "," + departureDate, Toast.LENGTH_LONG).show();
             warringShowed = true;
             sendNotification("Booked Time", "Parking Duration About To End", false);
-            startCountDown((exceedTime-(new Date().getTime()-departureDate))>=0?(exceedTime-(new Date().getTime()-departureDate)):0,true);
+            startCountDown((exceedTime - (new Date().getTime() - departureDate)) >= 0 ? (exceedTime - (new Date().getTime() - departureDate)) : 0, true);
         }
-        //executes after 5 mins of departure booking time
-//        if (new Date().getTime() >= departureDate + exceedTime) {
-//            Timber.e("car Parking time exceed 5 min -> %s %s", new Date().getTime(), departureDate + exceedTime);
-//            Toast.makeText(context, "car Parking time exceed 5 min: " + new Date().getTime() + "," + (departureDate + exceedTime), Toast.LENGTH_LONG).show();
-//            isExceedRunning = true;
-//            if (Preferences.getInstance(context).getBooked().getIsBooked()) {
-//                endBooking();
-//            }
-//        }
     }
 
     private void notificationCaller(String NOTIFICATION_CHANNEL_ID, String msg, int requestCode) {
@@ -171,7 +160,7 @@ public class BookingService extends Service {
             notificationChannel.setDescription("Booked Time");
             notificationChannel.enableLights(true);
             notificationChannel.setLightColor(Color.BLUE);
-//            notificationChannel.setVibrationPattern(new long[]{0, 1000, 500, 1000});
+            //notificationChannel.setVibrationPattern(new long[]{0, 1000, 500, 1000});
             notificationChannel.setVibrationPattern(null);
             notificationManager.createNotificationChannel(notificationChannel);
         }
@@ -210,27 +199,27 @@ public class BookingService extends Service {
     }
 
     private void stopTrackingLocation() {
-       if(mHandler!=null && mHandlerTask!=null){
-           mHandler.removeCallbacks(mHandlerTask);
-       }
-       if(exceedHandler !=null && exceedHandlerTask!=null){
-           exceedHandler.removeCallbacks(exceedHandlerTask);
-       }
+        if (mHandler != null && mHandlerTask != null) {
+            mHandler.removeCallbacks(mHandlerTask);
+        }
+        if (exceedHandler != null && exceedHandlerTask != null) {
+            exceedHandler.removeCallbacks(exceedHandlerTask);
+        }
         isRunning = false;
-       warringShowed = false;
-       departureDate = 0;
-      if(fusedLocationProviderClient!=null && locationCallback!=null){
-          fusedLocationProviderClient.removeLocationUpdates(locationCallback);
-      }
+        warringShowed = false;
+        departureDate = 0;
+        if (fusedLocationProviderClient != null) {
+            fusedLocationProviderClient.removeLocationUpdates(locationCallback);
+        }
         if (countDownTimer != null) {
             countDownTimer.cancel();
         }
-       try {
-           stopForeground(true);
-           stopSelf();
-       }catch (Exception e){
-           e.getCause();
-       }
+        try {
+            stopForeground(true);
+            stopSelf();
+        } catch (Exception e) {
+            e.getCause();
+        }
     }
 
     private final LocationCallback locationCallback = new LocationCallback() {
@@ -253,9 +242,6 @@ public class BookingService extends Service {
         Bundle b = new Bundle();
         b.putParcelable("Location", l);
         intent.putExtra("Location", b);
-        //SharePreferenceUtils sharePreferenceUtils = new SharePreferenceUtils(context);
-        //sharePreferenceUtils.addUserLocation(l);
-        //LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
     protected boolean isBetterLocation(Location location, Location currentBestLocation) {
@@ -330,7 +316,7 @@ public class BookingService extends Service {
     };
 
     @SuppressLint("SetTextI18n")
-    private void startCountDown(long timerMilliDifference,boolean exceedCounter) {
+    private void startCountDown(long timerMilliDifference, boolean exceedCounter) {
         countDownTimer = new CountDownTimer(timerMilliDifference, 1000) {
             @SuppressLint("DefaultLocale")
             public void onTick(long millisUntilFinished) {
@@ -343,16 +329,15 @@ public class BookingService extends Service {
                         .setVibrate(null);
                 // Because the ID remains unchanged, the existing notification is
                 // updated.
-              if(exceedCounter){
-                  notificationManager.notify(
-                          Constants.BOOKING_Exceed_SERVICE_ID,  // <-- Place your notification id here
-                          mBuilder.build());
-              }
-              else{
-                  notificationManager.notify(
-                          BOOKING_SERVICE_ID,  // <-- Place your notification id here
-                          mBuilder.build());
-              }
+                if (exceedCounter) {
+                    notificationManager.notify(
+                            Constants.BOOKING_Exceed_SERVICE_ID,  // <-- Place your notification id here
+                            mBuilder.build());
+                } else {
+                    notificationManager.notify(
+                            BOOKING_SERVICE_ID,  // <-- Place your notification id here
+                            mBuilder.build());
+                }
             }
 
             public void onFinish() {
@@ -387,7 +372,6 @@ public class BookingService extends Service {
             @Override
             public void onFailure(@NonNull Call<CloseReservationResponse> call, @NonNull Throwable t) {
                 Timber.e("onFailure -> %s", t.getMessage());
-                //ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
         });
     }
@@ -445,7 +429,7 @@ public class BookingService extends Service {
                 // years, in days, in hours, in
                 // minutes, and in seconds
                 //tvTimeDifference.setText(difference_In_Hours + " hr " + difference_In_Minutes + " min " + difference_In_Seconds + " sec");
-                startCountDown(difference_In_Time,false);
+                startCountDown(difference_In_Time, false);
 
                 System.out.print(
                         "Difference "
@@ -531,5 +515,4 @@ public class BookingService extends Service {
         Intent intent = new Intent("booking_ended");
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
-
 }

@@ -124,7 +124,7 @@ public class DialogUtils {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             builder.setMessage(message);
             builder.setCancelable(true);
-            builder.setPositiveButton(context.getResources().getString(R.string.get_support),
+            builder.setNegativeButton(context.getResources().getString(R.string.get_support),
                     (dialog, which) -> DialogUtils.getInstance().showAlertDialog(context.getString(R.string.number),
                             context, context.getString(R.string.call),
                             context.getString(R.string.cancel),
@@ -142,7 +142,7 @@ public class DialogUtils {
                                 Timber.e("Negative Button Clicked");
                                 dialog1.dismiss();
                             }));
-            builder.setNegativeButton(context.getResources().getString(R.string.ok), (dialog, which) -> dialog.dismiss());
+            builder.setPositiveButton(context.getResources().getString(R.string.ok), (dialog, which) -> dialog.dismiss());
             AlertDialog alertDialog = builder.create();
             try {
                 if (!((Activity) context).isFinishing()) {
