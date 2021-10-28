@@ -3,7 +3,7 @@ package www.fiberathome.com.parkingapp.model;
 public class Spinner {
 
     private int id;
-    private long timeValue;
+    private double timeValue;
     private String value;
 
     public Spinner() {
@@ -15,7 +15,7 @@ public class Spinner {
         this.value = value;
     }
 
-    public Spinner(long timeValue, String value) {
+    public Spinner(double timeValue, String value) {
         this.timeValue = timeValue;
         this.value = value;
     }
@@ -36,7 +36,7 @@ public class Spinner {
         this.value = value;
     }
 
-    public long getTimeValue() {
+    public double getTimeValue() {
         return timeValue;
     }
 

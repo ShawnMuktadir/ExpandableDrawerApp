@@ -421,7 +421,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                                             }
                                         }
                                         try {
-                                            departureTimeDataList.add(new Spinner(MathUtils.getInstance().convertToLong(timeValue), time));
+                                            departureTimeDataList.add(new Spinner(Double.parseDouble(timeValue), time));
                                         } catch (NumberFormatException e) {
                                             e.getCause();
                                         }
@@ -447,15 +447,15 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                 android.R.layout.simple_spinner_item,
                 departureTimeDataList);
 
-        departure = 1800000L;
+       try{
+           departure = (long) (departureTimeDataList.get(0).getTimeValue() * 3600000);
+       }catch (Exception e){
+           e.getCause();
+       }
         binding.spinnerDepartureTime.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 0) {
-                    departure = 1800000L;
-                } else {
-                    departure = departureTimeDataList.get(position).getTimeValue() * 3600000L;
-                }
+                departure = (long) (departureTimeDataList.get(position).getTimeValue() * 3600000);
             }
 
             @Override
