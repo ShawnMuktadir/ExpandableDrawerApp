@@ -52,8 +52,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import retrofit2.Call;
@@ -82,18 +84,50 @@ import www.fiberathome.com.parkingapp.utils.ToastUtils;
 public class BookingParkFragment extends BaseFragment implements OnMapReadyCallback {
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     public static BookingParkStatusResponse.Sensors sensors;
-
     Handler mHandler = new Handler();
     private FragmentChangeListener listener;
     private CountDownTimer countDownTimer;
     private GoogleMap mMap;
+    private SupportMapFragment supportMapFragment;
     private LocationRequest mLocationRequest;
     private Location mLastLocation;
     private Marker mCurrLocationMarker;
+    private FragmentBookingParkBinding binding;
+    LocationCallback mLocationCallback = new LocationCallback() {
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+            List<Location> locationList = locationResult.getLocations();
+            if (locationList.size() > 0) {
+                //The last location in the list is the newest
+                Location location = locationList.get(locationList.size() - 1);
+                mLastLocation = location;
+                if (mCurrLocationMarker != null) {
+                    mCurrLocationMarker.remove();
+                }
+
+                //move map camera
+                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(latLng.latitude, latLng.longitude)).zoom(13.5f).build();
+                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            }
+        }
+    };
     private FusedLocationProviderClient mFusedLocationClient;
     private HomeActivity context;
+    Runnable mHandlerTask = new Runnable() {
+        @Override
+        public void run() {
+            if (sensors != null) {
+                String extraTime = getTimeDifference(System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd()) > 0 ? (System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd())) : 0);
+                binding.tvExtraParkingTime.setText("Exceed Parking Time: " + extraTime);
 
-    FragmentBookingParkBinding binding;
+                if (System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd()) >= 0) {
+                    binding.tvExtraParkingTime.setTextColor(context.getResources().getColor(R.color.red));
+                }
+            }
+            mHandler.postDelayed(mHandlerTask, 1000);
+        }
+    };
 
     public BookingParkFragment() {
         // Required empty public constructor
@@ -106,7 +140,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
 
     @SuppressLint("SetTextI18n")
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentBookingParkBinding.inflate(getLayoutInflater());
@@ -123,7 +157,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         listener = (FragmentChangeListener) getActivity();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
         if (isServicesOk()) {
-            SupportMapFragment supportMapFragment = SupportMapFragment.newInstance();
+            supportMapFragment = SupportMapFragment.newInstance();
 
             if (context != null) {
                 context.setActionToolBarVisibilityGone();
@@ -167,42 +201,6 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         }
         setListeners();
     }
-
-
-    LocationCallback mLocationCallback = new LocationCallback() {
-        @Override
-        public void onLocationResult(LocationResult locationResult) {
-            List<Location> locationList = locationResult.getLocations();
-            if (locationList.size() > 0) {
-                //The last location in the list is the newest
-                Location location = locationList.get(locationList.size() - 1);
-                mLastLocation = location;
-                if (mCurrLocationMarker != null) {
-                    mCurrLocationMarker.remove();
-                }
-
-                //move map camera
-                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(latLng.latitude, latLng.longitude)).zoom(13.5f).build();
-                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-            }
-        }
-    };
-
-    Runnable mHandlerTask = new Runnable() {
-        @Override
-        public void run() {
-            if (sensors != null) {
-                String extraTime = getTimeDifference(System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd()) > 0 ? (System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd())) : 0);
-                binding.tvExtraParkingTime.setText("Exceed Parking Time: " + extraTime);
-
-                if (System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd()) >= 0) {
-                    binding.tvExtraParkingTime.setTextColor(context.getResources().getColor(R.color.red));
-                }
-            }
-            mHandler.postDelayed(mHandlerTask, 1000);
-        }
-    };
 
     @Override
     public void onResume() {
@@ -248,7 +246,6 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
     };
 
     private void setListeners() {
-
         binding.btnCarDeparture.setOnClickListener(v -> {
             if (ConnectivityUtils.getInstance().checkInternet(context)) {
                 endBooking();
@@ -299,6 +296,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         } catch (Exception e) {
             e.getCause();
         }
+
     }
 
     private void setMapSettings(GoogleMap mMap) {
@@ -357,7 +355,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
@@ -374,6 +372,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                                 mLocationCallback, Looper.myLooper());
                         mMap.setMyLocationEnabled(true);
                     }
+
                 } else {
                     // if not allow a permission, the application will exit
                     Intent intent = new Intent(Intent.ACTION_MAIN);
@@ -398,9 +397,22 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         }
     }
 
+
+    private String getDate(long milliSeconds) {
+        // Create a DateFormatter object for displaying date in specified format.
+        SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.US);
+        // Create a calendar object that will convert the date and time value in milliseconds to date.
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(milliSeconds);
+        return formatter.format(calendar.getTime());
+    }
+
     private boolean isServicesOk() {
+
         GoogleApiAvailability googleApi = GoogleApiAvailability.getInstance();
+
         int result = googleApi.isGooglePlayServicesAvailable(context);
+
         if (result == ConnectionResult.SUCCESS) {
             return true;
         } else if (googleApi.isUserResolvableError(result)) {
@@ -462,6 +474,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                     countDownTimer.cancel();
                 }
                 hideLoading();
+//                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
         });
     }
@@ -483,6 +496,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
 
     @SuppressLint("DefaultLocale")
     private String getTimeDifference(long difference) {
+
         return String.format("%02d hr: %02d min: %02d sec",
                 TimeUnit.MILLISECONDS.toHours(difference),
                 TimeUnit.MILLISECONDS.toMinutes(difference) -
@@ -602,6 +616,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                 if (serviceInfo.foreground) {
                     return true;
                 }
+
             }
             return false;
         }
@@ -624,4 +639,5 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
             context.startService(intent);
         }
     }
+
 }
