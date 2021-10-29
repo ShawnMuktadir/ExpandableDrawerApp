@@ -41,17 +41,6 @@
                 android:textSize="@dimen/dimTex15"
                 tools:ignore="HardcodedText" />
 
-            <!--<www.fiberathome.com.parkingapp.utils.customEdittext.PinEntryEditTextNew
-                android:id="@+id/txt_pin_entry"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:cursorVisible="true"
-                android:layout_margin="@dimen/_10sdp"
-                android:inputType="textPassword"
-                android:maxLength="4"
-                android:textIsSelectable="true"
-                android:textSize="20sp" />-->
-
             <com.poovam.pinedittextfield.SquarePinField
                 android:id="@+id/txt_pin_entry"
                 android:layout_width="wrap_content"

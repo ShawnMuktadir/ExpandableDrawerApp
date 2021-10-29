@@ -36,9 +36,9 @@ import www.fiberathome.com.parkingapp.utils.Validator;
 
 @SuppressLint("NonConstantResourceId")
 @SuppressWarnings({"unused", "RedundantSuppression"})
-public class ChangeNewPasswordFragment extends BaseFragment {
+public class NewPasswordFragment extends BaseFragment {
 
-    private static final String TAG = ChangeNewPasswordFragment.class.getSimpleName();
+    private static final String TAG = NewPasswordFragment.class.getSimpleName();
 
     @BindView(R.id.textInputLayoutOldPassword)
     TextInputLayout textInputLayoutOldPassword;
@@ -61,16 +61,16 @@ public class ChangeNewPasswordFragment extends BaseFragment {
     @BindView(R.id.changePasswordBtn)
     AppCompatButton changePasswordBtn;
 
-    private ChangeNewPasswordActivity context;
+    private NewPasswordActivity context;
 
     private Unbinder unbinder;
 
-    public ChangeNewPasswordFragment() {
+    public NewPasswordFragment() {
         // Required empty public constructor
     }
 
-    public static ChangeNewPasswordFragment newInstance() {
-        return new ChangeNewPasswordFragment();
+    public static NewPasswordFragment newInstance() {
+        return new NewPasswordFragment();
     }
 
     @Override
@@ -87,7 +87,7 @@ public class ChangeNewPasswordFragment extends BaseFragment {
 
         unbinder = ButterKnife.bind(this, view);
 
-        context =  (ChangeNewPasswordActivity) getActivity();
+        context = (NewPasswordActivity) getActivity();
 
         setListeners();
     }

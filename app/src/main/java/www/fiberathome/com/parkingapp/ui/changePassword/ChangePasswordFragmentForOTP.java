@@ -36,7 +36,7 @@ import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 import www.fiberathome.com.parkingapp.model.response.login.LoginResponse;
-import www.fiberathome.com.parkingapp.ui.changePassword.newPassword.ChangeNewPasswordActivity;
+import www.fiberathome.com.parkingapp.ui.changePassword.newPassword.NewPasswordActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.NoUnderlineSpan;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
@@ -44,18 +44,18 @@ import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressLint("NonConstantResourceId")
 @SuppressWarnings({"unused", "RedundantSuppression"})
-public class ChangePasswordActivityForOTPFragment extends BaseFragment {
+public class ChangePasswordFragmentForOTP extends BaseFragment {
 
-    private ChangePasswordActivityForOTPNew context;
+    private ChangePasswordActivityForOTP context;
 
     FragmentVerifyPhoneBinding binding;
 
-    public ChangePasswordActivityForOTPFragment() {
+    public ChangePasswordFragmentForOTP() {
         // Required empty public constructor
     }
 
-    public static ChangePasswordActivityForOTPFragment newInstance() {
-        return new ChangePasswordActivityForOTPFragment();
+    public static ChangePasswordFragmentForOTP newInstance() {
+        return new ChangePasswordFragmentForOTP();
     }
 
     @Override
@@ -69,7 +69,7 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        context = (ChangePasswordActivityForOTPNew) getActivity();
+        context = (ChangePasswordActivityForOTP) getActivity();
         setListeners();
         startCountDown();
     }
@@ -203,7 +203,7 @@ public class ChangePasswordActivityForOTPFragment extends BaseFragment {
 
                             SharedData.getInstance().setOtp(otp);
 
-                            Intent intent = new Intent(context, ChangeNewPasswordActivity.class);
+                            Intent intent = new Intent(context, NewPasswordActivity.class);
                             startActivity(intent);
                             context.finish();
                             countDownTimer.cancel();

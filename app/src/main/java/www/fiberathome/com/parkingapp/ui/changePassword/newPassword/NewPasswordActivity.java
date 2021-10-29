@@ -21,7 +21,7 @@ import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
 @SuppressLint("NonConstantResourceId")
-public class ChangeNewPasswordActivity extends BaseActivity {
+public class NewPasswordActivity extends BaseActivity {
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -46,7 +46,7 @@ public class ChangeNewPasswordActivity extends BaseActivity {
 
         // Initialize ForgetPasswordFragment
         ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
-                ChangeNewPasswordFragment.newInstance(), R.id.frameLayout);
+                NewPasswordFragment.newInstance(), R.id.frameLayout);
     }
 
     @Override

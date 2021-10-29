@@ -94,13 +94,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
@@ -898,20 +896,22 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         }
                     }
                 }
-            } else if (isBooked && bookedPlace != null) {
+            }
+            /*else if (isBooked && bookedPlace != null) {
                 Gson gson = new Gson();
                 String json = bookedPlace.getRoute();
                 Type type = new TypeToken<List<LatLng>>() {
                 }.getType();
                 if (json != null && json.length() > 1 && !json.equals("")) {
-                    if (polyline != null)
+                    if (polyline != null) {
                         polyline.remove();
-                    polyline = mMap.addPolyline(getDefaultPolyLines(gson.fromJson(json, type)));
-                    isRouteDrawn = 1;
-                    getDirectionPinMarkerDraw(new LatLng(bookedPlace.getLat(), bookedPlace.getLon()), bookedPlace.getBookedUid(), false);
-                    zoomRoute(mMap, polyline.getPoints());
+                        polyline = mMap.addPolyline(getDefaultPolyLines(gson.fromJson(json, type)));
+                        isRouteDrawn = 1;
+                        getDirectionPinMarkerDraw(new LatLng(bookedPlace.getLat(), bookedPlace.getLon()), bookedPlace.getBookedUid(), false);
+                        zoomRoute(mMap, polyline.getPoints());
+                    }
                 }
-            }
+            }*/
         } catch (JsonSyntaxException e) {
             e.getCause();
         }
@@ -1548,7 +1548,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                     parkingSpotLatLng = new LatLng(bookedPlace.getLat(), bookedPlace.getLon());
                                     destination = "" + parkingSpotLatLng.latitude + ", " + parkingSpotLatLng.longitude;
                                     populateNearestPlaceBottomSheet(parkingSpotLatLng);
-                                    setButtonText(context.getResources().getString(R.string.park), context.getResources().getColor(R.color.gray3));
+                                    if (!isInAreaEnabled)
+                                        setButtonText(context.getResources().getString(R.string.park), context.getResources().getColor(R.color.gray3));
                                     binding.buttonSearch.setVisibility(View.GONE);
                                 } else if (lat != 0 && lng != 0 && areaName != null && !areaName.equalsIgnoreCase("") && parkingSlotCount != null) {
                                     parkingSpotLatLng = new LatLng(lat, lng);

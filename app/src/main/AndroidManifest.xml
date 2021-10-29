@@ -47,7 +47,7 @@
         android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup,LockedOrientationActivity"
         tools:targetApi="q"
-        android:resizeableActivity="true">
+        android:resizeableActivity="false">
         <activity
             android:name=".ui.getDiscount.GetDiscountActivity"
             android:screenOrientation="portrait"
@@ -91,12 +91,12 @@
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
-            android:name=".ui.changePassword.newPassword.ChangeNewPasswordActivity"
+            android:name=".ui.changePassword.newPassword.NewPasswordActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
-            android:name=".ui.changePassword.ChangePasswordActivityForOTPNew"
+            android:name=".ui.changePassword.ChangePasswordActivityForOTP"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
