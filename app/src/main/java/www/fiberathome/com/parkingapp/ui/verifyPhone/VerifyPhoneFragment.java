@@ -191,8 +191,8 @@ public class VerifyPhoneFragment extends BaseFragment {
 
                     if (response.body() != null) {
                         Timber.e("response body not null -> %s", new Gson().toJson(response.body()));
-                        if (response.body().getError() && response.body().getMessage().equalsIgnoreCase("Sorry! Failed to Verify Your Account by OYP.")) {
-                            ToastUtils.getInstance().showToastMessage(context, "Sorry! Failed to Verify Your Account by OTP.");
+                        if (response.body().getError()) {
+                            ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                         } else if (!response.body().getError()) {
                             ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                             context.startActivityWithFinishAffinity(LoginActivity.class);
