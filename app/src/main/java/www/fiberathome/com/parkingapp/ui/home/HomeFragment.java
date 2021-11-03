@@ -1550,6 +1550,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                     populateNearestPlaceBottomSheet(parkingSpotLatLng);
                                     if (!isInAreaEnabled)
                                         setButtonText(context.getResources().getString(R.string.park), context.getResources().getColor(R.color.gray3));
+                                    hideNoData();
                                     binding.buttonSearch.setVisibility(View.GONE);
                                 } else if (lat != 0 && lng != 0 && areaName != null && !areaName.equalsIgnoreCase("") && parkingSlotCount != null) {
                                     parkingSpotLatLng = new LatLng(lat, lng);
@@ -1668,6 +1669,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             parkingSpotLatLng = new LatLng(sensors.getLat(), sensors.getLng());
             destination = "" + parkingSpotLatLng.latitude + ", " + parkingSpotLatLng.longitude;
             binding.fabGetDirection.setVisibility(View.VISIBLE);
+            hideNoData();
             try {
                 if (isRouteDrawn == 0) {
                     //for getting the location name
