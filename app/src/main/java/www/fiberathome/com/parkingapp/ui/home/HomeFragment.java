@@ -2071,6 +2071,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     getDirectionPinMarkerDraw(parkingSpotLatLng, parkingAreaPlacedId, false);
                 }
             } catch (Exception e) {
+                Timber.e(e.getCause());
                 e.getCause();
             }
         });
@@ -2131,7 +2132,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             layoutVisible(false, "", "", " ", null);
             SharedData.getInstance().setParkingLocation(null);
             SharedData.getInstance().setSensorArea(null);
-            if (isInAreaEnabled) {
+            if (isBooked) {
                 setButtonText(context.getResources().getString(R.string.park), context.getResources().getColor(R.color.black));
             } else {
                 setButtonText(context.getResources().getString(R.string.confirm_booking), context.getResources().getColor(R.color.black));
