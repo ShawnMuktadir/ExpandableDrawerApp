@@ -1,16 +1,15 @@
 package www.fiberathome.com.parkingapp.ui.booking;
 
 import static www.fiberathome.com.parkingapp.ui.home.HomeFragment.PLAY_SERVICES_ERROR_CODE;
+import static www.fiberathome.com.parkingapp.utils.GoogleMapHelper.defaultMapSettings;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Dialog;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -52,10 +51,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import retrofit2.Call;
@@ -81,18 +79,25 @@ import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.MathUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
+@SuppressLint("SimpleDateFormat")
 public class BookingParkFragment extends BaseFragment implements OnMapReadyCallback {
+
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     public static BookingParkStatusResponse.Sensors sensors;
+
     Handler mHandler = new Handler();
     private FragmentChangeListener listener;
     private CountDownTimer countDownTimer;
     private GoogleMap mMap;
-    private SupportMapFragment supportMapFragment;
+
     private LocationRequest mLocationRequest;
     private Location mLastLocation;
-    private Marker mCurrLocationMarker;
+    protected Marker mCurrLocationMarker;
+
     private FragmentBookingParkBinding binding;
+    private FusedLocationProviderClient mFusedLocationClient;
+    private HomeActivity context;
+
     LocationCallback mLocationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
@@ -112,14 +117,13 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
             }
         }
     };
-    private FusedLocationProviderClient mFusedLocationClient;
-    private HomeActivity context;
+
     Runnable mHandlerTask = new Runnable() {
         @Override
         public void run() {
             if (sensors != null) {
                 String extraTime = getTimeDifference(System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd()) > 0 ? (System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd())) : 0);
-                binding.tvExtraParkingTime.setText("Exceed Parking Time: " + extraTime);
+                binding.tvExtraParkingTime.setText(String.format("Exceed Parking Time: %s", extraTime));
 
                 if (System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd()) >= 0) {
                     binding.tvExtraParkingTime.setTextColor(context.getResources().getColor(R.color.red));
@@ -140,7 +144,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
 
     @SuppressLint("SetTextI18n")
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentBookingParkBinding.inflate(getLayoutInflater());
@@ -157,7 +161,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         listener = (FragmentChangeListener) getActivity();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
         if (isServicesOk()) {
-            supportMapFragment = SupportMapFragment.newInstance();
+            SupportMapFragment supportMapFragment = SupportMapFragment.newInstance();
 
             if (context != null) {
                 context.setActionToolBarVisibilityGone();
@@ -169,11 +173,11 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                     //from HomeActivity
 
                     startBookingExceedService(getStringDateToMillis(sensors.getTimeEnd()));
-                    binding.tvArrivedTime.setText("Booking Time: " + sensors.getTimeStart());
-                    binding.tvDepartureTime.setText("Departure Time: " + sensors.getTimeEnd());
+                    binding.tvArrivedTime.setText(String.format("Booking Time: %s", sensors.getTimeStart()));
+                    binding.tvDepartureTime.setText(String.format("Departure Time: %s", sensors.getTimeEnd()));
                     binding.tvParkingAreaName.setText(sensors.getParkingArea());
-                    String currentDateandTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-                    findDifference(currentDateandTime, sensors.getTimeEnd(), "");
+                    String currentDateAndTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+                    findDifference(currentDateAndTime, sensors.getTimeEnd(), "");
                     findDifference(sensors.getTimeStart(), sensors.getTimeEnd(), "TimeStart");
                     String extraTime;
                     String earlyParkingTime;
@@ -184,7 +188,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                     if (System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd()) >= 0) {
                         binding.tvExtraParkingTime.setTextColor(context.getResources().getColor(R.color.red));
                     } else {
-                        findDifference(currentDateandTime, sensors.getTimeEnd(), "");
+                        findDifference(currentDateAndTime, sensors.getTimeEnd(), "");
                     }
                     if (getStringDateToMillis(sensors.getTimeStart()) - getStringDateToMillis(sensors.getP_date()) >= 0) {
                         binding.tvEarlyParkingTime.setTextColor(context.getResources().getColor(R.color.red));
@@ -216,13 +220,12 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         @Override
         public void onReceive(Context mContext, Intent intent) {
             // Get extra data included in the Intent
-            String message = intent.getStringExtra("message");
             if (isAdded() && mMap != null) {
                 try {
                     mHandler.removeCallbacks(mHandlerTask);
                     sensors = null;
                     DialogUtils.getInstance().alertDialog(context,
-                            (Activity) context,
+                            context,
                             "As your reservation time had exceed over 5 mins, your booking has been closed. Thank you.",
                             context.getString(R.string.ok), "",
                             new DialogUtils.DialogClickListener() {
@@ -239,6 +242,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                             }).show();
                     Timber.e("BroadcastReceiver called");
                 } catch (Exception e) {
+                    Timber.e(e.getCause());
                     e.getCause();
                 }
             }
@@ -252,6 +256,11 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
             }
         });
 
+        binding.fabCurrentLocation.setOnClickListener(v -> {
+            if (mLastLocation != null)
+                animateCamera(mLastLocation);
+        });
+
         binding.btnLiveParking.setOnClickListener(v -> Toast.makeText(context, "Live Parking Coming Soon!!!", Toast.LENGTH_SHORT).show());
 
         binding.textViewTermsCondition.setOnClickListener(v -> Toast.makeText(context, "T&C Coming Soon!!!", Toast.LENGTH_SHORT).show());
@@ -260,12 +269,9 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
-        setMapSettings(mMap);
 
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(120000); // two minute interval
-        mLocationRequest.setFastestInterval(120000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        buildLocationRequest();
+        defaultMapSettings(context, mMap, mFusedLocationClient, mLocationRequest, mLocationCallback);
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(context,
@@ -273,7 +279,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                     == PackageManager.PERMISSION_GRANTED) {
                 //Location Permission already granted
                 mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback,
-                        Looper.myLooper());
+                        Objects.requireNonNull(Looper.myLooper()));
                 mMap.setMyLocationEnabled(true);
             } else {
                 //Request Location Permission
@@ -281,7 +287,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
             }
         } else {
             mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback,
-                    Looper.myLooper());
+                    Objects.requireNonNull(Looper.myLooper()));
             mMap.setMyLocationEnabled(true);
         }
 
@@ -294,28 +300,29 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_car_running)));
             }
         } catch (Exception e) {
+            Timber.e(e.getCause());
             e.getCause();
         }
 
     }
 
-    private void setMapSettings(GoogleMap mMap) {
-        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        mMap.getUiSettings().setZoomControlsEnabled(true);
-        mMap.getUiSettings().setScrollGesturesEnabledDuringRotateOrZoom(true);
-        mMap.getUiSettings().setZoomGesturesEnabled(true);
+    public void animateCamera(@NonNull Location location) {
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        if (mMap != null)
+            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(getCameraPositionWithBearing(latLng)));
+    }
 
-        mMap.setBuildingsEnabled(false);
-        mMap.setTrafficEnabled(true);
-        mMap.setIndoorEnabled(false);
+    @NonNull
+    private CameraPosition getCameraPositionWithBearing(LatLng latLng) {
+        return new CameraPosition.Builder().target(latLng).zoom(13.8f).build();
+    }
 
-        mMap.getUiSettings().setMapToolbarEnabled(false);
-        mMap.getUiSettings().setRotateGesturesEnabled(true);
-        mMap.getUiSettings().setAllGesturesEnabled(true);
-        mMap.getUiSettings().setMapToolbarEnabled(false);
-        mMap.getUiSettings().setTiltGesturesEnabled(true);
-        mMap.getUiSettings().setCompassEnabled(false);
-        mMap.getUiSettings().setMyLocationButtonEnabled(false);
+    private void buildLocationRequest() {
+        mLocationRequest = LocationRequest.create();
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setInterval(5000);
+        mLocationRequest.setFastestInterval(3000);
+        mLocationRequest.setSmallestDisplacement(10f);
     }
 
     private void checkLocationPermission() {
@@ -332,14 +339,11 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                 new AlertDialog.Builder(context)
                         .setTitle("Location Permission Needed")
                         .setMessage("This app needs the Location permission, please accept to use location functionality")
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                //Prompt the user once explanation has been shown
-                                ActivityCompat.requestPermissions(context,
-                                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                        MY_PERMISSIONS_REQUEST_LOCATION);
-                            }
+                        .setPositiveButton("OK", (dialogInterface, i) -> {
+                            //Prompt the user once explanation has been shown
+                            ActivityCompat.requestPermissions(context,
+                                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                    MY_PERMISSIONS_REQUEST_LOCATION);
                         })
                         .create()
                         .show();
@@ -355,7 +359,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
@@ -369,7 +373,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                             == PackageManager.PERMISSION_GRANTED) {
 
                         mFusedLocationClient.requestLocationUpdates(mLocationRequest,
-                                mLocationCallback, Looper.myLooper());
+                                mLocationCallback, Objects.requireNonNull(Looper.myLooper()));
                         mMap.setMyLocationEnabled(true);
                     }
 
@@ -397,26 +401,13 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         }
     }
 
-
-    private String getDate(long milliSeconds) {
-        // Create a DateFormatter object for displaying date in specified format.
-        SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.US);
-        // Create a calendar object that will convert the date and time value in milliseconds to date.
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(milliSeconds);
-        return formatter.format(calendar.getTime());
-    }
-
     private boolean isServicesOk() {
-
         GoogleApiAvailability googleApi = GoogleApiAvailability.getInstance();
-
         int result = googleApi.isGooglePlayServicesAvailable(context);
-
         if (result == ConnectionResult.SUCCESS) {
             return true;
         } else if (googleApi.isUserResolvableError(result)) {
-            Dialog dialog = googleApi.getErrorDialog((Activity) context, result, PLAY_SERVICES_ERROR_CODE, task ->
+            Dialog dialog = googleApi.getErrorDialog(context, result, PLAY_SERVICES_ERROR_CODE, task ->
                     ToastUtils.getInstance().showToastMessage(context, "Dialog is cancelled by User"));
             if (dialog != null) {
                 dialog.show();
@@ -448,7 +439,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         DialogUtils.getInstance().alertDialog(context,
-                                (Activity) context,
+                                context,
                                 response.body().getMessage(),
                                 context.getString(R.string.ok), "",
                                 new DialogUtils.DialogClickListener() {
@@ -474,19 +465,18 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                     countDownTimer.cancel();
                 }
                 hideLoading();
-//                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
         });
     }
 
-
     private long getStringDateToMillis(String date) {
-        //String givenDateString = "Tue Apr 23 16:08:28 GMT+05:30 2013";
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         long timeInMilliseconds = 0;
         try {
             Date mDate = sdf.parse(date);
-            timeInMilliseconds = mDate.getTime();
+            if (mDate != null) {
+                timeInMilliseconds = mDate.getTime();
+            }
             System.out.println("Date in milli :: " + timeInMilliseconds);
         } catch (ParseException e) {
             e.printStackTrace();
@@ -507,7 +497,6 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
 
     @SuppressLint("SetTextI18n")
     private void startCountDown(long timerMilliDifference) {
-        long millis = Preferences.getInstance(context).getBooked().getDepartedDate();
         countDownTimer = new CountDownTimer(timerMilliDifference, 1000) {
             @SuppressLint("DefaultLocale")
             public void onTick(long millisUntilFinished) {
@@ -567,7 +556,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
 
                 long difference_In_Years
                         = (difference_In_Time
-                        / (1000l * 60 * 60 * 24 * 365));
+                        / (1000L * 60 * 60 * 24 * 365));
 
                 long difference_In_Days
                         = (difference_In_Time
@@ -616,7 +605,6 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                 if (serviceInfo.foreground) {
                     return true;
                 }
-
             }
             return false;
         }

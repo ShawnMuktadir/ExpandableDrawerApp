@@ -524,4 +524,5 @@
     <string name="booking_already_canceled_msg">Your reserve time is over. Your parking has been canceled.</string>
     <string name="back">Back</string>
     <string name="parking_spot_id">"Spot Id: "</string>
+    <string name="car_departure">Car Departure</string>
 </resources>
