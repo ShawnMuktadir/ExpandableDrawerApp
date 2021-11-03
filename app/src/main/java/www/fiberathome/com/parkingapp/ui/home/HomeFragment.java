@@ -11,7 +11,6 @@ import static www.fiberathome.com.parkingapp.utils.GoogleMapHelper.getDefaultPol
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.Dialog;
@@ -367,6 +366,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         switch (newState) {
                             case BottomSheetBehavior.STATE_HIDDEN:
                             case BottomSheetBehavior.STATE_SETTLING:
+                            case BottomSheetBehavior.STATE_HALF_EXPANDED:
                                 break;
                             case BottomSheetBehavior.STATE_EXPANDED:
                                 binding.bottomSheetLayout.layoutBottomSheet.requestLayout();
@@ -384,8 +384,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                 toolbarAnimVisibility(view, true);
                                 if (bottomSheetAdapter != null)
                                     bottomSheetAdapter.onAttachedToRecyclerView(binding.bottomSheetLayout.bottomSheetRecyclerView);
-                                break;
-                            case BottomSheetBehavior.STATE_HALF_EXPANDED:
                                 break;
                         }
                     }
@@ -475,7 +473,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     private SensorArea markerTagObj;
 
-    private double myLocationChangedDistance;
+    protected double myLocationChangedDistance;
 
     private void getDirectionPinMarkerDraw(LatLng pinPosition, String markerUid, boolean fromSearch) {
         if (pinMarker != null) {
@@ -544,6 +542,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 Timber.e("marker else UID: did not work");
             }
         } catch (Exception e) {
+            Timber.e(e.getCause());
             e.getCause();
         }
 
@@ -790,6 +789,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 return;
             }
         } catch (Exception e) {
+            Timber.e(e.getCause());
             e.getCause();
         }
 
@@ -799,6 +799,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             SharedData.getInstance().setOnConnectedLocation(onConnectedLocation);
 
         } catch (Exception e) {
+            Timber.e(e.getCause());
             e.getCause();
         }
 
@@ -825,6 +826,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
             settingGeoFire();
         } catch (Exception e) {
+            Timber.e(e.getCause());
             e.getCause();
         }
     }
@@ -1327,6 +1329,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     commonBackOperation();
                     Timber.e("BroadcastReceiver called");
                 } catch (Exception e) {
+                    Timber.e(e.getCause());
                     e.getCause();
                 }
             }
@@ -2152,7 +2155,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     Timber.e(String.valueOf(circle.getRadius()));
                     if (distanceBetween <= distance && (bookedPlace.getArriveDate() - System.currentTimeMillis()) <= 300000) {
                         DialogUtils.getInstance().alertDialog(context,
-                                (Activity) context,
+                                context,
                                 "Your park has been started",
                                 context.getString(R.string.ok), "",
                                 new DialogUtils.DialogClickListener() {
