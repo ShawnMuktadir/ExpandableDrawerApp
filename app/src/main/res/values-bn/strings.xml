@@ -388,7 +388,7 @@
     <string name="locc">LOCC</string>
     <string name="parking_slot">পার্কিং এর স্থান ১৭</string>h
     <string name="total_time">২.৩০ ঘন্টা</string>
-    <string name="total_fair">সর্বমোট ঃ ৭২৬.০০টাকা</string>
+    <string name="total_fair">সর্বমোট ৳</string>
     <string name="rate_tip"> মুল্য এবং বখশিশ</string>
     <string name="view_receipt">রশিদ দেখুন</string>
     <string name="get_help">সাহায্য</string>
@@ -527,5 +527,6 @@
     <string name="booking_already_canceled">Booking already canceled</string>
     <string name="booking_already_canceled_msg">Your reserve time is over. Your parking has been canceled.</string>
     <string name="back">Back</string>
+    <string name="parking_spot_id">"Spot Id: "</string>
 </resources>
 

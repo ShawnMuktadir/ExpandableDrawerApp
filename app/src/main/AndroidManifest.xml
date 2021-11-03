@@ -96,7 +96,7 @@
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
-            android:name=".ui.changePassword.ChangePasswordActivityForOTP"
+            android:name=".ui.changePassword.ChangePasswordOTPActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.DefaultActionBar" />
 

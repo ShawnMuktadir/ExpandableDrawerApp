@@ -384,7 +384,7 @@
     <string name="locc">LOCC</string>
     <string name="parking_slot">Parking Slot 17</string>h
     <string name="total_time">2.30h</string>
-    <string name="total_fair">Total: BDT726.00</string>
+    <string name="total_fair">Total: BDT </string>
     <string name="rate_tip">Rate and tip</string>
     <string name="view_receipt">View Receipt</string>
     <string name="get_help">Get Help</string>
@@ -523,4 +523,5 @@
     <string name="booking_already_canceled">Booking already canceled</string>
     <string name="booking_already_canceled_msg">Your reserve time is over. Your parking has been canceled.</string>
     <string name="back">Back</string>
+    <string name="parking_spot_id">"Spot Id: "</string>
 </resources>

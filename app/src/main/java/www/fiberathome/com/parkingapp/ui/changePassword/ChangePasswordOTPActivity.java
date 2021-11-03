@@ -17,7 +17,7 @@ import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
 @SuppressLint("NonConstantResourceId")
-public class ChangePasswordActivityForOTP extends BaseActivity {
+public class ChangePasswordOTPActivity extends BaseActivity {
 
     private Context context;
 
@@ -36,7 +36,7 @@ public class ChangePasswordActivityForOTP extends BaseActivity {
 
         // Initialize ChangePasswordFragmentForOTP
         ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
-                ChangePasswordFragmentForOTP.newInstance(), R.id.frameLayout);
+                ChangePasswordOTPFragment.newInstance(), R.id.frameLayout);
     }
 
     @Override

@@ -44,18 +44,18 @@ import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressLint("NonConstantResourceId")
 @SuppressWarnings({"unused", "RedundantSuppression"})
-public class ChangePasswordFragmentForOTP extends BaseFragment {
+public class ChangePasswordOTPFragment extends BaseFragment {
 
-    private ChangePasswordActivityForOTP context;
+    private ChangePasswordOTPActivity context;
 
     FragmentVerifyPhoneBinding binding;
 
-    public ChangePasswordFragmentForOTP() {
+    public ChangePasswordOTPFragment() {
         // Required empty public constructor
     }
 
-    public static ChangePasswordFragmentForOTP newInstance() {
-        return new ChangePasswordFragmentForOTP();
+    public static ChangePasswordOTPFragment newInstance() {
+        return new ChangePasswordOTPFragment();
     }
 
     @Override
@@ -69,7 +69,7 @@ public class ChangePasswordFragmentForOTP extends BaseFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        context = (ChangePasswordActivityForOTP) getActivity();
+        context = (ChangePasswordOTPActivity) getActivity();
         setListeners();
         startCountDown();
     }

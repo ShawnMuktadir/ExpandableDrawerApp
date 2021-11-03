@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.ui.booking;
+package www.fiberathome.com.parkingapp.ui.booking.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -26,6 +26,7 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.databinding.BookingsRowBinding;
 import www.fiberathome.com.parkingapp.model.response.booking.BookedList;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingArea;
+import www.fiberathome.com.parkingapp.ui.booking.BookingActivity;
 
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -36,7 +37,8 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private ArrayList<BookedList> bookedLists;
     BookingAdapterClickListener bookingAdapterClickListener;
 
-    public BookingAdapter(BookingActivity context, ArrayList<BookedList> bookedLists, BookingAdapterClickListener bookingAdapterClickListener) {
+    public BookingAdapter(BookingActivity context, ArrayList<BookedList> bookedLists,
+                          BookingAdapterClickListener bookingAdapterClickListener) {
         this.context = context;
         this.bookedLists = bookedLists;
         this.bookingAdapterClickListener = bookingAdapterClickListener;
@@ -59,6 +61,8 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         BookedList bookedList = bookedLists.get(position);
         bookingViewHolder.binding.textViewParkingSlot.setText(bookedList.getAddress());
+        bookingViewHolder.binding.textViewParkingTotalPaymentAmount.setText(context.getResources().getString(R.string.total_fair) + " " + bookedList.getCurrentBill());
+        bookingViewHolder.binding.textViewSpotId.setText(context.getResources().getString(R.string.parking_spot_id) + bookedList.getPsId());
         bookingViewHolder.binding.textViewParkingTime.setText("Arrival " + bookedList.getTimeStart() + " - \n" + "Departure " + bookedList.getTimeEnd());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
 
@@ -75,25 +79,25 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             e.printStackTrace();
         }
 
-        if (bookedList.getC_status().equalsIgnoreCase("0") && bookedList.getStatus().equalsIgnoreCase("0") && bookedList.getP_status().equalsIgnoreCase("1")) {
+        if (bookedList.getC_Status().equalsIgnoreCase("0") && bookedList.getStatus().equalsIgnoreCase("0") && bookedList.getP_status().equalsIgnoreCase("1")) {
             bookingViewHolder.binding.tvStatus.setVisibility(View.VISIBLE);
             bookingViewHolder.binding.tvCancel.setVisibility(View.GONE);
             bookingViewHolder.binding.tvStatus.setText("Parking");
             bookingViewHolder.binding.tvStatus.setTextColor(context.getColor(R.color.green2));
-        } else if (bookedList.getC_status().equalsIgnoreCase("0") && bookedList.getStatus().equalsIgnoreCase("0")) {
+        } else if (bookedList.getC_Status().equalsIgnoreCase("0") && bookedList.getStatus().equalsIgnoreCase("0")) {
             bookingViewHolder.binding.tvCancel.setVisibility(View.VISIBLE);
             bookingViewHolder.binding.tvStatus.setVisibility(View.GONE);
-        } else if (bookedList.getC_status().equalsIgnoreCase("0") && bookedList.getStatus().equalsIgnoreCase("1")) {
+        } else if (bookedList.getC_Status().equalsIgnoreCase("0") && bookedList.getStatus().equalsIgnoreCase("1")) {
             bookingViewHolder.binding.tvStatus.setVisibility(View.VISIBLE);
             bookingViewHolder.binding.tvCancel.setVisibility(View.GONE);
             bookingViewHolder.binding.tvStatus.setText("Completed");
             bookingViewHolder.binding.tvStatus.setTextColor(context.getColor(R.color.green2));
-        } else if (bookedList.getC_status().equalsIgnoreCase("1") && bookedList.getStatus().equalsIgnoreCase("1")) {
+        } else if (bookedList.getC_Status().equalsIgnoreCase("1") && bookedList.getStatus().equalsIgnoreCase("1")) {
             bookingViewHolder.binding.tvStatus.setVisibility(View.VISIBLE);
             bookingViewHolder.binding.tvStatus.setText("Canceled");
             bookingViewHolder.binding.tvCancel.setVisibility(View.GONE);
             bookingViewHolder.binding.tvStatus.setTextColor(Color.RED);
-        } else if (bookedList.getC_status().equalsIgnoreCase("1") && bookedList.getStatus().equalsIgnoreCase("0")) {
+        } else if (bookedList.getC_Status().equalsIgnoreCase("1") && bookedList.getStatus().equalsIgnoreCase("0")) {
             bookingViewHolder.binding.tvStatus.setVisibility(View.VISIBLE);
             bookingViewHolder.binding.tvStatus.setText("Rejected");
             bookingViewHolder.binding.tvCancel.setVisibility(View.GONE);

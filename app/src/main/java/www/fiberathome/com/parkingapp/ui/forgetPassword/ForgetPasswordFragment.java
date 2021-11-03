@@ -30,7 +30,7 @@ import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.response.BaseResponse;
-import www.fiberathome.com.parkingapp.ui.changePassword.ChangePasswordActivityForOTP;
+import www.fiberathome.com.parkingapp.ui.changePassword.ChangePasswordOTPActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
@@ -213,7 +213,7 @@ public class ForgetPasswordFragment extends BaseFragment {
 
                                 ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
 
-                                Intent intent = new Intent(context, ChangePasswordActivityForOTP.class);
+                                Intent intent = new Intent(context, ChangePasswordOTPActivity.class);
                                 intent.putExtra("mobile_no", mobileNo);
                                 startActivity(intent);
                                 SharedData.getInstance().setForgetPasswordMobile(mobileNo);
