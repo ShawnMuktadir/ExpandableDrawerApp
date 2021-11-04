@@ -447,7 +447,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                                     public void onPositiveClick() {
                                         Timber.e("Positive Button clicked");
                                         Preferences.getInstance(context).clearBooking();
-                                        listener.fragmentChange(new HomeFragment());
+                                        listener.fragmentChange(HomeFragment.newInstance());
                                     }
 
                                     @Override
