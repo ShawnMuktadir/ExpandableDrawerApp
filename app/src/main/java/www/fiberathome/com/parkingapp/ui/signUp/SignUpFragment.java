@@ -333,9 +333,9 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                 } else {
                     DialogUtils.getInstance().alertDialog(context,
                             context,
-                            context.getString(R.string.connect_to_internet),
-                            context.getString(R.string.retry),
-                            context.getString(R.string.close_app),
+                            context.getResources().getString(R.string.connect_to_internet),
+                            context.getResources().getString(R.string.retry),
+                            context.getResources().getString(R.string.close_app),
                             new DialogUtils.DialogClickListener() {
                                 @Override
                                 public void onPositiveClick() {
@@ -520,9 +520,9 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                         } else {
                             DialogUtils.getInstance().alertDialog(context,
                                     context,
-                                    context.getString(R.string.connect_to_internet),
-                                    context.getString(R.string.retry),
-                                    context.getString(R.string.close_app),
+                                    context.getResources().getString(R.string.connect_to_internet),
+                                    context.getResources().getString(R.string.retry),
+                                    context.getResources().getString(R.string.close_app),
                                     new DialogUtils.DialogClickListener() {
                                         @Override
                                         public void onPositiveClick() {
@@ -559,7 +559,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() < 1) {
                     binding.textInputLayoutFullName.setErrorEnabled(true);
-                    binding.textInputLayoutFullName.setError(context.getString(R.string.err_msg_fullname));
+                    binding.textInputLayoutFullName.setError(context.getResources().getString(R.string.err_msg_fullname));
                 }
 
                 if (s.length() > 0) {
@@ -584,7 +584,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() < 1) {
                     binding.textInputLayoutMobile.setErrorEnabled(true);
-                    binding.textInputLayoutMobile.setError(context.getString(R.string.err_msg_mobile));
+                    binding.textInputLayoutMobile.setError(context.getResources().getString(R.string.err_msg_mobile));
                 }
 
                 if (s.length() > 0) {
@@ -610,7 +610,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() < 1) {
                     binding.textInputLayoutVehicle.setErrorEnabled(true);
-                    binding.textInputLayoutVehicle.setError(context.getString(R.string.err_msg_vehicle));
+                    binding.textInputLayoutVehicle.setError(context.getResources().getString(R.string.err_msg_vehicle));
                 }
 
                 if (s.length() > 0) {
@@ -636,7 +636,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() < 1) {
                     binding.textInputLayoutPassword.setErrorEnabled(true);
-                    binding.textInputLayoutPassword.setError(context.getString(R.string.err_msg_password));
+                    binding.textInputLayoutPassword.setError(context.getResources().getString(R.string.err_msg_password));
                 }
 
                 if (s.length() > 0) {
@@ -662,7 +662,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() < 1) {
                     binding.textInputLayoutVehicleMilitaryFirstTwoDigit.setErrorEnabled(true);
-                    binding.textInputLayoutVehicleMilitaryFirstTwoDigit.setError(context.getString(R.string.err_msg_vehicle));
+                    binding.textInputLayoutVehicleMilitaryFirstTwoDigit.setError(context.getResources().getString(R.string.err_msg_vehicle));
                 }
 
                 if (s.length() > 0) {
@@ -688,7 +688,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() < 1) {
                     binding.textInputLayoutVehicleMilitaryLastFourDigit.setErrorEnabled(true);
-                    binding.textInputLayoutVehicleMilitaryLastFourDigit.setError(context.getString(R.string.err_msg_vehicle));
+                    binding.textInputLayoutVehicleMilitaryLastFourDigit.setError(context.getResources().getString(R.string.err_msg_vehicle));
                 }
 
                 if (s.length() > 0) {
@@ -889,16 +889,16 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         boolean isVehicleRegValid = false;
         boolean isVehicleRegValidForFirstTwoDigit = false;
         boolean isVehicleRegValidForLastFourDigit = false;
-        boolean isNameValid = Validator.checkValidity(binding.textInputLayoutFullName, binding.editTextFullName.getText().toString(), context.getString(R.string.err_msg_fullname), "text");
-        boolean isPhoneValid = Validator.checkValidity(binding.textInputLayoutMobile, binding.editTextMobileNumber.getText().toString(), context.getString(R.string.err_msg_mobile), "phone");
-        boolean isPasswordValid = Validator.checkValidity(binding.textInputLayoutPassword, binding.editTextPassword.getText().toString(), context.getString(R.string.err_msg_password_signup), "textPassword");
+        boolean isNameValid = Validator.checkValidity(binding.textInputLayoutFullName, binding.editTextFullName.getText().toString(), context.getResources().getString(R.string.err_msg_fullname), "text");
+        boolean isPhoneValid = Validator.checkValidity(binding.textInputLayoutMobile, binding.editTextMobileNumber.getText().toString(), context.getResources().getString(R.string.err_msg_mobile), "phone");
+        boolean isPasswordValid = Validator.checkValidity(binding.textInputLayoutPassword, binding.editTextPassword.getText().toString(), context.getResources().getString(R.string.err_msg_password_signup), "textPassword");
         boolean isLicencePlateValid = false;
 
         if (binding.radioGroup.getCheckedRadioButtonId() == R.id.radioGeneral) {
-            isVehicleRegValid = Validator.checkValidity(binding.textInputLayoutVehicle, binding.editTextVehicleRegNumber.getText().toString(), context.getString(R.string.err_msg_vehicle), "vehicleNumber");
+            isVehicleRegValid = Validator.checkValidity(binding.textInputLayoutVehicle, binding.editTextVehicleRegNumber.getText().toString(), context.getResources().getString(R.string.err_msg_vehicle), "vehicleNumber");
         } else {
-            isVehicleRegValidForFirstTwoDigit = Validator.checkValidity(binding.textInputLayoutVehicleMilitaryFirstTwoDigit, binding.editTextVehicleRegNumberMilitaryFirstTwoDigit.getText().toString(), context.getString(R.string.err_msg_vehicle), "vehicleMilitaryNumberForFirstTwo");
-            isVehicleRegValidForLastFourDigit = Validator.checkValidity(binding.textInputLayoutVehicleMilitaryLastFourDigit, binding.editTextVehicleRegNumberMilitaryLastFourDigit.getText().toString(), context.getString(R.string.err_msg_vehicle), "vehicleMilitaryNumberForLastFour");
+            isVehicleRegValidForFirstTwoDigit = Validator.checkValidity(binding.textInputLayoutVehicleMilitaryFirstTwoDigit, binding.editTextVehicleRegNumberMilitaryFirstTwoDigit.getText().toString(), context.getResources().getString(R.string.err_msg_vehicle), "vehicleMilitaryNumberForFirstTwo");
+            isVehicleRegValidForLastFourDigit = Validator.checkValidity(binding.textInputLayoutVehicleMilitaryLastFourDigit, binding.editTextVehicleRegNumberMilitaryLastFourDigit.getText().toString(), context.getResources().getString(R.string.err_msg_vehicle), "vehicleMilitaryNumberForLastFour");
         }
 
         if (binding.radioGroup.getCheckedRadioButtonId() == R.id.radioMilitary) {

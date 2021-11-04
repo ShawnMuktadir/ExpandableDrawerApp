@@ -129,9 +129,9 @@ public class StartActivity extends BaseActivity implements View.OnClickListener 
                 } else {
                     DialogUtils.getInstance().alertDialog(context,
                             (Activity) context,
-                            context.getString(R.string.connect_to_internet),
-                            context.getString(R.string.retry),
-                            context.getString(R.string.close_app),
+                            context.getResources().getString(R.string.connect_to_internet),
+                            context.getResources().getString(R.string.retry),
+                            context.getResources().getString(R.string.close_app),
                             new DialogUtils.DialogClickListener() {
                                 @Override
                                 public void onPositiveClick() {

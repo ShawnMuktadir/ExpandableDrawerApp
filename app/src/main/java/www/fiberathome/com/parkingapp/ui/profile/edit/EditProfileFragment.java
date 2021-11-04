@@ -169,7 +169,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() < 1) {
                     binding.textInputLayoutFullName.setErrorEnabled(true);
-                    binding.textInputLayoutFullName.setError(context.getString(R.string.err_msg_fullname));
+                    binding.textInputLayoutFullName.setError(context.getResources().getString(R.string.err_msg_fullname));
                 }
 
                 if (s.length() > 0) {
@@ -194,7 +194,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() < 1) {
                     binding.textInputLayoutCarNumber.setErrorEnabled(true);
-                    binding.textInputLayoutCarNumber.setError(context.getString(R.string.err_msg_vehicle));
+                    binding.textInputLayoutCarNumber.setError(context.getResources().getString(R.string.err_msg_vehicle));
                 }
 
                 if (s.length() > 0) {
@@ -219,7 +219,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() < 1) {
                     binding.textInputLayoutVehicleMilitaryFirstTwoDigit.setErrorEnabled(true);
-                    binding.textInputLayoutVehicleMilitaryFirstTwoDigit.setError(context.getString(R.string.err_msg_vehicle));
+                    binding.textInputLayoutVehicleMilitaryFirstTwoDigit.setError(context.getResources().getString(R.string.err_msg_vehicle));
                 }
                 if (s.length() > 0) {
                     binding.textInputLayoutVehicleMilitaryFirstTwoDigit.setError(null);
@@ -243,7 +243,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() < 1) {
                     binding.textInputLayoutVehicleMilitaryLastFourDigit.setErrorEnabled(true);
-                    binding.textInputLayoutVehicleMilitaryLastFourDigit.setError(context.getString(R.string.err_msg_vehicle));
+                    binding.textInputLayoutVehicleMilitaryLastFourDigit.setError(context.getResources().getString(R.string.err_msg_vehicle));
                 }
                 if (s.length() > 0) {
                     binding.textInputLayoutVehicleMilitaryLastFourDigit.setError(null);
@@ -330,9 +330,9 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                 } else {
                     DialogUtils.getInstance().alertDialog(context,
                             context,
-                            context.getString(R.string.connect_to_internet),
-                            context.getString(R.string.retry),
-                            context.getString(R.string.close_app),
+                            context.getResources().getString(R.string.connect_to_internet),
+                            context.getResources().getString(R.string.retry),
+                            context.getResources().getString(R.string.close_app),
                             new DialogUtils.DialogClickListener() {
                                 @Override
                                 public void onPositiveClick() {
@@ -805,14 +805,14 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
         boolean isVehicleRegValid = false;
         boolean isVehicleRegValidForFirstTwoDigit = false;
         boolean isVehicleRegValidForLastFourDigit = false;
-        boolean isNameValid = Validator.checkValidity(binding.textInputLayoutFullName, binding.editTextFullName.getText().toString(), context.getString(R.string.err_msg_fullname), "text");
+        boolean isNameValid = Validator.checkValidity(binding.textInputLayoutFullName, binding.editTextFullName.getText().toString(), context.getResources().getString(R.string.err_msg_fullname), "text");
         boolean isLicencePlateValid = false;
 
         if (binding.radioGroup.getCheckedRadioButtonId() == R.id.radioGeneral) {
-            isVehicleRegValid = Validator.checkValidity(binding.textInputLayoutCarNumber, binding.editTextCarNumber.getText().toString(), context.getString(R.string.err_msg_vehicle), "vehicleNumber");
+            isVehicleRegValid = Validator.checkValidity(binding.textInputLayoutCarNumber, binding.editTextCarNumber.getText().toString(), context.getResources().getString(R.string.err_msg_vehicle), "vehicleNumber");
         } else {
-            isVehicleRegValidForFirstTwoDigit = Validator.checkValidity(binding.textInputLayoutVehicleMilitaryFirstTwoDigit, binding.editTextVehicleRegNumberMilitaryFirstTwoDigit.getText().toString(), context.getString(R.string.err_msg_vehicle), "vehicleMilitaryNumberForFirstTwo");
-            isVehicleRegValidForLastFourDigit = Validator.checkValidity(binding.textInputLayoutVehicleMilitaryLastFourDigit, binding.editTextVehicleRegNumberMilitaryLastFourDigit.getText().toString(), context.getString(R.string.err_msg_vehicle), "vehicleMilitaryNumberForLastFour");
+            isVehicleRegValidForFirstTwoDigit = Validator.checkValidity(binding.textInputLayoutVehicleMilitaryFirstTwoDigit, binding.editTextVehicleRegNumberMilitaryFirstTwoDigit.getText().toString(), context.getResources().getString(R.string.err_msg_vehicle), "vehicleMilitaryNumberForFirstTwo");
+            isVehicleRegValidForLastFourDigit = Validator.checkValidity(binding.textInputLayoutVehicleMilitaryLastFourDigit, binding.editTextVehicleRegNumberMilitaryLastFourDigit.getText().toString(), context.getResources().getString(R.string.err_msg_vehicle), "vehicleMilitaryNumberForLastFour");
         }
 
         if (binding.radioGroup.getCheckedRadioButtonId() == R.id.radioMilitary) {

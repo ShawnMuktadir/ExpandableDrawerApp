@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.gson.Gson;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -152,30 +153,28 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                 if (minutes > 120) {
                     ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.booking_time_rules));
                 } else {
-                  if(isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
-                      storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
-                              getDate(arrivedDate.getTime()), getDate(departureDate.getTime()), placeId);
-                  }
+                    if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
+                        storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
+                                getDate(arrivedDate.getTime()), getDate(departureDate.getTime()), placeId);
+                    }
                 }
             } else {
                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
             }
         });
     }
+
     private boolean isGPSEnabled() {
-
         LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-
         boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
         if (providerEnabled) {
             return true;
         } else {
             Timber.e("else called");
         }
-
         return false;
     }
+
     private void setData() {
         binding.tvArrivedTime.setText(arrivedTime);
         binding.tvDepartureTime.setText(departureTime);
@@ -185,11 +184,14 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
 
     private void setBill() {
         final double perMintBill = 0.6666666667;
-        DecimalFormat df = new DecimalFormat("##.##");
+        DecimalFormat df = new DecimalFormat("##.##",
+                new DecimalFormatSymbols(Locale.US));
         long minutes = TimeUnit.MILLISECONDS.toMinutes(differenceUnit);
         binding.tvSubTotal.setText(new StringBuilder().append("BDT ").append(df.format(perMintBill * minutes)).toString());
         binding.tvTotal.setText(new StringBuilder().append("BDT ").append(df.format(perMintBill * minutes)).toString());
         binding.btnPay.setText(new StringBuilder().append("Pay BDT ").append(df.format(perMintBill * minutes)).toString());
+        /*binding.btnPay.setText(new StringBuilder().append("Pay BDT ").append(MathUtils.getInstance().convertToDouble(new DecimalFormat("##.#",
+                new DecimalFormatSymbols(Locale.US)).format(df.format(perMintBill * minutes)))));*/
     }
 
     private void storeReservation(String mobileNo, String arrivalTime, String departureTime, String markerUid) {
@@ -206,9 +208,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                         if (response.body().getUid() != null) {
                             Timber.e("response -> %s", new Gson().toJson(response.body()));
                             TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.reservation_successful));
-                            //check 15 minutes before departure
-                            //ToDo
-
+                            //set booked place info
                             BookedPlace bookedPlace = new BookedPlace();
                             bookedPlace.setBookedUid(response.body().getUid());
                             bookedPlace.setLat(lat);
@@ -256,11 +256,12 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
         calendar.setTimeInMillis(milliSeconds);
         return formatter.format(calendar.getTime());
     }
+
     private void startAlarm(Calendar c) {
         Timber.e("startAlarm called");
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, NotificationPublisher.class);
-        intent.putExtra("Started", "Booked Time About to start for : \n"+ Preferences.getInstance(context).getBooked().getAreaName());
+        intent.putExtra("Started", "Booked Time About to start for : \n" + Preferences.getInstance(context).getBooked().getAreaName());
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, intent, 0);
         if (c.before(Calendar.getInstance())) {
             c.add(Calendar.DATE, 1);

@@ -123,9 +123,9 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
         } else {
             DialogUtils.getInstance().alertDialog(context,
                     context,
-                    context.getString(R.string.connect_to_internet_gps),
-                    context.getString(R.string.retry),
-                    context.getString(R.string.close_app),
+                    context.getResources().getString(R.string.connect_to_internet_gps),
+                    context.getResources().getString(R.string.retry),
+                    context.getResources().getString(R.string.close_app),
                     new DialogUtils.DialogClickListener() {
                         @Override
                         public void onPositiveClick() {
@@ -336,12 +336,10 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
 
                                 if (i == 2) {
                                     endLat = Double.parseDouble(baseStringList.get(i).trim());
-                                    Timber.e("endLat -> %s", endLat);
                                 }
 
                                 if (i == 3) {
                                     endLng = Double.parseDouble(baseStringList.get(i).trim());
-                                    Timber.e("endLng -> %s", endLng);
                                 }
 
                                 if (i == 4) {

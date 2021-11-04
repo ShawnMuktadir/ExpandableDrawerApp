@@ -125,8 +125,8 @@ public class NewPasswordFragment extends BaseFragment {
     }
 
     private boolean checkFields() {
-        boolean isNewPasswordValid = Validator.checkValidity(textInputLayoutNewPassword, editTextNewPassword.getText().toString(), context.getString(R.string.err_new_password), "textPassword");
-        boolean isConfirmPasswordValid = Validator.checkValidity(textInputLayoutConfirmPassword, editTextConfirmPassword.getText().toString(), context.getString(R.string.err_confirm_password), "textPassword");
+        boolean isNewPasswordValid = Validator.checkValidity(textInputLayoutNewPassword, editTextNewPassword.getText().toString(), context.getResources().getString(R.string.err_new_password), "textPassword");
+        boolean isConfirmPasswordValid = Validator.checkValidity(textInputLayoutConfirmPassword, editTextConfirmPassword.getText().toString(), context.getResources().getString(R.string.err_confirm_password), "textPassword");
         return isNewPasswordValid && isConfirmPasswordValid;
     }
 
@@ -188,7 +188,7 @@ public class NewPasswordFragment extends BaseFragment {
             if (password.equals(confirmPassword)) {
                 passStatus = true;
             } else {
-                ToastUtils.getInstance().showToastMessage(context, context.getString(R.string.err_confirm_password));
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.err_confirm_password));
             }
         }
         return passStatus;
@@ -201,7 +201,7 @@ public class NewPasswordFragment extends BaseFragment {
             if (password.equals(oldPassword)) {
                 passStatus = true;
             } else {
-                ToastUtils.getInstance().showToastMessage(context, context.getString(R.string.err_old_password));
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.err_old_password));
             }
         }
         return passStatus;

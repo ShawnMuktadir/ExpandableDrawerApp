@@ -101,7 +101,6 @@ public class BookedPlace implements Parcelable {
         return arriveDate;
     }
 
-
     public String getReservation() {
         return reservation;
     }

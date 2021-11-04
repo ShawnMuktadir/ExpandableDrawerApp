@@ -101,7 +101,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
         } else {
             DialogUtils.getInstance().alertDialog(context,
                     context,
-                    context.getString(R.string.connect_to_internet), context.getString(R.string.retry), context.getString(R.string.close_app),
+                    context.getResources().getString(R.string.connect_to_internet), context.getResources().getString(R.string.retry), context.getResources().getString(R.string.close_app),
                     new DialogUtils.DialogClickListener() {
                         @Override
                         public void onPositiveClick() {
@@ -194,9 +194,6 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
     }
 
     private void fetchBookedParkingPlace(String mobileNo, boolean refresh) {
-
-        Timber.e("fetchBookedParkingPlace mobileNo -> %s,", mobileNo);
-
         showLoading(context);
 
         ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
@@ -232,7 +229,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
             public void onFailure(@NonNull Call<BookedResponse> call, @NonNull Throwable errors) {
                 Timber.e("Throwable Errors: -> %s", errors.toString());
                 hideLoading();
-//                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
         });
     }
@@ -243,8 +240,8 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
             binding.recyclerViewBooking.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
             bookingAdapter = new BookingAdapter(context, bookedLists, (position, uid, id) -> DialogUtils.getInstance().alertDialog(context,
                     (Activity) context,
-                    "Do you want to cancel booking?",
-                    context.getString(R.string.ok), context.getString(R.string.cancel),
+                    context.getResources().getString(R.string.dp_u_want_to_cancel_booking),
+                    context.getResources().getString(R.string.ok), context.getResources().getString(R.string.cancel),
                     new DialogUtils.DialogClickListener() {
                         @Override
                         public void onPositiveClick() {
@@ -336,7 +333,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
 
     private void setNoData() {
         binding.textViewNoData.setVisibility(View.VISIBLE);
-        //textViewNoData.setText(context.getString(R.string.no_record_found));
+        //textViewNoData.setText(context.getResources().getString(R.string.no_record_found));
     }
 
     private void hideNoData() {

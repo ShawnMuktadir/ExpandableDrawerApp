@@ -233,7 +233,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                         } else {
                             DialogUtils.getInstance().alertDialog(context,
                                     context,
-                                    context.getString(R.string.connect_to_internet),
+                                    context.getResources().getString(R.string.connect_to_internet),
                                     context.getResources().getString(R.string.retry),
                                     context.getResources().getString(R.string.close_app),
                                     new DialogUtils.DialogClickListener() {
@@ -272,7 +272,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() < 1) {
                     binding.textInputLayoutMobile.setErrorEnabled(true);
-                    binding.textInputLayoutMobile.setError(context.getString(R.string.err_msg_mobile));
+                    binding.textInputLayoutMobile.setError(context.getResources().getString(R.string.err_msg_mobile));
                 }
 
                 if (s.length() > 0) {
@@ -298,7 +298,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() < 1) {
                     binding.textInputLayoutPassword.setErrorEnabled(true);
-                    binding.textInputLayoutPassword.setError(context.getString(R.string.err_msg_password));
+                    binding.textInputLayoutPassword.setError(context.getResources().getString(R.string.err_msg_password));
                 }
 
                 if (s.length() > 0) {
@@ -323,9 +323,8 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
     }
 
     private boolean checkFields() {
-        boolean isPhoneValid = Validator.checkValidity(binding.textInputLayoutMobile, binding.editTextMobile.getText().toString(), context.getString(R.string.err_msg_mobile), "phone");
-        boolean isPasswordValid = Validator.checkValidity(binding.textInputLayoutPassword, binding.editTextPassword.getText().toString(), context.getString(R.string.err_msg_password), "textPassword");
-
+        boolean isPhoneValid = Validator.checkValidity(binding.textInputLayoutMobile, binding.editTextMobile.getText().toString(), context.getResources().getString(R.string.err_msg_mobile), "phone");
+        boolean isPasswordValid = Validator.checkValidity(binding.textInputLayoutPassword, binding.editTextPassword.getText().toString(), context.getResources().getString(R.string.err_msg_password), "textPassword");
         return isPhoneValid && isPasswordValid;
     }
 

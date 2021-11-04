@@ -559,6 +559,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 isMyCurrentLocation = false;
             }
         } catch (Exception e) {
+            Timber.e(e.getCause());
             e.getCause();
         }
 
@@ -600,8 +601,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 } else {
                     DialogUtils.getInstance().alertDialog(context,
                             context,
-                            context.getString(R.string.you_have_to_exit_from_current_destination),
-                            context.getString(R.string.yes), context.getString(R.string.no),
+                            context.getResources().getString(R.string.you_have_to_exit_from_current_destination),
+                            context.getResources().getString(R.string.yes), context.getResources().getString(R.string.no),
                             new DialogUtils.DialogClickListener() {
                                 @Override
                                 public void onPositiveClick() {
@@ -1043,11 +1044,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     }
 
     private void stopBookingTrackService() {
-//        if (isLocationTrackingServiceRunning()) {
+        //if (isLocationTrackingServiceRunning()) {
         Intent intent = new Intent(context, BookingService.class);
         intent.setAction(Constants.STOP_BOOKING_TRACKING);
         context.startService(intent);
-//        }
+        //}
     }
 
     private void checkParkingSpotDistance(LatLng car, LatLng spot) {
@@ -1689,9 +1690,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 } else {
                     DialogUtils.getInstance().alertDialog(context,
                             context,
-                            context.getString(R.string.you_have_to_exit_from_current_destination),
-                            context.getString(R.string.yes),
-                            context.getString(R.string.no),
+                            context.getResources().getString(R.string.you_have_to_exit_from_current_destination),
+                            context.getResources().getString(R.string.yes),
+                            context.getResources().getString(R.string.no),
                             new DialogUtils.DialogClickListener() {
                                 @Override
                                 public void onPositiveClick() {
@@ -2024,9 +2025,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             } else {
                 DialogUtils.getInstance().alertDialog(context,
                         context,
-                        context.getString(R.string.connect_to_internet),
-                        context.getString(R.string.retry),
-                        context.getString(R.string.close_app),
+                        context.getResources().getString(R.string.connect_to_internet),
+                        context.getResources().getString(R.string.retry),
+                        context.getResources().getString(R.string.close_app),
                         new DialogUtils.DialogClickListener() {
                             @Override
                             public void onPositiveClick() {
@@ -2101,9 +2102,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             } else {
                 DialogUtils.getInstance().alertDialog(context,
                         context,
-                        context.getString(R.string.connect_to_internet),
-                        context.getString(R.string.retry),
-                        context.getString(R.string.close_app),
+                        context.getResources().getString(R.string.connect_to_internet),
+                        context.getResources().getString(R.string.retry),
+                        context.getResources().getString(R.string.close_app),
                         new DialogUtils.DialogClickListener() {
                             @Override
                             public void onPositiveClick() {
@@ -2156,8 +2157,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     if (distanceBetween <= distance && (bookedPlace.getArriveDate() - System.currentTimeMillis()) <= 300000) {
                         DialogUtils.getInstance().alertDialog(context,
                                 context,
-                                "Your park has been started",
-                                context.getString(R.string.ok), "",
+                                context.getResources().getString(R.string.park_has_started),
+                                context.getResources().getString(R.string.ok), "",
                                 new DialogUtils.DialogClickListener() {
                                     @Override
                                     public void onPositiveClick() {
@@ -2171,13 +2172,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                                     new DialogUtils.DialogClickListener() {
                                                         @Override
                                                         public void onPositiveClick() {
-                                                            Timber.e("Positive Button clicked");
                                                             commonBackOperation();
                                                         }
 
                                                         @Override
                                                         public void onNegativeClick() {
-                                                            Timber.e("Negative Button Clicked");
                                                         }
                                                     }).show();
                                         }
@@ -2457,7 +2456,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     public void setNoData() {
         binding.bottomSheetLayout.textViewNoData.setVisibility(View.VISIBLE);
-        binding.bottomSheetLayout.textViewNoData.setText(context.getString(R.string.no_nearest_parking_area_found));
+        binding.bottomSheetLayout.textViewNoData.setText(context.getResources().getString(R.string.no_nearest_parking_area_found));
     }
 
     public void hideNoData() {

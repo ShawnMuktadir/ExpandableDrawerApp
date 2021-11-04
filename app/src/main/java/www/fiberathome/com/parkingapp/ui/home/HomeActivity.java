@@ -276,7 +276,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
             DialogUtils.getInstance().alertDialog(context,
                     (Activity) context,
                     context.getResources().getString(R.string.exit_message_main),
-                    context.getString(R.string.ok), context.getString(R.string.cancel),
+                    context.getResources().getString(R.string.ok), context.getResources().getString(R.string.cancel),
                     new DialogUtils.DialogClickListener() {
                         @Override
                         public void onPositiveClick() {

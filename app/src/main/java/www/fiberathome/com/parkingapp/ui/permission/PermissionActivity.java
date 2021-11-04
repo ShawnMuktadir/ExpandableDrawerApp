@@ -161,9 +161,9 @@ public class PermissionActivity extends BaseActivity implements PermissionInterf
         DialogUtils.getInstance().alertDialog(context,
                 context,
                 context.getResources().getString(R.string.we_need_this_permission_for_find_nearest_parking_places),
-                context.getString(R.string.allow_this_permission_to_further_use_of_this_app),
-                context.getString(R.string.allow),
-                context.getString(R.string.cancel),
+                context.getResources().getString(R.string.allow_this_permission_to_further_use_of_this_app),
+                context.getResources().getString(R.string.allow),
+                context.getResources().getString(R.string.cancel),
                 new DialogUtils.DialogClickListener() {
                     @Override
                     public void onPositiveClick() {

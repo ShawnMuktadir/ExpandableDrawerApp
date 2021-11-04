@@ -86,7 +86,7 @@ public class ForgetPasswordFragment extends BaseFragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() < 1) {
                     binding.textInputLayoutMobile.setErrorEnabled(true);
-                    binding.textInputLayoutMobile.setError(context.getString(R.string.err_msg_mobile));
+                    binding.textInputLayoutMobile.setError(context.getResources().getString(R.string.err_msg_mobile));
                 }
 
                 if (s.length() > 0) {
@@ -112,9 +112,9 @@ public class ForgetPasswordFragment extends BaseFragment {
                             submitLogin();
                         } else {
                             DialogUtils.getInstance().alertDialog(context,
-                                    context, context.getString(R.string.connect_to_internet),
-                                    context.getString(R.string.retry),
-                                    context.getString(R.string.close_app),
+                                    context, context.getResources().getString(R.string.connect_to_internet),
+                                    context.getResources().getString(R.string.retry),
+                                    context.getResources().getString(R.string.close_app),
                                     new DialogUtils.DialogClickListener() {
                                         @Override
                                         public void onPositiveClick() {
@@ -146,8 +146,8 @@ public class ForgetPasswordFragment extends BaseFragment {
                 submitLogin();
             } else {
                 DialogUtils.getInstance().alertDialog(context,
-                        context, context.getString(R.string.connect_to_internet),
-                        context.getString(R.string.retry), context.getString(R.string.close_app),
+                        context, context.getResources().getString(R.string.connect_to_internet),
+                        context.getResources().getString(R.string.retry), context.getResources().getString(R.string.close_app),
                         new DialogUtils.DialogClickListener() {
                             @Override
                             public void onPositiveClick() {
@@ -173,7 +173,7 @@ public class ForgetPasswordFragment extends BaseFragment {
     }
 
     private boolean checkFields() {
-        return Validator.checkValidity(binding.textInputLayoutMobile, binding.editTextMobileNumber.getText().toString(), context.getString(R.string.err_msg_mobile), "phone");
+        return Validator.checkValidity(binding.textInputLayoutMobile, binding.editTextMobileNumber.getText().toString(), context.getResources().getString(R.string.err_msg_mobile), "phone");
 
     }
 

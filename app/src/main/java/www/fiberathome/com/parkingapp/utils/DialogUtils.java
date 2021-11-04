@@ -125,12 +125,12 @@ public class DialogUtils {
             builder.setMessage(message);
             builder.setCancelable(true);
             builder.setNegativeButton(context.getResources().getString(R.string.get_support),
-                    (dialog, which) -> DialogUtils.getInstance().showAlertDialog(context.getString(R.string.number),
-                            context, context.getString(R.string.call),
-                            context.getString(R.string.cancel),
+                    (dialog, which) -> DialogUtils.getInstance().showAlertDialog(context.getResources().getString(R.string.number),
+                            context, context.getResources().getString(R.string.call),
+                            context.getResources().getString(R.string.cancel),
                             (dialog1, which1) -> {
                                 Timber.e("Positive Button clicked");
-                                String number = context.getString(R.string.number);
+                                String number = context.getResources().getString(R.string.number);
                                 Intent intent = new Intent();
                                 intent.setAction(Intent.ACTION_DIAL); // Action for what intent called for
                                 intent.setData(Uri.parse("tel: " + number)); // Datum with intent respective action on intent

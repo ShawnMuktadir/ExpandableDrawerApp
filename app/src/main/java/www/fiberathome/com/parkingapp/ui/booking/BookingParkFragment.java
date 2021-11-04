@@ -226,14 +226,14 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                     sensors = null;
                     DialogUtils.getInstance().alertDialog(context,
                             context,
-                            "As your reservation time had exceed over 5 mins, your booking has been closed. Thank you.",
-                            context.getString(R.string.ok), "",
+                            context.getResources().getString(R.string.as_your_reservation_time_had_exceed_over_five_mins),
+                            context.getResources().getString(R.string.ok), "",
                             new DialogUtils.DialogClickListener() {
                                 @Override
                                 public void onPositiveClick() {
                                     Timber.e("Positive Button clicked");
                                     Preferences.getInstance(context).clearBooking();
-                                    listener.fragmentChange(new HomeFragment());
+                                    listener.fragmentChange(HomeFragment.newInstance());
                                 }
 
                                 @Override
@@ -441,7 +441,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                         DialogUtils.getInstance().alertDialog(context,
                                 context,
                                 response.body().getMessage(),
-                                context.getString(R.string.ok), "",
+                                context.getResources().getString(R.string.ok), "",
                                 new DialogUtils.DialogClickListener() {
                                     @Override
                                     public void onPositiveClick() {
@@ -612,11 +612,11 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
     }
 
     private void stopBookingTrackService() {
-//        if (isLocationTrackingServiceRunning()) {
+        //if (isLocationTrackingServiceRunning()) {
         Intent intent = new Intent(context, BookingService.class);
         intent.setAction(Constants.STOP_BOOKING_TRACKING);
         context.startService(intent);
-//        }
+        //}
     }
 
     private void startBookingExceedService(long departureDate) {
@@ -627,5 +627,4 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
             context.startService(intent);
         }
     }
-
 }

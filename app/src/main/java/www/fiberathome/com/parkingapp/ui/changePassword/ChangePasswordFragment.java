@@ -93,7 +93,7 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
                 changePassword();
             } else {
                 DialogUtils.getInstance().alertDialog(context,
-                        (Activity) context, context.getString(R.string.connect_to_internet), context.getString(R.string.retry), context.getString(R.string.close_app),
+                        (Activity) context, context.getResources().getString(R.string.connect_to_internet), context.getResources().getString(R.string.retry), context.getResources().getString(R.string.close_app),
                         new DialogUtils.DialogClickListener() {
                             @Override
                             public void onPositiveClick() {
@@ -127,7 +127,7 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() < 1) {
                     binding.textInputLayoutOldPassword.setErrorEnabled(true);
-                    binding.textInputLayoutOldPassword.setError(context.getString(R.string.err_old_password));
+                    binding.textInputLayoutOldPassword.setError(context.getResources().getString(R.string.err_old_password));
                 }
 
                 if (s.length() > 0) {
@@ -152,7 +152,7 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() < 1) {
                     binding.textInputLayoutNewPassword.setErrorEnabled(true);
-                    binding.textInputLayoutNewPassword.setError(context.getString(R.string.err_new_password));
+                    binding.textInputLayoutNewPassword.setError(context.getResources().getString(R.string.err_new_password));
                 }
 
                 if (s.length() > 0) {
@@ -177,7 +177,7 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() < 1) {
                     binding.textInputLayoutConfirmPassword.setErrorEnabled(true);
-                    binding.textInputLayoutConfirmPassword.setError(context.getString(R.string.err_confirm_password));
+                    binding.textInputLayoutConfirmPassword.setError(context.getResources().getString(R.string.err_confirm_password));
                 }
 
                 if (s.length() > 0) {
@@ -210,9 +210,9 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
     }
 
     private boolean checkFields() {
-        boolean isOldPasswordValid = Validator.checkValidity(binding.textInputLayoutOldPassword, binding.editTextOldPassword.getText().toString(), context.getString(R.string.err_old_password), "textPassword");
-        boolean isNewPasswordValid = Validator.checkValidity(binding.textInputLayoutNewPassword, binding.editTextNewPassword.getText().toString(), context.getString(R.string.err_new_password), "textPassword");
-        boolean isConfirmPasswordValid = Validator.checkValidity(binding.textInputLayoutConfirmPassword, binding.editTextConfirmPassword.getText().toString(), context.getString(R.string.err_confirm_password), "textPassword");
+        boolean isOldPasswordValid = Validator.checkValidity(binding.textInputLayoutOldPassword, binding.editTextOldPassword.getText().toString(), context.getResources().getString(R.string.err_old_password), "textPassword");
+        boolean isNewPasswordValid = Validator.checkValidity(binding.textInputLayoutNewPassword, binding.editTextNewPassword.getText().toString(), context.getResources().getString(R.string.err_new_password), "textPassword");
+        boolean isConfirmPasswordValid = Validator.checkValidity(binding.textInputLayoutConfirmPassword, binding.editTextConfirmPassword.getText().toString(), context.getResources().getString(R.string.err_confirm_password), "textPassword");
         return isOldPasswordValid && isNewPasswordValid && isConfirmPasswordValid;
     }
 
@@ -283,7 +283,7 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
             if (password.equals(confirmPassword)) {
                 passStatus = true;
             } else {
-                ToastUtils.getInstance().showToastMessage(context, context.getString(R.string.err_confirm_password));
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.err_confirm_password));
             }
         }
         return passStatus;
@@ -296,7 +296,7 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
             if (password.equals(oldPassword)) {
                 passStatus = true;
             } else {
-                ToastUtils.getInstance().showToastMessage(context, context.getString(R.string.err_old_password));
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.err_old_password));
             }
         }
         return passStatus;

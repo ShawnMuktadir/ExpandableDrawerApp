@@ -523,6 +523,9 @@
     <string name="booking_already_canceled">Booking already canceled</string>
     <string name="booking_already_canceled_msg">Your reserve time is over. Your parking has been canceled.</string>
     <string name="back">Back</string>
-    <string name="parking_spot_id">"Spot Id: "</string>
+    <string name="parking_spot_id">Spot Id: </string>
     <string name="car_departure">Car Departure</string>
+    <string name="dp_u_want_to_cancel_booking">Do you want to cancel booking?</string>
+    <string name="park_has_started">Your park has been started</string>
+    <string name="as_your_reservation_time_had_exceed_over_five_mins">As your reservation time had exceed over 5 mins, your booking has been closed. Thank you</string>
 </resources>
