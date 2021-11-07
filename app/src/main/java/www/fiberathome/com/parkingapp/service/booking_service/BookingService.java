@@ -78,6 +78,7 @@ public class BookingService extends Service {
     private boolean warringShowed = false;
     private long departureDate;
     private long exceedTime = 300000;
+    private boolean endBookingCalled = false;
 
 
     @Nullable
@@ -107,11 +108,16 @@ public class BookingService extends Service {
 
     private void startTrackingLocation() {
         String currentDateandTime = new SimpleDateFormat("dd-MM-yyyy HH:mm").format(new Date());
-        if (new Date().getTime() >= Preferences.getInstance(context).getBooked().getArriveDate()) {
+        if (new Date().getTime() >= Preferences.getInstance(context).getBooked().getArriveDate()
+                && new Date().getTime() < Preferences.getInstance(context).getBooked().getDepartedDate() && !isRunning) {
             isRunning = true;
             notificationCaller(Constants.NOTIFICATION_CHANNEL_BOOKING, "Booked time Status", 2);
             startForeground(BOOKING_SERVICE_ID, mBuilder.build());
             findDifference(getDate(Preferences.getInstance(context).getBooked().getArriveDate()), getDate(Preferences.getInstance(context).getBooked().getDepartedDate()));
+        } else if (new Date().getTime() > (Preferences.getInstance(context).getBooked().getDepartedDate() + 60000L) && !endBookingCalled) {
+            if (ConnectivityUtils.getInstance().checkInternet(context)) {
+                endBooking();
+            }
         }
     }
 
@@ -297,9 +303,9 @@ public class BookingService extends Service {
     Runnable mHandlerTask = new Runnable() {
         @Override
         public void run() {
-            if (!isRunning) {
+//            if (!isRunning) {
                 startTrackingLocation();
-            }
+//            }
             mHandler.postDelayed(mHandlerTask, BOOKING_CHECK_DELAY);
         }
     };
@@ -350,6 +356,7 @@ public class BookingService extends Service {
     }
 
     private void endBooking() {
+        endBookingCalled = true;
         ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
         String user = Preferences.getInstance(context).getUser().getMobileNo();
         String bookedUid = Preferences.getInstance(context).getBooked().getBookedUid();
