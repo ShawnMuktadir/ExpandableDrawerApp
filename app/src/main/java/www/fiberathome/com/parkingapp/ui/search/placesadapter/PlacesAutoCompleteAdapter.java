@@ -33,7 +33,6 @@ import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
-import com.sdsmdg.tastytoast.TastyToast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -130,20 +129,13 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
                     // The API did not return any results, invalidate the data set.
                     //notifyDataSetInvalidated();
                     searchVisitorDataList.clear();
-
                     notifyDataSetChanged();
-
                     isShownEmpty = true;
-                    /*Toast.makeText(mContext, "No Places found!", Toast.LENGTH_SHORT).show();
-                    final Toast toast = Toast.makeText(mContext, "No Places found!", Toast.LENGTH_SHORT);*/
-                    Toast toast = TastyToast.makeText(mContext, "No Places found!", TastyToast.LENGTH_SHORT, TastyToast.WARNING);
 
+                    Toast toast = Toast.makeText(mContext, "No Places found!", Toast.LENGTH_SHORT);
                     toast.show();
-
                     Handler handler = new Handler();
-
                     handler.postDelayed(toast::cancel, 700);
-                    //TastyToastUtils.showTastyErrorToast(mContext, "No Places found!");
                 }
             }
         };
