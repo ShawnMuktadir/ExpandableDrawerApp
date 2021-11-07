@@ -17,18 +17,15 @@ import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
+import www.fiberathome.com.parkingapp.databinding.FragmentSplashBinding;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.permission.PermissionActivity;
@@ -43,18 +40,13 @@ import www.fiberathome.com.parkingapp.utils.ToastUtils;
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class SplashFragment extends BaseFragment implements LocationListener {
 
-    private static final String TAG = "SplashFragment";
-
-    @BindView(R.id.splash_iv_logo)
-    ImageView imageViewSplashLogo;
-
-    private Unbinder unbinder;
-
     private SplashActivity context;
 
     private LocationManager mLocationManager;
 
     private boolean isLocationEnabled = false;
+
+    FragmentSplashBinding binding;
 
     public SplashFragment() {
         // Required empty public constructor
@@ -70,20 +62,17 @@ public class SplashFragment extends BaseFragment implements LocationListener {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_splash, container, false);
+        binding = FragmentSplashBinding.inflate(getLayoutInflater());
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        unbinder = ButterKnife.bind(this, view);
-
         context = (SplashActivity) getActivity();
-
         checkUserLogin();
     }
 
@@ -132,9 +121,6 @@ public class SplashFragment extends BaseFragment implements LocationListener {
     @Override
     public void onDestroyView() {
         mLocationManager.removeUpdates(context);
-        if (unbinder != null) {
-            unbinder.unbind();
-        }
         super.onDestroyView();
     }
 
@@ -168,9 +154,9 @@ public class SplashFragment extends BaseFragment implements LocationListener {
             } else {
                 DialogUtils.getInstance().alertDialog(context,
                         context,
-                        context.getString(R.string.connect_to_internet),
-                        context.getString(R.string.retry),
-                        context.getString(R.string.close_app),
+                        context.getResources().getString(R.string.connect_to_internet),
+                        context.getResources().getString(R.string.retry),
+                        context.getResources().getString(R.string.close_app),
                         new DialogUtils.DialogClickListener() {
                             @Override
                             public void onPositiveClick() {

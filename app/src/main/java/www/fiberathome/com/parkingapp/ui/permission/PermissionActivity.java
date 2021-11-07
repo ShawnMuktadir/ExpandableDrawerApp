@@ -51,50 +51,6 @@ public class PermissionActivity extends BaseActivity implements PermissionInterf
         Dexter.withContext(this).withPermission(Manifest.permission.ACCESS_FINE_LOCATION).withListener(permissionListener).check();
     }
 
-    /*@RequiresApi(api = Build.VERSION_CODES.Q)
-    public void takeLocationPermission(View view) {
-        Dexter.withContext(this).withPermissions(Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-                .withListener(new MultiplePermissionsListener() {
-                    @Override
-                    public void onPermissionsChecked(MultiplePermissionsReport report) {
-                        // check if all permissions are granted
-                        if (report.areAllPermissionsGranted()) {
-                            // do you work now
-                            Intent intent = new Intent(PermissionActivity.this, HomeActivity.class);
-                            SharedPreManager.getInstance(context).setIsLocationPermissionGiven(true);
-                            startActivity(intent);
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    finish();
-                                }
-                            }, 1000);
-                        }
-                        // check for permanent denial of any permission
-                        if (report.isAnyPermissionPermanentlyDenied()) {
-                            // permission is denied permanently, navigate user to app settings
-                            takeLocationPermission(view);
-                            Toast.makeText(context, "Please allow All Time Location for using Parking App...", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> list, PermissionToken permissionToken) {
-
-                    }
-                })
-                .withErrorListener(new PermissionRequestErrorListener() {
-                    @Override
-                    public void onError(DexterError error) {
-                        Toast.makeText(getApplicationContext(), "Error occurred! " + error.toString(), Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .check();
-        //.withListener((MultiplePermissionsListener) permissionListener).check();
-    }*/
-
     @Override
     public void showPermissionGranted(String permissionName) {
         if (Manifest.permission.ACCESS_FINE_LOCATION.equals(permissionName)) {
@@ -205,9 +161,9 @@ public class PermissionActivity extends BaseActivity implements PermissionInterf
         DialogUtils.getInstance().alertDialog(context,
                 context,
                 context.getResources().getString(R.string.we_need_this_permission_for_find_nearest_parking_places),
-                context.getString(R.string.allow_this_permission_to_further_use_of_this_app),
-                context.getString(R.string.allow),
-                context.getString(R.string.cancel),
+                context.getResources().getString(R.string.allow_this_permission_to_further_use_of_this_app),
+                context.getResources().getString(R.string.allow),
+                context.getResources().getString(R.string.cancel),
                 new DialogUtils.DialogClickListener() {
                     @Override
                     public void onPositiveClick() {

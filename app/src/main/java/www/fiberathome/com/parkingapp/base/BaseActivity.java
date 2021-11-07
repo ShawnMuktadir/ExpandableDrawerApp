@@ -411,7 +411,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
             return;
         } else {
             sbView.setBackgroundColor(getResources().getColor(R.color.transparent_gray));
-            snackbar.setAction(context.getString(R.string.retry), view -> {
+            snackbar.setAction(context.getResources().getString(R.string.retry), view -> {
 
                 if (ConnectivityUtils.getInstance().checkInternet(context)) {
                     return;
@@ -433,14 +433,14 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Internet Disabled!");
         builder.setMessage("No active Internet connection found.");
-        builder.setPositiveButton(context.getString(R.string.retry), (dialog, which) -> {
+        builder.setPositiveButton(context.getResources().getString(R.string.retry), (dialog, which) -> {
 
             if (ConnectivityUtils.getInstance().checkInternet(context)) {
                 return;
             } else {
                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
             }
-        }).setNegativeButton(context.getString(R.string.close_app), (dialog, which) -> {
+        }).setNegativeButton(context.getResources().getString(R.string.close_app), (dialog, which) -> {
             dialog.dismiss();
             if (context != null) {
                 finishAffinity();

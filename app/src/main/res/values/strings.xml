@@ -128,7 +128,7 @@
     <string name="date">wed,5 Feb</string>
     <string name="schedule_heading">Schedule</string>
     <string name="arrived">Arrived at the parking spot:</string>
-    <string name="departure">Departure at the parking spot:</string>
+    <string name="departure">Select how long you want to book</string>
     <string name="book">Your book</string>
     <string name="gps_network_not_enabled">GPS network not enabled!</string>
     <string name="open_location_settings">Open Location Settings</string>
@@ -384,7 +384,7 @@
     <string name="locc">LOCC</string>
     <string name="parking_slot">Parking Slot 17</string>h
     <string name="total_time">2.30h</string>
-    <string name="total_fair">Total: BDT726.00</string>
+    <string name="total_fair">Total: BDT </string>
     <string name="rate_tip">Rate and tip</string>
     <string name="view_receipt">View Receipt</string>
     <string name="get_help">Get Help</string>
@@ -522,4 +522,10 @@
     <string name="you_are_parked">You Are Parked</string>
     <string name="booking_already_canceled">Booking already canceled</string>
     <string name="booking_already_canceled_msg">Your reserve time is over. Your parking has been canceled.</string>
+    <string name="back">Back</string>
+    <string name="parking_spot_id">Spot Id: </string>
+    <string name="car_departure">Car Departure</string>
+    <string name="dp_u_want_to_cancel_booking">Do you want to cancel booking?</string>
+    <string name="park_has_started">Your park has been started</string>
+    <string name="as_your_reservation_time_had_exceed_over_five_mins">As your reservation time had exceed over 5 mins, your booking has been closed. Thank you</string>
 </resources>

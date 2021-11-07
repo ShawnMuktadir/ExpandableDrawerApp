@@ -7,10 +7,7 @@ import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,10 +19,9 @@ import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.databinding.ParkingRowBinding;
 import www.fiberathome.com.parkingapp.model.response.sensors.SensorArea;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
 
@@ -33,15 +29,10 @@ import www.fiberathome.com.parkingapp.utils.TextUtils;
 public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ParkingActivity context;
-
     private ArrayList<SensorArea> sensorAreas;
-
     public LatLng location;
-
     public final Location onConnectedLocation;
-
     private int selectedPosition = -1;
-
     private final ParkingAdapterClickListener mListener;
 
     public interface ParkingAdapterClickListener {
@@ -59,39 +50,37 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.
-                from(parent.getContext()).
-                inflate(R.layout.parking_row, parent, false);
         context = (ParkingActivity) parent.getContext();
-        return new ParkingViewHolder(itemView);
+        LayoutInflater layoutInflater = LayoutInflater.from(context);
+        ParkingRowBinding itemBinding = ParkingRowBinding.inflate(layoutInflater, parent, false);
+        return new ParkingViewHolder(itemBinding);
     }
 
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, @SuppressLint("RecyclerView") int position) {
         ParkingViewHolder parkingViewHolder = (ParkingViewHolder) viewHolder;
-
         SensorArea sensorArea = sensorAreas.get(position);
 
-        parkingViewHolder.textViewParkingAreaName.setText(TextUtils.getInstance().capitalizeFirstLetter(sensorArea.getParkingArea()));
+        parkingViewHolder.binding.textViewParkingAreaName.setText(TextUtils.getInstance().capitalizeFirstLetter(sensorArea.getParkingArea()));
 
-        parkingViewHolder.textViewParkingAreaCount.setText(sensorArea.getCount());
+        parkingViewHolder.binding.textViewParkingAreaCount.setText(sensorArea.getCount());
 
-        parkingViewHolder.textViewParkingDistance.setText(new DecimalFormat("##.#",
+        parkingViewHolder.binding.textViewParkingDistance.setText(new DecimalFormat("##.#",
                 new DecimalFormatSymbols(Locale.US)).format(sensorArea.getDistance()) + " km");
 
-        parkingViewHolder.textViewParkingTravelTime.setText(sensorArea.getDuration());
+        parkingViewHolder.binding.textViewParkingTravelTime.setText(sensorArea.getDuration());
 
-        parkingViewHolder.relativeLayout.setOnClickListener(view -> {
+        parkingViewHolder.binding.relativeLayout.setOnClickListener(view -> {
             selectedPosition = position;
             notifyDataSetChanged();
             mListener.onItemClick(position, sensorArea.getEndLat(), sensorArea.getEndLng(), sensorArea.getParkingArea(), sensorArea.getCount());
         });
 
         if (selectedPosition == position) {
-            parkingViewHolder.relativeLayout.setBackgroundColor(context.getResources().getColor(R.color.selectedColor));
+            parkingViewHolder.binding.relativeLayout.setBackgroundColor(context.getResources().getColor(R.color.selectedColor));
         } else {
-            parkingViewHolder.relativeLayout.setBackgroundColor(Color.TRANSPARENT);
+            parkingViewHolder.binding.relativeLayout.setBackgroundColor(Color.TRANSPARENT);
         }
     }
 
@@ -130,28 +119,11 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @SuppressLint("NonConstantResourceId")
     public static class ParkingViewHolder extends RecyclerView.ViewHolder {
+        ParkingRowBinding binding;
 
-        @BindView(R.id.textViewParkingAreaName)
-        TextView textViewParkingAreaName;
-
-        @BindView(R.id.textViewParkingAreaCount)
-        TextView textViewParkingAreaCount;
-
-        @BindView(R.id.textViewParkingAreaAddress)
-        TextView textViewParkingAreaAddress;
-
-        @BindView(R.id.relativeLayout)
-        RelativeLayout relativeLayout;
-
-        @BindView(R.id.textViewParkingDistance)
-        TextView textViewParkingDistance;
-
-        @BindView(R.id.textViewParkingTravelTime)
-        TextView textViewParkingTravelTime;
-
-        public ParkingViewHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
+        public ParkingViewHolder(ParkingRowBinding itemView) {
+            super(itemView.getRoot());
+            this.binding = itemView;
         }
     }
 }

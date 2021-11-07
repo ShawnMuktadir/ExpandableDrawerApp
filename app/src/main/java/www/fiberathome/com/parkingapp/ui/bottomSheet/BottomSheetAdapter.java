@@ -10,9 +10,6 @@ import android.location.LocationManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,10 +19,9 @@ import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.databinding.BottomSheetTextRecyclerItemBinding;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingSensors;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
@@ -63,9 +59,10 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
     @NonNull
     @Override
     public TextBookingViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.bottom_sheet_text_recycler_item, parent, false);
         context = parent.getContext();
-        return new TextBookingViewHolder(view);
+        LayoutInflater layoutInflater = LayoutInflater.from(context);
+        BottomSheetTextRecyclerItemBinding itemBinding = BottomSheetTextRecyclerItemBinding.inflate(layoutInflater, parent, false);
+        return new TextBookingViewHolder(itemBinding);
     }
 
     @SuppressLint("SetTextI18n")
@@ -77,25 +74,25 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
             selectedItem = position;
 
-            holder.relativeLayoutTxtBottom.setVisibility(View.VISIBLE);
+            holder.binding.textBottom.setVisibility(View.VISIBLE);
 
-            holder.textViewStatic.setText(bookingSensors.getText());
+            holder.binding.textViewStatic.setText(bookingSensors.getText());
 
             holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.selectedColor));
 
-            holder.relativeLayoutTxtBottom.setVisibility(View.VISIBLE);
+            holder.binding.textBottom.setVisibility(View.VISIBLE);
 
         } else {
-            holder.relativeLayoutTxtBottom.setVisibility(View.GONE);
+            holder.binding.textBottom.setVisibility(View.GONE);
         }
 
-        holder.textViewParkingAreaName.setText(bookingSensors.getParkingArea());
+        holder.binding.textViewParkingAreaName.setText(bookingSensors.getParkingArea());
 
-        holder.textViewParkingAreaCount.setText(bookingSensors.getCount());
+        holder.binding.textViewParkingAreaCount.setText(bookingSensors.getCount());
 
-        holder.textViewParkingDistance.setText(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(bookingSensors.getDistance()) + " km");
+        holder.binding.textViewParkingDistance.setText(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(bookingSensors.getDistance()) + " km");
 
-        holder.rowFG.setOnClickListener(view -> {
+        holder.binding.rowFG.setOnClickListener(view -> {
             if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
                 clickListeners.onClick(bookingSensors);
             } else {
@@ -108,7 +105,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         double tmp = MathUtils.getInstance().convertToDouble(decimalFormat.format(Double
                 .parseDouble(bookingSensors.getDuration())));
 
-        holder.textViewParkingTravelTime.setText(tmp + " mins");
+        holder.binding.textViewParkingTravelTime.setText(tmp + " mins");
 
         if (selectedItem == position) {
             holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.selectedColor));
@@ -151,11 +148,8 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
     }
 
     private boolean isGPSEnabled() {
-
         LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-
         boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
         if (providerEnabled) {
             return true;
         } else {
@@ -166,37 +160,11 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
     @SuppressLint("NonConstantResourceId")
     public static class TextBookingViewHolder extends RecyclerView.ViewHolder {
+        BottomSheetTextRecyclerItemBinding binding;
 
-        @BindView(R.id.textViewParkingAreaName)
-        public TextView textViewParkingAreaName;
-
-        @BindView(R.id.textViewParkingAreaCount)
-        public TextView textViewParkingAreaCount;
-
-        @BindView(R.id.textViewParkingAreaAddress)
-        public TextView textViewParkingAreaAddress;
-
-        @BindView(R.id.textViewParkingDistance)
-        public TextView textViewParkingDistance;
-
-        @BindView(R.id.textViewParkingTravelTime)
-        public TextView textViewParkingTravelTime;
-
-        @BindView(R.id.textViewStatic)
-        public TextView textViewStatic;
-
-        @BindView(R.id.relativeLayoutTxt)
-        public RelativeLayout relativeLayoutTxt;
-
-        @BindView(R.id.textBottom)
-        public RelativeLayout relativeLayoutTxtBottom;
-
-        @BindView(R.id.rowFG)
-        public LinearLayout rowFG;
-
-        public TextBookingViewHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
+        public TextBookingViewHolder(BottomSheetTextRecyclerItemBinding itemView) {
+            super(itemView.getRoot());
+            this.binding = itemView;
         }
     }
 }

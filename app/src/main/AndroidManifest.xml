@@ -74,7 +74,7 @@
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
-            android:name=".ui.booking.newBooking.BookingActivity"
+            android:name=".ui.booking.BookingActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
@@ -91,12 +91,12 @@
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
-            android:name=".ui.changePassword.newPassword.ChangeNewPasswordActivity"
+            android:name=".ui.changePassword.newPassword.NewPasswordActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
-            android:name=".ui.changePassword.ChangePasswordActivityForOTPNew"
+            android:name=".ui.changePassword.ChangePasswordOTPActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
@@ -206,13 +206,13 @@
         </provider>
 
         <service
-            android:name=".module.booking_service.BookingService"
+            android:name=".service.booking_service.BookingService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="dataSync" />
 
         <!-- <receiver android:name=".utils.GeoFenceBroadcastReceiver"/>-->
-        <receiver android:name=".module.notification.NotificationPublisher" />
+        <receiver android:name=".service.notification.NotificationPublisher" />
 
         <uses-library
             android:name="org.apache.http.legacy"

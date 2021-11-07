@@ -130,6 +130,7 @@
                     android:layout_height="wrap_content"
                     android:padding="@dimen/dim5"
                     android:text="@string/arrived"
+                    android:textStyle="bold"
                     android:textColor="@color/arrived"
                     android:textSize="@dimen/dimTex14" />
 
@@ -163,6 +164,7 @@
                     android:padding="@dimen/dim5"
                     android:text="@string/departure"
                     android:textColor="@color/arrived"
+                    android:textStyle="bold"
                     android:textSize="@dimen/dimTex14" />
 
                 <LinearLayout
@@ -173,7 +175,7 @@
                     android:background="@drawable/rect_white_bg_gray_border_rounded">
 
                     <Spinner
-                        android:id="@+id/classSpinner"
+                        android:id="@+id/spinner_departure_time"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_gravity="center_vertical"

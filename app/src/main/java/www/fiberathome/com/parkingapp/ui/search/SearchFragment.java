@@ -117,10 +117,8 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
 
     private final TextWatcher filterTextWatcher = new TextWatcher() {
 
+        @SuppressLint("NotifyDataSetChanged")
         public void afterTextChanged(Editable s) {
-            /*if (!s.toString().equals("")) {
-                mAutoCompleteAdapter.getFilter().filter(s.toString());
-            }*/
 
             mAutoCompleteAdapter.notifyDataSetChanged();
 
@@ -245,17 +243,6 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
                         KeyboardUtils.getInstance().hideKeyboard(context, editTextSearch);
                     }
                 }
-                /*if (s.length() >= 0) {
-                    //filter(s.toString());
-                    mAutoCompleteAdapter.getFilter().filter(s.toString());
-                }
-
-                drawing cross button if text appears programmatically
-                if (s.length() > 0) {
-                    editTextSearch.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_clear, 0);
-                } else {
-                    editTextSearch.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                }*/
             }
         });
 

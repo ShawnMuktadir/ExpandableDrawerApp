@@ -21,7 +21,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.ui.booking.newBooking.BookingActivity;
+import www.fiberathome.com.parkingapp.ui.booking.BookingActivity;
 import www.fiberathome.com.parkingapp.ui.widget.BaseBottomSheetDialog;
 
 @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -124,13 +124,13 @@ public class DialogUtils {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             builder.setMessage(message);
             builder.setCancelable(true);
-            builder.setPositiveButton(context.getResources().getString(R.string.get_support),
-                    (dialog, which) -> DialogUtils.getInstance().showAlertDialog(context.getString(R.string.number),
-                            context, context.getString(R.string.call),
-                            context.getString(R.string.cancel),
+            builder.setNegativeButton(context.getResources().getString(R.string.get_support),
+                    (dialog, which) -> DialogUtils.getInstance().showAlertDialog(context.getResources().getString(R.string.number),
+                            context, context.getResources().getString(R.string.call),
+                            context.getResources().getString(R.string.cancel),
                             (dialog1, which1) -> {
                                 Timber.e("Positive Button clicked");
-                                String number = context.getString(R.string.number);
+                                String number = context.getResources().getString(R.string.number);
                                 Intent intent = new Intent();
                                 intent.setAction(Intent.ACTION_DIAL); // Action for what intent called for
                                 intent.setData(Uri.parse("tel: " + number)); // Datum with intent respective action on intent
@@ -142,7 +142,7 @@ public class DialogUtils {
                                 Timber.e("Negative Button Clicked");
                                 dialog1.dismiss();
                             }));
-            builder.setNegativeButton(context.getResources().getString(R.string.ok), (dialog, which) -> dialog.dismiss());
+            builder.setPositiveButton(context.getResources().getString(R.string.ok), (dialog, which) -> dialog.dismiss());
             AlertDialog alertDialog = builder.create();
             try {
                 if (!((Activity) context).isFinishing()) {

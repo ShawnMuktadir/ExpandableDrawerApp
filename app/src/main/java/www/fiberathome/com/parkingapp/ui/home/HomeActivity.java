@@ -42,6 +42,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
@@ -49,9 +50,8 @@ import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingParkStatusResponse;
 import www.fiberathome.com.parkingapp.ui.NavigationActivity;
+import www.fiberathome.com.parkingapp.ui.booking.BookingFragment;
 import www.fiberathome.com.parkingapp.ui.booking.BookingParkFragment;
-import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener;
-import www.fiberathome.com.parkingapp.ui.booking.newBooking.BookingFragment;
 import www.fiberathome.com.parkingapp.ui.followUs.FollowUsFragment;
 import www.fiberathome.com.parkingapp.ui.getDiscount.GetDiscountFragment;
 import www.fiberathome.com.parkingapp.ui.law.LawFragment;
@@ -276,7 +276,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
             DialogUtils.getInstance().alertDialog(context,
                     (Activity) context,
                     context.getResources().getString(R.string.exit_message_main),
-                    context.getString(R.string.ok), context.getString(R.string.cancel),
+                    context.getResources().getString(R.string.ok), context.getResources().getString(R.string.cancel),
                     new DialogUtils.DialogClickListener() {
                         @Override
                         public void onPositiveClick() {

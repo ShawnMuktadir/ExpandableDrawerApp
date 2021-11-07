@@ -54,8 +54,6 @@ import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 
 public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
-    private final String TAG = getClass().getSimpleName();
-
     public ArrayList<PlaceAutocomplete> mResultList = new ArrayList<>();
 
     private final Context mContext;
@@ -70,7 +68,7 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
 
     private final AutocompleteSessionToken token;
 
-    public ArrayList<SearchVisitorData> searchVisitorDataList = new ArrayList<>();
+    public ArrayList<SearchVisitorData> searchVisitorDataList;
 
     private CharSequence charSequence;
 
@@ -144,12 +142,7 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
 
                     Handler handler = new Handler();
 
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            toast.cancel();
-                        }
-                    }, 700);
+                    handler.postDelayed(toast::cancel, 700);
                     //TastyToastUtils.showTastyErrorToast(mContext, "No Places found!");
                 }
             }

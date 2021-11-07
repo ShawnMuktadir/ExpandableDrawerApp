@@ -13,9 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,12 +29,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
+import www.fiberathome.com.parkingapp.databinding.FragmentLawBinding;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.law.LawItem;
 import www.fiberathome.com.parkingapp.model.response.law.LocalJson;
@@ -52,23 +47,11 @@ import www.fiberathome.com.parkingapp.utils.TextUtils;
 @SuppressLint("NonConstantResourceId")
 public class LawFragment extends BaseFragment implements IOnBackPressListener {
 
-    @BindView(R.id.editTextSearchLaw)
-    EditText editTextSearchLaw;
-
-    @BindView(R.id.ivClearSearchText)
-    ImageView ivClearSearchText;
-
-    @BindView(R.id.recyclerView)
-    RecyclerView recyclerView;
-
-    @BindView(R.id.textViewNoData)
-    public TextView textViewNoData;
-
-    private Unbinder unbinder;
-
     private LawActivity context;
 
     private LawAdapter lawAdapter;
+
+    FragmentLawBinding binding;
 
     public LawFragment() {
         // Required empty public constructor
@@ -85,16 +68,15 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_law, container, false);
+        binding = FragmentLawBinding.inflate(getLayoutInflater());
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        unbinder = ButterKnife.bind(this, view);
 
         context = (LawActivity) getActivity();
 
@@ -108,10 +90,6 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Timber.e("onDestroyView called ");
-        if (unbinder != null) {
-            unbinder.unbind();
-        }
     }
 
     @Override
@@ -142,12 +120,12 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
             }
 
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(context);
-            recyclerView.setLayoutManager(mLayoutManager);
-            recyclerView.addItemDecoration(new DividerItemDecoration(context, LinearLayoutManager.VERTICAL));
-            recyclerView.setItemAnimator(new DefaultItemAnimator());
-            recyclerView.setMotionEventSplittingEnabled(false);
+            binding.recyclerView.setLayoutManager(mLayoutManager);
+            binding.recyclerView.addItemDecoration(new DividerItemDecoration(context, LinearLayoutManager.VERTICAL));
+            binding.recyclerView.setItemAnimator(new DefaultItemAnimator());
+            binding.recyclerView.setMotionEventSplittingEnabled(false);
             lawAdapter = new LawAdapter(lawItems, this);
-            recyclerView.setAdapter(lawAdapter);
+            binding.recyclerView.setAdapter(lawAdapter);
         }
     }
 
@@ -189,7 +167,7 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
     @SuppressLint("ClickableViewAccessibility")
     private void setListeners() {
 
-        editTextSearchLaw.addTextChangedListener(new TextWatcher() {
+        binding.editTextSearchLaw.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -198,9 +176,9 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
                 if (charSequence.length() > 0) {
-                    ivClearSearchText.setVisibility(View.VISIBLE);
+                    binding.ivClearSearchText.setVisibility(View.VISIBLE);
                 } else {
-                    ivClearSearchText.setVisibility(View.GONE);
+                    binding.ivClearSearchText.setVisibility(View.GONE);
                 }
             }
 
@@ -209,15 +187,15 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
                 if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_EN) &&
                         TextUtils.getInstance().textContainsBangla(s.toString())) {
                     setNoDataForBangla();
-                    recyclerView.setVisibility(View.GONE);
-                    editTextSearchLaw.setText("");
+                    binding.recyclerView.setVisibility(View.GONE);
+                    binding.editTextSearchLaw.setText("");
                 } else if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN) &&
                         TextUtils.getInstance().textContainsEnglish(s.toString())) {
                     setNoDataForEnglish();
-                    recyclerView.setVisibility(View.GONE);
-                    editTextSearchLaw.setText("");
+                    binding.recyclerView.setVisibility(View.GONE);
+                    binding.editTextSearchLaw.setText("");
                 } else {
-                    recyclerView.setVisibility(View.VISIBLE);
+                    binding.recyclerView.setVisibility(View.VISIBLE);
                     lawAdapter.getFilter().filter(s.toString());
                 }
 
@@ -227,34 +205,34 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
             }
         });
 
-        ivClearSearchText.setOnClickListener(view -> {
-            editTextSearchLaw.setText("");
+        binding.ivClearSearchText.setOnClickListener(view -> {
+            binding.editTextSearchLaw.setText("");
             hideNoData();
             fetchJSONFromAsset();
         });
 
-        editTextSearchLaw.setOnEditorActionListener((v, actionId, event) -> {
+        binding.editTextSearchLaw.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                String contents = editTextSearchLaw.getText().toString().trim();
+                String contents = binding.editTextSearchLaw.getText().toString().trim();
                 if (contents.length() > 0) {
                     //do search
                     if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_EN)
                             && TextUtils.getInstance().textContainsBangla(contents)) {
                         setNoDataForBangla();
-                        recyclerView.setVisibility(View.GONE);
-                        editTextSearchLaw.setText("");
+                        binding.recyclerView.setVisibility(View.GONE);
+                        binding.editTextSearchLaw.setText("");
                     } else if (Preferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN)
                             && TextUtils.getInstance().textContainsEnglish(contents)) {
                         setNoDataForEnglish();
-                        recyclerView.setVisibility(View.GONE);
-                        editTextSearchLaw.setText("");
+                        binding.recyclerView.setVisibility(View.GONE);
+                        binding.editTextSearchLaw.setText("");
                     } else {
-                        recyclerView.setVisibility(View.VISIBLE);
+                        binding.recyclerView.setVisibility(View.VISIBLE);
                         lawAdapter.getFilter().filter(contents);
                     }
                 } else {
                     //if something to do for empty edit text
-                    KeyboardUtils.getInstance().hideKeyboard(context, editTextSearchLaw);
+                    KeyboardUtils.getInstance().hideKeyboard(context, binding.editTextSearchLaw);
                     return true;
                 }
             }
@@ -263,24 +241,24 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
     }
 
     private void setNoDataForBangla() {
-        textViewNoData.setVisibility(View.VISIBLE);
-        textViewNoData.setText(context.getResources().getString(R.string.no_data_found));
+        binding.textViewNoData.setVisibility(View.VISIBLE);
+        binding.textViewNoData.setText(context.getResources().getString(R.string.no_data_found));
         DialogUtils.getInstance().showOnlyMessageDialog(context.getResources().getString(R.string.install_bangla_keyboard), context);
     }
 
     private void setNoDataForEnglish() {
-        textViewNoData.setVisibility(View.VISIBLE);
-        textViewNoData.setText(context.getResources().getString(R.string.no_data_found));
+        binding.textViewNoData.setVisibility(View.VISIBLE);
+        binding.textViewNoData.setText(context.getResources().getString(R.string.no_data_found));
         DialogUtils.getInstance().showOnlyMessageDialog(context.getResources().getString(R.string.change_app_language_to_english), context);
     }
 
     public void hideNoData() {
-        textViewNoData.setVisibility(View.GONE);
+        binding.textViewNoData.setVisibility(View.GONE);
     }
 
     public void setNoData() {
-        textViewNoData.setVisibility(View.VISIBLE);
-        textViewNoData.setText(context.getResources().getString(R.string.no_data_found));
+        binding.textViewNoData.setVisibility(View.VISIBLE);
+        binding.textViewNoData.setText(context.getResources().getString(R.string.no_data_found));
     }
 
     private boolean isGPSEnabled() {

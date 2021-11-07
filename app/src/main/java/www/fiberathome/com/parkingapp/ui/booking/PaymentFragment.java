@@ -11,9 +11,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -23,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.gson.Gson;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -35,14 +33,15 @@ import retrofit2.Callback;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
+import www.fiberathome.com.parkingapp.databinding.FragmentPaymentBinding;
+import www.fiberathome.com.parkingapp.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.model.BookedPlace;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.booking.ReservationResponse;
-import www.fiberathome.com.parkingapp.module.notification.NotificationPublisher;
-import www.fiberathome.com.parkingapp.ui.booking.listener.FragmentChangeListener;
+import www.fiberathome.com.parkingapp.service.notification.NotificationPublisher;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
@@ -58,12 +57,11 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
     static String arrivedTime, departureTime, timeDifference, placeId, route, areaName, parkingSlotCount;
     static long differenceUnit;
     static double lat, lon;
-    private TextView tvArrivedTime, tvDepartureTime, tvTimeDifference, tvSubTotal, tvTotal, tvEditSlot,
-            tvTermsCondition, tvPromo, tvParkingSlotName, actionBarTitle;
-    private ImageView ivBackArrow;
-    private Button payBtn;
+
     private HomeActivity context;
     private FragmentChangeListener listener;
+
+    FragmentPaymentBinding binding;
 
     public PaymentFragment() {
         // Required empty public constructor
@@ -71,7 +69,8 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
 
     public static PaymentFragment newInstance(Date mArrivedDate, Date mDepartedDate, String mArrivedTime,
                                               String mDepartureTime, String mTimeDifference, long mDifferenceUnit,
-                                              String mMarkerUid, double mLat, double mLon, String mRoute, String mAreaName, String mParkingSlotCount) {
+                                              String mMarkerUid, double mLat, double mLon, String mRoute, String mAreaName,
+                                              String mParkingSlotCount) {
         arrivedDate = mArrivedDate;
         departureDate = mDepartedDate;
         arrivedTime = mArrivedTime;
@@ -93,10 +92,11 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_payment, container, false);
+        binding = FragmentPaymentBinding.inflate(getLayoutInflater());
+        return binding.getRoot();
     }
 
     @Override
@@ -105,7 +105,6 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
         if (isAdded()) {
             context = (HomeActivity) getActivity();
             listener = context;
-            initUI(view);
             setListeners();
             setData();
             setBill();
@@ -130,34 +129,19 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
         return false;
     }
 
-    private void initUI(View view) {
-        tvArrivedTime = view.findViewById(R.id.tvArrivedTime);
-        tvDepartureTime = view.findViewById(R.id.tvDepartureTime);
-        tvTimeDifference = view.findViewById(R.id.tvDifferenceTime);
-        tvSubTotal = view.findViewById(R.id.tvSubTotal);
-        tvTotal = view.findViewById(R.id.tvTotal);
-        payBtn = view.findViewById(R.id.btnPay);
-        tvEditSlot = view.findViewById(R.id.tvEditSlot);
-        tvTermsCondition = view.findViewById(R.id.tvTermCondition);
-        tvPromo = view.findViewById(R.id.tvPromo);
-        tvParkingSlotName = view.findViewById(R.id.tvParkingSlotName);
-        actionBarTitle = view.findViewById(R.id.action_bar_title);
-        ivBackArrow = view.findViewById(R.id.ivBackArrow);
-    }
-
     private void setListeners() {
-        ivBackArrow.setOnClickListener(v -> {
+        binding.ivBackArrow.setOnClickListener(v -> {
             ScheduleFragment scheduleFragment = ScheduleFragment.newInstance(placeId, areaName);
             listener.fragmentChange(scheduleFragment);
         });
 
-        tvEditSlot.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
+        binding.tvEditSlot.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
 
-        tvPromo.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
+        binding.tvPromo.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
 
-        tvTermsCondition.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
+        binding.tvTermCondition.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
 
-        payBtn.setOnClickListener(v -> {
+        binding.btnPay.setOnClickListener(v -> {
             if (ConnectivityUtils.getInstance().checkInternet(context)) {
                 long diff = arrivedDate.getTime() - departureDate.getTime();
                 long seconds = diff / 1000;
@@ -169,44 +153,45 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                 if (minutes > 120) {
                     ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.booking_time_rules));
                 } else {
-                  if(isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
-                      storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
-                              getDate(arrivedDate.getTime()), getDate(departureDate.getTime()), placeId);
-                  }
+                    if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
+                        storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
+                                getDate(arrivedDate.getTime()), getDate(departureDate.getTime()), placeId);
+                    }
                 }
             } else {
                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
             }
         });
     }
+
     private boolean isGPSEnabled() {
-
         LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-
         boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
         if (providerEnabled) {
             return true;
         } else {
             Timber.e("else called");
         }
-
         return false;
     }
+
     private void setData() {
-        tvArrivedTime.setText(arrivedTime);
-        tvDepartureTime.setText(departureTime);
-        tvTimeDifference.setText(new StringBuilder().append(timeDifference).append(" min").toString());
-        tvParkingSlotName.setText(areaName);
+        binding.tvArrivedTime.setText(arrivedTime);
+        binding.tvDepartureTime.setText(departureTime);
+        binding.tvDifferenceTime.setText(String.format("%s hr", timeDifference));
+        binding.tvParkingSlotName.setText(areaName);
     }
 
     private void setBill() {
         final double perMintBill = 0.6666666667;
-        DecimalFormat df = new DecimalFormat("##.##");
+        DecimalFormat df = new DecimalFormat("##.##",
+                new DecimalFormatSymbols(Locale.US));
         long minutes = TimeUnit.MILLISECONDS.toMinutes(differenceUnit);
-        tvSubTotal.setText(new StringBuilder().append("BDT ").append(df.format(perMintBill * minutes)).toString());
-        tvTotal.setText(new StringBuilder().append("BDT ").append(df.format(perMintBill * minutes)).toString());
-        payBtn.setText(new StringBuilder().append("Pay BDT ").append(df.format(perMintBill * minutes)).toString());
+        binding.tvSubTotal.setText(new StringBuilder().append("BDT ").append(df.format(perMintBill * minutes)).toString());
+        binding.tvTotal.setText(new StringBuilder().append("BDT ").append(df.format(perMintBill * minutes)).toString());
+        binding.btnPay.setText(new StringBuilder().append("Pay BDT ").append(df.format(perMintBill * minutes)).toString());
+        /*binding.btnPay.setText(new StringBuilder().append("Pay BDT ").append(MathUtils.getInstance().convertToDouble(new DecimalFormat("##.#",
+                new DecimalFormatSymbols(Locale.US)).format(df.format(perMintBill * minutes)))));*/
     }
 
     private void storeReservation(String mobileNo, String arrivalTime, String departureTime, String markerUid) {
@@ -223,9 +208,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                         if (response.body().getUid() != null) {
                             Timber.e("response -> %s", new Gson().toJson(response.body()));
                             TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.reservation_successful));
-                            //check 15 minutes before departure
-                            //ToDo
-
+                            //set booked place info
                             BookedPlace bookedPlace = new BookedPlace();
                             bookedPlace.setBookedUid(response.body().getUid());
                             bookedPlace.setLat(lat);
@@ -242,7 +225,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                             Preferences.getInstance(context).setBooked(bookedPlace);
                             startAlarm(convertLongToCalendar(Preferences.getInstance(context).getBooked().getArriveDate()));
                             if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
-                                actionBarTitle.setText(context.getResources().getString(R.string.booking_payment));
+                                binding.actionBarTitle.setText(context.getResources().getString(R.string.booking_payment));
                                 listener.fragmentChange(HomeFragment.newInstance(bookedPlace));
                                 //ApplicationUtils.replaceFragmentWithAnimation(getParentFragmentManager(), HomeFragment.newInstance(bookedPlace));
                             } else {
@@ -250,7 +233,6 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                             }
                         } else {
                             DialogUtils.getInstance().showOnlyMessageDialog(context.getResources().getString(R.string.parking_slot_not_available), context);
-                            return;
                         }
                     } else {
                         Toast.makeText(getContext(), context.getResources().getString(R.string.reservation_failed), Toast.LENGTH_SHORT).show();
@@ -262,7 +244,6 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
             public void onFailure(@NonNull Call<ReservationResponse> call, @NonNull Throwable t) {
                 Timber.e("onFailure -> %s", t.getMessage());
                 hideLoading();
-//                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
         });
     }
@@ -275,11 +256,12 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
         calendar.setTimeInMillis(milliSeconds);
         return formatter.format(calendar.getTime());
     }
+
     private void startAlarm(Calendar c) {
         Timber.e("startAlarm called");
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, NotificationPublisher.class);
-        intent.putExtra("Started", "Booked Time About to start for : \n"+ Preferences.getInstance(context).getBooked().getAreaName());
+        intent.putExtra("Started", "Booked Time About to start for : \n" + Preferences.getInstance(context).getBooked().getAreaName());
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, intent, 0);
         if (c.before(Calendar.getInstance())) {
             c.add(Calendar.DATE, 1);
