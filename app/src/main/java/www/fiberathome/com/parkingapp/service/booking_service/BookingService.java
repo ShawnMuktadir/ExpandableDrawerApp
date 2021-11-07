@@ -130,14 +130,18 @@ public class BookingService extends Service {
             startForeground(Constants.BOOKING_Exceed_SERVICE_ID, mBuilder.build());
             isExceedRunned = true;
         }
+
         //executes when booking time ends
         if (!warringShowed && new Date().getTime() >= departureDate) {
             Timber.e("car Parking Duration End -> %s %s", new Date().getTime(), departureDate);
 //            Toast.makeText(context, "car Parking Duration End:" + new Date().getTime() + "," + departureDate, Toast.LENGTH_LONG).show();
-            warringShowed = true;
-            sendNotification("Booked Time", "Parking Duration About To End", false);
-            startCountDown((exceedTime - (new Date().getTime() - departureDate)) >= 0 ? (exceedTime - (new Date().getTime() - departureDate)) : 0, true);
+            if (ConnectivityUtils.getInstance().checkInternet(context)) {
+                warringShowed = true;
+                sendNotification("Booked Time", "Parking Duration About To End", false);
+                startCountDown((exceedTime - (new Date().getTime() - departureDate)) >= 0 ? (exceedTime - (new Date().getTime() - departureDate)) : 0, true);
+            }
         }
+
     }
 
     private void notificationCaller(String NOTIFICATION_CHANNEL_ID, String msg, int requestCode) {
