@@ -313,11 +313,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         return fragment;
     }
 
-    public static HomeFragment newInstance(BookedPlace mBookedPlace) {
-        bookedPlace = mBookedPlace;
-        return new HomeFragment();
-    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         Timber.e("onCreate called");
@@ -527,6 +522,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     @Override
     public boolean onMarkerClick(Marker marker) {
         hideNoData();
+        searchPlaceCount = "";
         final String[] uid = {""};
         final String[] uid1 = {""};
         final String[] markerAreaName1 = {""};
@@ -567,7 +563,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                 if (isRouteDrawn == 0) {
                     if (mMap != null) {
-
                         if (marker.getTitle() != null) {
                             if (!marker.getTitle().equals("My Location")) {
                                 if (previousMarker != null) {
@@ -591,7 +586,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         destination = "" + parkingSpotLatLng.latitude + ", " + parkingSpotLatLng.longitude;
                         binding.fabGetDirection.setVisibility(View.VISIBLE);
                         cordList.add(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
-
                         if (!isMyCurrentLocation) {
                             populateNearestPlaceBottomSheet(parkingSpotLatLng);
                         }
@@ -618,7 +612,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                             parkingAreaChanged = true;
                                             isNotificationSent = false;
                                             isInAreaEnabled = false;
-                                            searchPlaceCount = "";
                                             setButtonText(context.getResources().getString(R.string.confirm_booking), context.getResources().getColor(R.color.black));
                                         }
                                     }
@@ -1672,6 +1665,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             destination = "" + parkingSpotLatLng.latitude + ", " + parkingSpotLatLng.longitude;
             binding.fabGetDirection.setVisibility(View.VISIBLE);
             hideNoData();
+            searchPlaceCount = "";
             try {
                 if (isRouteDrawn == 0) {
                     //for getting the location name
@@ -2192,22 +2186,13 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                 }).show();
                         setButtonText(context.getResources().getString(R.string.parking), context.getResources().getColor(R.color.black));
                     } else if (parkingAreaChanged && isBooked) {
-                        if (!isAreaChangedForSearch) {
-                            DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.park_message), context);
-                        } else {
-                            DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.already_booked_msg), context);
-                        }
+                        DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.already_booked_msg), context);
                     } else {
                         DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.park_message), context);
                     }
                 } else {
-                    if (searchPlaceCount.equals("0")) {
-                        DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.no_parking_spot_message), context);
-                    } else {
-                        Timber.e("else called");
-                    }
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                    if (parkingNumberOfIndividualMarker.equals("0") || searchPlaceCount.equals("0")) {
+                    if (searchPlaceCount.equals("0")) {
                         DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.no_parking_spot_message), context);
                         setButtonText(context.getResources().getString(R.string.unavailable_parking_spot), context.getResources().getColor(R.color.gray3));
                         binding.btnConfirmBooking.setEnabled(true);

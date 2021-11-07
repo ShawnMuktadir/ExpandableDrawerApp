@@ -208,13 +208,11 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
 
                     @Override
                     public void transactionFail(String s) {
-
                         Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void merchantValidationError(String s) {
-
                         Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -282,8 +280,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                             startAlarm(convertLongToCalendar(Preferences.getInstance(context).getBooked().getArriveDate()));
                             if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
                                 binding.actionBarTitle.setText(context.getResources().getString(R.string.booking_payment));
-                                listener.fragmentChange(HomeFragment.newInstance(bookedPlace));
-                                //ApplicationUtils.replaceFragmentWithAnimation(getParentFragmentManager(), HomeFragment.newInstance(bookedPlace));
+                                listener.fragmentChange(new HomeFragment());
                             } else {
                                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
                             }

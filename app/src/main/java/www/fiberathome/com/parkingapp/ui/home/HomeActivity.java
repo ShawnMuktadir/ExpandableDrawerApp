@@ -338,10 +338,17 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
 
     @Override
     public void fragmentChange(Fragment fragment) {
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.nav_host_fragment, fragment);
-        ft.addToBackStack(null);
-        ft.commit();
+        try {
+            if (!isFinishing()) {
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.nav_host_fragment, fragment);
+                ft.addToBackStack(null);
+                ft.commit();
+            }
+        } catch (IllegalStateException e) {
+            // There's no way to avoid getting this if saveInstanceState has already been called.
+            Timber.e("IllegalStateException -> %s", e.getCause());
+        }
     }
 
     private void setListeners() {
