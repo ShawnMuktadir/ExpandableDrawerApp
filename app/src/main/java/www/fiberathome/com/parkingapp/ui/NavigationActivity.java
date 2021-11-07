@@ -57,7 +57,6 @@ import www.fiberathome.com.parkingapp.model.user.User;
 import www.fiberathome.com.parkingapp.ui.booking.BookingActivity;
 import www.fiberathome.com.parkingapp.ui.changePassword.ChangePasswordFragment;
 import www.fiberathome.com.parkingapp.ui.followUs.FollowUsActivity;
-import www.fiberathome.com.parkingapp.ui.getDiscount.GetDiscountActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.law.LawActivity;
 import www.fiberathome.com.parkingapp.ui.parking.ParkingActivity;
@@ -429,10 +428,6 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
 
             case R.id.nav_settings:
                 startActivity(SettingsActivity.class);
-                break;
-
-            case R.id.nav_get_discount:
-                startActivity(GetDiscountActivity.class);
                 break;
 
             case R.id.nav_rating_review:

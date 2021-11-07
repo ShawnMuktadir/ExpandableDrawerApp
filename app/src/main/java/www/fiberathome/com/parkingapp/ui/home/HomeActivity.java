@@ -53,7 +53,6 @@ import www.fiberathome.com.parkingapp.ui.NavigationActivity;
 import www.fiberathome.com.parkingapp.ui.booking.BookingFragment;
 import www.fiberathome.com.parkingapp.ui.booking.BookingParkFragment;
 import www.fiberathome.com.parkingapp.ui.followUs.FollowUsFragment;
-import www.fiberathome.com.parkingapp.ui.getDiscount.GetDiscountFragment;
 import www.fiberathome.com.parkingapp.ui.law.LawFragment;
 import www.fiberathome.com.parkingapp.ui.parking.ParkingFragment;
 import www.fiberathome.com.parkingapp.ui.permission.PermissionActivity;
@@ -244,9 +243,6 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                         toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
                     } else if (f instanceof SettingsFragment) {
                         ((SettingsFragment) f).onBackPressed();
-                        toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
-                    } else if (f instanceof GetDiscountFragment) {
-                        ((GetDiscountFragment) f).onBackPressed();
                         toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
                     } else if (f instanceof FollowUsFragment) {
                         ((FollowUsFragment) f).onBackPressed();

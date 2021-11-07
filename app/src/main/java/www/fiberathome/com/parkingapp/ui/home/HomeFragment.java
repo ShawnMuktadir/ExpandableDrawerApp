@@ -1733,8 +1733,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         binding.bottomSheetLayout.bottomSheetRecyclerView.setAdapter(bottomSheetAdapter);
         if (bookingSensors.size() == 0) {
             setNoData();
-        }
-        else {
+        } else {
             hideNoData();
         }
     }
@@ -2069,9 +2068,14 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     fetchDirections(origin, bookedDestination);
                     getDirectionPinMarkerDraw(new LatLng(bookedPlace.getLat(), bookedPlace.getLon()), bookedPlace.getPlaceId(), false);
                 } else {
-                    if (destination != null && parkingAreaChanged)
-                        fetchDirections(origin, destination);
-                    getDirectionPinMarkerDraw(parkingSpotLatLng, parkingAreaPlacedId, false);
+                    if (destination != null) {
+                        if (parkingAreaChanged) {
+                            fetchDirections(origin, destination);
+                        } else {
+                            fetchDirections(origin, destination);
+                        }
+                        getDirectionPinMarkerDraw(parkingSpotLatLng, parkingAreaPlacedId, false);
+                    }
                 }
             } catch (Exception e) {
                 Timber.e(e.getCause());
