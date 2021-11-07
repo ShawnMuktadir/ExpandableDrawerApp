@@ -33,7 +33,6 @@ import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
-import com.sdsmdg.tastytoast.TastyToast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -134,16 +133,11 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
                     notifyDataSetChanged();
 
                     isShownEmpty = true;
-                    /*Toast.makeText(mContext, "No Places found!", Toast.LENGTH_SHORT).show();
-                    final Toast toast = Toast.makeText(mContext, "No Places found!", Toast.LENGTH_SHORT);*/
-                    Toast toast = TastyToast.makeText(mContext, "No Places found!", TastyToast.LENGTH_SHORT, TastyToast.WARNING);
 
+                    Toast toast = Toast.makeText(mContext, "No Places found!", Toast.LENGTH_SHORT);
                     toast.show();
-
                     Handler handler = new Handler();
-
                     handler.postDelayed(toast::cancel, 700);
-                    //TastyToastUtils.showTastyErrorToast(mContext, "No Places found!");
                 }
             }
         };
@@ -377,56 +371,14 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
         if (providerEnabled) {
             return true;
         } else {
-            /*AlertDialog alertDialog = new AlertDialog.Builder(context)
-                    .setTitle("GPS Permissions")
-                    .setMessage("GPS is required for this app to work. Please enable GPS.")
-                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
-                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        intent.putExtra("position",position);
-                        Activity origin = (Activity)context;
-
-                        origin.startActivityForResult(intent, GPS_REQUEST_CODE);
-                    }))
-                    .setCancelable(false)
-                    .show();*/
+            Timber.e("else called");
         }
-
         return false;
-    }
-
-    public boolean isExist(String strName) {
-        for (int i = 0; i < searchVisitorDataList.size(); i++) {
-            if (searchVisitorDataList.get(i).equals(strName)) {
-                searchVisitorDataList.remove(i);
-                notifyDataSetChanged();
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private void setNoData(SearchPredictionViewHolder mSearchPredictionViewHolder) {
-        mSearchPredictionViewHolder.imageViewSearchPlace.setVisibility(View.VISIBLE);
-        mSearchPredictionViewHolder.textViewNoData.setVisibility(View.VISIBLE);
     }
 
     private void setNoData(SearchHistoryViewHolder searchHistoryViewHolder) {
         searchHistoryViewHolder.imageViewSearchPlace.setVisibility(View.GONE);
         searchHistoryViewHolder.textViewNoData.setVisibility(View.VISIBLE);
-    }
-
-    public void selectData(SearchVisitorData data) {
-        searchVisitorDataList.remove(data);
-        try {
-            notifyDataSetChanged();
-        } catch (Exception e) {
-            e.getCause();
-        }
-    }
-
-    public boolean checkIfAlreadySelected(SearchVisitorData searchVisitorData) {
-        return searchVisitorDataList.contains(searchVisitorData);
     }
 
     private PlaceAutocomplete getItem(int position) {

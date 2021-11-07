@@ -56,10 +56,6 @@ import androidx.transition.Fade;
 import androidx.transition.Transition;
 import androidx.transition.TransitionManager;
 
-import com.firebase.geofire.GeoFire;
-import com.firebase.geofire.GeoLocation;
-import com.firebase.geofire.GeoQuery;
-import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -88,9 +84,6 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.SquareCap;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
@@ -165,8 +158,8 @@ import www.fiberathome.com.parkingapp.utils.ViewUtils;
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class HomeFragment extends BaseFragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener, GoogleMap.OnMarkerClickListener,
-        IOnLoadLocationListener, GeoQueryEventListener,
-        IOnBackPressListener, DirectionFinderListener,
+        IOnLoadLocationListener, IOnBackPressListener,
+        DirectionFinderListener,
         GoogleMap.OnCameraMoveStartedListener,
         GoogleMap.OnCameraMoveListener,
         GoogleMap.OnCameraMoveCanceledListener,
@@ -227,9 +220,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private LocationCallback locationCallback;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private Marker currentUser;
-    private GeoFire geoFire;
     private Location lastLocation;
-    private GeoQuery geoQuery;
     private boolean isInAreaEnabled;
 
     private String parkingNumberOfIndividualMarker = "";
@@ -823,7 +814,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             buildLocationRequest();
             buildLocationCallBack();
             fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
-            settingGeoFire();
         } catch (Exception e) {
             Timber.e(e.getCause());
             e.getCause();
@@ -2293,33 +2283,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         return formatter.format(calendar.getTime());
     }
 
-    @Override
-    public void onKeyEntered(String key, GeoLocation location) {
-        //sendNotification("ParkingApp", String.format("%s entered the Parking Area", key));
-        //isInAreaEnabled = true;
-    }
-
-    @Override
-    public void onKeyExited(String key) {
-        //sendNotification("ParkingApp", String.format("%s leave the Parking Area", key));
-        //isInAreaEnabled = false;
-    }
-
-    @Override
-    public void onKeyMoved(String key, GeoLocation location) {
-        //sendNotification("ParkingApp", String.format("%s move within the Parking Area", key));
-    }
-
-    @Override
-    public void onGeoQueryReady() {
-
-    }
-
-    @Override
-    public void onGeoQueryError(DatabaseError error) {
-
-    }
-
     @SuppressWarnings("SameParameterValue")
     private void sendNotification(String title, String content) {
         String NOTIFICATION_CHANNEL_ID = "Shawn_Muktadir";
@@ -2364,28 +2327,12 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         //clear map and add again
         if (mMap != null) {
             mMap.clear();
-            //Add user Marker
-            addUserMarker();
         }
     }
 
     @Override
     public void onLoadLocationFailed(String message) {
         ToastUtils.getInstance().showToastMessage(context, message);
-    }
-
-    private void addUserMarker() {
-        if (geoFire != null) {
-            geoFire.setLocation("You", new GeoLocation(lastLocation.getLatitude(),
-                    lastLocation.getLongitude()), (key, error) -> {
-                if (currentUser != null) currentUser.remove();
-            });
-        }
-    }
-
-    private void settingGeoFire() {
-        DatabaseReference myLocationRef = FirebaseDatabase.getInstance().getReference("MyLocation");
-        geoFire = new GeoFire(myLocationRef);
     }
 
     private void buildLocationCallBack() {
@@ -2395,7 +2342,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 if (mMap != null) {
                     lastLocation = locationResult.getLastLocation();
                     SharedData.getInstance().setLastLocation(lastLocation);
-                    addUserMarker();
                 }
             }
         };
