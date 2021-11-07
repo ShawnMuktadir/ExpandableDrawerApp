@@ -18,6 +18,12 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.gson.Gson;
+import com.sslwireless.sslcommerzlibrary.model.initializer.SSLCommerzInitialization;
+import com.sslwireless.sslcommerzlibrary.model.response.SSLCTransactionInfoModel;
+import com.sslwireless.sslcommerzlibrary.model.util.SSLCCurrencyType;
+import com.sslwireless.sslcommerzlibrary.model.util.SSLCSdkType;
+import com.sslwireless.sslcommerzlibrary.view.singleton.IntegrateSSLCommerz;
+import com.sslwireless.sslcommerzlibrary.viewmodel.listener.SSLCTransactionResponseListener;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -26,6 +32,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import retrofit2.Call;
@@ -62,6 +69,8 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
     private FragmentChangeListener listener;
 
     FragmentPaymentBinding binding;
+    private double netBill;
+    BookedPlace bookedPlace;
 
     public PaymentFragment() {
         // Required empty public constructor
@@ -107,7 +116,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
             listener = context;
             setListeners();
             setData();
-            setBill();
+            netBill = setBill();
         }
     }
 
@@ -154,14 +163,61 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                     ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.booking_time_rules));
                 } else {
                     if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
-                        storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
-                                getDate(arrivedDate.getTime()), getDate(departureDate.getTime()), placeId);
+                        if (!Preferences.getInstance(context).getBooked().getIsBooked()
+                                && Preferences.getInstance(context).getBooked().getBill() == netBill
+                                && Preferences.getInstance(context).getBooked().isPaid() && bookedPlace != null) {
+                            storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
+                                    getDate(arrivedDate.getTime()), getDate(departureDate.getTime()), placeId);
+                        } else {
+                            sslPayment(netBill);
+                        }
                     }
                 }
             } else {
                 TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
             }
         });
+    }
+
+    private void sslPayment(double mNetBill) {
+        Random random = new Random();
+
+        int tnxId = random.nextInt(9999999);
+
+        final SSLCommerzInitialization sslCommerzInitialization = new SSLCommerzInitialization
+                ("fiber61877740d2a85", "fiber61877740d2a85@ssl", mNetBill, SSLCCurrencyType.BDT, tnxId + Preferences.getInstance(context).getUser().getMobileNo(),
+                        "CarParkingBill", SSLCSdkType.TESTBOX);
+        IntegrateSSLCommerz
+                .getInstance(context)
+                .addSSLCommerzInitialization(sslCommerzInitialization)
+                .buildApiCall(new SSLCTransactionResponseListener() {
+                    @Override
+                    public void transactionSuccess(SSLCTransactionInfoModel sslcTransactionInfoModel) {
+
+                        bookedPlace = new BookedPlace();
+                        bookedPlace.setPaid(true);
+                        bookedPlace.setBill((float) mNetBill);
+                        Preferences.getInstance(context).setBooked(bookedPlace);
+                        if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
+                            storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
+                                    getDate(arrivedDate.getTime()), getDate(departureDate.getTime()), placeId);
+                        } else {
+                            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                        }
+                    }
+
+                    @Override
+                    public void transactionFail(String s) {
+
+                        Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void merchantValidationError(String s) {
+
+                        Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private boolean isGPSEnabled() {
@@ -182,7 +238,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
         binding.tvParkingSlotName.setText(areaName);
     }
 
-    private void setBill() {
+    private double setBill() {
         final double perMintBill = 0.6666666667;
         DecimalFormat df = new DecimalFormat("##.##",
                 new DecimalFormatSymbols(Locale.US));
@@ -192,6 +248,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
         binding.btnPay.setText(new StringBuilder().append("Pay BDT ").append(df.format(perMintBill * minutes)).toString());
         /*binding.btnPay.setText(new StringBuilder().append("Pay BDT ").append(MathUtils.getInstance().convertToDouble(new DecimalFormat("##.#",
                 new DecimalFormatSymbols(Locale.US)).format(df.format(perMintBill * minutes)))));*/
+        return perMintBill * minutes;
     }
 
     private void storeReservation(String mobileNo, String arrivalTime, String departureTime, String markerUid) {
@@ -209,7 +266,6 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                             Timber.e("response -> %s", new Gson().toJson(response.body()));
                             TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.reservation_successful));
                             //set booked place info
-                            BookedPlace bookedPlace = new BookedPlace();
                             bookedPlace.setBookedUid(response.body().getUid());
                             bookedPlace.setLat(lat);
                             bookedPlace.setLon(lon);

@@ -72,8 +72,13 @@ android {
     useLibrary 'org.apache.http.legacy'
     buildToolsVersion = '30.0.3'
     compileOptions.encoding = 'ISO-8859-1'
-}
 
+}
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.core:core:1.6.0'
@@ -198,6 +203,9 @@ dependencies {
 
     //pinview
     implementation 'com.poovam:pin-edittext-field:1.2.3'
+
+    //SSl Commerz
+    implementation (name: 'sslCommerzSdk', ext:'aar')
 }
 
 task javadoc(type: Javadoc) {

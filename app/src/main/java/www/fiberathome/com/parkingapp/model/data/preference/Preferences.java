@@ -87,10 +87,12 @@ public class Preferences {
         editor.putString("lon",   String.valueOf(booked.getLon()));
         editor.putString("route", booked.getRoute());
         editor.putBoolean("isBooked", booked.getIsBooked());
+        editor.putBoolean("isPaid", booked.isPaid());
         editor.putString("placeId", booked.getPlaceId());
         editor.putString("reservation", booked.getReservation());
         editor.putLong("departedDate", booked.getDepartedDate());
         editor.putLong("arrivedDate", booked.getArriveDate());
+        editor.putFloat("bill", booked.getBill());
         editor.apply();
     }
 
@@ -110,6 +112,8 @@ public class Preferences {
         bookedPlace.setDepartedDate(sharedPreferences.getLong("departedDate", 0));
         bookedPlace.setArriveDate(sharedPreferences.getLong("arrivedDate", 0));
         bookedPlace.setIsBooked(sharedPreferences.getBoolean("isBooked", false));
+        bookedPlace.setPaid(sharedPreferences.getBoolean("isPaid", false));
+        bookedPlace.setBill(sharedPreferences.getFloat("bill", 0));
 
         return bookedPlace;
     }

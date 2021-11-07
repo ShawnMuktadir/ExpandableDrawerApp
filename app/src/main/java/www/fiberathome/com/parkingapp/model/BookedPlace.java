@@ -13,10 +13,13 @@ public class BookedPlace implements Parcelable {
     private String areaName;
     private String parkingSlotCount;
     private boolean isBooked = false;
+    private boolean isPaid = false;
     private String placeId;
     private String reservation;
     private long departedDate;
     private long arriveDate;
+    private float bill;
+
 
     public BookedPlace() {
     }
@@ -77,6 +80,14 @@ public class BookedPlace implements Parcelable {
         this.isBooked = isBooked;
     }
 
+    public boolean isPaid() {
+        return isPaid;
+    }
+
+    public void setPaid(boolean paid) {
+        isPaid = paid;
+    }
+
     public void setPlaceId(String placeId) {
         this.placeId = placeId;
     }
@@ -109,6 +120,14 @@ public class BookedPlace implements Parcelable {
         this.reservation = reservation;
     }
 
+    public float getBill() {
+        return bill;
+    }
+
+    public void setBill(float bill) {
+        this.bill = bill;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -124,6 +143,7 @@ public class BookedPlace implements Parcelable {
         dest.writeString(this.parkingSlotCount);
         dest.writeString(this.reservation);
         dest.writeByte(this.isBooked ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.isPaid ? (byte) 1 : (byte) 0);
         dest.writeString(this.placeId);
         dest.writeDouble(this.departedDate);
         dest.writeDouble(this.arriveDate);
@@ -137,6 +157,7 @@ public class BookedPlace implements Parcelable {
         this.areaName = source.readString();
         this.parkingSlotCount = source.readString();
         this.isBooked = source.readByte() != 0;
+        this.isPaid = source.readByte() != 0;
         this.placeId = source.readString();
         this.reservation = source.readString();
         this.departedDate = source.readLong();
@@ -151,6 +172,7 @@ public class BookedPlace implements Parcelable {
         this.areaName = in.readString();
         this.parkingSlotCount = in.readString();
         this.isBooked = in.readByte() != 0;
+        this.isPaid = in.readByte() != 0;
         this.placeId = in.readString();
         this.reservation = in.readString();
         this.departedDate = in.readLong();
