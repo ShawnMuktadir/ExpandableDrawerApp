@@ -1,11 +1,11 @@
 package www.fiberathome.com.parkingapp.model.response.booking;
 
-import java.util.List;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class TimeSlotsResponse{
+import java.util.List;
+
+public class TimeSlotsResponse {
 
 
 	@SerializedName("error")

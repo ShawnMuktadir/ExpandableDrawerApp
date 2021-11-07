@@ -343,8 +343,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         return binding.getRoot();
     }
 
-    static int requestCode;
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         Timber.e("onViewCreated called");
