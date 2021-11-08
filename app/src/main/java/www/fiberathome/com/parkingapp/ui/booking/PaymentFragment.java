@@ -164,11 +164,13 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                 } else {
                     if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
                         if (!Preferences.getInstance(context).getBooked().getIsBooked()
-                                && Preferences.getInstance(context).getBooked().getBill() == netBill
+                                && Preferences.getInstance(context).getBooked().getBill() == Math.round(netBill)
                                 && Preferences.getInstance(context).getBooked().isPaid() && bookedPlace != null) {
                             storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
                                     getDate(arrivedDate.getTime()), getDate(departureDate.getTime()), placeId);
                         } else {
+                            Toast.makeText(context, Math.round(netBill) + "->netbill <-" + Preferences.getInstance(context).getBooked().getBill(), Toast.LENGTH_SHORT).show();
+//
                             sslPayment(netBill);
                         }
                     }
@@ -197,6 +199,14 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                         bookedPlace = new BookedPlace();
                         bookedPlace.setPaid(true);
                         bookedPlace.setBill((float) mNetBill);
+                        bookedPlace.setLat(lat);
+                        bookedPlace.setLon(lon);
+                        bookedPlace.setRoute(route);
+                        bookedPlace.setAreaName(areaName);
+                        bookedPlace.setParkingSlotCount(parkingSlotCount);
+                        bookedPlace.setDepartedDate(departureDate.getTime());
+                        bookedPlace.setArriveDate(arrivedDate.getTime());
+                        bookedPlace.setPlaceId(placeId);
                         Preferences.getInstance(context).setBooked(bookedPlace);
                         if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
                             storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
@@ -249,10 +259,10 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
         return perMintBill * minutes;
     }
 
-    private void storeReservation(String mobileNo, String arrivalTime, String departureTime, String markerUid) {
+    private void storeReservation(String mobileNo, String arrivalTime, String departureTime, String mPlaceId) {
         showLoading(context);
         ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<ReservationResponse> call = request.storeReservation(mobileNo, arrivalTime, departureTime, markerUid, "2");
+        Call<ReservationResponse> call = request.storeReservation(mobileNo, arrivalTime, departureTime, mPlaceId, "2");
         call.enqueue(new Callback<ReservationResponse>() {
             @Override
             public void onResponse(@NonNull Call<ReservationResponse> call,
@@ -272,7 +282,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                             bookedPlace.setParkingSlotCount(parkingSlotCount);
                             bookedPlace.setDepartedDate(departureDate.getTime());
                             bookedPlace.setArriveDate(arrivedDate.getTime());
-                            bookedPlace.setPlaceId(markerUid);
+                            bookedPlace.setPlaceId(mPlaceId);
                             bookedPlace.setReservation(response.body().getReservation());
                             bookedPlace.setIsBooked(true);
 

@@ -31,7 +31,6 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.provider.Settings;
 import android.view.LayoutInflater;
@@ -39,6 +38,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
@@ -56,10 +56,6 @@ import androidx.transition.Fade;
 import androidx.transition.Transition;
 import androidx.transition.TransitionManager;
 
-import com.firebase.geofire.GeoFire;
-import com.firebase.geofire.GeoLocation;
-import com.firebase.geofire.GeoQuery;
-import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -69,7 +65,6 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -78,24 +73,16 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
-import com.google.android.gms.maps.model.JointType;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.maps.model.SquareCap;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
@@ -108,7 +95,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -132,6 +118,7 @@ import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingParkStatusResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingSensors;
 import www.fiberathome.com.parkingapp.model.response.booking.ReservationCancelResponse;
+import www.fiberathome.com.parkingapp.model.response.booking.ReservationResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.SensorAreaStatusResponse;
 import www.fiberathome.com.parkingapp.model.response.parkingSlot.ParkingSlotResponse;
 import www.fiberathome.com.parkingapp.model.response.search.SearchVisitorData;
@@ -165,106 +152,90 @@ import www.fiberathome.com.parkingapp.utils.ViewUtils;
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class HomeFragment extends BaseFragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener, GoogleMap.OnMarkerClickListener,
-        IOnLoadLocationListener, GeoQueryEventListener,
-        IOnBackPressListener, DirectionFinderListener,
-        GoogleMap.OnCameraMoveStartedListener,
-        GoogleMap.OnCameraMoveListener,
-        GoogleMap.OnCameraMoveCanceledListener,
-        GoogleMap.OnCameraIdleListener {
-
-    private static boolean isBooked = false;
-    private static String bookedUid;
-    private static BookedPlace bookedPlace;
-    private final String TAG = getClass().getSimpleName();
+        IOnLoadLocationListener,
+        IOnBackPressListener, DirectionFinderListener {
 
     public static final int GPS_REQUEST_CODE = 9003;
     public static final int PLAY_SERVICES_ERROR_CODE = 9002;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 100;
-
-    private HomeActivity context;
-
-    public final ArrayList<LatLng> cordList = new ArrayList<>();
-
     public static Location currentLocation = null;
+    public static MarkerOptions markerOptionsPin;
+    private static boolean isBooked = false;
+    private static String bookedUid;
+    private static BookedPlace bookedPlace;
+    public final ArrayList<LatLng> cordList = new ArrayList<>();
+    protected final ArrayList<MarkerOptions> mMarkerArrayList = new ArrayList<>();
+    final String[] place_id = {""};
+    private final String TAG = getClass().getSimpleName();
+    private final ArrayList<BookingSensors> bookingSensorsArrayList = new ArrayList<>();
+    private final ArrayList<BookingSensors> bookingSensorsArrayListGlobal = new ArrayList<>();
+    private final double adjustValue = 2;
+    private final List<SensorArea> sensorAreaArrayList = new ArrayList<>();
+    private final List<SensorStatus> sensorStatusArrayList = new ArrayList<>();
+    private final List<Sensor> sensorArrayList = new ArrayList<>();
+    private final List<Sensor> sensorInitialArrayList = new ArrayList<>();
     public String address, city, state, country, subAdminArea, test, knownName, postalCode = "";
     public GoogleMap mMap;
-
-    //used in fetchSensor()
     public double nDistance = 132116456;
     public double nLatitude;
     public double nLongitude;
     public int isRouteDrawn = 0;
+    public BottomSheetBehavior<View> bottomSheetBehavior;
+    public Polyline polyline;
+    public List<LatLng> points = new ArrayList<>();
+    public Marker previousGetDestinationMarker;
+    public double oldTotalDistanceInKm, totalDistanceInKm;
+    protected String distance;
+    protected String sensorStatus = "Occupied";
+    protected boolean firstDraw = true;
+    protected AlarmManager alarmManager;
+    protected PendingIntent pendingIntent;
+    protected PendingIntent pendingIntent2;
+    protected PendingIntent pendingIntent3;
+    protected double myLocationChangedDistance;
+    FragmentHomeBinding binding;
+    ActivityResultLauncher<Intent> activityResultLauncher;
+    boolean isMyCurrentLocation = false;
+    String parkingPlaceId = "";
+    String oldDestination = "";
+    List<www.fiberathome.com.parkingapp.service.googleService.directionModules.Route> updatedRoute;
+    private HomeActivity context;
     private FragmentChangeListener listener;
     private long arrived, departure;
-    private TextView arrivedTimeTV, departureTimeTV, timeDifferenceTV, countDownTV, textViewTermsCondition;
+    private TextView arrivedTimeTV, departureTimeTV, timeDifferenceTV, textViewTermsCondition;
     private long difference;
-    protected final ArrayList<MarkerOptions> mMarkerArrayList = new ArrayList<>();
     private BottomSheetAdapter bottomSheetAdapter;
     private Marker currentLocationMarker;
-    public BottomSheetBehavior<View> bottomSheetBehavior;
     private String nearByDuration;
     private String fetchDuration;
     private SupportMapFragment supportMapFragment;
-
     private String name, count = "";
-    protected String distance;
     private boolean isGPS;
     private GoogleApiClient googleApiClient;
-    protected String sensorStatus = "Occupied";
-
-    //route flag
-    private final int flag = 0;
-
     //polyline animate
     private List<LatLng> polyLineList;
     private PolylineOptions polylineOptions, blackPolylineOptions;
     private Polyline blackPolyline, grayPolyline;
     private IGoogleApi mService;
     private String searchPlaceCount = "0";
-
-    //geoFence
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private Marker currentUser;
-    private GeoFire geoFire;
     private Location lastLocation;
-    private GeoQuery geoQuery;
     private boolean isInAreaEnabled;
-
     private String parkingNumberOfIndividualMarker = "";
-
     private Marker previousMarker = null;
-
     private Location onConnectedLocation;
-
-    private final ArrayList<BookingSensors> bookingSensorsArrayList = new ArrayList<>();
-    private final ArrayList<BookingSensors> bookingSensorsArrayListGlobal = new ArrayList<>();
-
-    private final double adjustValue = 2;
-
     private LatLng origin;
     private Button moreBtn, btnLiveParking, departureBtn;
-
     private double adapterDistance;
-
     private String parkingAreaPlacedId;
     private Marker markerClicked;
-
     private boolean isNotificationSent = false;
-
-    public Polyline polyline;
-
-    public List<LatLng> points = new ArrayList<>();
-
     private double lat, lng;
     private String areaName, parkingSlotCount;
-
-    public Marker previousGetDestinationMarker;
     private Location myPreviousLocation;
-    public double oldTotalDistanceInKm, totalDistanceInKm;
-
-    protected boolean firstDraw = true;
     private List<List<String>> list = new ArrayList<>();
     private List<List<String>> sensorAreaStatusList = new ArrayList<>();
     private ParkingSlotResponse parkingSlotResponse;
@@ -276,23 +247,35 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private double endLat;
     private double endLng;
     private double fetchDistance;
-    private final List<SensorArea> sensorAreaArrayList = new ArrayList<>();
     private boolean parkingAreaChanged = false;
     private boolean isAreaChangedForSearch = false;
     private String sensorAreaStatusAreaId, sensorAreaStatusTotalSensorCount, sensorAreaStatusTotalOccupied;
-    private final List<SensorStatus> sensorStatusArrayList = new ArrayList<>();
-
     private boolean isBackClicked = false;
     private String previousOrigin;
-
-    protected AlarmManager alarmManager;
-    protected PendingIntent pendingIntent;
-    protected PendingIntent pendingIntent2;
-    protected PendingIntent pendingIntent3;
-
-    FragmentHomeBinding binding;
-    ActivityResultLauncher<Intent> activityResultLauncher;
     private String destination = null;
+    private Marker pinMarker;
+    private Circle circle;
+    private SensorArea markerTagObj;
+    private String parkingAreaPlaceName = "";
+    private List<LatLng> initialRoutePoints;
+    private LatLng parkingSpotLatLng;
+    private final BroadcastReceiver bookingEndedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Get extra data included in the Intent
+            String message = intent.getStringExtra("message");
+            if (isAdded() && mMap != null) {
+                try {
+                    commonBackOperation();
+                    Timber.e("BroadcastReceiver called");
+                } catch (Exception e) {
+                    Timber.e(e.getCause());
+                    e.getCause();
+                }
+            }
+        }
+    };
+    private boolean isFromSearch = false;
 
     public HomeFragment() {
 
@@ -311,6 +294,27 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         bundle.putString("count", count);
         fragment.setArguments(bundle);
         return fragment;
+    }
+
+    public static MarkerOptions newMarkerPinInstance() {
+        if (markerOptionsPin == null) {
+            markerOptionsPin = new MarkerOptions();
+        }
+        return markerOptionsPin;
+    }
+
+    private static Boolean isLocationEnabled(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            // This is new method provided in API 28
+            LocationManager lm = (LocationManager) context.getSystemService(LOCATION_SERVICE);
+            return lm.isLocationEnabled();
+
+        } else {
+            // This is Deprecated in API 28
+            int mode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE,
+                    Settings.Secure.LOCATION_MODE_OFF);
+            return (mode != Settings.Secure.LOCATION_MODE_OFF);
+        }
     }
 
     @Override
@@ -347,6 +351,14 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             listener = context;
         }
         bookedPlace = Preferences.getInstance(context).getBooked();
+        if (!bookedPlace.getIsBooked() && bookedPlace.isPaid()) {
+            if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
+                storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
+                        getDate(bookedPlace.getArriveDate()), getDate(bookedPlace.getDepartedDate()), bookedPlace.getPlaceId());
+            } else {
+                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+            }
+        }
         setBroadcast();
         try {
             if (isAdded()) {
@@ -427,8 +439,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
     }
 
-    private Marker pinMarker;
-
     @SuppressLint("PotentialBehaviorOverride")
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
@@ -445,28 +455,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         buildGoogleApiClient();
 
         mMap.setOnMarkerClickListener(this);
-        mMap.setOnCameraIdleListener(this);
-        mMap.setOnCameraMoveStartedListener(this);
-        mMap.setOnCameraMoveListener(this);
-        mMap.setOnCameraMoveCanceledListener(this);
     }
-
-    public static MarkerOptions markerOptionsPin;
-
-    public static MarkerOptions newMarkerPinInstance() {
-        if (markerOptionsPin == null) {
-            markerOptionsPin = new MarkerOptions();
-        }
-        return markerOptionsPin;
-    }
-
-    boolean isMyCurrentLocation = false;
-
-    private Circle circle;
-
-    private SensorArea markerTagObj;
-
-    protected double myLocationChangedDistance;
 
     private void getDirectionPinMarkerDraw(LatLng pinPosition, String markerUid, boolean fromSearch) {
         if (pinMarker != null) {
@@ -515,8 +504,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         TransitionManager.beginDelayedTransition((ViewGroup) view, transition);
         toolbar.setVisibility(show ? View.VISIBLE : View.GONE);
     }
-
-    private String parkingAreaPlaceName = "";
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -636,56 +623,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                     marker.getPosition();
                                     destination = "" + parkingSpotLatLng.latitude + ", " + parkingSpotLatLng.longitude;
 
-                                    for (int i = 0; i < sensorAreaArrayList.size(); i++) {
-                                        JSONObject jsonObject;
-                                        SensorArea sensor = sensorAreaArrayList.get(i);
-                                        try {
-                                            uid1[0] = sensor.getPlaceId();
-                                            markerAreaName1[0] = sensor.getParkingArea();
-                                            double distanceForCount = calculateDistance(marker.getPosition().latitude, marker.getPosition().longitude,
-                                                    sensor.getEndLat(), sensor.getEndLng());
-
-                                            if (distanceForCount < 0.001) {
-                                                parkingNumberOfIndividualMarker = sensor.getCount();
-                                                binding.textViewParkingAreaCount.setText(parkingNumberOfIndividualMarker);
-                                                break;
-                                            }
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-
-                                    String finalUid = uid1[0];
-
-                                    String markerPlaceName = markerAreaName1[0];
-
-                                    double markerDistance;
-
-                                    markerDistance = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
-                                            marker.getPosition().latitude, marker.getPosition().longitude);
-
-                                    double kim = (markerDistance / 1000) + adjustValue;
-                                    double markerDoubleDuration = MathUtils.getInstance().convertToDouble(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(markerDistance * 2.43));
-                                    String markerStringDuration = String.valueOf(markerDoubleDuration);
-
-                                    //showCurrentLocationButton();
-                                    if (markerTagObj != null) {
-                                        bookingSensorsArrayList.add(new BookingSensors(markerTagObj.getParkingArea(), marker.getPosition().latitude, marker.getPosition().longitude,
-                                                markerDistance, markerTagObj.getCount(), markerStringDuration,
-                                                context.getResources().getString(R.string.nearest_parking_from_your_destination),
-                                                BookingSensors.TEXT_INFO_TYPE, 0));
-
-                                        setBottomSheetList(() -> {
-                                            if (bottomSheetAdapter != null) {
-                                                bookingSensorsArrayListGlobal.clear();
-                                                bookingSensorsArrayListGlobal.addAll(bookingSensorsArrayList);
-                                                bottomSheetAdapter.notifyDataSetChanged();
-                                            } else {
-                                                Timber.e("bottomSheetAdapter null");
-                                            }
-                                        }, sensorAreaArrayList, marker.getPosition(), bookingSensorsArrayList, finalUid);
-                                        bottomSheetAdapter.setDataList(bookingSensorsArrayList);
-                                    }
+                                    populateNearestPlaceBottomSheet(parkingSpotLatLng);
                                 }
 
                                 @Override
@@ -816,14 +754,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             buildLocationRequest();
             buildLocationCallBack();
             fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
-            settingGeoFire();
         } catch (Exception e) {
             Timber.e(e.getCause());
             e.getCause();
         }
     }
-
-    private List<LatLng> initialRoutePoints;
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
@@ -959,22 +894,31 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     public void onStart() {
         Timber.e("onStart called");
         super.onStart();
+        bookedPlace = Preferences.getInstance(context).getBooked();
         isBooked = Preferences.getInstance(context).getBooked().getIsBooked();
         if (isBooked) {
             startBookingTrackService();
         } else {
             stopBookingTrackService();
         }
+
     }
 
     @Override
     public void onResume() {
         Timber.e("onResume called");
         super.onResume();
+        hideLoading();
         bookedPlace = Preferences.getInstance(context).getBooked();
         isBooked = Preferences.getInstance(context).getBooked().getIsBooked();
-        if (!isBooked && parkingSpotLatLng == null) {
-            commonBackOperation();
+        if (isFromSearch) {
+            if (!isBooked && parkingSpotLatLng == null) {
+                commonBackOperation();
+            }
+        } else {
+            if (!isBooked) {
+                commonBackOperation();
+            }
         }
         if (isBooked) {
             binding.fabGetDirection.setVisibility(View.VISIBLE);
@@ -1024,7 +968,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
         return false;
     }
-
 
     private void startBookingTrackService() {
         if (!isLocationTrackingServiceRunning()) {
@@ -1078,6 +1021,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             searchPlaceCount = "0";
             binding.fabGetDirection.setVisibility(View.VISIBLE);
             parkingAreaChanged = false;
+            isFromSearch = true;
             if (searchPlaceCount.equals("0")) {
                 setButtonText(context.getResources().getString(R.string.unavailable_parking_spot), context.getResources().getColor(R.color.gray3));
             }
@@ -1272,61 +1216,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         return new CameraPosition.Builder().target(latLng).zoom(13.8f).build();
     }
 
-    @Override
-    public void onCameraMoveStarted(int reason) {
-
-        if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
-            Timber.e("OnCameraMoveStartedListener called");
-
-        } else if (reason == GoogleMap.OnCameraMoveStartedListener
-                .REASON_API_ANIMATION) {
-            Timber.e("OnCameraMoveStartedListener called");
-
-        } else if (reason == GoogleMap.OnCameraMoveStartedListener
-                .REASON_DEVELOPER_ANIMATION) {
-            Timber.e("OnCameraMoveStartedListener called");
-        }
-    }
-
-    @Override
-    public void onCameraMove() {
-        /*Toast.makeText(context, "The camera is moving.",
-                Toast.LENGTH_SHORT).show();*/
-    }
-
-    @Override
-    public void onCameraMoveCanceled() {
-        /*Toast.makeText(context, "Camera movement canceled.",
-                Toast.LENGTH_SHORT).show();*/
-    }
-
-    @Override
-    public void onCameraIdle() {
-        /*Toast.makeText(context, "The camera has stopped moving.",
-                Toast.LENGTH_SHORT).show();*/
-    }
-
     private void setBroadcast() {
         LocalBroadcastManager.getInstance(context).registerReceiver(bookingEndedReceiver,
                 new IntentFilter("booking_ended"));
     }
-
-    private final BroadcastReceiver bookingEndedReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            // Get extra data included in the Intent
-            String message = intent.getStringExtra("message");
-            if (isAdded() && mMap != null) {
-                try {
-                    commonBackOperation();
-                    Timber.e("BroadcastReceiver called");
-                } catch (Exception e) {
-                    Timber.e(e.getCause());
-                    e.getCause();
-                }
-            }
-        }
-    };
 
     private void getSensorAreaStatus(Call<SensorAreaStatusResponse> call) {
         showLoading(context);
@@ -1373,20 +1266,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 hideLoading();
             }
         });
-    }
-
-    private static Boolean isLocationEnabled(Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            // This is new method provided in API 28
-            LocationManager lm = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-            return lm.isLocationEnabled();
-
-        } else {
-            // This is Deprecated in API 28
-            int mode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE,
-                    Settings.Secure.LOCATION_MODE_OFF);
-            return (mode != Settings.Secure.LOCATION_MODE_OFF);
-        }
     }
 
     public void animateCamera(@NonNull Location location) {
@@ -1464,9 +1343,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         googleApiClient.connect();
     }
-
-    private final List<Sensor> sensorArrayList = new ArrayList<>();
-    private final List<Sensor> sensorInitialArrayList = new ArrayList<>();
 
     private void fetchParkingSlotSensors(Location location) {
         Timber.e("fetchParkingSlotSensors called");
@@ -1651,10 +1527,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         setBottomSheetRecyclerViewAdapter(sensors);
     }
 
-    String parkingPlaceId = "";
-
-    final String[] place_id = {""};
-
     private void setBottomSheetRecyclerViewAdapter(ArrayList<BookingSensors> bookingSensors) {
         bottomSheetAdapter = null;
         bottomSheetAdapter = new BottomSheetAdapter(context, this, onConnectedLocation, (BookingSensors sensors) -> {
@@ -1778,94 +1650,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
     }
 
-    //getting the direction url
-    private String getDirectionsUrl(LatLng origin, LatLng dest) {
-        // Key
-        String key = "key=" + context.getResources().getString(R.string.google_maps_key);
-        // Origin of route
-        String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
-        // Destination of route
-        String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
-        // Sensor enabled
-        String sensor = "sensor=false";
-        // Building the parameters to the web service
-        String parameters = str_origin + "&" + str_dest + "&" + key;
-        // Output format
-        String output = "json";
-        // Building the url to the web service
-        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters;
-
-        mService.getDataFromGoogleApi(url)
-                .enqueue(new Callback<String>() {
-                    @Override
-                    public void onResponse(@NonNull Call<String> call, @NonNull retrofit2.Response<String> response) {
-
-                        try {
-                            assert response.body() != null;
-                            JSONObject jsonObject =
-                                    new JSONObject(response.body());
-                            JSONArray jsonArray = jsonObject.getJSONArray("routes");
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject route = jsonArray.getJSONObject(i);
-                                JSONObject poly = route.getJSONObject("overview_polyline");
-                                String polyLine = poly.getString("points");
-                                if (polyLineList != null) {
-                                    polyLineList.clear();
-                                }
-                                polyLineList = decodePoly(polyLine);
-
-                            }
-                            //Adjusting Bounds
-                            LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                            for (LatLng latLng : polyLineList)
-                                builder.include(latLng);
-                            LatLngBounds bounds = builder.build();
-                            CameraUpdate mCameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 2);
-                            mMap.animateCamera(mCameraUpdate);
-
-                            polylineOptions = new PolylineOptions();
-                            //polylineOptions.color(Color.GRAY);
-                            polylineOptions.color(context.getResources().getColor(R.color.route_color));
-                            polylineOptions.width(7f);
-                            polylineOptions.geodesic(true);
-                            polylineOptions.startCap(new SquareCap());
-                            polylineOptions.endCap(new SquareCap());
-                            polylineOptions.jointType(JointType.ROUND);
-                            polylineOptions.addAll(polyLineList);
-                            grayPolyline = mMap.addPolyline(polylineOptions);
-
-                            blackPolylineOptions = new PolylineOptions();
-                            //blackPolylineOptions.color(Color.BLACK);
-                            blackPolylineOptions.color(context.getResources().getColor(R.color.route_color));
-                            blackPolylineOptions.width(7f);
-                            blackPolylineOptions.zIndex(5f);
-                            blackPolylineOptions.geodesic(true);
-                            blackPolylineOptions.startCap(new SquareCap());
-                            blackPolylineOptions.endCap(new SquareCap());
-                            blackPolylineOptions.jointType(JointType.ROUND);
-                            blackPolylineOptions.addAll(polyLineList);
-                            blackPolyline = mMap.addPolyline(blackPolylineOptions);
-                            zoomRoute(mMap, polyLineList);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
-                        ToastUtils.getInstance().showToastMessage(context, "Error: " + t.getMessage());
-                    }
-                });
-
-        mMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
-                .target(mMap.getCameraPosition().target)
-                .zoom(16f)
-                .bearing(30)
-                .tilt(30)
-                .build()));
-        return url;
-    }
-
     /**
      * Zooms a Route (given a List of LalLng) at the greatest possible zoom level.
      *
@@ -1937,8 +1721,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
     }
 
-    private LatLng parkingSpotLatLng;
-
     @SuppressLint("SetTextI18n")
     private void layoutVisible(boolean isVisible, String name, String count,
                                String distance, LatLng location) {
@@ -1977,6 +1759,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     mMap.clear();
                     mMap.setTrafficEnabled(true);
                     parkingAreaChanged = false;
+                    isFromSearch = false;
                     previousGetDestinationMarker = null;
                     previousMarker = null;
                     isRouteDrawn = 0;
@@ -2246,65 +2029,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         });
     }
 
-    private void setTimer(long difference) {
-        new CountDownTimer(difference, 1000) {
-
-            public void onTick(long millisUntilFinished) {
-                countDownTV.setText(getTimeDifference(millisUntilFinished));
-            }
-
-            public void onFinish() {
-                countDownTV.setText(context.getResources().getString(R.string.please_wait));
-            }
-        }.start();
-    }
-
-    @SuppressLint("DefaultLocale")
-    private String getTimeDifference(long difference) {
-
-        return String.format("%02d:%02d",
-                TimeUnit.MILLISECONDS.toHours(difference),
-                TimeUnit.MILLISECONDS.toMinutes(difference) -
-                        TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(difference)) // The change is in this line
-        );
-    }
-
-    private String getDate(long milliSeconds) {
-        // Create a DateFormatter object for displaying date in specified format.
-        SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.US);
-        // Create a calendar object that will convert the date and time value in milliseconds to date.
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(milliSeconds);
-        return formatter.format(calendar.getTime());
-    }
-
-    @Override
-    public void onKeyEntered(String key, GeoLocation location) {
-        //sendNotification("ParkingApp", String.format("%s entered the Parking Area", key));
-        //isInAreaEnabled = true;
-    }
-
-    @Override
-    public void onKeyExited(String key) {
-        //sendNotification("ParkingApp", String.format("%s leave the Parking Area", key));
-        //isInAreaEnabled = false;
-    }
-
-    @Override
-    public void onKeyMoved(String key, GeoLocation location) {
-        //sendNotification("ParkingApp", String.format("%s move within the Parking Area", key));
-    }
-
-    @Override
-    public void onGeoQueryReady() {
-
-    }
-
-    @Override
-    public void onGeoQueryError(DatabaseError error) {
-
-    }
-
     @SuppressWarnings("SameParameterValue")
     private void sendNotification(String title, String content) {
         String NOTIFICATION_CHANNEL_ID = "Shawn_Muktadir";
@@ -2349,8 +2073,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         //clear map and add again
         if (mMap != null) {
             mMap.clear();
-            //Add user Marker
-            addUserMarker();
         }
     }
 
@@ -2359,19 +2081,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         ToastUtils.getInstance().showToastMessage(context, message);
     }
 
-    private void addUserMarker() {
-        if (geoFire != null) {
-            geoFire.setLocation("You", new GeoLocation(lastLocation.getLatitude(),
-                    lastLocation.getLongitude()), (key, error) -> {
-                if (currentUser != null) currentUser.remove();
-            });
-        }
-    }
-
-    private void settingGeoFire() {
-        DatabaseReference myLocationRef = FirebaseDatabase.getInstance().getReference("MyLocation");
-        geoFire = new GeoFire(myLocationRef);
-    }
 
     private void buildLocationCallBack() {
         locationCallback = new LocationCallback() {
@@ -2380,7 +2089,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 if (mMap != null) {
                     lastLocation = locationResult.getLastLocation();
                     SharedData.getInstance().setLastLocation(lastLocation);
-                    addUserMarker();
                 }
             }
         };
@@ -2451,17 +2159,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         binding.bottomSheetLayout.textViewNoData.setVisibility(View.GONE);
     }
 
-    public interface SetBottomSheetCallBack {
-        void setBottomSheet();
-    }
-
-    public interface AddressCallBack {
-        void addressCall(String address);
-
-    }
-
-    String oldDestination = "";
-
     public void fetchDirections(String origin, String destination) {
         mMap.setTrafficEnabled(false);
         String bookedDestination = "" + bookedPlace.getLat() + ", " + bookedPlace.getLon();
@@ -2515,8 +2212,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
     }
 
-    List<www.fiberathome.com.parkingapp.service.googleService.directionModules.Route> updatedRoute;
-
     @Override
     public void onDirectionFinderSuccess(List<www.fiberathome.com.parkingapp.service.googleService.directionModules.Route> route) {
         if (isAdded()) {
@@ -2542,36 +2237,48 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
     }
 
-    private void startAlarm(Calendar arrive, Calendar departure) {
-        Timber.e("startAlarm called");
-        alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        Intent firstIntent = new Intent(context, NotificationPublisher.class); // trigger before 15 mins
-        Intent secondIntent = new Intent(context, NotificationPublisher.class); // trigger at end time
-        Intent thiredIntent = new Intent(context, NotificationPublisher.class); // trigger at end time
-        firstIntent.putExtra("started", "Book Time started");
-        secondIntent.putExtra("ended", "Book Time Up");
-        pendingIntent = PendingIntent.getBroadcast(context, 1, firstIntent, 0);
-        pendingIntent2 = PendingIntent.getBroadcast(context, 2, secondIntent, 0);
-        pendingIntent3 = PendingIntent.getBroadcast(context, 3, thiredIntent, 0);
-        if (arrive.before(Calendar.getInstance())) {
-            arrive.add(Calendar.DATE, 1);
-        }
-        if (departure.before(Calendar.getInstance())) {
-            departure.add(Calendar.DATE, 1);
-        }
-        Objects.requireNonNull(alarmManager).setExact(AlarmManager.RTC_WAKEUP,
-                departure.getTimeInMillis() - 900000, pendingIntent3);
-        Objects.requireNonNull(alarmManager).setExact(AlarmManager.RTC_WAKEUP,
-                arrive.getTimeInMillis(), pendingIntent);
-        Objects.requireNonNull(alarmManager).setExact(AlarmManager.RTC_WAKEUP,
-                departure.getTimeInMillis(), pendingIntent2);
+    private void storeReservation(String mobileNo, String arrivalTime, String departureTime, String mPlaceId) {
+        showLoading(context);
+        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+        Call<ReservationResponse> call = request.storeReservation(mobileNo, arrivalTime, departureTime, mPlaceId, "2");
+        call.enqueue(new Callback<ReservationResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ReservationResponse> call,
+                                   @NonNull retrofit2.Response<ReservationResponse> response) {
+                hideLoading();
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        if (response.body().getUid() != null) {
+                            Timber.e("response -> %s", new Gson().toJson(response.body()));
+                            TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.reservation_successful));
+                            //set booked place info
+                            bookedPlace.setBookedUid(response.body().getUid());
+                            bookedPlace.setAreaName(areaName);
+                            bookedPlace.setParkingSlotCount(parkingSlotCount);
+                            bookedPlace.setPlaceId(mPlaceId);
+                            bookedPlace.setReservation(response.body().getReservation());
+                            bookedPlace.setIsBooked(true);
+
+                            Preferences.getInstance(context).setBooked(bookedPlace);
+                            startAlarm(convertLongToCalendar(Preferences.getInstance(context).getBooked().getArriveDate()));
+
+                        } else {
+                            DialogUtils.getInstance().showOnlyMessageDialog(context.getResources().getString(R.string.parking_slot_not_available), context);
+                        }
+                    } else {
+                        Toast.makeText(getContext(), context.getResources().getString(R.string.reservation_failed), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ReservationResponse> call, @NonNull Throwable t) {
+                Timber.e("onFailure -> %s", t.getMessage());
+                hideLoading();
+            }
+        });
     }
 
-    public Calendar convertLongToCalendar(Long source) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(source);
-        return calendar;
-    }
 
     private void getBookingParkStatus(String mobileNo) {
         showLoading(context);
@@ -2598,5 +2305,42 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 hideLoading();
             }
         });
+    }
+
+    public interface SetBottomSheetCallBack {
+        void setBottomSheet();
+    }
+
+    public interface AddressCallBack {
+        void addressCall(String address);
+
+    }
+
+    private String getDate(long milliSeconds) {
+        // Create a DateFormatter object for displaying date in specified format.
+        SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.US);
+        // Create a calendar object that will convert the date and time value in milliseconds to date.
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(milliSeconds);
+        return formatter.format(calendar.getTime());
+    }
+
+    private void startAlarm(Calendar c) {
+        Timber.e("startAlarm called");
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(context, NotificationPublisher.class);
+        intent.putExtra("Started", "Booked Time About to start for : \n" + Preferences.getInstance(context).getBooked().getAreaName());
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, intent, 0);
+        if (c.before(Calendar.getInstance())) {
+            c.add(Calendar.DATE, 1);
+        }
+        Objects.requireNonNull(alarmManager).setExact(AlarmManager.RTC_WAKEUP,
+                c.getTimeInMillis() - 900000, pendingIntent);
+    }
+
+    public Calendar convertLongToCalendar(Long source) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(source);
+        return calendar;
     }
 }

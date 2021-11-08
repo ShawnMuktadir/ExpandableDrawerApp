@@ -514,6 +514,7 @@ public class BookingService extends Service {
             notificationManager.notify(new Random().nextInt(), notification);
         }
         if (close) {
+            endBookingCalled = false;
             closeBooking();
             if (countDownTimer != null)
                 countDownTimer.cancel();
