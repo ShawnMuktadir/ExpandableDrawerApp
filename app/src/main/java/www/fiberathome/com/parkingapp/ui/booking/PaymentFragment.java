@@ -98,6 +98,8 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = (HomeActivity) getActivity();
+        listener = context;
     }
 
     @Override
@@ -112,8 +114,6 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if (isAdded()) {
-            context = (HomeActivity) getActivity();
-            listener = context;
             setListeners();
             setData();
             netBill = setBill();
@@ -169,8 +169,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                             storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
                                     getDate(arrivedDate.getTime()), getDate(departureDate.getTime()), placeId);
                         } else {
-                            Toast.makeText(context, Math.round(netBill) + "->netbill <-" + Preferences.getInstance(context).getBooked().getBill(), Toast.LENGTH_SHORT).show();
-//
+                            //Toast.makeText(context, Math.round(netBill) + "->netbill <-" + Preferences.getInstance(context).getBooked().getBill(), Toast.LENGTH_SHORT).show();
                             sslPayment(netBill);
                         }
                     }

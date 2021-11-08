@@ -20,7 +20,7 @@ public class BookingSensors {
     public String occupiedCount;
     public String totalCount;
 
-    public static final int TEXT_INFO_TYPE = 0;
+    public static final int SELECTED_INFO_TYPE = 0;
     public static final int INFO_TYPE = 1;
 
     public BookingSensors() {

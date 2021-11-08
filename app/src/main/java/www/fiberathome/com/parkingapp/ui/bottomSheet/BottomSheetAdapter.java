@@ -70,7 +70,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
     public void onBindViewHolder(@NonNull TextBookingViewHolder holder, @SuppressLint("RecyclerView") int position) {
         BookingSensors bookingSensors = bookingSensorsArrayList.get(position);
 
-        if (bookingSensors.type == BookingSensors.TEXT_INFO_TYPE) {
+        if (bookingSensors.type == BookingSensors.SELECTED_INFO_TYPE) {
 
             selectedItem = position;
 
@@ -126,7 +126,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
     @Override
     public int getItemViewType(int position) {
         if (bookingSensorsArrayList.get(position).type == 0) {
-            return BookingSensors.TEXT_INFO_TYPE;
+            return BookingSensors.SELECTED_INFO_TYPE;
         }
         return BookingSensors.INFO_TYPE;
     }
