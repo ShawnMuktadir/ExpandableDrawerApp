@@ -123,6 +123,9 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
     public void onResume() {
         super.onResume();
         Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).hide();
+        if (Preferences.getInstance(context).getBooked().getIsBooked()) {
+            listener.fragmentChange(HomeFragment.newInstance());
+        }
     }
 
     @Override
@@ -168,7 +171,6 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                             storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
                                     getDate(arrivedDate.getTime()), getDate(departureDate.getTime()), placeId);
                         } else {
-                            //Toast.makeText(context, Math.round(netBill) + "->netbill <-" + Preferences.getInstance(context).getBooked().getBill(), Toast.LENGTH_SHORT).show();
                             sslPayment(netBill);
                         }
                     }
@@ -287,7 +289,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                             startAlarm(convertLongToCalendar(Preferences.getInstance(context).getBooked().getArriveDate()));
                             if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
                                 binding.actionBarTitle.setText(context.getResources().getString(R.string.booking_payment));
-                                listener.fragmentChange(new HomeFragment());
+                                listener.fragmentChange(HomeFragment.newInstance());
                             } else {
                                 ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_gps));
                             }

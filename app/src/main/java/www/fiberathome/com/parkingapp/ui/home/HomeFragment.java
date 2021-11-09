@@ -950,10 +950,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 }
             } else {
                 if (mIsBooked) {
-                    isInAreaEnabled = false;
+                    //isInAreaEnabled = false;
                     if (isBooked && bookedPlace != null) {
-//                        destination = "" + bookedPlace.getLat() + ", " + bookedPlace.getLon();
-//                        populateNearestPlaceBottomSheet(new LatLng(bookedPlace.getLat(), bookedPlace.getLon()));
                         setButtonText(context.getResources().getString(R.string.park), context.getResources().getColor(R.color.gray3));
                     }
                 }

@@ -95,10 +95,13 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
     private String areaName;
     private String count;
 
+    Bundle mSavedInstanceState;
+    protected HomeFragment homeFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mSavedInstanceState = savedInstanceState;
         super.onCreate(savedInstanceState);
-
         context = this;
 
         unbinder = ButterKnife.bind(this);
@@ -352,8 +355,28 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
         } catch (IllegalStateException e) {
             // There's no way to avoid getting this if saveInstanceState has already been called.
             Timber.e(e.getCause());
-            ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
-                    HomeFragment.newInstance(), R.id.nav_host_fragment);
+            if (mSavedInstanceState != null) {
+                homeFragment = (HomeFragment) getSupportFragmentManager().getFragment(mSavedInstanceState, "homeFragment");
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction().setCustomAnimations(
+                        R.anim.slide_in,  // enter
+                        R.anim.fade_out,  // exit
+                        R.anim.fade_in,   // popEnter
+                        R.anim.slide_out  // popExit
+                );
+                ft.replace(R.id.nav_host_fragment, homeFragment);
+                ft.addToBackStack(null);
+                ft.commit();
+            } else {
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction().setCustomAnimations(
+                        R.anim.slide_in,  // enter
+                        R.anim.fade_out,  // exit
+                        R.anim.fade_in,   // popEnter
+                        R.anim.slide_out  // popExit
+                );
+                ft.replace(R.id.nav_host_fragment, fragment);
+                ft.addToBackStack(null);
+                ft.commit();
+            }
         }
     }
 

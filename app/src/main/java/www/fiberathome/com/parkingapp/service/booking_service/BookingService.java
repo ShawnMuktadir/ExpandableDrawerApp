@@ -111,7 +111,7 @@ public class BookingService extends Service {
             isRunning = true;
             notificationCaller(Constants.NOTIFICATION_CHANNEL_BOOKING, "Booked time Status", 2);
             startForeground(BOOKING_SERVICE_ID, mBuilder.build());
-            findDifference(getDate(Preferences.getInstance(context).getBooked().getArriveDate()), getDate(Preferences.getInstance(context).getBooked().getDepartedDate()));
+            findDifference(getDate(new Date().getTime()), getDate(Preferences.getInstance(context).getBooked().getDepartedDate()));
         } else if (new Date().getTime() > (Preferences.getInstance(context).getBooked().getDepartedDate() + 60000L) && !endBookingCalled) {
             if (ConnectivityUtils.getInstance().checkInternet(context)) {
                 endBooking();
@@ -344,7 +344,6 @@ public class BookingService extends Service {
 
             public void onFinish() {
                 if (ConnectivityUtils.getInstance().checkInternet(context)) {
-                    //Toast.makeText(context, "onFinish called", Toast.LENGTH_LONG).show();
                     endBooking();
                 }
             }
@@ -357,7 +356,6 @@ public class BookingService extends Service {
         String user = Preferences.getInstance(context).getUser().getMobileNo();
         String bookedUid = Preferences.getInstance(context).getBooked().getBookedUid();
         String reservationId = Preferences.getInstance(context).getBooked().getReservation();
-        Timber.e("EndBooking user=> %s and uid=>%s", user, bookedUid);
         Call<CloseReservationResponse> call = request.endReservation(user, bookedUid, reservationId);
         call.enqueue(new Callback<CloseReservationResponse>() {
             @Override
