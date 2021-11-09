@@ -33,7 +33,6 @@ import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.LocationHelper;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressLint("NonConstantResourceId")
@@ -109,7 +108,7 @@ public class SplashFragment extends BaseFragment implements LocationListener {
                         context.startActivityWithFinish(HomeActivity.class);
                     }, 4000);
                 } else {
-                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.rules_for_using_app_through_gps));
+                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.rules_for_using_app_through_gps));
                 }
             }
         } catch (NullPointerException e) {
@@ -149,7 +148,7 @@ public class SplashFragment extends BaseFragment implements LocationListener {
                                     Timber.e("Negative Button Clicked");
                                 }
                             }).show();
-                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.please_enable_gps));
+                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.please_enable_gps));
                 }
             } else {
                 DialogUtils.getInstance().alertDialog(context,
@@ -164,7 +163,7 @@ public class SplashFragment extends BaseFragment implements LocationListener {
                                 if (ConnectivityUtils.getInstance().checkInternet(context)) {
                                     checkUserLogin();
                                 } else {
-                                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_splash));
+                                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_splash));
                                     new Handler().postDelayed(() -> context.finish(), 700);
                                 }
                             }

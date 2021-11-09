@@ -528,4 +528,5 @@
     <string name="dp_u_want_to_cancel_booking">Do you want to cancel booking?</string>
     <string name="park_has_started">Your park has been started</string>
     <string name="as_your_reservation_time_had_exceed_over_five_mins">As your reservation time had exceed over 5 mins, your booking has been closed. Thank you</string>
+    <string name="invalid_vehicle_number">Invalid vehicle number</string>
 </resources>

@@ -141,7 +141,6 @@ import www.fiberathome.com.parkingapp.utils.GpsUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.MathUtils;
 import www.fiberathome.com.parkingapp.utils.RecyclerTouchListener;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 import www.fiberathome.com.parkingapp.utils.ViewUtils;
 
@@ -349,7 +348,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
                         getDate(bookedPlace.getArriveDate()), getDate(bookedPlace.getDepartedDate()), bookedPlace.getPlaceId());
             } else {
-                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
             }
         }
         setBroadcast();
@@ -619,7 +618,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             }).show();
                 }
             } else {
-                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_gps));
             }
         } catch (Resources.NotFoundException e) {
             e.getCause();
@@ -666,6 +665,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         bottomSheetDistance, occupied != null ? occupied + "/" + binding.textViewParkingAreaCount.getText().toString() : binding.textViewParkingAreaCount.getText().toString(), bottomSheetStringDuration,
                         context.getResources().getString(R.string.nearest_parking_from_your_destination),
                         BookingSensors.SELECTED_INFO_TYPE, 0));
+                binding.btnConfirmBooking.setVisibility(View.VISIBLE);
                 setBottomSheetList(() -> {
                     if (bottomSheetAdapter != null) {
                         bookingSensorsArrayListGlobal.clear();
@@ -1416,7 +1416,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 13.5f));
                                 }
                             } else {
-                                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
+                                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_gps));
                             }
                         }, 1000);
                         setBottomSheetFragmentControls(bookingSensorsArrayListGlobal);
@@ -1708,7 +1708,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         this.parkingSpotLatLng = location;
         if (isVisible && isAdded()) {
             try {
-                binding.linearLayoutNameCount.setVisibility(View.GONE);
                 binding.linearLayoutBottom.setVisibility(View.VISIBLE);
                 binding.btnConfirmBooking.setEnabled(true);
                 binding.btnConfirmBooking.setFocusable(true);
@@ -1787,7 +1786,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                 if (ConnectivityUtils.getInstance().checkInternet(context)) {
                                     fetchParkingSlotSensors(onConnectedLocation);
                                 } else {
-                                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
                                 }
                             }
 
@@ -1796,7 +1795,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                 Timber.e("Negative Button Clicked");
                                 if (getActivity() != null) {
                                     getActivity().finish();
-                                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
                                 }
                             }
                         }).show();
@@ -1871,7 +1870,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                     Call<SensorAreaStatusResponse> call = request.getSensorAreaStatus();
                                     getSensorAreaStatus(call);
                                 } else {
-                                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
                                 }
                             }
 
@@ -1880,7 +1879,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                 Timber.e("Negative Button Clicked");
                                 if (getActivity() != null) {
                                     getActivity().finish();
-                                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
                                 }
                             }
                         }).show();
@@ -1976,7 +1975,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     }
                 }
             } else {
-                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_gps));
             }
         });
     }
@@ -2146,7 +2145,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
             if (isBooked && bookedPlace != null) {
                 if (!destination.equalsIgnoreCase(bookedDestination)) {
-                    //binding.btnConfirmBooking.setText(context.getResources().getString(R.string.confirm_booking));
                     setButtonText(context.getResources().getString(R.string.confirm_booking), context.getResources().getColor(R.color.black));
                     parkingAreaChanged = true;
                 }
@@ -2227,7 +2225,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     if (response.body() != null) {
                         if (response.body().getUid() != null) {
                             Timber.e("response -> %s", new Gson().toJson(response.body()));
-                            TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.reservation_successful));
+                            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.reservation_successful));
                             //set booked place info
                             bookedPlace.setBookedUid(response.body().getUid());
                             bookedPlace.setAreaName(areaName);

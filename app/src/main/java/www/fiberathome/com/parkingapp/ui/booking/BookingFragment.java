@@ -15,7 +15,6 @@ import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -50,7 +49,6 @@ import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressLint("NonConstantResourceId")
@@ -108,7 +106,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                             if (ConnectivityUtils.getInstance().checkInternet(context)) {
                                 fetchBookedParkingPlace(mobileNo, false);
                             } else {
-                                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
                             }
                         }
 
@@ -116,7 +114,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                         public void onNegativeClick() {
                             if (context != null) {
                                 context.finish();
-                                TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
                             }
                         }
                     }).show();
@@ -168,7 +166,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                         .commit();
             }
         } else {
-            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
+            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_gps));
         }
         return false;
     }
@@ -311,7 +309,6 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
             Intent intent = new Intent(context, BookingService.class);
             intent.setAction(Constants.STOP_BOOKING_TRACKING);
             context.startService(intent);
-            Toast.makeText(context, "Booking Tracking Stopped", Toast.LENGTH_SHORT).show();
         }
     }
 

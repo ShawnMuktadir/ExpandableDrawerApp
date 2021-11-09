@@ -15,15 +15,12 @@ import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -41,6 +38,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -61,7 +59,6 @@ import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 public class BookingService extends Service {
 
     public static final String TAG = "LocationTrackService";
-    LocationRequest locationRequest;
     FusedLocationProviderClient fusedLocationProviderClient;
     private Context context;
 
@@ -73,13 +70,11 @@ public class BookingService extends Service {
     private CountDownTimer countDownTimer;
     private NotificationManager notificationManager;
     private NotificationCompat.Builder mBuilder;
-    private boolean exceedServiceStarted = false;
     private boolean isExceedRunned = false;
     private boolean warringShowed = false;
     private long departureDate;
-    private long exceedTime = 300000;
+    protected final long exceedTime = 300000;
     private boolean endBookingCalled = false;
-
 
     @Nullable
     @Override
@@ -93,21 +88,24 @@ public class BookingService extends Service {
         context = getApplicationContext();
         String action = intent.getAction();
         if (action != null) {
-            if (action.equals(Constants.START_BOOKING_TRACKING)) {
-                mHandlerTask.run();
-            } else if (action.equals(Constants.STOP_BOOKING_TRACKING)) {
-                stopTrackingLocation();
-            } else if (action.equals(Constants.BOOKING_EXCEED_CHECK)) {
-                departureDate = 0;
-                departureDate = intent.getLongExtra("departureDate", 0);
-                exceedHandlerTask.run();
+            switch (action) {
+                case Constants.START_BOOKING_TRACKING:
+                    mHandlerTask.run();
+                    break;
+                case Constants.STOP_BOOKING_TRACKING:
+                    stopTrackingLocation();
+                    break;
+                case Constants.BOOKING_EXCEED_CHECK:
+                    departureDate = 0;
+                    departureDate = intent.getLongExtra("departureDate", 0);
+                    exceedHandlerTask.run();
+                    break;
             }
         }
         return super.onStartCommand(intent, flags, startId);
     }
 
     private void startTrackingLocation() {
-        String currentDateandTime = new SimpleDateFormat("dd-MM-yyyy HH:mm").format(new Date());
         if (new Date().getTime() >= Preferences.getInstance(context).getBooked().getArriveDate()
                 && new Date().getTime() < Preferences.getInstance(context).getBooked().getDepartedDate() && !isRunning) {
             isRunning = true;
@@ -125,7 +123,7 @@ public class BookingService extends Service {
         //service starts when car is on parking spot and user clicks on park button
         if (!isExceedRunned) {
             Timber.e("car parked");
-//            Toast.makeText(context, "car parked", Toast.LENGTH_LONG).show();
+            //Toast.makeText(context, "car parked", Toast.LENGTH_LONG).show();
             notificationCaller(Constants.NOTIFICATION_CHANNEL_EXCEED_BOOKING, "Car Parked", 3);
             startForeground(Constants.BOOKING_Exceed_SERVICE_ID, mBuilder.build());
             isExceedRunned = true;
@@ -134,7 +132,7 @@ public class BookingService extends Service {
         //executes when booking time ends
         if (!warringShowed && new Date().getTime() >= departureDate) {
             Timber.e("car Parking Duration End -> %s %s", new Date().getTime(), departureDate);
-//            Toast.makeText(context, "car Parking Duration End:" + new Date().getTime() + "," + departureDate, Toast.LENGTH_LONG).show();
+            //Toast.makeText(context, "car Parking Duration End:" + new Date().getTime() + "," + departureDate, Toast.LENGTH_LONG).show();
             if (ConnectivityUtils.getInstance().checkInternet(context)) {
                 warringShowed = true;
                 sendNotification("Booked Time", "Parking Duration About To End", false);
@@ -149,8 +147,6 @@ public class BookingService extends Service {
         Intent targetIntent = new Intent(context, HomeActivity.class);
         targetIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent contentIntent = PendingIntent.getActivity(context, requestCode, targetIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        long[] v = {500, 1000};
-        Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
         mBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
                 .setWhen(System.currentTimeMillis())
@@ -160,8 +156,6 @@ public class BookingService extends Service {
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setAutoCancel(false)
                 .setSilent(true)
-//                .setVibrate(v)
-//                .setSound(uri)
                 .setContentIntent(contentIntent);
 
 
@@ -200,7 +194,7 @@ public class BookingService extends Service {
                         return;
                     }
                 }
-                fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
+                fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Objects.requireNonNull(Looper.myLooper()));
 
             }
         } catch (Exception e) {
@@ -212,7 +206,7 @@ public class BookingService extends Service {
         if (mHandler != null && mHandlerTask != null) {
             mHandler.removeCallbacks(mHandlerTask);
         }
-        if (exceedHandler != null && exceedHandlerTask != null) {
+        if (exceedHandler != null) {
             exceedHandler.removeCallbacks(exceedHandlerTask);
         }
         isRunning = false;
@@ -228,7 +222,7 @@ public class BookingService extends Service {
             stopForeground(true);
             stopSelf();
         } catch (Exception e) {
-            e.getCause();
+            Timber.e(e.getCause());
         }
     }
 
@@ -307,15 +301,13 @@ public class BookingService extends Service {
     Runnable mHandlerTask = new Runnable() {
         @Override
         public void run() {
-//            if (!isRunning) {
-                startTrackingLocation();
-//            }
+            startTrackingLocation();
             mHandler.postDelayed(mHandlerTask, BOOKING_CHECK_DELAY);
         }
     };
 
-    private boolean isExceedRunning = false;
-    private Runnable exceedHandlerTask = new Runnable() {
+    protected final boolean isExceedRunning = false;
+    private final Runnable exceedHandlerTask = new Runnable() {
         @Override
         public void run() {
             if (!isExceedRunning) {
@@ -352,7 +344,7 @@ public class BookingService extends Service {
 
             public void onFinish() {
                 if (ConnectivityUtils.getInstance().checkInternet(context)) {
-                    Toast.makeText(context, "onFinish called", Toast.LENGTH_LONG).show();
+                    //Toast.makeText(context, "onFinish called", Toast.LENGTH_LONG).show();
                     endBooking();
                 }
             }
@@ -402,7 +394,7 @@ public class BookingService extends Service {
             Date d1 = sdf.parse(start_date);
             Date d2 = sdf.parse(end_date);
 
-            // Calucalte time difference
+            // Calculate time difference
             // in milliseconds
             if (d1 != null && d2 != null) {
                 long difference_In_Time
@@ -468,15 +460,6 @@ public class BookingService extends Service {
     private String getDate(long milliSeconds) {
         // Create a DateFormatter object for displaying date in specified format.
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        // Create a calendar object that will convert the date and time value in milliseconds to date.
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(milliSeconds);
-        return formatter.format(calendar.getTime());
-    }
-
-    private String getDate2(long milliSeconds) {
-        // Create a DateFormatter object for displaying date in specified format.
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         // Create a calendar object that will convert the date and time value in milliseconds to date.
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(milliSeconds);

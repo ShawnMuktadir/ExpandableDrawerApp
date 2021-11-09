@@ -58,7 +58,7 @@ import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.GeoFenceBroadcastReceiver;
 import www.fiberathome.com.parkingapp.utils.GeofenceConstants;
 import www.fiberathome.com.parkingapp.utils.SnackBarUtils;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+import www.fiberathome.com.parkingapp.utils.ToastUtils;
 import www.fiberathome.com.parkingapp.utils.internet.Connectivity;
 
 /**
@@ -211,7 +211,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
                             @Override
                             public void onNegativeClick() {
                                 finishAffinity();
-                                TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
                             }
                         }).show();
             }*/
@@ -321,7 +321,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
                     snackbar.dismiss();
                 } else {
                     snackbar.show();
-                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
                 }
             });
 
@@ -332,7 +332,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
                 snackbar.dismiss();
                 if (context != null) {
                     finishAffinity();
-                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
                 }
             });
 
@@ -390,7 +390,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
                         (dialog, which) -> {
                             if (context != null) {
                                 finishAffinity();
-                                TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
                             }
                         });
         AlertDialog mGPSDialog = builder.create();
@@ -416,7 +416,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
                 if (ConnectivityUtils.getInstance().checkInternet(context)) {
                     return;
                 } else {
-                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
                 }
             });
             snackbar.setActionTextColor(context.getResources().getColor(R.color.white));
@@ -438,13 +438,13 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
             if (ConnectivityUtils.getInstance().checkInternet(context)) {
                 return;
             } else {
-                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
             }
         }).setNegativeButton(context.getResources().getString(R.string.close_app), (dialog, which) -> {
             dialog.dismiss();
             if (context != null) {
                 finishAffinity();
-                TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
             }
         });
         mInternetDialog = builder.create();

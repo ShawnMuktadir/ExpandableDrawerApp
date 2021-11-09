@@ -68,7 +68,6 @@ import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DateTimeUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.MathUtils;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
 
@@ -343,7 +342,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                                     if (ConnectivityUtils.getInstance().checkInternet(context)) {
                                         submitRegistration();
                                     } else {
-                                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
                                     }
                                 }
 
@@ -352,7 +351,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                                     Timber.e("Negative Button Clicked");
                                     if (context != null) {
                                         context.finish();
-                                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
                                     }
                                 }
                             }).show();
@@ -457,7 +456,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                 if (ConnectivityUtils.getInstance().checkInternet(context)) {
                     context.startActivity(new Intent(context, TermsConditionsActivity.class));
                 } else {
-                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
                 }
             }
 
@@ -477,7 +476,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                 if (ConnectivityUtils.getInstance().checkInternet(context)) {
                     context.startActivity(new Intent(context, PrivacyPolicyActivity.class));
                 } else {
-                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
                 }
             }
 
@@ -530,7 +529,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                                             if (ConnectivityUtils.getInstance().checkInternet(context)) {
                                                 submitRegistration();
                                             } else {
-                                                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                                                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
                                             }
                                         }
 
@@ -539,7 +538,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                                             Timber.e("Negative Button Clicked");
                                             if (context != null) {
                                                 context.finish();
-                                                TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                                                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
                                             }
                                         }
                                     }).show();
@@ -799,9 +798,9 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                     if (profileBitmap != null && vehicleBitmap != null) {
                         registerUser(fullName, password, mobileNo, licencePlateInfo);
                     } else if (vehicleBitmap == null) {
-                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.upload_vehicle_pic));
+                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.upload_vehicle_pic));
                     } else {
-                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.upload_profile_photo));
+                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.upload_profile_photo));
                     }
                 }
             } else if (binding.radioGroup.getCheckedRadioButtonId() == R.id.radioMilitary) {
@@ -810,9 +809,9 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                 if (profileBitmap != null && vehicleBitmap != null) {
                     registerUser(fullName, password, mobileNo, licencePlateInfo);
                 } else if (vehicleBitmap == null) {
-                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.upload_vehicle_pic));
+                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.upload_vehicle_pic));
                 } else {
-                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.upload_profile_photo));
+                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.upload_profile_photo));
                 }
             }
         } else {

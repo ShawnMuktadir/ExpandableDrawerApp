@@ -532,5 +532,6 @@
     <string name="dp_u_want_to_cancel_booking">আপনি কি বুকিং বাতিল করতে চান?</string>
     <string name="park_has_started">আপনার পার্ক শুরু হয়েছে</string>
     <string name="as_your_reservation_time_had_exceed_over_five_mins">যেহেতু আপনার রিজার্ভেশনের সময় 5 মিনিটের বেশি হয়ে গেছে, তাই আপনার বুকিং বন্ধ হয়ে গেছে। ধন্যবাদ</string>
+    <string name="invalid_vehicle_number">অবৈধ গাড়ির নম্বর</string>
 </resources>
 

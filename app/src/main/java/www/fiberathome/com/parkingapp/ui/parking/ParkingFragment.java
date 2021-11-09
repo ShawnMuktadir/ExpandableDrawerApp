@@ -55,7 +55,6 @@ import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.KeyboardUtils;
 import www.fiberathome.com.parkingapp.utils.MathUtils;
 import www.fiberathome.com.parkingapp.utils.RecyclerTouchListener;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
@@ -133,7 +132,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                             if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
                                 fetchParkingSlotSensors();
                             } else {
-                                TastyToastUtils.showTastyWarningToast(context,
+                                ToastUtils.getInstance().showToastMessage(context,
                                         context.getResources().getString(R.string.connect_to_internet_gps));
                             }
                         }
@@ -143,7 +142,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                             Timber.e("Negative Button Clicked");
                             if (context != null) {
                                 context.finish();
-                                TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
                             }
                         }
                     }).show();
@@ -194,7 +193,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                         .addToBackStack(null)
                         .commit();
             } else {
-                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_gps));
             }
         }
         return false;
@@ -209,7 +208,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
             if (ConnectivityUtils.getInstance().checkInternet(context)) {
                 updateAdapter();
             } else {
-                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
             }
         });
 
@@ -252,7 +251,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                         updateAdapter();
                     } else {
                         Timber.e("else length 0 called");
-                        //TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                        //ToastUtils.getInstance().showToastMessage(context, "Please connect to internet");
                     }
                 }
             }
@@ -283,7 +282,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                             KeyboardUtils.getInstance().hideKeyboard(context, binding.editTextParking);
                         }
                     } else {
-                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
+                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_gps));
                     }
                 } else {
                     //if something to do for empty edittext
@@ -291,7 +290,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                         updateAdapter();
                         KeyboardUtils.getInstance().hideKeyboard(context, binding.editTextParking);
                     } else {
-                        TastyToastUtils.showTastyWarningToast(context,
+                        ToastUtils.getInstance().showToastMessage(context,
                                 context.getResources().getString(R.string.connect_to_internet_gps));
                     }
                     return true;
@@ -444,7 +443,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                     Timber.e("try catch called -> %s", e.getMessage());
                 }
             } else {
-                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_gps));
             }
         });
         binding.recyclerViewParking.setAdapter(parkingAdapter);
@@ -498,7 +497,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                 Timber.e("sensorAreas is empty");
             }
         } else {
-            TastyToastUtils.showTastyWarningToast(context,
+            ToastUtils.getInstance().showToastMessage(context,
                     context.getResources().getString(R.string.connect_to_internet_gps));
         }
     }

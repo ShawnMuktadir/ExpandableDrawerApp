@@ -8,7 +8,7 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 public class SignUpActivity extends BaseActivity {
 
@@ -47,7 +47,7 @@ public class SignUpActivity extends BaseActivity {
                     @Override
                     public void onPositiveClick() {
                         finishAffinity();
-                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
                     }
 
                     @Override

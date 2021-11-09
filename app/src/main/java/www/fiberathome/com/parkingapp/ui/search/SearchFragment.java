@@ -63,7 +63,7 @@ import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.search.placesadapter.PlacesAutoCompleteAdapter;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.KeyboardUtils;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressLint("NonConstantResourceId")
 @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -170,7 +170,7 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
             editTextSearch.requestFocus();
             editTextSearch.requestLayout();
         } else {
-            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
         }
 
         setPlacesRecyclerAdapter();
@@ -304,7 +304,7 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
                 }
             }
         } else {
-            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
+            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_gps));
         }
     }
 
@@ -363,7 +363,7 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
                 context.finish();
             }
         } else {
-            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
+            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_gps));
         }
     }
 

@@ -49,7 +49,7 @@ import www.fiberathome.com.parkingapp.model.response.search.SearchVisitorData;
 import www.fiberathome.com.parkingapp.ui.parking.EmptyViewHolder;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
@@ -266,7 +266,7 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
                         //throw new RuntimeException("Test Crash");
                     }
                 } else {
-                    TastyToastUtils.showTastyWarningToast(mContext, mContext.getResources().getString(R.string.connect_to_internet_gps));
+                    ToastUtils.getInstance().showToastMessage(mContext, mContext.getResources().getString(R.string.connect_to_internet_gps));
                 }
             });
         } else if (viewHolder instanceof SearchHistoryViewHolder) {
@@ -294,7 +294,7 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
                         final Handler handler = new Handler();
                         handler.postDelayed(() -> clickListener.onClick(visitorData), 100);
                     } else {
-                        TastyToastUtils.showTastyWarningToast(mContext, mContext.getResources().getString(R.string.connect_to_internet_gps));
+                        ToastUtils.getInstance().showToastMessage(mContext, mContext.getResources().getString(R.string.connect_to_internet_gps));
                     }
                 });
             } else {

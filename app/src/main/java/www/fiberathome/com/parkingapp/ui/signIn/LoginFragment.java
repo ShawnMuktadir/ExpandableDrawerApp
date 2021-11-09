@@ -50,7 +50,6 @@ import www.fiberathome.com.parkingapp.ui.signUp.SignUpActivity;
 import www.fiberathome.com.parkingapp.ui.verifyPhone.VerifyPhoneActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
 
@@ -175,7 +174,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                                     if (ConnectivityUtils.getInstance().checkInternet(context)) {
                                         submitLogin();
                                     } else {
-                                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
                                     }
                                 }
 
@@ -183,7 +182,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                                 public void onNegativeClick() {
                                     Timber.e("Negative Button Clicked");
                                     if (context != null) {
-                                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
                                         context.finish();
                                     }
                                 }
@@ -243,7 +242,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                                             if (ConnectivityUtils.getInstance().checkInternet(context)) {
                                                 submitLogin();
                                             } else {
-                                                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                                                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
                                             }
                                         }
 
@@ -251,7 +250,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                                         public void onNegativeClick() {
                                             Timber.e("Negative Button Clicked");
                                             if (context != null) {
-                                                TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                                                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
                                                 context.finish();
                                             }
                                         }

@@ -35,7 +35,6 @@ import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.response.login.LoginResponse;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.NoUnderlineSpan;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressLint("NonConstantResourceId")
@@ -118,7 +117,7 @@ public class VerifyPhoneFragment extends BaseFragment {
             public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable errors) {
                 Timber.e("Throwable Errors: -> %s", errors.toString());
                 hideLoading();
-                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.something_went_wrong));
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
         });
     }
@@ -147,7 +146,7 @@ public class VerifyPhoneFragment extends BaseFragment {
                     submitOTPVerification(otp);
                 }
             } else {
-                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.enter_valid_otp));
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.enter_valid_otp));
             }
         });
     }

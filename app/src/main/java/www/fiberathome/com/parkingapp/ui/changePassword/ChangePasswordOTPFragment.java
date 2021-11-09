@@ -39,7 +39,6 @@ import www.fiberathome.com.parkingapp.model.response.login.LoginResponse;
 import www.fiberathome.com.parkingapp.ui.changePassword.newPassword.NewPasswordActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.NoUnderlineSpan;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressLint("NonConstantResourceId")
@@ -109,7 +108,7 @@ public class ChangePasswordOTPFragment extends BaseFragment {
                     submitOTPVerification(otp);
                 }
             } else {
-                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.enter_valid_otp));
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.enter_valid_otp));
             }
         });
     }
@@ -135,7 +134,7 @@ public class ChangePasswordOTPFragment extends BaseFragment {
                         ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                     } else {
                         if (response.body().getMessage().equalsIgnoreCase("Try Again! Invalid Mobile Number.")) {
-                            TastyToastUtils.showTastyErrorToast(context,
+                            ToastUtils.getInstance().showToastMessage(context,
                                     context.getResources().getString(R.string.mobile_number_not_exist));
                         } else {
                             ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
@@ -148,7 +147,7 @@ public class ChangePasswordOTPFragment extends BaseFragment {
             public void onFailure(@NonNull Call<BaseResponse> call, @NonNull Throwable errors) {
                 Timber.e("Throwable Errors: -> %s", errors.toString());
                 hideLoading();
-                TastyToastUtils.showTastyErrorToast(context,
+                ToastUtils.getInstance().showToastMessage(context,
                         context.getResources().getString(R.string.mobile_number_not_exist));
             }
         });
@@ -218,7 +217,7 @@ public class ChangePasswordOTPFragment extends BaseFragment {
             });
         } else {
             hideLoading();
-            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.enter_valid_otp));
+            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.enter_valid_otp));
         }
     }
 

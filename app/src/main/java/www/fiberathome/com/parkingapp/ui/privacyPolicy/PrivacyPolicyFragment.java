@@ -41,7 +41,6 @@ import www.fiberathome.com.parkingapp.model.response.termsCondition.TermsConditi
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressLint("NonConstantResourceId")
@@ -93,7 +92,7 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
                         .addToBackStack(null)
                         .commit();
             } else {
-                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_gps));
             }
         }
         return false;
@@ -127,7 +126,7 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
         if (ConnectivityUtils.getInstance().checkInternet(context)) {
             fetchPrivacyPolicy();
         } else {
-            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
         }
     }
 

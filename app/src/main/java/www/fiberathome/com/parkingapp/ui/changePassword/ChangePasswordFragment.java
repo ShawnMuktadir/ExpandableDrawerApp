@@ -35,7 +35,6 @@ import www.fiberathome.com.parkingapp.model.user.User;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
 
@@ -100,7 +99,7 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
                                 if (ConnectivityUtils.getInstance().checkInternet(context)) {
                                     changePassword();
                                 } else {
-                                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
                                 }
                             }
 
@@ -108,7 +107,7 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
                             public void onNegativeClick() {
                                 if (getActivity() != null) {
                                     getActivity().finish();
-                                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
                                 }
                             }
                         }).show();

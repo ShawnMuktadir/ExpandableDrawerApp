@@ -61,7 +61,6 @@ import www.fiberathome.com.parkingapp.utils.DateTimeUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.MathUtils;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
@@ -283,7 +282,6 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                     Bitmap convertedImage = getResizedBitmap(bitmap2, 500);
                     binding.ivVehicleEditPlatePreview.setImageBitmap(convertedImage);
                 }
-                //Toast.makeText(SignUpActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
             } catch (IOException e) {
                 e.printStackTrace();
                 ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
@@ -315,7 +313,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                         .addToBackStack(null)
                         .commit();
             } else {
-                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_gps));
             }
         }
         return false;
@@ -340,7 +338,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                                     if (ConnectivityUtils.getInstance().checkInternet(context)) {
                                         submitEditProfileInfo();
                                     } else {
-                                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
                                     }
                                 }
 
@@ -349,7 +347,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                                     Timber.e("Negative Button Clicked");
                                     if (context != null) {
                                         context.finish();
-                                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
                                     }
                                 }
                             }).show();
@@ -711,7 +709,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                             // storing the user in sharedPreference
                             Preferences.getInstance(context).setUser(user);
                             Timber.e("user after update -> %s", new Gson().toJson(user));
-                            Toast.makeText(context, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                            ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                             context.onBackPressed();
                         } else {
                             Timber.e("jsonObject else called");
@@ -786,7 +784,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                 if (vehicleNoInt < 11 || (vehicleDiv.equalsIgnoreCase("E") && vehicleNoIntForOther > 60) ||
                         (vehicleDiv.equalsIgnoreCase("Ma") && vehicleClass.equalsIgnoreCase("Munshiganj") && vehicleNoIntForOther > 50) ||
                         (vehicleDiv.equalsIgnoreCase("Ma") && vehicleClass.equalsIgnoreCase("Narayanganj") && vehicleNoInt < 51)) {
-                    Toast.makeText(context, "Invalid vehicle number", Toast.LENGTH_SHORT).show();
+                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.invalid_vehicle_number));
                 } else {
                     editProfile(fullName, password, mobileNo, licencePlateInfo);
                 }

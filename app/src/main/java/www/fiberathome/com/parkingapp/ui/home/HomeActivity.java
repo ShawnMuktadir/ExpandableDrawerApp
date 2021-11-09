@@ -65,7 +65,6 @@ import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressLint("NonConstantResourceId")
@@ -268,7 +267,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                 navigationView.getMenu().getItem(10).setChecked(false);
             }
         } else {
-            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_parking_app));
+            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_parking_app));
             DialogUtils.getInstance().alertDialog(context,
                     (Activity) context,
                     context.getResources().getString(R.string.exit_message_main),
@@ -278,7 +277,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                         public void onPositiveClick() {
                             Timber.e("Positive Button clicked");
                             finishAffinity();
-                            TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
                         }
 
                         @Override
@@ -353,6 +352,8 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
         } catch (IllegalStateException e) {
             // There's no way to avoid getting this if saveInstanceState has already been called.
             Timber.e(e.getCause());
+            ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
+                    HomeFragment.newInstance(), R.id.nav_host_fragment);
         }
     }
 
@@ -362,7 +363,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                 ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
                         ScheduleFragment.newInstance(), R.id.nav_host_fragment);
             } else {
-                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.please_enable_gps));
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.please_enable_gps));
             }
         });
     }

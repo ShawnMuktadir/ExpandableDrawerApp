@@ -55,7 +55,6 @@ import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 public class PaymentFragment extends BaseFragment implements IOnBackPressListener {
@@ -175,7 +174,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                     }
                 }
             } else {
-                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
             }
         });
     }
@@ -194,7 +193,6 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                 .buildApiCall(new SSLCTransactionResponseListener() {
                     @Override
                     public void transactionSuccess(SSLCTransactionInfoModel sslcTransactionInfoModel) {
-
                         bookedPlace = new BookedPlace();
                         bookedPlace.setPaid(true);
                         bookedPlace.setBill((float) mNetBill);
@@ -211,18 +209,18 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                             storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
                                     getDate(arrivedDate.getTime()), getDate(departureDate.getTime()), placeId);
                         } else {
-                            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
                         }
                     }
 
                     @Override
                     public void transactionFail(String s) {
-                        Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
+                        Timber.e("transactionFail -> %s", s);
                     }
 
                     @Override
                     public void merchantValidationError(String s) {
-                        Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
+                        Timber.e("merchantValidationError -> %s", s);
                     }
                 });
     }
@@ -271,7 +269,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                     if (response.body() != null) {
                         if (response.body().getUid() != null) {
                             Timber.e("response -> %s", new Gson().toJson(response.body()));
-                            TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.reservation_successful));
+                            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.reservation_successful));
                             //set booked place info
                             bookedPlace.setBookedUid(response.body().getUid());
                             bookedPlace.setLat(lat);
@@ -291,13 +289,13 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                                 binding.actionBarTitle.setText(context.getResources().getString(R.string.booking_payment));
                                 listener.fragmentChange(new HomeFragment());
                             } else {
-                                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
+                                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_gps));
                             }
                         } else {
                             DialogUtils.getInstance().showOnlyMessageDialog(context.getResources().getString(R.string.parking_slot_not_available), context);
                         }
                     } else {
-                        Toast.makeText(getContext(), context.getResources().getString(R.string.reservation_failed), Toast.LENGTH_SHORT).show();
+                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.reservation_failed));
                     }
                 }
             }

@@ -26,7 +26,7 @@ import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.utils.LocationHelper;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressLint("NonConstantResourceId")
 public class LocationActivity extends BaseActivity {
@@ -144,7 +144,7 @@ public class LocationActivity extends BaseActivity {
                     //PermissionActivity.super.onBackPressed();
                     finish();
                     Preferences.getInstance(context).setIsLocationPermissionGiven(false);
-                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
                 }).create();
         androidx.appcompat.app.AlertDialog dialog = builder.create();
         dialog.setOnShowListener(arg0 -> {
