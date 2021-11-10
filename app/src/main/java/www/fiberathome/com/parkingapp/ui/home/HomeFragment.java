@@ -765,27 +765,31 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         try {
             if (isRouteDrawn == 1) {
-                if (!(isBooked && bookedPlace != null)) {
-                    if (previousOrigin != null && oldDestination != null && onConnectedLocation != null) {
-                        String[] latlong = previousOrigin.split(",");
-                        String[] latlong2 = oldDestination.split(",");
-                        if (!oldDestination.equals("")) {
-                            double lat = MathUtils.getInstance().convertToDouble(latlong[0].trim());
-                            double lon = MathUtils.getInstance().convertToDouble(latlong[1].trim());
-                            double lat2 = MathUtils.getInstance().convertToDouble(latlong2[0].trim());
-                            double lon2 = MathUtils.getInstance().convertToDouble(latlong2[1].trim());
-                            double distanceMoved = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), lat, lon) * 1000;
-                            double distanceFromDestination = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), lat2, lon2) * 1000;
-                            if (distanceMoved >= 100) {
-                                reDrawRoute(origin);
-                                previousOrigin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
-                            } else if ((distanceFromDestination <= 20 && distanceFromDestination >= 10) && distanceMoved >= 9) {
-                                reDrawRoute(origin);
+                if (oldDestination != null) {
+                    if (previousOrigin != null) {
+                        if (!oldDestination.isEmpty() && onConnectedLocation != null) {
+                            String[] latlong = previousOrigin.split(",");
+                            String[] latlong2 = oldDestination.split(",");
+                            if (!oldDestination.equals("")) {
+                                double lat = MathUtils.getInstance().convertToDouble(latlong[0].trim());
+                                double lon = MathUtils.getInstance().convertToDouble(latlong[1].trim());
+                                double lat2 = MathUtils.getInstance().convertToDouble(latlong2[0].trim());
+                                double lon2 = MathUtils.getInstance().convertToDouble(latlong2[1].trim());
+                                double distanceMoved = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), lat, lon) * 1000;
+                                double distanceFromDestination = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), lat2, lon2) * 1000;
+                                if (distanceMoved >= 100) {
+                                    reDrawRoute(origin);
+                                    previousOrigin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
+                                } else if ((distanceFromDestination <= 20 && distanceFromDestination >= 10) && distanceMoved >= 9) {
+                                    reDrawRoute(origin);
+                                    previousOrigin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
+                                }
+                            } else {
                                 previousOrigin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
                             }
-                        } else {
-                            previousOrigin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
                         }
+                    } else {
+                        previousOrigin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
                     }
                 }
             }
@@ -1040,7 +1044,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         ToastUtils.getInstance().showToastMessage(context, "Enable your Gps Location");
                     }
 
-                    showLoading(context);
+//                    showLoading(context);
 
                     new GpsUtils(context).turnGPSOn(isGPSEnable -> {
                         // turn on GPS
@@ -2201,6 +2205,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     if (response.body() != null) {
                         if (response.body().getSensors() != null) {
                             BookingParkStatusResponse.Sensors sensors = response.body().getSensors();
+                            isRouteDrawn = 0;
                             listener.fragmentChange(BookingParkFragment.newInstance(sensors));
                         }
                     }
