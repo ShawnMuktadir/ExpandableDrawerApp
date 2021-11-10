@@ -749,14 +749,20 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 .anchor(0.5f, 0.5f));
 
 
-        if (markerClicked != null) {
-            checkParkingSpotDistance(latLng, markerClicked.getPosition(), false);
-        } else if (parkingSpotLatLng != null) {
-            checkParkingSpotDistance(latLng, parkingSpotLatLng, false);
-        } else if (Preferences.getInstance(context).getBooked() != null && Preferences.getInstance(context).getBooked().getIsBooked()) {
-            if (mMap != null) {
-                checkParkingSpotDistance(latLng, new LatLng(Preferences.getInstance(context).getBooked().getLat(),
-                        Preferences.getInstance(context).getBooked().getLon()), true);
+        if (mMap != null) {
+            if (Preferences.getInstance(context).getBooked() != null && Preferences.getInstance(context).getBooked().getIsBooked()) {
+                if (parkingSpotLatLng != null) {
+                    double distanceForCount = calculateDistance(parkingSpotLatLng.latitude, parkingSpotLatLng.longitude,
+                            Preferences.getInstance(context).getBooked().getLat(),
+                            Preferences.getInstance(context).getBooked().getLon());
+                    if (distanceForCount < 0.001) {
+                        checkParkingSpotDistance(latLng, new LatLng(Preferences.getInstance(context).getBooked().getLat(),
+                                Preferences.getInstance(context).getBooked().getLon()));
+                    }
+                } else {
+                    checkParkingSpotDistance(latLng, new LatLng(Preferences.getInstance(context).getBooked().getLat(),
+                            Preferences.getInstance(context).getBooked().getLon()));
+                }
             }
         }
 
@@ -932,25 +938,24 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         //}
     }
 
-    private void checkParkingSpotDistance(LatLng car, LatLng spot, boolean mIsBooked) {
+    private void checkParkingSpotDistance(LatLng car, LatLng spot) {
         float[] distance = new float[2];
         if (circle != null) {
             Location.distanceBetween(car.latitude, car.longitude, circle.getCenter().latitude, circle.getCenter().longitude, distance);
             if (distance[0] <= circle.getRadius() && !isNotificationSent) {
                 // Inside The Circle
                 isNotificationSent = true;
-                sendNotification("You are near a parking spot", "You can book parking");
-                if (mIsBooked) {
-                    isInAreaEnabled = true;
-                    if (isBooked && bookedPlace != null) {
-                        destination = "" + bookedPlace.getLat() + ", " + bookedPlace.getLon();
-                        populateNearestPlaceBottomSheet(new LatLng(bookedPlace.getLat(), bookedPlace.getLon()));
-                        setButtonText(context.getResources().getString(R.string.park), context.getResources().getColor(R.color.black));
-                    }
+                sendNotification("You are near your parking spot", "You can Park");
+                isInAreaEnabled = true;
+                if (isBooked && bookedPlace != null) {
+                    destination = "" + bookedPlace.getLat() + ", " + bookedPlace.getLon();
+                    populateNearestPlaceBottomSheet(new LatLng(bookedPlace.getLat(), bookedPlace.getLon()));
+                    setButtonText(context.getResources().getString(R.string.park), context.getResources().getColor(R.color.black));
                 }
             } else {
-                if (mIsBooked) {
-                    //isInAreaEnabled = false;
+                if (distance[0] > circle.getRadius()) {
+                    isNotificationSent = false;
+                    isInAreaEnabled = false;
                     if (isBooked && bookedPlace != null) {
                         setButtonText(context.getResources().getString(R.string.park), context.getResources().getColor(R.color.gray3));
                     }

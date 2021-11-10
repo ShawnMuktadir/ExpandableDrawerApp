@@ -3,6 +3,8 @@ package www.fiberathome.com.parkingapp.base;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
@@ -14,17 +16,31 @@ import www.fiberathome.com.parkingapp.utils.DialogUtils;
 public class BaseFragment extends Fragment {
 
     private ProgressDialog progressDialog;
+    private boolean isLoadingHidden;
 
     protected void showLoading(Context context) {
         try {
+            isLoadingHidden = false;
+            forceDismissLoading(context);
             progressDialog = DialogUtils.getInstance().progressDialog(context, context.getResources().getString(R.string.please_wait));
         } catch (final IllegalArgumentException e) {
             e.getCause();
         }
     }
 
+    private void forceDismissLoading(Context context) {
+        new Handler().postDelayed(() -> {
+            if (!isLoadingHidden) {
+                hideLoading();
+                Toast.makeText(context, "dismissed", Toast.LENGTH_SHORT).show();
+            }
+        }, 60000);
+    }
+
     protected void showLoading(Context context, String message) {
         try {
+            isLoadingHidden = false;
+            forceDismissLoading(context);
             progressDialog = DialogUtils.getInstance().progressDialog(context, message);
         } catch (final IllegalArgumentException e) {
             e.getCause();
@@ -32,6 +48,7 @@ public class BaseFragment extends Fragment {
     }
 
     protected void hideLoading() {
+        isLoadingHidden = true;
         if (progressDialog == null) return;
 
         try {
