@@ -36,6 +36,7 @@ public class Preferences {
     private static Preferences instance;
 
     private static Context mContext;
+    public boolean isBookingCancelled = false;
 
     public Preferences(Context context) {
         mContext = context;

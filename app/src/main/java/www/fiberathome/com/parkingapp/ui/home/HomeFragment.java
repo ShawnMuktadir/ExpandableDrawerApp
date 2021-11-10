@@ -214,7 +214,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private boolean isNotificationSent = false;
     protected boolean isAreaChangedForSearch = false;
     private boolean isBackClicked = false;
-    private boolean isFromSearch = false;
 
     private Marker previousMarker = null;
     private Marker markerClicked, pinMarker;
@@ -863,15 +862,12 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         hideLoading();
         bookedPlace = Preferences.getInstance(context).getBooked();
         isBooked = Preferences.getInstance(context).getBooked().getIsBooked();
-        if (isFromSearch) {
-            if (!isBooked && parkingSpotLatLng == null) {
-                commonBackOperation();
-            }
-        } else {
-            if (!isBooked) {
-                commonBackOperation();
-            }
+
+        if (Preferences.getInstance(context).isBookingCancelled) {
+            Preferences.getInstance(context).isBookingCancelled = false;
+            commonBackOperation();
         }
+
         if (isBooked) {
             binding.fabGetDirection.setVisibility(View.VISIBLE);
         }
@@ -976,7 +972,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             searchPlaceCount = "0";
             binding.fabGetDirection.setVisibility(View.VISIBLE);
             parkingAreaChanged = false;
-            isFromSearch = true;
             if (searchPlaceCount.equals("0")) {
                 setButtonText(context.getResources().getString(R.string.unavailable_parking_spot), context.getResources().getColor(R.color.gray3));
             }
@@ -1692,7 +1687,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     mMap.clear();
                     mMap.setTrafficEnabled(true);
                     parkingAreaChanged = false;
-                    isFromSearch = false;
                     previousMarker = null;
                     isRouteDrawn = 0;
                     oldDestination = "";

@@ -273,6 +273,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                     if (response.body() != null) {
                         ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                         Preferences.getInstance(context).clearBooking();
+                        Preferences.getInstance(context).isBookingCancelled = true;
                         bookedLists.clear();
                         fetchBookedParkingPlace(mobileNo, true);
                         stopBookingTrackService();
