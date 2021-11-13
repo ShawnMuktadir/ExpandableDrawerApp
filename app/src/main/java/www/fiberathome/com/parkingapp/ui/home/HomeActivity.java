@@ -97,6 +97,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
 
     Bundle mSavedInstanceState;
     protected HomeFragment homeFragment;
+    private String placeId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,6 +138,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
         lng = getIntent().getDoubleExtra("lng", 0.0);
         areaName = getIntent().getStringExtra("areaName");
         count = getIntent().getStringExtra("count");
+        placeId = getIntent().getStringExtra("placeId");
 
         if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
             //initialize home fragment
@@ -453,7 +455,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                                     BookingParkFragment.newInstance(sensors), R.id.nav_host_fragment);
                         } else {
                             ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
-                                    HomeFragment.newInstance(lat, lng, areaName, count), R.id.nav_host_fragment);
+                                    HomeFragment.newInstance(lat, lng, areaName, count, placeId), R.id.nav_host_fragment);
                         }
                     }
                 }

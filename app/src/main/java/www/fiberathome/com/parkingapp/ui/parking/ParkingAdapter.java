@@ -36,7 +36,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private final ParkingAdapterClickListener mListener;
 
     public interface ParkingAdapterClickListener {
-        void onItemClick(int position, double lat, double lng, String parkingArea, String count);
+        void onItemClick(int position, double lat, double lng, String parkingArea, String count, String placeId);
     }
 
     public ParkingAdapter(ParkingActivity context, ArrayList<SensorArea> sensorAreas,
@@ -74,7 +74,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         parkingViewHolder.binding.relativeLayout.setOnClickListener(view -> {
             selectedPosition = position;
             notifyDataSetChanged();
-            mListener.onItemClick(position, sensorArea.getEndLat(), sensorArea.getEndLng(), sensorArea.getParkingArea(), sensorArea.getCount());
+            mListener.onItemClick(position, sensorArea.getEndLat(), sensorArea.getEndLng(), sensorArea.getParkingArea(), sensorArea.getCount(), sensorArea.getPlaceId());
         });
 
         if (selectedPosition == position) {

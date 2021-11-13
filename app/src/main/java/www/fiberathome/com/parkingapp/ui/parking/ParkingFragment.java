@@ -419,7 +419,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
 
     private void setAdapter(ArrayList<SensorArea> sensorAreas) {
         this.sensorAreas = sensorAreas;
-        parkingAdapter = new ParkingAdapter(context, sensorAreas, onConnectedLocation, (position, lat, lng, parkingAreaName, count) -> {
+        parkingAdapter = new ParkingAdapter(context, sensorAreas, onConnectedLocation, (position, lat, lng, parkingAreaName, count, placeId) -> {
 
             long now = System.currentTimeMillis();
 
@@ -438,6 +438,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                     bundle.putDouble("lng", lng);
                     bundle.putString("areaName", parkingAreaName);
                     bundle.putString("count", count);
+                    bundle.putString("placeId", placeId);
                     context.startActivityWithFinishBundle(HomeActivity.class, bundle);
                 } catch (Exception e) {
                     Timber.e("try catch called -> %s", e.getMessage());

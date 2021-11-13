@@ -19,6 +19,7 @@ public class BookingSensors {
     public String uid;
     public String occupiedCount;
     public String totalCount;
+    private String parkingPlaceId;
 
     public static final int SELECTED_INFO_TYPE = 0;
     public static final int INFO_TYPE = 1;
@@ -26,7 +27,8 @@ public class BookingSensors {
     public BookingSensors() {
     }
 
-    public BookingSensors(String parkingArea, double lat, double lng, double distance, String count, String duration, String text, int type, int data) {
+
+    public BookingSensors(String parkingArea, double lat, double lng, double distance, String count, String duration, String text, int type, int data, String parkingPlaceId) {
         this.parkingArea = parkingArea;
         this.lat = lat;
         this.lng = lng;
@@ -36,9 +38,10 @@ public class BookingSensors {
         this.text = text;
         this.type = type;
         this.data = data;
+        this.parkingPlaceId = parkingPlaceId;
     }
 
-    public BookingSensors(String parkingArea, double lat, double lng, double distance, String count, String duration, int type, int data) {
+    public BookingSensors(String parkingArea, double lat, double lng, double distance, String count, String duration, int type, int data, String parkingPlaceId) {
         this.parkingArea = parkingArea;
         this.lat = lat;
         this.lng = lng;
@@ -47,7 +50,9 @@ public class BookingSensors {
         this.duration = duration;
         this.type = type;
         this.data = data;
+        this.parkingPlaceId = parkingPlaceId;
     }
+
 
     public int compareTo(BookingSensors element) {
         int res = 0;
@@ -175,5 +180,13 @@ public class BookingSensors {
 
     public void setTotalCount(String totalCount) {
         this.totalCount = totalCount;
+    }
+
+    public String getParkingPlaceId() {
+        return parkingPlaceId;
+    }
+
+    public void setParkingPlaceId(String parkingPlaceId) {
+        this.parkingPlaceId = parkingPlaceId;
     }
 }
