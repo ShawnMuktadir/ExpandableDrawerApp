@@ -1,9 +1,10 @@
 package www.fiberathome.com.parkingapp.model.response.search;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 @SuppressWarnings({"unused", "RedundantSuppression"})
-public class SearchVisitorData implements Serializable {
+public class SearchVisitorData implements Parcelable {
 
     private String visitedArea;
     private String placeId;
@@ -95,4 +96,48 @@ public class SearchVisitorData implements Serializable {
         return (this.visitedArea.hashCode() + this.placeId.hashCode());
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.visitedArea);
+        dest.writeString(this.placeId);
+        dest.writeDouble(this.endLat);
+        dest.writeDouble(this.endLng);
+        dest.writeDouble(this.startLat);
+        dest.writeDouble(this.startLng);
+    }
+
+    public void readFromParcel(Parcel source) {
+        this.visitedArea = source.readString();
+        this.placeId = source.readString();
+        this.endLat = source.readDouble();
+        this.endLng = source.readDouble();
+        this.startLat = source.readDouble();
+        this.startLng = source.readDouble();
+    }
+
+    protected SearchVisitorData(Parcel in) {
+        this.visitedArea = in.readString();
+        this.placeId = in.readString();
+        this.endLat = in.readDouble();
+        this.endLng = in.readDouble();
+        this.startLat = in.readDouble();
+        this.startLng = in.readDouble();
+    }
+
+    public static final Parcelable.Creator<SearchVisitorData> CREATOR = new Parcelable.Creator<SearchVisitorData>() {
+        @Override
+        public SearchVisitorData createFromParcel(Parcel source) {
+            return new SearchVisitorData(source);
+        }
+
+        @Override
+        public SearchVisitorData[] newArray(int size) {
+            return new SearchVisitorData[size];
+        }
+    };
 }

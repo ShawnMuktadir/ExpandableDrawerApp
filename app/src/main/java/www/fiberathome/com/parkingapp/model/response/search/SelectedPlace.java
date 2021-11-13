@@ -1,15 +1,16 @@
 package www.fiberathome.com.parkingapp.model.response.search;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 @SuppressWarnings({"unused", "RedundantSuppression"})
-public class SelectedPlace implements Serializable {
+public class SelectedPlace implements Parcelable {
 
     private String placeId;
     private String areaName;
     private String areaAddress;
-    private final double latitude;
-    private final double longitude;
+    private double latitude;
+    private double longitude;
 
     public SelectedPlace(String areaName, double latitude, double longitude) {
         this.areaName = areaName;
@@ -56,4 +57,46 @@ public class SelectedPlace implements Serializable {
     public double getLongitude() {
         return longitude;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.placeId);
+        dest.writeString(this.areaName);
+        dest.writeString(this.areaAddress);
+        dest.writeDouble(this.latitude);
+        dest.writeDouble(this.longitude);
+    }
+
+    public void readFromParcel(Parcel source) {
+        this.placeId = source.readString();
+        this.areaName = source.readString();
+        this.areaAddress = source.readString();
+        this.latitude = source.readDouble();
+        this.longitude = source.readDouble();
+    }
+
+    protected SelectedPlace(Parcel in) {
+        this.placeId = in.readString();
+        this.areaName = in.readString();
+        this.areaAddress = in.readString();
+        this.latitude = in.readDouble();
+        this.longitude = in.readDouble();
+    }
+
+    public static final Parcelable.Creator<SelectedPlace> CREATOR = new Parcelable.Creator<SelectedPlace>() {
+        @Override
+        public SelectedPlace createFromParcel(Parcel source) {
+            return new SelectedPlace(source);
+        }
+
+        @Override
+        public SelectedPlace[] newArray(int size) {
+            return new SelectedPlace[size];
+        }
+    };
 }

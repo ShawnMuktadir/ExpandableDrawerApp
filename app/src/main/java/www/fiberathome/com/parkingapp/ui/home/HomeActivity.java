@@ -70,33 +70,25 @@ import www.fiberathome.com.parkingapp.utils.ToastUtils;
 @SuppressLint("NonConstantResourceId")
 public class HomeActivity extends NavigationActivity implements FragmentChangeListener, PermissionInterface {
 
+    public static final int GPS_REQUEST_CODE = 9003;
     @BindView(R.id.toolbar)
     public Toolbar toolbar;
-
     @BindView(R.id.tvTimeToolbar)
     public TextView tvTimeToolbar;
-
     @BindView(R.id.linearLayoutToolbarTime)
     public LinearLayout linearLayoutToolbarTime;
-
+    protected HomeFragment homeFragment;
+    Bundle mSavedInstanceState;
     private Unbinder unbinder;
-
     private LocationCallback locationCallback;
     private Location lastLocation;
-
     private Toast exitToast;
     private int exitCounter = 1;
-
-    public static final int GPS_REQUEST_CODE = 9003;
-
     private Context context;
     private double lat;
     private double lng;
     private String areaName;
     private String count;
-
-    Bundle mSavedInstanceState;
-    protected HomeFragment homeFragment;
     private String placeId;
 
     @Override

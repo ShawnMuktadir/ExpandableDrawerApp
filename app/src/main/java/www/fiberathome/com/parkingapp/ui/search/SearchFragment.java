@@ -4,7 +4,9 @@ import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.LOCATION_SERVICE;
 import static www.fiberathome.com.parkingapp.model.data.AppConstants.HISTORY_PLACE_SELECTED;
+import static www.fiberathome.com.parkingapp.model.data.AppConstants.HISTORY_PLACE_SELECTED_OBJ;
 import static www.fiberathome.com.parkingapp.model.data.AppConstants.NEW_PLACE_SELECTED;
+import static www.fiberathome.com.parkingapp.model.data.AppConstants.NEW_PLACE_SELECTED_OBJ;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -253,10 +255,9 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
                     //do search
                     mAutoCompleteAdapter.getFilter().filter(contents);
                     mAutoCompleteAdapter.notifyDataSetChanged();
-                    KeyboardUtils.getInstance().hideKeyboard(context);
-                } else
-                    //if something to do for empty edittext
-                    KeyboardUtils.getInstance().hideKeyboard(context);
+                }
+                //if something to do for empty edittext
+                KeyboardUtils.getInstance().hideKeyboard(context);
                 return true;
             }
             return false;
@@ -291,7 +292,8 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
                     SelectedPlace selectedplace = new SelectedPlace(placeId, areaName, areaAddress, latitude, longitude);
                     // resultIntent.putExtra(NEW_PLACE_SELECTED,place);
                     //String result=new Gson().toJson(place);
-                    resultIntent.putExtra(NEW_PLACE_SELECTED, selectedplace);
+                    resultIntent.putExtra(NEW_PLACE_SELECTED_OBJ, selectedplace);
+                    resultIntent.putExtra(NEW_PLACE_SELECTED, NEW_PLACE_SELECTED);
                     context.setResult(RESULT_OK, resultIntent);
                     /*Log.d("ShawnClick", "click: ");
                 new Handler().postDelayed(new Runnable() {
@@ -354,7 +356,8 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
                 SearchVisitorData searchVisitorData = new SearchVisitorData(areaName, placeId, latitude, longitude, latitude, longitude);
                 // resultIntent.putExtra(NEW_PLACE_SELECTED,place);
                 //String result=new Gson().toJson(place);
-                resultIntent.putExtra(HISTORY_PLACE_SELECTED, searchVisitorData);
+                resultIntent.putExtra(HISTORY_PLACE_SELECTED_OBJ, searchVisitorData);
+                resultIntent.putExtra(HISTORY_PLACE_SELECTED, HISTORY_PLACE_SELECTED);
                 context.setResult(RESULT_OK, resultIntent);
                 //Log.d("ShawnClick", "click: ");
                 /*new Handler().postDelayed(new Runnable() {

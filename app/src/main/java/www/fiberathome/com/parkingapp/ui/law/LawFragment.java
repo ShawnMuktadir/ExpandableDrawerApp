@@ -47,11 +47,9 @@ import www.fiberathome.com.parkingapp.utils.ToastUtils;
 @SuppressLint("NonConstantResourceId")
 public class LawFragment extends BaseFragment implements IOnBackPressListener {
 
-    private LawActivity context;
-
-    private LawAdapter lawAdapter;
-
     FragmentLawBinding binding;
+    private LawActivity context;
+    private LawAdapter lawAdapter;
 
     public LawFragment() {
         // Required empty public constructor

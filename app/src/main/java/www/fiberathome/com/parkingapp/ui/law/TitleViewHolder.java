@@ -30,8 +30,8 @@ import www.fiberathome.com.parkingapp.model.response.law.LawItem;
  * Created by LEVI on 22/09/2018.
  */
 public class TitleViewHolder extends GroupViewHolder {
-    private TextView mTextView;
-    private ImageView arrow;
+    private final TextView mTextView;
+    private final ImageView arrow;
 
     public TitleViewHolder(View itemView) {
         super(itemView);
