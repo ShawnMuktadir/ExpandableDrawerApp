@@ -6,7 +6,6 @@ import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
 import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
@@ -525,14 +524,8 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                     }))
                     .setCancelable(false)
                     .show();
-
         }
         return false;
-    }
-
-    public boolean checkGpsStatus() {
-        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 
     private void setNoData() {

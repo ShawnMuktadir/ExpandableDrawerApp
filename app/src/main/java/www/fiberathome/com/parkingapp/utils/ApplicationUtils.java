@@ -1,7 +1,15 @@
 package www.fiberathome.com.parkingapp.utils;
 
+import static android.content.Context.LOCATION_SERVICE;
+import static www.fiberathome.com.parkingapp.ui.home.HomeFragment.PLAY_SERVICES_ERROR_CODE;
+
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.Dialog;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.net.Uri;
 
 import androidx.annotation.NonNull;
@@ -9,11 +17,15 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
+import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.data.StaticData;
 import www.fiberathome.com.parkingapp.utils.internet.ConnectivityInterceptor;
@@ -120,5 +132,53 @@ public class ApplicationUtils {
         final Intent intent = new Intent(Intent.ACTION_VIEW, updateUrl);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
+    }
+
+    public static boolean isServicesOk(Context context) {
+
+        GoogleApiAvailability googleApi = GoogleApiAvailability.getInstance();
+
+        int result = googleApi.isGooglePlayServicesAvailable(context);
+
+        if (result == ConnectionResult.SUCCESS) {
+            return true;
+        } else if (googleApi.isUserResolvableError(result)) {
+            Dialog dialog = googleApi.getErrorDialog((Activity) context, result, PLAY_SERVICES_ERROR_CODE, task ->
+                    ToastUtils.getInstance().showToastMessage(context, "Dialog is cancelled by User"));
+            if (dialog != null) {
+                dialog.show();
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean isGPSEnabled(Context context) {
+
+        LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
+
+        boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+        if (providerEnabled) {
+            return true;
+        } else {
+            Timber.e("else called");
+        }
+
+        return false;
+    }
+
+    public static boolean isLocationTrackingServiceRunning(Context context) {
+        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        if (activityManager != null) {
+            for (ActivityManager.RunningServiceInfo serviceInfo : activityManager.getRunningServices(Integer.MAX_VALUE)) {
+                String a = Service.class.getName();
+                if (serviceInfo.foreground) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        return false;
     }
 }
