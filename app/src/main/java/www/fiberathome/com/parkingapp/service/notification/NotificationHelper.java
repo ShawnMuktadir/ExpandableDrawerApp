@@ -65,7 +65,7 @@ class NotificationHelper extends ContextWrapper {
             return new NotificationCompat.Builder(getApplicationContext(), channelID)
                     .setContentTitle("Booking Scheduled Alert")
 //                    .setContentText(ended)
-                    .setContentText("Booked time will start in 15 minutes")
+                    .setContentText("Booked time will start shortly")
                     .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)
                     .setSmallIcon(R.mipmap.ic_launcher);
         } else {

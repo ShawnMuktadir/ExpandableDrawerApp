@@ -108,7 +108,7 @@ public class BookingService extends Service {
 
     private void startTrackingLocation() {
         if (new Date().getTime() >= (Preferences.getInstance(context).getBooked().getArriveDate() - 900000) && !isServiceStarted) {
-            notificationCaller(Constants.NOTIFICATION_CHANNEL_BOOKING, "Booked Time About to start for : \n" + Preferences.getInstance(context).getBooked().getAreaName(), 2);
+            notificationCaller(Constants.NOTIFICATION_CHANNEL_BOOKING, "Booked for : \n" + Preferences.getInstance(context).getBooked().getAreaName(), 2);
             startForeground(BOOKING_SERVICE_ID, mBuilder.build());
             isServiceStarted = true;
         } else if (new Date().getTime() >= Preferences.getInstance(context).getBooked().getArriveDate()
@@ -154,7 +154,8 @@ public class BookingService extends Service {
         mBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
                 .setWhen(System.currentTimeMillis())
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle(msg)
+                .setContentTitle("Booked Time")
+                .setContentText(msg)
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setAutoCancel(false)
