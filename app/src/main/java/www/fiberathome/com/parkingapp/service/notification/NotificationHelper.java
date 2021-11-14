@@ -12,6 +12,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 
 class NotificationHelper extends ContextWrapper {
     public static final String channelID = "channelID";
@@ -55,12 +56,16 @@ class NotificationHelper extends ContextWrapper {
 
     public NotificationCompat.Builder getChannelNotification() {
         if (ended != null) {
-           if(ended.equalsIgnoreCase("Book Time Up")) {
+            if (ended.equalsIgnoreCase("Book Time Up")) {
 //               closeBooking();
-           }
+            }
+
+            ApplicationUtils.startBookingTrackService(context);
+
             return new NotificationCompat.Builder(getApplicationContext(), channelID)
                     .setContentTitle("Booking Scheduled Alert")
-                    .setContentText(ended)
+//                    .setContentText(ended)
+                    .setContentText("Booked time will start in 15 minutes")
                     .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)
                     .setSmallIcon(R.mipmap.ic_launcher);
         } else {

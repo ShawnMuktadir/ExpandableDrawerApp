@@ -75,6 +75,7 @@ public class BookingService extends Service {
     private long departureDate;
     protected final long exceedTime = 300000;
     private boolean endBookingCalled = false;
+    private boolean isServiceStarted = false;
 
     @Nullable
     @Override
@@ -106,11 +107,13 @@ public class BookingService extends Service {
     }
 
     private void startTrackingLocation() {
-        if (new Date().getTime() >= Preferences.getInstance(context).getBooked().getArriveDate()
+        if (new Date().getTime() >= (Preferences.getInstance(context).getBooked().getArriveDate() - 900000) && !isServiceStarted) {
+            notificationCaller(Constants.NOTIFICATION_CHANNEL_BOOKING, "Booked Time About to start for : \n" + Preferences.getInstance(context).getBooked().getAreaName(), 2);
+            startForeground(BOOKING_SERVICE_ID, mBuilder.build());
+            isServiceStarted = true;
+        } else if (new Date().getTime() >= Preferences.getInstance(context).getBooked().getArriveDate()
                 && new Date().getTime() < Preferences.getInstance(context).getBooked().getDepartedDate() && !isRunning) {
             isRunning = true;
-            notificationCaller(Constants.NOTIFICATION_CHANNEL_BOOKING, "Booked time Status", 2);
-            startForeground(BOOKING_SERVICE_ID, mBuilder.build());
             findDifference(getDate(new Date().getTime()), getDate(Preferences.getInstance(context).getBooked().getDepartedDate()));
         } else if (new Date().getTime() > (Preferences.getInstance(context).getBooked().getDepartedDate() + 60000L) && !endBookingCalled) {
             if (ConnectivityUtils.getInstance().checkInternet(context)) {
