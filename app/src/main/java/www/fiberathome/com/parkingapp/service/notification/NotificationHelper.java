@@ -24,10 +24,8 @@ class NotificationHelper extends ContextWrapper {
     public NotificationHelper(Context base, String ended) {
         super(base);
         context = base;
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            createChannel();
-            this.ended = ended;
-//        }
+        createChannel();
+        this.ended = ended;
     }
 
     private void createChannel() {
@@ -57,14 +55,14 @@ class NotificationHelper extends ContextWrapper {
     public NotificationCompat.Builder getChannelNotification() {
         if (ended != null) {
             if (ended.equalsIgnoreCase("Book Time Up")) {
-//               closeBooking();
+                //closeBooking();
             }
 
             ApplicationUtils.startBookingTrackService(context);
 
             return new NotificationCompat.Builder(getApplicationContext(), channelID)
                     .setContentTitle("Booking Scheduled Alert")
-//                    .setContentText(ended)
+                    //.setContentText(ended)
                     .setContentText("Booked time will start shortly")
                     .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)
                     .setSmallIcon(R.mipmap.ic_launcher);

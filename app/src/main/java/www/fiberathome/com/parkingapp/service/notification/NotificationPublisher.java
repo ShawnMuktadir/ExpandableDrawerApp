@@ -14,13 +14,12 @@ public class NotificationPublisher extends BroadcastReceiver {
         intent.getStringExtra("ended");
         intent.getStringExtra("Started");
         NotificationHelper notificationHelper;
-       if(intent.getStringExtra("Started")!=null) {
+        if (intent.getStringExtra("Started") != null) {
             notificationHelper = new NotificationHelper(context, intent.getStringExtra("Started"));
-       }
-       else {
+        } else {
 
             notificationHelper = new NotificationHelper(context, intent.getStringExtra("ended"));
-       }
+        }
 
         NotificationCompat.Builder nb = notificationHelper.getChannelNotification();
         notificationHelper.getManager().notify(1, nb.build());

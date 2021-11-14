@@ -109,8 +109,8 @@ public class Preferences {
         bookedPlace.setPlaceId(sharedPreferences.getString("placeId", ""));
         bookedPlace.setReservation(sharedPreferences.getString("reservation", ""));
         bookedPlace.setTicketSpotId(sharedPreferences.getString("ticketSpotId", ""));
-        double lat = Double.parseDouble(Objects.requireNonNull(sharedPreferences.getString("lat", "0")));
-        double lon = Double.parseDouble(Objects.requireNonNull(sharedPreferences.getString("lon", "0")));
+        double lat = Double.parseDouble(sharedPreferences.getString("lat", "0"));
+        double lon = Double.parseDouble(sharedPreferences.getString("lon", "0"));
         bookedPlace.setLat(lat);
         bookedPlace.setLon(lon);
         bookedPlace.setDepartedDate(sharedPreferences.getLong("departedDate", 0));

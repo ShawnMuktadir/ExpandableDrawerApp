@@ -49,6 +49,7 @@ import www.fiberathome.com.parkingapp.model.response.booking.ReservationResponse
 import www.fiberathome.com.parkingapp.model.response.booking.TimeSlotResponse;
 import www.fiberathome.com.parkingapp.ui.booking.PaymentFragment;
 import www.fiberathome.com.parkingapp.ui.booking.helper.DialogHelper;
+import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DateTimeUtils;
@@ -67,23 +68,27 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
     public DialogHelper.PayBtnClickListener payBtnClickListener;
     public long arrived, departure, difference;
 
-    private Context context;
+    private HomeActivity context;
+
     private Date arrivedDate;
     private Date departedDate;
+
     private boolean setArrivedDate = false;
     private boolean more = false;
-    private FragmentChangeListener listener;
+
     private double lat;
     private double lon;
+
     private String route;
     private String parkingSlotCount;
-    private final List<www.fiberathome.com.parkingapp.model.Spinner> departureTimeDataList = new ArrayList<>();
-    private List<List<String>> sensorAreaStatusList = new ArrayList<>();
-
     private String time = "";
     private String timeValue = "";
 
+    private final List<www.fiberathome.com.parkingapp.model.Spinner> departureTimeDataList = new ArrayList<>();
+    private List<List<String>> sensorAreaStatusList = new ArrayList<>();
+
     FragmentScheduleBinding binding;
+    private FragmentChangeListener listener;
 
     public ScheduleFragment() {
         // Required empty public constructor
@@ -112,10 +117,11 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
         super.onViewCreated(view, savedInstanceState);
 
         if (isAdded()) {
-            context = getActivity();
+            context = (HomeActivity) getActivity();
             binding.textViewCurrentDate.setText(DateTimeUtils.getInstance().getCurrentDayTime());
             listener = (FragmentChangeListener) getActivity();
             payBtnClickListener = this;
+
             Date currentTime = Calendar.getInstance().getTime();
             //add 30 minutes to date
             Date mFutureTime = new Date(); // Instantiate a Date object
@@ -226,10 +232,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
     public boolean onBackPressed() {
         if (isGPSEnabled()) {
             if (getActivity() != null) {
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.nav_host_fragment, HomeFragment.newInstance())
-                        .addToBackStack(null)
-                        .commit();
+                listener.fragmentChange(HomeFragment.newInstance());
             } else {
                 ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_gps));
             }
@@ -443,11 +446,11 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                 android.R.layout.simple_spinner_item,
                 departureTimeDataList);
 
-       try{
-           departure = (long) (departureTimeDataList.get(0).getTimeValue() * 3600000);
-       }catch (Exception e){
-           e.getCause();
-       }
+        try {
+            departure = (long) (departureTimeDataList.get(0).getTimeValue() * 3600000);
+        } catch (Exception e) {
+            e.getCause();
+        }
         binding.spinnerDepartureTime.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
