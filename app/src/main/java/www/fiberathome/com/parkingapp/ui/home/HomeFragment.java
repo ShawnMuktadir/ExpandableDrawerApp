@@ -414,6 +414,249 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         mMap.setOnMarkerClickListener(this);
     }
 
+    @Override
+    public void onStart() {
+        Timber.e("onStart called");
+        super.onStart();
+        bookedPlace = Preferences.getInstance(context).getBooked();
+        isBooked = Preferences.getInstance(context).getBooked().getIsBooked();
+        if (isBooked) {
+            ApplicationUtils.startBookingTrackService(context);
+        } else {
+            ApplicationUtils.stopBookingTrackService(context);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        Timber.e("onResume called");
+        super.onResume();
+        hideLoading();
+        bookedPlace = Preferences.getInstance(context).getBooked();
+        isBooked = Preferences.getInstance(context).getBooked().getIsBooked();
+        if (fusedLocationProviderClient == null) {
+            setupLocationBuilder();
+        }
+        if (Preferences.getInstance(context).isBookingCancelled) {
+            Preferences.getInstance(context).isBookingCancelled = false;
+            commonBackOperation();
+        }
+
+        if (isBooked) {
+            binding.fabGetDirection.setVisibility(View.VISIBLE);
+        }
+        if (isAdded())
+            setListeners();
+    }
+
+    @Override
+    public void onPause() {
+        Timber.e("onPause called");
+        super.onPause();
+        hideLoading();
+    }
+
+    @Override
+    public void onStop() {
+        Timber.e("onStop called");
+        if (fusedLocationProviderClient != null)
+            fusedLocationProviderClient.removeLocationUpdates(locationCallback);
+        super.onStop();
+    }
+
+    @Override
+    public void onDestroy() {
+        Timber.e("onDestroy called");
+        super.onDestroy();
+        hideLoading();
+    }
+
+    @Override
+    public boolean onMarkerClick(@NonNull Marker marker) {
+        if (mMap != null) {
+            if (markerTagObj != null) {
+                if (marker.getTag() != null) {
+                    SensorArea tempMarkerTagObj = (SensorArea) marker.getTag();
+                    if (!markerTagObj.getPlaceId().equalsIgnoreCase(tempMarkerTagObj.getPlaceId())) {
+                        markerTagObj = tempMarkerTagObj;
+                        if (isRouteDrawn == 0) {
+                            markerParkingSetup(markerTagObj, marker);
+                        } else {
+                            showParkingSpotChangeDialog(markerTagObj, marker);
+                        }
+                    }
+                }
+
+            } else {
+                if (marker.getTag() != null) {
+                    markerTagObj = (SensorArea) marker.getTag();
+                    if (isRouteDrawn == 0) {
+                        markerParkingSetup(markerTagObj, marker);
+                    } else {
+                        showParkingSpotChangeDialog(markerTagObj, marker);
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == AppConstants.GPS_REQUEST && resultCode == RESULT_OK) {
+            isGPS = true;// flag maintain before get location
+        }
+
+        if (requestCode == GPS_REQUEST_CODE) {
+
+            LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
+
+            boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+            showLoading(context, context.getResources().getString(R.string.enabling_gps));
+
+            new Handler().postDelayed(() -> {
+                hideLoading();
+
+                if (providerEnabled) {
+                    ToastUtils.getInstance().showToastMessage(context,
+                            context.getResources().getString(R.string.gps_enabled));
+                    Timber.e("providerEnabled HomeFragment check called");
+
+                    supportMapFragment = SupportMapFragment.newInstance();
+
+                    if (context != null) {
+                        FragmentTransaction ft = context.getSupportFragmentManager().beginTransaction().
+                                replace(R.id.map, supportMapFragment);
+                        ft.commit();
+                        supportMapFragment.getMapAsync(HomeFragment.this);
+                        ApplicationUtils.reLoadFragment(getParentFragmentManager(), HomeFragment.this);
+                    } else {
+                        ToastUtils.getInstance().showToastMessage(context, "Enable your Gps Location");
+                    }
+
+                    new GpsUtils(context).turnGPSOn(isGPSEnable -> {
+                        // turn on GPS
+                        isGPS = isGPSEnable;
+                    });
+
+                    if ((ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                            PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context,
+                            Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+                        requestPermissions(new String[]{
+                                Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+                    }
+                } else {
+                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.gps_network_not_enabled));
+                }
+            }, 6000);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Timber.d("onRequestPermissionsResult");
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            Timber.d("onRequestPermissionsResult: First time evoked");
+
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Showing the toast message
+                Timber.d("onRequestPermissionResult: on requestPermission if-if");
+
+                if (isLocationEnabled(context)) {
+                    supportMapFragment.getMapAsync(this);
+                }
+            } else if (grantResults.length == FIRST_TIME_INSTALLED && context != null) {
+                if ((ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                        ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+                    requestPermissions(new String[]{
+                            Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+                }
+            }
+        }
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        return false;
+    }
+
+    public void onLocationChanged(@NonNull Location location) {
+        currentLocation = location;
+        if (onConnectedLocation != null) {
+            myLocationChangedDistance = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), location.getLatitude(), location.getLongitude()) * 1000;
+        }
+        onConnectedLocation = location;
+        SharedData.getInstance().setOnConnectedLocation(location);
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        if (currentLocationMarker != null) {
+            currentLocationMarker.remove();
+        }
+        currentLocationMarker = mMap.addMarker(new MarkerOptions().position(latLng)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_car_running))
+                .title("My Location")
+                .rotation(location.getBearing())
+                .flat(false)
+                .zIndex(1)
+                .anchor(0.5f, 0.5f));
+        if (mMap != null) {
+            if (Preferences.getInstance(context).getBooked() != null && Preferences.getInstance(context).getBooked().getIsBooked()) {
+                if (parkingSpotLatLng != null) {
+                    double distanceForCount = calculateDistance(parkingSpotLatLng.latitude, parkingSpotLatLng.longitude,
+                            Preferences.getInstance(context).getBooked().getLat(),
+                            Preferences.getInstance(context).getBooked().getLon());
+                    if (distanceForCount < 0.001) {
+                        checkParkingSpotDistance(latLng, new LatLng(Preferences.getInstance(context).getBooked().getLat(),
+                                Preferences.getInstance(context).getBooked().getLon()));
+                    }
+                } else {
+                    checkParkingSpotDistance(latLng, new LatLng(Preferences.getInstance(context).getBooked().getLat(),
+                            Preferences.getInstance(context).getBooked().getLon()));
+                }
+            }
+        }
+
+        String origin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
+
+        try {
+            if (isRouteDrawn == 1) {
+                if (oldDestination != null) {
+                    if (previousOrigin != null) {
+                        if (!oldDestination.isEmpty() && onConnectedLocation != null) {
+                            String[] latlng = previousOrigin.split(",");
+                            String[] latlng2 = oldDestination.split(",");
+                            if (!oldDestination.equals("")) {
+                                double lat = MathUtils.getInstance().convertToDouble(latlng[0].trim());
+                                double lon = MathUtils.getInstance().convertToDouble(latlng[1].trim());
+                                double lat2 = MathUtils.getInstance().convertToDouble(latlng2[0].trim());
+                                double lon2 = MathUtils.getInstance().convertToDouble(latlng2[1].trim());
+                                double distanceMoved = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), lat, lon) * 1000;
+                                double distanceFromDestination = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), lat2, lon2) * 1000;
+                                if (distanceMoved >= 100) {
+                                    reDrawRoute(origin);
+                                    previousOrigin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
+                                } else if ((distanceFromDestination <= 20 && distanceFromDestination >= 10) && distanceMoved >= 9) {
+                                    reDrawRoute(origin);
+                                    previousOrigin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
+                                }
+                            } else {
+                                previousOrigin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
+                            }
+                        }
+                    } else {
+                        previousOrigin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
+                    }
+                }
+            }
+        } catch (JsonSyntaxException e) {
+            e.getCause();
+        }
+    }
+
     private void setupLocationBuilder() {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -482,7 +725,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         return distance;
     }
 
-
     private void toolbarAnimVisibility(View view, boolean show) {
         Transition transition = new Fade();
         transition.setDuration(600);
@@ -490,40 +732,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         View toolbar = context.findViewById(R.id.toolbar);
         TransitionManager.beginDelayedTransition((ViewGroup) view, transition);
         toolbar.setVisibility(show ? View.VISIBLE : View.GONE);
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    @Override
-    public boolean onMarkerClick(@NonNull Marker marker) {
-
-        if (mMap != null) {
-            if (markerTagObj != null) {
-                if (marker.getTag() != null) {
-                    SensorArea tempMarkerTagObj = (SensorArea) marker.getTag();
-                    if (!markerTagObj.getPlaceId().equalsIgnoreCase(tempMarkerTagObj.getPlaceId())) {
-                        markerTagObj = tempMarkerTagObj;
-                        if (isRouteDrawn == 0) {
-                            markerParkingSetup(markerTagObj, marker);
-                        } else {
-                            showParkingSpotChangeDialog(markerTagObj, marker);
-                        }
-                    }
-                }
-
-            } else {
-                if (marker.getTag() != null) {
-                    markerTagObj = (SensorArea) marker.getTag();
-                    if (isRouteDrawn == 0) {
-                        markerParkingSetup(markerTagObj, marker);
-                    } else {
-                        showParkingSpotChangeDialog(markerTagObj, marker);
-                    }
-                }
-            }
-        }
-
-
-        return true;
     }
 
     private void showParkingSpotChangeDialog(SensorArea mMarkerTagObj, Marker mMarker) {
@@ -645,79 +853,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
     }
 
-
-    public void onLocationChanged(@NonNull Location location) {
-        currentLocation = location;
-        if (onConnectedLocation != null) {
-            myLocationChangedDistance = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), location.getLatitude(), location.getLongitude()) * 1000;
-        }
-        onConnectedLocation = location;
-        SharedData.getInstance().setOnConnectedLocation(location);
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        if (currentLocationMarker != null) {
-            currentLocationMarker.remove();
-        }
-        currentLocationMarker = mMap.addMarker(new MarkerOptions().position(latLng)
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_car_running))
-                .title("My Location")
-                .rotation(location.getBearing())
-                .flat(false)
-                .zIndex(1)
-                .anchor(0.5f, 0.5f));
-        if (mMap != null) {
-            if (Preferences.getInstance(context).getBooked() != null && Preferences.getInstance(context).getBooked().getIsBooked()) {
-                if (parkingSpotLatLng != null) {
-                    double distanceForCount = calculateDistance(parkingSpotLatLng.latitude, parkingSpotLatLng.longitude,
-                            Preferences.getInstance(context).getBooked().getLat(),
-                            Preferences.getInstance(context).getBooked().getLon());
-                    if (distanceForCount < 0.001) {
-                        checkParkingSpotDistance(latLng, new LatLng(Preferences.getInstance(context).getBooked().getLat(),
-                                Preferences.getInstance(context).getBooked().getLon()));
-                    }
-                } else {
-                    checkParkingSpotDistance(latLng, new LatLng(Preferences.getInstance(context).getBooked().getLat(),
-                            Preferences.getInstance(context).getBooked().getLon()));
-                }
-            }
-        }
-
-        String origin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
-
-        try {
-            if (isRouteDrawn == 1) {
-                if (oldDestination != null) {
-                    if (previousOrigin != null) {
-                        if (!oldDestination.isEmpty() && onConnectedLocation != null) {
-                            String[] latlng = previousOrigin.split(",");
-                            String[] latlng2 = oldDestination.split(",");
-                            if (!oldDestination.equals("")) {
-                                double lat = MathUtils.getInstance().convertToDouble(latlng[0].trim());
-                                double lon = MathUtils.getInstance().convertToDouble(latlng[1].trim());
-                                double lat2 = MathUtils.getInstance().convertToDouble(latlng2[0].trim());
-                                double lon2 = MathUtils.getInstance().convertToDouble(latlng2[1].trim());
-                                double distanceMoved = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), lat, lon) * 1000;
-                                double distanceFromDestination = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), lat2, lon2) * 1000;
-                                if (distanceMoved >= 100) {
-                                    reDrawRoute(origin);
-                                    previousOrigin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
-                                } else if ((distanceFromDestination <= 20 && distanceFromDestination >= 10) && distanceMoved >= 9) {
-                                    reDrawRoute(origin);
-                                    previousOrigin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
-                                }
-                            } else {
-                                previousOrigin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
-                            }
-                        }
-                    } else {
-                        previousOrigin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
-                    }
-                }
-            }
-        } catch (JsonSyntaxException e) {
-            e.getCause();
-        }
-    }
-
     private void setCircleOnLocation(LatLng latLng) {
         circle = mMap.addCircle(
                 new CircleOptions()
@@ -760,68 +895,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             e.printStackTrace();
             hideLoading();
         }
-    }
-
-    @Override
-    public void onStart() {
-        Timber.e("onStart called");
-        super.onStart();
-        bookedPlace = Preferences.getInstance(context).getBooked();
-        isBooked = Preferences.getInstance(context).getBooked().getIsBooked();
-        if (isBooked) {
-            ApplicationUtils.startBookingTrackService(context);
-        } else {
-            ApplicationUtils.stopBookingTrackService(context);
-        }
-    }
-
-    @Override
-    public void onResume() {
-        Timber.e("onResume called");
-        super.onResume();
-        hideLoading();
-        bookedPlace = Preferences.getInstance(context).getBooked();
-        isBooked = Preferences.getInstance(context).getBooked().getIsBooked();
-        if (fusedLocationProviderClient == null) {
-            setupLocationBuilder();
-        }
-        if (Preferences.getInstance(context).isBookingCancelled) {
-            Preferences.getInstance(context).isBookingCancelled = false;
-            commonBackOperation();
-        }
-
-        if (isBooked) {
-            binding.fabGetDirection.setVisibility(View.VISIBLE);
-        }
-        if (isAdded())
-            setListeners();
-    }
-
-    @Override
-    public void onPause() {
-        Timber.e("onPause called");
-        super.onPause();
-        hideLoading();
-    }
-
-    @Override
-    public void onStop() {
-        Timber.e("onStop called");
-        if (fusedLocationProviderClient != null)
-            fusedLocationProviderClient.removeLocationUpdates(locationCallback);
-        super.onStop();
-    }
-
-    @Override
-    public void onDestroy() {
-        Timber.e("onDestroy called");
-        super.onDestroy();
-        hideLoading();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
     }
 
     private void checkParkingSpotDistance(LatLng car, LatLng spot) {
@@ -899,59 +972,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == AppConstants.GPS_REQUEST && resultCode == RESULT_OK) {
-            isGPS = true;// flag maintain before get location
-        }
-
-        if (requestCode == GPS_REQUEST_CODE) {
-
-            LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-
-            boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-            showLoading(context, context.getResources().getString(R.string.enabling_gps));
-
-            new Handler().postDelayed(() -> {
-                hideLoading();
-
-                if (providerEnabled) {
-                    ToastUtils.getInstance().showToastMessage(context,
-                            context.getResources().getString(R.string.gps_enabled));
-                    Timber.e("providerEnabled HomeFragment check called");
-
-                    supportMapFragment = SupportMapFragment.newInstance();
-
-                    if (context != null) {
-                        FragmentTransaction ft = context.getSupportFragmentManager().beginTransaction().
-                                replace(R.id.map, supportMapFragment);
-                        ft.commit();
-                        supportMapFragment.getMapAsync(HomeFragment.this);
-                        ApplicationUtils.reLoadFragment(getParentFragmentManager(), HomeFragment.this);
-                    } else {
-                        ToastUtils.getInstance().showToastMessage(context, "Enable your Gps Location");
-                    }
-
-                    new GpsUtils(context).turnGPSOn(isGPSEnable -> {
-                        // turn on GPS
-                        isGPS = isGPSEnable;
-                    });
-
-                    if ((ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) !=
-                            PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context,
-                            Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
-                        requestPermissions(new String[]{
-                                Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
-                    }
-                } else {
-                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.gps_network_not_enabled));
-                }
-            }, 6000);
-        }
-    }
-
     private void plotSearchAddressData(String areaName, String placeId, LatLng parkingSpotLatLng, String searchPlaceCount) {
         binding.buttonSearch.setVisibility(View.GONE);
         binding.linearLayoutBottom.setVisibility(View.VISIBLE);
@@ -1020,36 +1040,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         } else {
             ToastUtils.getInstance().showToastMessage(context, "Location cannot be identified!!!");
         }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        Timber.d("onRequestPermissionsResult");
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
-            Timber.d("onRequestPermissionsResult: First time evoked");
-
-            if (grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Showing the toast message
-                Timber.d("onRequestPermissionResult: on requestPermission if-if");
-
-                if (isLocationEnabled(context)) {
-                    supportMapFragment.getMapAsync(this);
-                }
-            } else if (grantResults.length == FIRST_TIME_INSTALLED && context != null) {
-                if ((ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                        ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
-                    requestPermissions(new String[]{
-                            Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
-                }
-            }
-        }
-    }
-
-    @Override
-    public boolean onBackPressed() {
-        return false;
     }
 
     @NonNull
