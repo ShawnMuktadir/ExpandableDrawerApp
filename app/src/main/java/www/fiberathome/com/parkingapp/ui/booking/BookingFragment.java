@@ -122,41 +122,6 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
     }
 
     @Override
-    public void onStart() {
-        Timber.e("onStart called");
-        super.onStart();
-    }
-
-    @Override
-    public void onResume() {
-        Timber.e("onResume called");
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        Timber.e("onPause called");
-        super.onPause();
-    }
-
-    @Override
-    public void onStop() {
-        Timber.e("onStop called");
-        super.onStop();
-    }
-
-    @Override
-    public void onDestroy() {
-        Timber.e("onDestroy called");
-        super.onDestroy();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-    }
-
-    @Override
     public boolean onBackPressed() {
         if (isGPSEnabled()) {
             if (getActivity() != null) {

@@ -104,7 +104,6 @@ import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.AppConstants;
-import www.fiberathome.com.parkingapp.model.data.Constants;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.response.BaseResponse;
@@ -118,7 +117,6 @@ import www.fiberathome.com.parkingapp.model.response.search.SearchVisitorData;
 import www.fiberathome.com.parkingapp.model.response.search.SelectedPlace;
 import www.fiberathome.com.parkingapp.model.response.sensors.SensorArea;
 import www.fiberathome.com.parkingapp.model.response.sensors.SensorStatus;
-import www.fiberathome.com.parkingapp.service.booking_service.BookingService;
 import www.fiberathome.com.parkingapp.service.geoFenceInterface.IOnLoadLocationListener;
 import www.fiberathome.com.parkingapp.service.geoFenceInterface.MyLatLng;
 import www.fiberathome.com.parkingapp.service.googleService.directionModules.DirectionFinder;
@@ -201,6 +199,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private String sensorAreaStatusAreaId, sensorAreaStatusTotalSensorCount, sensorAreaStatusTotalOccupied;
     private String destination = null;
     private double lat, lng, endLat, endLng, fetchDistance;
+    private String argPlaceId;
 
     private boolean isInAreaEnabled = false;
     private boolean parkingAreaChanged = false;
@@ -234,7 +233,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             }
         }
     };
-    private String argPlaceId;
 
     public HomeFragment() {
 
@@ -409,7 +407,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         try {
             setupLocationBuilder();
         } catch (Exception e) {
-            e.getCause();
+            Timber.e(e.getCause());
         }
         defaultMapSettings(context, mMap, fusedLocationProviderClient, locationRequest, locationCallback);
 
@@ -496,7 +494,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
-    public boolean onMarkerClick(Marker marker) {
+    public boolean onMarkerClick(@NonNull Marker marker) {
 
         if (mMap != null) {
             if (markerTagObj != null) {
@@ -598,18 +596,18 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
     }
 
-    private void populateNearestPlaceBottomSheet(LatLng latLng, SensorArea SelectedSensorArea) {
+    private void populateNearestPlaceBottomSheet(LatLng latLng, SensorArea selectedSensorArea) {
         try {
             if (onConnectedLocation != null && latLng != null) {
                 bookingSensorsArrayList.clear();
                 parkingSpotLatLng = latLng;
 
                 try {
-                    parkingPlaceId = SelectedSensorArea.getPlaceId();
-                    parkingAreaPlaceName = SelectedSensorArea.getParkingArea();
+                    parkingPlaceId = selectedSensorArea.getPlaceId();
+                    parkingAreaPlaceName = selectedSensorArea.getParkingArea();
 
                     parkingAreaPlacedId = parkingPlaceId;
-                    parkingNumberOfIndividualMarker = SelectedSensorArea.getCount();
+                    parkingNumberOfIndividualMarker = selectedSensorArea.getCount();
                     binding.textViewParkingAreaCount.setText(parkingNumberOfIndividualMarker);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -690,13 +688,13 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 if (oldDestination != null) {
                     if (previousOrigin != null) {
                         if (!oldDestination.isEmpty() && onConnectedLocation != null) {
-                            String[] latlong = previousOrigin.split(",");
-                            String[] latlong2 = oldDestination.split(",");
+                            String[] latlng = previousOrigin.split(",");
+                            String[] latlng2 = oldDestination.split(",");
                             if (!oldDestination.equals("")) {
-                                double lat = MathUtils.getInstance().convertToDouble(latlong[0].trim());
-                                double lon = MathUtils.getInstance().convertToDouble(latlong[1].trim());
-                                double lat2 = MathUtils.getInstance().convertToDouble(latlong2[0].trim());
-                                double lon2 = MathUtils.getInstance().convertToDouble(latlong2[1].trim());
+                                double lat = MathUtils.getInstance().convertToDouble(latlng[0].trim());
+                                double lon = MathUtils.getInstance().convertToDouble(latlng[1].trim());
+                                double lat2 = MathUtils.getInstance().convertToDouble(latlng2[0].trim());
+                                double lon2 = MathUtils.getInstance().convertToDouble(latlng2[1].trim());
                                 double distanceMoved = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), lat, lon) * 1000;
                                 double distanceFromDestination = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(), lat2, lon2) * 1000;
                                 if (distanceMoved >= 100) {
@@ -771,11 +769,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         bookedPlace = Preferences.getInstance(context).getBooked();
         isBooked = Preferences.getInstance(context).getBooked().getIsBooked();
         if (isBooked) {
-            startBookingTrackService();
+            ApplicationUtils.startBookingTrackService(context);
         } else {
-            stopBookingTrackService();
+            ApplicationUtils.stopBookingTrackService(context);
         }
-
     }
 
     @Override
@@ -825,20 +822,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-    }
-
-    private void startBookingTrackService() {
-        if (!ApplicationUtils.isLocationTrackingServiceRunning(context)) {
-            Intent intent = new Intent(context, BookingService.class);
-            intent.setAction(Constants.START_BOOKING_TRACKING);
-            context.startService(intent);
-        }
-    }
-
-    private void stopBookingTrackService() {
-        Intent intent = new Intent(context, BookingService.class);
-        intent.setAction(Constants.STOP_BOOKING_TRACKING);
-        context.startService(intent);
     }
 
     private void checkParkingSpotDistance(LatLng car, LatLng spot) {
@@ -1823,7 +1806,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 hideLoading();
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
-                        stopBookingTrackService();
+                        ApplicationUtils.stopBookingTrackService(context);
                         getBookingParkStatus(Preferences.getInstance(context).getUser().getMobileNo());
                     }
                 }

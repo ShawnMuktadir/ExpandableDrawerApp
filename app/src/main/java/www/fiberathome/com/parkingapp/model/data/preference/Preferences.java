@@ -7,6 +7,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.util.Objects;
+
 import www.fiberathome.com.parkingapp.model.BookedPlace;
 import www.fiberathome.com.parkingapp.model.data.Constants;
 import www.fiberathome.com.parkingapp.model.user.User;
@@ -106,8 +108,9 @@ public class Preferences {
         bookedPlace.setRoute(sharedPreferences.getString("route", ""));
         bookedPlace.setPlaceId(sharedPreferences.getString("placeId", ""));
         bookedPlace.setReservation(sharedPreferences.getString("reservation", ""));
-        double lat = Double.parseDouble(sharedPreferences.getString("lat", "0"));
-        double lon = Double.parseDouble(sharedPreferences.getString("lon", "0"));
+        bookedPlace.setTicketSpotId(sharedPreferences.getString("ticketSpotId", ""));
+        double lat = Double.parseDouble(Objects.requireNonNull(sharedPreferences.getString("lat", "0")));
+        double lon = Double.parseDouble(Objects.requireNonNull(sharedPreferences.getString("lon", "0")));
         bookedPlace.setLat(lat);
         bookedPlace.setLon(lon);
         bookedPlace.setDepartedDate(sharedPreferences.getLong("departedDate", 0));

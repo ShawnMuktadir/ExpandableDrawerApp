@@ -19,7 +19,7 @@ public class BookedPlace implements Parcelable {
     private long departedDate;
     private long arriveDate;
     private float bill;
-
+    private String ticketSpotId;
 
     public BookedPlace() {
     }
@@ -126,6 +126,14 @@ public class BookedPlace implements Parcelable {
 
     public void setBill(float bill) {
         this.bill = bill;
+    }
+
+    public String getTicketSpotId() {
+        return ticketSpotId;
+    }
+
+    public void setTicketSpotId(String ticketSpotId) {
+        this.ticketSpotId = ticketSpotId;
     }
 
     @Override

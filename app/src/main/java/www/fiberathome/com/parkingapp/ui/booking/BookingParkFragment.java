@@ -5,9 +5,7 @@ import static www.fiberathome.com.parkingapp.utils.GoogleMapHelper.defaultMapSet
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.ActivityManager;
 import android.app.Dialog;
-import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -74,6 +72,7 @@ import www.fiberathome.com.parkingapp.model.response.booking.CloseReservationRes
 import www.fiberathome.com.parkingapp.service.booking_service.BookingService;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
+import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.MathUtils;
@@ -596,31 +595,14 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         }
     }
 
-    private boolean isLocationTrackingServiceRunning() {
-        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        if (activityManager != null) {
-            for (ActivityManager.RunningServiceInfo serviceInfo : activityManager.getRunningServices(Integer.MAX_VALUE)) {
-                String a = Service.class.getName();
-                serviceInfo.service.getClassName();
-                if (serviceInfo.foreground) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        return false;
-    }
-
     private void stopBookingTrackService() {
-        //if (isLocationTrackingServiceRunning()) {
         Intent intent = new Intent(context, BookingService.class);
         intent.setAction(Constants.STOP_BOOKING_TRACKING);
         context.startService(intent);
-        //}
     }
 
     private void startBookingExceedService(long departureDate) {
-        if (!isLocationTrackingServiceRunning()) {
+        if (!ApplicationUtils.isLocationTrackingServiceRunning(context)) {
             Intent intent = new Intent(context, BookingService.class);
             intent.putExtra("departureDate", departureDate);
             intent.setAction(Constants.BOOKING_EXCEED_CHECK);

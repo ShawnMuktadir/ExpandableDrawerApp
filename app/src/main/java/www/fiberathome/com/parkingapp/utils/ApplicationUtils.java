@@ -27,7 +27,9 @@ import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.model.data.Constants;
 import www.fiberathome.com.parkingapp.model.data.StaticData;
+import www.fiberathome.com.parkingapp.service.booking_service.BookingService;
 import www.fiberathome.com.parkingapp.utils.internet.ConnectivityInterceptor;
 
 @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -180,5 +182,19 @@ public class ApplicationUtils {
             return false;
         }
         return false;
+    }
+
+    public static void startBookingTrackService(Context context) {
+        if (!isLocationTrackingServiceRunning(context)) {
+            Intent intent = new Intent(context, BookingService.class);
+            intent.setAction(Constants.START_BOOKING_TRACKING);
+            context.startService(intent);
+        }
+    }
+
+    public static void stopBookingTrackService(Context context) {
+        Intent intent = new Intent(context, BookingService.class);
+        intent.setAction(Constants.STOP_BOOKING_TRACKING);
+        context.startService(intent);
     }
 }
