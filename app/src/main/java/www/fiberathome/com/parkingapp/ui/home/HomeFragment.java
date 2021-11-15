@@ -711,12 +711,12 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             parkingAreaChanged = false;
         } else {
             if (isBooked && bookedPlace != null) {
+                String mDestination = "" + parkingSpotLatLng.latitude + ", " + parkingSpotLatLng.longitude;
                 String bookedDestination = "" + bookedPlace.getLat() + ", " + bookedPlace.getLon();
-                if (!destination.equalsIgnoreCase(bookedDestination)) {
-
+                if (!mDestination.equalsIgnoreCase(bookedDestination)) {
                 }
             } else {
-                parkingAreaChanged = true;
+                Timber.e("else called");
             }
         }
     }
@@ -755,6 +755,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         if (polyline != null) {
                             polyline.remove();
                         }
+                        parkingSpotLatLng = mMarker.getPosition();
                         getDirectionPinMarkerDraw(mMarker.getPosition(), mMarkerTagObj.getPlaceId(), false);
                         String origin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
                         markerParkingSetup(mMarkerTagObj, mMarker);
@@ -787,7 +788,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         previousMarker = marker;
                         removeCircle();
                         marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_gray));
-                        parkingAreaChanged = true;
                         setButtonText(context.getResources().getString(R.string.confirm_booking), context.getResources().getColor(R.color.black));
                         isNotificationSent = false;
                         isInAreaEnabled = false;
@@ -813,6 +813,14 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     private void populateNearestPlaceBottomSheet(LatLng latLng, SensorArea selectedSensorArea) {
         try {
+            double distanceForCount = calculateDistance(parkingSpotLatLng.latitude, parkingSpotLatLng.longitude,
+                    Preferences.getInstance(context).getBooked().getLat(),
+                    Preferences.getInstance(context).getBooked().getLon());
+            if (distanceForCount < 0.001) {
+                parkingAreaChanged = false;
+            } else {
+                parkingAreaChanged = true;
+            }
             if (onConnectedLocation != null && latLng != null) {
                 bookingSensorsArrayList.clear();
                 parkingSpotLatLng = latLng;
@@ -913,9 +921,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 isInAreaEnabled = true;
                 if (isBooked && bookedPlace != null) {
                     destination = "" + bookedPlace.getLat() + ", " + bookedPlace.getLon();
-
                     SensorArea sensorArea = createSensorAreaObj(bookedPlace.getAreaName(), bookedPlace.getPlaceId(), bookedPlace.getLat(), bookedPlace.getLon(), bookedPlace.getParkingSlotCount());
-
                     populateNearestPlaceBottomSheet(new LatLng(bookedPlace.getLat(), bookedPlace.getLon()), sensorArea);
                     setButtonText(context.getResources().getString(R.string.park), context.getResources().getColor(R.color.black));
                 }

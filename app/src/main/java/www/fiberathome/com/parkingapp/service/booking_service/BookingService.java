@@ -109,17 +109,16 @@ public class BookingService extends Service {
     }
 
     private void startBookingTracking() {
-
-        Timber.e("abdur service running");
+        Timber.e("service running");
         if (!isServiceStarted) {
             notificationCaller(Constants.NOTIFICATION_CHANNEL_BOOKING, "Booked for : \n" + Preferences.getInstance(context).getBooked().getAreaName(), 2);
             startForeground(BOOKING_SERVICE_ID, mBuilder.build());
             isServiceStarted = true;
         }
-//        else if (new Date().getTime() >= (Preferences.getInstance(context).getBooked().getArriveDate() - 900000) && !isFifteenMinsRemaining) {
-//            isFifteenMinsRemaining = true;
-//            sendNotification("Booked park", "Booked time is about to begin shortly", false);
-//        }
+        /*else if (new Date().getTime() >= (Preferences.getInstance(context).getBooked().getArriveDate() - 900000) && !isFifteenMinsRemaining) {
+            isFifteenMinsRemaining = true;
+            sendNotification("Booked park", "Booked time is about to begin shortly", false);
+        }*/
         else if (new Date().getTime() >= Preferences.getInstance(context).getBooked().getArriveDate()
                 && new Date().getTime() < Preferences.getInstance(context).getBooked().getDepartedDate() && !isRunning) {
             isRunning = true;
@@ -401,7 +400,6 @@ public class BookingService extends Service {
 
         // try Block
         try {
-
             // parse method is used to parse
             // the text from a string to
             // produce the date
