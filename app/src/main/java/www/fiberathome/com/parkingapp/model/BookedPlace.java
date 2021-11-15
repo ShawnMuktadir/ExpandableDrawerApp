@@ -9,7 +9,6 @@ public class BookedPlace implements Parcelable {
     private double lat;
     private double lon;
     private String bookedUid;
-    private String route;
     private String areaName;
     private String parkingSlotCount;
     private boolean isBooked = false;
@@ -46,14 +45,6 @@ public class BookedPlace implements Parcelable {
 
     public void setBookedUid(String bookedUid) {
         this.bookedUid = bookedUid;
-    }
-
-    public String getRoute() {
-        return route;
-    }
-
-    public void setRoute(String route) {
-        this.route = route;
     }
 
     public String getAreaName() {
@@ -146,7 +137,6 @@ public class BookedPlace implements Parcelable {
         dest.writeDouble(this.lat);
         dest.writeDouble(this.lon);
         dest.writeString(this.bookedUid);
-        dest.writeString(this.route);
         dest.writeString(this.areaName);
         dest.writeString(this.parkingSlotCount);
         dest.writeString(this.reservation);
@@ -161,7 +151,6 @@ public class BookedPlace implements Parcelable {
         this.lat = source.readDouble();
         this.lon = source.readDouble();
         this.bookedUid = source.readString();
-        this.route = source.readString();
         this.areaName = source.readString();
         this.parkingSlotCount = source.readString();
         this.isBooked = source.readByte() != 0;
@@ -176,7 +165,6 @@ public class BookedPlace implements Parcelable {
         this.lat = in.readDouble();
         this.lon = in.readDouble();
         this.bookedUid = in.readString();
-        this.route = in.readString();
         this.areaName = in.readString();
         this.parkingSlotCount = in.readString();
         this.isBooked = in.readByte() != 0;

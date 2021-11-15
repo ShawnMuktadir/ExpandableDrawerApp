@@ -60,7 +60,7 @@ import www.fiberathome.com.parkingapp.utils.ToastUtils;
 public class PaymentFragment extends BaseFragment implements IOnBackPressListener {
 
     static Date arrivedDate, departureDate;
-    static String arrivedTime, departureTime, timeDifference, placeId, route, areaName, parkingSlotCount;
+    static String arrivedTime, departureTime, timeDifference, placeId, areaName, parkingSlotCount;
     static long differenceUnit;
     static double lat, lon;
 
@@ -77,7 +77,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
 
     public static PaymentFragment newInstance(Date mArrivedDate, Date mDepartedDate, String mArrivedTime,
                                               String mDepartureTime, String mTimeDifference, long mDifferenceUnit,
-                                              String mMarkerUid, double mLat, double mLon, String mRoute, String mAreaName,
+                                              String mMarkerUid, double mLat, double mLon, String mAreaName,
                                               String mParkingSlotCount) {
         arrivedDate = mArrivedDate;
         departureDate = mDepartedDate;
@@ -88,7 +88,6 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
         placeId = mMarkerUid;
         lat = mLat;
         lon = mLon;
-        route = mRoute;
         areaName = mAreaName;
         parkingSlotCount = mParkingSlotCount;
         return new PaymentFragment();
@@ -200,7 +199,6 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                         bookedPlace.setBill((float) mNetBill);
                         bookedPlace.setLat(lat);
                         bookedPlace.setLon(lon);
-                        bookedPlace.setRoute(route);
                         bookedPlace.setAreaName(areaName);
                         bookedPlace.setParkingSlotCount(parkingSlotCount);
                         bookedPlace.setDepartedDate(departureDate.getTime());
@@ -276,7 +274,6 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                             bookedPlace.setBookedUid(response.body().getUid());
                             bookedPlace.setLat(lat);
                             bookedPlace.setLon(lon);
-                            bookedPlace.setRoute(route);
                             bookedPlace.setAreaName(areaName);
                             bookedPlace.setParkingSlotCount(parkingSlotCount);
                             bookedPlace.setDepartedDate(departureDate.getTime());

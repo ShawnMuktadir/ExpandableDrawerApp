@@ -79,7 +79,6 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
     private double lat;
     private double lon;
 
-    private String route;
     private String parkingSlotCount;
     private String time = "";
     private String timeValue = "";
@@ -135,7 +134,6 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                 markerUid = getArguments().getString("markerUid");
                 lat = getArguments().getDouble("lat");
                 lon = getArguments().getDouble("long");
-                route = getArguments().getString("route");
                 areaName = getArguments().getString("areaName");
                 parkingSlotCount = getArguments().getString("parkingSlotCount");
                 Timber.e("markerUid -> %s", markerUid);
@@ -374,7 +372,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                         if (!response.body().getError()) {
                             PaymentFragment paymentFragment = PaymentFragment.newInstance(arrivedDate, new Date((departure + arrivedDate.getTime())), getDate(arrivedDate.getTime()), getDate((departure + arrivedDate.getTime())),
                                     getTimeDifference((departure + arrivedDate.getTime()) - arrivedDate.getTime()),
-                                    (departure + arrivedDate.getTime()) - arrivedDate.getTime(), markerUid, lat, lon, route, areaName, parkingSlotCount);
+                                    (departure + arrivedDate.getTime()) - arrivedDate.getTime(), markerUid, lat, lon, areaName, parkingSlotCount);
                             listener.fragmentChange(paymentFragment);
                         } else {
                             DialogUtils.getInstance().showOnlyMessageDialog(response.body().getMessage(), context);
