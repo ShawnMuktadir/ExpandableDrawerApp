@@ -360,6 +360,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                 ft.replace(R.id.nav_host_fragment, fragment);
                 ft.addToBackStack(null);
                 ft.commit();
+                isTransactionPending = false;
             } else {
                  /*
                  If any transaction is not done because the activity is in background. We set the

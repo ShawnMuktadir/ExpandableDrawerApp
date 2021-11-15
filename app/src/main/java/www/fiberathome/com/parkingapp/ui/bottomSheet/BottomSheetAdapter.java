@@ -69,7 +69,11 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         }
 
         holder.binding.textViewParkingAreaName.setText(bookingSensors.getParkingArea());
-        holder.binding.textViewParkingAreaCount.setText(bookingSensors.getCount());
+        if (bookingSensors.getOccupiedCount() != null) {
+            holder.binding.textViewParkingAreaCount.setText(bookingSensors.getOccupiedCount() + "/" + bookingSensors.getCount());
+        } else {
+            holder.binding.textViewParkingAreaCount.setText(bookingSensors.getCount());
+        }
         holder.binding.textViewParkingDistance.setText(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(bookingSensors.getDistance()) + " km");
         holder.binding.rowFG.setOnClickListener(view -> {
             if (ApplicationUtils.isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {

@@ -27,8 +27,8 @@ public class BookingSensors {
     public BookingSensors() {
     }
 
-
-    public BookingSensors(String parkingArea, double lat, double lng, double distance, String count, String duration, String text, int type, int data, String parkingPlaceId) {
+    public BookingSensors(String parkingArea, double lat, double lng, double distance, String count,
+                          String duration, String text, int type, int data, String parkingPlaceId, String occupiedCount) {
         this.parkingArea = parkingArea;
         this.lat = lat;
         this.lng = lng;
@@ -39,9 +39,11 @@ public class BookingSensors {
         this.type = type;
         this.data = data;
         this.parkingPlaceId = parkingPlaceId;
+        this.occupiedCount = occupiedCount;
     }
 
-    public BookingSensors(String parkingArea, double lat, double lng, double distance, String count, String duration, int type, int data, String parkingPlaceId) {
+    public BookingSensors(String parkingArea, double lat, double lng, double distance, String count,
+                          String duration, int type, int data, String parkingPlaceId, String occupiedCount) {
         this.parkingArea = parkingArea;
         this.lat = lat;
         this.lng = lng;
@@ -51,8 +53,8 @@ public class BookingSensors {
         this.type = type;
         this.data = data;
         this.parkingPlaceId = parkingPlaceId;
+        this.occupiedCount = occupiedCount;
     }
-
 
     public int compareTo(BookingSensors element) {
         int res = 0;
