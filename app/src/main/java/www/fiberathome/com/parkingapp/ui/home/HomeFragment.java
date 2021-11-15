@@ -120,7 +120,7 @@ import www.fiberathome.com.parkingapp.service.geoFenceInterface.IOnLoadLocationL
 import www.fiberathome.com.parkingapp.service.geoFenceInterface.MyLatLng;
 import www.fiberathome.com.parkingapp.service.googleService.directionModules.DirectionFinder;
 import www.fiberathome.com.parkingapp.service.googleService.directionModules.DirectionFinderListener;
-import www.fiberathome.com.parkingapp.service.notification.NotificationPublisher;
+import www.fiberathome.com.parkingapp.service.notification.BookingServiceStarter;
 import www.fiberathome.com.parkingapp.ui.booking.BookingParkFragment;
 import www.fiberathome.com.parkingapp.ui.bottomSheet.BottomSheetAdapter;
 import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
@@ -421,7 +421,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         bookedPlace = Preferences.getInstance(context).getBooked();
         isBooked = Preferences.getInstance(context).getBooked().getIsBooked();
         if (isBooked) {
-            ApplicationUtils.startBookingTrackService(context);
+//            ApplicationUtils.startBookingTrackService(context);
         } else {
             ApplicationUtils.stopBookingTrackService(context);
         }
@@ -2063,7 +2063,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private void startAlarm(Calendar c) {
         Timber.e("startAlarm called");
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(context, NotificationPublisher.class);
+        Intent intent = new Intent(context, BookingServiceStarter.class);
         intent.putExtra("Started", "Booked Time About to start for : \n" + Preferences.getInstance(context).getBooked().getAreaName());
         @SuppressLint("UnspecifiedImmutableFlag") PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, intent, 0);
         if (c.before(Calendar.getInstance())) {
