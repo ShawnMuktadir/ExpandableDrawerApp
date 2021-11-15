@@ -105,18 +105,22 @@ public class BookingService extends Service {
                     break;
             }
         }
-        return super.onStartCommand(intent, flags, startId);
+        return START_REDELIVER_INTENT;
     }
 
     private void startBookingTracking() {
+
+        Timber.e("abdur service running");
         if (!isServiceStarted) {
             notificationCaller(Constants.NOTIFICATION_CHANNEL_BOOKING, "Booked for : \n" + Preferences.getInstance(context).getBooked().getAreaName(), 2);
             startForeground(BOOKING_SERVICE_ID, mBuilder.build());
             isServiceStarted = true;
-        } else if (new Date().getTime() >= (Preferences.getInstance(context).getBooked().getArriveDate() - 900000) && !isFifteenMinsRemaining) {
-            isFifteenMinsRemaining = true;
-            sendNotification("Booked park", "Booked time is about to begin shortly", false);
-        } else if (new Date().getTime() >= Preferences.getInstance(context).getBooked().getArriveDate()
+        }
+//        else if (new Date().getTime() >= (Preferences.getInstance(context).getBooked().getArriveDate() - 900000) && !isFifteenMinsRemaining) {
+//            isFifteenMinsRemaining = true;
+//            sendNotification("Booked park", "Booked time is about to begin shortly", false);
+//        }
+        else if (new Date().getTime() >= Preferences.getInstance(context).getBooked().getArriveDate()
                 && new Date().getTime() < Preferences.getInstance(context).getBooked().getDepartedDate() && !isRunning) {
             isRunning = true;
             findDifference(getDate(new Date().getTime()), getDate(Preferences.getInstance(context).getBooked().getDepartedDate()));
@@ -159,8 +163,10 @@ public class BookingService extends Service {
         mBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
                 .setWhen(System.currentTimeMillis())
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("Booked Time")
+                .setContentTitle("Booked Parking")
                 .setContentText(msg)
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(msg))
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setAutoCancel(true)
@@ -516,5 +522,24 @@ public class BookingService extends Service {
     private void closeBooking() {
         Intent intent = new Intent("booking_ended");
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
+
+    @Override
+    public void onDestroy() {
+        if (Preferences.getInstance(context).getBooked().getIsBooked()) {
+//           Toast.makeText(context, "service restarted", Toast.LENGTH_SHORT).show();
+            Timber.e("abdur service restarted");
+            Intent intent = new Intent(context, BookingService.class);
+            intent.setAction(Constants.START_BOOKING_TRACKING);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(intent);
+            } else {
+                context.startService(intent);
+            }
+        } else {
+//           Toast.makeText(context, "service destroyed", Toast.LENGTH_SHORT).show();
+            Timber.e("abdur service destroyed");
+            super.onDestroy();
+        }
     }
 }

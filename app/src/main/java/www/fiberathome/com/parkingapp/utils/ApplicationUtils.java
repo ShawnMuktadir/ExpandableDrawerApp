@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -188,7 +189,24 @@ public class ApplicationUtils {
         if (!isLocationTrackingServiceRunning(context)) {
             Intent intent = new Intent(context, BookingService.class);
             intent.setAction(Constants.START_BOOKING_TRACKING);
-            context.startService(intent);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(intent);
+            } else {
+                context.startService(intent);
+            }
+        }
+    }
+
+    public static void startBookingExceedService(Context context, long departureDate) {
+        if (!isLocationTrackingServiceRunning(context)) {
+            Intent intent = new Intent(context, BookingService.class);
+            intent.putExtra("departureDate", departureDate);
+            intent.setAction(Constants.BOOKING_EXCEED_CHECK);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(intent);
+            } else {
+                context.startService(intent);
+            }
         }
     }
 

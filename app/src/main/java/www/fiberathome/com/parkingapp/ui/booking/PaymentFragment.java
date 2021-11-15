@@ -48,7 +48,7 @@ import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.booking.ReservationResponse;
-import www.fiberathome.com.parkingapp.service.notification.NotificationPublisher;
+import www.fiberathome.com.parkingapp.service.notification.BookingServiceStarter;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
@@ -322,14 +322,16 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
     private void startAlarm(Calendar c) {
         Timber.e("startAlarm called");
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(context, NotificationPublisher.class);
-        intent.putExtra("Started", "Booked Time About to start for : \n" + Preferences.getInstance(context).getBooked().getAreaName());
+        Intent intent = new Intent(context, BookingServiceStarter.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, intent, 0);
-        if (c.before(Calendar.getInstance())) {
-            c.add(Calendar.DATE, 1);
+
+        if (new Date().getTime() >= (c.getTimeInMillis() - 900000)) {
+            Objects.requireNonNull(alarmManager).setExact(AlarmManager.RTC_WAKEUP,
+                    new Date().getTime() - 2000, pendingIntent);
+        } else {
+            Objects.requireNonNull(alarmManager).setExact(AlarmManager.RTC_WAKEUP,
+                    c.getTimeInMillis() - 900000, pendingIntent);
         }
-        Objects.requireNonNull(alarmManager).setExact(AlarmManager.RTC_WAKEUP,
-                c.getTimeInMillis() - 900000, pendingIntent);
     }
 
     public Calendar convertLongToCalendar(Long source) {

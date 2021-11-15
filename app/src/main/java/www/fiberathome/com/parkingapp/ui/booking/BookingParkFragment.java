@@ -65,11 +65,9 @@ import www.fiberathome.com.parkingapp.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
-import www.fiberathome.com.parkingapp.model.data.Constants;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingParkStatusResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.CloseReservationResponse;
-import www.fiberathome.com.parkingapp.service.booking_service.BookingService;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
@@ -171,7 +169,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                 if (sensors != null) {
                     //from HomeActivity
 
-                    startBookingExceedService(getStringDateToMillis(sensors.getTimeEnd()));
+                    ApplicationUtils.startBookingExceedService(context, getStringDateToMillis(sensors.getTimeEnd()));
                     binding.tvArrivedTime.setText(String.format("Booking Time: %s", sensors.getTimeStart()));
                     binding.tvDepartureTime.setText(String.format("Departure Time: %s", sensors.getTimeEnd()));
                     binding.tvParkingAreaName.setText(sensors.getParkingArea());
@@ -434,7 +432,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                 }
                 mHandler.removeCallbacks(mHandlerTask);
                 sensors = null;
-                stopBookingTrackService();
+                ApplicationUtils.stopBookingTrackService(context);
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         DialogUtils.getInstance().alertDialog(context,
@@ -592,21 +590,6 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         // catch the Exception
         catch (ParseException e) {
             e.printStackTrace();
-        }
-    }
-
-    private void stopBookingTrackService() {
-        Intent intent = new Intent(context, BookingService.class);
-        intent.setAction(Constants.STOP_BOOKING_TRACKING);
-        context.startService(intent);
-    }
-
-    private void startBookingExceedService(long departureDate) {
-        if (!ApplicationUtils.isLocationTrackingServiceRunning(context)) {
-            Intent intent = new Intent(context, BookingService.class);
-            intent.putExtra("departureDate", departureDate);
-            intent.setAction(Constants.BOOKING_EXCEED_CHECK);
-            context.startService(intent);
         }
     }
 }
