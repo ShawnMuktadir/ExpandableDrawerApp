@@ -114,7 +114,6 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
             getWindow().setStatusBarColor(ContextCompat.getColor(context, R.color.updatedColorPrimaryDark));
         }
 
-
         snackbar = Snackbar.make(this.findViewById(android.R.id.content), context.getResources().getString(R.string.connect_to_internet), 86400000);
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         context.registerReceiver(mNetworkDetectReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
@@ -151,9 +150,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
     @Override
     protected void onDestroy() {
         mLocationManager.removeUpdates(this);
-
         context.unregisterReceiver(mNetworkDetectReceiver);
-
         super.onDestroy();
     }
 

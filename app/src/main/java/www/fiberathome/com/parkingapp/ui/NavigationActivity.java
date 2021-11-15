@@ -79,7 +79,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
 
     private Context context;
 
-    ActivityNavigationBinding binding;
+    protected ActivityNavigationBinding binding;
 
     public static Drawable getTintedDrawable(@NonNull Context context, @NonNull Drawable inputDrawable,
                                              @ColorInt int color) {
@@ -104,9 +104,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         drawerLayout = findViewById(R.id.drawer_layout);
-
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 

@@ -2,10 +2,6 @@ package www.fiberathome.com.parkingapp.ui.booking;
 
 import static android.content.Context.LOCATION_SERVICE;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -27,8 +23,6 @@ import com.sslwireless.sslcommerzlibrary.viewmodel.listener.SSLCTransactionRespo
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
@@ -48,10 +42,10 @@ import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.booking.ReservationResponse;
-import www.fiberathome.com.parkingapp.service.notification.BookingServiceStarter;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
+import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
@@ -168,7 +162,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                                 && Preferences.getInstance(context).getBooked().getBill() == Math.round(netBill)
                                 && Preferences.getInstance(context).getBooked().isPaid() && bookedPlace != null) {
                             storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
-                                    getDate(arrivedDate.getTime()), getDate(departureDate.getTime()), placeId);
+                                    ApplicationUtils.getDate(arrivedDate.getTime()), ApplicationUtils.getDate(departureDate.getTime()), placeId);
                         } else {
                             sslPayment(netBill);
                         }
@@ -207,7 +201,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                         Preferences.getInstance(context).setBooked(bookedPlace);
                         if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
                             storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
-                                    getDate(arrivedDate.getTime()), getDate(departureDate.getTime()), placeId);
+                                    ApplicationUtils.getDate(arrivedDate.getTime()), ApplicationUtils.getDate(departureDate.getTime()), placeId);
                         } else {
                             ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
                         }
@@ -283,7 +277,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                             bookedPlace.setIsBooked(true);
 
                             Preferences.getInstance(context).setBooked(bookedPlace);
-                            startAlarm(convertLongToCalendar(Preferences.getInstance(context).getBooked().getArriveDate()));
+                            ApplicationUtils.startAlarm(context, ApplicationUtils.convertLongToCalendar(Preferences.getInstance(context).getBooked().getArriveDate()));
                             if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
                                 binding.actionBarTitle.setText(context.getResources().getString(R.string.booking_payment));
                                 listener.fragmentChange(HomeFragment.newInstance());
@@ -305,35 +299,5 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                 hideLoading();
             }
         });
-    }
-
-    private String getDate(long milliSeconds) {
-        // Create a DateFormatter object for displaying date in specified format.
-        SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.US);
-        // Create a calendar object that will convert the date and time value in milliseconds to date.
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(milliSeconds);
-        return formatter.format(calendar.getTime());
-    }
-
-    private void startAlarm(Calendar c) {
-        Timber.e("startAlarm called");
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(context, BookingServiceStarter.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, intent, 0);
-
-        if (new Date().getTime() >= (c.getTimeInMillis() - 900000)) {
-            Objects.requireNonNull(alarmManager).setExact(AlarmManager.RTC_WAKEUP,
-                    new Date().getTime() - 2000, pendingIntent);
-        } else {
-            Objects.requireNonNull(alarmManager).setExact(AlarmManager.RTC_WAKEUP,
-                    c.getTimeInMillis() - 900000, pendingIntent);
-        }
-    }
-
-    public Calendar convertLongToCalendar(Long source) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(source);
-        return calendar;
     }
 }

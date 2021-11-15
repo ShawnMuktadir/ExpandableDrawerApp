@@ -5,7 +5,9 @@ import static www.fiberathome.com.parkingapp.ui.home.HomeFragment.PLAY_SERVICES_
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.AlarmManager;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -21,6 +23,11 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -31,6 +38,7 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.model.data.Constants;
 import www.fiberathome.com.parkingapp.model.data.StaticData;
 import www.fiberathome.com.parkingapp.service.booking_service.BookingService;
+import www.fiberathome.com.parkingapp.service.notification.BookingServiceStarter;
 import www.fiberathome.com.parkingapp.utils.internet.ConnectivityInterceptor;
 
 @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -214,5 +222,35 @@ public class ApplicationUtils {
         Intent intent = new Intent(context, BookingService.class);
         intent.setAction(Constants.STOP_BOOKING_TRACKING);
         context.startService(intent);
+    }
+
+    public static void startAlarm(Context context, Calendar c) {
+        Timber.e("startAlarm called");
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(context, BookingServiceStarter.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, intent, 0);
+
+        if (new Date().getTime() >= (c.getTimeInMillis() - 900000)) {
+            Objects.requireNonNull(alarmManager).setExact(AlarmManager.RTC_WAKEUP,
+                    new Date().getTime() - 2000, pendingIntent);
+        } else {
+            Objects.requireNonNull(alarmManager).setExact(AlarmManager.RTC_WAKEUP,
+                    c.getTimeInMillis() - 900000, pendingIntent);
+        }
+    }
+
+    public static String getDate(long milliSeconds) {
+        // Create a DateFormatter object for displaying date in specified format.
+        SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.US);
+        // Create a calendar object that will convert the date and time value in milliseconds to date.
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(milliSeconds);
+        return formatter.format(calendar.getTime());
+    }
+
+    public static Calendar convertLongToCalendar(Long source) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(source);
+        return calendar;
     }
 }

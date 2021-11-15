@@ -12,13 +12,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
@@ -34,9 +31,6 @@ import com.karumi.dexter.PermissionToken;
 import java.util.List;
 import java.util.Objects;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -71,33 +65,31 @@ import www.fiberathome.com.parkingapp.utils.ToastUtils;
 public class HomeActivity extends NavigationActivity implements FragmentChangeListener, PermissionInterface {
 
     public static final int GPS_REQUEST_CODE = 9003;
-    @BindView(R.id.toolbar)
-    public Toolbar toolbar;
-    @BindView(R.id.tvTimeToolbar)
-    public TextView tvTimeToolbar;
-    @BindView(R.id.linearLayoutToolbarTime)
-    public LinearLayout linearLayoutToolbarTime;
-    protected HomeFragment homeFragment;
-    Bundle mSavedInstanceState;
-    private Unbinder unbinder;
+
     private LocationCallback locationCallback;
     private Location lastLocation;
     private Toast exitToast;
+
     private int exitCounter = 1;
-    private Context context;
     private double lat;
     private double lng;
     private String areaName;
     private String count;
     private String placeId;
 
+    //Boolean variable to mark if the transaction is safe
+    private boolean isTransactionSafe;
+
+    //Boolean variable to mark if there is any transaction pending
+    private boolean isTransactionPending;
+
+    private Context context;
+    protected HomeFragment homeFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        mSavedInstanceState = savedInstanceState;
         super.onCreate(savedInstanceState);
         context = this;
-
-        unbinder = ButterKnife.bind(this);
 
         setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
 
@@ -135,7 +127,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
         if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
             //initialize home fragment
             getBookingParkStatus(Preferences.getInstance(context).getUser().getMobileNo());
-            linearLayoutToolbarTime.setVisibility(View.GONE);
+            binding.appBarMain.linearLayoutToolbarTime.setVisibility(View.GONE);
             navigationView.getMenu().getItem(0).setChecked(true);
         }
 
@@ -159,6 +151,32 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
         super.onResume();
     }
 
+    /*
+    onPostResume is called only when the activity's state is completely restored. In this we will
+    set our boolean variable to true. Indicating that transaction is safe now
+    */
+    @Override
+    public void onPostResume() {
+        super.onPostResume();
+        isTransactionSafe = true;
+
+        /* Here after the activity is restored we check if there is any transaction pending from
+        the last restoration */
+        if (isTransactionPending) {
+            fragmentChange(HomeFragment.newInstance());
+        }
+    }
+
+    /*
+    onPause is called just before the activity moves to background and also before onSaveInstanceState. In this
+    we will mark the transaction as unsafe
+    */
+    @Override
+    public void onPause() {
+        super.onPause();
+        isTransactionSafe = false;
+    }
+
     @Override
     public void onStop() {
         Timber.e("onStop called");
@@ -167,9 +185,6 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
 
     @Override
     protected void onDestroy() {
-        if (unbinder != null) {
-            unbinder.unbind();
-        }
         super.onDestroy();
     }
 
@@ -248,8 +263,8 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                         toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
                     }
                 }
-                tvTimeToolbar.setVisibility(View.GONE);
-                linearLayoutToolbarTime.setVisibility(View.GONE);
+                binding.appBarMain.tvTimeToolbar.setVisibility(View.GONE);
+                binding.appBarMain.linearLayoutToolbarTime.setVisibility(View.GONE);
                 drawerLayout.closeDrawers();
                 navigationView.getMenu().getItem(0).setChecked(true);
                 navigationView.getMenu().getItem(1).setChecked(false);
@@ -335,7 +350,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
     @Override
     public void fragmentChange(Fragment fragment) {
         try {
-            if (!isFinishing()) {
+            if (isTransactionSafe) {
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction().setCustomAnimations(
                         R.anim.slide_in,  // enter
                         R.anim.fade_out,  // exit
@@ -345,37 +360,21 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                 ft.replace(R.id.nav_host_fragment, fragment);
                 ft.addToBackStack(null);
                 ft.commit();
+            } else {
+                 /*
+                 If any transaction is not done because the activity is in background. We set the
+                 isTransactionPending variable to true so that we can pick this up when we come back to
+                 foreground */
+                isTransactionPending = true;
             }
         } catch (IllegalStateException e) {
             // There's no way to avoid getting this if saveInstanceState has already been called.
             Timber.e(e.getCause());
-            if (mSavedInstanceState != null) {
-                homeFragment = (HomeFragment) getSupportFragmentManager().getFragment(mSavedInstanceState, "homeFragment");
-                FragmentTransaction ft = getSupportFragmentManager().beginTransaction().setCustomAnimations(
-                        R.anim.slide_in,  // enter
-                        R.anim.fade_out,  // exit
-                        R.anim.fade_in,   // popEnter
-                        R.anim.slide_out  // popExit
-                );
-                ft.replace(R.id.nav_host_fragment, homeFragment);
-                ft.addToBackStack(null);
-                ft.commit();
-            } else {
-                FragmentTransaction ft = getSupportFragmentManager().beginTransaction().setCustomAnimations(
-                        R.anim.slide_in,  // enter
-                        R.anim.fade_out,  // exit
-                        R.anim.fade_in,   // popEnter
-                        R.anim.slide_out  // popExit
-                );
-                ft.replace(R.id.nav_host_fragment, fragment);
-                ft.addToBackStack(null);
-                ft.commit();
-            }
         }
     }
 
     private void setListeners() {
-        linearLayoutToolbarTime.setOnClickListener(v -> {
+        binding.appBarMain.linearLayoutToolbarTime.setOnClickListener(v -> {
             if (isGPSEnabled()) {
                 ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
                         ScheduleFragment.newInstance(), R.id.nav_host_fragment);
