@@ -48,8 +48,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.transition.Fade;
 import androidx.transition.Transition;
@@ -124,7 +123,6 @@ import www.fiberathome.com.parkingapp.service.googleService.directionModules.Dir
 import www.fiberathome.com.parkingapp.service.notification.NotificationPublisher;
 import www.fiberathome.com.parkingapp.ui.booking.BookingParkFragment;
 import www.fiberathome.com.parkingapp.ui.bottomSheet.BottomSheetAdapter;
-import www.fiberathome.com.parkingapp.ui.bottomSheet.CustomLinearLayoutManager;
 import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
 import www.fiberathome.com.parkingapp.ui.search.SearchActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
@@ -818,11 +816,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             if (onConnectedLocation != null && latLng != null) {
                 bookingSensorsArrayList.clear();
                 parkingSpotLatLng = latLng;
-
                 try {
                     parkingPlaceId = selectedSensorArea.getPlaceId();
                     parkingAreaPlaceName = selectedSensorArea.getParkingArea();
-
                     parkingAreaPlacedId = parkingPlaceId;
                     parkingNumberOfIndividualMarker = selectedSensorArea.getCount();
                     binding.textViewParkingAreaCount.setText(parkingNumberOfIndividualMarker);
@@ -1307,10 +1303,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private void setBottomSheetFragmentControls(ArrayList<BookingSensors> sensors) {
         binding.bottomSheetLayout.bottomSheetRecyclerView.setHasFixedSize(false);
         binding.bottomSheetLayout.bottomSheetRecyclerView.setNestedScrollingEnabled(false);
-        RecyclerView.LayoutManager mLayoutManager = new CustomLinearLayoutManager(getActivity());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(context);
         binding.bottomSheetLayout.bottomSheetRecyclerView.setLayoutManager(mLayoutManager);
-        binding.bottomSheetLayout.bottomSheetRecyclerView.addItemDecoration(new DividerItemDecoration(context, CustomLinearLayoutManager.VERTICAL));
-        binding.bottomSheetLayout.bottomSheetRecyclerView.setItemAnimator(new DefaultItemAnimator());
         binding.bottomSheetLayout.bottomSheetRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), binding.bottomSheetLayout.bottomSheetRecyclerView,
                 new RecyclerTouchListener.ClickListener() {
                     @Override
@@ -1565,11 +1559,12 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     oldDestination = "";
                     searchPlaceCount = "";
                     parkingSpotLatLng = null;
+                    bookingSensorsArrayListGlobal.clear();
+                    bookingSensorsArrayList.clear();
                     if (bottomSheetAdapter != null) {
                         bottomSheetAdapter.clear();
                         bottomSheetAdapter = null;
                     }
-                    bookingSensorsArrayList.clear();
                     if (onConnectedLocation != null) {
                         fetchParkingSlotSensors(onConnectedLocation);
                         animateCamera(onConnectedLocation);
@@ -1630,7 +1625,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     }
 
     private void setListeners() {
-
         binding.fabCurrentLocation.setOnClickListener(v -> {
             if (mMap != null && onConnectedLocation != null)
                 animateCamera(onConnectedLocation);

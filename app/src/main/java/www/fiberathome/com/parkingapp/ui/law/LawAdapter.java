@@ -1,7 +1,6 @@
 package www.fiberathome.com.parkingapp.ui.law;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,16 +53,14 @@ public class LawAdapter extends ExpandableRecyclerViewAdapter<TitleViewHolder, L
                 for (LawItem item : copylawItemList) {
                     if (item.getTitle().toLowerCase().contains(filterPattern)) {
                         queryLawItemList.add(item);
-//                        ApplicationUtils.highlightSearchText(SpannableStringBuilder.valueOf(item.getTitle()), filterPattern);
+                        //ApplicationUtils.highlightSearchText(SpannableStringBuilder.valueOf(item.getTitle()), filterPattern);
                     }
                 }
             }
-
             FilterResults results = new FilterResults();
             results.values = queryLawItemList;
 
             return results;
-
         }
 
         @SuppressWarnings("unchecked")
@@ -85,9 +82,8 @@ public class LawAdapter extends ExpandableRecyclerViewAdapter<TitleViewHolder, L
     @SuppressWarnings("unchecked")
     public LawAdapter(List<? extends ExpandableGroup> groups, LawFragment lawFragment) {
         super(groups);
-        copylawItemList = new ArrayList<LawItem>((Collection<? extends LawItem>) groups);
+        copylawItemList = new ArrayList<>((Collection<? extends LawItem>) groups);
         this.lawFragment = lawFragment;
-        Log.d(TAG, "LawAdapter: " + copylawItemList.size());
     }
 
     @Override

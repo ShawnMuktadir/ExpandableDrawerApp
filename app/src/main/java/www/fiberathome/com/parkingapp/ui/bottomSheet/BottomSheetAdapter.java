@@ -1,12 +1,8 @@
 package www.fiberathome.com.parkingapp.ui.bottomSheet;
 
-import static android.content.Context.LOCATION_SERVICE;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Color;
 import android.location.Location;
-import android.location.LocationManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,11 +15,11 @@ import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.databinding.BottomSheetTextRecyclerItemBinding;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingSensors;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
+import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.MathUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
@@ -32,15 +28,9 @@ import www.fiberathome.com.parkingapp.utils.ToastUtils;
 public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.TextBookingViewHolder> {
 
     public Context context;
-
     public final HomeFragment homeFragment;
-
     private ArrayList<BookingSensors> bookingSensorsArrayList;
-
     public Location location;
-
-    private int selectedItem = -1;
-
     private final onItemClickListeners clickListeners;
 
     public BottomSheetAdapter(Context context, HomeFragment homeFragment,
@@ -69,31 +59,20 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
     @Override
     public void onBindViewHolder(@NonNull TextBookingViewHolder holder, @SuppressLint("RecyclerView") int position) {
         BookingSensors bookingSensors = bookingSensorsArrayList.get(position);
-
         if (bookingSensors.type == BookingSensors.SELECTED_INFO_TYPE) {
-
-            selectedItem = position;
-
             holder.binding.textBottom.setVisibility(View.VISIBLE);
-
             holder.binding.textViewStatic.setText(bookingSensors.getText());
-
             holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.selectedColor));
-
             holder.binding.textBottom.setVisibility(View.VISIBLE);
-
         } else {
             holder.binding.textBottom.setVisibility(View.GONE);
         }
 
         holder.binding.textViewParkingAreaName.setText(bookingSensors.getParkingArea());
-
         holder.binding.textViewParkingAreaCount.setText(bookingSensors.getCount());
-
         holder.binding.textViewParkingDistance.setText(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(bookingSensors.getDistance()) + " km");
-
         holder.binding.rowFG.setOnClickListener(view -> {
-            if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
+            if (ApplicationUtils.isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
                 clickListeners.onClick(bookingSensors);
             } else {
                 ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_gps));
@@ -101,17 +80,9 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         });
 
         DecimalFormat decimalFormat = new DecimalFormat("00.0", new DecimalFormatSymbols(Locale.US));
-
         double tmp = MathUtils.getInstance().convertToDouble(decimalFormat.format(Double
                 .parseDouble(bookingSensors.getDuration())));
-
         holder.binding.textViewParkingTravelTime.setText(tmp + " mins");
-
-        if (selectedItem == position) {
-            holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.selectedColor));
-        } else {
-            holder.itemView.setBackgroundColor(Color.TRANSPARENT);
-        }
     }
 
     @Override
@@ -132,30 +103,20 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
     }
 
     public void setDataList(ArrayList<BookingSensors> dataList) {
-        this.bookingSensorsArrayList = dataList;
+        bookingSensorsArrayList.clear();
+        bookingSensorsArrayList = dataList;
         notifyDataSetChanged();
     }
 
-    public void update(ArrayList<BookingSensors> datas) {
+    public void update(ArrayList<BookingSensors> arrayList) {
         bookingSensorsArrayList.clear();
-        bookingSensorsArrayList.addAll(datas);
+        bookingSensorsArrayList.addAll(arrayList);
         notifyDataSetChanged();
     }
 
     public void clear() {
         bookingSensorsArrayList.clear();
         notifyDataSetChanged();
-    }
-
-    private boolean isGPSEnabled() {
-        LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-        boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        if (providerEnabled) {
-            return true;
-        } else {
-            Timber.e("else called");
-        }
-        return false;
     }
 
     @SuppressLint("NonConstantResourceId")

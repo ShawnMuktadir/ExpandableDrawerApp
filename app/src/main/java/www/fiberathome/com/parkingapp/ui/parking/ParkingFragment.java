@@ -26,6 +26,7 @@ import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -356,10 +357,6 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                                 }
                             }
 
-                            Timber.e("distance before adjust:" + fetchDistance + parkingArea +
-                                    "  mine lat " + onConnectedLocation.getLatitude() + " lon " + onConnectedLocation.getLongitude()
-                                    + " area lat " + endLat + " lon " + endLng);
-
                             SensorArea sensorArea = new SensorArea(parkingArea, placeId, endLat, endLng, count,
                                     fetchDistance);
 
@@ -384,12 +381,10 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
 
     private void setFragmentControls(ArrayList<SensorArea> sensorAreas) {
         this.sensorAreas = sensorAreas;
-        binding.recyclerViewParking.setHasFixedSize(true);
-        binding.recyclerViewParking.setItemViewCacheSize(20);
+        binding.recyclerViewParking.setHasFixedSize(false);
         binding.recyclerViewParking.setNestedScrollingEnabled(false);
-        binding.recyclerViewParking.setMotionEventSplittingEnabled(false);
-
-        binding.recyclerViewParking.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(context);
+        binding.recyclerViewParking.setLayoutManager(mLayoutManager);
         binding.recyclerViewParking.addItemDecoration(new DividerItemDecoration(context, LinearLayoutManager.VERTICAL));
         binding.recyclerViewParking.setItemAnimator(new DefaultItemAnimator());
         binding.recyclerViewParking.addOnItemTouchListener(new RecyclerTouchListener(context, binding.recyclerViewParking, new RecyclerTouchListener.ClickListener() {
@@ -406,9 +401,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
 
             }
         }));
-
         ViewCompat.setNestedScrollingEnabled(binding.recyclerViewParking, false);
-
         setAdapter(sensorAreas);
     }
 
@@ -421,13 +414,10 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
         parkingAdapter = new ParkingAdapter(context, sensorAreas, onConnectedLocation, (position, lat, lng, parkingAreaName, count, placeId) -> {
 
             long now = System.currentTimeMillis();
-
             if (now - mLastClickTime < CLICK_TIME_INTERVAL) {
                 return;
             }
-
             mLastClickTime = now;
-
             if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
                 try {
                     Timber.e("try called");
@@ -447,19 +437,6 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
             }
         });
         binding.recyclerViewParking.setAdapter(parkingAdapter);
-    }
-
-    private double adjustDistance(double distance) {
-
-        if (distance > 1.9) {
-            distance = distance + 2;
-        } else if (distance < 1.9 && distance > 1) {
-            distance = distance + 1;
-        } else {
-            distance = distance + 0.5;
-        }
-
-        return distance;
     }
 
     private void setNoDataForEnglish() {
