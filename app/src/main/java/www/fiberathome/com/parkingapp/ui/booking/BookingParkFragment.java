@@ -513,6 +513,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         }.start();
     }
 
+    @SuppressLint("SetTextI18n")
     public void findDifference(String start_date,
                                String end_date, String timeStart) {
 
