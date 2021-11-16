@@ -37,19 +37,22 @@
                 android:id="@+id/editTextParking"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="@dimen/dim5"
+                android:layout_marginStart="@dimen/dim5"
+                android:layout_marginTop="@dimen/dim5"
+                android:layout_marginEnd="@dimen/dim5"
+                android:layout_marginBottom="@dimen/dim5"
                 android:background="@drawable/white_border"
                 android:drawableStart="@drawable/ic_search"
                 android:drawablePadding="@dimen/dim10"
                 android:hint="@string/search"
                 android:imeOptions="actionSearch"
+                android:importantForAutofill="no"
                 android:inputType="text"
                 android:maxLines="1"
                 android:padding="@dimen/dim5"
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/dimTex15"
-                android:textStyle="normal"
-                android:importantForAutofill="no" />
+                android:textStyle="normal" />
 
             <ImageView
                 android:id="@+id/ivClearSearchText"

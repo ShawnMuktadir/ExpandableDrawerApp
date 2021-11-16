@@ -1,12 +1,9 @@
 package www.fiberathome.com.parkingapp.ui.search.placesadapter;
 
-import static android.content.Context.LOCATION_SERVICE;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.location.LocationManager;
 import android.os.Handler;
 import android.text.style.CharacterStyle;
 import android.text.style.StyleSpan;
@@ -15,9 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -41,51 +35,40 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.databinding.ItemListEmptyBinding;
+import www.fiberathome.com.parkingapp.databinding.SearchHistoryListItemBinding;
+import www.fiberathome.com.parkingapp.databinding.SearchListItemBinding;
 import www.fiberathome.com.parkingapp.model.response.search.SearchVisitorData;
 import www.fiberathome.com.parkingapp.ui.parking.EmptyViewHolder;
+import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
+@SuppressLint("NotifyDataSetChanged")
 public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
-    public ArrayList<PlaceAutocomplete> mResultList = new ArrayList<>();
-
-    private final Context mContext;
-
-    private final CharacterStyle STYLE_BOLD;
-
-    private final CharacterStyle STYLE_NORMAL;
-
-    private final PlacesClient placesClient;
-
-    private ClickListener clickListener;
-
-    private final AutocompleteSessionToken token;
-
-    public ArrayList<SearchVisitorData> searchVisitorDataList;
-
-    private CharSequence charSequence;
-
-    private int selectedPosition = -1;
-
     private static final int VIEW_TYPE_PLACE = 0;
-
     private static final int VIEW_TYPE_HISTORY = 1;
-
     private static final int VIEW_TYPE_EMPTY = 2;
-
-    private boolean isShownEmpty = false;
-
-    private long mLastClickTime = System.currentTimeMillis();
-
     private static final long CLICK_TIME_INTERVAL = 300;
 
-    public PlacesAutoCompleteAdapter(Context context, PlacesClient placesClient, ArrayList<SearchVisitorData> searchVisitorDataList) {
+    public ArrayList<PlaceAutocomplete> mResultList = new ArrayList<>();
+    private final Context mContext;
+    private final CharacterStyle STYLE_BOLD;
+    private final CharacterStyle STYLE_NORMAL;
+    private final PlacesClient placesClient;
+    private ClickListener clickListener;
+    private final AutocompleteSessionToken token;
+    public ArrayList<SearchVisitorData> searchVisitorDataList;
+    private CharSequence charSequence;
+    private long mLastClickTime = System.currentTimeMillis();
+    private int selectedPosition = -1;
+
+    public PlacesAutoCompleteAdapter(Context context, PlacesClient placesClient,
+                                     ArrayList<SearchVisitorData> searchVisitorDataList) {
         mContext = context;
         STYLE_BOLD = new StyleSpan(Typeface.BOLD);
         STYLE_NORMAL = new StyleSpan(Typeface.NORMAL);
@@ -108,12 +91,9 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
                     charSequence = constraint;
                     // Query the autocomplete API for the (constraint) search string.
                     mResultList = getPredictions(constraint);
-                    if (mResultList != null) {
-                        // The API successfully returned results.
-                        results.values = mResultList;
-                        results.count = mResultList.size();
-                        isShownEmpty = false;
-                    }
+                    // The API successfully returned results.
+                    results.values = mResultList;
+                    results.count = mResultList.size();
                 }
                 return results;
             }
@@ -123,14 +103,12 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
                 if (results != null && results.count > 0) {
                     // The API returned at least one result, update the data.
                     mResultList = (ArrayList<PlaceAutocomplete>) results.values;
-
                     notifyDataSetChanged();
                 } else {
                     // The API did not return any results, invalidate the data set.
                     //notifyDataSetInvalidated();
                     searchVisitorDataList.clear();
                     notifyDataSetChanged();
-                    isShownEmpty = true;
 
                     Toast toast = Toast.makeText(mContext, "No Places found!", Toast.LENGTH_SHORT);
                     toast.show();
@@ -180,41 +158,43 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
         }
     }
 
+    public Context context;
+
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        /*LayoutInflater layoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View convertView = Objects.requireNonNull(layoutInflater).inflate(R.layout.search_list_item_location, parent, false);
-        return new PredictionHolder(convertView);*/
-
-        View itemView;
+        context = parent.getContext();
         if (viewType == VIEW_TYPE_PLACE) {
-            itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_list_item_location, parent, false);
-            return new SearchPredictionViewHolder(itemView);
+            LayoutInflater layoutInflater = LayoutInflater.from(context);
+            SearchListItemBinding itemBinding = SearchListItemBinding.inflate(layoutInflater, parent, false);
+            return new SearchPredictionViewHolder(itemBinding);
         } else if (viewType == VIEW_TYPE_HISTORY) {
-            itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_history_list_item_location, parent, false);
-            return new SearchHistoryViewHolder(itemView);
+            LayoutInflater layoutInflater = LayoutInflater.from(context);
+            SearchHistoryListItemBinding itemBinding = SearchHistoryListItemBinding.inflate(layoutInflater, parent, false);
+            return new SearchHistoryViewHolder(itemBinding);
         } else {
-            itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_list_empty, parent, false);
-            return new EmptyViewHolder(itemView);
+            LayoutInflater layoutInflater = LayoutInflater.from(context);
+            ItemListEmptyBinding itemBinding = ItemListEmptyBinding.inflate(layoutInflater, parent, false);
+            return new EmptyViewHolder(itemBinding);
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder viewHolder, @SuppressLint("RecyclerView") final int position) {
         if (viewHolder instanceof SearchPredictionViewHolder) {
 
             SearchPredictionViewHolder mSearchPredictionViewHolder = (SearchPredictionViewHolder) viewHolder;
             if (charSequence != null) {
-                mSearchPredictionViewHolder.address.setText(mResultList.get(position).address);
-                mSearchPredictionViewHolder.area.setText(mResultList.get(position).area);
+                mSearchPredictionViewHolder.binding.address.setText(mResultList.get(position).address);
+                mSearchPredictionViewHolder.binding.area.setText(mResultList.get(position).area);
             }
             // Here I am just highlighting the background
-            mSearchPredictionViewHolder.itemView.setBackgroundColor(selectedPosition == position ?
+            mSearchPredictionViewHolder.binding.itemView.setBackgroundColor(selectedPosition == position ?
                     mContext.getResources().getColor(R.color.selectedColor) : Color.TRANSPARENT);
 
-            mSearchPredictionViewHolder.itemView.setOnClickListener(v -> {
-                if (isGPSEnabled(position) && ConnectivityUtils.getInstance().checkInternet(mContext)) {
+            mSearchPredictionViewHolder.binding.itemView.setOnClickListener(v -> {
+                if (ApplicationUtils.isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(mContext)) {
                     long now = System.currentTimeMillis();
                     if (now - mLastClickTime < CLICK_TIME_INTERVAL) {
                         return;
@@ -227,18 +207,10 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
                         Timber.e(e);
                     }
                     PlaceAutocomplete item;
-                    Timber.d("List size : -> %s", mResultList.size());
-                    Timber.d("position : -> %s", selectedPosition);
-
-                   /* Toast.makeText(mContext,"position:"+position,Toast.LENGTH_SHORT).show();
-                    for (PlaceAutocomplete autoComplete:mResultList) {
-                        Log.d(TAG, "onBindViewHolder: "+autoComplete);
-                    }*/
 
                     try {
                         item = getItem(selectedPosition);   //mResultList.get(selectedPosition);
                         if (v.getId() == R.id.item_view) {
-
                             String placeId = String.valueOf(item.placeId);
                             Timber.e("placeId -> %s", placeId);
 
@@ -247,12 +219,7 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
                             placesClient.fetchPlace(request).addOnSuccessListener(response -> {
                                 Place place = response.getPlace();
                                 final Handler handler = new Handler();
-                                handler.postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        clickListener.onClick(place);
-                                    }
-                                }, 100);
+                                handler.postDelayed(() -> clickListener.onClick(place), 100);
                             }).addOnFailureListener(exception -> {
                                 if (exception instanceof ApiException) {
                                     Toast.makeText(mContext, exception.getMessage() + "", Toast.LENGTH_SHORT).show();
@@ -260,10 +227,8 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
                             });
                         }
                     } catch (IndexOutOfBoundsException e) {
-                        //Toast.makeText(mContext, "Please try again", Toast.LENGTH_SHORT).show();
                         DialogUtils.getInstance().showOnlyMessageDialog(mContext.getResources().getString(R.string.please_try_again), mContext);
                         Timber.d("exception: -> %s", e.getMessage());
-                        //throw new RuntimeException("Test Crash");
                     }
                 } else {
                     ToastUtils.getInstance().showToastMessage(mContext, mContext.getResources().getString(R.string.connect_to_internet_gps));
@@ -274,11 +239,11 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
             final SearchVisitorData visitorData = searchVisitorDataList.get(position);
 
             if (visitorData != null) {
-                searchHistoryViewHolder.textViewHistoryArea.setText(visitorData.getVisitedArea());
-                searchHistoryViewHolder.itemView.setBackgroundColor(selectedPosition == position ?
+                searchHistoryViewHolder.binding.textViewHistoryArea.setText(visitorData.getVisitedArea());
+                searchHistoryViewHolder.binding.itemView.setBackgroundColor(selectedPosition == position ?
                         mContext.getResources().getColor(R.color.selectedColor) : Color.TRANSPARENT);
-                searchHistoryViewHolder.itemView.setOnClickListener(v -> {
-                    if (isGPSEnabled(position) && ConnectivityUtils.getInstance().checkInternet(mContext)) {
+                searchHistoryViewHolder.binding.itemView.setOnClickListener(v -> {
+                    if (ApplicationUtils.isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(mContext)) {
                         long now = System.currentTimeMillis();
                         if (now - mLastClickTime < CLICK_TIME_INTERVAL) {
                             return;
@@ -290,7 +255,6 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
                         } catch (Exception e) {
                             Timber.e(e);
                         }
-
                         final Handler handler = new Handler();
                         handler.postDelayed(() -> clickListener.onClick(visitorData), 100);
                     } else {
@@ -304,11 +268,11 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
             Timber.e("EmptyViewHolder -> POSITION:: %s", position);
             EmptyViewHolder emptyViewHolder = (EmptyViewHolder) viewHolder;
             if (searchVisitorDataList.isEmpty()) {
-                emptyViewHolder.imageViewSearchPlace.setVisibility(View.VISIBLE);
-                emptyViewHolder.tvEmptyView.setVisibility(View.VISIBLE);
+                emptyViewHolder.binding.imageViewSearchPlace.setVisibility(View.VISIBLE);
+                emptyViewHolder.binding.tvEmptyView.setVisibility(View.VISIBLE);
             } else {
-                emptyViewHolder.imageViewSearchPlace.setVisibility(View.GONE);
-                emptyViewHolder.tvEmptyView.setVisibility(View.GONE);
+                emptyViewHolder.binding.imageViewSearchPlace.setVisibility(View.GONE);
+                emptyViewHolder.binding.tvEmptyView.setVisibility(View.GONE);
             }
         }
     }
@@ -360,65 +324,9 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
         void onClick(SearchVisitorData visitorData);
     }
 
-    private boolean isGPSEnabled(int position) {
-
-        LocationManager locationManager = (LocationManager) mContext.getSystemService(LOCATION_SERVICE);
-
-        boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-        if (providerEnabled) {
-            return true;
-        } else {
-            /*AlertDialog alertDialog = new AlertDialog.Builder(context)
-                    .setTitle("GPS Permissions")
-                    .setMessage("GPS is required for this app to work. Please enable GPS.")
-                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
-                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        intent.putExtra("position",position);
-                        Activity origin = (Activity)context;
-
-                        origin.startActivityForResult(intent, GPS_REQUEST_CODE);
-                    }))
-                    .setCancelable(false)
-                    .show();*/
-        }
-
-        return false;
-    }
-
-    public boolean isExist(String strName) {
-        for (int i = 0; i < searchVisitorDataList.size(); i++) {
-            if (searchVisitorDataList.get(i).equals(strName)) {
-                searchVisitorDataList.remove(i);
-                notifyDataSetChanged();
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private void setNoData(SearchPredictionViewHolder mSearchPredictionViewHolder) {
-        mSearchPredictionViewHolder.imageViewSearchPlace.setVisibility(View.VISIBLE);
-        mSearchPredictionViewHolder.textViewNoData.setVisibility(View.VISIBLE);
-    }
-
     private void setNoData(SearchHistoryViewHolder searchHistoryViewHolder) {
-        searchHistoryViewHolder.imageViewSearchPlace.setVisibility(View.GONE);
-        searchHistoryViewHolder.textViewNoData.setVisibility(View.VISIBLE);
-    }
-
-    public void selectData(SearchVisitorData data) {
-        searchVisitorDataList.remove(data);
-        try {
-            notifyDataSetChanged();
-        } catch (Exception e) {
-            e.getCause();
-        }
-    }
-
-    public boolean checkIfAlreadySelected(SearchVisitorData searchVisitorData) {
-        return searchVisitorDataList.contains(searchVisitorData);
+        searchHistoryViewHolder.binding.imageViewSearchPlace.setVisibility(View.GONE);
+        searchHistoryViewHolder.binding.textViewNoData.setVisibility(View.VISIBLE);
     }
 
     private PlaceAutocomplete getItem(int position) {
@@ -427,26 +335,11 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
 
     @SuppressLint("NonConstantResourceId")
     public static class SearchPredictionViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        SearchListItemBinding binding;
 
-        private final TextView address;
-        private final TextView area;
-
-        private final LinearLayout mRow;
-
-        @BindView(R.id.imageViewSearchPlace)
-        ImageView imageViewSearchPlace;
-
-        @BindView(R.id.textViewNoData)
-        TextView textViewNoData;
-
-        SearchPredictionViewHolder(View itemView) {
-
-            super(itemView);
-            area = itemView.findViewById(R.id.area);
-            address = itemView.findViewById(R.id.address);
-            mRow = itemView.findViewById(R.id.item_view);
-            ButterKnife.bind(this, itemView);
-            itemView.setOnClickListener(this);
+        SearchPredictionViewHolder(SearchListItemBinding itemView) {
+            super(itemView.getRoot());
+            this.binding = itemView;
         }
 
         @Override
@@ -478,25 +371,11 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
 
     @SuppressLint("NonConstantResourceId")
     public static class SearchHistoryViewHolder extends RecyclerView.ViewHolder {
+        SearchHistoryListItemBinding binding;
 
-        @BindView(R.id.textViewHistoryArea)
-        TextView textViewHistoryArea;
-
-        @BindView(R.id.textViewHistoryAddress)
-        TextView textViewHistoryAddress;
-
-        @BindView(R.id.circleImageView)
-        ImageView circleImageView;
-
-        @BindView(R.id.imageViewSearchPlace)
-        ImageView imageViewSearchPlace;
-
-        @BindView(R.id.textViewNoData)
-        TextView textViewNoData;
-
-        public SearchHistoryViewHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
+        public SearchHistoryViewHolder(SearchHistoryListItemBinding itemView) {
+            super(itemView.getRoot());
+            this.binding = itemView;
         }
     }
 

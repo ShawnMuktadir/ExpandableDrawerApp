@@ -529,4 +529,5 @@
     <string name="park_has_started">Your park has been started</string>
     <string name="as_your_reservation_time_had_exceed_over_five_mins">As your reservation time had exceed over 5 mins, your booking has been closed. Thank you</string>
     <string name="invalid_vehicle_number">Invalid vehicle number</string>
+    <string name="clock">Clock</string>
 </resources>

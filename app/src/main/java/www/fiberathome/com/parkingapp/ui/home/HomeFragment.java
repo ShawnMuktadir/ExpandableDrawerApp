@@ -1,6 +1,5 @@
 package www.fiberathome.com.parkingapp.ui.home;
 
-import static android.content.Context.LOCATION_SERVICE;
 import static www.fiberathome.com.parkingapp.model.data.AppConstants.HISTORY_PLACE_SELECTED;
 import static www.fiberathome.com.parkingapp.model.data.AppConstants.HISTORY_PLACE_SELECTED_OBJ;
 import static www.fiberathome.com.parkingapp.model.data.AppConstants.NEW_PLACE_SELECTED;
@@ -23,11 +22,9 @@ import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
-import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -236,27 +233,12 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         return markerOptionsPin;
     }
 
-    private static Boolean isLocationEnabled(Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            // This is new method provided in API 28
-            LocationManager lm = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-            return lm.isLocationEnabled();
-
-        } else {
-            // This is Deprecated in API 28
-            int mode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE,
-                    Settings.Secure.LOCATION_MODE_OFF);
-            return (mode != Settings.Secure.LOCATION_MODE_OFF);
-        }
-    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         Timber.e("onCreate called");
         setHasOptionsMenu(false);
         super.onCreate(savedInstanceState);
         context = (HomeActivity) getActivity();
-
         if (context != null) {
             FirebaseApp.initializeApp(context);
         }
@@ -397,6 +379,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         bookedPlace = Preferences.getInstance(context).getBooked();
         isBooked = Preferences.getInstance(context).getBooked().getIsBooked();
         if (isBooked) {
+            Timber.e(" onStart isBooked called");
             //ApplicationUtils.startBookingTrackService(context);
         } else {
             ApplicationUtils.stopBookingTrackService(context);
@@ -417,7 +400,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             Preferences.getInstance(context).isBookingCancelled = false;
             commonBackOperation();
         }
-
         if (isBooked) {
             binding.fabGetDirection.setVisibility(View.VISIBLE);
         }
@@ -608,6 +590,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 String mDestination = "" + parkingSpotLatLng.latitude + ", " + parkingSpotLatLng.longitude;
                 String bookedDestination = "" + bookedPlace.getLat() + ", " + bookedPlace.getLon();
                 if (!mDestination.equalsIgnoreCase(bookedDestination)) {
+                    Timber.e("if called mDestination");
                 }
             } else {
                 Timber.e("else called");
@@ -1326,7 +1309,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         });
     }
 
-    //bubble sort for nearest parking spot from searched area
+    //bubble sort for nearest parking spot
     private void bubbleSortArrayList(ArrayList<BookingSensors> list) {
         BookingSensors temp;
         boolean sorted = false;
@@ -1364,54 +1347,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         LatLngBounds latLngBounds = boundsBuilder.build();
         googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, routePadding));
         googleMap.setPadding(left, top, right, bottom);
-    }
-
-    private List<LatLng> decodePoly(String encoded) {
-        List<LatLng> poly = new ArrayList<>();
-        int index = 0, len = encoded.length();
-        int lat = 0, lng = 0;
-
-        while (index < len) {
-            int b, shift = 0, result = 0;
-            do {
-                b = encoded.charAt(index++) - 63;
-                result |= (b & 0x1f) << shift;
-                shift += 5;
-            } while (b >= 0x20);
-            int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
-            lat += dlat;
-
-            shift = 0;
-            result = 0;
-            do {
-                b = encoded.charAt(index++) - 63;
-                result |= (b & 0x1f) << shift;
-                shift += 5;
-            } while (b >= 0x20);
-            int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
-            lng += dlng;
-
-            LatLng p = new LatLng((((double) lat / 1E5)),
-                    (((double) lng / 1E5)));
-            poly.add(p);
-        }
-        return poly;
-    }
-
-    private void setMapZoomLevelDirection(LatLng startPosition, LatLng endPosition) {
-        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        builder.include(startPosition);
-        builder.include(endPosition);
-        if (getContext() != null) {
-            int width = getResources().getDisplayMetrics().widthPixels;
-            int height = getResources().getDisplayMetrics().heightPixels;
-            int padding;
-            //padding = (int) (height * 0.05);
-            padding = (int) (Math.min(width, height) * 0.30);
-            //padding = ((height) / 500);
-            LatLngBounds bounds = builder.build();
-            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding));
-        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -1752,7 +1687,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         ToastUtils.getInstance().showToastMessage(context, message);
     }
 
-
     private LocationCallback buildLocationCallBack() {
         locationCallback = new LocationCallback() {
             @Override
@@ -1773,29 +1707,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         locationRequest.setInterval(1000);
         locationRequest.setFastestInterval(1000);
         return locationRequest;
-    }
-
-    private void startShimmer() {
-        Timber.e("startShimmer");
-        binding.bottomSheetLayout.mShimmerViewContainer.setVisibility(View.VISIBLE);
-        binding.bottomSheetLayout.mShimmerViewContainer.startShimmer();
-        binding.bottomSheetLayout.bottomSheetRecyclerView.setVisibility(View.INVISIBLE);
-    }
-
-    private void stopShimmer() {
-        Timber.e("stopShimmer");
-        binding.bottomSheetLayout.mShimmerViewContainer.setVisibility(View.GONE);
-        binding.bottomSheetLayout.mShimmerViewContainer.stopShimmer();
-        binding.bottomSheetLayout.bottomSheetRecyclerView.setVisibility(View.VISIBLE);
-    }
-
-    public void setNoData() {
-        binding.bottomSheetLayout.textViewNoData.setVisibility(View.VISIBLE);
-        binding.bottomSheetLayout.textViewNoData.setText(context.getResources().getString(R.string.no_nearest_parking_area_found));
-    }
-
-    public void hideNoData() {
-        binding.bottomSheetLayout.textViewNoData.setVisibility(View.GONE);
     }
 
     public void fetchDirections(String origin, String destination) {
@@ -1866,6 +1777,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     binding.btnConfirmBooking.setEnabled(true);
                     binding.btnConfirmBooking.setFocusable(true);
                 }
+                if (mMap != null && initialRoutePoints != null)
+                    zoomRoute(mMap, initialRoutePoints);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -1944,5 +1857,28 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     public interface SetBottomSheetCallBack {
         void setBottomSheet(ArrayList<BookingSensors> bookingSensorsArrayList);
+    }
+
+    private void startShimmer() {
+        Timber.e("startShimmer");
+        binding.bottomSheetLayout.mShimmerViewContainer.setVisibility(View.VISIBLE);
+        binding.bottomSheetLayout.mShimmerViewContainer.startShimmer();
+        binding.bottomSheetLayout.bottomSheetRecyclerView.setVisibility(View.INVISIBLE);
+    }
+
+    private void stopShimmer() {
+        Timber.e("stopShimmer");
+        binding.bottomSheetLayout.mShimmerViewContainer.setVisibility(View.GONE);
+        binding.bottomSheetLayout.mShimmerViewContainer.stopShimmer();
+        binding.bottomSheetLayout.bottomSheetRecyclerView.setVisibility(View.VISIBLE);
+    }
+
+    public void setNoData() {
+        binding.bottomSheetLayout.textViewNoData.setVisibility(View.VISIBLE);
+        binding.bottomSheetLayout.textViewNoData.setText(context.getResources().getString(R.string.no_nearest_parking_area_found));
+    }
+
+    public void hideNoData() {
+        binding.bottomSheetLayout.textViewNoData.setVisibility(View.GONE);
     }
 }
