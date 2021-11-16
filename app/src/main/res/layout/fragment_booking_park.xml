@@ -30,6 +30,18 @@
             android:textSize="@dimen/dimTex16"
             android:textStyle="bold" />
 
+        <TextView
+            android:id="@+id/tvParkingPsId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/dim2"
+            android:gravity="center"
+            android:padding="@dimen/dim2"
+            android:text="@string/parking"
+            android:textSize="@dimen/dimTex16"
+            android:textStyle="bold" />
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"

@@ -168,11 +168,15 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                 supportMapFragment.getMapAsync(this);
                 if (sensors != null) {
                     //from HomeActivity
-
                     ApplicationUtils.startBookingExceedService(context, getStringDateToMillis(sensors.getTimeEnd()));
                     binding.tvArrivedTime.setText(String.format("Booking Time: %s", sensors.getTimeStart()));
                     binding.tvDepartureTime.setText(String.format("Departure Time: %s", sensors.getTimeEnd()));
                     binding.tvParkingAreaName.setText(sensors.getParkingArea());
+                    if (Preferences.getInstance(context).getBooked().getPsId() != null && !Preferences.getInstance(context).getBooked().getPsId().equalsIgnoreCase("")) {
+                        binding.tvParkingPsId.setText("( Spot No: " + Preferences.getInstance(context).getBooked().getPsId() + " )");
+                    } else {
+                        binding.tvParkingPsId.setText("");
+                    }
                     String currentDateAndTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
                     findDifference(currentDateAndTime, sensors.getTimeEnd(), "");
                     findDifference(sensors.getTimeStart(), sensors.getTimeEnd(), "TimeStart");

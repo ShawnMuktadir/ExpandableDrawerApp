@@ -320,8 +320,8 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                                 }
                             }
 
-                            SensorArea sensorArea = new SensorArea(parkingArea, placeId, endLat, endLng, count,
-                                    fetchDistance);
+                            SensorArea sensorArea = new SensorArea(parkingArea, placeId, endLat, endLng,
+                                    count, null, fetchDistance);
                             sensorAreaArrayList.add(sensorArea);
                         }
                         Collections.sort(sensorAreaArrayList, (c1, c2) -> Double.compare(c1.getDistance(), c2.getDistance()));
@@ -393,9 +393,9 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                             Timber.e("try catch called -> %s", e.getMessage());
                         }
                     } else {
-                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_gps));
-            }
-        });
+                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_gps));
+                    }
+                });
         binding.recyclerViewParking.setAdapter(parkingAdapter);
     }
 

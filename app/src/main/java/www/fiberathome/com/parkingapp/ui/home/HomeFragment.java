@@ -690,11 +690,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     private void populateNearestPlaceBottomSheet(LatLng latLng, SensorArea selectedSensorArea) {
         try {
-            double distanceForCount = calculateDistance(parkingSpotLatLng.latitude, parkingSpotLatLng.longitude,
+            double distanceForCount = calculateDistance(latLng.latitude, latLng.longitude,
                     Preferences.getInstance(context).getBooked().getLat(),
                     Preferences.getInstance(context).getBooked().getLon());
             parkingAreaChanged = !(distanceForCount < 0.001);
-            if (onConnectedLocation != null && latLng != null) {
+            if (onConnectedLocation != null) {
                 bookingSensorsArrayList.clear();
                 parkingSpotLatLng = latLng;
                 try {
@@ -722,7 +722,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 bookingSensorsArrayList.add(new BookingSensors(parkingAreaPlaceName, parkingSpotLatLng.latitude, parkingSpotLatLng.longitude,
                         bottomSheetDistance, tempCount, bottomSheetStringDuration,
                         context.getResources().getString(R.string.nearest_parking_from_your_destination),
-                        BookingSensors.SELECTED_INFO_TYPE, 0, parkingPlaceId, occupied));
+                        BookingSensors.SELECTED_INFO_TYPE, 0, parkingPlaceId, occupied, selectedSensorArea.getPsId()));
                 binding.btnConfirmBooking.setVisibility(View.VISIBLE);
                 setBottomSheetList((ArrayList<BookingSensors> mBookingSensorsArrayList) -> {
                     if (bottomSheetAdapter != null) {
@@ -795,7 +795,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 isInAreaEnabled = true;
                 if (isBooked && bookedPlace != null) {
                     destination = "" + bookedPlace.getLat() + ", " + bookedPlace.getLon();
-                    SensorArea sensorArea = createSensorAreaObj(bookedPlace.getAreaName(), bookedPlace.getPlaceId(), bookedPlace.getLat(), bookedPlace.getLon(), bookedPlace.getParkingSlotCount());
+                    SensorArea sensorArea = createSensorAreaObj(bookedPlace.getAreaName(), bookedPlace.getPlaceId(), bookedPlace.getLat(), bookedPlace.getLon(), bookedPlace.getParkingSlotCount(), bookedPlace.getPsId());
                     populateNearestPlaceBottomSheet(new LatLng(bookedPlace.getLat(), bookedPlace.getLon()), sensorArea);
                     setButtonText(context.getResources().getString(R.string.park), context.getResources().getColor(R.color.black));
                 }
@@ -890,7 +890,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             bookingSensorsArrayList.add(new BookingSensors(areaName, parkingSpotLatLng.latitude, parkingSpotLatLng.longitude,
                     searchDistance, searchPlaceCount, searchStringDuration,
                     context.getResources().getString(R.string.nearest_parking_from_your_destination),
-                    BookingSensors.SELECTED_INFO_TYPE, 0, placeId, null));
+                    BookingSensors.SELECTED_INFO_TYPE, 0, null, null, null));
             for (int i = 0; i < sensorAreaArrayList.size(); i++) {
                 Timber.e("SensorAreaArrayListSearch ->%s", new Gson().toJson(sensorAreaArrayList.get(i)));
                 SensorArea sensor = sensorAreaArrayList.get(i);
@@ -912,7 +912,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             sensor.getEndLat(),
                             sensor.getEndLng(), adjustDistance(distanceForNearbyLoc), parkingNumberOfNearbyDistanceLoc,
                             nearbySearchStringDuration,
-                            BookingSensors.INFO_TYPE, 1, sensor.getPlaceId(), null));
+                            BookingSensors.INFO_TYPE, 1, sensor.getPlaceId(), null, null));
 
                     bubbleSortArrayList(bookingSensorsArrayList);
                 }
@@ -1023,7 +1023,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     bookingSensorsArrayList.add(new BookingSensors(nearbyAreaName[0], sensor.getEndLat(),
                             sensor.getEndLng(), adjustDistance(distanceForNearbyLoc), parkingNumberOfNearbyDistanceLoc,
                             nearbySearchStringDuration,
-                            BookingSensors.INFO_TYPE, 1, sensor.getPlaceId(), sensor.getOccupiedCount()));
+                            BookingSensors.INFO_TYPE, 1, sensor.getPlaceId(), sensor.getOccupiedCount(), null));
 
                     bubbleSortArrayList(bookingSensorsArrayList);
                 } else {
@@ -1078,7 +1078,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                     count = baseStringList.get(i);
                                 }
                             }
-                            SensorArea sensorArea = createSensorAreaObj(parkingArea, placeId, endLat, endLng, count);
+                            SensorArea sensorArea = createSensorAreaObj(parkingArea, placeId, endLat, endLng, count, null);
                             sensorAreaArrayList.add(sensorArea);
                         }
 
@@ -1138,7 +1138,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             origin = new LatLng(location.getLatitude(), location.getLongitude());
             bookingSensorsArrayListGlobal.add(new BookingSensors(areaName, latitude, longitude,
                     adjustDistance(fetchDistance), parkingCount, initialNearestDuration,
-                    BookingSensors.INFO_TYPE, 1, sensor.getPlaceId(), sensor.getOccupiedCount()));
+                    BookingSensors.INFO_TYPE, 1, sensor.getPlaceId(), sensor.getOccupiedCount(), null));
             //fetch distance in ascending order
             Collections.sort(bookingSensorsArrayListGlobal, (BookingSensors c1, BookingSensors c2) -> Double.compare(c1.getDistance(), c2.getDistance()));
         }
@@ -1187,7 +1187,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(parkingSpotLatLng.latitude, parkingSpotLatLng.longitude), 13.5f), 500, null);
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(parkingSpotLatLng.latitude, parkingSpotLatLng.longitude), 13.5f));
                     }
-                    SensorArea sensorArea = createSensorAreaObj(sensors.getParkingArea(), sensors.getParkingPlaceId(), sensors.getLat(), sensors.getLng(), sensors.getCount());
+                    SensorArea sensorArea = createSensorAreaObj(sensors.getParkingArea(), sensors.getParkingPlaceId(), sensors.getLat(), sensors.getLng(), sensors.getCount(), null);
                     populateNearestPlaceBottomSheet(parkingSpotLatLng, sensorArea);
                     setButtonText(context.getResources().getString(R.string.confirm_booking), context.getResources().getColor(R.color.black));
                 } else {
@@ -1217,7 +1217,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                     if (parkingSpotLatLng != null) {
                                         destination = "" + parkingSpotLatLng.latitude + ", " + parkingSpotLatLng.longitude;
                                     }
-                                    SensorArea sensorArea = createSensorAreaObj(sensors.getParkingArea(), sensors.getParkingPlaceId(), sensors.getLat(), sensors.getLng(), sensors.getCount());
+                                    SensorArea sensorArea = createSensorAreaObj(sensors.getParkingArea(), sensors.getParkingPlaceId(), sensors.getLat(), sensors.getLng(), sensors.getCount(), null);
                                     populateNearestPlaceBottomSheet(parkingSpotLatLng, sensorArea);
                                 }
 
@@ -1251,7 +1251,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 hideLoading();
                 getDirectionPinMarkerDraw(new LatLng(lat, lng), parkingAreaPlacedId, false);
                 destination = "" + parkingSpotLatLng.latitude + ", " + parkingSpotLatLng.longitude;
-                SensorArea sensorArea = createSensorAreaObj(areaName, argPlaceId, lat, lng, parkingSlotCount);
+                SensorArea sensorArea = createSensorAreaObj(areaName, argPlaceId, lat, lng, parkingSlotCount, null);
                 populateNearestPlaceBottomSheet(parkingSpotLatLng, sensorArea);
                 setButtonText(context.getResources().getString(R.string.confirm_booking), context.getResources().getColor(R.color.black));
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 13.5f), 500, null);
@@ -1259,7 +1259,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             } else if (isBooked && bookedPlace != null) {
                 parkingSpotLatLng = new LatLng(bookedPlace.getLat(), bookedPlace.getLon());
                 destination = "" + parkingSpotLatLng.latitude + ", " + parkingSpotLatLng.longitude;
-                SensorArea sensorArea = createSensorAreaObj(bookedPlace.getAreaName(), bookedPlace.getPlaceId(), bookedPlace.getLat(), bookedPlace.getLon(), bookedPlace.getParkingSlotCount());
+                SensorArea sensorArea = createSensorAreaObj(bookedPlace.getAreaName(), bookedPlace.getPlaceId(), bookedPlace.getLat(), bookedPlace.getLon(), bookedPlace.getParkingSlotCount(), bookedPlace.getPsId());
                 populateNearestPlaceBottomSheet(parkingSpotLatLng, sensorArea);
                 if (!isInAreaEnabled)
                     setButtonText(context.getResources().getString(R.string.park), context.getResources().getColor(R.color.gray3));
@@ -1274,10 +1274,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
     }
 
-    private SensorArea createSensorAreaObj(String parkingArea, String parkingPlaceId, double lat, double lng, String count) {
+    private SensorArea createSensorAreaObj(String parkingArea, String parkingPlaceId, double lat, double lng, String count, String psId) {
         double mFetchDistance = MathUtils.getInstance().calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
                 lat, lng);
-        return new SensorArea(parkingArea, parkingPlaceId, lat, lng, count, adjustDistance(mFetchDistance));
+        return new SensorArea(parkingArea, parkingPlaceId, lat, lng, count, psId, adjustDistance(mFetchDistance));
     }
 
     private double calculateDistance(Double startLatitude, Double startLongitude, Double endLatitude, Double endLongitude) {
@@ -1782,7 +1782,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             }
         } catch (Exception e) {
             e.printStackTrace();
-            //  Toast.makeText(context, "Error occurred on finding the directions...", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, "Error occurred on finding the directions...", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -1807,7 +1807,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             bookedPlace.setPlaceId(mPlaceId);
                             bookedPlace.setReservation(response.body().getReservation());
                             bookedPlace.setIsBooked(true);
-
+                            bookedPlace.setPsId(response.body().getPsId());
                             Preferences.getInstance(context).setBooked(bookedPlace);
                             ApplicationUtils.startAlarm(context, ApplicationUtils.convertLongToCalendar(Preferences.getInstance(context).getBooked().getArriveDate()));
                         } else {

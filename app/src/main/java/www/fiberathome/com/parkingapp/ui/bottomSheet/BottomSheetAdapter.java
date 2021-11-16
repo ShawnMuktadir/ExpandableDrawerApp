@@ -67,8 +67,12 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         } else {
             holder.binding.textBottom.setVisibility(View.GONE);
         }
-
         holder.binding.textViewParkingAreaName.setText(bookingSensors.getParkingArea());
+        if (bookingSensors.getPsId() != null && !bookingSensors.getPsId().equalsIgnoreCase("")) {
+            holder.binding.textViewPsId.setText("( Spot No: " + bookingSensors.getPsId() + " )");
+        } else {
+            holder.binding.textViewPsId.setText("");
+        }
         if (bookingSensors.getOccupiedCount() != null) {
             holder.binding.textViewParkingAreaCount.setText(bookingSensors.getOccupiedCount() + "/" + bookingSensors.getCount());
         } else {

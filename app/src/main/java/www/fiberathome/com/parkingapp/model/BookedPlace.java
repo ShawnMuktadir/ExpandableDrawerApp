@@ -19,6 +19,7 @@ public class BookedPlace implements Parcelable {
     private long arriveDate;
     private float bill;
     private String ticketSpotId;
+    private String psId;
 
     public BookedPlace() {
     }
@@ -127,6 +128,14 @@ public class BookedPlace implements Parcelable {
         this.ticketSpotId = ticketSpotId;
     }
 
+    public String getPsId() {
+        return psId;
+    }
+
+    public void setPsId(String psId) {
+        this.psId = psId;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -145,6 +154,7 @@ public class BookedPlace implements Parcelable {
         dest.writeString(this.placeId);
         dest.writeDouble(this.departedDate);
         dest.writeDouble(this.arriveDate);
+        dest.writeString(this.psId);
     }
 
     public void readFromParcel(Parcel source) {
@@ -159,6 +169,7 @@ public class BookedPlace implements Parcelable {
         this.reservation = source.readString();
         this.departedDate = source.readLong();
         this.arriveDate = source.readLong();
+        this.psId = source.readString();
     }
 
     protected BookedPlace(Parcel in) {
@@ -173,6 +184,7 @@ public class BookedPlace implements Parcelable {
         this.reservation = in.readString();
         this.departedDate = in.readLong();
         this.arriveDate = in.readLong();
+        this.psId = in.readString();
     }
 
     public static final Creator<BookedPlace> CREATOR = new Creator<BookedPlace>() {

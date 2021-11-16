@@ -79,7 +79,6 @@ public class Preferences {
     public void setBooked(BookedPlace booked) {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME_BOOKING, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-
         editor.putString("uid", booked.getBookedUid());
         editor.putString("areaName", booked.getAreaName());
         editor.putString("parkingSlotCount", booked.getParkingSlotCount());
@@ -93,6 +92,7 @@ public class Preferences {
         editor.putLong("departedDate", booked.getDepartedDate());
         editor.putLong("arrivedDate", booked.getArriveDate());
         editor.putFloat("bill", booked.getBill());
+        editor.putString("ps_Id", booked.getPsId());
         editor.apply();
     }
 
@@ -114,9 +114,10 @@ public class Preferences {
         bookedPlace.setIsBooked(sharedPreferences.getBoolean("isBooked", false));
         bookedPlace.setPaid(sharedPreferences.getBoolean("isPaid", false));
         bookedPlace.setBill(sharedPreferences.getFloat("bill", 0));
-
+        bookedPlace.setPsId(sharedPreferences.getString("ps_Id", ""));
         return bookedPlace;
     }
+
     public void clearBooking(){
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME_BOOKING, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();

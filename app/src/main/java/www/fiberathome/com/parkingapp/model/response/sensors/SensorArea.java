@@ -9,18 +9,21 @@ public class SensorArea {
     private String duration;
     private boolean isChecked;
     private String occupiedCount;
+    private String psId;
 
     private final double fetchDistance = 0.0;
     private String placeId;
     private double endLat;
     private double endLng;
 
-    public SensorArea(String parkingArea, String placeId, double endLat, double endLng, String count, double fetchDistance) {
+    public SensorArea(String parkingArea, String placeId, double endLat, double endLng, String count,
+                      String psId, double fetchDistance) {
         this.parkingArea = parkingArea;
         this.placeId = placeId;
         this.endLat = endLat;
         this.endLng = endLng;
         this.count = count;
+        this.psId = psId;
         this.distance = fetchDistance;
     }
 
@@ -78,6 +81,14 @@ public class SensorArea {
 
     public void setOccupiedCount(String occupiedCount) {
         this.occupiedCount = occupiedCount;
+    }
+
+    public String getPsId() {
+        return psId;
+    }
+
+    public void setPsId(String psId) {
+        this.psId = psId;
     }
 
     public boolean isChecked() {
