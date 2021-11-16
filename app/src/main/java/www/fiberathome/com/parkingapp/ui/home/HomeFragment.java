@@ -732,6 +732,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 for (SensorStatus status : sensorStatusArrayList) {
                     if (status.getAreaId().equalsIgnoreCase(parkingAreaPlacedId)) {
                         occupied = status.getOccupiedCount();
+                        break;
                     }
                 }
                 String tempCount = parkingNumberOfIndividualMarker;
