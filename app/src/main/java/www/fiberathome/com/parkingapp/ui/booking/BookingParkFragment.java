@@ -62,6 +62,7 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.databinding.FragmentBookingParkBinding;
 import www.fiberathome.com.parkingapp.listener.FragmentChangeListener;
+import www.fiberathome.com.parkingapp.model.BookedPlace;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
@@ -167,7 +168,9 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                 ft.commit();
                 supportMapFragment.getMapAsync(this);
                 if (sensors != null) {
-                    //from HomeActivity
+                    BookedPlace mBookedPlace = Preferences.getInstance(context).getBooked();
+                    mBookedPlace.setExceedRunning(true);
+                    Preferences.getInstance(context).setBooked(mBookedPlace);
                     ApplicationUtils.startBookingExceedService(context, getStringDateToMillis(sensors.getTimeEnd()));
                     binding.tvArrivedTime.setText(String.format("Booking Time: %s", sensors.getTimeStart()));
                     binding.tvDepartureTime.setText(String.format("Departure Time: %s", sensors.getTimeEnd()));
@@ -225,6 +228,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                 try {
                     mHandler.removeCallbacks(mHandlerTask);
                     sensors = null;
+                    Preferences.getInstance(context).clearBooking();
                     DialogUtils.getInstance().alertDialog(context,
                             context,
                             context.getResources().getString(R.string.as_your_reservation_time_had_exceed_over_five_mins),
@@ -233,7 +237,6 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                                 @Override
                                 public void onPositiveClick() {
                                     Timber.e("Positive Button clicked");
-                                    Preferences.getInstance(context).clearBooking();
                                     listener.fragmentChange(HomeFragment.newInstance());
                                 }
 
@@ -436,9 +439,10 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                 }
                 mHandler.removeCallbacks(mHandlerTask);
                 sensors = null;
-                ApplicationUtils.stopBookingTrackService(context);
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
+                        Preferences.getInstance(context).clearBooking();
+                        ApplicationUtils.stopBookingTrackService(context);
                         DialogUtils.getInstance().alertDialog(context,
                                 context,
                                 response.body().getMessage(),
@@ -447,7 +451,6 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                                     @Override
                                     public void onPositiveClick() {
                                         Timber.e("Positive Button clicked");
-                                        Preferences.getInstance(context).clearBooking();
                                         listener.fragmentChange(HomeFragment.newInstance());
                                     }
 

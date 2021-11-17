@@ -133,11 +133,12 @@ public class BookingService extends Service {
     private void startExceedTimeTracking() {
         //service starts when car is on parking spot and user clicks on park button
         if (!isExceedRunned) {
+            isExceedRunned = true;
             Timber.e("car parked");
             //Toast.makeText(context, "car parked", Toast.LENGTH_LONG).show();
             notificationCaller(Constants.NOTIFICATION_CHANNEL_EXCEED_BOOKING, "Car Parked", 3);
             startForeground(Constants.BOOKING_Exceed_SERVICE_ID, mBuilder.build());
-            isExceedRunned = true;
+
         }
 
         //executes when booking time ends
@@ -226,6 +227,7 @@ public class BookingService extends Service {
         isRunning = false;
         warringShowed = false;
         departureDate = 0;
+        isServiceStarted = false;
         if (fusedLocationProviderClient != null) {
             fusedLocationProviderClient.removeLocationUpdates(locationCallback);
         }
@@ -524,11 +526,24 @@ public class BookingService extends Service {
 
     @Override
     public void onDestroy() {
-        if (Preferences.getInstance(context).getBooked().getIsBooked()) {
+        if (Preferences.getInstance(context).getBooked().getIsBooked() &&
+                !Preferences.getInstance(context).getBooked().isCarParked()) {
 //           Toast.makeText(context, "service restarted", Toast.LENGTH_SHORT).show();
             Timber.e("abdur service restarted");
             Intent intent = new Intent(context, BookingService.class);
             intent.setAction(Constants.START_BOOKING_TRACKING);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(intent);
+            } else {
+                context.startService(intent);
+            }
+        } else if (Preferences.getInstance(context).getBooked().getIsBooked()
+                && Preferences.getInstance(context).getBooked().isCarParked()
+                && Preferences.getInstance(context).getBooked().isExceedRunning()) {
+//           Toast.makeText(context, "service restarted", Toast.LENGTH_SHORT).show();
+            Timber.e("abdur service restarted");
+            Intent intent = new Intent(context, BookingService.class);
+            intent.setAction(Constants.BOOKING_EXCEED_CHECK);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 context.startForegroundService(intent);
             } else {

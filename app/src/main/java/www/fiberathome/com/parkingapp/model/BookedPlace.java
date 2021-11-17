@@ -13,6 +13,8 @@ public class BookedPlace implements Parcelable {
     private String parkingSlotCount;
     private boolean isBooked = false;
     private boolean isPaid = false;
+    private boolean isCarParked = false;
+    private boolean isExceedRunning = false;
     private String placeId;
     private String reservation;
     private long departedDate;
@@ -78,6 +80,22 @@ public class BookedPlace implements Parcelable {
 
     public void setPaid(boolean paid) {
         isPaid = paid;
+    }
+
+    public boolean isCarParked() {
+        return isCarParked;
+    }
+
+    public void setCarParked(boolean carParked) {
+        isCarParked = carParked;
+    }
+
+    public boolean isExceedRunning() {
+        return isExceedRunning;
+    }
+
+    public void setExceedRunning(boolean exceedRunning) {
+        isExceedRunning = exceedRunning;
     }
 
     public void setPlaceId(String placeId) {
@@ -151,6 +169,7 @@ public class BookedPlace implements Parcelable {
         dest.writeString(this.reservation);
         dest.writeByte(this.isBooked ? (byte) 1 : (byte) 0);
         dest.writeByte(this.isPaid ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.isCarParked ? (byte) 1 : (byte) 0);
         dest.writeString(this.placeId);
         dest.writeDouble(this.departedDate);
         dest.writeDouble(this.arriveDate);
@@ -165,6 +184,7 @@ public class BookedPlace implements Parcelable {
         this.parkingSlotCount = source.readString();
         this.isBooked = source.readByte() != 0;
         this.isPaid = source.readByte() != 0;
+        this.isCarParked = source.readByte() != 0;
         this.placeId = source.readString();
         this.reservation = source.readString();
         this.departedDate = source.readLong();
@@ -180,6 +200,7 @@ public class BookedPlace implements Parcelable {
         this.parkingSlotCount = in.readString();
         this.isBooked = in.readByte() != 0;
         this.isPaid = in.readByte() != 0;
+        this.isCarParked = in.readByte() != 0;
         this.placeId = in.readString();
         this.reservation = in.readString();
         this.departedDate = in.readLong();

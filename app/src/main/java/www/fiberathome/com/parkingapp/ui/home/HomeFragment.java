@@ -1631,6 +1631,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 hideLoading();
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
+                        BookedPlace mBookedPlace = Preferences.getInstance(context).getBooked();
+                        mBookedPlace.setCarParked(true);
+                        Preferences.getInstance(context).setBooked(mBookedPlace);
                         ApplicationUtils.stopBookingTrackService(context);
                         getBookingParkStatus(Preferences.getInstance(context).getUser().getMobileNo());
                     }

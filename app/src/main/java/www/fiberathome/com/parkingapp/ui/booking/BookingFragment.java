@@ -5,9 +5,6 @@ import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CO
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.ActivityManager;
-import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -37,15 +34,14 @@ import www.fiberathome.com.parkingapp.databinding.FragmentBookingBinding;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
-import www.fiberathome.com.parkingapp.model.data.Constants;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.booking.BookedList;
 import www.fiberathome.com.parkingapp.model.response.booking.BookedResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.ReservationCancelResponse;
-import www.fiberathome.com.parkingapp.service.booking_service.BookingService;
 import www.fiberathome.com.parkingapp.ui.booking.adapter.BookingAdapter;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
+import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
@@ -241,7 +237,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                         Preferences.getInstance(context).isBookingCancelled = true;
                         bookedLists.clear();
                         fetchBookedParkingPlace(mobileNo, true);
-                        stopBookingTrackService();
+                        ApplicationUtils.stopBookingTrackService(context);
                     }
                 }
             }
@@ -270,29 +266,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
         });
     }
 
-    private void stopBookingTrackService() {
-        if (isLocationTrackingServiceRunning()) {
-            Intent intent = new Intent(context, BookingService.class);
-            intent.setAction(Constants.STOP_BOOKING_TRACKING);
-            context.startService(intent);
-        }
-    }
 
-    private boolean isLocationTrackingServiceRunning() {
-        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        if (activityManager != null) {
-            for (ActivityManager.RunningServiceInfo serviceInfo : activityManager.getRunningServices(Integer.MAX_VALUE)) {
-                String a = Service.class.getName();
-                serviceInfo.service.getClassName();
-                if (serviceInfo.foreground) {
-                    return true;
-                }
-
-            }
-            return false;
-        }
-        return false;
-    }
 
     private void setNoData() {
         binding.textViewNoData.setVisibility(View.VISIBLE);

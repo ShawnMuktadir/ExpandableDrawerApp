@@ -84,9 +84,11 @@ public class Preferences {
         editor.putString("parkingSlotCount", booked.getParkingSlotCount());
         editor.putString("uid", booked.getBookedUid());
         editor.putString("lat", String.valueOf(booked.getLat()));
-        editor.putString("lon",   String.valueOf(booked.getLon()));
+        editor.putString("lon", String.valueOf(booked.getLon()));
         editor.putBoolean("isBooked", booked.getIsBooked());
         editor.putBoolean("isPaid", booked.isPaid());
+        editor.putBoolean("isCarParked", booked.isCarParked());
+        editor.putBoolean("isExceedRunning", booked.isExceedRunning());
         editor.putString("placeId", booked.getPlaceId());
         editor.putString("reservation", booked.getReservation());
         editor.putLong("departedDate", booked.getDepartedDate());
@@ -113,6 +115,8 @@ public class Preferences {
         bookedPlace.setArriveDate(sharedPreferences.getLong("arrivedDate", 0));
         bookedPlace.setIsBooked(sharedPreferences.getBoolean("isBooked", false));
         bookedPlace.setPaid(sharedPreferences.getBoolean("isPaid", false));
+        bookedPlace.setCarParked(sharedPreferences.getBoolean("isCarParked", false));
+        bookedPlace.setExceedRunning(sharedPreferences.getBoolean("isExceedRunning", false));
         bookedPlace.setBill(sharedPreferences.getFloat("bill", 0));
         bookedPlace.setPsId(sharedPreferences.getString("ps_Id", ""));
         return bookedPlace;
