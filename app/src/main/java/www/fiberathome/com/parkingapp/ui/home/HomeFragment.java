@@ -375,7 +375,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     public void onStart() {
         Timber.e("onStart called");
         super.onStart();
-        hideLoading();
         bookedPlace = Preferences.getInstance(context).getBooked();
         isBooked = Preferences.getInstance(context).getBooked().getIsBooked();
         if (isBooked) {
@@ -384,13 +383,13 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         } else {
             ApplicationUtils.stopBookingTrackService(context);
         }
+        hideLoading();
     }
 
     @Override
     public void onResume() {
         Timber.e("onResume called");
         super.onResume();
-        hideLoading();
         bookedPlace = Preferences.getInstance(context).getBooked();
         isBooked = Preferences.getInstance(context).getBooked().getIsBooked();
         if (fusedLocationProviderClient == null) {
@@ -403,8 +402,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         if (isBooked) {
             binding.fabGetDirection.setVisibility(View.VISIBLE);
         }
-        if (isAdded())
+        if (isAdded()) {
             setListeners();
+        }
+        hideLoading();
     }
 
     @Override
@@ -419,6 +420,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         Timber.e("onStop called");
         if (fusedLocationProviderClient != null)
             fusedLocationProviderClient.removeLocationUpdates(locationCallback);
+        hideLoading();
         super.onStop();
     }
 

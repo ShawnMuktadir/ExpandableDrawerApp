@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.gson.Gson;
+import com.sslwireless.sslcommerzlibrary.model.initializer.SSLCCustomerInfoInitializer;
 import com.sslwireless.sslcommerzlibrary.model.initializer.SSLCommerzInitialization;
 import com.sslwireless.sslcommerzlibrary.model.response.SSLCTransactionInfoModel;
 import com.sslwireless.sslcommerzlibrary.model.util.SSLCCurrencyType;
@@ -179,15 +180,20 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
 
         int tnxId = random.nextInt(9999999);
 
+        final SSLCCustomerInfoInitializer customerInfoInitializer = new SSLCCustomerInfoInitializer(Preferences.getInstance(context).getUser().getFullName(), "customer email",
+                "address", "dhaka", "1214", "Bangladesh", Preferences.getInstance(context).getUser().getMobileNo());
+
         final SSLCommerzInitialization sslCommerzInitialization = new SSLCommerzInitialization
                 ("fiber61877740d2a85", "fiber61877740d2a85@ssl", mNetBill, SSLCCurrencyType.BDT, tnxId + Preferences.getInstance(context).getUser().getMobileNo(),
                         "CarParkingBill", SSLCSdkType.TESTBOX);
         IntegrateSSLCommerz
                 .getInstance(context)
                 .addSSLCommerzInitialization(sslCommerzInitialization)
+                .addCustomerInfoInitializer(customerInfoInitializer)
                 .buildApiCall(new SSLCTransactionResponseListener() {
                     @Override
                     public void transactionSuccess(SSLCTransactionInfoModel sslcTransactionInfoModel) {
+                        Timber.e("transactionSuccess -> %s", new Gson().toJson(sslcTransactionInfoModel));
                         bookedPlace = new BookedPlace();
                         bookedPlace.setPaid(true);
                         bookedPlace.setBill((float) mNetBill);
