@@ -27,6 +27,8 @@ import www.fiberathome.com.parkingapp.databinding.BookingsRowBinding;
 import www.fiberathome.com.parkingapp.model.response.booking.BookedList;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingArea;
 import www.fiberathome.com.parkingapp.ui.booking.BookingActivity;
+import www.fiberathome.com.parkingapp.utils.DialogUtils;
+import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -62,7 +64,7 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         BookedList bookedList = bookedLists.get(position);
         bookingViewHolder.binding.textViewParkingSlot.setText(bookedList.getAddress());
         bookingViewHolder.binding.textViewParkingTotalPaymentAmount.setText(context.getResources().getString(R.string.total_fair) + " " + bookedList.getCurrentBill());
-        bookingViewHolder.binding.textViewSpotId.setText(context.getResources().getString(R.string.parking_spot_id) + bookedList.getPsId());
+        bookingViewHolder.binding.textViewSpotId.setText("#" + bookedList.getPsId());
         bookingViewHolder.binding.textViewParkingTime.setText("Arrival " + bookedList.getTimeStart() + " - \n" + "Departure " + bookedList.getTimeEnd());
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
@@ -104,9 +106,20 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             bookingViewHolder.binding.tvStatus.setTextColor(Color.RED);
         }
 
-        bookingViewHolder.binding.tvCancel.setOnClickListener(v -> bookingAdapterClickListener.onItemClick(bookingViewHolder.getAbsoluteAdapterPosition(), bookedList.getSpotId(), bookedList.getId()));
+        bookingViewHolder.binding.tvRebooking.setOnClickListener(v -> {
+            if (bookedList.getC_Status().equalsIgnoreCase("0") && bookedList.getStatus().equalsIgnoreCase("0")) {
+                ToastUtils.getInstance().showToast(context, "" + context.getResources().getString(R.string.already_booked_msg));
+            } else {
+                bookingAdapterClickListener.onItemRebookListener(position);
+            }
 
-        bookingViewHolder.binding.textViewParkingRateNTip.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
+        });
+
+        bookingViewHolder.binding.tvGetHelp.setOnClickListener(v -> {
+            bookingAdapterClickListener.onItemGetHelpListener();
+        });
+
+        bookingViewHolder.binding.tvCancel.setOnClickListener(v -> bookingAdapterClickListener.onBookingItemCancel(bookingViewHolder.getAbsoluteAdapterPosition(), bookedList.getSpotId(), bookedList.getId()));
 
         bookingViewHolder.binding.btnViewReceipt.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
 
@@ -150,6 +163,11 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     public interface BookingAdapterClickListener {
-        void onItemClick(int position, String uid, String id);
+        void onBookingItemCancel(int position, String uid, String id);
+
+        void onItemGetHelpListener();
+
+        void onItemRebookListener(int position);
+
     }
 }

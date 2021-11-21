@@ -36,9 +36,6 @@ public class DialogUtils {
         return dialogUtils;
     }
 
-    public void alertDialog(BookingActivity context, Activity context1, String string, BookingActivity context2, String string1, String string2, Object positive_button_clicked, Object negative_button_clicked) {
-    }
-
     public interface DialogClickListener {
         void onPositiveClick();
 
@@ -166,6 +163,36 @@ public class DialogUtils {
             builder.setMessage(message);
             builder.setCancelable(true);
             builder.setPositiveButton(context.getResources().getString(R.string.ok), (dialog, which) -> dialog.dismiss());
+            AlertDialog alertDialog = builder.create();
+            try {
+                if (!((Activity) context).isFinishing()) {
+                    alertDialog.show();
+                }
+            } catch (WindowManager.BadTokenException e) {
+                //use a log message
+                e.getCause();
+            }
+
+            // Let's start with animation work. We just need to create a style and use it here as follows.
+            /*if (alertDialog.getWindow() != null)
+                alertDialog.getWindow().getAttributes().windowAnimations = R.style.slidingDialogAnimation;*/
+
+        }
+    }
+
+    public void showCallDialog(String message, Context context) {
+        if (context != null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setMessage(message);
+            builder.setCancelable(true);
+            builder.setPositiveButton(context.getResources().getString(R.string.call), (dialog, which) -> {
+                String number = context.getResources().getString(R.string.number);
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_DIAL); // Action for what intent called for
+                intent.setData(Uri.parse("tel: " + number)); // Datum with intent respective action on intent
+                context.startActivity(intent);
+                dialog.dismiss();
+            });
             AlertDialog alertDialog = builder.create();
             try {
                 if (!((Activity) context).isFinishing()) {

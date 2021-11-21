@@ -530,4 +530,7 @@
     <string name="as_your_reservation_time_had_exceed_over_five_mins">As your reservation time had exceed over 5 mins, your booking has been closed. Thank you</string>
     <string name="invalid_vehicle_number">Invalid vehicle number</string>
     <string name="clock">Clock</string>
+    <string name="re_booking">Rebook</string>
+    <string name="please_contact_our_support_team_for_your_queries">Please contact our support team for your necessary queries</string>
+    <string name="sms">Sms</string>
 </resources>

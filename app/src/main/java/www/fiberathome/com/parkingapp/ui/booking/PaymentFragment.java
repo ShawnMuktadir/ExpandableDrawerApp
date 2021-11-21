@@ -1,8 +1,5 @@
 package www.fiberathome.com.parkingapp.ui.booking;
 
-import static android.content.Context.LOCATION_SERVICE;
-
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -158,14 +155,18 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                 if (minutes > 120) {
                     ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.booking_time_rules));
                 } else {
-                    if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
+                    if (ApplicationUtils.isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
                         if (!Preferences.getInstance(context).getBooked().getIsBooked()
                                 && Preferences.getInstance(context).getBooked().getBill() == Math.round(netBill)
                                 && Preferences.getInstance(context).getBooked().isPaid() && bookedPlace != null) {
                             storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
                                     ApplicationUtils.getDate(arrivedDate.getTime()), ApplicationUtils.getDate(departureDate.getTime()), placeId);
                         } else {
-                            sslPayment(netBill);
+                            try {
+                                sslPayment(netBill);
+                            } catch (Exception e) {
+                                Timber.e(e.getCause());
+                            }
                         }
                     }
                 }
@@ -180,12 +181,12 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
 
         int tnxId = random.nextInt(9999999);
 
-        final SSLCCustomerInfoInitializer customerInfoInitializer = new SSLCCustomerInfoInitializer(Preferences.getInstance(context).getUser().getFullName(), "customer email",
-                "address", "dhaka", "1214", "Bangladesh", Preferences.getInstance(context).getUser().getMobileNo());
-
         final SSLCommerzInitialization sslCommerzInitialization = new SSLCommerzInitialization
                 ("fiber61877740d2a85", "fiber61877740d2a85@ssl", mNetBill, SSLCCurrencyType.BDT, tnxId + Preferences.getInstance(context).getUser().getMobileNo(),
                         "CarParkingBill", SSLCSdkType.TESTBOX);
+        final SSLCCustomerInfoInitializer customerInfoInitializer = new SSLCCustomerInfoInitializer(Preferences.getInstance(context).getUser().getFullName(), "customer email",
+                "address", "dhaka", "1214", "Bangladesh", Preferences.getInstance(context).getUser().getMobileNo());
+
         IntegrateSSLCommerz
                 .getInstance(context)
                 .addSSLCommerzInitialization(sslCommerzInitialization)
@@ -209,12 +210,13 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                             storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
                                     ApplicationUtils.getDate(arrivedDate.getTime()), ApplicationUtils.getDate(departureDate.getTime()), placeId);
                         } else {
-                            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
+                            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_gps));
                         }
                     }
 
                     @Override
                     public void transactionFail(String s) {
+                        ToastUtils.getInstance().showToast(context, s);
                         Timber.e("transactionFail -> %s", s);
                     }
 
@@ -223,17 +225,6 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                         Timber.e("merchantValidationError -> %s", s);
                     }
                 });
-    }
-
-    private boolean isGPSEnabled() {
-        LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-        boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        if (providerEnabled) {
-            return true;
-        } else {
-            Timber.e("else called");
-        }
-        return false;
     }
 
     private void setData() {

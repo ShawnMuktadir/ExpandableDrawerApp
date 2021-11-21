@@ -4,7 +4,6 @@ import static android.content.Context.LOCATION_SERVICE;
 import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -16,10 +15,10 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -39,7 +38,6 @@ import www.fiberathome.com.parkingapp.model.response.booking.BookedList;
 import www.fiberathome.com.parkingapp.model.response.booking.BookedResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.ReservationCancelResponse;
 import www.fiberathome.com.parkingapp.ui.booking.adapter.BookingAdapter;
-import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
@@ -48,7 +46,7 @@ import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressLint("NonConstantResourceId")
-@SuppressWarnings({"unused", "RedundantSuppression"})
+@SuppressWarnings({"unused", "RedundantSuppression", "InflateParams"})
 public class BookingFragment extends BaseFragment implements IOnBackPressListener {
 
     private BookingActivity context;
@@ -85,10 +83,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         context = (BookingActivity) getActivity();
-        setListeners();
-
         String mobileNo = Preferences.getInstance(context).getUser().getMobileNo();
         if (ConnectivityUtils.getInstance().checkInternet(context)) {
             fetchBookedParkingPlace(mobileNo, false);
@@ -197,25 +192,44 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
         if (!refresh && isAdded()) {
             binding.recyclerViewBooking.setHasFixedSize(true);
             binding.recyclerViewBooking.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
-            bookingAdapter = new BookingAdapter(context, bookedLists, (position, uid, id) -> DialogUtils.getInstance().alertDialog(context,
-                    (Activity) context,
-                    context.getResources().getString(R.string.dp_u_want_to_cancel_booking),
-                    context.getResources().getString(R.string.ok), context.getResources().getString(R.string.cancel),
-                    new DialogUtils.DialogClickListener() {
-                        @Override
-                        public void onPositiveClick() {
-                            Timber.e("Positive Button clicked");
-                            if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
-                                cancelBooking(Preferences.getInstance(context).getUser().getMobileNo(), uid, id);
-                            }
-                            Preferences.getInstance(context).clearBooking();
-                        }
+            bookingAdapter = new BookingAdapter(context, bookedLists, new BookingAdapter.BookingAdapterClickListener() {
+                @Override
+                public void onBookingItemCancel(int position, String uid, String id) {
+                    DialogUtils.getInstance().alertDialog(context,
+                            context,
+                            context.getResources().getString(R.string.dp_u_want_to_cancel_booking),
+                            context.getResources().getString(R.string.ok), context.getResources().getString(R.string.cancel),
+                            new DialogUtils.DialogClickListener() {
+                                @Override
+                                public void onPositiveClick() {
+                                    Timber.e("Positive Button clicked");
+                                    if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
+                                        cancelBooking(Preferences.getInstance(context).getUser().getMobileNo(), uid, id);
+                                    }
+                                    Preferences.getInstance(context).clearBooking();
+                                }
 
-                        @Override
-                        public void onNegativeClick() {
-                            Timber.e("Negative Button Clicked");
-                        }
-                    }).show());
+                                @Override
+                                public void onNegativeClick() {
+                                    Timber.e("Negative Button Clicked");
+                                }
+                            }).show();
+                }
+
+                @Override
+                public void onItemGetHelpListener() {
+                    //DialogUtils.getInstance().showCallDialog(context.getResources().getString(R.string.get_support), context);
+                    View modelBottomSheet = LayoutInflater.from(context).inflate(R.layout.bottom_sheet_dialog_get_help, null);
+                    BottomSheetDialog dialog = new BottomSheetDialog(context);
+                    dialog.setContentView(modelBottomSheet);
+                    dialog.show();
+                }
+
+                @Override
+                public void onItemRebookListener(int position) {
+
+                }
+            });
             binding.recyclerViewBooking.setAdapter(bookingAdapter);
         } else {
             bookingAdapter.updateList(bookedLists);
@@ -249,24 +263,6 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
             }
         });
     }
-
-    private void setListeners() {
-        binding.imageViewCross.setOnClickListener(v -> {
-            if (getActivity() != null) {
-                getActivity().onBackPressed();
-                ((HomeActivity) getActivity()).toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
-                ((HomeActivity) getActivity()).navigationView.getMenu().getItem(2).setChecked(false);
-            }
-            if (getFragmentManager() != null) {
-                FragmentTransaction fragmentTransaction = context.getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.nav_host_fragment, HomeFragment.newInstance());
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
-            }
-        });
-    }
-
-
 
     private void setNoData() {
         binding.textViewNoData.setVisibility(View.VISIBLE);

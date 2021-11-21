@@ -64,7 +64,6 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
 
     public static String markerUid = "";
     public static String areaName;
-    private final String TAG = getClass().getSimpleName();
     public DialogHelper.PayBtnClickListener payBtnClickListener;
     public long arrived, departure, difference;
 
