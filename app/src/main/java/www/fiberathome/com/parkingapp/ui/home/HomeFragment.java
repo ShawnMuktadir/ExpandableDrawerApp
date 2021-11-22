@@ -1814,7 +1814,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             bookedPlace.setIsBooked(true);
                             bookedPlace.setPsId(response.body().getPsId());
                             Preferences.getInstance(context).setBooked(bookedPlace);
-                            ApplicationUtils.startAlarm(context, ApplicationUtils.convertLongToCalendar(Preferences.getInstance(context).getBooked().getArriveDate()));
+                            ApplicationUtils.startAlarm(context, ApplicationUtils.convertLongToCalendar(Preferences.getInstance(context).getBooked().getArriveDate())
+                                    , ApplicationUtils.convertLongToCalendar(Preferences.getInstance(context).getBooked().getDepartedDate()));
                         } else {
                             DialogUtils.getInstance().showOnlyMessageDialog(context.getResources().getString(R.string.parking_slot_not_available), context);
                         }

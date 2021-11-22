@@ -274,7 +274,8 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                             bookedPlace.setIsBooked(true);
                             bookedPlace.setPsId(response.body().getPsId());
                             Preferences.getInstance(context).setBooked(bookedPlace);
-                            ApplicationUtils.startAlarm(context, ApplicationUtils.convertLongToCalendar(Preferences.getInstance(context).getBooked().getArriveDate()));
+                            ApplicationUtils.startAlarm(context, ApplicationUtils.convertLongToCalendar(Preferences.getInstance(context).getBooked().getArriveDate())
+                                    , ApplicationUtils.convertLongToCalendar(Preferences.getInstance(context).getBooked().getDepartedDate()));
                             if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
                                 binding.actionBarTitle.setText(context.getResources().getString(R.string.booking_payment));
                                 listener.fragmentChange(HomeFragment.newInstance());

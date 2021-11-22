@@ -132,7 +132,7 @@
                     android:id="@+id/radioMilitary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/radio_military" />
+                    android:text="@string/others" />
 
             </RadioGroup>
 
