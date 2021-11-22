@@ -163,7 +163,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                     if (ApplicationUtils.isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
                         if (!Preferences.getInstance(context).getBooked().getIsBooked()
                                 && Preferences.getInstance(context).getBooked().getBill() == Math.round(netBill)
-                                && Preferences.getInstance(context).getBooked().isPaid() && bookedPlace != null) {
+                                && Preferences.getInstance(context).getBooked().isPaid()) {
                             storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
                                     ApplicationUtils.getDate(arrivedDate.getTime()), ApplicationUtils.getDate(departureDate.getTime()), placeId);
                         } else {
