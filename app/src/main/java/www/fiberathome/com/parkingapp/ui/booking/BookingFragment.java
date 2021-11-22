@@ -14,6 +14,7 @@ import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -205,7 +206,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                     DialogUtils.getInstance().alertDialog(context,
                             context,
                             context.getResources().getString(R.string.dp_u_want_to_cancel_booking),
-                            context.getResources().getString(R.string.ok), context.getResources().getString(R.string.cancel),
+                            context.getResources().getString(R.string.yes), context.getResources().getString(R.string.no),
                             new DialogUtils.DialogClickListener() {
                                 @Override
                                 public void onPositiveClick() {
@@ -238,7 +239,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                             if (ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                                 mPermissionResult.launch(Manifest.permission.CALL_PHONE);
                             } else {
-                                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + "0123456789"));
+                                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + context.getResources().getString(R.string.number)));
                                 startActivity(intent);
                             }
                         }
@@ -246,18 +247,27 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                     getHelpBinding.buttonSms.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Intent smsIntent = new Intent(Intent.ACTION_VIEW, Uri.fromParts("sms", "0123456789", null));
+                            Intent smsIntent = new Intent(Intent.ACTION_VIEW, Uri.fromParts("sms", context.getResources().getString(R.string.number), null));
                             smsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(smsIntent);
                         }
                     });
-
-
                 }
 
                 @Override
                 public void onItemRebookListener(int position) {
-
+//                    Bundle bundle = new Bundle();
+//                    bundle.putBoolean("m", false); //m for more
+//                    bundle.putString("areaPlacedId", parkingAreaPlacedId);
+//                    bundle.putString("areaName", parkingAreaPlaceName);
+//                    bundle.putString("parkingSlotCount", parkingNumberOfIndividualMarker);
+//                    bundle.putDouble("lat", parkingSpotLatLng.latitude);
+//                    bundle.putDouble("long", parkingSpotLatLng.longitude);
+//                    bundle.putString("route", new Gson().toJson(initialRoutePoints));
+//                    ScheduleFragment scheduleFragment = new ScheduleFragment();
+//                    scheduleFragment.setArguments(bundle);
+//                    listener.fragmentChange(scheduleFragment);
+                    Toast.makeText(context, "Re-booking currently not available", Toast.LENGTH_SHORT).show();
                 }
             });
             binding.recyclerViewBooking.setAdapter(bookingAdapter);
@@ -270,7 +280,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
             new ActivityResultContracts.RequestPermission(),
             result -> {
                 if (result) {
-                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + "0123456789"));
+                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + context.getResources().getString(R.string.number)));
                     startActivity(intent);
                 }
             });

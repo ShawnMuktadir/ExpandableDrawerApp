@@ -27,7 +27,6 @@ import www.fiberathome.com.parkingapp.databinding.BookingsRowBinding;
 import www.fiberathome.com.parkingapp.model.response.booking.BookedList;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingArea;
 import www.fiberathome.com.parkingapp.ui.booking.BookingActivity;
-import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -62,7 +61,8 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         BookingViewHolder bookingViewHolder = (BookingViewHolder) viewHolder;
 
         BookedList bookedList = bookedLists.get(position);
-        bookingViewHolder.binding.textViewParkingSlot.setText(bookedList.getAddress());
+        bookingViewHolder.binding.textViewParkingSlot.setText(context.getResources().getString(R.string.parking_spot_id) + bookedList.getAddress());
+        bookingViewHolder.binding.textViewReservationId.setText(context.getResources().getString(R.string.parking_reservation_id) + bookedList.getId());
         bookingViewHolder.binding.textViewParkingTotalPaymentAmount.setText(context.getResources().getString(R.string.total_fair) + " " + bookedList.getCurrentBill());
         bookingViewHolder.binding.textViewSpotId.setText("#" + bookedList.getPsId());
         bookingViewHolder.binding.textViewParkingTime.setText("Arrival " + bookedList.getTimeStart() + " - \n" + "Departure " + bookedList.getTimeEnd());

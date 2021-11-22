@@ -1604,7 +1604,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         binding.btnConfirmBooking.setFocusable(true);
                         Bundle bundle = new Bundle();
                         bundle.putBoolean("m", false); //m for more
-                        bundle.putString("markerUid", parkingAreaPlacedId);
+                        bundle.putString("areaPlacedId", parkingAreaPlacedId);
                         bundle.putString("areaName", parkingAreaPlaceName);
                         bundle.putString("parkingSlotCount", parkingNumberOfIndividualMarker);
                         bundle.putDouble("lat", parkingSpotLatLng.latitude);
