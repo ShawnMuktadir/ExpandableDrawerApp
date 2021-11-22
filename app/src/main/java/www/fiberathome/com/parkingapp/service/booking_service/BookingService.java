@@ -344,7 +344,7 @@ public class BookingService extends Service {
             @SuppressLint("DefaultLocale")
             public void onTick(long millisUntilFinished) {
                 int numMessages = 0;
-                mBuilder.setContentText("" + String.format(context.getString(R.string.remaining_time) + "%d min, %d sec",
+                mBuilder.setContentText("" + String.format(context.getString(R.string.remaining_time) + " %d min, %d sec",
                         TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
                         TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
                                 TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))))

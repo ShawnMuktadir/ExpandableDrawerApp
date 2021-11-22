@@ -287,9 +287,21 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         if (!bookedPlace.getIsBooked() && bookedPlace.isPaid()) {
             if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
                 storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
-                        ApplicationUtils.getDate(bookedPlace.getArriveDate()), ApplicationUtils.getDate(bookedPlace.getDepartedDate()), bookedPlace.getPlaceId());
+                        ApplicationUtils.getDate(bookedPlace.getArriveDate()),
+                        ApplicationUtils.getDate(bookedPlace.getDepartedDate()), bookedPlace.getPlaceId());
             } else {
                 ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
+            }
+        } else {
+            if (bookedPlace.getLat() == 0 || bookedPlace.getLon() == 0
+                    || !bookedPlace.getIsBooked()
+                    || !bookedPlace.isPaid()
+                    || bookedPlace.getPlaceId().equals("")
+                    || bookedPlace.getReservation().equals("")
+                    || bookedPlace.getParkingSlotCount().equals("")
+                    || bookedPlace.getPsId().equals("")
+                    || bookedPlace.getBookedUid().equals("")) {
+                Preferences.getInstance(context).clearBooking();
             }
         }
         setBroadcast();
@@ -1258,17 +1270,22 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 13.5f), 500, null);
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 13.5f));
             } else if (isBooked && bookedPlace != null) {
-                parkingSpotLatLng = new LatLng(bookedPlace.getLat(), bookedPlace.getLon());
-                destination = "" + parkingSpotLatLng.latitude + ", " + parkingSpotLatLng.longitude;
-                SensorArea sensorArea = createSensorAreaObj(bookedPlace.getAreaName(), bookedPlace.getPlaceId(), bookedPlace.getLat(), bookedPlace.getLon(), bookedPlace.getParkingSlotCount(), bookedPlace.getPsId());
-                populateNearestPlaceBottomSheet(parkingSpotLatLng, sensorArea);
-                if (!isInAreaEnabled)
-                    setButtonText(context.getResources().getString(R.string.park), context.getResources().getColor(R.color.gray3));
-                else
-                    setButtonText(context.getResources().getString(R.string.park), context.getResources().getColor(R.color.black));
-                hideNoData();
-                hideLoading();
-                binding.buttonSearch.setVisibility(View.GONE);
+                if (bookedPlace.getLat() != 0 && !bookedPlace.getPlaceId().equals("")) {
+                    parkingSpotLatLng = new LatLng(bookedPlace.getLat(), bookedPlace.getLon());
+                    destination = "" + parkingSpotLatLng.latitude + ", " + parkingSpotLatLng.longitude;
+                    SensorArea sensorArea = createSensorAreaObj(bookedPlace.getAreaName(), bookedPlace.getPlaceId(), bookedPlace.getLat(), bookedPlace.getLon(), bookedPlace.getParkingSlotCount(), bookedPlace.getPsId());
+                    populateNearestPlaceBottomSheet(parkingSpotLatLng, sensorArea);
+                    if (!isInAreaEnabled)
+                        setButtonText(context.getResources().getString(R.string.park), context.getResources().getColor(R.color.gray3));
+                    else
+                        setButtonText(context.getResources().getString(R.string.park), context.getResources().getColor(R.color.black));
+                    hideNoData();
+                    hideLoading();
+                    binding.buttonSearch.setVisibility(View.GONE);
+                } else {
+                    hideNoData();
+                    hideLoading();
+                }
             }
         } else {
             ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_gps));
