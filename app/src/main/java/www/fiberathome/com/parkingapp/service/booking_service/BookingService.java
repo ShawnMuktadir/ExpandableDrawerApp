@@ -150,6 +150,10 @@ public class BookingService extends Service {
                 sendNotification("Booked Time", "Parking Duration About To End", false);
                 startCountDown((exceedTime - (new Date().getTime() - departureDate)) >= 0 ? (exceedTime - (new Date().getTime() - departureDate)) : 0, true);
             }
+        } else if (new Date().getTime() > (Preferences.getInstance(context).getBooked().getDepartedDate() + 60000L + exceedTime) && !endBookingCalled) {
+            if (ConnectivityUtils.getInstance().checkInternet(context)) {
+                endBooking();
+            }
         }
 
     }
@@ -226,6 +230,7 @@ public class BookingService extends Service {
         }
         isRunning = false;
         warringShowed = false;
+        endBookingCalled = false;
         departureDate = 0;
         isServiceStarted = false;
         if (fusedLocationProviderClient != null) {
@@ -361,6 +366,8 @@ public class BookingService extends Service {
             public void onFinish() {
                 if (ConnectivityUtils.getInstance().checkInternet(context)) {
                     endBooking();
+                } else {
+                    endBookingCalled = false;
                 }
             }
         }.start();
@@ -389,6 +396,7 @@ public class BookingService extends Service {
             @Override
             public void onFailure(@NonNull Call<CloseReservationResponse> call, @NonNull Throwable t) {
                 Timber.e("onFailure -> %s", t.getMessage());
+                endBookingCalled = false;
             }
         });
     }

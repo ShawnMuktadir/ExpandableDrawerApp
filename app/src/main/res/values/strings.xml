@@ -523,7 +523,7 @@
     <string name="booking_already_canceled">Booking already canceled</string>
     <string name="booking_already_canceled_msg">Your reserve time is over. Your parking has been canceled.</string>
     <string name="back">Back</string>
-    <string name="parking_spot_id">Spot Id: </string>
+    <string name="parking_spot_id">Spot No: </string>
     <string name="car_departure">Car Departure</string>
     <string name="dp_u_want_to_cancel_booking">Do you want to cancel booking?</string>
     <string name="park_has_started">Your park has been started</string>
@@ -542,4 +542,7 @@
     <string name="departuretime">Departure Time:</string>
     <string name="earlyparkingtime">Early Parking Time:</string>
     <string name="exceedParktime">Exceed Parking Time:</string>
+    <string name="completed">Completed</string>
+    <string name="canceled">Canceled</string>
+    <string name="rejected">Rejected</string>
 </resources>

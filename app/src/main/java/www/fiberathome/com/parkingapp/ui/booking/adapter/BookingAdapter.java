@@ -61,10 +61,10 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         BookingViewHolder bookingViewHolder = (BookingViewHolder) viewHolder;
 
         BookedList bookedList = bookedLists.get(position);
-        bookingViewHolder.binding.textViewParkingSlot.setText(context.getResources().getString(R.string.parking_spot_id) + bookedList.getAddress());
+        bookingViewHolder.binding.textViewParkingSlot.setText(bookedList.getAddress());
         bookingViewHolder.binding.textViewReservationId.setText(context.getResources().getString(R.string.parking_reservation_id) + bookedList.getId());
         bookingViewHolder.binding.textViewParkingTotalPaymentAmount.setText(context.getResources().getString(R.string.total_fair) + " " + bookedList.getCurrentBill());
-        bookingViewHolder.binding.textViewSpotId.setText("#" + bookedList.getPsId());
+        bookingViewHolder.binding.textViewSpotId.setText(context.getResources().getString(R.string.parking_spot_id) + bookedList.getPsId());
         bookingViewHolder.binding.textViewParkingTime.setText(context.getString(R.string.arrival) + " " + bookedList.getTimeStart()
                 + " - \n" + context.getString(R.string.departuretxt) + " " + bookedList.getTimeEnd());
 
@@ -85,7 +85,7 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (bookedList.getC_Status().equalsIgnoreCase("0") && bookedList.getStatus().equalsIgnoreCase("0") && bookedList.getP_status().equalsIgnoreCase("1")) {
             bookingViewHolder.binding.tvStatus.setVisibility(View.VISIBLE);
             bookingViewHolder.binding.tvCancel.setVisibility(View.GONE);
-            bookingViewHolder.binding.tvStatus.setText("Parking");
+            bookingViewHolder.binding.tvStatus.setText(context.getResources().getString(R.string.parking));
             bookingViewHolder.binding.tvStatus.setTextColor(context.getColor(R.color.green2));
         } else if (bookedList.getC_Status().equalsIgnoreCase("0") && bookedList.getStatus().equalsIgnoreCase("0")) {
             bookingViewHolder.binding.tvCancel.setVisibility(View.VISIBLE);
@@ -93,16 +93,16 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         } else if (bookedList.getC_Status().equalsIgnoreCase("0") && bookedList.getStatus().equalsIgnoreCase("1")) {
             bookingViewHolder.binding.tvStatus.setVisibility(View.VISIBLE);
             bookingViewHolder.binding.tvCancel.setVisibility(View.GONE);
-            bookingViewHolder.binding.tvStatus.setText("Completed");
+            bookingViewHolder.binding.tvStatus.setText(context.getResources().getString(R.string.completed));
             bookingViewHolder.binding.tvStatus.setTextColor(context.getColor(R.color.green2));
         } else if (bookedList.getC_Status().equalsIgnoreCase("1") && bookedList.getStatus().equalsIgnoreCase("1")) {
             bookingViewHolder.binding.tvStatus.setVisibility(View.VISIBLE);
-            bookingViewHolder.binding.tvStatus.setText("Canceled");
+            bookingViewHolder.binding.tvStatus.setText(context.getResources().getString(R.string.canceled));
             bookingViewHolder.binding.tvCancel.setVisibility(View.GONE);
             bookingViewHolder.binding.tvStatus.setTextColor(Color.RED);
         } else if (bookedList.getC_Status().equalsIgnoreCase("1") && bookedList.getStatus().equalsIgnoreCase("0")) {
             bookingViewHolder.binding.tvStatus.setVisibility(View.VISIBLE);
-            bookingViewHolder.binding.tvStatus.setText("Rejected");
+            bookingViewHolder.binding.tvStatus.setText(context.getResources().getString(R.string.rejected));
             bookingViewHolder.binding.tvCancel.setVisibility(View.GONE);
             bookingViewHolder.binding.tvStatus.setTextColor(Color.RED);
         }

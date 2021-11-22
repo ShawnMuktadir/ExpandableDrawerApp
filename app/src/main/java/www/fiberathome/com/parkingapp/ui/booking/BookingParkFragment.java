@@ -121,7 +121,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         public void run() {
             if (sensors != null) {
                 String extraTime = getTimeDifference(System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd()) > 0 ? (System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd())) : 0);
-                binding.tvExtraParkingTime.setText(String.format("Exceed Parking Time: %s", extraTime));
+                binding.tvExtraParkingTime.setText(String.format(context.getResources().getString(R.string.exceedParktime) + " %s", extraTime));
 
                 if (System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd()) >= 0) {
                     binding.tvExtraParkingTime.setTextColor(context.getResources().getColor(R.color.red));
@@ -172,11 +172,11 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                     mBookedPlace.setExceedRunning(true);
                     Preferences.getInstance(context).setBooked(mBookedPlace);
                     ApplicationUtils.startBookingExceedService(context, getStringDateToMillis(sensors.getTimeEnd()));
-                    binding.tvArrivedTime.setText(String.format(getString(R.string.booking_time) + " %s", sensors.getTimeStart()));
-                    binding.tvDepartureTime.setText(String.format(getString(R.string.departuretime) + " %s", sensors.getTimeEnd()));
+                    binding.tvArrivedTime.setText(String.format(context.getResources().getString(R.string.booking_time) + " %s", sensors.getTimeStart()));
+                    binding.tvDepartureTime.setText(String.format(context.getResources().getString(R.string.departuretime) + " %s", sensors.getTimeEnd()));
                     binding.tvParkingAreaName.setText(sensors.getParkingArea());
                     if (Preferences.getInstance(context).getBooked().getPsId() != null && !Preferences.getInstance(context).getBooked().getPsId().equalsIgnoreCase("")) {
-                        binding.tvParkingPsId.setText("( Spot No: " + Preferences.getInstance(context).getBooked().getPsId() + " )");
+                        binding.tvParkingPsId.setText("( " + context.getResources().getString(R.string.parking_spot_id) + " " + Preferences.getInstance(context).getBooked().getPsId() + " )");
                     } else {
                         binding.tvParkingPsId.setText("");
                     }
@@ -187,8 +187,8 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                     String earlyParkingTime;
                     earlyParkingTime = getTimeDifference(getStringDateToMillis(sensors.getTimeStart()) - getStringDateToMillis(sensors.getP_date()) >= 0 ? (getStringDateToMillis(sensors.getTimeStart()) - getStringDateToMillis(sensors.getP_date())) : 0);
                     extraTime = getTimeDifference(System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd()) > 0 ? (System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd())) : 0);
-                    binding.tvEarlyParkingTime.setText(getString(R.string.earlyparkingtime) + " " + earlyParkingTime);
-                    binding.tvExtraParkingTime.setText(getString(R.string.exceedParktime) + " " + extraTime);
+                    binding.tvEarlyParkingTime.setText(context.getResources().getString(R.string.earlyparkingtime) + " " + earlyParkingTime);
+                    binding.tvExtraParkingTime.setText(context.getResources().getString(R.string.exceedParktime) + " " + extraTime);
                     if (System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd()) >= 0) {
                         binding.tvExtraParkingTime.setTextColor(context.getResources().getColor(R.color.red));
                     } else {
