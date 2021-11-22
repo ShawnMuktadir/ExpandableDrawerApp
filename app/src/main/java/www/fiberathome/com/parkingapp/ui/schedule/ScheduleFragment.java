@@ -200,6 +200,8 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
             });
             setListeners();
         }
+
+        getTimeSlots();
     }
 
     @Override
@@ -216,7 +218,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
     public void onResume() {
         super.onResume();
         Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).hide();
-        getTimeSlots();
+
     }
 
     @Override

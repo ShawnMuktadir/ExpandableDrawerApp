@@ -65,7 +65,8 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         bookingViewHolder.binding.textViewReservationId.setText(context.getResources().getString(R.string.parking_reservation_id) + bookedList.getId());
         bookingViewHolder.binding.textViewParkingTotalPaymentAmount.setText(context.getResources().getString(R.string.total_fair) + " " + bookedList.getCurrentBill());
         bookingViewHolder.binding.textViewSpotId.setText("#" + bookedList.getPsId());
-        bookingViewHolder.binding.textViewParkingTime.setText("Arrival " + bookedList.getTimeStart() + " - \n" + "Departure " + bookedList.getTimeEnd());
+        bookingViewHolder.binding.textViewParkingTime.setText(context.getString(R.string.arrival) + " " + bookedList.getTimeStart()
+                + " - \n" + context.getString(R.string.departuretxt) + " " + bookedList.getTimeEnd());
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
         try {

@@ -535,4 +535,11 @@
     <string name="sms">Sms</string>
     <string name="others">Others</string>
     <string name="parking_reservation_id">Reservation Number:</string>
+    <string name="arrival">Arrival</string>
+    <string name="departuretxt">Departure</string>
+    <string name="remaining_time">Remaining Time:</string>
+    <string name="booking_time">Booking Time:</string>
+    <string name="departuretime">Departure Time:</string>
+    <string name="earlyparkingtime">Early Parking Time:</string>
+    <string name="exceedParktime">Exceed Parking Time:</string>
 </resources>
