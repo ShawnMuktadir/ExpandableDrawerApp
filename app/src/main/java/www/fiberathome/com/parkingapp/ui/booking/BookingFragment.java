@@ -3,18 +3,24 @@ package www.fiberathome.com.parkingapp.ui.booking;
 import static android.content.Context.LOCATION_SERVICE;
 import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -29,6 +35,7 @@ import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
+import www.fiberathome.com.parkingapp.databinding.BottomSheetDialogGetHelpBinding;
 import www.fiberathome.com.parkingapp.databinding.FragmentBookingBinding;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
@@ -219,10 +226,33 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                 @Override
                 public void onItemGetHelpListener() {
                     //DialogUtils.getInstance().showCallDialog(context.getResources().getString(R.string.get_support), context);
-                    View modelBottomSheet = LayoutInflater.from(context).inflate(R.layout.bottom_sheet_dialog_get_help, null);
+                    BottomSheetDialogGetHelpBinding getHelpBinding = BottomSheetDialogGetHelpBinding.inflate(getLayoutInflater());
                     BottomSheetDialog dialog = new BottomSheetDialog(context);
-                    dialog.setContentView(modelBottomSheet);
+                    dialog.setContentView(getHelpBinding.getRoot());
                     dialog.show();
+
+                    getHelpBinding.buttonCall.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            if (ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                                mPermissionResult.launch(Manifest.permission.CALL_PHONE);
+                            } else {
+                                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + "0123456789"));
+                                startActivity(intent);
+                            }
+                        }
+                    });
+                    getHelpBinding.buttonSms.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent smsIntent = new Intent(Intent.ACTION_VIEW, Uri.fromParts("sms", "0123456789", null));
+                            smsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(smsIntent);
+                        }
+                    });
+
+
                 }
 
                 @Override
@@ -235,6 +265,15 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
             bookingAdapter.updateList(bookedLists);
         }
     }
+
+    private final ActivityResultLauncher<String> mPermissionResult = registerForActivityResult(
+            new ActivityResultContracts.RequestPermission(),
+            result -> {
+                if (result) {
+                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + "0123456789"));
+                    startActivity(intent);
+                }
+            });
 
     private void cancelBooking(String mobileNo, String uid, String id) {
         showLoading(context);

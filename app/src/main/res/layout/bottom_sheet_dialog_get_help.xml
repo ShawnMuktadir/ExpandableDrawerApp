@@ -30,7 +30,7 @@
         android:weightSum="2">
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/button_call"
+            android:id="@+id/button_sms"
             style="@style/ButtonSmallStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -41,7 +41,7 @@
             android:text="@string/sms" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/button_sms"
+            android:id="@+id/button_call"
             style="@style/ButtonSmallStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
