@@ -1823,9 +1823,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.reservation_successful));
                             //set booked place info
                             bookedPlace.setBookedUid(response.body().getUid());
-                            bookedPlace.setAreaName(areaName);
-                            bookedPlace.setParkingSlotCount(parkingSlotCount);
-                            bookedPlace.setPlaceId(mPlaceId);
                             bookedPlace.setReservation(response.body().getReservation());
                             bookedPlace.setIsBooked(true);
                             bookedPlace.setPsId(response.body().getPsId());
