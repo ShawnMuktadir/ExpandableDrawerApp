@@ -609,6 +609,13 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
             config.locale = new Locale(localeCode.toLowerCase());
         }
         resources.updateConfiguration(config, dm);
+
+        /*Locale myLocale = new Locale(localeCode);
+        Resources res = getResources();
+        DisplayMetrics dm = res.getDisplayMetrics();
+        Configuration conf = res.getConfiguration();
+        conf.locale = myLocale;
+        res.updateConfiguration(conf, dm);*/
     }
 
     protected void setActionBarBackButton() {

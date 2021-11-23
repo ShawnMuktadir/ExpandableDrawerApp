@@ -1,5 +1,7 @@
 package www.fiberathome.com.parkingapp.ui.home;
 
+import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_BN;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -40,6 +42,7 @@ import www.fiberathome.com.parkingapp.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
+import www.fiberathome.com.parkingapp.model.data.preference.LanguagePreferences;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingParkStatusResponse;
@@ -149,6 +152,11 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
     @Override
     protected void onResume() {
         super.onResume();
+        if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
+            setAppLocale(LANGUAGE_BN);
+        } else {
+            setAppLocale(Preferences.getInstance(context).getAppLanguage());
+        }
     }
 
     /*
