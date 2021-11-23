@@ -546,4 +546,5 @@
     <string name="canceled">Canceled</string>
     <string name="rejected">Rejected</string>
     <string name="t_amp_c"><![CDATA[T&C]]></string>
+    <string name="pay_bdt">Pay BDT </string>
 </resources>

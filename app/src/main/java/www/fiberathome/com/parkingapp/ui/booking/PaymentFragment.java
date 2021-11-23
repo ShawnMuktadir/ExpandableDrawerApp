@@ -251,8 +251,8 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
         long minutes = TimeUnit.MILLISECONDS.toMinutes(differenceUnit);
         binding.tvSubTotal.setText(new StringBuilder().append("BDT ").append(df.format(perMintBill * minutes)).toString());
         binding.tvTotal.setText(new StringBuilder().append("BDT ").append(df.format(perMintBill * minutes)).toString());
-        binding.btnPay.setText(new StringBuilder().append("Pay BDT ").append(df.format(perMintBill * minutes)).toString());
-        /*binding.btnPay.setText(new StringBuilder().append("Pay BDT ").append(MathUtils.getInstance().convertToDouble(new DecimalFormat("##.#",
+        binding.btnPay.setText(new StringBuilder().append(context.getResources().getString(R.string.pay_bdt)).append(df.format(perMintBill * minutes)).toString());
+        /*binding.btnPay.setText(new StringBuilder().append(context.getResources().getString(R.string.pay_bdt)).append(MathUtils.getInstance().convertToDouble(new DecimalFormat("##.#",
                 new DecimalFormatSymbols(Locale.US)).format(df.format(perMintBill * minutes)))));*/
         return perMintBill * minutes;
     }
