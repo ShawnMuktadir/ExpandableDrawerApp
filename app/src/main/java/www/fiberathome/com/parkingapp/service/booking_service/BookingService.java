@@ -56,15 +56,14 @@ import www.fiberathome.com.parkingapp.model.response.booking.CloseReservationRes
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 
+@SuppressLint("SimpleDateFormat")
 public class BookingService extends Service {
 
-    public static final String TAG = "LocationTrackService";
     public static final int BOOKING_CHECK_DELAY = 1000; // 1 sec
 
     private Context context;
     public Location previousBestLocation = null;
     FusedLocationProviderClient fusedLocationProviderClient;
-
 
     private CountDownTimer countDownTimer;
     private NotificationManager notificationManager;
@@ -77,7 +76,6 @@ public class BookingService extends Service {
     private boolean warringShowed = false;
     private boolean endBookingCalled = false;
     private boolean isServiceStarted = false;
-    private boolean isFifteenMinsRemaining = false;
 
     @Nullable
     @Override
@@ -138,7 +136,6 @@ public class BookingService extends Service {
             //Toast.makeText(context, "car parked", Toast.LENGTH_LONG).show();
             notificationCaller(Constants.NOTIFICATION_CHANNEL_EXCEED_BOOKING, "Car Parked", 3);
             startForeground(Constants.BOOKING_Exceed_SERVICE_ID, mBuilder.build());
-
         }
 
         //executes when booking time ends
@@ -151,7 +148,6 @@ public class BookingService extends Service {
                 startCountDown((exceedTime - (new Date().getTime() - departureDate)) >= 0 ? (exceedTime - (new Date().getTime() - departureDate)) : 0, true);
             }
         }
-
     }
 
     private void notificationCaller(String NOTIFICATION_CHANNEL_ID, String msg, int requestCode) {
@@ -172,7 +168,6 @@ public class BookingService extends Service {
                 .setAutoCancel(true)
                 .setSilent(true)
                 .setContentIntent(contentIntent);
-
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, msg, NotificationManager.IMPORTANCE_DEFAULT);
@@ -338,7 +333,6 @@ public class BookingService extends Service {
         countDownTimer = new CountDownTimer(timerMilliDifference, 1000) {
             @SuppressLint("DefaultLocale")
             public void onTick(long millisUntilFinished) {
-                int numMessages = 0;
                 mBuilder.setContentText("" + String.format("%d min, %d sec remaining",
                         TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
                         TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -

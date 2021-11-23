@@ -380,7 +380,6 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                                 mLocationCallback, Objects.requireNonNull(Looper.myLooper()));
                         mMap.setMyLocationEnabled(true);
                     }
-
                 } else {
                     // if not allow a permission, the application will exit
                     Intent intent = new Intent(Intent.ACTION_MAIN);
