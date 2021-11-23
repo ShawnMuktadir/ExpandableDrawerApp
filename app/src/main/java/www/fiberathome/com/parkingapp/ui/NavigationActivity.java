@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.ColorInt;
@@ -303,6 +304,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         TextView tvUserFullName = headerView.findViewById(R.id.header_fullname);
         TextView tvUserVehicleNo = headerView.findViewById(R.id.header_vehicle_no);
         ImageView ivUserProfile = headerView.findViewById(R.id.header_profile_pic);
+        RelativeLayout navHeaderView = headerView.findViewById(R.id.view_container);
 
         tvUserFullName.setText(TextUtils.getInstance().capitalizeFirstLetter(user.getFullName()));
 
@@ -331,7 +333,6 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         Timber.e("user profile photo url -> %s", url);
         Glide.with(this).load(url).apply(requestOptions).override(200, 200).into(ivUserProfile);
 
-
         String text = user.getMobileNo() + " - ";
         text = text + user.getVehicleNo();
         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
@@ -343,6 +344,8 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         } catch (WriterException e) {
             e.printStackTrace();
         }
+
+        navHeaderView.setOnClickListener(v -> startActivity(ProfileActivity.class));
     }
 
     public void changeDefaultActionBarDrawerToogleIconWithBackButton() {
