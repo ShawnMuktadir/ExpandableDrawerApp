@@ -381,7 +381,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                     if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
                         try {
                             Timber.e("try called");
-                            SharedData.getInstance().setSensorArea(this.sensorAreas.get(position));
+//                            SharedData.getInstance().setSensorArea(this.sensorAreas.get(position));
                             Bundle bundle = new Bundle();
                             bundle.putDouble("lat", lat);
                             bundle.putDouble("lng", lng);

@@ -11,31 +11,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:visibility="gone">
-
-            <ImageView
-                android:id="@+id/imageViewCross"
-                android:layout_width="@dimen/dim30"
-                android:layout_height="@dimen/dim30"
-                android:layout_gravity="center"
-                android:padding="@dimen/dim3"
-                app:srcCompat="@drawable/ic_clear" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/dim3"
-                android:text="@string/your_booked"
-                android:textColor="@color/blackColor"
-                android:textSize="@dimen/_15ssp"
-                android:textStyle="bold" />
-
-        </LinearLayout>
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewBooking"
             android:layout_width="match_parent"

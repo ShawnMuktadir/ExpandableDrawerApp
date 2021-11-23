@@ -225,19 +225,24 @@ public class ApplicationUtils {
         context.startService(intent);
     }
 
-    public static void startAlarm(Context context, Calendar c) {
+    public static void startAlarm(Context context, Calendar arrival, Calendar departure) {
         Timber.e("startAlarm called");
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, BookingServiceStarter.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, intent, 0);
+        intent.putExtra("EndBooking", true);
+        intent.putExtra("departure", departure.getTimeInMillis());
+        PendingIntent pendingIntent2 = PendingIntent.getBroadcast(context, 2, intent, 0);
 
-        if (new Date().getTime() >= (c.getTimeInMillis() - 900000)) {
+        if (new Date().getTime() >= (arrival.getTimeInMillis() - 900000)) {
             Objects.requireNonNull(alarmManager).setExact(AlarmManager.RTC_WAKEUP,
                     new Date().getTime() - 2000, pendingIntent);
         } else {
             Objects.requireNonNull(alarmManager).setExact(AlarmManager.RTC_WAKEUP,
-                    c.getTimeInMillis() - 900000, pendingIntent);
+                    arrival.getTimeInMillis() - 900000, pendingIntent);
         }
+        Objects.requireNonNull(alarmManager).setExact(AlarmManager.RTC_WAKEUP,
+                (departure.getTimeInMillis() + (6 * 60000)), pendingIntent2);
     }
 
     public static String getDate(long milliSeconds) {

@@ -1,8 +1,5 @@
 package www.fiberathome.com.parkingapp.ui.booking;
 
-import static android.content.Context.LOCATION_SERVICE;
-
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -134,6 +131,11 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
         return false;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
     private void setListeners() {
         binding.ivBackArrow.setOnClickListener(v -> {
             ScheduleFragment scheduleFragment = ScheduleFragment.newInstance(placeId, areaName);
@@ -158,14 +160,20 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                 if (minutes > 120) {
                     ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.booking_time_rules));
                 } else {
-                    if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
+                    if (ApplicationUtils.isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
                         if (!Preferences.getInstance(context).getBooked().getIsBooked()
                                 && Preferences.getInstance(context).getBooked().getBill() == Math.round(netBill)
-                                && Preferences.getInstance(context).getBooked().isPaid() && bookedPlace != null) {
+                                && Preferences.getInstance(context).getBooked().isPaid()) {
                             storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
-                                    ApplicationUtils.getDate(arrivedDate.getTime()), ApplicationUtils.getDate(departureDate.getTime()), placeId);
+                                    ApplicationUtils.getDate(Preferences.getInstance(context).getBooked().getArriveDate()),
+                                    ApplicationUtils.getDate(Preferences.getInstance(context).getBooked().getArriveDate()),
+                                    Preferences.getInstance(context).getBooked().getPlaceId());
                         } else {
-                            sslPayment(netBill);
+                            try {
+                                sslPayment(netBill);
+                            } catch (Exception e) {
+                                Timber.e(e.getCause());
+                            }
                         }
                     }
                 }
@@ -180,12 +188,23 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
 
         int tnxId = random.nextInt(9999999);
 
-        final SSLCCustomerInfoInitializer customerInfoInitializer = new SSLCCustomerInfoInitializer(Preferences.getInstance(context).getUser().getFullName(), "customer email",
-                "address", "dhaka", "1214", "Bangladesh", Preferences.getInstance(context).getUser().getMobileNo());
-
         final SSLCommerzInitialization sslCommerzInitialization = new SSLCommerzInitialization
                 ("fiber61877740d2a85", "fiber61877740d2a85@ssl", mNetBill, SSLCCurrencyType.BDT, tnxId + Preferences.getInstance(context).getUser().getMobileNo(),
                         "CarParkingBill", SSLCSdkType.TESTBOX);
+        final SSLCCustomerInfoInitializer customerInfoInitializer = new SSLCCustomerInfoInitializer(Preferences.getInstance(context).getUser().getFullName(), "customer email",
+                "address", "dhaka", "1214", "Bangladesh", Preferences.getInstance(context).getUser().getMobileNo());
+
+        BookedPlace mBookedPlace = new BookedPlace();
+        mBookedPlace.setBill((float) mNetBill);
+        mBookedPlace.setLat(lat);
+        mBookedPlace.setLon(lon);
+        mBookedPlace.setAreaName(areaName);
+        mBookedPlace.setParkingSlotCount(parkingSlotCount);
+        mBookedPlace.setDepartedDate(departureDate.getTime());
+        mBookedPlace.setArriveDate(arrivedDate.getTime());
+        mBookedPlace.setPlaceId(placeId);
+        Preferences.getInstance(context).setBooked(mBookedPlace);
+
         IntegrateSSLCommerz
                 .getInstance(context)
                 .addSSLCommerzInitialization(sslCommerzInitialization)
@@ -194,27 +213,21 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                     @Override
                     public void transactionSuccess(SSLCTransactionInfoModel sslcTransactionInfoModel) {
                         Timber.e("transactionSuccess -> %s", new Gson().toJson(sslcTransactionInfoModel));
-                        bookedPlace = new BookedPlace();
-                        bookedPlace.setPaid(true);
-                        bookedPlace.setBill((float) mNetBill);
-                        bookedPlace.setLat(lat);
-                        bookedPlace.setLon(lon);
-                        bookedPlace.setAreaName(areaName);
-                        bookedPlace.setParkingSlotCount(parkingSlotCount);
-                        bookedPlace.setDepartedDate(departureDate.getTime());
-                        bookedPlace.setArriveDate(arrivedDate.getTime());
-                        bookedPlace.setPlaceId(placeId);
-                        Preferences.getInstance(context).setBooked(bookedPlace);
+                        BookedPlace mBookedPlace;
+                        mBookedPlace = Preferences.getInstance(context).getBooked();
+                        mBookedPlace.setPaid(true);
+                        Preferences.getInstance(context).setBooked(mBookedPlace);
                         if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
                             storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
-                                    ApplicationUtils.getDate(arrivedDate.getTime()), ApplicationUtils.getDate(departureDate.getTime()), placeId);
+                                    ApplicationUtils.getDate(mBookedPlace.getArriveDate()), ApplicationUtils.getDate(mBookedPlace.getDepartedDate()), mBookedPlace.getPlaceId());
                         } else {
-                            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
+                            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_gps));
                         }
                     }
 
                     @Override
                     public void transactionFail(String s) {
+//                        ToastUtils.getInstance().showToast(context, s);
                         Timber.e("transactionFail -> %s", s);
                     }
 
@@ -223,17 +236,6 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                         Timber.e("merchantValidationError -> %s", s);
                     }
                 });
-    }
-
-    private boolean isGPSEnabled() {
-        LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-        boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        if (providerEnabled) {
-            return true;
-        } else {
-            Timber.e("else called");
-        }
-        return false;
     }
 
     private void setData() {
@@ -271,19 +273,15 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                             Timber.e("response -> %s", new Gson().toJson(response.body()));
                             ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.reservation_successful));
                             //set booked place info
-                            bookedPlace.setBookedUid(response.body().getUid());
-                            bookedPlace.setLat(lat);
-                            bookedPlace.setLon(lon);
-                            bookedPlace.setAreaName(areaName);
-                            bookedPlace.setParkingSlotCount(parkingSlotCount);
-                            bookedPlace.setDepartedDate(departureDate.getTime());
-                            bookedPlace.setArriveDate(arrivedDate.getTime());
-                            bookedPlace.setPlaceId(mPlaceId);
-                            bookedPlace.setReservation(response.body().getReservation());
-                            bookedPlace.setIsBooked(true);
-                            bookedPlace.setPsId(response.body().getPsId());
-                            Preferences.getInstance(context).setBooked(bookedPlace);
-                            ApplicationUtils.startAlarm(context, ApplicationUtils.convertLongToCalendar(Preferences.getInstance(context).getBooked().getArriveDate()));
+                            BookedPlace mBookedPlace;
+                            mBookedPlace = Preferences.getInstance(context).getBooked();
+                            mBookedPlace.setBookedUid(response.body().getUid());
+                            mBookedPlace.setReservation(response.body().getReservation());
+                            mBookedPlace.setIsBooked(true);
+                            mBookedPlace.setPsId(response.body().getPsId());
+                            Preferences.getInstance(context).setBooked(mBookedPlace);
+                            ApplicationUtils.startAlarm(context, ApplicationUtils.convertLongToCalendar(Preferences.getInstance(context).getBooked().getArriveDate())
+                                    , ApplicationUtils.convertLongToCalendar(Preferences.getInstance(context).getBooked().getDepartedDate()));
                             if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
                                 binding.actionBarTitle.setText(context.getResources().getString(R.string.booking_payment));
                                 listener.fragmentChange(HomeFragment.newInstance());

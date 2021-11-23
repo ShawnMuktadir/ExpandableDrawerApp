@@ -100,7 +100,7 @@ dependencies {
 
     //google map services
     implementation 'com.google.maps:google-maps-services:0.18.0'
-    implementation 'com.google.android.gms:play-services-maps:17.0.1'
+    implementation 'com.google.android.gms:play-services-maps:18.0.0'
     implementation 'com.google.android.gms:play-services-places:17.0.0'
     implementation 'com.google.android.libraries.places:places:2.5.0'
     implementation 'com.google.maps.android:android-maps-utils:2.2.0'
@@ -155,7 +155,7 @@ dependencies {
 
     //Add live data and view model dependency
     implementation "android.arch.lifecycle:extensions:1.1.1"
-    implementation "androidx.lifecycle:lifecycle-common-java8:2.3.1"
+    implementation "androidx.lifecycle:lifecycle-common-java8:2.4.0"
 
     //for duration takes this library
     implementation 'com.akexorcist:googledirectionlibrary:1.1.1' // Custom Google Direction API
@@ -180,8 +180,8 @@ dependencies {
     implementation 'com.github.florent37:singledateandtimepicker:2.2.3'
 
     // Add the Firebase Crashlytics SDK.
-    implementation 'com.google.firebase:firebase-crashlytics:18.2.3'
-    implementation 'com.google.firebase:firebase-analytics:19.0.2'
+    implementation 'com.google.firebase:firebase-crashlytics:18.2.4'
+    implementation 'com.google.firebase:firebase-analytics:20.0.0'
     implementation 'com.google.firebase:firebase-config:21.0.1'
     implementation 'com.google.firebase:firebase-database:20.0.2'
 
@@ -189,7 +189,7 @@ dependencies {
     implementation 'com.karumi:dexter:6.2.2'
 
     //geoFence Libraries
-    implementation 'com.firebase:geofire-android:3.0.0'
+    implementation 'com.firebase:geofire-android:3.1.0'
 
     //room
     def room_version = "1.1.1"

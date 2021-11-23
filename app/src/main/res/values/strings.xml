@@ -523,11 +523,26 @@
     <string name="booking_already_canceled">Booking already canceled</string>
     <string name="booking_already_canceled_msg">Your reserve time is over. Your parking has been canceled.</string>
     <string name="back">Back</string>
-    <string name="parking_spot_id">Spot Id: </string>
+    <string name="parking_spot_id">Spot No: </string>
     <string name="car_departure">Car Departure</string>
     <string name="dp_u_want_to_cancel_booking">Do you want to cancel booking?</string>
     <string name="park_has_started">Your park has been started</string>
     <string name="as_your_reservation_time_had_exceed_over_five_mins">As your reservation time had exceed over 5 mins, your booking has been closed. Thank you</string>
     <string name="invalid_vehicle_number">Invalid vehicle number</string>
     <string name="clock">Clock</string>
+    <string name="re_booking">Re-book</string>
+    <string name="please_contact_our_support_team_for_your_queries">Please contact our support team for your necessary queries</string>
+    <string name="sms">Sms</string>
+    <string name="others">Others</string>
+    <string name="parking_reservation_id">Reservation Number:</string>
+    <string name="arrival">Arrival</string>
+    <string name="departuretxt">Departure</string>
+    <string name="remaining_time">Remaining Time:</string>
+    <string name="booking_time">Booking Time:</string>
+    <string name="departuretime">Departure Time:</string>
+    <string name="earlyparkingtime">Early Parking Time:</string>
+    <string name="exceedParktime">Exceed Parking Time:</string>
+    <string name="completed">Completed</string>
+    <string name="canceled">Canceled</string>
+    <string name="rejected">Rejected</string>
 </resources>

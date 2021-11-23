@@ -62,9 +62,8 @@ import www.fiberathome.com.parkingapp.utils.ToastUtils;
 public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBtnClickListener,
         IOnBackPressListener {
 
-    public static String markerUid = "";
+    public static String areaPlaceId = "";
     public static String areaName;
-    private final String TAG = getClass().getSimpleName();
     public DialogHelper.PayBtnClickListener payBtnClickListener;
     public long arrived, departure, difference;
 
@@ -98,7 +97,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
     }
 
     public static ScheduleFragment newInstance(String placeId, String mAreaName) {
-        markerUid = placeId;
+        areaPlaceId = placeId;
         areaName = mAreaName;
         return new ScheduleFragment();
     }
@@ -131,12 +130,12 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
             Date futureTime = mFutureTime;
             if (getArguments() != null) {
                 more = getArguments().getBoolean("m");
-                markerUid = getArguments().getString("markerUid");
+                areaPlaceId = getArguments().getString("areaPlacedId");
                 lat = getArguments().getDouble("lat");
                 lon = getArguments().getDouble("long");
                 areaName = getArguments().getString("areaName");
                 parkingSlotCount = getArguments().getString("parkingSlotCount");
-                Timber.e("markerUid -> %s", markerUid);
+                Timber.e("markerUid -> %s", areaPlaceId);
             }
             binding.arrivedPicker.setIsAmPm(true);
             binding.departurePicker.setIsAmPm(true);
@@ -201,6 +200,8 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
             });
             setListeners();
         }
+
+        getTimeSlots();
     }
 
     @Override
@@ -217,7 +218,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
     public void onResume() {
         super.onResume();
         Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).hide();
-        getTimeSlots();
+
     }
 
     @Override
@@ -275,7 +276,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                         Toast.makeText(requireActivity(), context.getResources().getString(R.string.departure_time_less_arrive_time), Toast.LENGTH_SHORT).show();
                     } else {
                         if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
-                            storeReservation(Preferences.getInstance(context).getUser().getMobileNo(), getDate(arrivedDate.getTime()), getDate((departure + arrivedDate.getTime())), markerUid);
+                            storeReservation(Preferences.getInstance(context).getUser().getMobileNo(), getDate(arrivedDate.getTime()), getDate((departure + arrivedDate.getTime())), areaPlaceId);
                         }
                     }
                 }

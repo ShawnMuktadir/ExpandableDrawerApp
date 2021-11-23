@@ -16,7 +16,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="horizontal"
                 android:weightSum="2">
 
@@ -24,9 +24,9 @@
                     android:id="@+id/ivBackArrow"
                     android:layout_width="0dp"
                     android:layout_height="25dp"
-                    android:layout_gravity="start"
+                    android:layout_gravity="start|center"
                     android:layout_weight="0.2"
-                    android:contentDescription="arrow"
+                    android:contentDescription="@string/army_vehicle_arrow"
                     android:gravity="start"
                     android:padding="@dimen/dim2"
                     app:srcCompat="@drawable/ic_action_back" />
@@ -37,6 +37,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1.8"
                     android:maxLines="2"
+                    android:layout_gravity="center"
                     android:padding="@dimen/dim2"
                     android:text="@string/booking_payment"
                     android:textColor="@color/black"
