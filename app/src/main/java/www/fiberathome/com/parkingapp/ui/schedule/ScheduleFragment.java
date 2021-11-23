@@ -200,7 +200,6 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
             });
             setListeners();
         }
-
         getTimeSlots();
     }
 

@@ -549,5 +549,6 @@
     <string name="completed">সম্পন্ন</string>
     <string name="canceled">বাতিল করা হয়েছে</string>
     <string name="rejected">প্রত্যাখ্যাত</string>
+    <string name="t_amp_c"><![CDATA[T&C]]></string>
 </resources>
 

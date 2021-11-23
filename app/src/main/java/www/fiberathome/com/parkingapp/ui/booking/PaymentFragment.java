@@ -61,7 +61,6 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
 
     FragmentPaymentBinding binding;
     private double netBill;
-    BookedPlace bookedPlace;
 
     public PaymentFragment() {
         // Required empty public constructor
@@ -166,7 +165,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                                 && Preferences.getInstance(context).getBooked().isPaid()) {
                             storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
                                     ApplicationUtils.getDate(Preferences.getInstance(context).getBooked().getArriveDate()),
-                                    ApplicationUtils.getDate(Preferences.getInstance(context).getBooked().getArriveDate()),
+                                    ApplicationUtils.getDate(Preferences.getInstance(context).getBooked().getDepartedDate()),
                                     Preferences.getInstance(context).getBooked().getPlaceId());
                         } else {
                             try {

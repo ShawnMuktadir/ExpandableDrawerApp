@@ -178,7 +178,7 @@
 
         <TextView
             android:id="@+id/tvPromo"
-            android:layout_width="120dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/border2"
             android:layout_marginStart="@dimen/dim5"

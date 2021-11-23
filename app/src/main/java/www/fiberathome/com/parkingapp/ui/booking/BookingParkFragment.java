@@ -534,7 +534,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
             Date d1 = sdf.parse(start_date);
             Date d2 = sdf.parse(end_date);
 
-            // Calucalte time difference
+            // Calculate time difference
             // in milliseconds
             if (d1 != null && d2 != null) {
                 long difference_In_Time
