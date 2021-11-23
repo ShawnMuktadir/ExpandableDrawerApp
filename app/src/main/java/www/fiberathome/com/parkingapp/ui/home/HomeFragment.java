@@ -1286,8 +1286,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     hideNoData();
                     hideLoading();
                 }
+            } else {
+                hideLoading();
             }
         } else {
+            hideLoading();
             ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_gps));
         }
     }

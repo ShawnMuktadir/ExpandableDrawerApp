@@ -165,7 +165,9 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                                 && Preferences.getInstance(context).getBooked().getBill() == Math.round(netBill)
                                 && Preferences.getInstance(context).getBooked().isPaid()) {
                             storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
-                                    ApplicationUtils.getDate(arrivedDate.getTime()), ApplicationUtils.getDate(departureDate.getTime()), placeId);
+                                    ApplicationUtils.getDate(Preferences.getInstance(context).getBooked().getArriveDate()),
+                                    ApplicationUtils.getDate(Preferences.getInstance(context).getBooked().getArriveDate()),
+                                    Preferences.getInstance(context).getBooked().getPlaceId());
                         } else {
                             try {
                                 sslPayment(netBill);
@@ -217,7 +219,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                         Preferences.getInstance(context).setBooked(mBookedPlace);
                         if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
                             storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
-                                    ApplicationUtils.getDate(arrivedDate.getTime()), ApplicationUtils.getDate(departureDate.getTime()), placeId);
+                                    ApplicationUtils.getDate(arrivedDate.getTime()), ApplicationUtils.getDate(departureDate.getTime()), mBookedPlace.getPlaceId());
                         } else {
                             ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_gps));
                         }
