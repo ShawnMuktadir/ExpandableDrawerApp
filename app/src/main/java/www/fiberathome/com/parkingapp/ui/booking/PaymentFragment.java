@@ -219,7 +219,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                         Preferences.getInstance(context).setBooked(mBookedPlace);
                         if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
                             storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
-                                    ApplicationUtils.getDate(arrivedDate.getTime()), ApplicationUtils.getDate(departureDate.getTime()), mBookedPlace.getPlaceId());
+                                    ApplicationUtils.getDate(mBookedPlace.getArriveDate()), ApplicationUtils.getDate(mBookedPlace.getDepartedDate()), mBookedPlace.getPlaceId());
                         } else {
                             ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_gps));
                         }
