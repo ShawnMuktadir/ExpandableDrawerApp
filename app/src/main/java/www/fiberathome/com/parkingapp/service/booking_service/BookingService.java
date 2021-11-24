@@ -109,7 +109,7 @@ public class BookingService extends Service {
     private void startBookingTracking() {
         Timber.e("service running");
         if (!isServiceStarted) {
-            notificationCaller(Constants.NOTIFICATION_CHANNEL_BOOKING, "Booked for : \n" + Preferences.getInstance(context).getBooked().getAreaName(), 2);
+            notificationCaller(Constants.NOTIFICATION_CHANNEL_BOOKING, context.getResources().getString(R.string.Booked_for) + Preferences.getInstance(context).getBooked().getAreaName(), 2);
             startForeground(BOOKING_SERVICE_ID, mBuilder.build());
             isServiceStarted = true;
         }
@@ -134,7 +134,7 @@ public class BookingService extends Service {
             isExceedRunned = true;
             Timber.e("car parked");
             //Toast.makeText(context, "car parked", Toast.LENGTH_LONG).show();
-            notificationCaller(Constants.NOTIFICATION_CHANNEL_EXCEED_BOOKING, "Car Parked", 3);
+            notificationCaller(Constants.NOTIFICATION_CHANNEL_EXCEED_BOOKING, context.getResources().getString(R.string.car_parked), 3);
             startForeground(Constants.BOOKING_Exceed_SERVICE_ID, mBuilder.build());
         }
 
@@ -144,7 +144,7 @@ public class BookingService extends Service {
             //Toast.makeText(context, "car Parking Duration End:" + new Date().getTime() + "," + departureDate, Toast.LENGTH_LONG).show();
             if (ConnectivityUtils.getInstance().checkInternet(context)) {
                 warringShowed = true;
-                sendNotification("Booked Time", "Parking Duration About To End", false);
+                sendNotification(context.getResources().getString(R.string.booked_time), context.getResources().getString(R.string.park_duration_about_to_end), false);
                 startCountDown((exceedTime - (new Date().getTime() - departureDate)) >= 0 ? (exceedTime - (new Date().getTime() - departureDate)) : 0, true);
             }
         } else if (new Date().getTime() > (Preferences.getInstance(context).getBooked().getDepartedDate() + 60000L + exceedTime) && !endBookingCalled) {
@@ -163,7 +163,7 @@ public class BookingService extends Service {
         mBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
                 .setWhen(System.currentTimeMillis())
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("Booked Parking")
+                .setContentTitle(context.getResources().getString(R.string.booked_parking))
                 .setContentText(msg)
                 .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText(msg))
@@ -175,7 +175,7 @@ public class BookingService extends Service {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, msg, NotificationManager.IMPORTANCE_DEFAULT);
-            notificationChannel.setDescription("Booked Time");
+            notificationChannel.setDescription(context.getResources().getString(R.string.booked_time));
             notificationChannel.enableLights(true);
             notificationChannel.setLightColor(Color.BLUE);
             //notificationChannel.setVibrationPattern(new long[]{0, 1000, 500, 1000});
@@ -338,7 +338,6 @@ public class BookingService extends Service {
         countDownTimer = new CountDownTimer(timerMilliDifference, 1000) {
             @SuppressLint("DefaultLocale")
             public void onTick(long millisUntilFinished) {
-                int numMessages = 0;
                 mBuilder.setContentText("" + String.format(context.getString(R.string.remaining_time) + " %d min, %d sec",
                         TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
                         TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
@@ -382,7 +381,7 @@ public class BookingService extends Service {
                     if (response.body() != null) {
                         Preferences.getInstance(context).isBookingCancelled = true;
                         Preferences.getInstance(context).clearBooking();
-                        sendNotification("Booked Time", "Your Booked Parking Duration Has Ended", true);
+                        sendNotification(context.getResources().getString(R.string.booked_time), getString(R.string.your_booked_parking_duration_has_ended), true);
                         Timber.e("Booking closed");
                     }
                 }

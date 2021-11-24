@@ -547,4 +547,10 @@
     <string name="rejected">Rejected</string>
     <string name="t_amp_c"><![CDATA[T&C]]></string>
     <string name="pay_bdt">Pay BDT </string>
+    <string name="car_parked">Car Parked</string>
+    <string name="booked_time">Booked Time</string>
+    <string name="park_duration_about_to_end">Parking Duration About To End</string>
+    <string name="booked_parking">Booked Parking</string>
+    <string name="Booked_for">Booked for : \n</string>
+    <string name="your_booked_parking_duration_has_ended">Your Booked Parking Duration Has Ended</string>
 </resources>

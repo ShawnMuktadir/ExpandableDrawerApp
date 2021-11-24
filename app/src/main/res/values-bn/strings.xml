@@ -551,5 +551,11 @@
     <string name="rejected">প্রত্যাখ্যাত</string>
     <string name="t_amp_c"><![CDATA[T&C]]></string>
     <string name="pay_bdt">পে ৳ </string>
+    <string name="car_parked">গাড়ি পার্ক করা আছে</string>
+    <string name="booked_time">বুক করা সময়</string>
+    <string name="park_duration_about_to_end">পার্কিং সময়কাল প্রায় শেষ</string>
+    <string name="booked_parking">বুক করা পার্কিং</string>
+    <string name="Booked_for">বুক করা হয়েছে : \n</string>
+    <string name="your_booked_parking_duration_has_ended">আপনার বুক করা পার্কিং সময়কাল শেষ হয়েছে</string>
 </resources>
 
