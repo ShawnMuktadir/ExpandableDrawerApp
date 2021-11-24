@@ -1,26 +1,19 @@
 package www.fiberathome.com.parkingapp.ui.booking;
 
-import static android.content.Context.LOCATION_SERVICE;
-import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -38,6 +31,7 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.databinding.BottomSheetDialogGetHelpBinding;
 import www.fiberathome.com.parkingapp.databinding.FragmentBookingBinding;
+import www.fiberathome.com.parkingapp.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
@@ -47,6 +41,7 @@ import www.fiberathome.com.parkingapp.model.response.booking.BookedResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.ReservationCancelResponse;
 import www.fiberathome.com.parkingapp.ui.booking.adapter.BookingAdapter;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
+import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
@@ -65,6 +60,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
     private BookingAdapter bookingAdapter;
 
     FragmentBookingBinding binding;
+    private FragmentChangeListener listener;
 
     public BookingFragment() {
         // Required empty public constructor
@@ -92,6 +88,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         context = (BookingActivity) getActivity();
+        listener = (FragmentChangeListener) context;
         String mobileNo = Preferences.getInstance(context).getUser().getMobileNo();
         if (ConnectivityUtils.getInstance().checkInternet(context)) {
             fetchBookedParkingPlace(mobileNo, false);
@@ -122,7 +119,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
 
     @Override
     public boolean onBackPressed() {
-        if (isGPSEnabled()) {
+        if (ApplicationUtils.isGPSEnabled(context)) {
             if (getActivity() != null) {
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.nav_host_fragment, HomeFragment.newInstance())
@@ -131,26 +128,6 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
             }
         } else {
             ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_gps));
-        }
-        return false;
-    }
-
-    private boolean isGPSEnabled() {
-        LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-        boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        if (providerEnabled) {
-            return true;
-        } else {
-            AlertDialog alertDialog = new AlertDialog.Builder(context)
-                    .setTitle("GPS Permissions")
-                    .setMessage("GPS is required for this app to work. Please enable GPS.")
-                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
-                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        startActivityForResult(intent, GPS_REQUEST_CODE);
-                    }))
-                    .setCancelable(false)
-                    .show();
-
         }
         return false;
     }
@@ -165,9 +142,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
         bookedResponseCall.enqueue(new Callback<BookedResponse>() {
             @Override
             public void onResponse(@NonNull Call<BookedResponse> call, @NonNull Response<BookedResponse> response) {
-
                 Timber.e("response -> %s", new Gson().toJson(response.body()));
-
                 hideLoading();
 
                 if (response.body() != null && !response.body().getError()) {
@@ -211,7 +186,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                                 @Override
                                 public void onPositiveClick() {
                                     Timber.e("Positive Button clicked");
-                                    if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
+                                    if (ApplicationUtils.isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
                                         cancelBooking(Preferences.getInstance(context).getUser().getMobileNo(), uid, id);
                                     }
                                     Preferences.getInstance(context).clearBooking();
@@ -226,48 +201,36 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
 
                 @Override
                 public void onItemGetHelpListener() {
-                    //DialogUtils.getInstance().showCallDialog(context.getResources().getString(R.string.get_support), context);
                     BottomSheetDialogGetHelpBinding getHelpBinding = BottomSheetDialogGetHelpBinding.inflate(getLayoutInflater());
                     BottomSheetDialog dialog = new BottomSheetDialog(context);
                     dialog.setContentView(getHelpBinding.getRoot());
                     dialog.show();
 
-                    getHelpBinding.buttonCall.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-                            if (ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                                mPermissionResult.launch(Manifest.permission.CALL_PHONE);
-                            } else {
-                                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + context.getResources().getString(R.string.number)));
-                                startActivity(intent);
-                            }
+                    getHelpBinding.buttonCall.setOnClickListener(v -> {
+                        if (ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                            mPermissionResult.launch(Manifest.permission.CALL_PHONE);
+                        } else {
+                            Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + context.getResources().getString(R.string.number)));
+                            startActivity(intent);
                         }
                     });
-                    getHelpBinding.buttonSms.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent smsIntent = new Intent(Intent.ACTION_VIEW, Uri.fromParts("sms", context.getResources().getString(R.string.number), null));
-                            smsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(smsIntent);
-                        }
+                    getHelpBinding.buttonSms.setOnClickListener(v -> {
+                        Intent smsIntent = new Intent(Intent.ACTION_VIEW, Uri.fromParts("sms", context.getResources().getString(R.string.number), null));
+                        smsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(smsIntent);
                     });
                 }
 
                 @Override
-                public void onItemRebookListener(int position) {
-//                    Bundle bundle = new Bundle();
-//                    bundle.putBoolean("m", false); //m for more
-//                    bundle.putString("areaPlacedId", parkingAreaPlacedId);
-//                    bundle.putString("areaName", parkingAreaPlaceName);
-//                    bundle.putString("parkingSlotCount", parkingNumberOfIndividualMarker);
-//                    bundle.putDouble("lat", parkingSpotLatLng.latitude);
-//                    bundle.putDouble("long", parkingSpotLatLng.longitude);
-//                    bundle.putString("route", new Gson().toJson(initialRoutePoints));
-//                    ScheduleFragment scheduleFragment = new ScheduleFragment();
-//                    scheduleFragment.setArguments(bundle);
-//                    listener.fragmentChange(scheduleFragment);
-                    Toast.makeText(context, "Re-booking currently not available", Toast.LENGTH_SHORT).show();
+                public void onItemRebookListener(int position, double lat, double lng, String parkingArea, String count, String placeId) {
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean("m", false); //m for more
+                    bundle.putString("areaPlacedId", placeId);
+                    bundle.putString("areaName", parkingArea);
+                    bundle.putString("parkingSlotCount", count);
+                    bundle.putDouble("lat", lat);
+                    bundle.putDouble("long", lng);
+                    listener.fragmentChange(ScheduleFragment.newInstance(lat, lng, parkingArea, count, placeId));
                 }
             });
             binding.recyclerViewBooking.setAdapter(bookingAdapter);

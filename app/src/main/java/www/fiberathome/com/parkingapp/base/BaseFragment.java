@@ -1,5 +1,6 @@
 package www.fiberathome.com.parkingapp.base;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -69,6 +70,11 @@ public class BaseFragment extends Fragment {
     }
 
     @SuppressWarnings("rawtypes")
+    public void startActivityWithFinish(Activity context, Class activityClass) {
+        startActivity(new Intent(context, activityClass));
+        context.finish();
+    }
+
     public void startActivityWithFinish(BaseActivity context, Class activityClass) {
         startActivity(new Intent(context, activityClass));
         context.finish();

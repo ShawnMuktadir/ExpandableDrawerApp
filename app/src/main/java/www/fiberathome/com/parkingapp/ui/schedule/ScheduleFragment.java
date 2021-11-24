@@ -1,17 +1,12 @@
 package www.fiberathome.com.parkingapp.ui.schedule;
 
-import static android.content.Context.LOCATION_SERVICE;
-import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
-
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +15,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.text.SimpleDateFormat;
@@ -47,10 +41,12 @@ import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.booking.ReservationResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.TimeSlotResponse;
+import www.fiberathome.com.parkingapp.ui.booking.BookingActivity;
 import www.fiberathome.com.parkingapp.ui.booking.PaymentFragment;
 import www.fiberathome.com.parkingapp.ui.booking.helper.DialogHelper;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
+import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DateTimeUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
@@ -64,10 +60,11 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
 
     public static String areaPlaceId = "";
     public static String areaName;
+    public static String areaCount;
     public DialogHelper.PayBtnClickListener payBtnClickListener;
     public long arrived, departure, difference;
 
-    private HomeActivity context;
+    private Activity context;
 
     private Date arrivedDate;
     private Date departedDate;
@@ -75,8 +72,8 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
     private boolean setArrivedDate = false;
     private boolean more = false;
 
-    private double lat;
-    private double lon;
+    private static double lat;
+    private static double lon;
 
     private String parkingSlotCount;
     private String time = "";
@@ -102,6 +99,15 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
         return new ScheduleFragment();
     }
 
+    public static ScheduleFragment newInstance(double mLat, double mLng, String parkingArea, String count, String placeId) {
+        lat = mLat;
+        lon = mLng;
+        areaName = parkingArea;
+        areaCount = count;
+        areaPlaceId = placeId;
+        return new ScheduleFragment();
+    }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -115,7 +121,11 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
         super.onViewCreated(view, savedInstanceState);
 
         if (isAdded()) {
-            context = (HomeActivity) getActivity();
+            if (getActivity() instanceof HomeActivity) {
+                context = (HomeActivity) getActivity();
+            } else if (getActivity() instanceof BookingActivity) {
+                context = (BookingActivity) getActivity();
+            }
             binding.textViewCurrentDate.setText(DateTimeUtils.getInstance().getCurrentDayTime());
             listener = (FragmentChangeListener) getActivity();
             payBtnClickListener = this;
@@ -135,7 +145,6 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                 lon = getArguments().getDouble("long");
                 areaName = getArguments().getString("areaName");
                 parkingSlotCount = getArguments().getString("parkingSlotCount");
-                Timber.e("markerUid -> %s", areaPlaceId);
             }
             binding.arrivedPicker.setIsAmPm(true);
             binding.departurePicker.setIsAmPm(true);
@@ -162,8 +171,8 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                 departedDate = binding.departurePicker.getDate();
                 Timber.d("departure date before scrolling -> %s", departedDate);
                 arrived = arrivedDate.getTime();
-                //departure = departedDate.getTime();
-                //difference = arrived - departure;
+                /*departure = departedDate.getTime();
+                difference = arrived - departure;*/
                 Timber.e("difference -> %s", difference);
             }
             binding.arrivedPicker.addOnDateChangedListener((displayed, date) -> {
@@ -217,7 +226,6 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
     public void onResume() {
         super.onResume();
         Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).hide();
-
     }
 
     @Override
@@ -228,12 +236,14 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
 
     @Override
     public boolean onBackPressed() {
-        if (isGPSEnabled()) {
-            if (getActivity() != null) {
+        if (ApplicationUtils.isGPSEnabled(context)) {
+            if (getActivity() instanceof HomeActivity) {
                 listener.fragmentChange(HomeFragment.newInstance());
-            } else {
-                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_gps));
+            } else if (getActivity() instanceof BookingActivity) {
+                startActivityWithFinish(context, BookingActivity.class);
             }
+        } else {
+            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_gps));
         }
         return false;
     }
@@ -274,7 +284,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                     if (diff < 0) {
                         Toast.makeText(requireActivity(), context.getResources().getString(R.string.departure_time_less_arrive_time), Toast.LENGTH_SHORT).show();
                     } else {
-                        if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
+                        if (ApplicationUtils.isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
                             storeReservation(Preferences.getInstance(context).getUser().getMobileNo(), getDate(arrivedDate.getTime()), getDate((departure + arrivedDate.getTime())), areaPlaceId);
                         }
                     }
@@ -338,26 +348,6 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
         return min;
     }
 
-    private boolean isGPSEnabled() {
-        LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-        boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        if (providerEnabled) {
-            return true;
-        } else {
-            AlertDialog alertDialog = new AlertDialog.Builder(context)
-                    .setTitle("GPS Permissions")
-                    .setMessage("GPS is required for this app to work. Please enable GPS.")
-                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
-                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        startActivityForResult(intent, GPS_REQUEST_CODE);
-                    }))
-                    .setCancelable(false)
-                    .show();
-        }
-
-        return false;
-    }
-
     private void storeReservation(String mobileNo, String arrivalTime, String departureTime, String markerUid) {
         showLoading(context);
         ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
@@ -387,7 +377,6 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
             public void onFailure(@NonNull Call<ReservationResponse> call, @NonNull Throwable t) {
                 Timber.e("onFailure -> %s", t.getMessage());
                 hideLoading();
-                //ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
         });
     }
@@ -447,7 +436,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
         try {
             departure = (long) (departureTimeDataList.get(0).getTimeValue() * 3600000);
         } catch (Exception e) {
-            e.getCause();
+            Timber.e(e.getCause());
         }
         binding.spinnerDepartureTime.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

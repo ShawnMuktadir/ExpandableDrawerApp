@@ -21,7 +21,6 @@ import com.afollestad.materialdialogs.MaterialDialog;
 
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.ui.booking.BookingActivity;
 import www.fiberathome.com.parkingapp.ui.widget.BaseBottomSheetDialog;
 
 @SuppressWarnings({"unused", "RedundantSuppression"})

@@ -89,6 +89,13 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
+            android:name=".ui.schedule.ScheduleActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="locale"
+            android:theme="@style/AppTheme.DefaultActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity
             android:name=".ui.home.HomeActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"

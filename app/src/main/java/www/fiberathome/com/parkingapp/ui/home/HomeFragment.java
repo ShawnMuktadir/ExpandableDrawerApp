@@ -470,7 +470,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 }
             }
         }
-
         return true;
     }
 
@@ -562,12 +561,13 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
         fusedLocationProviderClient.requestLocationUpdates(buildLocationRequest(), buildLocationCallBack(), Objects.requireNonNull(Looper.myLooper()));
         fusedLocationProviderClient.getLastLocation().addOnCompleteListener(context, task -> {
-            Location location = task.getResult();
-            if (location != null) {
-                onConnectedLocation = location;
-                SharedData.getInstance().setOnConnectedLocation(onConnectedLocation);
-            }
             try {
+                hideLoading();
+                Location location = task.getResult();
+                if (location != null) {
+                    onConnectedLocation = location;
+                    SharedData.getInstance().setOnConnectedLocation(onConnectedLocation);
+                }
                 if (mMap != null && onConnectedLocation != null) {
                     LatLng latLng = new LatLng(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude());
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13.5f));

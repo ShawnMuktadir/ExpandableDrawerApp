@@ -27,6 +27,7 @@ import www.fiberathome.com.parkingapp.databinding.BookingsRowBinding;
 import www.fiberathome.com.parkingapp.model.response.booking.BookedList;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingArea;
 import www.fiberathome.com.parkingapp.ui.booking.BookingActivity;
+import www.fiberathome.com.parkingapp.utils.MathUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -111,7 +112,7 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             if (bookedList.getC_Status().equalsIgnoreCase("0") && bookedList.getStatus().equalsIgnoreCase("0")) {
                 ToastUtils.getInstance().showToast(context, "" + context.getResources().getString(R.string.already_booked_msg));
             } else {
-                bookingAdapterClickListener.onItemRebookListener(position);
+                bookingAdapterClickListener.onItemRebookListener(position, MathUtils.getInstance().convertToDouble(bookedList.getLatitude()), MathUtils.getInstance().convertToDouble(bookedList.getLongitude()), bookedList.getParkingArea(), bookedList.getCount(), bookedList.getAreaId());
             }
 
         });
@@ -168,7 +169,7 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         void onItemGetHelpListener();
 
-        void onItemRebookListener(int position);
+        void onItemRebookListener(int position, double lat, double lng, String parkingArea, String count, String placeId);
 
     }
 }

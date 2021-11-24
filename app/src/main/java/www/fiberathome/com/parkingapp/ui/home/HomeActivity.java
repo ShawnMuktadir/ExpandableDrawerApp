@@ -140,6 +140,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
         }
 
         setListeners();
+        hideLoading();
     }
 
     @Override
@@ -152,6 +153,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
     @Override
     protected void onResume() {
         super.onResume();
+        hideLoading();
         if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
             setAppLocale(LANGUAGE_BN);
         } else {
@@ -407,21 +409,6 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
             Preferences.getInstance(context).setIsLocationPermissionGiven(true);
 
         }
-    }
-
-    public boolean isGPSEnabled() {
-
-        LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-
-        boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-        if (providerEnabled) {
-            return true;
-        } else {
-            Timber.e("provider not Enabled");
-        }
-
-        return false;
     }
 
     private void buildLocationCallBack() {
