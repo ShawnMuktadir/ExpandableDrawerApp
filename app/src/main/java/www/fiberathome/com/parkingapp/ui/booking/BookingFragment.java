@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -222,15 +223,19 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                 }
 
                 @Override
-                public void onItemRebookListener(int position, double lat, double lng, String parkingArea, String count, String placeId) {
-                    Bundle bundle = new Bundle();
-                    bundle.putBoolean("m", false); //m for more
-                    bundle.putString("areaPlacedId", placeId);
-                    bundle.putString("areaName", parkingArea);
-                    bundle.putString("parkingSlotCount", count);
-                    bundle.putDouble("lat", lat);
-                    bundle.putDouble("long", lng);
-                    listener.fragmentChange(ScheduleFragment.newInstance(lat, lng, parkingArea, count, placeId));
+                public void onItemRebookListener(int position, double lat, double lng, String parkingArea, String count, String placeId, TextView textView) {
+                    if (textView.getText().equals(context.getResources().getString(R.string.re_booking))) {
+                        Bundle bundle = new Bundle();
+                        bundle.putBoolean("m", false); //m for more
+                        bundle.putString("areaPlacedId", placeId);
+                        bundle.putString("areaName", parkingArea);
+                        bundle.putString("parkingSlotCount", count);
+                        bundle.putDouble("lat", lat);
+                        bundle.putDouble("long", lng);
+                        listener.fragmentChange(ScheduleFragment.newInstance(lat, lng, parkingArea, count, placeId));
+                    } else if (textView.getText().equals(context.getResources().getString(R.string.get_direction))) {
+                        context.onBackPressed();
+                    }
                 }
             });
             binding.recyclerViewBooking.setAdapter(bookingAdapter);

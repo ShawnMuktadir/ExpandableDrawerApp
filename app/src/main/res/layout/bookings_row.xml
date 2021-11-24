@@ -27,15 +27,13 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="1.5">
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/textViewParkingSlot"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_weight="1"
                 android:maxLines="2"
                 android:text="@string/parking_slot"
                 android:textColor="@color/black"
@@ -197,7 +195,7 @@
                     android:gravity="center"
                     android:background="@color/black"
                     android:padding="@dimen/_5sdp"
-                    android:text="@string/re_booking"
+                    android:text="@string/get_direction"
                     android:textColor="@color/white"
                     android:textSize="@dimen/dimTex14"
                     android:layout_marginEnd="@dimen/dim2"
