@@ -29,7 +29,6 @@ import www.fiberathome.com.parkingapp.model.response.booking.BookedList;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingArea;
 import www.fiberathome.com.parkingapp.ui.booking.BookingActivity;
 import www.fiberathome.com.parkingapp.utils.MathUtils;
-import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -91,6 +90,7 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             bookingViewHolder.binding.tvStatus.setText(context.getResources().getString(R.string.parking));
             bookingViewHolder.binding.tvStatus.setTextColor(context.getColor(R.color.green2));
             bookingViewHolder.binding.tvRebooking.setText(context.getResources().getString(R.string.get_direction));
+            bookingViewHolder.binding.tvRebooking.setBackgroundColor(context.getResources().getColor(R.color.light_blue));
         } else if (bookedList.getC_Status().equalsIgnoreCase("0") && bookedList.getStatus().equalsIgnoreCase("0")) {
             bookingViewHolder.binding.tvCancel.setVisibility(View.VISIBLE);
             bookingViewHolder.binding.tvStatus.setVisibility(View.GONE);
@@ -105,6 +105,7 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             bookingViewHolder.binding.tvCancel.setVisibility(View.GONE);
             bookingViewHolder.binding.tvStatus.setTextColor(Color.RED);
             bookingViewHolder.binding.tvRebooking.setText(context.getResources().getString(R.string.re_booking));
+            bookingViewHolder.binding.tvRebooking.setBackgroundColor(context.getResources().getColor(R.color.black));
         } else if (bookedList.getC_Status().equalsIgnoreCase("1") && bookedList.getStatus().equalsIgnoreCase("0")) {
             bookingViewHolder.binding.tvStatus.setVisibility(View.VISIBLE);
             bookingViewHolder.binding.tvStatus.setText(context.getResources().getString(R.string.rejected));

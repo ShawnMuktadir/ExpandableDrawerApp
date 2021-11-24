@@ -224,7 +224,8 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
 
                 @Override
                 public void onItemRebookListener(int position, double lat, double lng, String parkingArea, String count, String placeId, TextView textView) {
-                    if (textView.getText().equals(context.getResources().getString(R.string.re_booking))) {
+                    String buttonText = textView.getText().toString();
+                    if (buttonText.equalsIgnoreCase(context.getResources().getString(R.string.re_booking))) {
                         Bundle bundle = new Bundle();
                         bundle.putBoolean("m", false); //m for more
                         bundle.putString("areaPlacedId", placeId);
@@ -233,7 +234,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                         bundle.putDouble("lat", lat);
                         bundle.putDouble("long", lng);
                         listener.fragmentChange(ScheduleFragment.newInstance(lat, lng, parkingArea, count, placeId));
-                    } else if (textView.getText().equals(context.getResources().getString(R.string.get_direction))) {
+                    } else if (buttonText.equalsIgnoreCase(context.getResources().getString(R.string.get_direction))) {
                         context.onBackPressed();
                     }
                 }
