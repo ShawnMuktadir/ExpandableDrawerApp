@@ -119,7 +119,6 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         if (isAdded()) {
             if (getActivity() instanceof HomeActivity) {
                 context = (HomeActivity) getActivity();
@@ -286,6 +285,8 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                     } else {
                         if (ApplicationUtils.isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
                             storeReservation(Preferences.getInstance(context).getUser().getMobileNo(), getDate(arrivedDate.getTime()), getDate((departure + arrivedDate.getTime())), areaPlaceId);
+                        } else {
+                            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_gps));
                         }
                     }
                 }
