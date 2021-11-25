@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -181,7 +180,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                 public void onBookingItemCancel(int position, String uid, String id) {
                     DialogUtils.getInstance().alertDialog(context,
                             context,
-                            context.getResources().getString(R.string.dp_u_want_to_cancel_booking),
+                            context.getResources().getString(R.string.do_u_want_to_cancel_booking),
                             context.getResources().getString(R.string.yes), context.getResources().getString(R.string.no),
                             new DialogUtils.DialogClickListener() {
                                 @Override
@@ -201,7 +200,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                 }
 
                 @Override
-                public void onItemGetHelpListener() {
+                public void onItemGetHelp() {
                     BottomSheetDialogGetHelpBinding getHelpBinding = BottomSheetDialogGetHelpBinding.inflate(getLayoutInflater());
                     BottomSheetDialog dialog = new BottomSheetDialog(context);
                     dialog.setContentView(getHelpBinding.getRoot());
@@ -223,19 +222,29 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                 }
 
                 @Override
-                public void onItemRebookListener(int position, double lat, double lng, String parkingArea, String count, String placeId, TextView textView) {
-                    String buttonText = textView.getText().toString();
-                    if (buttonText.equalsIgnoreCase(context.getResources().getString(R.string.re_booking))) {
+                public void onItemGetDirection(int position) {
+                    context.onBackPressed();
+                }
+
+                @Override
+                public void onItemRebookListener(int position, double lat, double lng, String parkingArea, String count, String placeId) {
+                    boolean isBooked = Preferences.getInstance(context).getBooked().getIsBooked();
+                    if (isBooked) {
+                        DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.already_booked_msg), context);
+                    } else {
                         Bundle bundle = new Bundle();
                         bundle.putBoolean("m", false); //m for more
                         bundle.putString("areaPlacedId", placeId);
+                        //bundle.putString("areaPlacedId", "1517");
                         bundle.putString("areaName", parkingArea);
-                        bundle.putString("parkingSlotCount", count);
+                        //bundle.putString("parkingSlotCount", count);
+                        bundle.putString("parkingSlotCount", "25");
                         bundle.putDouble("lat", lat);
                         bundle.putDouble("long", lng);
-                        listener.fragmentChange(ScheduleFragment.newInstance(lat, lng, parkingArea, count, placeId));
-                    } else if (buttonText.equalsIgnoreCase(context.getResources().getString(R.string.get_direction))) {
-                        context.onBackPressed();
+                        ScheduleFragment scheduleFragment = new ScheduleFragment();
+                        scheduleFragment.setArguments(bundle);
+                        listener.fragmentChange(scheduleFragment);
+                        //listener.fragmentChange(ScheduleFragment.newInstance(lat, lng, parkingArea, count, placeId));
                     }
                 }
             });

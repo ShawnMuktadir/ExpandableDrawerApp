@@ -1273,6 +1273,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 if (bookedPlace.getLat() != 0 && !bookedPlace.getPlaceId().equals("")) {
                     parkingSpotLatLng = new LatLng(bookedPlace.getLat(), bookedPlace.getLon());
                     destination = "" + parkingSpotLatLng.latitude + ", " + parkingSpotLatLng.longitude;
+                    getDirectionPinMarkerDraw(parkingSpotLatLng, bookedPlace.getPlaceId(), false);
                     SensorArea sensorArea = createSensorAreaObj(bookedPlace.getAreaName(), bookedPlace.getPlaceId(), bookedPlace.getLat(), bookedPlace.getLon(), bookedPlace.getParkingSlotCount(), bookedPlace.getPsId());
                     populateNearestPlaceBottomSheet(parkingSpotLatLng, sensorArea);
                     if (!isInAreaEnabled)

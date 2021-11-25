@@ -7,7 +7,6 @@ import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -89,38 +88,46 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             bookingViewHolder.binding.tvCancel.setVisibility(View.GONE);
             bookingViewHolder.binding.tvStatus.setText(context.getResources().getString(R.string.parking));
             bookingViewHolder.binding.tvStatus.setTextColor(context.getColor(R.color.green2));
-            bookingViewHolder.binding.tvRebooking.setText(context.getResources().getString(R.string.get_direction));
-            bookingViewHolder.binding.tvRebooking.setBackgroundColor(context.getResources().getColor(R.color.light_blue));
+            bookingViewHolder.binding.tvGetDirection.setVisibility(View.VISIBLE);
+            bookingViewHolder.binding.tvRebooking.setVisibility(View.GONE);
         } else if (bookedList.getC_Status().equalsIgnoreCase("0") && bookedList.getStatus().equalsIgnoreCase("0")) {
             bookingViewHolder.binding.tvCancel.setVisibility(View.VISIBLE);
             bookingViewHolder.binding.tvStatus.setVisibility(View.GONE);
+            bookingViewHolder.binding.tvGetDirection.setVisibility(View.VISIBLE);
+            bookingViewHolder.binding.tvRebooking.setVisibility(View.GONE);
         } else if (bookedList.getC_Status().equalsIgnoreCase("0") && bookedList.getStatus().equalsIgnoreCase("1")) {
             bookingViewHolder.binding.tvStatus.setVisibility(View.VISIBLE);
             bookingViewHolder.binding.tvCancel.setVisibility(View.GONE);
             bookingViewHolder.binding.tvStatus.setText(context.getResources().getString(R.string.completed));
             bookingViewHolder.binding.tvStatus.setTextColor(context.getColor(R.color.green2));
+            bookingViewHolder.binding.tvGetDirection.setVisibility(View.GONE);
+            bookingViewHolder.binding.tvRebooking.setVisibility(View.VISIBLE);
         } else if (bookedList.getC_Status().equalsIgnoreCase("1") && bookedList.getStatus().equalsIgnoreCase("1")) {
             bookingViewHolder.binding.tvStatus.setVisibility(View.VISIBLE);
             bookingViewHolder.binding.tvStatus.setText(context.getResources().getString(R.string.canceled));
             bookingViewHolder.binding.tvCancel.setVisibility(View.GONE);
             bookingViewHolder.binding.tvStatus.setTextColor(Color.RED);
-            bookingViewHolder.binding.tvRebooking.setText(context.getResources().getString(R.string.re_booking));
-            bookingViewHolder.binding.tvRebooking.setBackgroundColor(context.getResources().getColor(R.color.black));
+            bookingViewHolder.binding.tvGetDirection.setVisibility(View.GONE);
+            bookingViewHolder.binding.tvRebooking.setVisibility(View.VISIBLE);
         } else if (bookedList.getC_Status().equalsIgnoreCase("1") && bookedList.getStatus().equalsIgnoreCase("0")) {
             bookingViewHolder.binding.tvStatus.setVisibility(View.VISIBLE);
             bookingViewHolder.binding.tvStatus.setText(context.getResources().getString(R.string.rejected));
             bookingViewHolder.binding.tvCancel.setVisibility(View.GONE);
             bookingViewHolder.binding.tvStatus.setTextColor(Color.RED);
+            bookingViewHolder.binding.tvGetDirection.setVisibility(View.GONE);
+            bookingViewHolder.binding.tvRebooking.setVisibility(View.VISIBLE);
         }
 
-        bookingViewHolder.binding.tvRebooking.setOnClickListener(v -> {
-            bookingAdapterClickListener.onItemRebookListener(position, MathUtils.getInstance().convertToDouble(bookedList.getLatitude()),
-                    MathUtils.getInstance().convertToDouble(bookedList.getLongitude()), bookedList.getParkingArea(),
-                    bookedList.getCount(), bookedList.getAreaId(), bookingViewHolder.binding.tvRebooking);
-        });
+        bookingViewHolder.binding.tvRebooking.setOnClickListener(v -> bookingAdapterClickListener.onItemRebookListener(position, MathUtils.getInstance().convertToDouble(bookedList.getLatitude()),
+                MathUtils.getInstance().convertToDouble(bookedList.getLongitude()), bookedList.getParkingArea(),
+                bookedList.getCount(), bookedList.getAreaId()));
 
         bookingViewHolder.binding.tvGetHelp.setOnClickListener(v -> {
-            bookingAdapterClickListener.onItemGetHelpListener();
+            bookingAdapterClickListener.onItemGetHelp();
+        });
+
+        bookingViewHolder.binding.tvGetDirection.setOnClickListener(v -> {
+            bookingAdapterClickListener.onItemGetDirection(position);
         });
 
         bookingViewHolder.binding.tvCancel.setOnClickListener(v -> bookingAdapterClickListener.onBookingItemCancel(bookingViewHolder.getAbsoluteAdapterPosition(), bookedList.getSpotId(), bookedList.getId()));
@@ -169,8 +176,10 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public interface BookingAdapterClickListener {
         void onBookingItemCancel(int position, String uid, String id);
 
-        void onItemGetHelpListener();
+        void onItemGetHelp();
 
-        void onItemRebookListener(int position, double lat, double lng, String parkingArea, String count, String placeId, TextView tvRebooking);
+        void onItemGetDirection(int position);
+
+        void onItemRebookListener(int position, double lat, double lng, String parkingArea, String count, String placeId);
     }
 }

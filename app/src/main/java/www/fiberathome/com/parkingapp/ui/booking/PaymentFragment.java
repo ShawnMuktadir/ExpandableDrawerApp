@@ -1,5 +1,6 @@
 package www.fiberathome.com.parkingapp.ui.booking;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,7 +57,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
     static long differenceUnit;
     static double lat, lon;
 
-    private HomeActivity context;
+    private Activity context;
     private FragmentChangeListener listener;
 
     FragmentPaymentBinding binding;
@@ -87,8 +88,12 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        context = (HomeActivity) getActivity();
-        listener = context;
+        if (getActivity() instanceof HomeActivity) {
+            context = (HomeActivity) getActivity();
+        } else if (getActivity() instanceof BookingActivity) {
+            context = (BookingActivity) getActivity();
+        }
+        listener = (FragmentChangeListener) context;
     }
 
     @Override
@@ -126,7 +131,15 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
 
     @Override
     public boolean onBackPressed() {
-        context.onBackPressed();
+        if (ApplicationUtils.isGPSEnabled(context)) {
+            if (getActivity() instanceof HomeActivity) {
+                listener.fragmentChange(HomeFragment.newInstance());
+            } else if (getActivity() instanceof BookingActivity) {
+                startActivityWithFinish(context, BookingActivity.class);
+            }
+        } else {
+            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_gps));
+        }
         return false;
     }
 

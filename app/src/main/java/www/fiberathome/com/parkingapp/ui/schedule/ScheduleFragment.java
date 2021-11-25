@@ -349,10 +349,10 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
         return min;
     }
 
-    private void storeReservation(String mobileNo, String arrivalTime, String departureTime, String markerUid) {
+    private void storeReservation(String mobileNo, String arrivalTime, String departureTime, String mPlaceId) {
         showLoading(context);
         ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<ReservationResponse> call = request.storeReservation(mobileNo, arrivalTime, departureTime, markerUid, "1"); // 1 for request availability
+        Call<ReservationResponse> call = request.storeReservation(mobileNo, arrivalTime, departureTime, mPlaceId, "1"); // 1 for request availability
         call.enqueue(new Callback<ReservationResponse>() {
             @Override
             public void onResponse(@NonNull Call<ReservationResponse> call,
@@ -363,7 +363,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                         if (!response.body().getError()) {
                             PaymentFragment paymentFragment = PaymentFragment.newInstance(arrivedDate, new Date((departure + arrivedDate.getTime())), getDate(arrivedDate.getTime()), getDate((departure + arrivedDate.getTime())),
                                     getTimeDifference((departure + arrivedDate.getTime()) - arrivedDate.getTime()),
-                                    (departure + arrivedDate.getTime()) - arrivedDate.getTime(), markerUid, lat, lon, areaName, parkingSlotCount);
+                                    (departure + arrivedDate.getTime()) - arrivedDate.getTime(), mPlaceId, lat, lon, areaName, parkingSlotCount);
                             listener.fragmentChange(paymentFragment);
                         } else {
                             DialogUtils.getInstance().showOnlyMessageDialog(response.body().getMessage(), context);

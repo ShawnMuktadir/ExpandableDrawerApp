@@ -188,6 +188,21 @@
                 android:weightSum="2">
 
                 <TextView
+                    android:id="@+id/tvGetDirection"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:background="@color/selectedColor"
+                    android:padding="@dimen/_5sdp"
+                    android:text="@string/get_direction"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/dimTex14"
+                    android:layout_marginEnd="@dimen/dim2"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+                <TextView
                     android:id="@+id/tvRebooking"
                     android:layout_width="0dp"
                     android:layout_weight="1"
@@ -195,7 +210,7 @@
                     android:gravity="center"
                     android:background="@color/black"
                     android:padding="@dimen/_5sdp"
-                    android:text="@string/get_direction"
+                    android:text="@string/re_booking"
                     android:textColor="@color/white"
                     android:textSize="@dimen/dimTex14"
                     android:layout_marginEnd="@dimen/dim2"
