@@ -1572,7 +1572,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     double distanceBetween = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
                             bookedPlace.getLat(), bookedPlace.getLon()) * 1000;
                     double distance = circle != null ? circle.getRadius() : 70;
-                    if (distanceBetween <= distance && (bookedPlace.getArriveDate() - System.currentTimeMillis()) <= 300000) {
+                    if (distanceBetween <= distance && (bookedPlace.getArriveDate() - System.currentTimeMillis()) <= 300000 && !parkingAreaChanged) {
                         DialogUtils.getInstance().alertDialog(context,
                                 context,
                                 context.getResources().getString(R.string.park_has_started),

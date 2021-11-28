@@ -1,5 +1,7 @@
 package www.fiberathome.com.parkingapp.ui;
 
+import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_BN;
+
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
@@ -52,6 +54,7 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.databinding.ActivityNavigationBinding;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
+import www.fiberathome.com.parkingapp.model.data.preference.LanguagePreferences;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.user.User;
@@ -179,6 +182,11 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
     protected void onResume() {
         super.onResume();
         setNavDrawerItem(R.id.nav_home);
+        if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
+            setAppLocale(LANGUAGE_BN);
+        } else {
+            setAppLocale(Preferences.getInstance(context).getAppLanguage());
+        }
     }
 
     @Override

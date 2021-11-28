@@ -1,7 +1,5 @@
 package www.fiberathome.com.parkingapp.ui.booking;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -310,7 +308,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                                     setBookingPark(Preferences.getInstance(context).getUser().getMobileNo(), mBookedPlace.getBookedUid());
                                 } else {
                                     if (getActivity() instanceof BookingActivity) {
-                                        startActivityWithFinish(context, HomeActivity.class);
+                                        startActivityWithFinishAffinity(context, HomeActivity.class);
                                     } else if (getActivity() instanceof HomeActivity) {
                                         listener.fragmentChange(HomeFragment.newInstance());
                                     }
