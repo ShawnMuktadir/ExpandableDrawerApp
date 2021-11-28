@@ -64,9 +64,9 @@ public class BookedList {
     @Expose
     private String psId;
 
-    @SerializedName("count")
+    @SerializedName("no_of_parking")
     @Expose
-    private String count;
+    private String noOfParking;
 
     public BookedList(String id, String userId, String timeStart, String timeEnd, String spotId, String currentBill,
                       String paymentStatus, String penalty, String bookingTime, String status, String cStatus, String pStatus,
@@ -245,11 +245,11 @@ public class BookedList {
         this.psId = psId;
     }
 
-    public String getCount() {
-        return count;
+    public String getNoOfParking() {
+        return noOfParking;
     }
 
-    public void setCount(String count) {
-        this.count = count;
+    public void setNoOfParking(String noOfParking) {
+        this.noOfParking = noOfParking;
     }
 }

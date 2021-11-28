@@ -149,7 +149,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                     if (response.isSuccessful()) {
                         bookedResponse = response.body();
                         bookedLists = bookedResponse.getBookedLists();
-                        Timber.e("bookedLists -> %s", new Gson().toJson(bookedLists));
+                        //Timber.e("bookedLists -> %s", new Gson().toJson(bookedLists));
                         if (bookedLists != null && !bookedLists.isEmpty()) {
                             setFragmentControls(bookedLists, refresh);
                             hideNoData();
@@ -232,19 +232,21 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                     if (isBooked) {
                         DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.already_booked_msg), context);
                     } else {
-                        Bundle bundle = new Bundle();
-                        bundle.putBoolean("m", false); //m for more
-                        bundle.putString("areaPlacedId", placeId);
-                        //bundle.putString("areaPlacedId", "1517");
-                        bundle.putString("areaName", parkingArea);
-                        //bundle.putString("parkingSlotCount", count);
-                        bundle.putString("parkingSlotCount", "25");
-                        bundle.putDouble("lat", lat);
-                        bundle.putDouble("long", lng);
-                        ScheduleFragment scheduleFragment = new ScheduleFragment();
-                        scheduleFragment.setArguments(bundle);
-                        listener.fragmentChange(scheduleFragment);
-                        //listener.fragmentChange(ScheduleFragment.newInstance(lat, lng, parkingArea, count, placeId));
+                        if (placeId != null && !placeId.equalsIgnoreCase("") && placeId.equalsIgnoreCase("0") &&
+                                count != null && !count.equalsIgnoreCase("") && count.equalsIgnoreCase("0")) {
+                            Bundle bundle = new Bundle();
+                            bundle.putBoolean("m", false); //m for more
+                            bundle.putString("areaPlacedId", placeId);
+                            bundle.putString("areaName", parkingArea);
+                            bundle.putString("parkingSlotCount", count);
+                            bundle.putDouble("lat", lat);
+                            bundle.putDouble("long", lng);
+                            ScheduleFragment scheduleFragment = new ScheduleFragment();
+                            scheduleFragment.setArguments(bundle);
+                            listener.fragmentChange(scheduleFragment);
+                        } else {
+                            ToastUtils.getInstance().showToastMessage(context, "Currently Re-book is not available for this parking spot");
+                        }
                     }
                 }
             });

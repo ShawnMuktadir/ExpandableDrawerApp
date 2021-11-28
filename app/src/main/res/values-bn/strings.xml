@@ -538,7 +538,7 @@
     <string name="please_contact_our_support_team_for_your_queries">আপনার প্রয়োজনীয় প্রশ্নের জন্য যোগাযোগ করুন</string>
     <string name="sms">এসএমএস</string>
     <string name="others">অন্যান্য</string>
-    <string name="parking_reservation_id">রিসার্ভেসন নং:</string>
+    <string name="parking_reservation_id">রিসার্ভেসন নং: </string>
     <string name="arrival">অ্যারাইভাল</string>
     <string name="departuretxt">ডিপার্চার</string>
     <string name="remaining_time">কতক্ষণ সময় বাকি আছে:</string>
@@ -557,5 +557,6 @@
     <string name="booked_parking">বুক করা পার্কিং</string>
     <string name="Booked_for">বুক করা হয়েছে : \n</string>
     <string name="your_booked_parking_duration_has_ended">আপনার বুক করা পার্কিং সময়কাল শেষ হয়েছে</string>
+    <string name="book_now">Book Now</string>
 </resources>
 

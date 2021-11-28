@@ -127,7 +127,7 @@
 
     <string name="date">wed,5 Feb</string>
     <string name="schedule_heading">Schedule</string>
-    <string name="arrived">Arrived at the parking spot:</string>
+    <string name="arrived">Arrive at the parking spot:</string>
     <string name="departure">Select how long you want to book</string>
     <string name="book">Your book</string>
     <string name="gps_network_not_enabled">GPS network not enabled!</string>
@@ -534,7 +534,7 @@
     <string name="please_contact_our_support_team_for_your_queries">Please contact our support team for your necessary queries</string>
     <string name="sms">SMS</string>
     <string name="others">Others</string>
-    <string name="parking_reservation_id">Reservation Number:</string>
+    <string name="parking_reservation_id">Reservation Number: </string>
     <string name="arrival">Arrival</string>
     <string name="departuretxt">Departure</string>
     <string name="remaining_time">Remaining Time:</string>
@@ -553,4 +553,5 @@
     <string name="booked_parking">Booked Parking</string>
     <string name="Booked_for">Booked for : \n</string>
     <string name="your_booked_parking_duration_has_ended">Your Booked Parking Duration Has Ended</string>
+    <string name="book_now">Book Now</string>
 </resources>

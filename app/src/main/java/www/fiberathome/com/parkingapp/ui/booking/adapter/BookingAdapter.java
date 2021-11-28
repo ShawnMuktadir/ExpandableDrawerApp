@@ -63,7 +63,7 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         BookedList bookedList = bookedLists.get(position);
         bookingViewHolder.binding.textViewParkingSlot.setText(bookedList.getAddress());
         bookingViewHolder.binding.textViewReservationId.setText(context.getResources().getString(R.string.parking_reservation_id) + bookedList.getId());
-        bookingViewHolder.binding.textViewParkingTotalPaymentAmount.setText(context.getResources().getString(R.string.total_fair) + " " + bookedList.getCurrentBill());
+        bookingViewHolder.binding.textViewParkingTotalPaymentAmount.setText(context.getResources().getString(R.string.total_fair) + "  " + bookedList.getCurrentBill());
         bookingViewHolder.binding.textViewSpotId.setText(context.getResources().getString(R.string.parking_spot_id) + bookedList.getPsId());
         bookingViewHolder.binding.textViewParkingTime.setText(context.getString(R.string.arrival) + " " + bookedList.getTimeStart()
                 + " - \n" + context.getString(R.string.departuretxt) + " " + bookedList.getTimeEnd());
@@ -120,7 +120,7 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         bookingViewHolder.binding.tvRebooking.setOnClickListener(v -> bookingAdapterClickListener.onItemRebookListener(position, MathUtils.getInstance().convertToDouble(bookedList.getLatitude()),
                 MathUtils.getInstance().convertToDouble(bookedList.getLongitude()), bookedList.getParkingArea(),
-                bookedList.getCount(), bookedList.getAreaId()));
+                bookedList.getNoOfParking(), bookedList.getAreaId()));
 
         bookingViewHolder.binding.tvGetHelp.setOnClickListener(v -> {
             bookingAdapterClickListener.onItemGetHelp();

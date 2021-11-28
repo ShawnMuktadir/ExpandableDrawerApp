@@ -71,6 +71,8 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
 
     private boolean setArrivedDate = false;
     private boolean more = false;
+    private boolean isInArea = false;
+    private boolean isBookNowChecked = false;
 
     private static double lat;
     private static double lon;
@@ -99,13 +101,18 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
         return new ScheduleFragment();
     }
 
-    public static ScheduleFragment newInstance(double mLat, double mLng, String parkingArea, String count, String placeId) {
-        lat = mLat;
-        lon = mLng;
-        areaName = parkingArea;
-        areaCount = count;
-        areaPlaceId = placeId;
-        return new ScheduleFragment();
+    @Override
+    public void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            more = getArguments().getBoolean("m");
+            isInArea = getArguments().getBoolean("isInArea");
+            areaPlaceId = getArguments().getString("areaPlacedId");
+            lat = getArguments().getDouble("lat");
+            lon = getArguments().getDouble("long");
+            areaName = getArguments().getString("areaName");
+            parkingSlotCount = getArguments().getString("parkingSlotCount");
+        }
     }
 
     @Override
@@ -128,87 +135,50 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
             binding.textViewCurrentDate.setText(DateTimeUtils.getInstance().getCurrentDayTime());
             listener = (FragmentChangeListener) getActivity();
             payBtnClickListener = this;
-
-            Date currentTime = Calendar.getInstance().getTime();
-            //add 30 minutes to date
-            Date mFutureTime = new Date(); // Instantiate a Date object
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(mFutureTime);
-            cal.add(Calendar.MINUTE, 30);
-            mFutureTime = cal.getTime();
-            Date futureTime = mFutureTime;
-            if (getArguments() != null) {
-                more = getArguments().getBoolean("m");
-                areaPlaceId = getArguments().getString("areaPlacedId");
-                lat = getArguments().getDouble("lat");
-                lon = getArguments().getDouble("long");
-                areaName = getArguments().getString("areaName");
-                parkingSlotCount = getArguments().getString("parkingSlotCount");
-            }
-            binding.arrivedPicker.setIsAmPm(true);
-            binding.departurePicker.setIsAmPm(true);
-            binding.arrivedPicker.setDefaultDate(currentTime);
-            binding.departurePicker.setDefaultDate(mFutureTime);
-            if (more) {
-                setArrivedDate = true;
-                binding.arrivedPicker.setEnabled(false);
-                binding.arriveDisableLayout.setBackgroundColor(getResources().getColor(R.color.disableColor));
-                Date arrived = new Date(getArguments().getLong("a"));
-                Date departure = new Date(getArguments().getLong("d"));
-
-                arrivedDate = arrived;
-                departedDate = departure;
-
-                binding.arrivedPicker.setDefaultDate(arrived);
-                binding.departurePicker.setDefaultDate(departure);
+            if (isInArea) {
+                binding.cbBookNow.setVisibility(View.VISIBLE);
             } else {
-                binding.departurePicker.setEnabled(false);
-                binding.departureDisableLayout.setBackgroundColor(getResources().getColor(R.color.disableColor));
-
-                arrivedDate = binding.arrivedPicker.getDate();
-                Timber.d("arrived date before scrolling -> %s", arrivedDate);
-                departedDate = binding.departurePicker.getDate();
-                Timber.d("departure date before scrolling -> %s", departedDate);
-                arrived = arrivedDate.getTime();
-                /*departure = departedDate.getTime();
-                difference = arrived - departure;*/
-                Timber.e("difference -> %s", difference);
+                binding.cbBookNow.setVisibility(View.GONE);
             }
-            binding.arrivedPicker.addOnDateChangedListener((displayed, date) -> {
-                arrivedDate = date;
-                Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-                final long[] pattern = {0, 10};
-                final int[] amplitudes = {50, 50};
-
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                    VibrationEffect effect = VibrationEffect.createWaveform(pattern, amplitudes, 0);
-                    assert vibrator != null;
-                    vibrator.vibrate(effect);
-                    (new Handler()).postDelayed(vibrator::cancel, 50);
-                } else {
-                    assert vibrator != null;
-                    vibrator.vibrate(10);
-                }
-            });
-            binding.departurePicker.addOnDateChangedListener((displayed, date) -> {
-                departedDate = date;
-                Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-                final long[] pattern = {0, 10};
-                final int[] amplitudes = {50, 50};
-
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                    VibrationEffect effect = VibrationEffect.createWaveform(pattern, amplitudes, 0);
-                    assert vibrator != null;
-                    vibrator.vibrate(effect);
-                    (new Handler()).postDelayed(vibrator::cancel, 50);
-                } else {
-                    assert vibrator != null;
-                    vibrator.vibrate(10);
-                }
-            });
+            setDatePickerTime();
             setListeners();
         }
         getTimeSlots();
+    }
+
+    private void setDatePickerTime() {
+        Date currentTime = Calendar.getInstance().getTime();
+        //add 30 minutes to date
+        Date mFutureTime = new Date(); // Instantiate a Date object
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(mFutureTime);
+        cal.add(Calendar.MINUTE, 30);
+        mFutureTime = cal.getTime();
+        Date futureTime = mFutureTime;
+
+        binding.arrivedPicker.setIsAmPm(true);
+        binding.departurePicker.setIsAmPm(true);
+        binding.arrivedPicker.setDefaultDate(currentTime);
+        binding.departurePicker.setDefaultDate(mFutureTime);
+        if (more) {
+            setArrivedDate = true;
+            binding.arrivedPicker.setEnabled(false);
+            binding.arriveDisableLayout.setBackgroundColor(getResources().getColor(R.color.disableColor));
+            if (getArguments()!=null) {
+                Date arrived = new Date(getArguments().getLong("a"));
+                Date departure = new Date(getArguments().getLong("d"));
+                arrivedDate = arrived;
+                departedDate = departure;
+                binding.arrivedPicker.setDefaultDate(arrived);
+                binding.departurePicker.setDefaultDate(departure);
+            }
+        } else {
+            binding.departurePicker.setEnabled(false);
+            binding.departureDisableLayout.setBackgroundColor(getResources().getColor(R.color.disableColor));
+            arrivedDate = binding.arrivedPicker.getDate();
+            departedDate = binding.departurePicker.getDate();
+            arrived = arrivedDate.getTime();
+        }
     }
 
     @Override
@@ -218,7 +188,6 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
         }
         setArrivedDate = more;
         super.onStart();
-        Timber.e("onStart called ");
     }
 
     @Override
@@ -259,8 +228,55 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
     private void setListeners() {
         binding.ivBackArrow.setOnClickListener(v -> onBackPressed());
 
+        binding.cbBookNow.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                isBookNowChecked = true;
+                binding.arrivedPicker.setEnabled(false);
+                binding.arriveDisableLayout.setBackgroundColor(getResources().getColor(R.color.disableColor));
+                arrivedDate = new Date();
+            } else {
+                isBookNowChecked = false;
+                setArrivedDate = true;
+                binding.arrivedPicker.setEnabled(true);
+                binding.arriveDisableLayout.setBackgroundColor(getResources().getColor(R.color.enableColor));
+            }
+        });
+
+        binding.arrivedPicker.addOnDateChangedListener((displayed, date) -> {
+            arrivedDate = date;
+            Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+            final long[] pattern = {0, 10};
+            final int[] amplitudes = {50, 50};
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                VibrationEffect effect = VibrationEffect.createWaveform(pattern, amplitudes, 0);
+                assert vibrator != null;
+                vibrator.vibrate(effect);
+                (new Handler()).postDelayed(vibrator::cancel, 50);
+            } else {
+                assert vibrator != null;
+                vibrator.vibrate(10);
+            }
+        });
+
+        binding.departurePicker.addOnDateChangedListener((displayed, date) -> {
+            departedDate = date;
+            Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+            final long[] pattern = {0, 10};
+            final int[] amplitudes = {50, 50};
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                VibrationEffect effect = VibrationEffect.createWaveform(pattern, amplitudes, 0);
+                assert vibrator != null;
+                vibrator.vibrate(effect);
+                (new Handler()).postDelayed(vibrator::cancel, 50);
+            } else {
+                assert vibrator != null;
+                vibrator.vibrate(10);
+            }
+        });
+
         binding.setBtn.setOnClickListener(v -> {
-            //Timber.d("onClick: did not entered to condition");
             if (!setArrivedDate) {
                 Timber.d("onClick:  entered to if");
                 binding.arrivedPicker.setEnabled(false);
@@ -363,7 +379,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                         if (!response.body().getError()) {
                             PaymentFragment paymentFragment = PaymentFragment.newInstance(arrivedDate, new Date((departure + arrivedDate.getTime())), getDate(arrivedDate.getTime()), getDate((departure + arrivedDate.getTime())),
                                     getTimeDifference((departure + arrivedDate.getTime()) - arrivedDate.getTime()),
-                                    (departure + arrivedDate.getTime()) - arrivedDate.getTime(), mPlaceId, lat, lon, areaName, parkingSlotCount);
+                                    (departure + arrivedDate.getTime()) - arrivedDate.getTime(), mPlaceId, lat, lon, areaName, parkingSlotCount, isBookNowChecked);
                             listener.fragmentChange(paymentFragment);
                         } else {
                             DialogUtils.getInstance().showOnlyMessageDialog(response.body().getMessage(), context);

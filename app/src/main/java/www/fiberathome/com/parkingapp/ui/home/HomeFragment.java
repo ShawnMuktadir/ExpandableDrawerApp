@@ -1631,6 +1631,12 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         bundle.putDouble("long", parkingSpotLatLng.longitude);
                         bundle.putString("route", new Gson().toJson(initialRoutePoints));
                         ScheduleFragment scheduleFragment = new ScheduleFragment();
+                        double distanceBetween = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
+                                parkingSpotLatLng.latitude, parkingSpotLatLng.longitude) * 1000;
+                        double distance = circle != null ? circle.getRadius() : 70;
+                        if (distanceBetween <= distance) {
+                            bundle.putBoolean("isInArea", true);
+                        }
                         scheduleFragment.setArguments(bundle);
                         listener.fragmentChange(scheduleFragment);
                         binding.bottomSheetLayout.layoutBottomSheet.setVisibility(View.GONE);

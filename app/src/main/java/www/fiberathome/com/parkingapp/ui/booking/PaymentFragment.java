@@ -1,6 +1,7 @@
 package www.fiberathome.com.parkingapp.ui.booking;
 
 import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.gson.Gson;
@@ -30,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
@@ -40,6 +43,8 @@ import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
+import www.fiberathome.com.parkingapp.model.response.booking.BookingParkStatusResponse;
+import www.fiberathome.com.parkingapp.model.response.booking.ReservationCancelResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.ReservationResponse;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
@@ -56,6 +61,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
     static String arrivedTime, departureTime, timeDifference, placeId, areaName, parkingSlotCount;
     static long differenceUnit;
     static double lat, lon;
+    static boolean isBookNowChecked;
 
     private Activity context;
     private FragmentChangeListener listener;
@@ -70,7 +76,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
     public static PaymentFragment newInstance(Date mArrivedDate, Date mDepartedDate, String mArrivedTime,
                                               String mDepartureTime, String mTimeDifference, long mDifferenceUnit,
                                               String mMarkerUid, double mLat, double mLon, String mAreaName,
-                                              String mParkingSlotCount) {
+                                              String mParkingSlotCount, boolean mIsBookNowChecked) {
         arrivedDate = mArrivedDate;
         departureDate = mDepartedDate;
         arrivedTime = mArrivedTime;
@@ -82,6 +88,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
         lon = mLon;
         areaName = mAreaName;
         parkingSlotCount = mParkingSlotCount;
+        isBookNowChecked = mIsBookNowChecked;
         return new PaymentFragment();
     }
 
@@ -119,7 +126,8 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
         super.onResume();
         Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).hide();
         if (Preferences.getInstance(context).getBooked().getIsBooked()) {
-            listener.fragmentChange(HomeFragment.newInstance());
+            //listener.fragmentChange(HomeFragment.newInstance());
+            startActivityWithFinish(context, HomeActivity.class);
         }
     }
 
@@ -296,7 +304,12 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                                     , ApplicationUtils.convertLongToCalendar(Preferences.getInstance(context).getBooked().getDepartedDate()));
                             if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
                                 binding.actionBarTitle.setText(context.getResources().getString(R.string.booking_payment));
-                                listener.fragmentChange(HomeFragment.newInstance());
+                                if (isBookNowChecked) {
+                                    setBookingPark(Preferences.getInstance(context).getUser().getMobileNo(), mBookedPlace.getBookedUid());
+                                } else {
+                                    //listener.fragmentChange(HomeFragment.newInstance());
+                                    startActivityWithFinish(context, HomeActivity.class);
+                                }
                             } else {
                                 ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_gps));
                             }
@@ -311,6 +324,61 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
 
             @Override
             public void onFailure(@NonNull Call<ReservationResponse> call, @NonNull Throwable t) {
+                Timber.e("onFailure -> %s", t.getMessage());
+                hideLoading();
+            }
+        });
+    }
+
+    private void setBookingPark(String mobileNo, String uid) {
+        showLoading(context);
+        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+        Call<ReservationCancelResponse> call = request.setBookingPark(mobileNo, uid);
+        call.enqueue(new Callback<ReservationCancelResponse>() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onResponse(@NonNull Call<ReservationCancelResponse> call, @NonNull Response<ReservationCancelResponse> response) {
+                hideLoading();
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        BookedPlace mBookedPlace = Preferences.getInstance(context).getBooked();
+                        mBookedPlace.setCarParked(true);
+                        Preferences.getInstance(context).setBooked(mBookedPlace);
+                        ApplicationUtils.stopBookingTrackService(context);
+                        getBookingParkStatus(Preferences.getInstance(context).getUser().getMobileNo());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ReservationCancelResponse> call, @NonNull Throwable t) {
+                Timber.e("onFailure -> %s", t.getMessage());
+                hideLoading();
+            }
+        });
+    }
+
+    private void getBookingParkStatus(String mobileNo) {
+        showLoading(context);
+        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+        Call<BookingParkStatusResponse> call = request.getBookingParkStatus(mobileNo);
+        call.enqueue(new Callback<BookingParkStatusResponse>() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onResponse(@NonNull Call<BookingParkStatusResponse> call, @NonNull Response<BookingParkStatusResponse> response) {
+                hideLoading();
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        if (response.body().getSensors() != null) {
+                            BookingParkStatusResponse.Sensors sensors = response.body().getSensors();
+                            listener.fragmentChange(BookingParkFragment.newInstance(sensors));
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<BookingParkStatusResponse> call, @NonNull Throwable t) {
                 Timber.e("onFailure -> %s", t.getMessage());
                 hideLoading();
             }

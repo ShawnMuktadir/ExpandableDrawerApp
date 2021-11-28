@@ -87,19 +87,39 @@
                     android:layout_marginTop="3dp"
                     android:background="#000" />
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="@dimen/dim5"
-                    android:text="@string/arrived"
-                    android:textStyle="bold"
-                    android:textColor="@color/arrived"
-                    android:textSize="@dimen/dimTex14" />
+                    android:weightSum="2">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1.4"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/dim5"
+                        android:text="@string/arrived"
+                        android:textStyle="bold"
+                        android:textColor="@color/arrivedColor"
+                        android:textSize="@dimen/dimTex14" />
+
+                    <CheckBox
+                        android:id="@+id/cbBookNow"
+                        android:layout_width="0dp"
+                        android:layout_weight="0.6"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/dim5"
+                        android:text="@string/book_now"
+                        android:gravity="end"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/dimTex14" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/arriveDisableLayout"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dim5">
 
                     <com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker
                         android:id="@+id/arrivedPicker"
@@ -125,7 +145,7 @@
                     android:layout_height="wrap_content"
                     android:padding="@dimen/dim5"
                     android:text="@string/departure"
-                    android:textColor="@color/arrived"
+                    android:textColor="@color/arrivedColor"
                     android:textStyle="bold"
                     android:textSize="@dimen/dimTex14" />
 

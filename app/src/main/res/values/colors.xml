@@ -143,7 +143,7 @@
 
     <!--    booking -->
     <color name="pickerColor">#14000000</color>
-    <color name="arrived">#494747</color>
+    <color name="arrivedColor">#494747</color>
     <color name="disableColor">#37636262</color>
     <color name="enableColor">#FFFEFE</color>
     <color name="selectedColor">#BACDF8</color>
