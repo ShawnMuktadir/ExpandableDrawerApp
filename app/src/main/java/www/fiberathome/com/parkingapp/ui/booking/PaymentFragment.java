@@ -1,6 +1,7 @@
 package www.fiberathome.com.parkingapp.ui.booking;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -35,6 +36,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.databinding.FragmentPaymentBinding;
 import www.fiberathome.com.parkingapp.listener.FragmentChangeListener;
@@ -63,7 +65,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
     static double lat, lon;
     static boolean isBookNowChecked;
 
-    private Activity context;
+    private BaseActivity context;
     private FragmentChangeListener listener;
 
     FragmentPaymentBinding binding;
@@ -307,8 +309,11 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                                 if (isBookNowChecked) {
                                     setBookingPark(Preferences.getInstance(context).getUser().getMobileNo(), mBookedPlace.getBookedUid());
                                 } else {
-                                    //listener.fragmentChange(HomeFragment.newInstance());
-                                    startActivityWithFinish(context, HomeActivity.class);
+                                    if (getActivity() instanceof BookingActivity) {
+                                        startActivityWithFinish(context, HomeActivity.class);
+                                    } else if (getActivity() instanceof HomeActivity) {
+                                        listener.fragmentChange(HomeFragment.newInstance());
+                                    }
                                 }
                             } else {
                                 ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_gps));

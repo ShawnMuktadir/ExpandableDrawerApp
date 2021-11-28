@@ -232,6 +232,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                     if (isBooked) {
                         DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.already_booked_msg), context);
                     } else {
+                        count = "25";
                         if (placeId != null && !placeId.equalsIgnoreCase("") && placeId.equalsIgnoreCase("0") &&
                                 count != null && !count.equalsIgnoreCase("") && count.equalsIgnoreCase("0")) {
                             Bundle bundle = new Bundle();

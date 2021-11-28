@@ -31,6 +31,7 @@ import retrofit2.Callback;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.adapter.UniversalSpinnerAdapter;
+import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.databinding.FragmentScheduleBinding;
 import www.fiberathome.com.parkingapp.listener.FragmentChangeListener;
@@ -64,7 +65,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
     public DialogHelper.PayBtnClickListener payBtnClickListener;
     public long arrived, departure, difference;
 
-    private Activity context;
+    private BaseActivity context;
 
     private Date arrivedDate;
     private Date departedDate;
