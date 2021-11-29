@@ -131,7 +131,7 @@
 
     <string name="date">বুধবার,৫ ফেব্রুয়ারি</string>
     <string name="schedule_heading">পরিকল্পনা</string>
-    <string name="arrived">পার্কিং এর স্থানে পৌঁছেছেঃ</string>
+    <string name="arrived">পার্কিং এর স্থানে পৌঁছানোর সময়:</string>
     <string name="departure">আপনি কতক্ষণ বুক করতে চান তা নির্বাচন করুন</string>
     <string name="book">আপনার বুকিং</string>
     <string name="gps_network_not_enabled">জিপিএস নেটওয়ার্ক সক্রিয় করুন!</string>
@@ -143,7 +143,7 @@
     <string name="permission_request">অনুমতির অনুরোধ</string>
     <string name="grant_permission">অনুমতি প্রদান</string>
     <string name="no_data_available">পার্কিং অ্যাপ্লিকেশনে স্থান অনুসন্ধান করার জন্য একটি যথাযথ স্থানের নাম প্রবেশ করুন</string>
-    <string name="schedule_parking">পরিকল্পনা পার্কিং বুকিং</string>
+    <string name="schedule_parking">বুকিং পরিকল্পনা</string>
     <string name="by_using_this_app_you_agree_to_our_terms_and_conditions_amp_privacy_policy">
        <![CDATA[এই অ্যাপটি ব্যবহার এর মাধ্যমে আপনি আমাদের সকল শর্তাবলী,গোপনীয়তা এবং নীতি তে সম্মতি প্রদান করছেন]]></string>
 
@@ -557,6 +557,6 @@
     <string name="booked_parking">বুক করা পার্কিং</string>
     <string name="Booked_for">বুক করা হয়েছে : \n</string>
     <string name="your_booked_parking_duration_has_ended">আপনার বুক করা পার্কিং সময়কাল শেষ হয়েছে</string>
-    <string name="book_now">Book Now</string>
+    <string name="book_now">এখনই বুক করুন</string>
 </resources>
 
