@@ -403,11 +403,8 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         closeNavDrawer();
-
         navigationView.setCheckedItem(item.getItemId());
-
         int id = item.getItemId();
-
         switch (id) {
             case R.id.nav_home:
                 startActivity(HomeActivity.class);

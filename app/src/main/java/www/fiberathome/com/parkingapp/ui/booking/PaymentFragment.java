@@ -128,8 +128,11 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
         super.onResume();
         Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).hide();
         if (Preferences.getInstance(context).getBooked().getIsBooked()) {
-            //listener.fragmentChange(HomeFragment.newInstance());
-            startActivityWithFinish(context, HomeActivity.class);
+            if (getActivity() instanceof HomeActivity) {
+                listener.fragmentChange(HomeFragment.newInstance());
+            } else if (getActivity() instanceof BookingActivity) {
+                startActivityWithFinishAffinity(context, HomeActivity.class);
+            }
         }
     }
 

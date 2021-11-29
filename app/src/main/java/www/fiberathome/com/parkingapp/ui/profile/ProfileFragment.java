@@ -1,10 +1,7 @@
 package www.fiberathome.com.parkingapp.ui.profile;
 
-import static android.content.Context.LOCATION_SERVICE;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +21,7 @@ import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.user.User;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.ui.profile.edit.EditProfileActivity;
+import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
@@ -33,7 +31,6 @@ import www.fiberathome.com.parkingapp.utils.ToastUtils;
 public class ProfileFragment extends Fragment implements IOnBackPressListener {
 
     private ProfileActivity context;
-
     FragmentProfileBinding binding;
 
     public ProfileFragment() {
@@ -83,7 +80,7 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
 
     @Override
     public boolean onBackPressed() {
-        if (isGPSEnabled()) {
+        if (ApplicationUtils.isGPSEnabled(context)) {
             if (getActivity() != null) {
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.nav_host_fragment, HomeFragment.newInstance())
@@ -106,7 +103,6 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
         binding.tvUserName.setText(name);
 
         binding.tvUserMobileNo.setText(TextUtils.getInstance().addCountryPrefixWithPlus(user.getMobileNo()));
-        Timber.e("Mobile no -> %s", user.getMobileNo());
 
         if (TextUtils.getInstance().isNumeric(Preferences.getInstance(context).getUser().getVehicleNo())) {
             binding.tvUserVehicleNoArmy.setVisibility(View.VISIBLE);
@@ -134,16 +130,5 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
             Timber.e("Vehicle Image URL -> %s", vehicleUrl);
             Glide.with(context).load(vehicleUrl).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(binding.ivVehicleProfilePlatePreview);
         }
-    }
-
-    private boolean isGPSEnabled() {
-        LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-        boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        if (providerEnabled) {
-            return true;
-        } else {
-            Timber.e("else called");
-        }
-        return false;
     }
 }
