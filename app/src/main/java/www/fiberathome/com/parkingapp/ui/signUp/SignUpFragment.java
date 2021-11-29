@@ -407,12 +407,16 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                 if (data.getExtras() != null) {
                     if (!vehicleImage) {
                         profileBitmap = (Bitmap) data.getExtras().get("data");
-                        profileBitmap = Bitmap.createScaledBitmap(profileBitmap, 828, 828, true);
-                        binding.imageViewUploadProfileImage.setImageBitmap(profileBitmap);
+                        if (profileBitmap != null) {
+                            profileBitmap = Bitmap.createScaledBitmap(profileBitmap, 828, 828, true);
+                            binding.imageViewUploadProfileImage.setImageBitmap(profileBitmap);
+                        }
                     } else {
                         vehicleBitmap = (Bitmap) data.getExtras().get("data");
-                        vehicleBitmap = Bitmap.createScaledBitmap(vehicleBitmap, 828, 828, true);
-                        binding.ivVehiclePlatePreview.setImageBitmap(vehicleBitmap);
+                        if (vehicleBitmap != null) {
+                            vehicleBitmap = Bitmap.createScaledBitmap(vehicleBitmap, 828, 828, true);
+                            binding.ivVehiclePlatePreview.setImageBitmap(vehicleBitmap);
+                        }
                     }
                 }
             } catch (Exception e) {
@@ -820,11 +824,8 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     }
 
     private void registerUser(final String fullName, final String password, final String mobileNo, final String vehicleNo) {
-
         showLoading(context);
-
         showProgress();
-
         ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
         Call<BaseResponse> call = service.createUser(fullName, password, mobileNo, vehicleNo,
                 imageToString(profileBitmap),

@@ -29,9 +29,7 @@ public class ChangePasswordOTPActivity extends BaseActivity {
         binding = ActivityBaseBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
-
         context = this;
-
         setToolbar();
 
         // Initialize ChangePasswordFragmentForOTP

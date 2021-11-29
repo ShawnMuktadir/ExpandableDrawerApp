@@ -53,6 +53,7 @@
 
     <string name="no_account_yet_click_here">অ্যাকাউন্ট নেই? ক্লিক করুন</string>
     <string name="forget_password_click_here">পাসওয়ার্ড ভুলে গেছেন? ক্লিক করুন</string>
+    <string name="password_not_matched">নতুন পাসওয়ার্ড এবং পাসওয়ার্ড নিশ্চিত করুন মেলে না</string>
 
     //navigation
     <string name="home">হোম</string>
@@ -113,8 +114,7 @@
     <string name="no_parking_spot_message">আপনি পার্কিং এর জন্য এই স্থানটি সংরক্ষণ করতে পারবেন না কারণ এখানে পার্কিং এর স্থান নেই</string>
     <string name="confirm_booking_message">
 
-       আপনি পার্কিং এর স্থান এ পৌছানোর আগে আমরা পার্কিং এর স্থানটি আপনার জন্য সংরক্ষণ করি না।
-</string>
+       আপনি পার্কিং এর স্থান এ পৌছানোর আগে আমরা পার্কিং এর স্থানটি আপনার জন্য সংরক্ষণ করি না।</string>
 
     //bottom sheet
     <string name="bottom_Sheet_text"> একটি স্থান পছন্দ করুন অথবা আরো স্থান এর জন্য সোয়াইপ করুন</string>

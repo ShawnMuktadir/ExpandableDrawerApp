@@ -51,6 +51,7 @@
     <string name="err_confirm_password">Enter valid confirm password</string>
     <string name="no_account_yet_click_here">No account yet? Click Here</string>
     <string name="forget_password_click_here">Forget Password? Click Here</string>
+    <string name="password_not_matched">New Password &amp; Confirm password doesn\'t matched</string>
 
     //navigation
     <string name="home">Home</string>

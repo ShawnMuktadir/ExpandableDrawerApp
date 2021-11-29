@@ -58,7 +58,7 @@ public class ChangePasswordOTPFragment extends BaseFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentVerifyPhoneBinding.inflate(getLayoutInflater());
@@ -114,21 +114,14 @@ public class ChangePasswordOTPFragment extends BaseFragment {
     }
 
     private void checkForgetPassword(final String mobileNo) {
-
         showLoading(context);
-
         ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
         Call<BaseResponse> call = service.checkForgetPassword(mobileNo);
-
-        // Gathering results.
         call.enqueue(new Callback<BaseResponse>() {
             @Override
             public void onResponse(@NonNull Call<BaseResponse> call, @NonNull Response<BaseResponse> response) {
-
                 Timber.e("response body-> %s", new Gson().toJson(response.body()));
-
                 hideLoading();
-
                 if (response.body() != null) {
                     if (!response.body().getError()) {
                         ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
@@ -178,21 +171,15 @@ public class ChangePasswordOTPFragment extends BaseFragment {
     private void submitOTPVerification(final String otp) {
         if (!otp.isEmpty()) {
             showLoading(context);
-
             ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
             Call<LoginResponse> call = service.verifyOtp(otp);
-
             call.enqueue(new Callback<LoginResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
-
                     Timber.e("response body-> %s", new Gson().toJson(response.body()));
-
                     hideLoading();
-
                     if (response.body() != null) {
                         Timber.e("response body not null -> %s", new Gson().toJson(response.body()));
-
                         if (response.body().getError()) {
                             ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                         } else if (!response.body().getError()) {
@@ -222,7 +209,6 @@ public class ChangePasswordOTPFragment extends BaseFragment {
     }
 
     private void clickableSpanResendOTP() {
-
         //makes an underline on for Resend OTP Click Here
         SpannableString spannableString = new SpannableString(context.getResources().getString(R.string.if_you_have_not_received_any_otp_code_within_3_minute_then_resend));
 
