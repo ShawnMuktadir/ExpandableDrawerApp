@@ -73,6 +73,9 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
     private FragmentChangeListener listener;
 
     private Location currentLocation;
+    private LocationCallback locationCallback;
+    private FusedLocationProviderClient fusedLocationProviderClient;
+
     public BookingFragment() {
         // Required empty public constructor
     }
@@ -322,7 +325,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
     }
 
     private void setupLocationBuilder() {
-        FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -350,7 +353,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
     }
 
     private LocationCallback buildLocationCallBack() {
-        LocationCallback locationCallback = new LocationCallback() {
+        locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(@NonNull final LocationResult locationResult) {
                 currentLocation = locationResult.getLastLocation();
@@ -369,5 +372,12 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
 
     private double calculateDistance(Double startLatitude, Double startLongitude, Double endLatitude, Double endLongitude) {
         return MathUtils.getInstance().calculateDistance(startLatitude, startLongitude, endLatitude, endLongitude);
+    }
+
+    @Override
+    public void onStop() {
+        if (fusedLocationProviderClient != null)
+            fusedLocationProviderClient.removeLocationUpdates(locationCallback);
+        super.onStop();
     }
 }
