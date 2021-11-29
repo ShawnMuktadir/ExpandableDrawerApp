@@ -248,6 +248,10 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
 
         binding.arrivedPicker.addOnDateChangedListener((displayed, date) -> {
             arrivedDate = date;
+            isBookNowChecked = false;
+            binding.cbBookNow.setChecked(false);
+            binding.cbBookNow.setVisibility(View.INVISIBLE);
+
             Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
             final long[] pattern = {0, 10};
             final int[] amplitudes = {50, 50};
@@ -314,6 +318,10 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
         });
 
         binding.cancelBtn.setOnClickListener(v -> {
+            binding.arrivedPicker.setDefaultDate(new Date());
+            if (isInArea) {
+                binding.cbBookNow.setVisibility(View.VISIBLE);
+            }
             if (setArrivedDate) {
                 binding.arrivedPicker.setEnabled(true);
                 binding.arriveDisableLayout.setBackgroundColor(getResources().getColor(R.color.enableColor));
