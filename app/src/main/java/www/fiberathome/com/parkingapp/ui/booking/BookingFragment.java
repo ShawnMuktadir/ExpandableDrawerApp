@@ -147,6 +147,13 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
         return false;
     }
 
+    @Override
+    public void onStop() {
+        if (fusedLocationProviderClient != null)
+            fusedLocationProviderClient.removeLocationUpdates(locationCallback);
+        super.onStop();
+    }
+
     private void fetchBookedParkingPlace(String mobileNo, boolean refresh) {
         showLoading(context);
 
@@ -372,12 +379,5 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
 
     private double calculateDistance(Double startLatitude, Double startLongitude, Double endLatitude, Double endLongitude) {
         return MathUtils.getInstance().calculateDistance(startLatitude, startLongitude, endLatitude, endLongitude);
-    }
-
-    @Override
-    public void onStop() {
-        if (fusedLocationProviderClient != null)
-            fusedLocationProviderClient.removeLocationUpdates(locationCallback);
-        super.onStop();
     }
 }
