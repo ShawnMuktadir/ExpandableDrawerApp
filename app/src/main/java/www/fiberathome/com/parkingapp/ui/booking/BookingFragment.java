@@ -4,8 +4,10 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,14 +16,21 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -46,6 +55,7 @@ import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
+import www.fiberathome.com.parkingapp.utils.MathUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressLint("NonConstantResourceId")
@@ -62,6 +72,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
     FragmentBookingBinding binding;
     private FragmentChangeListener listener;
 
+    private Location currentLocation;
     public BookingFragment() {
         // Required empty public constructor
     }
@@ -89,6 +100,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
         super.onViewCreated(view, savedInstanceState);
         context = (BookingActivity) getActivity();
         listener = (FragmentChangeListener) context;
+        setupLocationBuilder();
         String mobileNo = Preferences.getInstance(context).getUser().getMobileNo();
         if (ConnectivityUtils.getInstance().checkInternet(context)) {
             fetchBookedParkingPlace(mobileNo, false);
@@ -243,6 +255,12 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                             bundle.putDouble("lat", lat);
                             bundle.putDouble("long", lng);
                             ScheduleFragment scheduleFragment = new ScheduleFragment();
+                            double distanceBetween = calculateDistance(currentLocation.getLatitude(), currentLocation.getLongitude(),
+                                    lat, lng) * 1000;
+                            double distance = 70;
+                            if (distanceBetween <= distance) {
+                                bundle.putBoolean("isInArea", true);
+                            }
                             scheduleFragment.setArguments(bundle);
                             listener.fragmentChange(scheduleFragment);
                         } else {
@@ -301,5 +319,55 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
 
     private void hideNoData() {
         binding.textViewNoData.setVisibility(View.GONE);
+    }
+
+    private void setupLocationBuilder() {
+        FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        fusedLocationProviderClient.requestLocationUpdates(buildLocationRequest(), buildLocationCallBack(), Objects.requireNonNull(Looper.myLooper()));
+        fusedLocationProviderClient.getLastLocation().addOnCompleteListener(context, task -> {
+            try {
+                hideLoading();
+                Location location = task.getResult();
+                if (location != null) {
+                    currentLocation = location;
+                }
+            } catch (Exception e) {
+                Timber.e(e.getCause());
+            }
+        });
+
+    }
+
+    private LocationCallback buildLocationCallBack() {
+        LocationCallback locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(@NonNull final LocationResult locationResult) {
+                currentLocation = locationResult.getLastLocation();
+            }
+        };
+        return locationCallback;
+    }
+
+    private LocationRequest buildLocationRequest() {
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(1000);
+        locationRequest.setFastestInterval(1000);
+        return locationRequest;
+    }
+
+    private double calculateDistance(Double startLatitude, Double startLongitude, Double endLatitude, Double endLongitude) {
+        return MathUtils.getInstance().calculateDistance(startLatitude, startLongitude, endLatitude, endLongitude);
     }
 }

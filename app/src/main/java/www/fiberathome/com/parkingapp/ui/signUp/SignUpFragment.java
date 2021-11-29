@@ -891,7 +891,17 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         boolean isNameValid = Validator.checkValidity(binding.textInputLayoutFullName, binding.editTextFullName.getText().toString(), context.getResources().getString(R.string.err_msg_fullname), "text");
         boolean isPhoneValid = Validator.checkValidity(binding.textInputLayoutMobile, binding.editTextMobileNumber.getText().toString(), context.getResources().getString(R.string.err_msg_mobile), "phone");
         boolean isPasswordValid = Validator.checkValidity(binding.textInputLayoutPassword, binding.editTextPassword.getText().toString(), context.getResources().getString(R.string.err_msg_password_signup), "textPassword");
+
         boolean isLicencePlateValid = false;
+        boolean isConfirmPasswordValid = false;
+
+        if (binding.editTextConfirmPassword.getText().toString().equals(binding.editTextPassword.getText().toString())) {
+            isConfirmPasswordValid = true;
+            binding.textInputLayoutConfirmPassword.setErrorEnabled(false);
+        } else {
+            binding.textInputLayoutConfirmPassword.setError(context.getResources().getString(R.string.err_confirm_password));
+            binding.textInputLayoutConfirmPassword.setErrorEnabled(true);
+        }
 
         if (binding.radioGroup.getCheckedRadioButtonId() == R.id.radioGeneral) {
             isVehicleRegValid = Validator.checkValidity(binding.textInputLayoutVehicle, binding.editTextVehicleRegNumber.getText().toString(), context.getResources().getString(R.string.err_msg_vehicle), "vehicleNumber");
@@ -916,9 +926,9 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         }
 
         if (binding.radioGroup.getCheckedRadioButtonId() == R.id.radioGeneral) {
-            return isNameValid && isPhoneValid && isVehicleRegValid && isPasswordValid && isLicencePlateValid;
+            return isNameValid && isPhoneValid && isVehicleRegValid && isPasswordValid && isConfirmPasswordValid && isLicencePlateValid;
         } else if (binding.radioGroup.getCheckedRadioButtonId() == R.id.radioMilitary) {
-            return isNameValid && isPhoneValid && isVehicleRegValidForFirstTwoDigit && isVehicleRegValidForLastFourDigit && isPasswordValid && isLicencePlateValid;
+            return isNameValid && isPhoneValid && isVehicleRegValidForFirstTwoDigit && isVehicleRegValidForLastFourDigit && isPasswordValid && isConfirmPasswordValid && isLicencePlateValid;
         } else {
             return false;
         }
