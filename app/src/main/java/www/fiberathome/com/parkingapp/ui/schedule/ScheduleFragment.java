@@ -1,7 +1,6 @@
 package www.fiberathome.com.parkingapp.ui.schedule;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -72,13 +71,13 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
 
     private boolean setArrivedDate = false;
     private boolean more = false;
-    private boolean isInArea = false;
+    private static boolean isInArea = false;
     private boolean isBookNowChecked = false;
 
     private static double lat;
     private static double lon;
 
-    private String parkingSlotCount;
+    private static String parkingSlotCount;
     private String time = "";
     private String timeValue = "";
 
@@ -96,9 +95,13 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
         return new ScheduleFragment();
     }
 
-    public static ScheduleFragment newInstance(String placeId, String mAreaName) {
+    public static ScheduleFragment newInstance(String placeId, String mAreaName, String mParkingSlotCount, double mLat, double mLon, boolean mIsInArea) {
         areaPlaceId = placeId;
         areaName = mAreaName;
+        parkingSlotCount = mParkingSlotCount;
+        lat = mLat;
+        lon = mLon;
+        isInArea = mIsInArea;
         return new ScheduleFragment();
     }
 
@@ -136,11 +139,6 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
             binding.textViewCurrentDate.setText(DateTimeUtils.getInstance().getCurrentDayTime());
             listener = (FragmentChangeListener) getActivity();
             payBtnClickListener = this;
-            if (isInArea) {
-                binding.cbBookNow.setVisibility(View.VISIBLE);
-            } else {
-                binding.cbBookNow.setVisibility(View.GONE);
-            }
             setDatePickerTime();
             setListeners();
         }
@@ -194,6 +192,11 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
     @Override
     public void onResume() {
         super.onResume();
+        if (isInArea) {
+            binding.cbBookNow.setVisibility(View.VISIBLE);
+        } else {
+            binding.cbBookNow.setVisibility(View.GONE);
+        }
         Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).hide();
     }
 
@@ -380,7 +383,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                         if (!response.body().getError()) {
                             PaymentFragment paymentFragment = PaymentFragment.newInstance(arrivedDate, new Date((departure + arrivedDate.getTime())), getDate(arrivedDate.getTime()), getDate((departure + arrivedDate.getTime())),
                                     getTimeDifference((departure + arrivedDate.getTime()) - arrivedDate.getTime()),
-                                    (departure + arrivedDate.getTime()) - arrivedDate.getTime(), mPlaceId, lat, lon, areaName, parkingSlotCount, isBookNowChecked);
+                                    (departure + arrivedDate.getTime()) - arrivedDate.getTime(), mPlaceId, lat, lon, areaName, parkingSlotCount, isBookNowChecked, isInArea);
                             listener.fragmentChange(paymentFragment);
                         } else {
                             DialogUtils.getInstance().showOnlyMessageDialog(response.body().getMessage(), context);

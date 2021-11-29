@@ -62,6 +62,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
     static long differenceUnit;
     static double lat, lon;
     static boolean isBookNowChecked;
+    private static boolean isInArea;
 
     private BaseActivity context;
     private FragmentChangeListener listener;
@@ -76,7 +77,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
     public static PaymentFragment newInstance(Date mArrivedDate, Date mDepartedDate, String mArrivedTime,
                                               String mDepartureTime, String mTimeDifference, long mDifferenceUnit,
                                               String mMarkerUid, double mLat, double mLon, String mAreaName,
-                                              String mParkingSlotCount, boolean mIsBookNowChecked) {
+                                              String mParkingSlotCount, boolean mIsBookNowChecked, boolean mIsInArea) {
         arrivedDate = mArrivedDate;
         departureDate = mDepartedDate;
         arrivedTime = mArrivedTime;
@@ -89,6 +90,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
         areaName = mAreaName;
         parkingSlotCount = mParkingSlotCount;
         isBookNowChecked = mIsBookNowChecked;
+        isInArea = mIsInArea;
         return new PaymentFragment();
     }
 
@@ -158,7 +160,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
 
     private void setListeners() {
         binding.ivBackArrow.setOnClickListener(v -> {
-            ScheduleFragment scheduleFragment = ScheduleFragment.newInstance(placeId, areaName);
+            ScheduleFragment scheduleFragment = ScheduleFragment.newInstance(placeId, areaName, parkingSlotCount, lat, lon, isInArea);
             listener.fragmentChange(scheduleFragment);
         });
 
