@@ -105,7 +105,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
         listener = (FragmentChangeListener) context;
         setupLocationBuilder();
         String mobileNo = Preferences.getInstance(context).getUser().getMobileNo();
-        if (ConnectivityUtils.getInstance().checkInternet(context)) {
+        if (ApplicationUtils.isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
             fetchBookedParkingPlace(mobileNo, false);
         } else {
             DialogUtils.getInstance().alertDialog(context,
@@ -114,7 +114,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                     new DialogUtils.DialogClickListener() {
                         @Override
                         public void onPositiveClick() {
-                            if (ConnectivityUtils.getInstance().checkInternet(context)) {
+                            if (ApplicationUtils.isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
                                 fetchBookedParkingPlace(mobileNo, false);
                             } else {
                                 ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
@@ -156,22 +156,16 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
 
     private void fetchBookedParkingPlace(String mobileNo, boolean refresh) {
         showLoading(context);
-
         ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
         Call<BookedResponse> bookedResponseCall = service.getBookedPlace(mobileNo);
-
-        // Gathering results.
         bookedResponseCall.enqueue(new Callback<BookedResponse>() {
             @Override
             public void onResponse(@NonNull Call<BookedResponse> call, @NonNull Response<BookedResponse> response) {
-                Timber.e("response -> %s", new Gson().toJson(response.body()));
                 hideLoading();
-
                 if (response.body() != null && !response.body().getError()) {
                     if (response.isSuccessful()) {
                         bookedResponse = response.body();
                         bookedLists = bookedResponse.getBookedLists();
-                        //Timber.e("bookedLists -> %s", new Gson().toJson(bookedLists));
                         if (bookedLists != null && !bookedLists.isEmpty()) {
                             setFragmentControls(bookedLists, refresh);
                             hideNoData();
@@ -274,7 +268,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                             scheduleFragment.setArguments(bundle);
                             listener.fragmentChange(scheduleFragment);
                         } else {
-                            ToastUtils.getInstance().showToastMessage(context, "Currently Re-book is not available for this parking spot");
+                            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.currently_rebook_not_available));
                         }
                     }
                 }

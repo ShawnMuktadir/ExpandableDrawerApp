@@ -264,8 +264,6 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
     }
 
     private void fetchParkingSlotSensors() {
-        Timber.e("fetchParkingSlotSensors called");
-
         showLoading(context);
 
         if (SharedData.getInstance().getOnConnectedLocation() != null) {
