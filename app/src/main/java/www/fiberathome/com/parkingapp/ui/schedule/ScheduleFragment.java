@@ -193,6 +193,11 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
     public void onResume() {
         super.onResume();
         if (isInArea) {
+            final float scale = this.getResources().getDisplayMetrics().density;
+            binding.cbBookNow.setPadding(binding.cbBookNow.getPaddingLeft() + (int) (10.0f * scale + 0.5f),
+                    binding.cbBookNow.getPaddingTop(),
+                    binding.cbBookNow.getPaddingRight(),
+                    binding.cbBookNow.getPaddingBottom());
             binding.cbBookNow.setVisibility(View.VISIBLE);
         } else {
             binding.cbBookNow.setVisibility(View.GONE);

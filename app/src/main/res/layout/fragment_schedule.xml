@@ -43,9 +43,9 @@
                         android:id="@+id/action_bar_title"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center"
                         android:layout_weight="1.8"
                         android:maxLines="2"
-                        android:layout_gravity="center"
                         android:padding="@dimen/dim2"
                         android:text="@string/schedule_parking"
                         android:textColor="@color/black"
@@ -94,25 +94,32 @@
 
                     <TextView
                         android:layout_width="0dp"
-                        android:layout_weight="1.2"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1.2"
                         android:padding="@dimen/dim5"
                         android:text="@string/arrived"
-                        android:textStyle="bold"
                         android:textColor="@color/arrivedColor"
-                        android:textSize="@dimen/dimTex14" />
+                        android:textSize="@dimen/dimTex14"
+                        android:textStyle="bold" />
 
-                    <CheckBox
-                        android:id="@+id/cbBookNow"
+                    <LinearLayout
                         android:layout_width="0dp"
-                        android:layout_weight="0.8"
                         android:layout_height="wrap_content"
-                        android:padding="@dimen/dim5"
-                        android:text="@string/book_now"
-                        android:gravity="end"
-                        android:textStyle="bold"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/dimTex14" />
+                        android:layout_weight="0.8"
+                        android:gravity="end|center"
+                        android:orientation="vertical">
+
+                        <CheckBox
+                            android:id="@+id/cbBookNow"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="@dimen/dim5"
+                            android:text="@string/book_now"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/dimTex14"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -146,8 +153,8 @@
                     android:padding="@dimen/dim5"
                     android:text="@string/departure"
                     android:textColor="@color/arrivedColor"
-                    android:textStyle="bold"
-                    android:textSize="@dimen/dimTex14" />
+                    android:textSize="@dimen/dimTex14"
+                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:id="@+id/departureDisableLayout"
