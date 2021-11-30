@@ -573,7 +573,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13.5f));
                     animateCamera(onConnectedLocation);
                     bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._92sdp));
-                    if (ConnectivityUtils.getInstance().checkInternet(context) && ApplicationUtils.isGPSEnabled(context)) {
+                    if (ConnectivityUtils.getInstance().checkInternet(context) && ConnectivityUtils.getInstance().isGPSEnabled(context)) {
                         getSensorAreaStatus();
                     } else {
                         ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_gps));
@@ -670,7 +670,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             if (markerTagObj != null) {
                 Timber.e("marker if UID: -> %s", markerTagObj.getParkingArea());
                 try {
-                    if (ApplicationUtils.isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
+                    if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
                         if (previousMarker != null) {
                             previousMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking_blue));
                         } else {
@@ -1255,7 +1255,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     }
 
     private void setSelectedSpot() {
-        if (ApplicationUtils.isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
+        if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
             isBooked = Preferences.getInstance(context).getBooked().getIsBooked();
             if (lat != 0 && lng != 0 && areaName != null && !areaName.equalsIgnoreCase("") && parkingSlotCount != null) {
                 parkingSpotLatLng = new LatLng(lat, lng);
@@ -1393,7 +1393,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     public void commonBackOperation() {
         try {
-            if (ApplicationUtils.isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
+            if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
                 if (mMap != null && isAdded()) {
                     if (polyline != null) {
                         polyline.remove();
@@ -1504,7 +1504,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         });
 
         binding.buttonSearch.setOnClickListener(v -> {
-            if (ApplicationUtils.isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
+            if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
                 Intent intent = new Intent(context, SearchActivity.class);
                 activityResultLauncher.launch(intent);
 
@@ -1566,7 +1566,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         });
 
         binding.btnConfirmBooking.setOnClickListener(v -> {
-            if (ApplicationUtils.isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
+            if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
                 isBooked = Preferences.getInstance(context).getBooked().getIsBooked();
                 if (isBooked && bookedPlace != null) {
                     double distanceBetween = calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),

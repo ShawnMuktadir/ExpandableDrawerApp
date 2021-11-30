@@ -56,9 +56,9 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return new ParkingViewHolder(itemBinding);
     }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint({"SetTextI18n", "RecyclerView"})
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, @SuppressLint("RecyclerView") int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
         ParkingViewHolder parkingViewHolder = (ParkingViewHolder) viewHolder;
         SensorArea sensorArea = sensorAreas.get(position);
 

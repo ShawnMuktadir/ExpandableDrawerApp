@@ -19,7 +19,6 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.databinding.BottomSheetTextRecyclerItemBinding;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingSensors;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.MathUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
@@ -80,7 +79,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         }
         holder.binding.textViewParkingDistance.setText(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(bookingSensors.getDistance()) + " km");
         holder.binding.rowFG.setOnClickListener(view -> {
-            if (ApplicationUtils.isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
+            if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
                 clickListeners.onClick(bookingSensors);
             } else {
                 ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_gps));

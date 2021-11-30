@@ -49,7 +49,6 @@ import www.fiberathome.com.parkingapp.model.response.search.SearchVisitorData;
 import www.fiberathome.com.parkingapp.model.response.search.SelectedPlace;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.search.placesadapter.PlacesAutoCompleteAdapter;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.KeyboardUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
@@ -225,7 +224,7 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
 
     @Override
     public void onClick(Place place) {
-        if (ApplicationUtils.isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
+        if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
             Intent resultIntent = new Intent();
             if (place == null) {
                 Timber.e("place null");
@@ -277,7 +276,7 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
 
     @Override
     public void onClick(SearchVisitorData visitorData) {
-        if (ApplicationUtils.isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
+        if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
             Intent resultIntent = new Intent();
             LatLng endLatLng = new LatLng(visitorData.getEndLat(), visitorData.getEndLng());
             String areaName = visitorData.getVisitedArea();

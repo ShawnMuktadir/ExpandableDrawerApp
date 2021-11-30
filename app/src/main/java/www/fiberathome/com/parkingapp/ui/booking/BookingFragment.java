@@ -105,7 +105,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
         listener = (FragmentChangeListener) context;
         setupLocationBuilder();
         String mobileNo = Preferences.getInstance(context).getUser().getMobileNo();
-        if (ApplicationUtils.isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
+        if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
             fetchBookedParkingPlace(mobileNo, false);
         } else {
             DialogUtils.getInstance().alertDialog(context,
@@ -114,7 +114,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                     new DialogUtils.DialogClickListener() {
                         @Override
                         public void onPositiveClick() {
-                            if (ApplicationUtils.isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
+                            if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
                                 fetchBookedParkingPlace(mobileNo, false);
                             } else {
                                 ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
@@ -134,7 +134,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
 
     @Override
     public boolean onBackPressed() {
-        if (ApplicationUtils.isGPSEnabled(context)) {
+        if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
             if (getActivity() != null) {
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.nav_host_fragment, HomeFragment.newInstance())
@@ -202,7 +202,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                                 @Override
                                 public void onPositiveClick() {
                                     Timber.e("Positive Button clicked");
-                                    if (ApplicationUtils.isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
+                                    if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
                                         cancelBooking(Preferences.getInstance(context).getUser().getMobileNo(), uid, id);
                                     }
                                     Preferences.getInstance(context).clearBooking();

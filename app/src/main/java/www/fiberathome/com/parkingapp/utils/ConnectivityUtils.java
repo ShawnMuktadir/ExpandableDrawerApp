@@ -23,7 +23,6 @@ public class ConnectivityUtils {
         if (connectivityUtils == null) {
             connectivityUtils = new ConnectivityUtils();
         }
-
         return connectivityUtils;
     }
 
@@ -44,16 +43,12 @@ public class ConnectivityUtils {
     }
 
     public boolean isGPSEnabled(Context context) {
-
         LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-
         boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
         if (providerEnabled) {
             return true;
         } else {
             Timber.e("error called");
-            //showToastMessage(context, context.getResources().getString(R.string.please_enable_gps));
         }
         return false;
     }

@@ -20,7 +20,7 @@ import java.util.Map;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.BuildConfig;
 import www.fiberathome.com.parkingapp.ui.splash.SplashActivity;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.ForceUpdateChecker;
 import www.fiberathome.com.parkingapp.utils.ForceUpgradeManager;
 import www.fiberathome.com.parkingapp.utils.internet.ConnectivityReceiver;
@@ -54,10 +54,8 @@ public class ParkingApp extends Application implements LifecycleObserver {
 
         //setAppDefaults();
 
-        if (ApplicationUtils.isGPSEnabled(getApplicationContext()) && !getClass().getSimpleName().equalsIgnoreCase(SplashActivity.class.getSimpleName())) {
-
+        if (ConnectivityUtils.getInstance().isGPSEnabled(getApplicationContext()) && !getClass().getSimpleName().equalsIgnoreCase(SplashActivity.class.getSimpleName())) {
             initForceUpgradeManager();
-
             ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         }
     }

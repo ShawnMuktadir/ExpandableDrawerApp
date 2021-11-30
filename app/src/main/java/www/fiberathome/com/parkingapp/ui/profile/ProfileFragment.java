@@ -21,7 +21,7 @@ import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.user.User;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.ui.profile.edit.EditProfileActivity;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
@@ -80,7 +80,7 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
 
     @Override
     public boolean onBackPressed() {
-        if (ApplicationUtils.isGPSEnabled(context)) {
+        if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
             if (getActivity() != null) {
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.nav_host_fragment, HomeFragment.newInstance())

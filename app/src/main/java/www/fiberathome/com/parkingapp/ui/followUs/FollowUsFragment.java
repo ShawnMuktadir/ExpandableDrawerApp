@@ -12,7 +12,7 @@ import androidx.annotation.Nullable;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
@@ -44,7 +44,7 @@ public class FollowUsFragment extends BaseFragment implements IOnBackPressListen
 
     @Override
     public boolean onBackPressed() {
-        if (ApplicationUtils.isGPSEnabled(context)) {
+        if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
             if (getActivity() != null) {
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.nav_host_fragment, HomeFragment.newInstance())

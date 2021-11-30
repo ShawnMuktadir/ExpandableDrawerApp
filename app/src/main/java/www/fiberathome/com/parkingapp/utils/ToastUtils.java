@@ -21,12 +21,8 @@ public class ToastUtils {
         return toastUtils;
     }
 
-    public void showToast(Context context, String message) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-    }
-
     public void showToastMessage(Context context, String message) {
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 
     public void showToastWithDelay(Context context, String message, long countDown) {

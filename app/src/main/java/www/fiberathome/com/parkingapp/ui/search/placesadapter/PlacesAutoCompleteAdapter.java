@@ -42,7 +42,6 @@ import www.fiberathome.com.parkingapp.databinding.SearchHistoryListItemBinding;
 import www.fiberathome.com.parkingapp.databinding.SearchListItemBinding;
 import www.fiberathome.com.parkingapp.model.response.search.SearchVisitorData;
 import www.fiberathome.com.parkingapp.ui.parking.EmptyViewHolder;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
@@ -194,7 +193,7 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
                     mContext.getResources().getColor(R.color.selectedColor) : Color.TRANSPARENT);
 
             mSearchPredictionViewHolder.binding.itemView.setOnClickListener(v -> {
-                if (ApplicationUtils.isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(mContext)) {
+                if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(mContext)) {
                     long now = System.currentTimeMillis();
                     if (now - mLastClickTime < CLICK_TIME_INTERVAL) {
                         return;
@@ -243,7 +242,7 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
                 searchHistoryViewHolder.binding.itemView.setBackgroundColor(selectedPosition == position ?
                         mContext.getResources().getColor(R.color.selectedColor) : Color.TRANSPARENT);
                 searchHistoryViewHolder.binding.itemView.setOnClickListener(v -> {
-                    if (ApplicationUtils.isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(mContext)) {
+                    if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(mContext)) {
                         long now = System.currentTimeMillis();
                         if (now - mLastClickTime < CLICK_TIME_INTERVAL) {
                             return;

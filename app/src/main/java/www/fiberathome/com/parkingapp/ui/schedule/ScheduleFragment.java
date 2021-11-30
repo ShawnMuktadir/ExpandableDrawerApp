@@ -46,7 +46,6 @@ import www.fiberathome.com.parkingapp.ui.booking.PaymentFragment;
 import www.fiberathome.com.parkingapp.ui.booking.helper.DialogHelper;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DateTimeUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
@@ -193,11 +192,6 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
     public void onResume() {
         super.onResume();
         if (isInArea) {
-            final float scale = this.getResources().getDisplayMetrics().density;
-            binding.cbBookNow.setPadding(binding.cbBookNow.getPaddingLeft() + (int) (10.0f * scale + 0.5f),
-                    binding.cbBookNow.getPaddingTop(),
-                    binding.cbBookNow.getPaddingRight(),
-                    binding.cbBookNow.getPaddingBottom());
             binding.cbBookNow.setVisibility(View.VISIBLE);
         } else {
             binding.cbBookNow.setVisibility(View.GONE);
@@ -213,7 +207,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
 
     @Override
     public boolean onBackPressed() {
-        if (ApplicationUtils.isGPSEnabled(context)) {
+        if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
             if (getActivity() instanceof HomeActivity) {
                 listener.fragmentChange(HomeFragment.newInstance());
             } else if (getActivity() instanceof BookingActivity) {
@@ -312,7 +306,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                     if (diff < 0) {
                         Toast.makeText(requireActivity(), context.getResources().getString(R.string.departure_time_less_arrive_time), Toast.LENGTH_SHORT).show();
                     } else {
-                        if (ApplicationUtils.isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
+                        if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
                             storeReservation(Preferences.getInstance(context).getUser().getMobileNo(), getDate(arrivedDate.getTime()), getDate((departure + arrivedDate.getTime())), areaPlaceId);
                         } else {
                             ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_gps));

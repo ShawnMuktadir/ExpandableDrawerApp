@@ -3,14 +3,12 @@ package www.fiberathome.com.parkingapp.ui.booking.adapter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
-import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -27,6 +25,7 @@ import www.fiberathome.com.parkingapp.databinding.BookingsRowBinding;
 import www.fiberathome.com.parkingapp.model.response.booking.BookedList;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingArea;
 import www.fiberathome.com.parkingapp.ui.booking.BookingActivity;
+import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.MathUtils;
 
 @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -54,8 +53,7 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return new BookingViewHolder(itemBinding);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    @SuppressLint("SetTextI18n")
+    @SuppressLint({"SetTextI18n", "RecyclerView"})
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
         BookingViewHolder bookingViewHolder = (BookingViewHolder) viewHolder;
@@ -87,7 +85,7 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             bookingViewHolder.binding.tvStatus.setVisibility(View.VISIBLE);
             bookingViewHolder.binding.tvCancel.setVisibility(View.GONE);
             bookingViewHolder.binding.tvStatus.setText(context.getResources().getString(R.string.parking));
-            bookingViewHolder.binding.tvStatus.setTextColor(context.getColor(R.color.green2));
+            bookingViewHolder.binding.tvStatus.setTextColor(context.getResources().getColor(R.color.green2));
             bookingViewHolder.binding.tvGetDirection.setVisibility(View.VISIBLE);
             bookingViewHolder.binding.tvRebooking.setVisibility(View.GONE);
         } else if (bookedList.getC_Status().equalsIgnoreCase("0") && bookedList.getStatus().equalsIgnoreCase("0")) {
@@ -99,7 +97,7 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             bookingViewHolder.binding.tvStatus.setVisibility(View.VISIBLE);
             bookingViewHolder.binding.tvCancel.setVisibility(View.GONE);
             bookingViewHolder.binding.tvStatus.setText(context.getResources().getString(R.string.completed));
-            bookingViewHolder.binding.tvStatus.setTextColor(context.getColor(R.color.green2));
+            bookingViewHolder.binding.tvStatus.setTextColor(context.getResources().getColor(R.color.green2));
             bookingViewHolder.binding.tvGetDirection.setVisibility(View.GONE);
             bookingViewHolder.binding.tvRebooking.setVisibility(View.VISIBLE);
         } else if (bookedList.getC_Status().equalsIgnoreCase("1") && bookedList.getStatus().equalsIgnoreCase("1")) {
@@ -118,17 +116,19 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             bookingViewHolder.binding.tvRebooking.setVisibility(View.VISIBLE);
         }
 
-        bookingViewHolder.binding.tvRebooking.setOnClickListener(v -> bookingAdapterClickListener.onItemRebookListener(position, MathUtils.getInstance().convertToDouble(bookedList.getLatitude()),
-                MathUtils.getInstance().convertToDouble(bookedList.getLongitude()), bookedList.getParkingArea(),
-                bookedList.getNoOfParking(), bookedList.getAreaId()));
-
-        bookingViewHolder.binding.tvGetHelp.setOnClickListener(v -> {
-            bookingAdapterClickListener.onItemGetHelp();
+        bookingViewHolder.binding.tvRebooking.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context))
+                    bookingAdapterClickListener.onItemRebookListener(position, MathUtils.getInstance().convertToDouble(bookedList.getLatitude()),
+                            MathUtils.getInstance().convertToDouble(bookedList.getLongitude()), bookedList.getParkingArea(),
+                            bookedList.getNoOfParking(), bookedList.getAreaId());
+            }
         });
 
-        bookingViewHolder.binding.tvGetDirection.setOnClickListener(v -> {
-            bookingAdapterClickListener.onItemGetDirection(position);
-        });
+        bookingViewHolder.binding.tvGetHelp.setOnClickListener(v -> bookingAdapterClickListener.onItemGetHelp());
+
+        bookingViewHolder.binding.tvGetDirection.setOnClickListener(v -> bookingAdapterClickListener.onItemGetDirection(position));
 
         bookingViewHolder.binding.tvCancel.setOnClickListener(v -> bookingAdapterClickListener.onBookingItemCancel(bookingViewHolder.getAbsoluteAdapterPosition(), bookedList.getSpotId(), bookedList.getId()));
 

@@ -147,7 +147,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
 
     @Override
     public boolean onBackPressed() {
-        if (ApplicationUtils.isGPSEnabled(context)) {
+        if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
             if (getActivity() instanceof HomeActivity) {
                 listener.fragmentChange(HomeFragment.newInstance());
             } else if (getActivity() instanceof BookingActivity) {
@@ -166,7 +166,8 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
 
     private void setListeners() {
         binding.ivBackArrow.setOnClickListener(v -> {
-            ScheduleFragment scheduleFragment = ScheduleFragment.newInstance(placeId, areaName, parkingSlotCount, lat, lon, isInArea);
+            ScheduleFragment scheduleFragment = ScheduleFragment.newInstance(placeId, areaName,
+                    parkingSlotCount, lat, lon, isInArea);
             listener.fragmentChange(scheduleFragment);
         });
 
@@ -183,12 +184,13 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                 long minutes = seconds / 60;
                 long hours = minutes / 60;
                 long days = hours / 24;
+                Timber.e("days -> %s", days);
                 Timber.e("hours -> %s", hours);
                 Timber.e("minutes -> %s", minutes);
                 if (minutes > 120) {
                     ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.booking_time_rules));
                 } else {
-                    if (ApplicationUtils.isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
+                    if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
                         if (!Preferences.getInstance(context).getBooked().getIsBooked()
                                 && Preferences.getInstance(context).getBooked().getBill() == Math.round(netBill)
                                 && Preferences.getInstance(context).getBooked().isPaid()) {
@@ -278,15 +280,13 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
         DecimalFormat df = new DecimalFormat("##.##",
                 new DecimalFormatSymbols(Locale.US));
         long minutes = TimeUnit.MILLISECONDS.toMinutes(differenceUnit);
-        binding.tvSubTotal.setText(new StringBuilder().append("BDT ").append(df.format(perMintBill * minutes)).toString());
-        binding.tvTotal.setText(new StringBuilder().append("BDT ").append(df.format(perMintBill * minutes)).toString());
+        binding.tvSubTotal.setText(String.format("BDT %s", df.format(perMintBill * minutes)));
+        binding.tvTotal.setText(String.format("BDT %s", df.format(perMintBill * minutes)));
         if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
-            binding.btnPay.setText(new StringBuilder().append(context.getResources().getString(R.string.money_sign)).append(df.format(perMintBill * minutes)).append("  ").append(context.getResources().getString(R.string.pay_bdt)).toString());
+            binding.btnPay.setText(String.format("%s%s  %s", context.getResources().getString(R.string.money_sign), df.format(perMintBill * minutes), context.getResources().getString(R.string.pay_bdt)));
         } else {
-            binding.btnPay.setText(new StringBuilder().append(context.getResources().getString(R.string.pay_bdt)).append("  ").append(df.format(perMintBill * minutes)).toString());
+            binding.btnPay.setText(String.format("%s  %s", context.getResources().getString(R.string.pay_bdt), df.format(perMintBill * minutes)));
         }
-        /*binding.btnPay.setText(new StringBuilder().append(context.getResources().getString(R.string.pay_bdt)).append(MathUtils.getInstance().convertToDouble(new DecimalFormat("##.#",
-                new DecimalFormatSymbols(Locale.US)).format(df.format(perMintBill * minutes)))));*/
         return perMintBill * minutes;
     }
 

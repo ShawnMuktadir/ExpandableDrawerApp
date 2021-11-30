@@ -1,6 +1,5 @@
 package www.fiberathome.com.parkingapp.utils;
 
-import static android.content.Context.LOCATION_SERVICE;
 import static www.fiberathome.com.parkingapp.ui.home.HomeFragment.PLAY_SERVICES_ERROR_CODE;
 
 import android.app.Activity;
@@ -11,10 +10,8 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
-import android.provider.Settings;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -165,21 +162,6 @@ public class ApplicationUtils {
         return false;
     }
 
-    public static boolean isGPSEnabled(Context context) {
-
-        LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-
-        boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-        if (providerEnabled) {
-            return true;
-        } else {
-            Timber.e("else called");
-        }
-
-        return false;
-    }
-
     public static boolean isLocationTrackingServiceRunning(Context context) {
         ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         if (activityManager != null) {
@@ -258,19 +240,5 @@ public class ApplicationUtils {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(source);
         return calendar;
-    }
-
-    public static boolean isLocationEnabled(Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            // This is new method provided in API 28
-            LocationManager lm = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-            return lm.isLocationEnabled();
-
-        } else {
-            // This is Deprecated in API 28
-            int mode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE,
-                    Settings.Secure.LOCATION_MODE_OFF);
-            return (mode != Settings.Secure.LOCATION_MODE_OFF);
-        }
     }
 }
