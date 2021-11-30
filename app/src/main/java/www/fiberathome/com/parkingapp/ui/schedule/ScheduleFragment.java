@@ -172,7 +172,6 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
             }
         } else {
             binding.departurePicker.setEnabled(false);
-            binding.departureDisableLayout.setBackgroundColor(getResources().getColor(R.color.disableColor));
             arrivedDate = binding.arrivedPicker.getDate();
             departedDate = binding.departurePicker.getDate();
             arrived = arrivedDate.getTime();

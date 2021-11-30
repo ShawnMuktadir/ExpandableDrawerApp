@@ -27,6 +27,7 @@ import www.fiberathome.com.parkingapp.model.response.booking.BookingArea;
 import www.fiberathome.com.parkingapp.ui.booking.BookingActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.MathUtils;
+import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -116,13 +117,13 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             bookingViewHolder.binding.tvRebooking.setVisibility(View.VISIBLE);
         }
 
-        bookingViewHolder.binding.tvRebooking.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context))
-                    bookingAdapterClickListener.onItemRebookListener(position, MathUtils.getInstance().convertToDouble(bookedList.getLatitude()),
-                            MathUtils.getInstance().convertToDouble(bookedList.getLongitude()), bookedList.getParkingArea(),
-                            bookedList.getNoOfParking(), bookedList.getAreaId());
+        bookingViewHolder.binding.tvRebooking.setOnClickListener(v -> {
+            if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
+                bookingAdapterClickListener.onItemRebookListener(position, MathUtils.getInstance().convertToDouble(bookedList.getLatitude()),
+                        MathUtils.getInstance().convertToDouble(bookedList.getLongitude()), bookedList.getParkingArea(),
+                        bookedList.getNoOfParking(), bookedList.getAreaId());
+            } else {
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_gps));
             }
         });
 
