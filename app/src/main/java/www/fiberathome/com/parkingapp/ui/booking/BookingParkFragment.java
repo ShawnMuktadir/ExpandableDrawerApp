@@ -444,7 +444,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                         ApplicationUtils.stopBookingTrackService(context);
                         DialogUtils.getInstance().alertDialog(context,
                                 context,
-                                response.body().getMessage(),
+                                context.getResources().getString(R.string.reservation_closed_successfully),
                                 context.getResources().getString(R.string.ok), "",
                                 new DialogUtils.DialogClickListener() {
                                     @Override

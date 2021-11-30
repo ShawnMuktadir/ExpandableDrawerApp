@@ -389,6 +389,7 @@
     <string name="parking_slot">পার্কিং এর স্থান ১৭</string>h
     <string name="total_time">২.৩০ ঘন্টা</string>
     <string name="total_fair">সর্বমোট ৳</string>
+    <string name="money_sign">৳ </string>
     <string name="rate_tip"> মুল্য এবং বখশিশ</string>
     <string name="view_receipt">রশিদ দেখুন</string>
     <string name="get_help">সাহায্য</string>
@@ -523,7 +524,7 @@
     <string name="parked">পার্ক করা হয়েছে</string>
     <string name="booking_cancel_rules"><![CDATA[বুকিং বাতিল করা যেতে পারে এবং বুকিং বাতিল করলে ব্যবহারকারীর চার্জ নেওয়া হবে (প্রস্থান সময় শেষ হওয়ার আগে ব্যবহারকারী যে কোন সময় বাতিল করতে পারেন)। আরও জানতে, টি অ্যান্ড সি পড়ুন]]></string>
     <string name="parking_slot_not_available">দুঃখিত,পার্কিং স্লট এখনই উপলব্ধ নয়!</string>
-    <string name="you_are_parked">আপনার পার্ক করা হয়েছে</string>
+    <string name="you_are_parked">আপনি পার্ক করেছেন</string>
     <string name="booking_already_canceled">বুকিং ইতিমধ্যে বাতিল করা হয়েছে</string>
     <string name="booking_already_canceled_msg">আপনার রিজার্ভ সময় শেষ. আপনার পার্কিং বাতিল করা হয়েছে।</string>
     <string name="back">পেছনে</string>
@@ -550,7 +551,7 @@
     <string name="canceled">বাতিল করা হয়েছে</string>
     <string name="rejected">প্রত্যাখ্যাত</string>
     <string name="t_amp_c"><![CDATA[T&C]]></string>
-    <string name="pay_bdt">পে ৳ </string>
+    <string name="pay_bdt"> পরিশোধ করুন</string>
     <string name="car_parked">গাড়ি পার্ক করা আছে</string>
     <string name="booked_time">বুক করা সময়</string>
     <string name="park_duration_about_to_end">পার্কিং সময়কাল প্রায় শেষ</string>
@@ -558,5 +559,6 @@
     <string name="Booked_for">বুক করা হয়েছে : \n</string>
     <string name="your_booked_parking_duration_has_ended">আপনার বুক করা পার্কিং সময়কাল শেষ হয়েছে</string>
     <string name="book_now">এখনই বুক করুন</string>
+    <string name="reservation_closed_successfully">রিজার্ভেশন সফলতার সাথে শেষ হয়েছে</string>
 </resources>
 

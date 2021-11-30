@@ -413,6 +413,7 @@
     <string name="fiber_home">Fiber@Home</string>
     <string name="vehicle_no_d_13456">Vehicle No: D-13456</string>
     <string name="enable_gps">Enable GPS</string>
+    <string name="money_sign">৳ </string>
 
     <string name="set">Set</string>
     <string name="you_can_book_parking_slot">You can Book your selected parking area now</string>
@@ -555,4 +556,5 @@
     <string name="Booked_for">Booked for : \n</string>
     <string name="your_booked_parking_duration_has_ended">Your Booked Parking Duration Has Ended</string>
     <string name="book_now">Book Now</string>
+    <string name="reservation_closed_successfully">Reservation Closed Sucessfully</string>
 </resources>

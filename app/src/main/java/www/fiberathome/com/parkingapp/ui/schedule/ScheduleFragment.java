@@ -163,7 +163,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
             setArrivedDate = true;
             binding.arrivedPicker.setEnabled(false);
             binding.arriveDisableLayout.setBackgroundColor(getResources().getColor(R.color.disableColor));
-            if (getArguments()!=null) {
+            if (getArguments() != null) {
                 Date arrived = new Date(getArguments().getLong("a"));
                 Date departure = new Date(getArguments().getLong("d"));
                 arrivedDate = arrived;
@@ -286,7 +286,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
 
         binding.setBtn.setOnClickListener(v -> {
             if (!setArrivedDate) {
-                Timber.d("onClick:  entered to if");
+                binding.cbBookNow.setEnabled(false);
                 binding.arrivedPicker.setEnabled(false);
                 binding.arriveDisableLayout.setBackgroundColor(getResources().getColor(R.color.disableColor));
 
@@ -318,9 +318,13 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
         });
 
         binding.cancelBtn.setOnClickListener(v -> {
+            if (binding.cbBookNow.isChecked()) {
+                binding.cbBookNow.toggle();
+            }
             binding.arrivedPicker.setDefaultDate(new Date());
             if (isInArea) {
                 binding.cbBookNow.setVisibility(View.VISIBLE);
+                binding.cbBookNow.setEnabled(true);
             }
             if (setArrivedDate) {
                 binding.arrivedPicker.setEnabled(true);

@@ -1,5 +1,7 @@
 package www.fiberathome.com.parkingapp.ui.booking;
 
+import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_BN;
+
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -42,6 +44,7 @@ import www.fiberathome.com.parkingapp.model.BookedPlace;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
+import www.fiberathome.com.parkingapp.model.data.preference.LanguagePreferences;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingParkStatusResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.ReservationCancelResponse;
@@ -277,7 +280,11 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
         long minutes = TimeUnit.MILLISECONDS.toMinutes(differenceUnit);
         binding.tvSubTotal.setText(new StringBuilder().append("BDT ").append(df.format(perMintBill * minutes)).toString());
         binding.tvTotal.setText(new StringBuilder().append("BDT ").append(df.format(perMintBill * minutes)).toString());
-        binding.btnPay.setText(new StringBuilder().append(context.getResources().getString(R.string.pay_bdt)).append(df.format(perMintBill * minutes)).toString());
+        if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
+            binding.btnPay.setText(new StringBuilder().append(context.getResources().getString(R.string.money_sign)).append(df.format(perMintBill * minutes)).append("  ").append(context.getResources().getString(R.string.pay_bdt)).toString());
+        } else {
+            binding.btnPay.setText(new StringBuilder().append(context.getResources().getString(R.string.pay_bdt)).append("  ").append(df.format(perMintBill * minutes)).toString());
+        }
         /*binding.btnPay.setText(new StringBuilder().append(context.getResources().getString(R.string.pay_bdt)).append(MathUtils.getInstance().convertToDouble(new DecimalFormat("##.#",
                 new DecimalFormatSymbols(Locale.US)).format(df.format(perMintBill * minutes)))));*/
         return perMintBill * minutes;
