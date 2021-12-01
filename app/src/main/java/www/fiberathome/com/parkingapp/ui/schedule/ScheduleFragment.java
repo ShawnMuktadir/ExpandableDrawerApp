@@ -157,6 +157,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
         binding.arrivedPicker.setIsAmPm(true);
         binding.departurePicker.setIsAmPm(true);
         binding.arrivedPicker.setDefaultDate(currentTime);
+        binding.arrivedPicker.setMinDate(currentTime);
         binding.departurePicker.setDefaultDate(mFutureTime);
         if (more) {
             setArrivedDate = true;
