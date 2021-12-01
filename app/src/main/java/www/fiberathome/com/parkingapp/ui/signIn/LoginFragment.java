@@ -111,19 +111,16 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
         ClickableSpan clickableSpan = new ClickableSpan() {
             @Override
             public void onClick(@NonNull View textView) {
-                // do some thing
+                // start SignUpActivity
                 startActivity(new Intent(context, SignUpActivity.class));
-                context.finish();
             }
         };
 
         if (Locale.getDefault().getLanguage().equalsIgnoreCase(LANGUAGE_EN)) {
-            //spannableString.setSpan(clickableSpan, 87, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             spannableString.setSpan(clickableSpan, 16, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             binding.textViewSignUp.setText(spannableString);
             binding.textViewSignUp.setMovementMethod(LinkMovementMethod.getInstance());
         } else if (Locale.getDefault().getLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
-            //spannableString.setSpan(clickableSpan, 50, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             spannableString.setSpan(clickableSpan, 16, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             binding.textViewSignUp.setText(spannableString);
             binding.textViewSignUp.setMovementMethod(LinkMovementMethod.getInstance());

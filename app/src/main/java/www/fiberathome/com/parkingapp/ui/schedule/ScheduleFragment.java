@@ -85,6 +85,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
 
     FragmentScheduleBinding binding;
     private FragmentChangeListener listener;
+    private Date currentTime;
 
     public ScheduleFragment() {
         // Required empty public constructor
@@ -135,6 +136,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
             } else if (getActivity() instanceof BookingActivity) {
                 context = (BookingActivity) getActivity();
             }
+            currentTime = Calendar.getInstance().getTime();
             binding.textViewCurrentDate.setText(DateTimeUtils.getInstance().getCurrentDayTime());
             listener = (FragmentChangeListener) getActivity();
             payBtnClickListener = this;
@@ -145,7 +147,6 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
     }
 
     private void setDatePickerTime() {
-        Date currentTime = Calendar.getInstance().getTime();
         //add 30 minutes to date
         Date mFutureTime = new Date(); // Instantiate a Date object
         Calendar cal = Calendar.getInstance();
@@ -191,6 +192,9 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
     @Override
     public void onResume() {
         super.onResume();
+        binding.arrivedPicker.setIsAmPm(true);
+        binding.arrivedPicker.setDefaultDate(currentTime);
+        binding.arrivedPicker.setMinDate(currentTime);
         if (isInArea) {
             binding.cbBookNow.setVisibility(View.VISIBLE);
         } else {

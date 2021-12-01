@@ -12,14 +12,10 @@ import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 public class SignUpActivity extends BaseActivity {
 
-    private Context context;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
-
-        context = this;
 
         //Initialize SignUp fragment
         ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
@@ -38,22 +34,6 @@ public class SignUpActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-
-        DialogUtils.getInstance().alertDialog(context,
-                (Activity) context,
-                context.getResources().getString(R.string.are_you_sure_you_want_to_exit),
-                context.getResources().getString(R.string.yes), context.getResources().getString(R.string.no),
-                new DialogUtils.DialogClickListener() {
-                    @Override
-                    public void onPositiveClick() {
-                        finishAffinity();
-                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
-                    }
-
-                    @Override
-                    public void onNegativeClick() {
-                        //null for this
-                    }
-                }).show();
+        super.onBackPressed();
     }
 }
