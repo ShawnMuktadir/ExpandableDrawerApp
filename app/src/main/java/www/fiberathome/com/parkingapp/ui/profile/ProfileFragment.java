@@ -112,23 +112,29 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
             binding.tvUserVehicleNo.setText(user.getVehicleNo());
             binding.tvUserVehicleNoArmy.setVisibility(View.GONE);
         }
-
-        if (!user.getImage().endsWith(".jpg")) {
-            String url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
-            Timber.e("Image URL -> %s", url);
-            Glide.with(context).load(url).placeholder(R.drawable.blank_profile).dontAnimate().into(binding.ivUserProfilePic);
-
-            String vehicleUrl = AppConfig.IMAGES_URL + user.getVehicleImage() + ".jpg";
-            Timber.e("Vehicle Image URL -> %s", vehicleUrl);
-            Glide.with(context).load(vehicleUrl).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(binding.ivVehicleProfilePlatePreview);
-        } else {
-            String url = AppConfig.IMAGES_URL + user.getImage();
-            Timber.e("Image URL -> %s", url);
-            Glide.with(context).load(url).placeholder(R.drawable.blank_profile).dontAnimate().into(binding.ivUserProfilePic);
-
-            String vehicleUrl = AppConfig.IMAGES_URL + user.getVehicleImage();
-            Timber.e("Vehicle Image URL -> %s", vehicleUrl);
-            Glide.with(context).load(vehicleUrl).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(binding.ivVehicleProfilePlatePreview);
+        if(user.getImage()!=null) {
+            if (!user.getImage().endsWith(".jpg")) {
+                String url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
+                Timber.e("Image URL -> %s", url);
+                Glide.with(context).load(url).placeholder(R.drawable.blank_profile).dontAnimate().into(binding.ivUserProfilePic);
+            }
+            else {
+                String url = AppConfig.IMAGES_URL + user.getImage();
+                Timber.e("Image URL -> %s", url);
+                Glide.with(context).load(url).placeholder(R.drawable.blank_profile).dontAnimate().into(binding.ivUserProfilePic);
+            }
+        }
+        if(user.getVehicleImage()!=null){
+            if(!user.getVehicleImage().endsWith(".jpg")){
+                String vehicleUrl = AppConfig.IMAGES_URL + user.getVehicleImage() + ".jpg";
+                Timber.e("Vehicle Image URL -> %s", vehicleUrl);
+                Glide.with(context).load(vehicleUrl).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(binding.ivVehicleProfilePlatePreview);
+            }
+            else{
+                String vehicleUrl = AppConfig.IMAGES_URL + user.getVehicleImage();
+                Timber.e("Vehicle Image URL -> %s", vehicleUrl);
+                Glide.with(context).load(vehicleUrl).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(binding.ivVehicleProfilePlatePreview);
+            }
         }
     }
 }

@@ -398,36 +398,28 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
 
         selectSpinnerItemByValue(binding.divSpinner, Preferences.getInstance(context).getVehicleDivData());
 
-        if (!user.getImage().endsWith(".jpg")) {
-            if (user.getImage() != null) {
+        if(user.getImage()!=null) {
+            if (!user.getImage().endsWith(".jpg")) {
                 String url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
                 Timber.e("Image URL -> %s", url);
                 Glide.with(context).load(url).placeholder(R.drawable.ic_account_settings).dontAnimate().into(binding.imageViewEditProfileImage);
-            } else {
-                Timber.e("Image value -> %s", user.getImage());
             }
-            if (user.getVehicleImage() != null) {
-                String url = AppConfig.IMAGES_URL + user.getVehicleImage() + ".jpg";
-                Timber.e("Vehicle Image URL -> %s", url);
-                Glide.with(context).load(url).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(binding.ivVehicleEditPlatePreview);
-            } else {
-                Timber.e("Vehicle Image value -> %s", user.getVehicleImage());
-            }
-        } else {
-            if (user.getImage() != null) {
+            else {
                 String url = AppConfig.IMAGES_URL + user.getImage();
                 Timber.e("Image URL -> %s", url);
                 Glide.with(context).load(url).placeholder(R.drawable.ic_account_settings).dontAnimate().into(binding.imageViewEditProfileImage);
-            } else {
-                Timber.e("Image value -> %s", user.getImage());
             }
-
-            if (user.getVehicleImage() != null) {
-                String url = AppConfig.IMAGES_URL + user.getVehicleImage();
-                Timber.e("Vehicle Image URL -> %s", url);
-                Glide.with(context).load(url).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(binding.ivVehicleEditPlatePreview);
-            } else {
-                Timber.e("Vehicle Image value -> %s", user.getVehicleImage());
+        }
+        if(user.getVehicleImage()!=null){
+            if(!user.getVehicleImage().endsWith(".jpg")){
+                String vehicleUrl = AppConfig.IMAGES_URL + user.getVehicleImage() + ".jpg";
+                Timber.e("Vehicle Image URL -> %s", vehicleUrl);
+                Glide.with(context).load(vehicleUrl).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(binding.ivVehicleEditPlatePreview);
+            }
+            else{
+                String vehicleUrl = AppConfig.IMAGES_URL + user.getVehicleImage();
+                Timber.e("Vehicle Image URL -> %s", vehicleUrl);
+                Glide.with(context).load(vehicleUrl).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(binding.ivVehicleEditPlatePreview);
             }
         }
     }

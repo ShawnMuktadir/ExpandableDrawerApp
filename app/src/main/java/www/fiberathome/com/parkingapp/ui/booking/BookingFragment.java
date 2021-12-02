@@ -239,6 +239,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
 
                 @Override
                 public void onItemGetDirection(int position) {
+                    Preferences.getInstance(context).isGetDirectionClicked = true;
                     context.onBackPressed();
                 }
 

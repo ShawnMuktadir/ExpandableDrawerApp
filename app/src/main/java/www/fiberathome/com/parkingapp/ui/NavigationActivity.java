@@ -333,13 +333,16 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
                 .error(R.drawable.blank_profile);
 
         String url;
-        if (!user.getImage().endsWith(".jpg")) {
-            url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
-        } else {
-            url = AppConfig.IMAGES_URL + user.getImage();
-        }
-        Timber.e("user profile photo url -> %s", url);
-        Glide.with(this).load(url).apply(requestOptions).override(200, 200).into(ivUserProfile);
+       if(user.getImage()!=null) {
+           if (!user.getImage().endsWith(".jpg")) {
+               url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
+           } else {
+               url = AppConfig.IMAGES_URL + user.getImage();
+           }
+           Timber.e("user profile photo url -> %s", url);
+           Glide.with(this).load(url).apply(requestOptions).override(200, 200).into(ivUserProfile);
+       }
+
 
         String text = user.getMobileNo() + " - ";
         text = text + user.getVehicleNo();

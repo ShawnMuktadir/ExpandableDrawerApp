@@ -37,6 +37,7 @@ public class Preferences {
 
     private static Context mContext;
     public boolean isBookingCancelled = false;
+    public boolean isGetDirectionClicked = false;
 
     public Preferences(Context context) {
         mContext = context;
