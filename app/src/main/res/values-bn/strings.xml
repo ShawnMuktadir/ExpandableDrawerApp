@@ -563,5 +563,8 @@
     <string name="currently_rebook_not_available">বর্তমানে এই পার্কিং স্পটের জন্য রি-বুক করা সম্ভব নয়</string>
     <string name="gps_permission">জিপিএস অনুমতি</string>
     <string name="gps_required">এই অ্যাপটি কাজ করার জন্য জিপিএস প্রয়োজন। অনুগ্রহ করে জিপিএস সক্ষম করুন৷</string>
+    <string name="barcode_scanner_started">বারকোড স্ক্যানার শুরু হয়েছে</string>
+    <string name="no_barcode_detected">কোন বারকোড সনাক্ত করা হয়নি</string>
+    <string name="prevent_memory_leaks_scan_stopped">মেমোরি লিক প্রতিরোধে বারকোড স্ক্যানার বন্ধ করে দেওয়া হয়েছে</string>
 </resources>
 

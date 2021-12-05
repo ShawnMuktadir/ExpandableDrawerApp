@@ -560,4 +560,7 @@
     <string name="currently_rebook_not_available">Currently Re-book is not available for this parking spot</string>
     <string name="gps_permission">GPS Permission</string>
     <string name="gps_required">GPS is required for this app to work. Please enable GPS.</string>
+    <string name="no_barcode_detected">No Barcode Detected</string>
+    <string name="barcode_scanner_started">Barcode scanner started</string>
+    <string name="prevent_memory_leaks_scan_stopped">To prevent memory leaks barcode scanner has been stopped</string>
 </resources>

@@ -70,10 +70,23 @@
                     app:srcCompat="@drawable/current_location_vector_icon" />
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/fabGetDirection"
+                    android:id="@+id/fabQRScan"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/fabCurrentLocation"
+                    android:layout_alignParentEnd="true"
+                    android:contentDescription="@null"
+                    android:layout_marginTop="@dimen/dim10"
+                    android:visibility="visible"
+                    android:tint="@color/white"
+                    android:background="@color/transparent"
+                    app:srcCompat="@drawable/ic_scanner" />
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fabGetDirection"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/fabQRScan"
                     android:layout_alignParentEnd="true"
                     android:contentDescription="@null"
                     android:tint="@color/white"

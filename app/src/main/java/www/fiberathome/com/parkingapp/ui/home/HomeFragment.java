@@ -69,6 +69,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.firebase.FirebaseApp;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
@@ -109,6 +111,7 @@ import www.fiberathome.com.parkingapp.service.geoFenceInterface.IOnLoadLocationL
 import www.fiberathome.com.parkingapp.service.geoFenceInterface.MyLatLng;
 import www.fiberathome.com.parkingapp.service.googleService.directionModules.DirectionFinder;
 import www.fiberathome.com.parkingapp.service.googleService.directionModules.DirectionFinderListener;
+import www.fiberathome.com.parkingapp.ui.ScanBarCodeActivity;
 import www.fiberathome.com.parkingapp.ui.booking.BookingParkFragment;
 import www.fiberathome.com.parkingapp.ui.bottomSheet.BottomSheetAdapter;
 import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
@@ -130,6 +133,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     public static final int PLAY_SERVICES_ERROR_CODE = 9002;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 100;
+    private static final int SCAN_REQUEST_CODE = 101;
 
     public static MarkerOptions markerOptionsPin;
     private static boolean isBooked = false;
@@ -842,7 +846,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                 setupSearchResult(selectedPlace);
                             }
                         }
-
                     }
                 }
             });
@@ -1481,6 +1484,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         binding.fabCurrentLocation.setOnClickListener(v -> {
             if (mMap != null && onConnectedLocation != null)
                 animateCamera(onConnectedLocation);
+        });
+
+        binding.fabQRScan.setOnClickListener(v -> {
+            context.startActivity(ScanBarCodeActivity.class);
         });
 
         binding.fabGetDirection.setOnClickListener(v -> {

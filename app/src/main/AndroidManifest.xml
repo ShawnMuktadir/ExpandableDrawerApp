@@ -52,6 +52,12 @@
         android:resizeableActivity="false">
 
         <activity
+            android:name=".ui.ScanBarCodeActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="locale"
+            android:theme="@style/AppTheme.DefaultActionBar" />
+
+        <activity
             android:name=".ui.followUs.FollowUsActivity"
             android:screenOrientation="portrait"
             android:configChanges="locale"
