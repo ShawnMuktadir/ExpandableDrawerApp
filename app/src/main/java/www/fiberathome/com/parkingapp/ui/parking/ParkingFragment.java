@@ -115,7 +115,6 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
         setListeners();
 
         if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
-            Timber.e("check internet method called");
             fetchParkingSlotSensors();
         } else {
             DialogUtils.getInstance().alertDialog(context,
@@ -379,7 +378,6 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                     if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
                         try {
                             Timber.e("try called");
-//                            SharedData.getInstance().setSensorArea(this.sensorAreas.get(position));
                             Bundle bundle = new Bundle();
                             bundle.putDouble("lat", lat);
                             bundle.putDouble("lng", lng);
@@ -426,7 +424,6 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                 } else {
                     hideNoData();
                 }
-
                 parkingAdapter.filterList(filteredList);
             } else {
                 Timber.e("sensorAreas is empty");
@@ -451,12 +448,12 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
             return true;
         } else {
             AlertDialog alertDialog = new AlertDialog.Builder(context)
-                    .setTitle("GPS Permissions")
-                    .setMessage("GPS is required for this app to work. Please enable GPS.")
-                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
+                    .setTitle(context.getResources().getString(R.string.gps_permission))
+                    .setMessage(context.getResources().getString(R.string.gps_required))
+                    .setPositiveButton(context.getResources().getString(R.string.yes), (dialogInterface, i) -> {
                         Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                         startActivityForResult(intent, GPS_REQUEST_CODE);
-                    }))
+                    })
                     .setCancelable(false)
                     .show();
         }

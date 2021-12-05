@@ -43,6 +43,7 @@
         <entry key="app/src/main/res/layout/layout_fragment.xml" value="0.153125" />
         <entry key="app/src/main/res/layout/nav_header.xml" value="0.16302083333333334" />
         <entry key="app/src/main/res/layout/nav_header_home.xml" value="0.16302083333333334" />
+        <entry key="app/src/main/res/layout/parking_row.xml" value="0.15885416666666666" />
         <entry key="app/src/main/res/layout/snackbar_internet.xml" value="0.13125" />
         <entry key="app/src/main/res/layout/voucher_dialog.xml" value="0.25" />
         <entry key="app/src/main/res/menu/drawer_menu.xml" value="0.20364583333333333" />

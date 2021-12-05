@@ -1,11 +1,8 @@
 package www.fiberathome.com.parkingapp.ui.parking;
 
-import static android.content.Context.LOCATION_SERVICE;
-
 import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.location.Location;
-import android.location.LocationManager;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -19,9 +16,8 @@ import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.databinding.ParkingRowBinding;
+import www.fiberathome.com.parkingapp.databinding.RowParkingBinding;
 import www.fiberathome.com.parkingapp.model.response.sensors.SensorArea;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
 
@@ -52,7 +48,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         context = (ParkingActivity) parent.getContext();
         LayoutInflater layoutInflater = LayoutInflater.from(context);
-        ParkingRowBinding itemBinding = ParkingRowBinding.inflate(layoutInflater, parent, false);
+        RowParkingBinding itemBinding = RowParkingBinding.inflate(layoutInflater, parent, false);
         return new ParkingViewHolder(itemBinding);
     }
 
@@ -105,23 +101,11 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         notifyDataSetChanged();
     }
 
-    private boolean isGPSEnabled() {
-        LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-        boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        if (providerEnabled) {
-            return true;
-        } else {
-            Timber.e("else called");
-        }
-
-        return false;
-    }
-
     @SuppressLint("NonConstantResourceId")
     public static class ParkingViewHolder extends RecyclerView.ViewHolder {
-        ParkingRowBinding binding;
+        RowParkingBinding binding;
 
-        public ParkingViewHolder(ParkingRowBinding itemView) {
+        public ParkingViewHolder(RowParkingBinding itemView) {
             super(itemView.getRoot());
             this.binding = itemView;
         }

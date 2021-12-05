@@ -14,15 +14,12 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.databinding.FragmentSettingsBinding;
 import www.fiberathome.com.parkingapp.model.Language;
 import www.fiberathome.com.parkingapp.model.data.preference.LanguagePreferences;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
@@ -33,11 +30,7 @@ import www.fiberathome.com.parkingapp.ui.splash.SplashActivity;
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class LanguageSettingFragment extends Fragment {
 
-    @BindView(R.id.recyclerView_settings)
-    RecyclerView recyclerViewLanguages;
-
-    private Unbinder unbinder;
-
+    FragmentSettingsBinding binding;
     private LanguageSettingActivity context;
 
     public LanguageSettingFragment() {
@@ -49,10 +42,11 @@ public class LanguageSettingFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_settings, container, false);
+        binding = FragmentSettingsBinding.inflate(getLayoutInflater());
+        return binding.getRoot();
     }
 
     @Override
@@ -64,19 +58,7 @@ public class LanguageSettingFragment extends Fragment {
         initView(view);
     }
 
-    @Override
-    public void onDestroyView() {
-
-        if (unbinder != null) {
-            unbinder.unbind();
-        }
-
-        super.onDestroyView();
-    }
-
     private void initView(View view) {
-        unbinder = ButterKnife.bind(this, view);
-
         String[] names = new String[]{context.getResources().getString(R.string.english), context.getResources().getString(R.string.bangla)};
         String[] subNames = new String[]{context.getResources().getString(R.string.english), context.getResources().getString(R.string.bangla_bn)};
         String[] isoCodes = new String[]{LANGUAGE_EN, LANGUAGE_BN};
@@ -102,9 +84,9 @@ public class LanguageSettingFragment extends Fragment {
             context.startActivityWithFinishAffinity(SplashActivity.class);
         });
 
-        recyclerViewLanguages.setLayoutManager(new LinearLayoutManager(context));
-        recyclerViewLanguages.setItemAnimator(new DefaultItemAnimator());
-        recyclerViewLanguages.setAdapter(languageAdapter);
+        binding.recyclerViewSettings.setLayoutManager(new LinearLayoutManager(context));
+        binding.recyclerViewSettings.setItemAnimator(new DefaultItemAnimator());
+        binding.recyclerViewSettings.setAdapter(languageAdapter);
     }
 
     private List<Language> populateLanguageItem(String[] names, String[] subNames, String[] isoCodes, List<Language> languages) {

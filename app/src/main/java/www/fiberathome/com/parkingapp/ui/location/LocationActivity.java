@@ -10,19 +10,16 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
-import android.widget.Button;
-import android.widget.TextView;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
+import www.fiberathome.com.parkingapp.databinding.ActivityLocationBinding;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.utils.LocationHelper;
@@ -31,17 +28,20 @@ import www.fiberathome.com.parkingapp.utils.ToastUtils;
 @SuppressLint("NonConstantResourceId")
 public class LocationActivity extends BaseActivity {
 
-    @BindView(R.id.permissionTV)
-    TextView permissionTV;
-
-    @BindView(R.id.btn_grant)
-    Button btn_grant;
-
-    private Unbinder unbinder;
-
     private BaseActivity context;
+    protected ActivityLocationBinding binding;
 
     public AlertDialog alertDialog;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        binding = ActivityLocationBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
+        context = this;
+        setListeners();
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -129,9 +129,6 @@ public class LocationActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         mLocationManager.removeUpdates(this);
-        if (unbinder != null) {
-            unbinder.unbind();
-        }
         super.onDestroy();
     }
 
@@ -156,21 +153,8 @@ public class LocationActivity extends BaseActivity {
     }
 
     private void setListeners() {
-        //btn_grant.setOnClickListener(view -> startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)));
-        btn_grant.setOnClickListener(view -> startActivityForResult(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS),
+        binding.btnGrant.setOnClickListener(view -> startActivityForResult(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS),
                 GPS_REQUEST_CODE));
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_location);
-
-        context = this;
-
-        unbinder = ButterKnife.bind(this);
-
-        setListeners();
     }
 
     public boolean isGPSEnabled() {

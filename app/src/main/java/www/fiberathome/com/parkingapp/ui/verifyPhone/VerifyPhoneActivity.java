@@ -6,32 +6,26 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 
-import androidx.appcompat.widget.Toolbar;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
+import www.fiberathome.com.parkingapp.databinding.ActivityBaseBinding;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 
 @SuppressLint("NonConstantResourceId")
 public class VerifyPhoneActivity extends BaseActivity {
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
 
-    @BindView(R.id.view)
-    View view;
-
-    private Context context;
+    ActivityBaseBinding binding;
+    protected Context context;
 
     @SuppressLint("UseCompatLoadingForDrawables")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_base);
+        binding = ActivityBaseBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
         context = this;
-        ButterKnife.bind(this);
 
         setTitle(context.getResources().getString(R.string.verify_otp));
 

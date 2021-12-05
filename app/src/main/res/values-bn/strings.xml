@@ -561,5 +561,7 @@
     <string name="book_now">এখনই বুক করুন</string>
     <string name="reservation_closed_successfully">রিজার্ভেশন সফলতার সাথে শেষ হয়েছে</string>
     <string name="currently_rebook_not_available">বর্তমানে এই পার্কিং স্পটের জন্য রি-বুক করা সম্ভব নয়</string>
+    <string name="gps_permission">জিপিএস অনুমতি</string>
+    <string name="gps_required">এই অ্যাপটি কাজ করার জন্য জিপিএস প্রয়োজন। অনুগ্রহ করে জিপিএস সক্ষম করুন৷</string>
 </resources>
 

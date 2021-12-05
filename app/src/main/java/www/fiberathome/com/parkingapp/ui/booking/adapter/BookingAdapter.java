@@ -21,7 +21,7 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.databinding.BookingsRowBinding;
+import www.fiberathome.com.parkingapp.databinding.RowBookingsBinding;
 import www.fiberathome.com.parkingapp.model.response.booking.BookedList;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingArea;
 import www.fiberathome.com.parkingapp.ui.booking.BookingActivity;
@@ -50,7 +50,7 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         context = parent.getContext();
         LayoutInflater layoutInflater = LayoutInflater.from(context);
-        BookingsRowBinding itemBinding = BookingsRowBinding.inflate(layoutInflater, parent, false);
+        RowBookingsBinding itemBinding = RowBookingsBinding.inflate(layoutInflater, parent, false);
         return new BookingViewHolder(itemBinding);
     }
 
@@ -166,9 +166,9 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @SuppressLint("NonConstantResourceId")
     public static class BookingViewHolder extends RecyclerView.ViewHolder {
-        BookingsRowBinding binding;
+        RowBookingsBinding binding;
 
-        public BookingViewHolder(BookingsRowBinding itemView) {
+        public BookingViewHolder(RowBookingsBinding itemView) {
             super(itemView.getRoot());
             this.binding = itemView;
         }

@@ -1,35 +1,26 @@
 package www.fiberathome.com.parkingapp.ui.settings;
 
-import static android.content.Context.LOCATION_SERVICE;
-import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
-
 import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.location.LocationManager;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
+import www.fiberathome.com.parkingapp.databinding.FragmentSettingsBinding;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.ui.settings.adapter.SettingAdapter;
+import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
@@ -37,11 +28,7 @@ import www.fiberathome.com.parkingapp.utils.ToastUtils;
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class SettingsFragment extends BaseFragment implements SettingAdapter.OnItemClickListener, IOnBackPressListener {
 
-    @BindView(R.id.recyclerView_settings)
-    RecyclerView recyclerViewSettings;
-
-    private Unbinder unbinder;
-
+    FragmentSettingsBinding binding;
     private SettingsActivity context;
 
     public SettingsFragment() {
@@ -54,10 +41,11 @@ public class SettingsFragment extends BaseFragment implements SettingAdapter.OnI
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_settings, container, false);
+        binding = FragmentSettingsBinding.inflate(getLayoutInflater());
+        return binding.getRoot();
     }
 
     @Override
@@ -76,19 +64,8 @@ public class SettingsFragment extends BaseFragment implements SettingAdapter.OnI
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-
-        Timber.e("onDestroyView called ");
-
-        if (unbinder != null) {
-            unbinder.unbind();
-        }
-    }
-
-    @Override
     public boolean onBackPressed() {
-        if (isGPSEnabled()) {
+        if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
             if (getActivity() != null) {
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.nav_host_fragment, HomeFragment.newInstance())
@@ -101,10 +78,7 @@ public class SettingsFragment extends BaseFragment implements SettingAdapter.OnI
         return false;
     }
 
-    public AlertDialog alertDialog;
-
     private void initView(View view) {
-        unbinder = ButterKnife.bind(this, view);
 
         String[] nameArray = new String[]{
                 context.getResources().getString(R.string.language)
@@ -118,9 +92,9 @@ public class SettingsFragment extends BaseFragment implements SettingAdapter.OnI
         SettingAdapter settingAdapter = new SettingAdapter(
                 populateSettingsItem(nameArray, drawableArray, new ArrayList<>()), this);
 
-        recyclerViewSettings.setLayoutManager(new LinearLayoutManager(context));
-        recyclerViewSettings.setItemAnimator(new DefaultItemAnimator());
-        recyclerViewSettings.setAdapter(settingAdapter);
+        binding.recyclerViewSettings.setLayoutManager(new LinearLayoutManager(context));
+        binding.recyclerViewSettings.setItemAnimator(new DefaultItemAnimator());
+        binding.recyclerViewSettings.setAdapter(settingAdapter);
     }
 
     private List<www.fiberathome.com.parkingapp.model.Settings> populateSettingsItem(String[] nameArray, Integer[] drawableArray, List<www.fiberathome.com.parkingapp.model.Settings> settings) {
@@ -149,27 +123,5 @@ public class SettingsFragment extends BaseFragment implements SettingAdapter.OnI
             default:
                 throw new IllegalStateException("Unexpected value: " + position);
         }
-    }
-
-    private boolean isGPSEnabled() {
-
-        LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-
-        boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-        if (providerEnabled) {
-            return true;
-        } else {
-            alertDialog = new AlertDialog.Builder(context)
-                    .setTitle("GPS Permissions")
-                    .setMessage("GPS is required for this app to work. Please enable GPS.")
-                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
-                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        startActivityForResult(intent, GPS_REQUEST_CODE);
-                    }))
-                    .setCancelable(false)
-                    .show();
-        }
-        return false;
     }
 }
