@@ -70,8 +70,6 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.firebase.FirebaseApp;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
 
 import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
@@ -419,6 +417,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
         if (isBooked) {
             binding.fabGetDirection.setVisibility(View.VISIBLE);
+            if (Preferences.getInstance(context).isGetDirectionClicked) {
+                commonBackOperation();
+            }
         }
         if (isAdded()) {
             setListeners();
@@ -1288,6 +1289,15 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     hideNoData();
                     hideLoading();
                     binding.buttonSearch.setVisibility(View.GONE);
+                    String origin = "" + onConnectedLocation.getLatitude() + ", " + onConnectedLocation.getLongitude();
+                    mMap.setTrafficEnabled(false);
+
+                    if (Preferences.getInstance(context).isGetDirectionClicked) {
+                        String bookedDestination = "" + bookedPlace.getLat() + ", " + bookedPlace.getLon();
+                        fetchDirections(origin, bookedDestination);
+                        Preferences.getInstance(context).isGetDirectionClicked = false;
+                        getDirectionPinMarkerDraw(new LatLng(bookedPlace.getLat(), bookedPlace.getLon()), bookedPlace.getPlaceId(), false);
+                    }
                 } else {
                     hideNoData();
                     hideLoading();
@@ -1755,7 +1765,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         if (!oldDestination.equalsIgnoreCase(destination)) {
             oldDestination = destination;
 
-            polyline = mMap.addPolyline(getDefaultPolyLines(points));
+//            polyline = mMap.addPolyline(getDefaultPolyLines(points));
 
             if (isBooked && bookedPlace != null) {
                 if (!destination.equalsIgnoreCase(bookedDestination)) {
@@ -1774,15 +1784,15 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 return;
             }
 
-            if (!polyline.isVisible())
-                return;
+//            if (!polyline.isVisible())
+//                return;
 
-            points = polyline.getPoints();
+//            points = polyline.getPoints();
             try {
-                if (polyline == null || !polyline.isVisible())
-                    return;
-                points = polyline.getPoints();
-                polyline.remove();
+                if (polyline != null) {
+                    points = polyline.getPoints();
+                    polyline.remove();
+                }
                 new DirectionFinder(this, origin, destination).execute();
                 isRouteDrawn = 1;
             } catch (UnsupportedEncodingException e) {
