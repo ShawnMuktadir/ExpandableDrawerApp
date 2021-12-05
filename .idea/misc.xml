@@ -20,6 +20,7 @@
         <entry key="app/src/main/res/drawable-anydpi/ic_scanner.xml" value="0.1865" />
         <entry key="app/src/main/res/drawable/button_shape.xml" value="0.14479166666666668" />
         <entry key="app/src/main/res/layout/activity_base.xml" value="0.153125" />
+        <entry key="app/src/main/res/layout/activity_email.xml" value="0.15208333333333332" />
         <entry key="app/src/main/res/layout/activity_navigation.xml" value="0.2515625" />
         <entry key="app/src/main/res/layout/activity_scan_bar_code.xml" value="0.165" />
         <entry key="app/src/main/res/layout/app_bar_main.xml" value="0.18541033434650456" />

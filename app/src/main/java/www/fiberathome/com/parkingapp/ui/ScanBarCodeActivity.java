@@ -1,20 +1,13 @@
 package www.fiberathome.com.parkingapp.ui;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.vision.CameraSource;
@@ -26,7 +19,6 @@ import java.io.IOException;
 
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
-import www.fiberathome.com.parkingapp.databinding.ActivityNavigationBinding;
 import www.fiberathome.com.parkingapp.databinding.ActivityScanBarCodeBinding;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
@@ -39,15 +31,28 @@ public class ScanBarCodeActivity extends BaseActivity {
 
     ActivityScanBarCodeBinding binding;
     protected BaseActivity context;
+    //boolean isEmail = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = this;
         binding = ActivityScanBarCodeBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
-        context = this;
         setListeners();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        cameraSource.release();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initialiseDetectorsAndSources();
     }
 
     private void setListeners() {
@@ -60,7 +65,6 @@ public class ScanBarCodeActivity extends BaseActivity {
     }
 
     private void initialiseDetectorsAndSources() {
-        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.barcode_scanner_started));
         barcodeDetector = new BarcodeDetector.Builder(this)
                 .setBarcodeFormats(Barcode.ALL_FORMATS)
                 .build();
@@ -100,7 +104,7 @@ public class ScanBarCodeActivity extends BaseActivity {
         barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
             @Override
             public void release() {
-                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.prevent_memory_leaks_scan_stopped));
+                ///Toast.makeText(getApplicationContext(), "To prevent memory leaks barcode scanner has been stopped", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -115,18 +119,5 @@ public class ScanBarCodeActivity extends BaseActivity {
                 }
             }
         });
-    }
-
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        cameraSource.release();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        initialiseDetectorsAndSources();
     }
 }
