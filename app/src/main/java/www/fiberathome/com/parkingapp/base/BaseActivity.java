@@ -260,9 +260,9 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
             return true;
         } else {
             AlertDialog alertDialog = new AlertDialog.Builder(context)
-                    .setTitle("GPS Permissions")
-                    .setMessage("GPS is required for this app to work. Please enable GPS.")
-                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
+                    .setTitle(context.getResources().getString(R.string.gps_permission))
+                    .setMessage(context.getResources().getString(R.string.gps_required))
+                    .setPositiveButton(context.getResources().getString(R.string.yes), ((dialogInterface, i) -> {
                         Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                         startActivityForResult(intent, GPS_REQUEST_CODE);
                     }))
