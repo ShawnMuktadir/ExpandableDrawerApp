@@ -3,10 +3,14 @@ package www.fiberathome.com.parkingapp.ui;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.View;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
@@ -81,8 +85,7 @@ public class ScanBarCodeActivity extends BaseActivity {
                     if (ActivityCompat.checkSelfPermission(ScanBarCodeActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
                         cameraSource.start(binding.surfaceView.getHolder());
                     } else {
-                        ActivityCompat.requestPermissions(ScanBarCodeActivity.this, new
-                                String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+                        mPermissionResult.launch(Manifest.permission.CAMERA);
                     }
 
                 } catch (IOException e) {
@@ -120,4 +123,23 @@ public class ScanBarCodeActivity extends BaseActivity {
             }
         });
     }
+
+    private ActivityResultLauncher<String> mPermissionResult = registerForActivityResult(
+            new ActivityResultContracts.RequestPermission(),
+            new ActivityResultCallback<Boolean>() {
+                @Override
+                public void onActivityResult(Boolean result) {
+                    if (result) {
+                        if (ActivityCompat.checkSelfPermission(ScanBarCodeActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                            try {
+                                cameraSource.start(binding.surfaceView.getHolder());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    } else {
+                        Log.e("ScanBarCodeActivity", "onActivityResult: PERMISSION DENIED");
+                    }
+                }
+            });
 }
