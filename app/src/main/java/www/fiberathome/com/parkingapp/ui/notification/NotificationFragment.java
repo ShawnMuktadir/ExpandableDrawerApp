@@ -5,11 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.fragment.app.Fragment;
-
-import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
-import www.fiberathome.com.parkingapp.databinding.FragmentBookingBinding;
 import www.fiberathome.com.parkingapp.databinding.FragmentNotificationBinding;
 
 public class NotificationFragment extends BaseFragment {

@@ -32,11 +32,10 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.databinding.ActivityScanBarCodeBinding;
 import www.fiberathome.com.parkingapp.listener.FragmentChangeListener;
+import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.sensors.SensorArea;
-import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.ui.schedule.ScheduleActivity;
-import www.fiberathome.com.parkingapp.utils.MathUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 public class ScanBarCodeActivity extends BaseActivity implements FragmentChangeListener {
@@ -205,7 +204,7 @@ public class ScanBarCodeActivity extends BaseActivity implements FragmentChangeL
         barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
             @Override
             public void release() {
-                ///Toast.makeText(getApplicationContext(), "To prevent memory leaks barcode scanner has been stopped", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "To prevent memory leaks barcode scanner has been stopped", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -216,9 +215,6 @@ public class ScanBarCodeActivity extends BaseActivity implements FragmentChangeL
                         binding.btnAction.setText(context.getResources().getString(R.string.confirm_booking));
                         intentData = barcodes.valueAt(0).displayValue;
                         SensorArea sensorArea = new Gson().fromJson(intentData, SensorArea.class);
-                        Timber.e(sensorArea.getParkingArea());
-                        //List<String> baseStringList = new ArrayList<>();
-                        //baseStringList.add(intentData);
                         parseQRIntentData(sensorArea);
                     });
                 } else {
@@ -246,11 +242,17 @@ public class ScanBarCodeActivity extends BaseActivity implements FragmentChangeL
         bundle.putString("parkingSlotCount", count);
         bundle.putString("areaPlacedId", placeId);
         bundle.putBoolean("isInArea", true);
-        context.startActivityWithFinishBundle(ScheduleActivity.class, bundle);
-    }
 
-    private double calculateDistance(Double startLatitude, Double startLongitude, Double endLatitude, Double endLongitude) {
-        return MathUtils.getInstance().calculateDistance(startLatitude, startLongitude, endLatitude, endLongitude);
+        boolean isBooked = Preferences.getInstance(context).getBooked().getIsBooked();
+        if (isBooked) {
+            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.already_booked_msg));
+            context.finish();
+        } else {
+            context.startActivityWithFinishBundle(ScheduleActivity.class, bundle);
+            if (cameraSource != null) {
+                cameraSource.release();
+            }
+        }
     }
 
     private final ActivityResultLauncher<String> mPermissionResult = registerForActivityResult(
