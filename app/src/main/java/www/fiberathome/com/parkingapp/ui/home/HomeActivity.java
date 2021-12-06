@@ -87,7 +87,6 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
     private boolean isTransactionPending;
 
     private Context context;
-    protected HomeFragment homeFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

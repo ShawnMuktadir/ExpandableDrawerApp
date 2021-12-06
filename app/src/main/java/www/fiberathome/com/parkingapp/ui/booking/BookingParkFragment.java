@@ -198,11 +198,10 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                         binding.tvEarlyParkingTime.setTextColor(context.getResources().getColor(R.color.red));
                     }
                 } else {
-
                     ToastUtils.getInstance().showToastMessage(context, "sensor null");
                 }
             } else {
-                ToastUtils.getInstance().showToastMessage(context, "Unable to load map");
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.unable_to_load_map));
             }
         } else {
             ToastUtils.getInstance().showToastMessage(context, "Play services are required by this application");

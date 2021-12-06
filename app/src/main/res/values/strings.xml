@@ -563,4 +563,5 @@
     <string name="no_barcode_detected">No Barcode Detected</string>
     <string name="barcode_scanner_started">Barcode scanner started</string>
     <string name="prevent_memory_leaks_scan_stopped">To prevent memory leaks barcode scanner has been stopped</string>
+    <string name="unable_to_load_map">Unable to load map</string>
 </resources>

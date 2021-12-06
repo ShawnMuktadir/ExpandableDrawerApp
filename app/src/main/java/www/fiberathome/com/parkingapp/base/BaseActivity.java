@@ -367,6 +367,14 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         finishAffinity();
     }
 
+    @SuppressWarnings("rawtypes")
+    public void startActivityWithFinishBundle(Class activityClass, Bundle bundle) {
+        Intent intent = new Intent(getApplicationContext(), activityClass);
+        intent.putExtras(bundle);
+        startActivity(intent);
+        finishAffinity();
+    }
+
     public void setStatusBarColor(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             int startColor = getWindow().getStatusBarColor();

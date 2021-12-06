@@ -95,7 +95,21 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
         return new ScheduleFragment();
     }
 
-    public static ScheduleFragment newInstance(String placeId, String mAreaName, String mParkingSlotCount, double mLat, double mLon, boolean mIsInArea) {
+    public static ScheduleFragment newInstance(double lat, double lng, String areaName, String count, String placeId, boolean isInArea) {
+        ScheduleFragment fragment = new ScheduleFragment();
+        Bundle bundle = new Bundle();
+        bundle.putDouble("lat", lat);
+        bundle.putDouble("long", lng);
+        bundle.putString("areaName", areaName);
+        bundle.putString("count", count);
+        bundle.putString("placeId", placeId);
+        bundle.putBoolean("isInArea", isInArea);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
+
+    public static ScheduleFragment newInstance(String placeId, String mAreaName, String mParkingSlotCount,
+                                               double mLat, double mLon, boolean mIsInArea) {
         areaPlaceId = placeId;
         areaName = mAreaName;
         parkingSlotCount = mParkingSlotCount;
@@ -135,6 +149,8 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                 context = (HomeActivity) getActivity();
             } else if (getActivity() instanceof BookingActivity) {
                 context = (BookingActivity) getActivity();
+            } else if (getActivity() instanceof ScheduleActivity) {
+                context = (ScheduleActivity) getActivity();
             }
             currentTime = Calendar.getInstance().getTime();
             binding.textViewCurrentDate.setText(DateTimeUtils.getInstance().getCurrentDayTime());
@@ -216,6 +232,8 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                 listener.fragmentChange(HomeFragment.newInstance());
             } else if (getActivity() instanceof BookingActivity) {
                 startActivityWithFinish(context, BookingActivity.class);
+            } else if (getActivity() instanceof ScheduleActivity) {
+                startActivityWithFinish(context, HomeActivity.class);
             }
         } else {
             ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_gps));
