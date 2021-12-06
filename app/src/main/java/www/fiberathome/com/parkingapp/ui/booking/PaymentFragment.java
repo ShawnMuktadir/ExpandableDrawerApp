@@ -257,7 +257,6 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
 
                     @Override
                     public void transactionFail(String s) {
-//                        ToastUtils.getInstance().showToast(context, s);
                         Timber.e("transactionFail -> %s", s);
                     }
 

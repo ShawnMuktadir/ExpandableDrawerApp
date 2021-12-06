@@ -230,8 +230,7 @@ public class ScanBarCodeActivity extends BaseActivity implements FragmentChangeL
 
     private void parseQRIntentData(SensorArea intentData) {
         String parkingArea, placeId, count = "";
-        double lat = 0.0;
-        double lng = 0.0;
+        double lat, lng;
         Timber.e("List intentData -> %s", intentData);
 
         parkingArea = intentData.getParkingArea();

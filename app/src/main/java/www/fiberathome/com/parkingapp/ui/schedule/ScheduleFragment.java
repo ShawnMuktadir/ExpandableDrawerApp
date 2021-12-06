@@ -102,7 +102,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
         bundle.putDouble("long", lng);
         bundle.putString("areaName", areaName);
         bundle.putString("count", count);
-        bundle.putString("placeId", placeId);
+        bundle.putString("areaPlacedId", placeId);
         bundle.putBoolean("isInArea", isInArea);
         fragment.setArguments(bundle);
         return fragment;
