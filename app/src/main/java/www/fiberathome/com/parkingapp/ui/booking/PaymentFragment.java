@@ -51,6 +51,7 @@ import www.fiberathome.com.parkingapp.model.response.booking.ReservationCancelRe
 import www.fiberathome.com.parkingapp.model.response.booking.ReservationResponse;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
+import www.fiberathome.com.parkingapp.ui.schedule.ScheduleActivity;
 import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
@@ -104,6 +105,8 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
             context = (HomeActivity) getActivity();
         } else if (getActivity() instanceof BookingActivity) {
             context = (BookingActivity) getActivity();
+        } else if (getActivity() instanceof ScheduleActivity) {
+            context = (ScheduleActivity) getActivity();
         }
         listener = (FragmentChangeListener) context;
     }
@@ -135,6 +138,8 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                 listener.fragmentChange(HomeFragment.newInstance());
             } else if (getActivity() instanceof BookingActivity) {
                 startActivityWithFinishAffinity(context, HomeActivity.class);
+            } else if (getActivity() instanceof ScheduleActivity) {
+                startActivityWithFinishAffinity(context, HomeActivity.class);
             }
         }
     }
@@ -152,6 +157,8 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                 listener.fragmentChange(HomeFragment.newInstance());
             } else if (getActivity() instanceof BookingActivity) {
                 startActivityWithFinish(context, BookingActivity.class);
+            } else if (getActivity() instanceof ScheduleActivity) {
+                startActivityWithFinish(context, ScheduleActivity.class);
             }
         } else {
             ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_gps));
@@ -323,6 +330,8 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                                         startActivityWithFinishAffinity(context, HomeActivity.class);
                                     } else if (getActivity() instanceof HomeActivity) {
                                         listener.fragmentChange(HomeFragment.newInstance());
+                                    } else if (getActivity() instanceof ScheduleActivity) {
+                                        startActivityWithFinishAffinity(context, HomeActivity.class);
                                     }
                                 }
                             } else {
