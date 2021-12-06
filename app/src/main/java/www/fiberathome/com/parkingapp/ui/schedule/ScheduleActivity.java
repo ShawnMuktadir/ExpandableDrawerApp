@@ -21,30 +21,20 @@ public class ScheduleActivity extends NavigationActivity implements FragmentChan
     //Boolean variable to mark if there is any transaction pending
     private boolean isTransactionPending;
 
-    private double lat;
-    private double lng;
-    private String areaName;
-    private String count;
-    private String placeId;
-    private boolean isInArea;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         Context context = this;
-
         setTitle(context.getResources().getString(R.string.your_booked));
 
-        lat = getIntent().getDoubleExtra("lat", 0.0);
-        lng = getIntent().getDoubleExtra("long", 0.0);
-        areaName = getIntent().getStringExtra("areaName");
-        count = getIntent().getStringExtra("parkingSlotCount");
-        placeId = getIntent().getStringExtra("areaPlacedId");
-        isInArea = getIntent().getBooleanExtra("isInArea", false);
+        double lat = getIntent().getDoubleExtra("lat", 0.0);
+        double lng = getIntent().getDoubleExtra("long", 0.0);
+        String areaName = getIntent().getStringExtra("areaName");
+        String count = getIntent().getStringExtra("parkingSlotCount");
+        String placeId = getIntent().getStringExtra("areaPlacedId");
+        boolean isInArea = getIntent().getBooleanExtra("isInArea", false);
+
         //Initialize Schedule Fragment
-        /*ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
-                ScheduleFragment.newInstance(), R.id.nav_host_fragment);*/
         ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
                 ScheduleFragment.newInstance(lat, lng, areaName, count, placeId, isInArea), R.id.nav_host_fragment);
 

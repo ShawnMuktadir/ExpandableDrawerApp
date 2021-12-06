@@ -417,7 +417,6 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         } else {
             sbView.setBackgroundColor(getResources().getColor(R.color.transparent_gray));
             snackbar.setAction(context.getResources().getString(R.string.retry), view -> {
-
                 if (ConnectivityUtils.getInstance().checkInternet(context)) {
                     return;
                 } else {
@@ -426,7 +425,6 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
             });
             snackbar.setActionTextColor(context.getResources().getColor(R.color.white));
         }
-
         snackbar.show();
     }
 
@@ -439,7 +437,6 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         builder.setTitle("Internet Disabled!");
         builder.setMessage("No active Internet connection found.");
         builder.setPositiveButton(context.getResources().getString(R.string.retry), (dialog, which) -> {
-
             if (ConnectivityUtils.getInstance().checkInternet(context)) {
                 return;
             } else {

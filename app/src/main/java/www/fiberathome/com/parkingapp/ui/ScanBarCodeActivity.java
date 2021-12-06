@@ -6,7 +6,6 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.View;
@@ -36,6 +35,8 @@ import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.sensors.SensorArea;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.ui.schedule.ScheduleActivity;
+import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
+import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 public class ScanBarCodeActivity extends BaseActivity implements FragmentChangeListener {
@@ -53,6 +54,8 @@ public class ScanBarCodeActivity extends BaseActivity implements FragmentChangeL
 
     //Boolean variable to mark if there is any transaction pending
     private boolean isTransactionPending;
+    private boolean scheduleActivityCalled = false;
+    private boolean isDialogShown = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,6 +153,7 @@ public class ScanBarCodeActivity extends BaseActivity implements FragmentChangeL
     @Override
     protected void onResume() {
         super.onResume();
+        scheduleActivityCalled = false;
         initialiseDetectorsAndSources();
     }
 
@@ -177,7 +181,6 @@ public class ScanBarCodeActivity extends BaseActivity implements FragmentChangeL
             public void surfaceCreated(@NonNull SurfaceHolder holder) {
                 try {
                     if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-                        //cameraSource.start(binding.surfaceView.getHolder());
                         if (cameraSource == null) {
                             return;
                         }
@@ -213,9 +216,13 @@ public class ScanBarCodeActivity extends BaseActivity implements FragmentChangeL
                 if (barcodes.size() != 0) {
                     binding.txtBarcodeValue.post(() -> {
                         binding.btnAction.setText(context.getResources().getString(R.string.confirm_booking));
-                        intentData = barcodes.valueAt(0).displayValue;
-                        SensorArea sensorArea = new Gson().fromJson(intentData, SensorArea.class);
-                        parseQRIntentData(sensorArea);
+                        try {
+                            intentData = barcodes.valueAt(0).displayValue;
+                            SensorArea sensorArea = new Gson().fromJson(intentData, SensorArea.class);
+                            parseQRIntentData(sensorArea);
+                        } catch (Exception e) {
+                            Timber.e(e.getCause());
+                        }
                     });
                 } else {
                     Timber.e("else called");
@@ -244,14 +251,33 @@ public class ScanBarCodeActivity extends BaseActivity implements FragmentChangeL
         bundle.putBoolean("isInArea", true);
 
         boolean isBooked = Preferences.getInstance(context).getBooked().getIsBooked();
-        if (isBooked) {
-            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.already_booked_msg));
-            context.finish();
-        } else {
+        if (!isBooked && !scheduleActivityCalled) {
+            scheduleActivityCalled = true;
             context.startActivityWithFinishBundle(ScheduleActivity.class, bundle);
             if (cameraSource != null) {
                 cameraSource.release();
             }
+        } else if (isBooked && !isDialogShown) {
+            isDialogShown = true;
+            DialogUtils.getInstance().alertDialog(context,
+                    context,
+                    context.getResources().getString(R.string.already_booked_msg),
+                    context.getResources().getString(R.string.ok), "",
+                    new DialogUtils.DialogClickListener() {
+                        @Override
+                        public void onPositiveClick() {
+                            Timber.e("Positive Button clicked");
+                            if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
+                                context.finish();
+                                isDialogShown = false;
+                            }
+                        }
+
+                        @Override
+                        public void onNegativeClick() {
+                            Timber.e("Negative Button Clicked");
+                        }
+                    }).show();
         }
     }
 
@@ -269,7 +295,7 @@ public class ScanBarCodeActivity extends BaseActivity implements FragmentChangeL
                             }
                         }
                     } else {
-                        Log.e("ScanBarCodeActivity", "onActivityResult: PERMISSION DENIED");
+                        Timber.e("ScanBarCodeActivity -> %s", "onActivityResult: PERMISSION DENIED");
                     }
                 }
             });

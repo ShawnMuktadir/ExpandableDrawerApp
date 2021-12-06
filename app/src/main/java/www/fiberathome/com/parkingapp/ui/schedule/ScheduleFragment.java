@@ -95,13 +95,14 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
         return new ScheduleFragment();
     }
 
-    public static ScheduleFragment newInstance(double lat, double lng, String areaName, String count, String placeId, boolean isInArea) {
+    public static ScheduleFragment newInstance(double lat, double lng, String areaName,
+                                               String count, String placeId, boolean isInArea) {
         ScheduleFragment fragment = new ScheduleFragment();
         Bundle bundle = new Bundle();
         bundle.putDouble("lat", lat);
         bundle.putDouble("long", lng);
         bundle.putString("areaName", areaName);
-        bundle.putString("count", count);
+        bundle.putString("parkingSlotCount", count);
         bundle.putString("areaPlacedId", placeId);
         bundle.putBoolean("isInArea", isInArea);
         fragment.setArguments(bundle);
