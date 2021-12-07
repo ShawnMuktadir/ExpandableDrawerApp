@@ -171,6 +171,10 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
             if (context != null) {
                 if (getActivity() instanceof HomeActivity) {
                     ((HomeActivity) context).setActionToolBarVisibilityGone();
+                } else if (getActivity() instanceof BookingActivity) {
+                    ((BookingActivity) context).setActionToolBarVisibilityGone();
+                } else if (getActivity() instanceof ScheduleActivity) {
+                    ((ScheduleActivity) context).setActionToolBarVisibilityGone();
                 }
                 FragmentTransaction ft = context.getSupportFragmentManager().beginTransaction().
                         replace(R.id.map, supportMapFragment);
