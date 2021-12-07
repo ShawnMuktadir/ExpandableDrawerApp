@@ -94,7 +94,7 @@ public class BookingService extends Service {
                     mHandlerTask.run();
                     break;
                 case Constants.STOP_BOOKING_TRACKING:
-                    stopTrackingLocation();
+                    stopBookingService();
                     break;
                 case Constants.BOOKING_EXCEED_CHECK:
                     departureDate = 0;
@@ -216,7 +216,7 @@ public class BookingService extends Service {
         }
     }
 
-    private void stopTrackingLocation() {
+    private void stopBookingService() {
         if (mHandler != null && mHandlerTask != null) {
             mHandler.removeCallbacks(mHandlerTask);
         }
@@ -517,7 +517,7 @@ public class BookingService extends Service {
             closeBooking();
             if (countDownTimer != null)
                 countDownTimer.cancel();
-            stopTrackingLocation();
+            stopBookingService();
         }
     }
 

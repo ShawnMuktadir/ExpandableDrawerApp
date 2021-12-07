@@ -318,13 +318,13 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                             mBookedPlace.setIsBooked(true);
                             mBookedPlace.setPsId(response.body().getPsId());
                             Preferences.getInstance(context).setBooked(mBookedPlace);
-                            ApplicationUtils.startAlarm(context, ApplicationUtils.convertLongToCalendar(Preferences.getInstance(context).getBooked().getArriveDate())
-                                    , ApplicationUtils.convertLongToCalendar(Preferences.getInstance(context).getBooked().getDepartedDate()));
                             if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
                                 binding.actionBarTitle.setText(context.getResources().getString(R.string.booking_payment));
                                 if (isBookNowChecked) {
                                     setBookingPark(Preferences.getInstance(context).getUser().getMobileNo(), mBookedPlace.getBookedUid());
                                 } else {
+                                    ApplicationUtils.startAlarm(context, ApplicationUtils.convertLongToCalendar(Preferences.getInstance(context).getBooked().getArriveDate())
+                                        , ApplicationUtils.convertLongToCalendar(Preferences.getInstance(context).getBooked().getDepartedDate()));
                                     if (getActivity() instanceof BookingActivity) {
                                         startActivityWithFinishAffinity(context, HomeActivity.class);
                                     } else if (getActivity() instanceof HomeActivity) {
@@ -367,7 +367,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                         BookedPlace mBookedPlace = Preferences.getInstance(context).getBooked();
                         mBookedPlace.setCarParked(true);
                         Preferences.getInstance(context).setBooked(mBookedPlace);
-                        ApplicationUtils.startBookingExceedService(context,mBookedPlace.getDepartedDate());
+                        ApplicationUtils.stopBookingTrackService(context);
                         getBookingParkStatus(Preferences.getInstance(context).getUser().getMobileNo());
                     }
                 }
