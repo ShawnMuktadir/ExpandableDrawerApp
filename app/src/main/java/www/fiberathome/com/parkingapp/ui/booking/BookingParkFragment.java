@@ -59,6 +59,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.databinding.FragmentBookingParkBinding;
 import www.fiberathome.com.parkingapp.listener.FragmentChangeListener;
@@ -71,6 +72,7 @@ import www.fiberathome.com.parkingapp.model.response.booking.BookingParkStatusRe
 import www.fiberathome.com.parkingapp.model.response.booking.CloseReservationResponse;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
+import www.fiberathome.com.parkingapp.ui.schedule.ScheduleActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
@@ -94,7 +96,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
 
     private FragmentBookingParkBinding binding;
     private FusedLocationProviderClient mFusedLocationClient;
-    private HomeActivity context;
+    private BaseActivity context;
 
     LocationCallback mLocationCallback = new LocationCallback() {
         @Override
@@ -153,16 +155,23 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        context = (HomeActivity) getActivity();
+        if (getActivity() instanceof HomeActivity) {
+            context = (HomeActivity) getActivity();
+        } else if (getActivity() instanceof BookingActivity) {
+            context = (BookingActivity) getActivity();
+        } else if (getActivity() instanceof ScheduleActivity) {
+            context = (ScheduleActivity) getActivity();
+        }
         mHandlerTask.run();
         setBroadcast();
         listener = (FragmentChangeListener) getActivity();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
         if (isServicesOk()) {
             SupportMapFragment supportMapFragment = SupportMapFragment.newInstance();
-
             if (context != null) {
-                context.setActionToolBarVisibilityGone();
+                if (getActivity() instanceof HomeActivity) {
+                    ((HomeActivity) context).setActionToolBarVisibilityGone();
+                }
                 FragmentTransaction ft = context.getSupportFragmentManager().beginTransaction().
                         replace(R.id.map, supportMapFragment);
                 ft.commit();
@@ -448,8 +457,13 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                                 new DialogUtils.DialogClickListener() {
                                     @Override
                                     public void onPositiveClick() {
-                                        Timber.e("Positive Button clicked");
-                                        listener.fragmentChange(HomeFragment.newInstance());
+                                        if (getActivity() instanceof HomeActivity) {
+                                            listener.fragmentChange(HomeFragment.newInstance());
+                                        } else if (getActivity() instanceof BookingActivity) {
+                                            context.startActivity(HomeActivity.class);
+                                        } else if (getActivity() instanceof ScheduleActivity) {
+                                            context.startActivity(HomeActivity.class);
+                                        }
                                     }
 
                                     @Override

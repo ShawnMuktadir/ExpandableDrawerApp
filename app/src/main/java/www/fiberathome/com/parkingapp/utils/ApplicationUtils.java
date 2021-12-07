@@ -180,10 +180,14 @@ public class ApplicationUtils {
         if (!isLocationTrackingServiceRunning(context)) {
             Intent intent = new Intent(context, BookingService.class);
             intent.setAction(Constants.START_BOOKING_TRACKING);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(intent);
-            } else {
-                context.startService(intent);
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    context.startForegroundService(intent);
+                } else {
+                    context.startService(intent);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -193,10 +197,14 @@ public class ApplicationUtils {
             Intent intent = new Intent(context, BookingService.class);
             intent.putExtra("departureDate", departureDate);
             intent.setAction(Constants.BOOKING_EXCEED_CHECK);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(intent);
-            } else {
-                context.startService(intent);
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    context.startForegroundService(intent);
+                } else {
+                    context.startService(intent);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -204,7 +212,15 @@ public class ApplicationUtils {
     public static void stopBookingTrackService(Context context) {
         Intent intent = new Intent(context, BookingService.class);
         intent.setAction(Constants.STOP_BOOKING_TRACKING);
-        context.startService(intent);
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(intent);
+            } else {
+                context.startService(intent);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void startAlarm(Context context, Calendar arrival, Calendar departure) {

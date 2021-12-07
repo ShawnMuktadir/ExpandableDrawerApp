@@ -112,28 +112,34 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
             binding.tvUserVehicleNo.setText(user.getVehicleNo());
             binding.tvUserVehicleNoArmy.setVisibility(View.GONE);
         }
-        if(user.getImage()!=null) {
-            if (!user.getImage().endsWith(".jpg")) {
-                String url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
-                Timber.e("Image URL -> %s", url);
-                Glide.with(context).load(url).placeholder(R.drawable.blank_profile).dontAnimate().into(binding.ivUserProfilePic);
-            }
-            else {
-                String url = AppConfig.IMAGES_URL + user.getImage();
-                Timber.e("Image URL -> %s", url);
-                Glide.with(context).load(url).placeholder(R.drawable.blank_profile).dontAnimate().into(binding.ivUserProfilePic);
+        if (user.getImage() != null && !user.getImage().equals("")) {
+            try {
+                if (!user.getImage().endsWith(".jpg")) {
+                    String url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
+                    Timber.e("Image URL -> %s", url);
+                    Glide.with(context).load(url).placeholder(R.drawable.blank_profile).dontAnimate().into(binding.ivUserProfilePic);
+                } else {
+                    String url = AppConfig.IMAGES_URL + user.getImage();
+                    Timber.e("Image URL -> %s", url);
+                    Glide.with(context).load(url).placeholder(R.drawable.blank_profile).dontAnimate().into(binding.ivUserProfilePic);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
-        if(user.getVehicleImage()!=null){
-            if(!user.getVehicleImage().endsWith(".jpg")){
-                String vehicleUrl = AppConfig.IMAGES_URL + user.getVehicleImage() + ".jpg";
-                Timber.e("Vehicle Image URL -> %s", vehicleUrl);
-                Glide.with(context).load(vehicleUrl).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(binding.ivVehicleProfilePlatePreview);
-            }
-            else{
-                String vehicleUrl = AppConfig.IMAGES_URL + user.getVehicleImage();
-                Timber.e("Vehicle Image URL -> %s", vehicleUrl);
-                Glide.with(context).load(vehicleUrl).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(binding.ivVehicleProfilePlatePreview);
+        if (user.getVehicleImage() != null && !user.getVehicleImage().equals("")) {
+            try {
+                if (!user.getVehicleImage().endsWith(".jpg")) {
+                    String vehicleUrl = AppConfig.IMAGES_URL + user.getVehicleImage() + ".jpg";
+                    Timber.e("Vehicle Image URL -> %s", vehicleUrl);
+                    Glide.with(context).load(vehicleUrl).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(binding.ivVehicleProfilePlatePreview);
+                } else {
+                    String vehicleUrl = AppConfig.IMAGES_URL + user.getVehicleImage();
+                    Timber.e("Vehicle Image URL -> %s", vehicleUrl);
+                    Glide.with(context).load(vehicleUrl).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(binding.ivVehicleProfilePlatePreview);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }

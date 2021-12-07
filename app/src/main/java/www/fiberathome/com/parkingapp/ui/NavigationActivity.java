@@ -11,7 +11,6 @@ import android.content.pm.ResolveInfo;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -39,11 +38,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.navigation.NavigationView;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
-import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.util.List;
 import java.util.Locale;
@@ -331,31 +325,20 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
                 .centerCrop()
                 .placeholder(R.drawable.blank_profile)
                 .error(R.drawable.blank_profile);
-
         String url;
-       if(user.getImage()!=null) {
-           if (!user.getImage().endsWith(".jpg")) {
-               url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
-           } else {
-               url = AppConfig.IMAGES_URL + user.getImage();
-           }
-           Timber.e("user profile photo url -> %s", url);
-           Glide.with(this).load(url).apply(requestOptions).override(200, 200).into(ivUserProfile);
-       }
-
-
-        String text = user.getMobileNo() + " - ";
-        text = text + user.getVehicleNo();
-        MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
-        try {
-            BitMatrix bitMatrix = multiFormatWriter.encode(text, BarcodeFormat.QR_CODE, 200, 200);
-            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-            Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
-            //QRCode.setImageBitmap(bitmap);
-        } catch (WriterException e) {
-            e.printStackTrace();
+        if (user.getImage() != null && !user.getImage().equals("")) {
+            try {
+                if (!user.getImage().endsWith(".jpg")) {
+                    url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
+                } else {
+                    url = AppConfig.IMAGES_URL + user.getImage();
+                }
+                Timber.e("user profile photo url -> %s", url);
+                Glide.with(this).load(url).apply(requestOptions).override(200, 200).into(ivUserProfile);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-
         navHeaderView.setOnClickListener(v -> startActivity(ProfileActivity.class));
     }
 
