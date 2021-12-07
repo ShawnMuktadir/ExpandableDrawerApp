@@ -210,16 +210,19 @@ public class ApplicationUtils {
     }
 
     public static void stopBookingTrackService(Context context) {
-        Intent intent = new Intent(context, BookingService.class);
-        intent.setAction(Constants.STOP_BOOKING_TRACKING);
-        try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(intent);
-            } else {
-                context.startService(intent);
+        if (isLocationTrackingServiceRunning(context)) {
+            Intent intent = new Intent(context, BookingService.class);
+
+            intent.setAction(Constants.STOP_BOOKING_TRACKING);
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    context.startForegroundService(intent);
+                } else {
+                    context.startService(intent);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
