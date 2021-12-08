@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.View;
@@ -22,9 +23,10 @@ import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
-import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
@@ -56,6 +58,7 @@ public class ScanBarCodeActivity extends BaseActivity implements FragmentChangeL
     private boolean isTransactionPending;
     private boolean scheduleActivityCalled = false;
     private boolean isDialogShown = false;
+    private ArrayList<SensorArea> sensorAreaArrayList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +68,9 @@ public class ScanBarCodeActivity extends BaseActivity implements FragmentChangeL
         View view = binding.getRoot();
         setContentView(view);
 
+        if (getIntent().getParcelableArrayListExtra("sensorAreaArrayList") != null) {
+            sensorAreaArrayList = getIntent().getParcelableArrayListExtra("sensorAreaArrayList");
+        }
         LocationManager mLocationManager = (LocationManager)
                 getSystemService(Context.LOCATION_SERVICE);
         //Location locationGPS = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -218,8 +224,28 @@ public class ScanBarCodeActivity extends BaseActivity implements FragmentChangeL
                         binding.btnAction.setText(context.getResources().getString(R.string.confirm_booking));
                         try {
                             intentData = barcodes.valueAt(0).displayValue;
-                            SensorArea sensorArea = new Gson().fromJson(intentData, SensorArea.class);
-                            parseQRIntentData(sensorArea);
+                            byte[] data = Base64.decode(intentData, Base64.DEFAULT);
+                            String decodedBase64 = new String(data, StandardCharsets.UTF_8);
+                            SensorArea sensorArea = null;
+                            for (SensorArea status : sensorAreaArrayList) {
+                                // decode intentData
+                                /*if (status.getPlaceId().equalsIgnoreCase(decodedBase64)) {
+                                    sensorArea = status;
+                                    break;
+                                }*/
+                                // plain intentData
+                                if (status.getPlaceId().equalsIgnoreCase(intentData)) {
+                                    sensorArea = status;
+                                    break;
+                                }
+                            }
+                            try {
+                                if (sensorArea != null) {
+                                    parseQRIntentData(sensorArea);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         } catch (Exception e) {
                             Timber.e(e.getCause());
                         }
@@ -232,7 +258,7 @@ public class ScanBarCodeActivity extends BaseActivity implements FragmentChangeL
     }
 
     private void parseQRIntentData(SensorArea intentData) {
-        String parkingArea, placeId, count = "";
+        String parkingArea, placeId, count;
         double lat, lng;
         Timber.e("List intentData -> %s", intentData);
 

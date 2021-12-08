@@ -564,4 +564,9 @@
     <string name="barcode_scanner_started">Barcode scanner started</string>
     <string name="prevent_memory_leaks_scan_stopped">To prevent memory leaks barcode scanner has been stopped</string>
     <string name="unable_to_load_map">Unable to load map</string>
+    <string name="scratchCard">Scratch Card</string>
+    <string name="e_pay">E-Pay</string>
+    <string name="online_pay">Pay Online</string>
+    <string name="scratch_card">Scratch Card</string>
+    <string name="enter_scratch_card_number">Enter your Scratch Card Number</string>
 </resources>

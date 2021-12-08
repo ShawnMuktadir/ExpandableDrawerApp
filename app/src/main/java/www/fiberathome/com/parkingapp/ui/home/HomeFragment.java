@@ -25,6 +25,7 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -1498,7 +1499,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         });
 
         binding.fabQRScan.setOnClickListener(v -> {
-            context.startActivity(ScanBarCodeActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList("sensorAreaArrayList", (ArrayList<? extends Parcelable>) sensorAreaArrayList);
+            context.startActivity(ScanBarCodeActivity.class, bundle);
         });
 
         binding.fabGetDirection.setOnClickListener(v -> {

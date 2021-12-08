@@ -59,7 +59,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:padding="@dimen/app_padding_secondary">
+                android:padding="@dimen/app_padding_secondary"
+                android:layout_margin="@dimen/dim5">
 
                 <TextView
                     android:layout_width="wrap_content"
