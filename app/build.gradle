@@ -51,9 +51,6 @@ android {
         }
     }
 
-    aaptOptions {
-        cruncherEnabled = false
-    }
 
     dexOptions {
         preDexLibraries false
