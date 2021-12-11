@@ -6,7 +6,6 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.View;
@@ -25,7 +24,6 @@ import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 import timber.log.Timber;
@@ -224,8 +222,8 @@ public class ScanBarCodeActivity extends BaseActivity implements FragmentChangeL
                         binding.btnAction.setText(context.getResources().getString(R.string.confirm_booking));
                         try {
                             intentData = barcodes.valueAt(0).displayValue;
-                            byte[] data = Base64.decode(intentData, Base64.DEFAULT);
-                            String decodedBase64 = new String(data, StandardCharsets.UTF_8);
+//                            byte[] data = Base64.decode(intentData, Base64.DEFAULT);
+//                            String decodedBase64 = new String(data, StandardCharsets.UTF_8);
                             SensorArea sensorArea = null;
                             for (SensorArea status : sensorAreaArrayList) {
                                 // decode intentData
