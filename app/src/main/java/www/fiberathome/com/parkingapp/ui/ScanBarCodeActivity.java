@@ -222,6 +222,7 @@ public class ScanBarCodeActivity extends BaseActivity implements FragmentChangeL
                         binding.btnAction.setText(context.getResources().getString(R.string.confirm_booking));
                         try {
                             intentData = barcodes.valueAt(0).displayValue;
+
                             /*byte[] data = Base64.decode(intentData, Base64.DEFAULT);
                             String decodedBase64 = new String(data, StandardCharsets.UTF_8);*/
                             SensorArea sensorArea = null;
@@ -240,6 +241,26 @@ public class ScanBarCodeActivity extends BaseActivity implements FragmentChangeL
                             try {
                                 if (sensorArea != null) {
                                     parseQRIntentData(sensorArea);
+                                } else {
+                                    DialogUtils.getInstance().alertDialog(context,
+                                            context,
+                                            context.getResources().getString(R.string.invalid_qr),
+                                            context.getResources().getString(R.string.invalid_qr_code_message),
+                                            context.getResources().getString(R.string.ok), "",
+                                            new DialogUtils.DialogClickListener() {
+                                                @Override
+                                                public void onPositiveClick() {
+                                                    Timber.e("Positive Button clicked");
+                                                    if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
+                                                        isDialogShown = false;
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onNegativeClick() {
+                                                    Timber.e("Negative Button Clicked");
+                                                }
+                                            }).show();
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();

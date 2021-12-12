@@ -4,11 +4,12 @@
     android:id="@+id/fragmentMain"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
+
     <View
         android:id="@+id/outside_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:background="@color/transparent_black"/>
+        android:background="@color/transparent_black" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cv_exit"
@@ -30,7 +31,7 @@
             android:text="@string/exit_message"
             android:textColor="@color/color_selector_white"
             android:textStyle="bold"
-            android:textSize="@dimen/_15ssp"/>
+            android:textSize="@dimen/_15ssp" />
 
     </androidx.cardview.widget.CardView>
 

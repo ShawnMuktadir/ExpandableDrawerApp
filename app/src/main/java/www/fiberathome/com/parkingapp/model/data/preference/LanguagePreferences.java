@@ -24,8 +24,8 @@ public class LanguagePreferences {
         mContext = context;
     }
 
-    public static synchronized LanguagePreferences getInstance(Context context){
-        if (instance == null){
+    public static synchronized LanguagePreferences getInstance(Context context) {
+        if (instance == null) {
             instance = new LanguagePreferences(context);
         }
 

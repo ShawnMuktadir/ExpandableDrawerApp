@@ -302,6 +302,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                     binding.textInputLayoutPassword.setErrorEnabled(false);
                 }
             }
+
             @Override
             public void afterTextChanged(Editable s) {
 

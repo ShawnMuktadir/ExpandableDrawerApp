@@ -50,12 +50,12 @@ public class Utility {
             Method getRuntime = (Method) getDeclaredMethod.invoke(vmRuntimeClass, "getRuntime",
                     null);
             Method setHiddenApiExemptions = (Method) getDeclaredMethod.invoke(vmRuntimeClass,
-                    "setHiddenApiExemptions", new Class[]{ String[].class });
+                    "setHiddenApiExemptions", new Class[]{String[].class});
             assert getRuntime != null;
             Object sVmRuntime = getRuntime.invoke(null);
 
             assert setHiddenApiExemptions != null;
-            setHiddenApiExemptions.invoke(sVmRuntime, new Object[]{ new String[]{ "L" } });
+            setHiddenApiExemptions.invoke(sVmRuntime, new Object[]{new String[]{"L"}});
         } catch (Throwable e) {
             Timber.e(e, "Reflect bootstrap failed:");
         }

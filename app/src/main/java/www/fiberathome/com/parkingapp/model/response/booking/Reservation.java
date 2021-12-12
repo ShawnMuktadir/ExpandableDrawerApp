@@ -21,11 +21,11 @@ public class Reservation {
     private String spotId;
 
 
-    public Reservation(){
+    public Reservation() {
 
     }
 
-    public Reservation( String mobileNo, String timeStart, String timeEnd, String spotId) {
+    public Reservation(String mobileNo, String timeStart, String timeEnd, String spotId) {
         this.mobileNo = mobileNo;
         this.timeStart = timeStart;
         this.timeEnd = timeEnd;
@@ -49,9 +49,13 @@ public class Reservation {
         this.timeStart = timeStart;
     }
 
-    public String getTimeEnd() { return timeEnd; }
+    public String getTimeEnd() {
+        return timeEnd;
+    }
 
-    public void setTimeEnd(String timeEnd) { this.timeEnd = timeEnd; }
+    public void setTimeEnd(String timeEnd) {
+        this.timeEnd = timeEnd;
+    }
 
     public String getMobileNo() {
         return mobileNo;

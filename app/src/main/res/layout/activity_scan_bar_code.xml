@@ -31,5 +31,5 @@
         android:textAllCaps="false"
         android:text="@string/confirm_booking"
         android:textColor="@color/white"
-        android:background="@color/black"/>
+        android:background="@color/black" />
 </RelativeLayout>

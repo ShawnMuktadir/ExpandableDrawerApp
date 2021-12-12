@@ -276,9 +276,9 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
             });
             binding.recyclerViewBooking.setAdapter(bookingAdapter);
         } else {
-           if(bookingAdapter!=null){
-               bookingAdapter.updateList(bookedLists);
-           }
+            if (bookingAdapter != null) {
+                bookingAdapter.updateList(bookedLists);
+            }
         }
     }
 

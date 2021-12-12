@@ -13,8 +13,7 @@ public class BookingServiceStarter extends BroadcastReceiver {
         boolean isBookingEnd = intent.getBooleanExtra("EndBooking", false);
         if (!isBookingEnd) {
             ApplicationUtils.startBookingTrackService(context);
-        }
-        else {
+        } else {
             if (Preferences.getInstance(context).getBooked().getIsBooked()) {
                 ApplicationUtils.startBookingExceedService(context, intent.getLongExtra("departure", 0));
             }

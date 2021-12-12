@@ -13,7 +13,7 @@ import java.util.Date;
 
 public class PhotoUtil {
 
-    public static Uri createImageFile(){
+    public static Uri createImageFile() {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
@@ -35,7 +35,7 @@ public class PhotoUtil {
         return Uri.fromFile(image);
     }
 
-    public static void copyFileUsingFileChannels(File source, File dest){
+    public static void copyFileUsingFileChannels(File source, File dest) {
         FileChannel inputChannel = null;
         FileChannel outputChannel = null;
         try {

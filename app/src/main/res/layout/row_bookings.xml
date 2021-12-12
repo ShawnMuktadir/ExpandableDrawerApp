@@ -136,43 +136,43 @@
                     android:textColor="@color/black"
                     android:textSize="@dimen/dimTex14"
                     android:textStyle="normal"
-                    android:layout_marginBottom="@dimen/dim5"/>
+                    android:layout_marginBottom="@dimen/dim5" />
 
-                    <FrameLayout
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/tvCancel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:gravity="end|center_vertical"
                         android:layout_gravity="end"
-                        android:layout_weight="1">
+                        android:background="@drawable/button_cancel_shape"
+                        android:padding="@dimen/dim5"
+                        android:layout_margin="@dimen/dim2"
+                        android:text="@string/cancel"
+                        android:textColor="@color/red"
+                        android:textSize="@dimen/dimTex14"
+                        android:textStyle="bold"
+                        android:visibility="gone"
+                        card_view:drawableStartCompat="@drawable/ic_cancel" />
 
-                        <TextView
-                            android:id="@+id/tvCancel"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="end|center_vertical"
-                            android:layout_gravity="end"
-                            android:background="@drawable/button_cancel_shape"
-                            android:padding="@dimen/dim5"
-                            android:layout_margin="@dimen/dim2"
-                            android:text="@string/cancel"
-                            android:textColor="@color/red"
-                            android:textSize="@dimen/dimTex14"
-                            android:textStyle="bold"
-                            android:visibility="gone"
-                            card_view:drawableStartCompat="@drawable/ic_cancel" />
+                    <TextView
+                        android:id="@+id/tvStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        android:layout_gravity="end"
+                        android:text="@string/parked"
+                        android:textColor="@color/green2"
+                        android:textSize="@dimen/dimTex14"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
 
-                        <TextView
-                            android:id="@+id/tvStatus"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="end"
-                            android:layout_gravity="end"
-                            android:text="@string/parked"
-                            android:textColor="@color/green2"
-                            android:textSize="@dimen/dimTex14"
-                            android:textStyle="bold"
-                            android:visibility="gone" />
-
-                    </FrameLayout>
+                </FrameLayout>
 
             </LinearLayout>
 

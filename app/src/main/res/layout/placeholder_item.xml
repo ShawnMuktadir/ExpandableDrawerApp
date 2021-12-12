@@ -64,13 +64,13 @@
                     android:layout_width="@dimen/_200sdp"
                     android:layout_height="@dimen/_10sdp"
                     android:layout_marginTop="@dimen/_5sdp"
-                    android:background="@color/placeholder_background"/>
+                    android:background="@color/placeholder_background" />
 
                 <View
                     android:layout_width="@dimen/_110sdp"
                     android:layout_height="@dimen/_10sdp"
                     android:layout_marginTop="@dimen/_5sdp"
-                    android:background="@color/placeholder_background"/>
+                    android:background="@color/placeholder_background" />
             </LinearLayout>
 
             <LinearLayout
@@ -90,13 +90,13 @@
                     android:layout_width="@dimen/_200sdp"
                     android:layout_height="@dimen/_10sdp"
                     android:layout_marginTop="@dimen/_5sdp"
-                    android:background="@color/placeholder_background"/>
+                    android:background="@color/placeholder_background" />
 
                 <View
                     android:layout_width="@dimen/_110sdp"
                     android:layout_height="@dimen/_10sdp"
                     android:layout_marginTop="@dimen/_5sdp"
-                    android:background="@color/placeholder_background"/>
+                    android:background="@color/placeholder_background" />
             </LinearLayout>
 
         </LinearLayout>

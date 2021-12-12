@@ -2,22 +2,20 @@ package www.fiberathome.com.parkingapp.ui.booking;
 
 import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_BN;
 
-import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.EditText;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 import com.sslwireless.sslcommerzlibrary.model.initializer.SSLCCustomerInfoInitializer;
 import com.sslwireless.sslcommerzlibrary.model.initializer.SSLCommerzInitialization;
@@ -29,9 +27,7 @@ import com.sslwireless.sslcommerzlibrary.viewmodel.listener.SSLCTransactionRespo
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Random;
@@ -42,13 +38,12 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.adapter.UniversalSpinnerAdapter;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
+import www.fiberathome.com.parkingapp.databinding.BottomSheetDialogScratchCardBinding;
 import www.fiberathome.com.parkingapp.databinding.FragmentPaymentBinding;
 import www.fiberathome.com.parkingapp.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.model.BookedPlace;
-import www.fiberathome.com.parkingapp.model.Spinner;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
@@ -186,8 +181,6 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
             listener.fragmentChange(scheduleFragment);
         });
 
-        binding.tvEditSlot.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
-
         binding.tvPromo.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
 
         binding.tvTermCondition.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
@@ -226,56 +219,57 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                 ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
             }
         });
-        binding.btnScratchCard.setOnClickListener(v -> {
-            AlertDialog.Builder alert = new AlertDialog.Builder(context);
-            final EditText edittext = new EditText(context);
-            alert.setMessage(context.getResources().getString(R.string.enter_scratch_card_number));
-            alert.setTitle(context.getResources().getString(R.string.scratch_card));
 
-            alert.setView(edittext);
+        binding.btnScratchCard.setOnClickListener(v1 -> {
+            try {
+                BottomSheetDialogScratchCardBinding dialogScratchCardBinding = BottomSheetDialogScratchCardBinding.inflate(getLayoutInflater());
+                BottomSheetDialog dialog = new BottomSheetDialog(context);
+                dialog.setContentView(dialogScratchCardBinding.getRoot());
+                dialog.getWindow().setSoftInputMode(
+                        WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+                dialog.show();
 
-            alert.setPositiveButton(context.getResources().getString(R.string.submit), (dialog, whichButton) -> {
-                //What ever you want to do with the value
-                String YouEditTextValue = edittext.getText().toString();
-                if (ConnectivityUtils.getInstance().checkInternet(context)) {
-                    long diff = arrivedDate.getTime() - departureDate.getTime();
-                    long seconds = diff / 1000;
-                    long minutes = seconds / 60;
-                    long hours = minutes / 60;
-                    long days = hours / 24;
-                    Timber.e("days -> %s", days);
-                    Timber.e("hours -> %s", hours);
-                    Timber.e("minutes -> %s", minutes);
-                    if (minutes > 120) {
-                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.booking_time_rules));
-                    } else {
-                        if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
-                            BookedPlace mBookedPlace = new BookedPlace();
-                            mBookedPlace.setBill((float) setBill());
-                            mBookedPlace.setLat(lat);
-                            mBookedPlace.setLon(lon);
-                            mBookedPlace.setAreaName(areaName);
-                            mBookedPlace.setParkingSlotCount(parkingSlotCount);
-                            mBookedPlace.setDepartedDate(departureDate.getTime());
-                            mBookedPlace.setArriveDate(arrivedDate.getTime());
-                            mBookedPlace.setPlaceId(placeId);
-                            mBookedPlace.setPaid(true);
-                            Preferences.getInstance(context).setBooked(mBookedPlace);
-                            storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
-                                    ApplicationUtils.getDate(Preferences.getInstance(context).getBooked().getArriveDate()),
-                                    ApplicationUtils.getDate(Preferences.getInstance(context).getBooked().getDepartedDate()),
-                                    Preferences.getInstance(context).getBooked().getPlaceId());
+                dialogScratchCardBinding.buttonSubmit.setOnClickListener(v -> {
+                    if (ConnectivityUtils.getInstance().checkInternet(context)) {
+                        long diff = arrivedDate.getTime() - departureDate.getTime();
+                        long seconds = diff / 1000;
+                        long minutes = seconds / 60;
+                        long hours = minutes / 60;
+                        long days = hours / 24;
+                        Timber.e("days -> %s", days);
+                        Timber.e("hours -> %s", hours);
+                        Timber.e("minutes -> %s", minutes);
+                        if (minutes > 120) {
+                            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.booking_time_rules));
+                        } else {
+                            if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
+                                BookedPlace mBookedPlace = new BookedPlace();
+                                mBookedPlace.setBill((float) setBill());
+                                mBookedPlace.setLat(lat);
+                                mBookedPlace.setLon(lon);
+                                mBookedPlace.setAreaName(areaName);
+                                mBookedPlace.setParkingSlotCount(parkingSlotCount);
+                                mBookedPlace.setDepartedDate(departureDate.getTime());
+                                mBookedPlace.setArriveDate(arrivedDate.getTime());
+                                mBookedPlace.setPlaceId(placeId);
+                                mBookedPlace.setPaid(true);
+                                Preferences.getInstance(context).setBooked(mBookedPlace);
+                                storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
+                                        ApplicationUtils.getDate(Preferences.getInstance(context).getBooked().getArriveDate()),
+                                        ApplicationUtils.getDate(Preferences.getInstance(context).getBooked().getDepartedDate()),
+                                        Preferences.getInstance(context).getBooked().getPlaceId());
+                                dialog.dismiss();
+                            }
                         }
                     }
-                } else {
-                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
-                }
-            });
+                });
 
-            alert.setNegativeButton(context.getResources().getString(R.string.cancel), (dialog, whichButton) -> {
-                // what ever you want to do with No option.
-            });
-            alert.show();
+                dialogScratchCardBinding.buttonCancel.setOnClickListener(v -> dialog.dismiss());
+            } catch (Exception e) {
+                // generic exception handling
+                e.printStackTrace();
+            }
+
         });
     }
 

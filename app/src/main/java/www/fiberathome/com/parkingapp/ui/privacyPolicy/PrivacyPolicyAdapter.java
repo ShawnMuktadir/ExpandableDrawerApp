@@ -58,7 +58,7 @@ public class PrivacyPolicyAdapter extends RecyclerView.Adapter<RecyclerView.View
         privacyPolicyViewHolder.binding.tvPrivacyBody.setText(termsCondition.getDescription());
 
         privacyPolicyViewHolder.binding.tvPrivacyBody.setOnClickListener(v -> {
-            if(isTextViewClicked) {
+            if (isTextViewClicked) {
                 //This will shrink textview to 2 lines if it is expanded.
                 privacyPolicyViewHolder.binding.tvPrivacyBody.setMaxLines(2);
                 isTextViewClicked = false;

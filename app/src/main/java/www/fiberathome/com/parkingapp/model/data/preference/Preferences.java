@@ -123,7 +123,7 @@ public class Preferences {
         return bookedPlace;
     }
 
-    public void clearBooking(){
+    public void clearBooking() {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME_BOOKING, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.clear();
@@ -162,7 +162,8 @@ public class Preferences {
     public void saveVehicleDivData(String vehicleDivData) {
         saveValue(Constants.KEY_VEHICLE_DIV_DATA, vehicleDivData);
     }
-   public String getBookedParkingData() {
+
+    public String getBookedParkingData() {
         return getValue(Constants.KEY_Booked_Parking_DATA, null);
     }
 

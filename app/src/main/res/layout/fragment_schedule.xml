@@ -161,8 +161,7 @@
                     android:id="@+id/departureDisableLayout"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_30sdp"
-                    android:layout_margin="@dimen/dim5"
-                    android:background="@drawable/rect_white_bg_gray_border_rounded">
+                    android:layout_margin="@dimen/dim5">
 
                     <Spinner
                         android:id="@+id/spinner_departure_time"

@@ -15,6 +15,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -43,7 +44,6 @@ import www.fiberathome.com.parkingapp.model.response.booking.ReservationResponse
 import www.fiberathome.com.parkingapp.model.response.booking.TimeSlotResponse;
 import www.fiberathome.com.parkingapp.ui.booking.BookingActivity;
 import www.fiberathome.com.parkingapp.ui.booking.PaymentFragment;
-import www.fiberathome.com.parkingapp.ui.booking.helper.DialogHelper;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
@@ -54,13 +54,11 @@ import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressLint("NonConstantResourceId")
 @SuppressWarnings({"unused", "RedundantSuppression"})
-public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBtnClickListener,
-        IOnBackPressListener {
+public class ScheduleFragment extends BaseFragment implements IOnBackPressListener {
 
     public static String areaPlaceId = "";
     public static String areaName;
     public static String areaCount;
-    public DialogHelper.PayBtnClickListener payBtnClickListener;
     public long arrived, departure, difference;
 
     private BaseActivity context;
@@ -156,7 +154,6 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
             currentTime = Calendar.getInstance().getTime();
             binding.textViewCurrentDate.setText(DateTimeUtils.getInstance().getCurrentDayTime());
             listener = (FragmentChangeListener) getActivity();
-            payBtnClickListener = this;
             setDatePickerTime();
             setListeners();
         }
@@ -247,10 +244,6 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
         super.onDestroyView();
     }
 
-    @Override
-    public void payBtnClick() {
-    }
-
     private void setListeners() {
         binding.ivBackArrow.setOnClickListener(v -> onBackPressed());
 
@@ -310,11 +303,9 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
             if (!setArrivedDate) {
                 binding.cbBookNow.setEnabled(false);
                 binding.arrivedPicker.setEnabled(false);
-                binding.arriveDisableLayout.setBackgroundColor(getResources().getColor(R.color.disableColor));
-
+                binding.arriveDisableLayout.setBackgroundColor(context.getResources().getColor(R.color.disableColor));
+                binding.departureDisableLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.rect_white_bg_gray_border_rounded));
                 binding.departurePicker.setEnabled(true);
-                binding.departureDisableLayout.setBackgroundColor(getResources().getColor(R.color.enableColor));
-
                 setArrivedDate = true;
             } else {
                 if (departure != 0) {
@@ -323,9 +314,7 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
                     long minutes = seconds / 60;
                     long hours = minutes / 60;
                     long days = hours / 24;
-                    Timber.d("onClick: did not entered to else");
-                    Timber.d("seconds-> %s", seconds);
-                    Timber.d("minutes-> %s", minutes);
+
                     if (diff < 0) {
                         Toast.makeText(requireActivity(), context.getResources().getString(R.string.departure_time_less_arrive_time), Toast.LENGTH_SHORT).show();
                     } else {
@@ -350,7 +339,8 @@ public class ScheduleFragment extends BaseFragment implements DialogHelper.PayBt
             }
             if (setArrivedDate) {
                 binding.arrivedPicker.setEnabled(true);
-                binding.arriveDisableLayout.setBackgroundColor(getResources().getColor(R.color.enableColor));
+                binding.arriveDisableLayout.setBackgroundColor(context.getResources().getColor(R.color.enableColor));
+                binding.departureDisableLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.white_border));
                 setArrivedDate = false;
                 if (getActivity() != null)
                     getActivity().getFragmentManager().popBackStack();

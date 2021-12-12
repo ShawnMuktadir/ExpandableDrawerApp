@@ -16,7 +16,7 @@ public class ApiClient {
         if (retrofit == null) {
             OkHttpClient client = new OkHttpClient.Builder()
                     .connectTimeout(20, TimeUnit.SECONDS)
-                    .readTimeout(20,TimeUnit.SECONDS).build();
+                    .readTimeout(20, TimeUnit.SECONDS).build();
             retrofit = new Retrofit.Builder()
                     .baseUrl(url)
                     .client(client)

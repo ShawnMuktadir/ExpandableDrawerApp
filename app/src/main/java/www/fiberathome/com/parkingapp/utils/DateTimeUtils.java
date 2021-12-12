@@ -67,6 +67,7 @@ public class DateTimeUtils {
             return null;
         }
     }
+
     @SuppressLint("SimpleDateFormat")
     public String getCurrentDayTime() {
         try {

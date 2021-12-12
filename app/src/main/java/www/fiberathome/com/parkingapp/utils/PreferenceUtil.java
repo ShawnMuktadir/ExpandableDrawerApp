@@ -15,7 +15,7 @@ public class PreferenceUtil {
         sharedPreference.edit().putBoolean(permission, isFirstTime).apply();
     }
 
-    public static boolean isFirstTimeAskingPermission(Context context, String permission){
+    public static boolean isFirstTimeAskingPermission(Context context, String permission) {
         return context.getSharedPreferences(PREFS_FILE_NAME, MODE_PRIVATE).getBoolean(permission, true);
     }
 }

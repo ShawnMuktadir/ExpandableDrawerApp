@@ -569,4 +569,6 @@
     <string name="online_pay">Pay Online</string>
     <string name="scratch_card">Scratch Card</string>
     <string name="enter_scratch_card_number">Enter your Scratch Card Number</string>
+    <string name="invalid_qr_code_message">Please scan a valid parking slot QR code</string>
+    <string name="invalid_qr">Invalid QR</string>
 </resources>

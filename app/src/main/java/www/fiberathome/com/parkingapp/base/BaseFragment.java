@@ -21,7 +21,6 @@ public class BaseFragment extends Fragment {
     protected void showLoading(Context context) {
         try {
             isLoadingHidden = false;
-            //forceDismissLoading(context);
             progressDialog = DialogUtils.getInstance().progressDialog(context, context.getResources().getString(R.string.please_wait));
         } catch (final IllegalArgumentException e) {
             e.getCause();
@@ -39,7 +38,6 @@ public class BaseFragment extends Fragment {
     protected void showLoading(Context context, String message) {
         try {
             isLoadingHidden = false;
-            //forceDismissLoading(context);
             progressDialog = DialogUtils.getInstance().progressDialog(context, message);
         } catch (final IllegalArgumentException e) {
             e.getCause();

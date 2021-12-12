@@ -3,7 +3,7 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 
 android {
-    defaultConfig.applicationId="www.fiberathome.com.parkingapp"
+    defaultConfig.applicationId = "www.fiberathome.com.parkingapp"
     compileSdkVersion 31
 
     configurations {
@@ -18,7 +18,7 @@ android {
         applicationId "www.fiberathome.com.parkingapp"
         minSdkVersion 19
         targetSdkVersion 31
-        versionCode versionMajor+versionMinor+versionPatch
+        versionCode versionMajor + versionMinor + versionPatch
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
@@ -188,12 +188,12 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth-api-phone:17.5.1'
 
     //pinview
-     implementation 'com.github.poovamraj:PinEditTextField:1.2.6'
+    implementation 'com.github.poovamraj:PinEditTextField:1.2.6'
 
     //SSl Commerz
-    implementation (name: 'sslCommerzSdk', ext:'aar')
+    implementation(name: 'sslCommerzSdk', ext: 'aar')
     //for surfaceview
-    implementation  'com.google.android.gms:play-services-vision:20.1.3'
+    implementation 'com.google.android.gms:play-services-vision:20.1.3'
 }
 
 task javadoc(type: Javadoc) {

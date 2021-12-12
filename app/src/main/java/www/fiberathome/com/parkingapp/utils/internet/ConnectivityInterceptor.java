@@ -11,7 +11,7 @@ import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 public class ConnectivityInterceptor implements Interceptor {
     private final Context context;
 
-    public ConnectivityInterceptor(Context context){
+    public ConnectivityInterceptor(Context context) {
         this.context = context;
     }
 

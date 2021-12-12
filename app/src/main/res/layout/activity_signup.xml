@@ -173,7 +173,7 @@
                 android:text="@string/by_using_this_app_you_agree_to_our_terms_and_conditions_amp_privacy_policy"
                 android:textColor="@color/black"
                 android:visibility="gone"
-                android:textSize="@dimen/dimTex14"/>
+                android:textSize="@dimen/dimTex14" />
 
         </LinearLayout>
 

@@ -36,7 +36,7 @@ public class LoginActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
     }
-    
+
     @Override
     public void onBackPressed() {
         DialogUtils.getInstance().alertDialog(context,

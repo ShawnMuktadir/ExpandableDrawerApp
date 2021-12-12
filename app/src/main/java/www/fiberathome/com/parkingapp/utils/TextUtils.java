@@ -173,14 +173,12 @@ public class TextUtils {
                     return "+88" + number;
             } else
                 return "88";
-        }
-        else if (number != null) {
-            if(number.length() > 3 && number.startsWith("+88") )
+        } else if (number != null) {
+            if (number.length() > 3 && number.startsWith("+88"))
                 return number;
             else
                 return "88";
-        }
-        else
+        } else
             return "88";
     }
 
@@ -193,14 +191,12 @@ public class TextUtils {
                     return "+88" + number;
             } else
                 return "88";
-        }
-        else if (number != null) {
-            if(number.length() > 3 && number.startsWith("+88") )
+        } else if (number != null) {
+            if (number.length() > 3 && number.startsWith("+88"))
                 return number;
             else
                 return "88";
-        }
-        else
+        } else
             return "88";
     }
 
