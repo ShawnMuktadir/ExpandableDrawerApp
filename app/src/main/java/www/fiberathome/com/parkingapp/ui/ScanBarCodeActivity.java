@@ -222,8 +222,8 @@ public class ScanBarCodeActivity extends BaseActivity implements FragmentChangeL
                         binding.btnAction.setText(context.getResources().getString(R.string.confirm_booking));
                         try {
                             intentData = barcodes.valueAt(0).displayValue;
-//                            byte[] data = Base64.decode(intentData, Base64.DEFAULT);
-//                            String decodedBase64 = new String(data, StandardCharsets.UTF_8);
+                            /*byte[] data = Base64.decode(intentData, Base64.DEFAULT);
+                            String decodedBase64 = new String(data, StandardCharsets.UTF_8);*/
                             SensorArea sensorArea = null;
                             for (SensorArea status : sensorAreaArrayList) {
                                 // decode intentData
