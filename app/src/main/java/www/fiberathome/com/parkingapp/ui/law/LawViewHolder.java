@@ -26,7 +26,7 @@ import www.fiberathome.com.parkingapp.model.response.law.Law;
  * Created by LEVI on 22/09/2018.
  */
 public class LawViewHolder extends ChildViewHolder {
-    private TextView mTextView;
+    private final TextView mTextView;
 
     public LawViewHolder(View itemView) {
         super(itemView);

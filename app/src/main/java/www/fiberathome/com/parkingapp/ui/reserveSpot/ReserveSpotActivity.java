@@ -20,7 +20,7 @@ public class ReserveSpotActivity extends AppCompatActivity implements View.OnCli
 
         //selectedspot = findViewById(R.id.selectedSpotTV);
 
-        String selectedSpot= getIntent().getStringExtra("selectedSpot");
+        String selectedSpot = getIntent().getStringExtra("selectedSpot");
         Toast.makeText(this, selectedSpot, Toast.LENGTH_LONG).show();
 
         //selectedspot.setText("Your selected: "+selectedSpot);

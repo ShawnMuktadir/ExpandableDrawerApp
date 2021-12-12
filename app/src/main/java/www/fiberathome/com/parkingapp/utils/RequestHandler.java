@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class RequestHandler {
 
-    public String sendPostRequest(String requestURL, Map<String, String> params){
+    public String sendPostRequest(String requestURL, Map<String, String> params) {
 
         URL url;
         StringBuilder stringBuilder = new StringBuilder();
@@ -40,12 +40,12 @@ public class RequestHandler {
             // get the response code
             int responseCode = httpURLConnection.getResponseCode();
 
-            if (responseCode == HttpURLConnection.HTTP_OK){
+            if (responseCode == HttpURLConnection.HTTP_OK) {
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
                 stringBuilder = new StringBuilder();
                 String response;
 
-                while ((response = bufferedReader.readLine()) != null){
+                while ((response = bufferedReader.readLine()) != null) {
                     stringBuilder.append(response);
                 }
             }
@@ -61,7 +61,7 @@ public class RequestHandler {
     private String getPostDataString(Map<String, String> params) throws UnsupportedEncodingException {
         StringBuilder result = new StringBuilder();
         boolean first = true;
-        for (Map.Entry<String, String> entry : params.entrySet()){
+        for (Map.Entry<String, String> entry : params.entrySet()) {
             if (first)
                 first = false;
 
@@ -73,7 +73,6 @@ public class RequestHandler {
             result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
 
         }
-
 
 
         return result.toString();

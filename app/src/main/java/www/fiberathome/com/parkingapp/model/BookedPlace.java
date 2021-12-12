@@ -9,14 +9,19 @@ public class BookedPlace implements Parcelable {
     private double lat;
     private double lon;
     private String bookedUid;
-    private String route;
     private String areaName;
     private String parkingSlotCount;
     private boolean isBooked = false;
+    private boolean isPaid = false;
+    private boolean isCarParked = false;
+    private boolean isExceedRunning = false;
     private String placeId;
     private String reservation;
     private long departedDate;
     private long arriveDate;
+    private float bill;
+    private String ticketSpotId;
+    private String psId;
 
     public BookedPlace() {
     }
@@ -45,14 +50,6 @@ public class BookedPlace implements Parcelable {
         this.bookedUid = bookedUid;
     }
 
-    public String getRoute() {
-        return route;
-    }
-
-    public void setRoute(String route) {
-        this.route = route;
-    }
-
     public String getAreaName() {
         return areaName;
     }
@@ -75,6 +72,30 @@ public class BookedPlace implements Parcelable {
 
     public void setIsBooked(boolean isBooked) {
         this.isBooked = isBooked;
+    }
+
+    public boolean isPaid() {
+        return isPaid;
+    }
+
+    public void setPaid(boolean paid) {
+        isPaid = paid;
+    }
+
+    public boolean isCarParked() {
+        return isCarParked;
+    }
+
+    public void setCarParked(boolean carParked) {
+        isCarParked = carParked;
+    }
+
+    public boolean isExceedRunning() {
+        return isExceedRunning;
+    }
+
+    public void setExceedRunning(boolean exceedRunning) {
+        isExceedRunning = exceedRunning;
     }
 
     public void setPlaceId(String placeId) {
@@ -109,6 +130,30 @@ public class BookedPlace implements Parcelable {
         this.reservation = reservation;
     }
 
+    public float getBill() {
+        return bill;
+    }
+
+    public void setBill(float bill) {
+        this.bill = bill;
+    }
+
+    public String getTicketSpotId() {
+        return ticketSpotId;
+    }
+
+    public void setTicketSpotId(String ticketSpotId) {
+        this.ticketSpotId = ticketSpotId;
+    }
+
+    public String getPsId() {
+        return psId;
+    }
+
+    public void setPsId(String psId) {
+        this.psId = psId;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -119,42 +164,48 @@ public class BookedPlace implements Parcelable {
         dest.writeDouble(this.lat);
         dest.writeDouble(this.lon);
         dest.writeString(this.bookedUid);
-        dest.writeString(this.route);
         dest.writeString(this.areaName);
         dest.writeString(this.parkingSlotCount);
         dest.writeString(this.reservation);
         dest.writeByte(this.isBooked ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.isPaid ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.isCarParked ? (byte) 1 : (byte) 0);
         dest.writeString(this.placeId);
         dest.writeDouble(this.departedDate);
         dest.writeDouble(this.arriveDate);
+        dest.writeString(this.psId);
     }
 
     public void readFromParcel(Parcel source) {
         this.lat = source.readDouble();
         this.lon = source.readDouble();
         this.bookedUid = source.readString();
-        this.route = source.readString();
         this.areaName = source.readString();
         this.parkingSlotCount = source.readString();
         this.isBooked = source.readByte() != 0;
+        this.isPaid = source.readByte() != 0;
+        this.isCarParked = source.readByte() != 0;
         this.placeId = source.readString();
         this.reservation = source.readString();
         this.departedDate = source.readLong();
         this.arriveDate = source.readLong();
+        this.psId = source.readString();
     }
 
     protected BookedPlace(Parcel in) {
         this.lat = in.readDouble();
         this.lon = in.readDouble();
         this.bookedUid = in.readString();
-        this.route = in.readString();
         this.areaName = in.readString();
         this.parkingSlotCount = in.readString();
         this.isBooked = in.readByte() != 0;
+        this.isPaid = in.readByte() != 0;
+        this.isCarParked = in.readByte() != 0;
         this.placeId = in.readString();
         this.reservation = in.readString();
         this.departedDate = in.readLong();
         this.arriveDate = in.readLong();
+        this.psId = in.readString();
     }
 
     public static final Creator<BookedPlace> CREATOR = new Creator<BookedPlace>() {

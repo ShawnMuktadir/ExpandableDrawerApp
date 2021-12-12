@@ -5,22 +5,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.fragment.app.Fragment;
+import www.fiberathome.com.parkingapp.base.BaseFragment;
+import www.fiberathome.com.parkingapp.databinding.FragmentNotificationBinding;
 
-import www.fiberathome.com.parkingapp.R;
+public class NotificationFragment extends BaseFragment {
 
-/**
- * A simple {@link Fragment} subclass.
- */
-public class NotificationFragment extends Fragment {
+    FragmentNotificationBinding binding;
 
     public NotificationFragment() {
         // Required empty public constructor
     }
 
     public static NotificationFragment newInstance() {
-        NotificationFragment notificationFragment = new NotificationFragment();
-        return notificationFragment;
+        return new NotificationFragment();
     }
 
 
@@ -28,6 +25,7 @@ public class NotificationFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_notification, container, false);
+        binding = FragmentNotificationBinding.inflate(getLayoutInflater());
+        return binding.getRoot();
     }
 }

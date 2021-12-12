@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/tools"
+    android:id="@+id/item_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/dim3"
+    android:layout_marginTop="@dimen/dim3"
+    android:layout_marginEnd="@dimen/dim3"
+    android:layout_marginBottom="@dimen/dim3"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    app:cardBackgroundColor="@color/white"
+    card_view:cardCornerRadius="@dimen/app_radius"
+    card_view:cardElevation="@dimen/dim3"
+    card_view:cardUseCompatPadding="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/area"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif-condensed"
+            android:padding="8dp"
+            android:singleLine="true"
+            android:text="@string/lorum"
+            android:textColor="@color/black"
+            android:textSize="@dimen/dimTex15" />
+
+        <TextView
+            android:id="@+id/address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="8dp"
+            android:singleLine="true"
+            android:text="@string/lorum"
+            android:textColor="#888888"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:id="@+id/imageViewSearchPlace"
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_gravity="center"
+            android:contentDescription="@string/search"
+            android:src="@drawable/ic_search_maps"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/textViewNoData"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/no_data_available"
+            android:textColor="@android:color/holo_red_dark"
+            android:textSize="18sp"
+            android:visibility="gone" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dim1"
+            android:background="@color/gray3" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

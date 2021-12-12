@@ -38,7 +38,7 @@ public class DirectionsJSONParser {
                 List<HashMap<String, String>> path = new ArrayList<>();
 
                 /* Traversing all legs */
-                for(int j = 0; j<jLegs.length(); j++){
+                for (int j = 0; j < jLegs.length(); j++) {
 
                     /* Getting distance from the json data */
                     jDistance = ((JSONObject) jLegs.get(j)).getJSONObject("distance");
@@ -56,16 +56,16 @@ public class DirectionsJSONParser {
                     /* Adding duration object to the path */
                     path.add(hmDuration);
 
-                    jSteps = ( (JSONObject)jLegs.get(j)).getJSONArray("steps");
+                    jSteps = ((JSONObject) jLegs.get(j)).getJSONArray("steps");
 
                     /* Traversing all steps */
-                    for(int k = 0; k<jSteps.length(); k++){
+                    for (int k = 0; k < jSteps.length(); k++) {
                         String polyline;
-                        polyline = (String)((JSONObject)((JSONObject)jSteps.get(k)).get("polyline")).get("points");
+                        polyline = (String) ((JSONObject) ((JSONObject) jSteps.get(k)).get("polyline")).get("points");
                         List<LatLng> list = decodePoly(polyline);
 
                         /* Traversing all points */
-                        for(int l = 0; l<list.size(); l++) {
+                        for (int l = 0; l < list.size(); l++) {
                             HashMap<String, String> hm = new HashMap<>();
                             hm.put("lat", Double.toString(list.get(l).latitude));
                             hm.put("lng", Double.toString(list.get(l).longitude));
@@ -86,7 +86,7 @@ public class DirectionsJSONParser {
     /**
      * Method to decode polyline points
      * Courtesy : jeffreysambells.com/2010/05/27/decoding-polylines-from-google-maps-direction-api-with-java
-     * */
+     */
     private List<LatLng> decodePoly(String encoded) {
 
         List<LatLng> poly = new ArrayList<>();
@@ -118,4 +118,5 @@ public class DirectionsJSONParser {
             poly.add(p);
         }
         return poly;
-    } }
+    }
+}

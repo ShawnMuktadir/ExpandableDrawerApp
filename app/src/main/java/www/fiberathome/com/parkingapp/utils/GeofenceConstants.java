@@ -17,8 +17,8 @@ public class GeofenceConstants {
     /**
      * Map for storing information about tacme in the dubai.
      */
-    public static  HashMap<String, LatLng> AREA_LANDMARKS = new HashMap<String, LatLng>();
-    public static long GEOFENCE_EXPIRATION_IN_MILLISECONDS= 12 * 60 * 60 * 1000;
+    public static HashMap<String, LatLng> AREA_LANDMARKS = new HashMap<String, LatLng>();
+    public static long GEOFENCE_EXPIRATION_IN_MILLISECONDS = 12 * 60 * 60 * 1000;
 
     static {
         AREA_LANDMARKS.put(GEOFENCE_ID, new LatLng(25.116354, 55.390398));

@@ -2,13 +2,13 @@ package www.fiberathome.com.parkingapp.ui.search;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
-import static android.content.Context.LOCATION_SERVICE;
 import static www.fiberathome.com.parkingapp.model.data.AppConstants.HISTORY_PLACE_SELECTED;
+import static www.fiberathome.com.parkingapp.model.data.AppConstants.HISTORY_PLACE_SELECTED_OBJ;
 import static www.fiberathome.com.parkingapp.model.data.AppConstants.NEW_PLACE_SELECTED;
+import static www.fiberathome.com.parkingapp.model.data.AppConstants.NEW_PLACE_SELECTED_OBJ;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -16,16 +16,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -36,22 +31,15 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
+import www.fiberathome.com.parkingapp.databinding.FragmentSearchBinding;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
@@ -63,42 +51,28 @@ import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.search.placesadapter.PlacesAutoCompleteAdapter;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.KeyboardUtils;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressLint("NonConstantResourceId")
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAdapter.ClickListener {
+    private PlacesAutoCompleteAdapter mAutoCompleteAdapter;
+    private PlacesClient placesClient;
 
-    private final String TAG = getClass().getSimpleName();
-
-    @BindView(R.id.ivClearSearchText)
-    ImageView ivClearSearchText;
-
-    @BindView(R.id.editTextSearch)
-    EditText editTextSearch;
-
-    @BindView(R.id.imageViewCross)
-    ImageView imageViewCross;
-
-    @BindView(R.id.recyclerViewSearchPlaces)
-    RecyclerView recyclerViewSearchPlaces;
-
-    @BindView(R.id.imageViewSearchPlace)
-    ImageView imageViewSearchPlace;
-
-    @BindView(R.id.linearLayoutEmptyView)
-    LinearLayout linearLayoutEmptyView;
-
-    @BindView(R.id.tvEmptyView)
-    TextView tvEmptyView;
-
-    private Unbinder unbinder;
+    private ArrayList<SearchVisitorData> searchVisitorDataList = new ArrayList<>();
+    private SearchVisitorData searchVisitorData;
+    private List<List<String>> visitedPlaceList = null;
+    private List<List<String>> list;
+    private SearchVisitedPlaceResponse searchVisitedPlaceResponse;
+    private String parkingArea = null;
+    private String placeId = null;
+    private double endLat = 0.0;
+    private double endLng = 0.0;
+    private double startLat = 0.0;
+    private double startLng = 0.0;
 
     private SearchActivity context;
-
-    private PlacesAutoCompleteAdapter mAutoCompleteAdapter;
-
-    private PlacesClient placesClient;
+    FragmentSearchBinding binding;
 
     public SearchFragment() {
         // Required empty public constructor
@@ -109,27 +83,25 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_search, container, false);
+        binding = FragmentSearchBinding.inflate(getLayoutInflater());
+        return binding.getRoot();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private final TextWatcher filterTextWatcher = new TextWatcher() {
-
-        @SuppressLint("NotifyDataSetChanged")
         public void afterTextChanged(Editable s) {
-
             mAutoCompleteAdapter.notifyDataSetChanged();
-
             if (!ConnectivityUtils.getInstance().checkInternet(context)) {
-                KeyboardUtils.getInstance().hideKeyboard(context, editTextSearch);
+                KeyboardUtils.getInstance().hideKeyboard(context, binding.editTextSearch);
             }
         }
 
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             if (!ConnectivityUtils.getInstance().checkInternet(context)) {
-                KeyboardUtils.getInstance().hideKeyboard(context, editTextSearch);
+                KeyboardUtils.getInstance().hideKeyboard(context, binding.editTextSearch);
             }
         }
 
@@ -142,7 +114,7 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
                 mAutoCompleteAdapter.clearList();
             }
             if (!ConnectivityUtils.getInstance().checkInternet(context)) {
-                KeyboardUtils.getInstance().hideKeyboard(context, editTextSearch);
+                KeyboardUtils.getInstance().hideKeyboard(context, binding.editTextSearch);
             }
         }
     };
@@ -150,31 +122,21 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        unbinder = ButterKnife.bind(this, view);
-
         context = (SearchActivity) getActivity();
-
         setListeners();
 
         Places.initialize(context, context.getResources().getString(R.string.google_maps_key));
         placesClient = Places.createClient(context);
 
         if (ConnectivityUtils.getInstance().checkInternet(context)) {
-
             fetchSearchedDestinationPlace(Preferences.getInstance(context).getUser().getMobileNo());
-
-            Timber.e("searchActivity mobileNo -> %s", Preferences.getInstance(context).getUser().getMobileNo());
-
-            editTextSearch.addTextChangedListener(filterTextWatcher);
-            editTextSearch.requestFocus();
-            editTextSearch.requestLayout();
+            binding.editTextSearch.addTextChangedListener(filterTextWatcher);
+            binding.editTextSearch.requestFocus();
+            binding.editTextSearch.requestLayout();
         } else {
-            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
         }
-
         setPlacesRecyclerAdapter();
-
         if (mAutoCompleteAdapter.getItemCount() == 0) {
             setNoData();
         } else {
@@ -182,16 +144,16 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
         }
     }
 
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint({"ClickableViewAccessibility", "NotifyDataSetChanged"})
     private void setListeners() {
-        imageViewCross.setOnClickListener(v -> {
+        binding.imageViewCross.setOnClickListener(v -> {
             startActivity(new Intent(context, HomeActivity.class));
             context.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             context.finish();
         });
 
-        ivClearSearchText.setOnClickListener(view -> {
-            editTextSearch.setText("");
+        binding.ivClearSearchText.setOnClickListener(view -> {
+            binding.editTextSearch.setText("");
             mAutoCompleteAdapter.clearList();
             if (searchVisitorDataList != null) {
                 hideNoData();
@@ -201,26 +163,26 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
             }
         });
 
-        editTextSearch.addTextChangedListener(new TextWatcher() {
+        binding.editTextSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 if (!ConnectivityUtils.getInstance().checkInternet(context)) {
-                    KeyboardUtils.getInstance().hideKeyboard(context, editTextSearch);
+                    KeyboardUtils.getInstance().hideKeyboard(context, binding.editTextSearch);
                 }
             }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
                 if (charSequence.length() > 0) {
-                    ivClearSearchText.setVisibility(View.VISIBLE);
+                    binding.ivClearSearchText.setVisibility(View.VISIBLE);
                     if (!ConnectivityUtils.getInstance().checkInternet(context)) {
-                        KeyboardUtils.getInstance().hideKeyboard(context, editTextSearch);
+                        KeyboardUtils.getInstance().hideKeyboard(context, binding.editTextSearch);
                     }
                 } else {
                     if (!ConnectivityUtils.getInstance().checkInternet(context)) {
-                        KeyboardUtils.getInstance().hideKeyboard(context, editTextSearch);
+                        KeyboardUtils.getInstance().hideKeyboard(context, binding.editTextSearch);
                     }
-                    ivClearSearchText.setVisibility(View.GONE);
+                    binding.ivClearSearchText.setVisibility(View.GONE);
                 }
             }
 
@@ -228,35 +190,32 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
             public void afterTextChanged(Editable s) {
                 if (s.length() == 0) {
                     if (!ConnectivityUtils.getInstance().checkInternet(context)) {
-                        KeyboardUtils.getInstance().hideKeyboard(context, editTextSearch);
+                        KeyboardUtils.getInstance().hideKeyboard(context, binding.editTextSearch);
                     }
                     if (searchVisitorDataList != null) {
                         hideNoData();
                         updateAdapter();
-                        //searchVisitorDataList.clear();
-                        //fetchSearchVisitorPlaceWithoutProgressBar(SharedPreManager.getInstance(context).getUser().getMobileNo());
                     } else {
                         setNoData();
                     }
                 } else {
                     if (!ConnectivityUtils.getInstance().checkInternet(context)) {
-                        KeyboardUtils.getInstance().hideKeyboard(context, editTextSearch);
+                        KeyboardUtils.getInstance().hideKeyboard(context, binding.editTextSearch);
                     }
                 }
             }
         });
 
-        editTextSearch.setOnEditorActionListener((v, actionId, event) -> {
+        binding.editTextSearch.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                String contents = editTextSearch.getText().toString().trim();
+                String contents = binding.editTextSearch.getText().toString().trim();
                 if (contents.length() > 0) {
                     //do search
                     mAutoCompleteAdapter.getFilter().filter(contents);
                     mAutoCompleteAdapter.notifyDataSetChanged();
-                    KeyboardUtils.getInstance().hideKeyboard(context);
-                } else
-                    //if something to do for empty edittext
-                    KeyboardUtils.getInstance().hideKeyboard(context);
+                }
+                //if something to do for empty edittext
+                KeyboardUtils.getInstance().hideKeyboard(context);
                 return true;
             }
             return false;
@@ -265,18 +224,12 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
 
     @Override
     public void onClick(Place place) {
-        if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
+        if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
             Intent resultIntent = new Intent();
             if (place == null) {
                 Timber.e("place null");
                 context.setResult(RESULT_CANCELED, resultIntent);
-                /*new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {*/
                 context.finish();
-               /* }
-                }, 500);
-                overridePendingTransition(0, 0);*/
             } else {
                 Timber.e("place not null");
                 LatLng latLng = place.getLatLng();
@@ -289,22 +242,14 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
                     double latitude = latLng.latitude;
                     double longitude = latLng.longitude;
                     SelectedPlace selectedplace = new SelectedPlace(placeId, areaName, areaAddress, latitude, longitude);
-                    // resultIntent.putExtra(NEW_PLACE_SELECTED,place);
-                    //String result=new Gson().toJson(place);
-                    resultIntent.putExtra(NEW_PLACE_SELECTED, selectedplace);
+                    resultIntent.putExtra(NEW_PLACE_SELECTED_OBJ, selectedplace);
+                    resultIntent.putExtra(NEW_PLACE_SELECTED, NEW_PLACE_SELECTED);
                     context.setResult(RESULT_OK, resultIntent);
-                    /*Log.d("ShawnClick", "click: ");
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {*/
                     context.finish();
-                    /*}
-                }, 500);
-                overridePendingTransition(0, 0);*/
                 }
             }
         } else {
-            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
+            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_gps));
         }
     }
 
@@ -316,34 +261,22 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
     @Override
     public void onPause() {
         super.onPause();
-
         if (context.isFinishing()) {
             context.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         }
-
         hideLoading();
     }
 
     @Override
     public void onDestroy() {
         Timber.e("onDestroy called");
-
         super.onDestroy();
-
         hideLoading();
     }
 
     @Override
-    public void onDestroyView() {
-        if (unbinder != null) {
-            unbinder.unbind();
-        }
-        super.onDestroyView();
-    }
-
-    @Override
     public void onClick(SearchVisitorData visitorData) {
-        if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
+        if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
             Intent resultIntent = new Intent();
             LatLng endLatLng = new LatLng(visitorData.getEndLat(), visitorData.getEndLng());
             String areaName = visitorData.getVisitedArea();
@@ -352,33 +285,15 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
                 double latitude = endLatLng.latitude;
                 double longitude = endLatLng.longitude;
                 SearchVisitorData searchVisitorData = new SearchVisitorData(areaName, placeId, latitude, longitude, latitude, longitude);
-                // resultIntent.putExtra(NEW_PLACE_SELECTED,place);
-                //String result=new Gson().toJson(place);
-                resultIntent.putExtra(HISTORY_PLACE_SELECTED, searchVisitorData);
+                resultIntent.putExtra(HISTORY_PLACE_SELECTED_OBJ, searchVisitorData);
+                resultIntent.putExtra(HISTORY_PLACE_SELECTED, HISTORY_PLACE_SELECTED);
                 context.setResult(RESULT_OK, resultIntent);
-                //Log.d("ShawnClick", "click: ");
-                /*new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {*/
                 context.finish();
             }
         } else {
-            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
+            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_gps));
         }
     }
-
-    private ArrayList<SearchVisitorData> searchVisitorDataList = new ArrayList<>();
-
-    private SearchVisitorData searchVisitorData;
-    private List<List<String>> visitedPlaceList = null;
-    private List<List<String>> list;
-    private SearchVisitedPlaceResponse searchVisitedPlaceResponse;
-    private String parkingArea = null;
-    private String placeId = null;
-    private double endLat = 0.0;
-    private double endLng = 0.0;
-    private double startLat = 0.0;
-    private double startLng = 0.0;
 
     private void fetchSearchedDestinationPlace(String mobileNo) {
 
@@ -470,31 +385,25 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
         Timber.e("setFragmentControls searchActivity called");
         this.searchVisitorDataList = searchVisitorDataList;
 
-        recyclerViewSearchPlaces.setHasFixedSize(true);
-        //recyclerViewSearchPlaces.setItemViewCacheSize(20);
-        recyclerViewSearchPlaces.setNestedScrollingEnabled(false);
-        recyclerViewSearchPlaces.setMotionEventSplittingEnabled(false);
-
+        binding.recyclerViewSearchPlaces.setHasFixedSize(true);
+        binding.recyclerViewSearchPlaces.setNestedScrollingEnabled(false);
+        binding.recyclerViewSearchPlaces.setMotionEventSplittingEnabled(false);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(context);
-        recyclerViewSearchPlaces.setLayoutManager(mLayoutManager);
-        recyclerViewSearchPlaces.addItemDecoration(new DividerItemDecoration(context, LinearLayoutManager.VERTICAL));
-        recyclerViewSearchPlaces.setItemAnimator(new DefaultItemAnimator());
-
-        ViewCompat.setNestedScrollingEnabled(recyclerViewSearchPlaces, false);
-
+        binding.recyclerViewSearchPlaces.setLayoutManager(mLayoutManager);
+        binding.recyclerViewSearchPlaces.setItemAnimator(new DefaultItemAnimator());
+        ViewCompat.setNestedScrollingEnabled(binding.recyclerViewSearchPlaces, false);
         mAutoCompleteAdapter = new PlacesAutoCompleteAdapter(context, placesClient, searchVisitorDataList);
         mAutoCompleteAdapter.setClickListener(this);
         mAutoCompleteAdapter.setDataList(searchVisitorDataList);
-        recyclerViewSearchPlaces.setAdapter(mAutoCompleteAdapter);
+        binding.recyclerViewSearchPlaces.setAdapter(mAutoCompleteAdapter);
     }
 
     private void setPlacesRecyclerAdapter() {
         mAutoCompleteAdapter = new PlacesAutoCompleteAdapter(context, placesClient, searchVisitorDataList);
-        recyclerViewSearchPlaces.setLayoutManager(new LinearLayoutManager(context));
-        recyclerViewSearchPlaces.addItemDecoration(new DividerItemDecoration(context, LinearLayoutManager.VERTICAL));
-        recyclerViewSearchPlaces.setItemAnimator(new DefaultItemAnimator());
-
-        recyclerViewSearchPlaces.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(context);
+        binding.recyclerViewSearchPlaces.setLayoutManager(mLayoutManager);
+        binding.recyclerViewSearchPlaces.setItemAnimator(new DefaultItemAnimator());
+        binding.recyclerViewSearchPlaces.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
             @Override
             public void onChildViewAttachedToWindow(@NonNull View view) {
                 Timber.e("onChildViewAttachedToWindow called");
@@ -508,9 +417,9 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
             }
         });
 
-        ViewCompat.setNestedScrollingEnabled(recyclerViewSearchPlaces, false);
+        ViewCompat.setNestedScrollingEnabled(binding.recyclerViewSearchPlaces, false);
         mAutoCompleteAdapter.setClickListener(this);
-        recyclerViewSearchPlaces.setAdapter(mAutoCompleteAdapter);
+        binding.recyclerViewSearchPlaces.setAdapter(mAutoCompleteAdapter);
     }
 
     private void updateAdapter() {
@@ -526,112 +435,15 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
 
     private void setNoData() {
         Timber.e("setNoData called");
-        imageViewSearchPlace.setVisibility(View.GONE);
-        tvEmptyView.setVisibility(View.VISIBLE);
-        linearLayoutEmptyView.setVisibility(View.VISIBLE);
+        binding.imageViewSearchPlace.setVisibility(View.GONE);
+        binding.tvEmptyView.setVisibility(View.VISIBLE);
+        binding.linearLayoutEmptyView.setVisibility(View.VISIBLE);
     }
 
     private void hideNoData() {
         Timber.e("hideNoData called");
-        imageViewSearchPlace.setVisibility(View.GONE);
-        tvEmptyView.setVisibility(View.GONE);
-        linearLayoutEmptyView.setVisibility(View.GONE);
-    }
-
-    private boolean isGPSEnabled() {
-
-        LocationManager locationManager = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-        }
-
-        assert locationManager != null;
-        boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-        if (providerEnabled) {
-            return true;
-        } else {
-            Timber.e("else called");
-            /*AlertDialog alertDialog = new AlertDialog.Builder(context)
-                    .setTitle("GPS Permissions")
-                    .setMessage("GPS is required for this app to work. Please enable GPS.")
-                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
-                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        startActivityForResult(intent, GPS_REQUEST_CODE);
-                    }))
-                    .setCancelable(false)
-                    .show();*/
-        }
-
-        return false;
-    }
-
-    public boolean checkIfAlreadyExist(SearchVisitorData searchVisitorData) {
-        if (!searchVisitorDataList.contains(searchVisitorData)) {
-            searchVisitorDataList.add(searchVisitorData);
-            mAutoCompleteAdapter.setDataList(searchVisitorDataList);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public boolean isExist(String strName) {
-        for (int i = 0; i < searchVisitorDataList.size(); i++) {
-            if (searchVisitorDataList.get(i).equals(strName)) {
-                searchVisitorDataList.remove(i);
-                mAutoCompleteAdapter.notifyDataSetChanged();
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private ArrayList<SearchVisitorData> removeDuplicates(ArrayList<SearchVisitorData> list) {
-        int count = list.size();
-
-        for (int i = 0; i < list.size(); i++) {
-            for (int j = i + 1; j < list.size(); j++) {
-                if (list.get(i).equals(list.get(j))) {
-                    list.remove(j);
-                    j--;
-                }
-            }
-        }
-        return list;
-    }
-
-    public ArrayList<SearchVisitorData> removeDuplicatesSearchVisitorData(ArrayList<SearchVisitorData> list) {
-        Set<SearchVisitorData> set = new TreeSet<SearchVisitorData>(new Comparator() {
-            @Override
-            public int compare(Object o1, Object o2) {
-                if (((SearchVisitorData) o1).getVisitedArea().equalsIgnoreCase(((SearchVisitorData) o2).getVisitedArea())) {
-                    return 0;
-                }
-                return 1;
-            }
-        });
-        set.addAll(list);
-        return new ArrayList<>(set);
-    }
-
-    private ArrayList<SearchVisitorData> clearListFromDuplicateVisitedArea(ArrayList<SearchVisitorData> visitedList) {
-
-        Map<String, SearchVisitorData> cleanMap = new LinkedHashMap<>();
-        for (int i = 0; i < visitedList.size(); i++) {
-            cleanMap.put(visitedList.get(i).getVisitedArea(), visitedList.get(i));
-        }
-        return new ArrayList<>(cleanMap.values());
-    }
-
-    public ArrayList<SearchVisitorData> getUniqueList(ArrayList<SearchVisitorData> alertList) {
-        ArrayList<SearchVisitorData> uniqueAlerts = new ArrayList<>();
-        for (SearchVisitorData alert : alertList) {
-            if (!uniqueAlerts.contains(alert)) {
-                uniqueAlerts.add(alert);
-            }
-        }
-        return uniqueAlerts;
+        binding.imageViewSearchPlace.setVisibility(View.GONE);
+        binding.tvEmptyView.setVisibility(View.GONE);
+        binding.linearLayoutEmptyView.setVisibility(View.GONE);
     }
 }

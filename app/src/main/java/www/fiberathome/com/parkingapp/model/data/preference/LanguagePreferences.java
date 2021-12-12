@@ -12,7 +12,7 @@ import www.fiberathome.com.parkingapp.model.data.Constants;
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class LanguagePreferences {
 
-    private static final String SHARED_PREF_NAME = "PARKINGAPP";
+    private static final String SHARED_PREF_NAME = "PARKINGAPP_LANGUAGE";
     private static final String KEY_ID = "id";
     private static final String KEY_LANGUAGE = "language";
 
@@ -24,8 +24,8 @@ public class LanguagePreferences {
         mContext = context;
     }
 
-    public static synchronized LanguagePreferences getInstance(Context context){
-        if (instance == null){
+    public static synchronized LanguagePreferences getInstance(Context context) {
+        if (instance == null) {
             instance = new LanguagePreferences(context);
         }
 

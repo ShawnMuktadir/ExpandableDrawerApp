@@ -15,15 +15,12 @@ import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -41,6 +38,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -58,27 +56,26 @@ import www.fiberathome.com.parkingapp.model.response.booking.CloseReservationRes
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 
+@SuppressLint("SimpleDateFormat")
 public class BookingService extends Service {
 
-    public static final String TAG = "LocationTrackService";
-    LocationRequest locationRequest;
-    FusedLocationProviderClient fusedLocationProviderClient;
-    private Context context;
-
-    public Location previousBestLocation = null;
-
     public static final int BOOKING_CHECK_DELAY = 1000; // 1 sec
-    public static Boolean isRunning = false;
+
+    private Context context;
+    public Location previousBestLocation = null;
+    FusedLocationProviderClient fusedLocationProviderClient;
 
     private CountDownTimer countDownTimer;
     private NotificationManager notificationManager;
     private NotificationCompat.Builder mBuilder;
-    private boolean exceedServiceStarted = false;
+    private long departureDate;
+    protected final long exceedTime = 300000;
+
+    public static Boolean isRunning = false;
     private boolean isExceedRunned = false;
     private boolean warringShowed = false;
-    private long departureDate;
-    private long exceedTime = 300000;
-
+    private boolean endBookingCalled = false;
+    private boolean isServiceStarted = false;
 
     @Nullable
     @Override
@@ -92,45 +89,68 @@ public class BookingService extends Service {
         context = getApplicationContext();
         String action = intent.getAction();
         if (action != null) {
-            if (action.equals(Constants.START_BOOKING_TRACKING)) {
-                mHandlerTask.run();
-            } else if (action.equals(Constants.STOP_BOOKING_TRACKING)) {
-                stopTrackingLocation();
-            } else if (action.equals(Constants.BOOKING_EXCEED_CHECK)) {
-                departureDate = 0;
-                departureDate = intent.getLongExtra("departureDate", 0);
-                exceedHandlerTask.run();
+            switch (action) {
+                case Constants.START_BOOKING_TRACKING:
+                    mHandlerTask.run();
+                    break;
+                case Constants.STOP_BOOKING_TRACKING:
+                    stopBookingService();
+                    break;
+                case Constants.BOOKING_EXCEED_CHECK:
+                    departureDate = 0;
+                    departureDate = intent.getLongExtra("departureDate", 0);
+                    exceedHandlerTask.run();
+                    break;
             }
         }
-        return super.onStartCommand(intent, flags, startId);
+        return START_REDELIVER_INTENT;
     }
 
-    private void startTrackingLocation() {
-        String currentDateandTime = new SimpleDateFormat("dd-MM-yyyy HH:mm").format(new Date());
-        if (new Date().getTime() >= Preferences.getInstance(context).getBooked().getArriveDate()) {
-            isRunning = true;
-            notificationCaller(Constants.NOTIFICATION_CHANNEL_BOOKING, "Booked time Status", 2);
+    private void startBookingTracking() {
+        Timber.e("service running");
+        if (!isServiceStarted) {
+            notificationCaller(Constants.NOTIFICATION_CHANNEL_BOOKING, context.getResources().getString(R.string.Booked_for) + Preferences.getInstance(context).getBooked().getAreaName(), 2);
             startForeground(BOOKING_SERVICE_ID, mBuilder.build());
-            findDifference(getDate(Preferences.getInstance(context).getBooked().getArriveDate()), getDate(Preferences.getInstance(context).getBooked().getDepartedDate()));
+            isServiceStarted = true;
+        }
+        /*else if (new Date().getTime() >= (Preferences.getInstance(context).getBooked().getArriveDate() - 900000) && !isFifteenMinsRemaining) {
+            isFifteenMinsRemaining = true;
+            sendNotification("Booked park", "Booked time is about to begin shortly", false);
+        }*/
+        else if (new Date().getTime() >= Preferences.getInstance(context).getBooked().getArriveDate()
+                && new Date().getTime() < Preferences.getInstance(context).getBooked().getDepartedDate() && !isRunning) {
+            isRunning = true;
+            findDifference(getDate(new Date().getTime()), getDate(Preferences.getInstance(context).getBooked().getDepartedDate()));
+        } else if (new Date().getTime() > (Preferences.getInstance(context).getBooked().getDepartedDate() + 60000L) && !endBookingCalled) {
+            if (ConnectivityUtils.getInstance().checkInternet(context)) {
+                endBooking();
+            }
         }
     }
 
     private void startExceedTimeTracking() {
         //service starts when car is on parking spot and user clicks on park button
         if (!isExceedRunned) {
-            Timber.e("car parked");
-//            Toast.makeText(context, "car parked", Toast.LENGTH_LONG).show();
-            notificationCaller(Constants.NOTIFICATION_CHANNEL_EXCEED_BOOKING, "Car Parked", 3);
-            startForeground(Constants.BOOKING_Exceed_SERVICE_ID, mBuilder.build());
             isExceedRunned = true;
+            Timber.e("car parked");
+            //Toast.makeText(context, "car parked", Toast.LENGTH_LONG).show();
+            notificationCaller(Constants.NOTIFICATION_CHANNEL_EXCEED_BOOKING, context.getResources().getString(R.string.car_parked), 3);
+            startForeground(Constants.BOOKING_Exceed_SERVICE_ID, mBuilder.build());
         }
+
         //executes when booking time ends
         if (!warringShowed && new Date().getTime() >= departureDate) {
             Timber.e("car Parking Duration End -> %s %s", new Date().getTime(), departureDate);
-//            Toast.makeText(context, "car Parking Duration End:" + new Date().getTime() + "," + departureDate, Toast.LENGTH_LONG).show();
-            warringShowed = true;
-            sendNotification("Booked Time", "Parking Duration About To End", false);
-            startCountDown((exceedTime - (new Date().getTime() - departureDate)) >= 0 ? (exceedTime - (new Date().getTime() - departureDate)) : 0, true);
+            //Toast.makeText(context, "car Parking Duration End:" + new Date().getTime() + "," + departureDate, Toast.LENGTH_LONG).show();
+            if (ConnectivityUtils.getInstance().checkInternet(context)) {
+                warringShowed = true;
+                sendNotification(context.getResources().getString(R.string.booked_time), context.getResources().getString(R.string.park_duration_about_to_end), false);
+                startCountDown((exceedTime - (new Date().getTime() - departureDate)) >= 0 ? (exceedTime - (new Date().getTime() - departureDate)) : 0, true);
+            }
+        } else if (new Date().getTime() > (Preferences.getInstance(context).getBooked().getDepartedDate() + 60000L + exceedTime) && !endBookingCalled) {
+            if (ConnectivityUtils.getInstance().checkInternet(context)) {
+                endBooking();
+            }
         }
     }
 
@@ -139,25 +159,23 @@ public class BookingService extends Service {
         Intent targetIntent = new Intent(context, HomeActivity.class);
         targetIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent contentIntent = PendingIntent.getActivity(context, requestCode, targetIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        long[] v = {500, 1000};
-        Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
         mBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
                 .setWhen(System.currentTimeMillis())
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle(msg)
+                .setContentTitle(context.getResources().getString(R.string.booked_parking))
+                .setContentText(msg)
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(msg))
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
-                .setAutoCancel(false)
+                .setAutoCancel(true)
                 .setSilent(true)
-//                .setVibrate(v)
-//                .setSound(uri)
                 .setContentIntent(contentIntent);
-
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, msg, NotificationManager.IMPORTANCE_DEFAULT);
-            notificationChannel.setDescription("Booked Time");
+            notificationChannel.setDescription(context.getResources().getString(R.string.booked_time));
             notificationChannel.enableLights(true);
             notificationChannel.setLightColor(Color.BLUE);
             //notificationChannel.setVibrationPattern(new long[]{0, 1000, 500, 1000});
@@ -190,7 +208,7 @@ public class BookingService extends Service {
                         return;
                     }
                 }
-                fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
+                fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Objects.requireNonNull(Looper.myLooper()));
 
             }
         } catch (Exception e) {
@@ -198,16 +216,18 @@ public class BookingService extends Service {
         }
     }
 
-    private void stopTrackingLocation() {
+    private void stopBookingService() {
         if (mHandler != null && mHandlerTask != null) {
             mHandler.removeCallbacks(mHandlerTask);
         }
-        if (exceedHandler != null && exceedHandlerTask != null) {
+        if (exceedHandler != null) {
             exceedHandler.removeCallbacks(exceedHandlerTask);
         }
         isRunning = false;
         warringShowed = false;
+        endBookingCalled = false;
         departureDate = 0;
+        isServiceStarted = false;
         if (fusedLocationProviderClient != null) {
             fusedLocationProviderClient.removeLocationUpdates(locationCallback);
         }
@@ -218,7 +238,7 @@ public class BookingService extends Service {
             stopForeground(true);
             stopSelf();
         } catch (Exception e) {
-            e.getCause();
+            Timber.e(e.getCause());
         }
     }
 
@@ -297,15 +317,13 @@ public class BookingService extends Service {
     Runnable mHandlerTask = new Runnable() {
         @Override
         public void run() {
-            if (!isRunning) {
-                startTrackingLocation();
-            }
+            startBookingTracking();
             mHandler.postDelayed(mHandlerTask, BOOKING_CHECK_DELAY);
         }
     };
 
-    private boolean isExceedRunning = false;
-    private Runnable exceedHandlerTask = new Runnable() {
+    protected final boolean isExceedRunning = false;
+    private final Runnable exceedHandlerTask = new Runnable() {
         @Override
         public void run() {
             if (!isExceedRunning) {
@@ -320,8 +338,7 @@ public class BookingService extends Service {
         countDownTimer = new CountDownTimer(timerMilliDifference, 1000) {
             @SuppressLint("DefaultLocale")
             public void onTick(long millisUntilFinished) {
-                int numMessages = 0;
-                mBuilder.setContentText("" + String.format("%d min, %d sec remaining",
+                mBuilder.setContentText("" + String.format(context.getString(R.string.remaining_time) + " %d min, %d sec",
                         TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
                         TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
                                 TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))))
@@ -342,27 +359,29 @@ public class BookingService extends Service {
 
             public void onFinish() {
                 if (ConnectivityUtils.getInstance().checkInternet(context)) {
-                    Toast.makeText(context, "onFinish called", Toast.LENGTH_LONG).show();
                     endBooking();
+                } else {
+                    endBookingCalled = false;
                 }
             }
         }.start();
     }
 
     private void endBooking() {
+        endBookingCalled = true;
         ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
         String user = Preferences.getInstance(context).getUser().getMobileNo();
         String bookedUid = Preferences.getInstance(context).getBooked().getBookedUid();
         String reservationId = Preferences.getInstance(context).getBooked().getReservation();
-        Timber.e("EndBooking user=> %s and uid=>%s", user, bookedUid);
         Call<CloseReservationResponse> call = request.endReservation(user, bookedUid, reservationId);
         call.enqueue(new Callback<CloseReservationResponse>() {
             @Override
             public void onResponse(@NonNull Call<CloseReservationResponse> call, @NonNull Response<CloseReservationResponse> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
+                        Preferences.getInstance(context).isBookingCancelled = true;
                         Preferences.getInstance(context).clearBooking();
-                        sendNotification("Booked Time", "Your Booked Parking Duration Has Ended", true);
+                        sendNotification(context.getResources().getString(R.string.booked_time), getString(R.string.your_booked_parking_duration_has_ended), true);
                         Timber.e("Booking closed");
                     }
                 }
@@ -371,6 +390,7 @@ public class BookingService extends Service {
             @Override
             public void onFailure(@NonNull Call<CloseReservationResponse> call, @NonNull Throwable t) {
                 Timber.e("onFailure -> %s", t.getMessage());
+                endBookingCalled = false;
             }
         });
     }
@@ -384,14 +404,13 @@ public class BookingService extends Service {
 
         // try Block
         try {
-
             // parse method is used to parse
             // the text from a string to
             // produce the date
             Date d1 = sdf.parse(start_date);
             Date d2 = sdf.parse(end_date);
 
-            // Calucalte time difference
+            // Calculate time difference
             // in milliseconds
             if (d1 != null && d2 != null) {
                 long difference_In_Time
@@ -463,15 +482,6 @@ public class BookingService extends Service {
         return formatter.format(calendar.getTime());
     }
 
-    private String getDate2(long milliSeconds) {
-        // Create a DateFormatter object for displaying date in specified format.
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-        // Create a calendar object that will convert the date and time value in milliseconds to date.
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(milliSeconds);
-        return formatter.format(calendar.getTime());
-    }
-
     @SuppressWarnings("SameParameterValue")
     private void sendNotification(String title, String content, boolean close) {
         String NOTIFICATION_CHANNEL_ID = "Shawn_Muktadir";
@@ -503,15 +513,48 @@ public class BookingService extends Service {
             notificationManager.notify(new Random().nextInt(), notification);
         }
         if (close) {
+            endBookingCalled = false;
             closeBooking();
             if (countDownTimer != null)
                 countDownTimer.cancel();
-            stopTrackingLocation();
+            stopBookingService();
         }
     }
 
     private void closeBooking() {
         Intent intent = new Intent("booking_ended");
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
+
+    @Override
+    public void onDestroy() {
+        if (Preferences.getInstance(context).getBooked().getIsBooked() &&
+                !Preferences.getInstance(context).getBooked().isCarParked()) {
+//           Toast.makeText(context, "service restarted", Toast.LENGTH_SHORT).show();
+            Timber.e("abdur service restarted");
+            Intent intent = new Intent(context, BookingService.class);
+            intent.setAction(Constants.START_BOOKING_TRACKING);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(intent);
+            } else {
+                context.startService(intent);
+            }
+        } else if (Preferences.getInstance(context).getBooked().getIsBooked()
+                && Preferences.getInstance(context).getBooked().isCarParked()
+                && Preferences.getInstance(context).getBooked().isExceedRunning()) {
+//           Toast.makeText(context, "service restarted", Toast.LENGTH_SHORT).show();
+            Timber.e("abdur service restarted");
+            Intent intent = new Intent(context, BookingService.class);
+            intent.setAction(Constants.BOOKING_EXCEED_CHECK);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(intent);
+            } else {
+                context.startService(intent);
+            }
+        } else {
+//           Toast.makeText(context, "service destroyed", Toast.LENGTH_SHORT).show();
+            Timber.e("abdur service destroyed");
+            super.onDestroy();
+        }
     }
 }

@@ -1,5 +1,7 @@
 package www.fiberathome.com.parkingapp.ui;
 
+import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_BN;
+
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
@@ -9,7 +11,6 @@ import android.content.pm.ResolveInfo;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -22,6 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.ColorInt;
@@ -36,11 +38,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.navigation.NavigationView;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
-import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.util.List;
 import java.util.Locale;
@@ -51,6 +48,7 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.databinding.ActivityNavigationBinding;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
+import www.fiberathome.com.parkingapp.model.data.preference.LanguagePreferences;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.user.User;
@@ -65,8 +63,8 @@ import www.fiberathome.com.parkingapp.ui.profile.ProfileActivity;
 import www.fiberathome.com.parkingapp.ui.settings.SettingsActivity;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
+import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressLint("NonConstantResourceId")
 @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -79,7 +77,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
 
     private Context context;
 
-    ActivityNavigationBinding binding;
+    protected ActivityNavigationBinding binding;
 
     public static Drawable getTintedDrawable(@NonNull Context context, @NonNull Drawable inputDrawable,
                                              @ColorInt int color) {
@@ -104,9 +102,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         drawerLayout = findViewById(R.id.drawer_layout);
-
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -180,6 +176,11 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
     protected void onResume() {
         super.onResume();
         setNavDrawerItem(R.id.nav_home);
+        if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
+            setAppLocale(LANGUAGE_BN);
+        } else {
+            setAppLocale(Preferences.getInstance(context).getAppLanguage());
+        }
     }
 
     @Override
@@ -305,6 +306,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         TextView tvUserFullName = headerView.findViewById(R.id.header_fullname);
         TextView tvUserVehicleNo = headerView.findViewById(R.id.header_vehicle_no);
         ImageView ivUserProfile = headerView.findViewById(R.id.header_profile_pic);
+        RelativeLayout navHeaderView = headerView.findViewById(R.id.view_container);
 
         tvUserFullName.setText(TextUtils.getInstance().capitalizeFirstLetter(user.getFullName()));
 
@@ -323,28 +325,21 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
                 .centerCrop()
                 .placeholder(R.drawable.blank_profile)
                 .error(R.drawable.blank_profile);
-
         String url;
-        if (!user.getImage().endsWith(".jpg")) {
-            url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
-        } else {
-            url = AppConfig.IMAGES_URL + user.getImage();
+        if (user.getImage() != null && !user.getImage().equals("")) {
+            try {
+                if (!user.getImage().endsWith(".jpg")) {
+                    url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
+                } else {
+                    url = AppConfig.IMAGES_URL + user.getImage();
+                }
+                Timber.e("user profile photo url -> %s", url);
+                Glide.with(this).load(url).apply(requestOptions).override(200, 200).into(ivUserProfile);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-        Timber.e("user profile photo url -> %s", url);
-        Glide.with(this).load(url).apply(requestOptions).override(200, 200).into(ivUserProfile);
-
-
-        String text = user.getMobileNo() + " - ";
-        text = text + user.getVehicleNo();
-        MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
-        try {
-            BitMatrix bitMatrix = multiFormatWriter.encode(text, BarcodeFormat.QR_CODE, 200, 200);
-            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-            Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
-            //QRCode.setImageBitmap(bitmap);
-        } catch (WriterException e) {
-            e.printStackTrace();
-        }
+        navHeaderView.setOnClickListener(v -> startActivity(ProfileActivity.class));
     }
 
     public void changeDefaultActionBarDrawerToogleIconWithBackButton() {
@@ -394,11 +389,8 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         closeNavDrawer();
-
         navigationView.setCheckedItem(item.getItemId());
-
         int id = item.getItemId();
-
         switch (id) {
             case R.id.nav_home:
                 startActivity(HomeActivity.class);
@@ -410,7 +402,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
                     // Remove any previous data from SharedData's sensor Data Parking Information
                     SharedData.getInstance().setSensorArea(null);
                 } else {
-                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
+                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_gps));
                 }
                 break;
 

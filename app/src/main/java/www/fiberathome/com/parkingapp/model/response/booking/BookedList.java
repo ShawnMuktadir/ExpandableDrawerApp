@@ -64,6 +64,10 @@ public class BookedList {
     @Expose
     private String psId;
 
+    @SerializedName("no_of_parking")
+    @Expose
+    private String noOfParking;
+
     public BookedList(String id, String userId, String timeStart, String timeEnd, String spotId, String currentBill,
                       String paymentStatus, String penalty, String bookingTime, String status, String cStatus, String pStatus,
                       String areaId, String pDate, String address, String parkingArea, String latitude, String longitude,
@@ -239,5 +243,13 @@ public class BookedList {
 
     public void setPsId(String psId) {
         this.psId = psId;
+    }
+
+    public String getNoOfParking() {
+        return noOfParking;
+    }
+
+    public void setNoOfParking(String noOfParking) {
+        this.noOfParking = noOfParking;
     }
 }

@@ -1,7 +1,7 @@
 package www.fiberathome.com.parkingapp.service.geoFenceInterface;
 
 @SuppressWarnings({"unused", "RedundantSuppression"})
-public class MyLatLng  {
+public class MyLatLng {
     private double latitude;
     private double longitude;
 

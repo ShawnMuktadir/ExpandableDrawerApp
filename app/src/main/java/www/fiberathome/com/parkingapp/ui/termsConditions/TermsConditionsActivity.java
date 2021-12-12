@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -12,34 +13,32 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.databinding.ActivityTermsConditionsBinding;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressLint("NonConstantResourceId")
 public class TermsConditionsActivity extends AppCompatActivity {
 
-    @BindView(R.id.webView)
-    WebView webView;
-
-    private Context context;
+    protected ActivityTermsConditionsBinding binding;
     private ProgressDialog progressDialog;
+    protected Context context;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_terms_conditions);
+        binding = ActivityTermsConditionsBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
         context = this;
-        ButterKnife.bind(this);
 
         progressDialog = DialogUtils.getInstance().progressDialog(context, context.getResources().getString(R.string.please_wait));
 
         if (ConnectivityUtils.getInstance().checkInternet(context)) {
-            webView.setWebViewClient(new WebViewClient() {
+            binding.webView.setWebViewClient(new WebViewClient() {
                 @Override
                 public boolean shouldOverrideUrlLoading(WebView view, String url) {
                     view.loadUrl(url);
@@ -62,17 +61,17 @@ public class TermsConditionsActivity extends AppCompatActivity {
 
                 }
             });
-            webView.getSettings().setJavaScriptEnabled(true);
-            webView.getSettings().setUseWideViewPort(true);
-            webView.getSettings().setLoadWithOverviewMode(true);
-            webView.getSettings().setBuiltInZoomControls(true);
-            webView.setInitialScale(1);
-            webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
-            webView.setScrollbarFadingEnabled(false);
-            webView.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
-            webView.loadUrl("https://docs.google.com/document/d/e/2PACX-1vQ5ikmuSBW8iYYSUXutxZkPGEZ_HhFlxxWKC5m0v9MpPvezmBvyb4WLZjSuuJnXl6xs6f7gc7UwQ223/pub");
+            binding.webView.getSettings().setJavaScriptEnabled(true);
+            binding.webView.getSettings().setUseWideViewPort(true);
+            binding.webView.getSettings().setLoadWithOverviewMode(true);
+            binding.webView.getSettings().setBuiltInZoomControls(true);
+            binding.webView.setInitialScale(1);
+            binding.webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+            binding.webView.setScrollbarFadingEnabled(false);
+            binding.webView.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
+            binding.webView.loadUrl("https://docs.google.com/document/d/e/2PACX-1vQ5ikmuSBW8iYYSUXutxZkPGEZ_HhFlxxWKC5m0v9MpPvezmBvyb4WLZjSuuJnXl6xs6f7gc7UwQ223/pub");
         } else {
-            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
         }
 
     }

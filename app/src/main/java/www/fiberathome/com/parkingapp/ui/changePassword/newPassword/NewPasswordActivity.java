@@ -8,53 +8,32 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 
-import androidx.appcompat.widget.Toolbar;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
+import www.fiberathome.com.parkingapp.databinding.ActivityBaseBinding;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressLint("NonConstantResourceId")
 public class NewPasswordActivity extends BaseActivity {
-
-    @BindView(R.id.toolbar)
-    Toolbar mToolbar;
-
-    @BindView(R.id.view)
-    View view;
-
     private Context context;
-
-    private Unbinder unbinder;
+    ActivityBaseBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_base);
+        binding = ActivityBaseBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
 
         context = this;
-
-        unbinder = ButterKnife.bind(this);
-
         setToolbar();
 
-        // Initialize ForgetPasswordFragment
+        // Initialize NewPasswordFragment
         ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
                 NewPasswordFragment.newInstance(), R.id.frameLayout);
-    }
-
-    @Override
-    protected void onDestroy() {
-        if (unbinder != null) {
-            unbinder.unbind();
-        }
-        super.onDestroy();
     }
 
     @Override
@@ -67,7 +46,7 @@ public class NewPasswordActivity extends BaseActivity {
                     @Override
                     public void onPositiveClick() {
                         finishAffinity();
-                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
                     }
 
                     @Override
@@ -90,15 +69,15 @@ public class NewPasswordActivity extends BaseActivity {
     }
 
     private void setToolbar() {
-        mToolbar.setVisibility(View.VISIBLE);
-        view.setVisibility(View.VISIBLE);
-        setSupportActionBar(mToolbar);
+        binding.toolbar.setVisibility(View.VISIBLE);
+        binding.view.setVisibility(View.VISIBLE);
+        setSupportActionBar(binding.toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(context.getResources().getString(R.string.title_change_password));
-        mToolbar.setTitleTextColor(context.getResources().getColor(R.color.black));
-        if (mToolbar.getNavigationIcon() != null) {
-            mToolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.black), PorterDuff.Mode.SRC_ATOP);
+        binding.toolbar.setTitleTextColor(context.getResources().getColor(R.color.black));
+        if (binding.toolbar.getNavigationIcon() != null) {
+            binding.toolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.black), PorterDuff.Mode.SRC_ATOP);
         }
     }
 }

@@ -4,15 +4,126 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/relativeLayout"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="#edecea">
+            android:background="#edecea"
+            android:weightSum="2">
+
+            <ImageView
+                android:id="@+id/ivBackArrow"
+                android:layout_width="0dp"
+                android:layout_height="25dp"
+                android:layout_gravity="start|center"
+                android:layout_weight="0.2"
+                android:contentDescription="@string/army_vehicle_arrow"
+                android:gravity="start"
+                android:padding="@dimen/dim2"
+                app:srcCompat="@drawable/ic_action_back" />
+
+            <TextView
+                android:id="@+id/action_bar_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1.8"
+                android:maxLines="2"
+                android:padding="@dimen/dim2"
+                android:text="@string/booking_payment"
+                android:textColor="@color/black"
+                android:textSize="@dimen/dimTex16" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/dim5">
+
+            <TextView
+                android:id="@+id/topText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/relativeLayout"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/dim5"
+                android:gravity="center"
+                android:padding="@dimen/dim5"
+                android:text="@string/your_booking"
+                android:textSize="@dimen/dimTex16" />
+
+            <TextView
+                android:id="@+id/tvParkingSlotName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/topText"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/dim5"
+                android:layout_marginTop="@dimen/dim5"
+                android:layout_marginEnd="@dimen/dim5"
+                android:layout_marginBottom="@dimen/dim5"
+                android:padding="@dimen/dim5"
+                android:text="Parking slot 17"
+                android:textColor="@android:color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <View
+                android:id="@+id/border1"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/tvParkingSlotName"
+                android:layout_marginTop="@dimen/dim2"
+                android:background="#978080"
+                android:padding="@dimen/dim5" />
+
+            <RelativeLayout
+                android:id="@+id/second_layer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/border1"
+                android:layout_marginTop="@dimen/dim5"
+                android:padding="@dimen/dim5">
+
+                <TextView
+                    android:id="@+id/tvArrivedTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/dim5"
+                    android:text="@string/arrived"
+                    android:textSize="@dimen/dimTex15" />
+
+                <TextView
+                    android:id="@+id/tvDepartureTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tvArrivedTime"
+                    android:padding="@dimen/dim5"
+                    android:text="@string/departure"
+                    android:textSize="@dimen/dimTex15" />
+
+                <TextView
+                    android:id="@+id/tvDifferenceTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginStart="@dimen/dim2"
+                    android:layout_marginTop="@dimen/dim2"
+                    android:layout_marginEnd="@dimen/dim2"
+                    android:layout_marginBottom="@dimen/dim2"
+                    android:padding="@dimen/dim5"
+                    android:text="2:30h"
+                    android:textSize="15sp" />
+            </RelativeLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -20,305 +131,250 @@
                 android:orientation="horizontal"
                 android:weightSum="2">
 
-                <ImageView
-                    android:id="@+id/ivBackArrow"
-                    android:layout_width="0dp"
-                    android:layout_height="25dp"
-                    android:layout_gravity="start"
-                    android:layout_weight="0.2"
-                    android:contentDescription="arrow"
-                    android:gravity="start"
-                    android:padding="@dimen/dim2"
-                    app:srcCompat="@drawable/ic_action_back" />
-
                 <TextView
-                    android:id="@+id/action_bar_title"
+                    android:id="@+id/eachHourText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1.8"
-                    android:maxLines="2"
-                    android:padding="@dimen/dim2"
-                    android:text="@string/booking_payment"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/dimTex16" />
+                    android:layout_below="@id/second_layer"
+                    android:layout_marginStart="@dimen/dim5"
+                    android:layout_weight="1"
+                    android:padding="@dimen/dim5"
+                    android:text="@string/each_hour"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/dimTex15"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/eachHourText"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="@dimen/dim5"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:padding="@dimen/dim5"
+                    android:text="@string/bdt_hour_charge"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
             </LinearLayout>
-        </RelativeLayout>
 
-        <TextView
-            android:id="@+id/topText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/relativeLayout"
-            android:layout_centerInParent="true"
-            android:layout_margin="@dimen/dim5"
-            android:gravity="center"
-            android:padding="@dimen/dim5"
-            android:text="@string/your_booking"
-            android:textSize="@dimen/dimTex16" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="10dp"
-            android:padding="@dimen/dim5"
-            android:visibility="gone">
+            <View
+                android:id="@+id/border2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/eachHourText"
+                android:layout_marginTop="2dp"
+                android:background="#978080" />
 
             <TextView
-                android:id="@+id/tvEditSlot"
-                android:layout_width="85dp"
+                android:id="@+id/tvPromo"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/border2"
+                android:layout_marginStart="@dimen/_7sdp"
+                android:layout_marginTop="@dimen/dim5"
                 android:background="@drawable/border_style"
                 android:gravity="center"
-                android:text="@string/edit_slot"
-                android:textSize="@dimen/dimTex15" />
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/tvParkingSlotName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/topText"
-            android:layout_centerInParent="true"
-            android:layout_marginStart="@dimen/dim5"
-            android:layout_marginTop="@dimen/dim5"
-            android:layout_marginEnd="@dimen/dim5"
-            android:layout_marginBottom="@dimen/dim5"
-            android:padding="@dimen/dim5"
-            android:text="Parking slot 17"
-            android:textColor="@android:color/black"
-            android:textSize="15sp"
-            android:textStyle="bold" />
-
-        <View
-            android:id="@+id/border1"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@+id/tvParkingSlotName"
-            android:layout_marginTop="@dimen/dim2"
-            android:background="#978080"
-            android:padding="@dimen/dim5" />
-
-        <RelativeLayout
-            android:id="@+id/second_layer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/border1"
-            android:layout_marginTop="@dimen/dim5"
-            android:padding="@dimen/dim5">
-
-            <TextView
-                android:id="@+id/tvArrivedTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:padding="@dimen/dim5"
-                android:text="@string/arrived"
-                android:textSize="@dimen/dimTex15" />
-
-            <TextView
-                android:id="@+id/tvDepartureTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tvArrivedTime"
-                android:padding="@dimen/dim5"
-                android:text="@string/departure"
-                android:textSize="@dimen/dimTex15" />
-
-            <TextView
-                android:id="@+id/tvDifferenceTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerInParent="true"
-                android:layout_marginStart="@dimen/dim2"
-                android:layout_marginTop="@dimen/dim2"
-                android:layout_marginEnd="@dimen/dim2"
-                android:layout_marginBottom="@dimen/dim2"
-                android:padding="@dimen/dim5"
-                android:text="2:30h"
-                android:textSize="15sp" />
-        </RelativeLayout>
-
-        <TextView
-            android:id="@+id/eachHourText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/second_layer"
-            android:layout_marginStart="@dimen/dim5"
-            android:padding="@dimen/dim5"
-            android:text="@string/each_hour"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/dimTex15"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/eachHourText"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="@dimen/dim2"
-            android:layout_marginTop="@dimen/dim2"
-            android:layout_marginEnd="@dimen/dim2"
-            android:layout_marginBottom="@dimen/dim2"
-            android:padding="@dimen/dim5"
-            android:text="@string/bdt_hour_charge"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <View
-            android:id="@+id/border2"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@+id/eachHourText"
-            android:layout_marginTop="2dp"
-            android:background="#978080" />
-
-        <TextView
-            android:id="@+id/tvPromo"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/border2"
-            android:layout_marginStart="@dimen/dim5"
-            android:layout_marginTop="@dimen/dim5"
-            android:background="@drawable/border_style"
-            android:gravity="center"
-            android:padding="@dimen/dim5"
-            android:text="@string/use_promo"
-            android:textSize="@dimen/dimTex15"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/tvSubTotalText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tvPromo"
-            android:layout_marginStart="@dimen/dim5"
-            android:layout_marginTop="@dimen/dim5"
-            android:padding="@dimen/dim5"
-            android:text="@string/subtotal_parking"
-            android:textColor="@android:color/black"
-            android:textSize="15sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/tvSubTotal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/tvSubTotalText"
-            android:layout_alignParentEnd="true"
-            android:layout_margin="@dimen/dim2"
-            android:padding="@dimen/dim5"
-            android:text="BDT 700.00"
-            android:textColor="@android:color/black"
-            android:textSize="15sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/tvDiscountStaticText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tvSubTotalText"
-            android:layout_marginStart="@dimen/dim5"
-            android:layout_marginTop="@dimen/dim2"
-            android:padding="@dimen/dim5"
-            android:text="@string/discount"
-            android:textSize="@dimen/dimTex14" />
-
-        <TextView
-            android:id="@+id/tvDiscount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/tvDiscountStaticText"
-            android:layout_alignParentEnd="true"
-            android:layout_margin="@dimen/dim2"
-            android:padding="@dimen/dim5"
-            android:text="@string/bdt_00_00"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/tvTotalStaticText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tvDiscountStaticText"
-            android:layout_marginStart="@dimen/dim5"
-            android:layout_marginTop="@dimen/dim2"
-            android:padding="@dimen/dim5"
-            android:text="@string/total"
-            android:textColor="@android:color/black"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/tvTotal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/tvTotalStaticText"
-            android:layout_alignParentEnd="true"
-            android:layout_margin="@dimen/dim2"
-            android:padding="@dimen/dim5"
-            android:text="BDT400.00"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/dimTex15"
-            android:textStyle="bold" />
-
-        <View
-            android:id="@+id/border3"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@id/tvTotalStaticText"
-            android:layout_marginTop="2dp"
-            android:background="#9C9696" />
-
-        <TextView
-            android:id="@+id/disclaimerTxt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/border3"
-            android:layout_marginStart="3dp"
-            android:layout_marginTop="3dp"
-            android:layout_marginEnd="3dp"
-            android:layout_marginBottom="3dp"
-            android:padding="3dp"
-            android:text="@string/loream_ipsum"
-            android:textSize="14sp"
-            android:visibility="gone" />
-
-        <LinearLayout
-            android:id="@+id/termConWrapLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/disclaimerTxt"
-            android:layout_alignParentEnd="true"
-            android:layout_margin="@dimen/dim2"
-            android:padding="@dimen/dim5">
-
-            <TextView
-                android:id="@+id/tvTermCondition"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:background="@drawable/border_style"
-                android:gravity="center"
-                android:text="T&amp;C"
-                android:textSize="@dimen/dimTex14"
+                android:text="@string/use_promo"
+                android:textSize="@dimen/dimTex15"
                 android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <TextView
+                    android:id="@+id/tvSubTotalText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tvPromo"
+                    android:layout_marginStart="@dimen/dim5"
+                    android:layout_marginTop="@dimen/dim5"
+                    android:layout_weight="1"
+                    android:padding="@dimen/dim5"
+                    android:text="@string/subtotal_parking"
+                    android:textColor="@android:color/black"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvSubTotal"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/tvSubTotalText"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="@dimen/dim5"
+                    android:layout_marginTop="@dimen/dim5"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:padding="@dimen/dim5"
+                    android:text="BDT 700.00"
+                    android:textColor="@android:color/black"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <TextView
+                    android:id="@+id/tvDiscountStaticText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tvSubTotalText"
+                    android:layout_marginStart="@dimen/dim5"
+                    android:layout_marginTop="@dimen/dim5"
+                    android:layout_weight="1"
+                    android:padding="@dimen/dim5"
+                    android:text="@string/discount"
+                    android:textSize="@dimen/dimTex14" />
+
+                <TextView
+                    android:id="@+id/tvDiscount"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/tvDiscountStaticText"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="@dimen/dim5"
+                    android:layout_marginTop="@dimen/dim5"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:padding="@dimen/dim5"
+                    android:text="@string/bdt_00_00"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <TextView
+                    android:id="@+id/tvTotalStaticText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tvDiscountStaticText"
+                    android:layout_marginStart="@dimen/dim5"
+                    android:layout_marginTop="@dimen/dim2"
+                    android:layout_weight="1"
+                    android:padding="@dimen/dim5"
+                    android:text="@string/total"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvTotal"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/tvTotalStaticText"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="@dimen/dim5"
+                    android:layout_marginTop="@dimen/dim5"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:padding="@dimen/dim5"
+                    android:text="BDT400.00"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/dimTex15"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/border3"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/tvTotalStaticText"
+                android:layout_marginTop="2dp"
+                android:background="#9C9696" />
+
+            <TextView
+                android:id="@+id/disclaimerTxt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/border3"
+                android:layout_marginStart="3dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginEnd="3dp"
+                android:layout_marginBottom="3dp"
+                android:padding="3dp"
+                android:text="@string/loream_ipsum"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/termConWrapLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/disclaimerTxt"
+                android:layout_alignParentEnd="true"
+                android:layout_margin="@dimen/dim2"
+                android:orientation="vertical"
+                android:padding="@dimen/dim5">
+
+                <TextView
+                    android:id="@+id/tvTermCondition"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:background="@drawable/border_style"
+                    android:gravity="center"
+                    android:text="T&amp;C"
+                    android:textSize="@dimen/dimTex14"
+                    android:textStyle="bold" />
+
+
+            </LinearLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/termConWrapLayout"
+                android:padding="@dimen/dim5"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnPay"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="2dp"
+                    android:background="@android:color/black"
+                    android:padding="@dimen/dim10"
+                    android:text="@string/online_pay"
+                    android:textColor="@android:color/white"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/btnScratchCard"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/btnScratchCard"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="2dp"
+                    android:background="@color/blue"
+                    android:padding="@dimen/dim10"
+                    android:text="@string/scratchCard"
+                    android:textColor="@android:color/white"
+                    app:layout_constraintEnd_toStartOf="@+id/btnPay"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
         </LinearLayout>
-
-        <Button
-            android:id="@+id/btnPay"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/termConWrapLayout"
-            android:layout_marginStart="@dimen/dim10"
-            android:layout_marginTop="@dimen/dim10"
-            android:layout_marginEnd="@dimen/dim10"
-            android:layout_marginBottom="@dimen/dim10"
-            android:background="@android:color/black"
-            android:padding="@dimen/dim10"
-            android:text="@string/pay_bdt_0"
-            android:textColor="@android:color/white" />
-
-    </RelativeLayout>
+    </LinearLayout>
 
 </ScrollView>

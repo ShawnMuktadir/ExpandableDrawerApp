@@ -28,7 +28,6 @@ import www.fiberathome.com.parkingapp.ui.permission.listener.DexterPermissionLis
 import www.fiberathome.com.parkingapp.ui.permission.listener.PermissionInterface;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 public class PermissionActivity extends BaseActivity implements PermissionInterface {
@@ -76,7 +75,7 @@ public class PermissionActivity extends BaseActivity implements PermissionInterf
 
                             }
                         }).show();
-                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.please_enable_gps));
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.please_enable_gps));
             }
         }
     }
@@ -201,7 +200,7 @@ public class PermissionActivity extends BaseActivity implements PermissionInterf
                     public void onPositiveClick() {
                         finishAffinity();
                         Preferences.getInstance(context).setIsLocationPermissionGiven(false);
-                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
                     }
 
                     @Override

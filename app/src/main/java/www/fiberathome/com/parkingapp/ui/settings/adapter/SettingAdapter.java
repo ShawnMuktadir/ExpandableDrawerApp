@@ -4,18 +4,15 @@ import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.databinding.RowSettingBinding;
 import www.fiberathome.com.parkingapp.model.Settings;
+import www.fiberathome.com.parkingapp.ui.settings.SettingsActivity;
 
 public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.SettingsViewHolder> {
 
@@ -32,20 +29,21 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.Settings
     @Override
     public SettingsViewHolder onCreateViewHolder(ViewGroup parent,
                                                  int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.row_setting, parent, false);
-
-        return new SettingsViewHolder(view);
+        SettingsActivity context = (SettingsActivity) parent.getContext();
+        LayoutInflater layoutInflater = LayoutInflater.from(context);
+        RowSettingBinding itemBinding = RowSettingBinding.inflate(layoutInflater, parent, false);
+        return new SettingsViewHolder(itemBinding);
     }
 
     @Override
     public void onBindViewHolder(final SettingsViewHolder viewHolder, final int position) {
         Settings data = dataSet.get(position);
 
-        viewHolder.textViewName.setText(data.getName());
+        viewHolder.binding.textViewSettingName.setText(data.getName());
 
-        if (data.getImage() == 0) viewHolder.imageViewIcon.setVisibility(View.INVISIBLE);
-        else viewHolder.imageViewIcon.setImageResource(data.getImage());
+        if (data.getImage() == 0)
+            viewHolder.binding.imageViewSettingIcon.setVisibility(View.INVISIBLE);
+        else viewHolder.binding.imageViewSettingIcon.setImageResource(data.getImage());
 
         viewHolder.itemView.setOnClickListener(v -> listener.onItemClick(viewHolder.itemView, position));
     }
@@ -57,16 +55,11 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.Settings
 
     @SuppressLint("NonConstantResourceId")
     public static class SettingsViewHolder extends RecyclerView.ViewHolder {
+        RowSettingBinding binding;
 
-        @BindView(R.id.text_view_setting_name)
-        TextView textViewName;
-
-        @BindView(R.id.image_view_setting_icon)
-        ImageView imageViewIcon;
-
-        public SettingsViewHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
+        public SettingsViewHolder(RowSettingBinding itemView) {
+            super(itemView.getRoot());
+            this.binding = itemView;
         }
     }
 

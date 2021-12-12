@@ -2,7 +2,6 @@ package www.fiberathome.com.parkingapp.ui.profile.edit;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
-import static android.content.Context.LOCATION_SERVICE;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -10,7 +9,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -61,7 +59,6 @@ import www.fiberathome.com.parkingapp.utils.DateTimeUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.MathUtils;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
@@ -120,9 +117,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
 
         setData(user);
         binding.editTextFullName.setSelection(binding.editTextFullName.getText().length());
-
         setListeners();
-
         binding.btnUpdateInfo.setOnClickListener(this);
         binding.imageViewEditProfileImage.setOnClickListener(this);
         binding.imageViewCaptureImage.setOnClickListener(this);
@@ -283,7 +278,6 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                     Bitmap convertedImage = getResizedBitmap(bitmap2, 500);
                     binding.ivVehicleEditPlatePreview.setImageBitmap(convertedImage);
                 }
-                //Toast.makeText(SignUpActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
             } catch (IOException e) {
                 e.printStackTrace();
                 ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
@@ -308,14 +302,14 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
 
     @Override
     public boolean onBackPressed() {
-        if (isGPSEnabled()) {
+        if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
             if (getActivity() != null) {
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.nav_host_fragment, HomeFragment.newInstance())
                         .addToBackStack(null)
                         .commit();
             } else {
-                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_gps));
             }
         }
         return false;
@@ -340,7 +334,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                                     if (ConnectivityUtils.getInstance().checkInternet(context)) {
                                         submitEditProfileInfo();
                                     } else {
-                                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
                                     }
                                 }
 
@@ -349,7 +343,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                                     Timber.e("Negative Button Clicked");
                                     if (context != null) {
                                         context.finish();
-                                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
                                     }
                                 }
                             }).show();
@@ -380,7 +374,6 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
         binding.editTextFullName.setText(name);
 
         binding.tvUserMobileNo.setText(TextUtils.getInstance().addCountryPrefixWithPlus(user.getMobileNo()));
-        //Timber.e("Mobile no -> %s", user.getMobileNo());
 
         if (TextUtils.getInstance().isNumeric(Preferences.getInstance(context).getUser().getVehicleNo())) {
             binding.editTextVehicleRegNumberMilitaryFirstTwoDigit.setText(user.getVehicleNo().substring(0, 2));
@@ -400,36 +393,34 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
 
         selectSpinnerItemByValue(binding.divSpinner, Preferences.getInstance(context).getVehicleDivData());
 
-        if (!user.getImage().endsWith(".jpg")) {
-            if (user.getImage() != null) {
-                String url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
-                Timber.e("Image URL -> %s", url);
-                Glide.with(context).load(url).placeholder(R.drawable.ic_account_settings).dontAnimate().into(binding.imageViewEditProfileImage);
-            } else {
-                Timber.e("Image value -> %s", user.getImage());
+        if (user.getImage() != null && !user.getImage().equals("")) {
+            try {
+                if (!user.getImage().endsWith(".jpg")) {
+                    String url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
+                    Timber.e("Image URL -> %s", url);
+                    Glide.with(context).load(url).placeholder(R.drawable.ic_account_settings).dontAnimate().into(binding.imageViewEditProfileImage);
+                } else {
+                    String url = AppConfig.IMAGES_URL + user.getImage();
+                    Timber.e("Image URL -> %s", url);
+                    Glide.with(context).load(url).placeholder(R.drawable.ic_account_settings).dontAnimate().into(binding.imageViewEditProfileImage);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            if (user.getVehicleImage() != null) {
-                String url = AppConfig.IMAGES_URL + user.getVehicleImage() + ".jpg";
-                Timber.e("Vehicle Image URL -> %s", url);
-                Glide.with(context).load(url).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(binding.ivVehicleEditPlatePreview);
-            } else {
-                Timber.e("Vehicle Image value -> %s", user.getVehicleImage());
-            }
-        } else {
-            if (user.getImage() != null) {
-                String url = AppConfig.IMAGES_URL + user.getImage();
-                Timber.e("Image URL -> %s", url);
-                Glide.with(context).load(url).placeholder(R.drawable.ic_account_settings).dontAnimate().into(binding.imageViewEditProfileImage);
-            } else {
-                Timber.e("Image value -> %s", user.getImage());
-            }
-
-            if (user.getVehicleImage() != null) {
-                String url = AppConfig.IMAGES_URL + user.getVehicleImage();
-                Timber.e("Vehicle Image URL -> %s", url);
-                Glide.with(context).load(url).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(binding.ivVehicleEditPlatePreview);
-            } else {
-                Timber.e("Vehicle Image value -> %s", user.getVehicleImage());
+        }
+        if (user.getVehicleImage() != null && !user.getVehicleImage().equals("")) {
+            try {
+                if (!user.getVehicleImage().endsWith(".jpg")) {
+                    String vehicleUrl = AppConfig.IMAGES_URL + user.getVehicleImage() + ".jpg";
+                    Timber.e("Vehicle Image URL -> %s", vehicleUrl);
+                    Glide.with(context).load(vehicleUrl).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(binding.ivVehicleEditPlatePreview);
+                } else {
+                    String vehicleUrl = AppConfig.IMAGES_URL + user.getVehicleImage();
+                    Timber.e("Vehicle Image URL -> %s", vehicleUrl);
+                    Glide.with(context).load(vehicleUrl).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(binding.ivVehicleEditPlatePreview);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -619,20 +610,6 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
         }
     }
 
-    private boolean isGPSEnabled() {
-
-        LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-
-        boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-        if (providerEnabled) {
-            return true;
-        } else {
-            Timber.e("else called");
-        }
-        return false;
-    }
-
     @SuppressWarnings("SameParameterValue")
     private Bitmap getResizedBitmap(Bitmap image, int maxSize) {
         int width = image.getWidth();
@@ -662,7 +639,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
             byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
             return BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
         } catch (Exception e) {
-            e.getMessage();
+            Timber.e(e);
             return null;
         }
     }
@@ -684,15 +661,11 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                 bitmap2 != null ? imageToString(bitmap2) :
                         imageToString(((BitmapDrawable) binding.ivVehicleEditPlatePreview.getDrawable()).getBitmap()),
                 mobileNo + "vehicle_" + DateTimeUtils.getInstance().getCurrentTimeStamp());
-
         call.enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
-
                 hideLoading();
-
                 hideProgress();
-
                 try {
                     Timber.e("Response -> %s", new Gson().toJson(response.body()));
                     Timber.e("ResponseCall -> %s", new Gson().toJson(call.request().body()));
@@ -711,7 +684,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                             // storing the user in sharedPreference
                             Preferences.getInstance(context).setUser(user);
                             Timber.e("user after update -> %s", new Gson().toJson(user));
-                            Toast.makeText(context, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                            ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                             context.onBackPressed();
                         } else {
                             Timber.e("jsonObject else called");
@@ -786,7 +759,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                 if (vehicleNoInt < 11 || (vehicleDiv.equalsIgnoreCase("E") && vehicleNoIntForOther > 60) ||
                         (vehicleDiv.equalsIgnoreCase("Ma") && vehicleClass.equalsIgnoreCase("Munshiganj") && vehicleNoIntForOther > 50) ||
                         (vehicleDiv.equalsIgnoreCase("Ma") && vehicleClass.equalsIgnoreCase("Narayanganj") && vehicleNoInt < 51)) {
-                    Toast.makeText(context, "Invalid vehicle number", Toast.LENGTH_SHORT).show();
+                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.invalid_vehicle_number));
                 } else {
                     editProfile(fullName, password, mobileNo, licencePlateInfo);
                 }
@@ -794,7 +767,6 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                 licencePlateInfo = binding.editTextVehicleRegNumberMilitaryFirstTwoDigit.getText().toString().trim() +
                         binding.editTextVehicleRegNumberMilitaryLastFourDigit.getText().toString().trim();
                 editProfile(fullName, password, mobileNo, licencePlateInfo);
-
             }
         }
     }

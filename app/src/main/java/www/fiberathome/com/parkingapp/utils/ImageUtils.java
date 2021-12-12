@@ -1,6 +1,10 @@
 package www.fiberathome.com.parkingapp.utils;
 
+import static www.fiberathome.com.parkingapp.model.data.Constants.REQUEST_PICK_CAMERA;
+
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -12,6 +16,7 @@ import android.media.ExifInterface;
 import androidx.annotation.ColorInt;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
@@ -176,6 +181,20 @@ public class ImageUtils {
         } catch (Exception e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    public boolean isCameraPermissionGranted(Context context) {
+        // Check Permission for Marshmallow
+        if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions((Activity) context, new String[]{android.Manifest.permission.CAMERA}, REQUEST_PICK_CAMERA);
+            return true;
+
+        } else if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            return true;
+
+        } else {
+            return true;
         }
     }
 }

@@ -4,7 +4,10 @@ import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_BN;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
@@ -12,7 +15,7 @@ import www.fiberathome.com.parkingapp.model.data.preference.LanguagePreferences;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 public class SplashActivity extends BaseActivity {
 
@@ -24,12 +27,6 @@ public class SplashActivity extends BaseActivity {
         setContentView(R.layout.activity_base);
 
         context = this;
-
-        if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
-            setAppLocale(LANGUAGE_BN);
-        } else {
-            setAppLocale(Preferences.getInstance(context).getAppLanguage());
-        }
 
         //Initialize splash fragment
         ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
@@ -44,6 +41,22 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
+            setAppLocale(LANGUAGE_BN);
+        } else {
+            setAppLocale(Preferences.getInstance(context).getAppLanguage());
+        }
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        // refresh your views here
+        if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
+            setAppLocale(LANGUAGE_BN);
+        } else {
+            setAppLocale(Preferences.getInstance(context).getAppLanguage());
+        }
+        super.onConfigurationChanged(newConfig);
     }
 
     @Override
@@ -56,7 +69,7 @@ public class SplashActivity extends BaseActivity {
                     @Override
                     public void onPositiveClick() {
                         SplashActivity.super.onBackPressed();
-                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
                     }
 
                     @Override

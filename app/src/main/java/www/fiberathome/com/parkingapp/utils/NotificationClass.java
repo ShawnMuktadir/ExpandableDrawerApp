@@ -17,10 +17,10 @@ public class NotificationClass extends Application {
         createNotificationChannels();
     }
 
-    private void  createNotificationChannels(){
+    private void createNotificationChannels() {
 
         // check android version heigher than Orio or heigher
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
             NotificationChannel heighpriority = new NotificationChannel(
                     CHANNEL_HIGH_PRIORITY_ID,

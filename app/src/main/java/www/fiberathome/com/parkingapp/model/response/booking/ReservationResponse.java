@@ -13,11 +13,12 @@ public class ReservationResponse extends BaseResponse {
     @SerializedName("bill")
     @Expose
     private String bill;
-
-
     @SerializedName("uid")
     @Expose
     private String uid;
+    @SerializedName("ps_id")
+    @Expose
+    private String psId;
 
     public String getReservation() {
         return reservation;
@@ -41,5 +42,13 @@ public class ReservationResponse extends BaseResponse {
 
     public void setUid(String uid) {
         this.uid = uid;
+    }
+
+    public String getPsId() {
+        return psId;
+    }
+
+    public void setPsId(String psId) {
+        this.psId = psId;
     }
 }

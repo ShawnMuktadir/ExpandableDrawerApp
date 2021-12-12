@@ -51,6 +51,7 @@
     <string name="err_confirm_password">Enter valid confirm password</string>
     <string name="no_account_yet_click_here">No account yet? Click Here</string>
     <string name="forget_password_click_here">Forget Password? Click Here</string>
+    <string name="password_not_matched">New Password &amp; Confirm password doesn\'t matched</string>
 
     //navigation
     <string name="home">Home</string>
@@ -127,7 +128,7 @@
 
     <string name="date">wed,5 Feb</string>
     <string name="schedule_heading">Schedule</string>
-    <string name="arrived">Arrived at the parking spot:</string>
+    <string name="arrived">Arrive at the parking spot:</string>
     <string name="departure">Select how long you want to book</string>
     <string name="book">Your book</string>
     <string name="gps_network_not_enabled">GPS network not enabled!</string>
@@ -412,6 +413,7 @@
     <string name="fiber_home">Fiber@Home</string>
     <string name="vehicle_no_d_13456">Vehicle No: D-13456</string>
     <string name="enable_gps">Enable GPS</string>
+    <string name="money_sign">৳ </string>
 
     <string name="set">Set</string>
     <string name="you_can_book_parking_slot">You can Book your selected parking area now</string>
@@ -523,9 +525,51 @@
     <string name="booking_already_canceled">Booking already canceled</string>
     <string name="booking_already_canceled_msg">Your reserve time is over. Your parking has been canceled.</string>
     <string name="back">Back</string>
-    <string name="parking_spot_id">Spot Id: </string>
+    <string name="parking_spot_id">Spot No: </string>
     <string name="car_departure">Car Departure</string>
-    <string name="dp_u_want_to_cancel_booking">Do you want to cancel booking?</string>
+    <string name="do_u_want_to_cancel_booking">Do you want to cancel booking?</string>
     <string name="park_has_started">Your park has been started</string>
     <string name="as_your_reservation_time_had_exceed_over_five_mins">As your reservation time had exceed over 5 mins, your booking has been closed. Thank you</string>
+    <string name="invalid_vehicle_number">Invalid vehicle number</string>
+    <string name="clock">Clock</string>
+    <string name="re_booking">Re-book</string>
+    <string name="please_contact_our_support_team_for_your_queries">Please contact our support team for your necessary queries</string>
+    <string name="sms">SMS</string>
+    <string name="others">Others</string>
+    <string name="parking_reservation_id">Reservation Number: </string>
+    <string name="arrival">Arrival</string>
+    <string name="departuretxt">Departure</string>
+    <string name="remaining_time">Remaining Time:</string>
+    <string name="booking_time">Booking Time:</string>
+    <string name="departuretime">Departure Time:</string>
+    <string name="earlyparkingtime">Early Parking Time:</string>
+    <string name="exceedParktime">Exceed Parking Time:</string>
+    <string name="completed">Completed</string>
+    <string name="canceled">Canceled</string>
+    <string name="rejected">Rejected</string>
+    <string name="t_amp_c"><![CDATA[T&C]]></string>
+    <string name="pay_bdt">Pay BDT </string>
+    <string name="car_parked">Car Parked</string>
+    <string name="booked_time">Booked Time</string>
+    <string name="park_duration_about_to_end">Parking Duration About To End</string>
+    <string name="booked_parking">Booked Parking</string>
+    <string name="Booked_for">Booked for : \n</string>
+    <string name="your_booked_parking_duration_has_ended">Your Booked Parking Duration Has Ended</string>
+    <string name="book_now">Book Now</string>
+    <string name="reservation_closed_successfully">Reservation Closed Sucessfully</string>
+    <string name="currently_rebook_not_available">Currently Re-book is not available for this parking spot</string>
+    <string name="gps_permission">GPS Permission</string>
+    <string name="gps_required">GPS is required for this app to work. Please enable GPS.</string>
+    <string name="no_barcode_detected">No Barcode Detected</string>
+    <string name="barcode_scanner_started">Barcode scanner started</string>
+    <string name="prevent_memory_leaks_scan_stopped">To prevent memory leaks barcode scanner has been stopped</string>
+    <string name="unable_to_load_map">Unable to load map</string>
+    <string name="scratchCard">Scratch Card</string>
+    <string name="e_pay">E-Pay</string>
+    <string name="online_pay">Pay Online</string>
+    <string name="scratch_card">Scratch Card</string>
+    <string name="enter_scratch_card_number">Enter your Scratch Card Number</string>
+    <string name="invalid_qr_code_message">Please scan a valid parking slot QR code</string>
+    <string name="invalid_qr">Invalid QR</string>
+    <string name="scan_text">Scan Parking slot QR code for faster booking confirmation</string>
 </resources>

@@ -50,33 +50,32 @@ public class GeofenceRegistrationService extends JobIntentService {
             } else {
                 Log.d(TAG, "You are outside parking");
             }
-            String geofenceTransitionDetails = getGeofenceTrasitionDetails(transaction, geofences );
+            String geofenceTransitionDetails = getGeofenceTrasitionDetails(transaction, geofences);
 
-            sendNotification( geofenceTransitionDetails );
+            sendNotification(geofenceTransitionDetails);
         }
     }
-
 
 
     // Create a detail message with Geofences received
     private String getGeofenceTrasitionDetails(int geoFenceTransition, List<Geofence> triggeringGeofences) {
         // get the ID of each geofence triggered
         ArrayList<String> triggeringGeofencesList = new ArrayList<>();
-        for ( Geofence geofence : triggeringGeofences ) {
-            triggeringGeofencesList.add( geofence.getRequestId() );
+        for (Geofence geofence : triggeringGeofences) {
+            triggeringGeofencesList.add(geofence.getRequestId());
         }
 
         String status = null;
-        if ( geoFenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER )
+        if (geoFenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER)
             status = "Entering ";
-        else if ( geoFenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT )
+        else if (geoFenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT)
             status = "Exiting ";
-        return status + TextUtils.join( ", ", triggeringGeofencesList);
+        return status + TextUtils.join(", ", triggeringGeofencesList);
     }
 
     // Send a notification
-    private void sendNotification( String msg ) {
-        Log.i(TAG, "sendNotification: " + msg );
+    private void sendNotification(String msg) {
+        Log.i(TAG, "sendNotification: " + msg);
 
         // Intent to start the main Activity
         Intent notificationIntent = new Intent(this, HomeActivity.class);
@@ -88,9 +87,9 @@ public class GeofenceRegistrationService extends JobIntentService {
 
         // Creating and sending Notification
         NotificationManager notificatioMng =
-                (NotificationManager) getSystemService( Context.NOTIFICATION_SERVICE );
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificatioMng.notify(
-               0,
+                0,
                 createNotification(msg, notificationPendingIntent));
     }
 
@@ -120,4 +119,6 @@ public class GeofenceRegistrationService extends JobIntentService {
             default:
                 return "Unknown error.";
 
-        }}}
+        }
+    }
+}

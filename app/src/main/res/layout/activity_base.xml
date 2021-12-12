@@ -31,7 +31,7 @@
                 app:contentInsetLeft="0dp"
                 app:contentInsetStart="0dp"
                 app:contentInsetStartWithNavigation="0dp"
-                app:popupTheme="@style/AppTheme.PopupOverlay"/>
+                app:popupTheme="@style/AppTheme.PopupOverlay" />
 
             <View
                 android:id="@+id/view"
@@ -39,10 +39,9 @@
                 android:layout_height="1dp"
                 android:background="@color/gray_update"
                 android:visibility="gone"
-                android:layout_below="@+id/toolbar"/>
+                android:layout_below="@+id/toolbar" />
 
         </RelativeLayout>
-
 
 
         <include

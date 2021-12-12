@@ -19,5 +19,6 @@ public class Constants {
     public static final String STOP_BOOKING_TRACKING = "stopBookingTracking";
     public static final int BOOKING_SERVICE_ID = 121;
     public static final int BOOKING_Exceed_SERVICE_ID = 122;
+    public static final int REQUEST_PICK_CAMERA = 1002;
     public static final String BOOKING_EXCEED_CHECK = "BOOKING_EXCEED_CHECK";
 }

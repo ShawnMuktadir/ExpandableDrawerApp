@@ -50,7 +50,6 @@ import www.fiberathome.com.parkingapp.ui.signUp.SignUpActivity;
 import www.fiberathome.com.parkingapp.ui.verifyPhone.VerifyPhoneActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
 
@@ -112,19 +111,16 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
         ClickableSpan clickableSpan = new ClickableSpan() {
             @Override
             public void onClick(@NonNull View textView) {
-                // do some thing
+                // start SignUpActivity
                 startActivity(new Intent(context, SignUpActivity.class));
-                context.finish();
             }
         };
 
         if (Locale.getDefault().getLanguage().equalsIgnoreCase(LANGUAGE_EN)) {
-            //spannableString.setSpan(clickableSpan, 87, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             spannableString.setSpan(clickableSpan, 16, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             binding.textViewSignUp.setText(spannableString);
             binding.textViewSignUp.setMovementMethod(LinkMovementMethod.getInstance());
         } else if (Locale.getDefault().getLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
-            //spannableString.setSpan(clickableSpan, 50, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             spannableString.setSpan(clickableSpan, 16, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             binding.textViewSignUp.setText(spannableString);
             binding.textViewSignUp.setMovementMethod(LinkMovementMethod.getInstance());
@@ -175,7 +171,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                                     if (ConnectivityUtils.getInstance().checkInternet(context)) {
                                         submitLogin();
                                     } else {
-                                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
                                     }
                                 }
 
@@ -183,7 +179,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                                 public void onNegativeClick() {
                                     Timber.e("Negative Button Clicked");
                                     if (context != null) {
-                                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
                                         context.finish();
                                     }
                                 }
@@ -243,7 +239,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                                             if (ConnectivityUtils.getInstance().checkInternet(context)) {
                                                 submitLogin();
                                             } else {
-                                                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                                                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
                                             }
                                         }
 
@@ -251,7 +247,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                                         public void onNegativeClick() {
                                             Timber.e("Negative Button Clicked");
                                             if (context != null) {
-                                                TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                                                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
                                                 context.finish();
                                             }
                                         }
@@ -306,6 +302,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
                     binding.textInputLayoutPassword.setErrorEnabled(false);
                 }
             }
+
             @Override
             public void afterTextChanged(Editable s) {
 

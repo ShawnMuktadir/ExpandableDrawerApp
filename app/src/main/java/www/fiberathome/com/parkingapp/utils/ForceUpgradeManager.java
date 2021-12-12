@@ -154,7 +154,7 @@ public class ForceUpgradeManager implements LifecycleObserver {
             }
         } catch (Exception e) {
             Timber.e(e.getCause());
-            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.something_went_wrong));
+            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
         }
     }
 

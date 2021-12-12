@@ -18,66 +18,38 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="?attr/actionBarSize"
                 android:background="#edecea"
                 android:padding="@dimen/app_padding_secondary">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:orientation="horizontal"
-                    android:weightSum="3.2">
+                    android:weightSum="2">
 
                     <ImageView
                         android:id="@+id/ivBackArrow"
-                        android:layout_width="25dp"
+                        android:layout_width="0dp"
                         android:layout_height="25dp"
-                        android:layout_weight=".2"
-                        android:contentDescription="arrow"
+                        android:layout_gravity="start|center"
+                        android:layout_weight="0.2"
+                        android:contentDescription="@string/army_vehicle_arrow"
+                        android:gravity="start"
+                        android:padding="@dimen/dim2"
                         app:srcCompat="@drawable/ic_action_back" />
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/_5sdp"
-                        android:layout_weight="2"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/action_bar_title"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:maxLines="2"
-                            android:text="@string/schedule_fragment_title"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/dimTex14"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/action_bar_sub_title"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:maxLines="2"
-                            android:text="@string/subject_to_availability"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/dimTex14" />
-
-                    </LinearLayout>
-
                     <TextView
-                        android:id="@+id/tvTotalParkingTime"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/action_bar_title"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:maxLines="3"
-                        android:text="@string/parking_total_time"
+                        android:layout_gravity="center"
+                        android:layout_weight="1.8"
+                        android:maxLines="2"
+                        android:padding="@dimen/dim2"
+                        android:text="@string/schedule_parking"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/dimTex12"
-                        android:textStyle="bold" />
+                        android:textSize="@dimen/dimTex16" />
 
                 </LinearLayout>
 
@@ -87,17 +59,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:padding="@dimen/app_padding_secondary">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_margin="@dimen/app_radius"
-                    android:text="@string/schedule_parking"
-                    android:textColor="@android:color/black"
-                    android:textSize="@dimen/dimTex14"
-                    android:textStyle="bold" />
+                android:padding="@dimen/app_padding_secondary"
+                android:layout_margin="@dimen/dim5">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -125,19 +88,46 @@
                     android:layout_marginTop="3dp"
                     android:background="#000" />
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="@dimen/dim5"
-                    android:text="@string/arrived"
-                    android:textStyle="bold"
-                    android:textColor="@color/arrived"
-                    android:textSize="@dimen/dimTex14" />
+                    android:weightSum="2">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.2"
+                        android:padding="@dimen/dim5"
+                        android:text="@string/arrived"
+                        android:textColor="@color/arrivedColor"
+                        android:textSize="@dimen/dimTex14"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.8"
+                        android:gravity="end|center"
+                        android:orientation="vertical">
+
+                        <CheckBox
+                            android:id="@+id/cbBookNow"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="@dimen/dim5"
+                            android:text="@string/book_now"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/dimTex14"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/arriveDisableLayout"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dim5">
 
                     <com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker
                         android:id="@+id/arrivedPicker"
@@ -163,16 +153,15 @@
                     android:layout_height="wrap_content"
                     android:padding="@dimen/dim5"
                     android:text="@string/departure"
-                    android:textColor="@color/arrived"
-                    android:textStyle="bold"
-                    android:textSize="@dimen/dimTex14" />
+                    android:textColor="@color/arrivedColor"
+                    android:textSize="@dimen/dimTex14"
+                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:id="@+id/departureDisableLayout"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_30sdp"
-                    android:layout_margin="@dimen/dim5"
-                    android:background="@drawable/rect_white_bg_gray_border_rounded">
+                    android:layout_margin="@dimen/dim5">
 
                     <Spinner
                         android:id="@+id/spinner_departure_time"

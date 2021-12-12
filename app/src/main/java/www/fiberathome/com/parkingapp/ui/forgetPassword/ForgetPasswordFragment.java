@@ -33,7 +33,6 @@ import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 import www.fiberathome.com.parkingapp.ui.changePassword.ChangePasswordOTPActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
 
@@ -53,7 +52,7 @@ public class ForgetPasswordFragment extends BaseFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentForgetPasswordBinding.inflate(getLayoutInflater());
@@ -122,7 +121,7 @@ public class ForgetPasswordFragment extends BaseFragment {
                                             if (ConnectivityUtils.getInstance().checkInternet(context)) {
                                                 submitLogin();
                                             } else {
-                                                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                                                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
                                             }
                                         }
 
@@ -130,7 +129,7 @@ public class ForgetPasswordFragment extends BaseFragment {
                                         public void onNegativeClick() {
                                             Timber.e("Negative Button Clicked");
                                             if (context != null) {
-                                                TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                                                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
                                                 context.finish();
                                             }
                                         }
@@ -155,7 +154,7 @@ public class ForgetPasswordFragment extends BaseFragment {
                                 if (ConnectivityUtils.getInstance().checkInternet(context)) {
                                     submitLogin();
                                 } else {
-                                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
                                 }
                             }
 
@@ -163,7 +162,7 @@ public class ForgetPasswordFragment extends BaseFragment {
                             public void onNegativeClick() {
                                 Timber.e("Negative Button Clicked");
                                 if (context != null) {
-                                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
                                     context.finish();
                                 }
                             }
@@ -205,7 +204,7 @@ public class ForgetPasswordFragment extends BaseFragment {
                         ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                     } else {
                         if (response.body().getMessage().equalsIgnoreCase("Try Again! Invalid Mobile Number.")) {
-                            TastyToastUtils.showTastyErrorToast(context,
+                            ToastUtils.getInstance().showToastMessage(context,
                                     context.getResources().getString(R.string.mobile_number_not_exist));
                         } else {
                             ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());

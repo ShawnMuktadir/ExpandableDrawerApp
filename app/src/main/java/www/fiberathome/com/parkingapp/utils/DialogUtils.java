@@ -21,7 +21,6 @@ import com.afollestad.materialdialogs.MaterialDialog;
 
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.ui.booking.BookingActivity;
 import www.fiberathome.com.parkingapp.ui.widget.BaseBottomSheetDialog;
 
 @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -34,9 +33,6 @@ public class DialogUtils {
         }
 
         return dialogUtils;
-    }
-
-    public void alertDialog(BookingActivity context, Activity context1, String string, BookingActivity context2, String string1, String string2, Object positive_button_clicked, Object negative_button_clicked) {
     }
 
     public interface DialogClickListener {
@@ -183,6 +179,36 @@ public class DialogUtils {
         }
     }
 
+    public void showCallDialog(String message, Context context) {
+        if (context != null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setMessage(message);
+            builder.setCancelable(true);
+            builder.setPositiveButton(context.getResources().getString(R.string.call), (dialog, which) -> {
+                String number = context.getResources().getString(R.string.number);
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_DIAL); // Action for what intent called for
+                intent.setData(Uri.parse("tel: " + number)); // Datum with intent respective action on intent
+                context.startActivity(intent);
+                dialog.dismiss();
+            });
+            AlertDialog alertDialog = builder.create();
+            try {
+                if (!((Activity) context).isFinishing()) {
+                    alertDialog.show();
+                }
+            } catch (WindowManager.BadTokenException e) {
+                //use a log message
+                e.getCause();
+            }
+
+            // Let's start with animation work. We just need to create a style and use it here as follows.
+            /*if (alertDialog.getWindow() != null)
+                alertDialog.getWindow().getAttributes().windowAnimations = R.style.slidingDialogAnimation;*/
+
+        }
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     public void showExitDialog(final Activity activity) {
         android.app.AlertDialog.Builder dialogBuilder = new android.app.AlertDialog.Builder(activity, R.style.Theme_AppCompat_NoActionBar);
@@ -212,7 +238,7 @@ public class DialogUtils {
         tv_exit.setOnClickListener(v -> {
             alertDialog.dismiss();
             activity.finish();
-            TastyToastUtils.showTastySuccessToast(activity, activity.getResources().getString(R.string.thanks_message));
+            ToastUtils.getInstance().showToastMessage(activity, activity.getResources().getString(R.string.thanks_message));
         });
 
     }

@@ -33,11 +33,11 @@ public class PermissionUtil {
         /*
          * If permission is not granted
          * */
-        if (shouldAskPermission(context, permission)){
+        if (shouldAskPermission(context, permission)) {
             /*
              * If permission denied previously
              * */
-            if (((Activity)context).shouldShowRequestPermissionRationale(permission)) {
+            if (((Activity) context).shouldShowRequestPermissionRationale(permission)) {
                 listener.onPermissionPreviouslyDenied();
             } else {
                 /*
@@ -57,6 +57,7 @@ public class PermissionUtil {
             listener.onPermissionGranted();
         }
     }
+
     /*
      * Callback on various cases on checking permission
      *
@@ -76,14 +77,17 @@ public class PermissionUtil {
          * Callback to ask permission
          * */
         void onPermissionAsk();
+
         /*
          * Callback on permission denied
          * */
         void onPermissionPreviouslyDenied();
+
         /*
          * Callback on permission "Never show again" checked and denied
          * */
         void onPermissionDisabled();
+
         /*
          * Callback on permission granted
          * */
@@ -94,11 +98,12 @@ public class PermissionUtil {
 
         private static final String PREFS_FILE_NAME = "file_name";
 
-        public static void firstTimeAskingPermission(Context context, String permission, boolean isFirstTime){
+        public static void firstTimeAskingPermission(Context context, String permission, boolean isFirstTime) {
             SharedPreferences sharedPreference = context.getSharedPreferences(PREFS_FILE_NAME, MODE_PRIVATE);
             sharedPreference.edit().putBoolean(permission, isFirstTime).apply();
         }
-        public static boolean isFirstTimeAskingPermission(Context context, String permission){
+
+        public static boolean isFirstTimeAskingPermission(Context context, String permission) {
             return context.getSharedPreferences(PREFS_FILE_NAME, MODE_PRIVATE).getBoolean(permission, true);
         }
     }

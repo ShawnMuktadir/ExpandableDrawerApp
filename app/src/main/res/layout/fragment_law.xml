@@ -60,7 +60,7 @@
             android:paddingStart="@dimen/dim2"
             android:paddingEnd="@dimen/dim2"
             android:paddingTop="@dimen/dim2"
-            android:paddingBottom="@dimen/dim10"/>
+            android:paddingBottom="@dimen/dim10" />
 
     </LinearLayout>
 

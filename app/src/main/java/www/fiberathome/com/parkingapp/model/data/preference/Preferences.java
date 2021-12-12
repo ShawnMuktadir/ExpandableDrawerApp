@@ -7,8 +7,15 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.List;
+
 import www.fiberathome.com.parkingapp.model.BookedPlace;
 import www.fiberathome.com.parkingapp.model.data.Constants;
+import www.fiberathome.com.parkingapp.model.response.sensors.SensorArea;
 import www.fiberathome.com.parkingapp.model.user.User;
 
 @SuppressLint("StaticFieldLeak")
@@ -36,6 +43,8 @@ public class Preferences {
     private static Preferences instance;
 
     private static Context mContext;
+    public boolean isBookingCancelled = false;
+    public boolean isGetDirectionClicked = false;
 
     public Preferences(Context context) {
         mContext = context;
@@ -78,19 +87,22 @@ public class Preferences {
     public void setBooked(BookedPlace booked) {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME_BOOKING, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-
         editor.putString("uid", booked.getBookedUid());
         editor.putString("areaName", booked.getAreaName());
         editor.putString("parkingSlotCount", booked.getParkingSlotCount());
         editor.putString("uid", booked.getBookedUid());
         editor.putString("lat", String.valueOf(booked.getLat()));
-        editor.putString("lon",   String.valueOf(booked.getLon()));
-        editor.putString("route", booked.getRoute());
+        editor.putString("lon", String.valueOf(booked.getLon()));
         editor.putBoolean("isBooked", booked.getIsBooked());
+        editor.putBoolean("isPaid", booked.isPaid());
+        editor.putBoolean("isCarParked", booked.isCarParked());
+        editor.putBoolean("isExceedRunning", booked.isExceedRunning());
         editor.putString("placeId", booked.getPlaceId());
         editor.putString("reservation", booked.getReservation());
         editor.putLong("departedDate", booked.getDepartedDate());
         editor.putLong("arrivedDate", booked.getArriveDate());
+        editor.putFloat("bill", booked.getBill());
+        editor.putString("ps_Id", booked.getPsId());
         editor.apply();
     }
 
@@ -100,9 +112,9 @@ public class Preferences {
         bookedPlace.setBookedUid(sharedPreferences.getString("uid", ""));
         bookedPlace.setAreaName(sharedPreferences.getString("areaName", ""));
         bookedPlace.setParkingSlotCount(sharedPreferences.getString("parkingSlotCount", ""));
-        bookedPlace.setRoute(sharedPreferences.getString("route", ""));
         bookedPlace.setPlaceId(sharedPreferences.getString("placeId", ""));
         bookedPlace.setReservation(sharedPreferences.getString("reservation", ""));
+        bookedPlace.setTicketSpotId(sharedPreferences.getString("ticketSpotId", ""));
         double lat = Double.parseDouble(sharedPreferences.getString("lat", "0"));
         double lon = Double.parseDouble(sharedPreferences.getString("lon", "0"));
         bookedPlace.setLat(lat);
@@ -110,10 +122,15 @@ public class Preferences {
         bookedPlace.setDepartedDate(sharedPreferences.getLong("departedDate", 0));
         bookedPlace.setArriveDate(sharedPreferences.getLong("arrivedDate", 0));
         bookedPlace.setIsBooked(sharedPreferences.getBoolean("isBooked", false));
-
+        bookedPlace.setPaid(sharedPreferences.getBoolean("isPaid", false));
+        bookedPlace.setCarParked(sharedPreferences.getBoolean("isCarParked", false));
+        bookedPlace.setExceedRunning(sharedPreferences.getBoolean("isExceedRunning", false));
+        bookedPlace.setBill(sharedPreferences.getFloat("bill", 0));
+        bookedPlace.setPsId(sharedPreferences.getString("ps_Id", ""));
         return bookedPlace;
     }
-    public void clearBooking(){
+
+    public void clearBooking() {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME_BOOKING, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.clear();
@@ -152,7 +169,8 @@ public class Preferences {
     public void saveVehicleDivData(String vehicleDivData) {
         saveValue(Constants.KEY_VEHICLE_DIV_DATA, vehicleDivData);
     }
-   public String getBookedParkingData() {
+
+    public String getBookedParkingData() {
         return getValue(Constants.KEY_Booked_Parking_DATA, null);
     }
 
@@ -240,5 +258,29 @@ public class Preferences {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt(KEY_CHECKED_ITEM, checkedItem);
         editor.apply();
+    }
+
+    public void saveSensorAreaList(Context context, List<SensorArea> sensorAreaList) {
+        Gson gson = new Gson();
+
+        // load tasks from preference
+        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        // save the SensorArea list to preference
+        SharedPreferences.Editor prefsEditor = prefs.edit();
+        String json = gson.toJson(sensorAreaList);
+        prefsEditor.putString("SENSOR_AREA_LIST", json);
+        prefsEditor.apply();
+    }
+
+    public List<SensorArea> getSensorAreaList() {
+        SharedPreferences mPrefs = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = mPrefs.getString("SENSOR_AREA_LIST", "");
+        Type type = new TypeToken<List<SensorArea>>() {
+        }.getType();
+        if (json != null && json.length() > 1) {
+            return gson.fromJson(json, type);
+        }
+        return null;
     }
 }

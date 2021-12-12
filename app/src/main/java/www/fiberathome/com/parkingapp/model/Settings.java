@@ -7,7 +7,7 @@ public class Settings {
 
     public Settings(String name, int image) {
         this.name = name;
-        this.image=image;
+        this.image = image;
     }
 
     public String getName() {

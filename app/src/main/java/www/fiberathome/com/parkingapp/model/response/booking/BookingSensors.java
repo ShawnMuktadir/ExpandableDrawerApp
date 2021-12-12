@@ -1,7 +1,5 @@
 package www.fiberathome.com.parkingapp.model.response.booking;
 
-import java.util.Comparator;
-
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class BookingSensors {
 
@@ -19,14 +17,18 @@ public class BookingSensors {
     public String uid;
     public String occupiedCount;
     public String totalCount;
+    private String parkingPlaceId;
+    private String psId;
 
-    public static final int TEXT_INFO_TYPE = 0;
+    public static final int SELECTED_INFO_TYPE = 0;
     public static final int INFO_TYPE = 1;
 
     public BookingSensors() {
     }
 
-    public BookingSensors(String parkingArea, double lat, double lng, double distance, String count, String duration, String text, int type, int data) {
+    public BookingSensors(String parkingArea, double lat, double lng, double distance, String count,
+                          String duration, String text, int type, int data, String parkingPlaceId,
+                          String occupiedCount, String psId) {
         this.parkingArea = parkingArea;
         this.lat = lat;
         this.lng = lng;
@@ -36,9 +38,13 @@ public class BookingSensors {
         this.text = text;
         this.type = type;
         this.data = data;
+        this.parkingPlaceId = parkingPlaceId;
+        this.occupiedCount = occupiedCount;
+        this.psId = psId;
     }
 
-    public BookingSensors(String parkingArea, double lat, double lng, double distance, String count, String duration, int type, int data) {
+    public BookingSensors(String parkingArea, double lat, double lng, double distance, String count,
+                          String duration, int type, int data, String parkingPlaceId, String occupiedCount, String psId) {
         this.parkingArea = parkingArea;
         this.lat = lat;
         this.lng = lng;
@@ -47,6 +53,9 @@ public class BookingSensors {
         this.duration = duration;
         this.type = type;
         this.data = data;
+        this.parkingPlaceId = parkingPlaceId;
+        this.occupiedCount = occupiedCount;
+        this.psId = psId;
     }
 
     public int compareTo(BookingSensors element) {
@@ -59,11 +68,6 @@ public class BookingSensors {
         }
         return res;
     }
-
-    public static final Comparator<BookingSensors> BY_NAME_ASCENDING_ORDER = (bookingSensors, t1) -> {
-        //return Double.compare(t1.getDistance(), bookingSensors.getDistance());
-        return bookingSensors.parkingArea.compareTo(t1.parkingArea);
-    };
 
     public String getText() {
         return text;
@@ -175,5 +179,21 @@ public class BookingSensors {
 
     public void setTotalCount(String totalCount) {
         this.totalCount = totalCount;
+    }
+
+    public String getParkingPlaceId() {
+        return parkingPlaceId;
+    }
+
+    public void setParkingPlaceId(String parkingPlaceId) {
+        this.parkingPlaceId = parkingPlaceId;
+    }
+
+    public String getPsId() {
+        return psId;
+    }
+
+    public void setPsId(String psId) {
+        this.psId = psId;
     }
 }

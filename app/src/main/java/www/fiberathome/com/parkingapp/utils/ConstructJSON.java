@@ -6,7 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ConstructJSON extends AsyncTask<Void, Void, JSONObject>{
+public class ConstructJSON extends AsyncTask<Void, Void, JSONObject> {
     private String base64EncodedString;
 
     public ConstructJSON(String base64EncodedString) {
@@ -25,14 +25,14 @@ public class ConstructJSON extends AsyncTask<Void, Void, JSONObject>{
         JSONObject imageObject = new JSONObject();
         try {
             imageObject.put("content", base64EncodedString);
-        } catch (JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
         }
 
         JSONObject type = new JSONObject();
-        try{
-            type.put("type","DOCUMENT_TEXT_DETECTION");
-        }catch (JSONException e){
+        try {
+            type.put("type", "DOCUMENT_TEXT_DETECTION");
+        } catch (JSONException e) {
             e.printStackTrace();
         }
 
@@ -59,7 +59,7 @@ public class ConstructJSON extends AsyncTask<Void, Void, JSONObject>{
         JSONObject mainObject = new JSONObject();
         try {
             mainObject.put("requests", requestsArray);
-        } catch(JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
         }
 

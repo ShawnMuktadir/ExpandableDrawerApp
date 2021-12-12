@@ -1,7 +1,10 @@
 package www.fiberathome.com.parkingapp.model.response.sensors;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 @SuppressWarnings({"unused", "RedundantSuppression"})
-public class SensorArea {
+public class SensorArea implements Parcelable {
 
     private String parkingArea;
     private double distance;
@@ -9,20 +12,49 @@ public class SensorArea {
     private String duration;
     private boolean isChecked;
     private String occupiedCount;
+    private String psId;
 
-    private final double fetchDistance = 0.0;
+    private double fetchDistance = 0.0;
     private String placeId;
     private double endLat;
     private double endLng;
 
-    public SensorArea(String parkingArea, String placeId, double endLat, double endLng, String count, double fetchDistance) {
+    public SensorArea(String parkingArea, String placeId, double endLat, double endLng, String count,
+                      String psId, double fetchDistance) {
         this.parkingArea = parkingArea;
         this.placeId = placeId;
         this.endLat = endLat;
         this.endLng = endLng;
         this.count = count;
+        this.psId = psId;
         this.distance = fetchDistance;
     }
+
+    protected SensorArea(Parcel in) {
+        parkingArea = in.readString();
+        distance = in.readDouble();
+        count = in.readString();
+        duration = in.readString();
+        isChecked = in.readByte() != 0;
+        occupiedCount = in.readString();
+        psId = in.readString();
+        fetchDistance = in.readDouble();
+        placeId = in.readString();
+        endLat = in.readDouble();
+        endLng = in.readDouble();
+    }
+
+    public static final Creator<SensorArea> CREATOR = new Creator<SensorArea>() {
+        @Override
+        public SensorArea createFromParcel(Parcel in) {
+            return new SensorArea(in);
+        }
+
+        @Override
+        public SensorArea[] newArray(int size) {
+            return new SensorArea[size];
+        }
+    };
 
     public String getParkingArea() {
         return parkingArea;
@@ -80,6 +112,14 @@ public class SensorArea {
         this.occupiedCount = occupiedCount;
     }
 
+    public String getPsId() {
+        return psId;
+    }
+
+    public void setPsId(String psId) {
+        this.psId = psId;
+    }
+
     public boolean isChecked() {
         return isChecked;
     }
@@ -105,5 +145,25 @@ public class SensorArea {
             res = 1;
         }
         return res;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(parkingArea);
+        dest.writeDouble(distance);
+        dest.writeString(count);
+        dest.writeString(duration);
+        dest.writeByte((byte) (isChecked ? 1 : 0));
+        dest.writeString(occupiedCount);
+        dest.writeString(psId);
+        dest.writeDouble(fetchDistance);
+        dest.writeString(placeId);
+        dest.writeDouble(endLat);
+        dest.writeDouble(endLng);
     }
 }

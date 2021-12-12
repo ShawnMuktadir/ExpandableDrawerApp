@@ -5,9 +5,7 @@ import static www.fiberathome.com.parkingapp.utils.GoogleMapHelper.defaultMapSet
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.ActivityManager;
 import android.app.Dialog;
-import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -61,19 +59,21 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.databinding.FragmentBookingParkBinding;
 import www.fiberathome.com.parkingapp.listener.FragmentChangeListener;
+import www.fiberathome.com.parkingapp.model.BookedPlace;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
-import www.fiberathome.com.parkingapp.model.data.Constants;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingParkStatusResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.CloseReservationResponse;
-import www.fiberathome.com.parkingapp.service.booking_service.BookingService;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
+import www.fiberathome.com.parkingapp.ui.schedule.ScheduleActivity;
+import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.MathUtils;
@@ -96,7 +96,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
 
     private FragmentBookingParkBinding binding;
     private FusedLocationProviderClient mFusedLocationClient;
-    private HomeActivity context;
+    private BaseActivity context;
 
     LocationCallback mLocationCallback = new LocationCallback() {
         @Override
@@ -123,7 +123,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         public void run() {
             if (sensors != null) {
                 String extraTime = getTimeDifference(System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd()) > 0 ? (System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd())) : 0);
-                binding.tvExtraParkingTime.setText(String.format("Exceed Parking Time: %s", extraTime));
+                binding.tvExtraParkingTime.setText(String.format(context.getResources().getString(R.string.exceedParktime) + " %s", extraTime));
 
                 if (System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd()) >= 0) {
                     binding.tvExtraParkingTime.setTextColor(context.getResources().getColor(R.color.red));
@@ -155,27 +155,44 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        context = (HomeActivity) getActivity();
+        if (getActivity() instanceof HomeActivity) {
+            context = (HomeActivity) getActivity();
+        } else if (getActivity() instanceof BookingActivity) {
+            context = (BookingActivity) getActivity();
+        } else if (getActivity() instanceof ScheduleActivity) {
+            context = (ScheduleActivity) getActivity();
+        }
         mHandlerTask.run();
         setBroadcast();
         listener = (FragmentChangeListener) getActivity();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
         if (isServicesOk()) {
             SupportMapFragment supportMapFragment = SupportMapFragment.newInstance();
-
             if (context != null) {
-                context.setActionToolBarVisibilityGone();
+                if (getActivity() instanceof HomeActivity) {
+                    ((HomeActivity) context).setActionToolBarVisibilityGone();
+                } else if (getActivity() instanceof BookingActivity) {
+                    ((BookingActivity) context).setActionToolBarVisibilityGone();
+                } else if (getActivity() instanceof ScheduleActivity) {
+                    ((ScheduleActivity) context).setActionToolBarVisibilityGone();
+                }
                 FragmentTransaction ft = context.getSupportFragmentManager().beginTransaction().
                         replace(R.id.map, supportMapFragment);
                 ft.commit();
                 supportMapFragment.getMapAsync(this);
                 if (sensors != null) {
-                    //from HomeActivity
-
-                    startBookingExceedService(getStringDateToMillis(sensors.getTimeEnd()));
-                    binding.tvArrivedTime.setText(String.format("Booking Time: %s", sensors.getTimeStart()));
-                    binding.tvDepartureTime.setText(String.format("Departure Time: %s", sensors.getTimeEnd()));
+                    BookedPlace mBookedPlace = Preferences.getInstance(context).getBooked();
+                    mBookedPlace.setExceedRunning(true);
+                    Preferences.getInstance(context).setBooked(mBookedPlace);
+                    ApplicationUtils.startBookingExceedService(context, getStringDateToMillis(sensors.getTimeEnd()));
+                    binding.tvArrivedTime.setText(String.format(context.getResources().getString(R.string.booking_time) + " %s", sensors.getTimeStart()));
+                    binding.tvDepartureTime.setText(String.format(context.getResources().getString(R.string.departuretime) + " %s", sensors.getTimeEnd()));
                     binding.tvParkingAreaName.setText(sensors.getParkingArea());
+                    if (Preferences.getInstance(context).getBooked().getPsId() != null && !Preferences.getInstance(context).getBooked().getPsId().equalsIgnoreCase("")) {
+                        binding.tvParkingPsId.setText("( " + context.getResources().getString(R.string.parking_spot_id) + " " + Preferences.getInstance(context).getBooked().getPsId() + " )");
+                    } else {
+                        binding.tvParkingPsId.setText("");
+                    }
                     String currentDateAndTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
                     findDifference(currentDateAndTime, sensors.getTimeEnd(), "");
                     findDifference(sensors.getTimeStart(), sensors.getTimeEnd(), "TimeStart");
@@ -183,8 +200,8 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                     String earlyParkingTime;
                     earlyParkingTime = getTimeDifference(getStringDateToMillis(sensors.getTimeStart()) - getStringDateToMillis(sensors.getP_date()) >= 0 ? (getStringDateToMillis(sensors.getTimeStart()) - getStringDateToMillis(sensors.getP_date())) : 0);
                     extraTime = getTimeDifference(System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd()) > 0 ? (System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd())) : 0);
-                    binding.tvEarlyParkingTime.setText("Early Parking Time: " + earlyParkingTime);
-                    binding.tvExtraParkingTime.setText("Exceed Parking Time: " + extraTime);
+                    binding.tvEarlyParkingTime.setText(context.getResources().getString(R.string.earlyparkingtime) + " " + earlyParkingTime);
+                    binding.tvExtraParkingTime.setText(context.getResources().getString(R.string.exceedParktime) + " " + extraTime);
                     if (System.currentTimeMillis() - getStringDateToMillis(sensors.getTimeEnd()) >= 0) {
                         binding.tvExtraParkingTime.setTextColor(context.getResources().getColor(R.color.red));
                     } else {
@@ -194,11 +211,10 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                         binding.tvEarlyParkingTime.setTextColor(context.getResources().getColor(R.color.red));
                     }
                 } else {
-
                     ToastUtils.getInstance().showToastMessage(context, "sensor null");
                 }
             } else {
-                ToastUtils.getInstance().showToastMessage(context, "Unable to load map");
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.unable_to_load_map));
             }
         } else {
             ToastUtils.getInstance().showToastMessage(context, "Play services are required by this application");
@@ -224,6 +240,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                 try {
                     mHandler.removeCallbacks(mHandlerTask);
                     sensors = null;
+                    Preferences.getInstance(context).clearBooking();
                     DialogUtils.getInstance().alertDialog(context,
                             context,
                             context.getResources().getString(R.string.as_your_reservation_time_had_exceed_over_five_mins),
@@ -232,7 +249,6 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                                 @Override
                                 public void onPositiveClick() {
                                     Timber.e("Positive Button clicked");
-                                    Preferences.getInstance(context).clearBooking();
                                     listener.fragmentChange(HomeFragment.newInstance());
                                 }
 
@@ -376,7 +392,6 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                                 mLocationCallback, Objects.requireNonNull(Looper.myLooper()));
                         mMap.setMyLocationEnabled(true);
                     }
-
                 } else {
                     // if not allow a permission, the application will exit
                     Intent intent = new Intent(Intent.ACTION_MAIN);
@@ -435,19 +450,24 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                 }
                 mHandler.removeCallbacks(mHandlerTask);
                 sensors = null;
-                stopBookingTrackService();
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
+                        Preferences.getInstance(context).clearBooking();
+                        ApplicationUtils.stopBookingTrackService(context);
                         DialogUtils.getInstance().alertDialog(context,
                                 context,
-                                response.body().getMessage(),
+                                context.getResources().getString(R.string.reservation_closed_successfully),
                                 context.getResources().getString(R.string.ok), "",
                                 new DialogUtils.DialogClickListener() {
                                     @Override
                                     public void onPositiveClick() {
-                                        Timber.e("Positive Button clicked");
-                                        Preferences.getInstance(context).clearBooking();
-                                        listener.fragmentChange(HomeFragment.newInstance());
+                                        if (getActivity() instanceof HomeActivity) {
+                                            listener.fragmentChange(HomeFragment.newInstance());
+                                        } else if (getActivity() instanceof BookingActivity) {
+                                            context.startActivity(HomeActivity.class);
+                                        } else if (getActivity() instanceof ScheduleActivity) {
+                                            context.startActivity(HomeActivity.class);
+                                        }
                                     }
 
                                     @Override
@@ -500,18 +520,19 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         countDownTimer = new CountDownTimer(timerMilliDifference, 1000) {
             @SuppressLint("DefaultLocale")
             public void onTick(long millisUntilFinished) {
-                binding.tvCountDown.setText("" + String.format("Remaining Time %d min, %d sec",
+                binding.tvCountDown.setText("" + String.format(context.getString(R.string.remaining_time) + " %d min, %d sec",
                         TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
                         TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
                                 TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))));
             }
 
             public void onFinish() {
-                binding.tvCountDown.setText("Remaining Time 00:00");
+                binding.tvCountDown.setText(context.getString(R.string.remaining_time) + "00:00");
             }
         }.start();
     }
 
+    @SuppressLint("SetTextI18n")
     public void findDifference(String start_date,
                                String end_date, String timeStart) {
 
@@ -530,7 +551,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
             Date d1 = sdf.parse(start_date);
             Date d2 = sdf.parse(end_date);
 
-            // Calucalte time difference
+            // Calculate time difference
             // in milliseconds
             if (d1 != null && d2 != null) {
                 long difference_In_Time
@@ -593,38 +614,6 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         // catch the Exception
         catch (ParseException e) {
             e.printStackTrace();
-        }
-    }
-
-    private boolean isLocationTrackingServiceRunning() {
-        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        if (activityManager != null) {
-            for (ActivityManager.RunningServiceInfo serviceInfo : activityManager.getRunningServices(Integer.MAX_VALUE)) {
-                String a = Service.class.getName();
-                serviceInfo.service.getClassName();
-                if (serviceInfo.foreground) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        return false;
-    }
-
-    private void stopBookingTrackService() {
-        //if (isLocationTrackingServiceRunning()) {
-        Intent intent = new Intent(context, BookingService.class);
-        intent.setAction(Constants.STOP_BOOKING_TRACKING);
-        context.startService(intent);
-        //}
-    }
-
-    private void startBookingExceedService(long departureDate) {
-        if (!isLocationTrackingServiceRunning()) {
-            Intent intent = new Intent(context, BookingService.class);
-            intent.putExtra("departureDate", departureDate);
-            intent.setAction(Constants.BOOKING_EXCEED_CHECK);
-            context.startService(intent);
         }
     }
 }

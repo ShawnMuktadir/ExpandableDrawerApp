@@ -29,13 +29,11 @@ import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
-import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.response.BaseResponse;
 import www.fiberathome.com.parkingapp.model.user.User;
 import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
 
@@ -100,7 +98,7 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
                                 if (ConnectivityUtils.getInstance().checkInternet(context)) {
                                     changePassword();
                                 } else {
-                                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
                                 }
                             }
 
@@ -108,7 +106,7 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
                             public void onNegativeClick() {
                                 if (getActivity() != null) {
                                     getActivity().finish();
-                                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
                                 }
                             }
                         }).show();
@@ -134,7 +132,6 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
                     binding.textInputLayoutOldPassword.setError(null);
                     binding.textInputLayoutOldPassword.setErrorEnabled(false);
                 }
-
             }
 
             @Override
@@ -159,7 +156,6 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
                     binding.textInputLayoutNewPassword.setError(null);
                     binding.textInputLayoutNewPassword.setErrorEnabled(false);
                 }
-
             }
 
             @Override
@@ -184,7 +180,6 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
                     binding.textInputLayoutConfirmPassword.setError(null);
                     binding.textInputLayoutConfirmPassword.setErrorEnabled(false);
                 }
-
             }
 
             @Override
@@ -195,14 +190,12 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
     }
 
     private void changePassword() {
-
         if (checkFields()) {
             User user = Preferences.getInstance(context).getUser();
             String oldPassword = binding.editTextOldPassword.getText().toString().trim();
             String newPassword = binding.editTextNewPassword.getText().toString().trim();
             String confirmPassword = binding.editTextConfirmPassword.getText().toString().trim();
             String mobileNo = user.getMobileNo().trim();
-
             if (validatePassword()) {
                 updatePassword(oldPassword, newPassword, confirmPassword, mobileNo);
             }
@@ -217,47 +210,26 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
     }
 
     private boolean validatePassword() {
-        String userPassword;
-        String newPassword;
-        //User user = SharedPreManager.getInstance(getContext()).getUser();
-        if (SharedData.getInstance().getPassword() != null) {
-            userPassword = SharedData.getInstance().getPassword();
-            Timber.e("userPassword -> %s", userPassword);
-            String oldPassword = binding.editTextOldPassword.getText().toString().trim();
-            checkUserPasswordAndOldPasswordField(userPassword, oldPassword);
-        }
-
-        newPassword = binding.editTextNewPassword.getText().toString().trim();
+        String oldPassword = binding.editTextOldPassword.getText().toString().trim();
+        String newPassword = binding.editTextNewPassword.getText().toString().trim();
         String confirmPassword = binding.editTextConfirmPassword.getText().toString().trim();
-        if (SharedData.getInstance().getPassword() != null) {
-            SharedData.getInstance().setPassword(newPassword);
-        }
-
-        checkPassWordAndConfirmPassword(newPassword, confirmPassword);
+        checkNewPasswordAndConfirmPassword(newPassword, confirmPassword);
         return true;
     }
 
     private void updatePassword(String oldPassword, String newPassword, String confirmPassword, String mobileNo) {
-
         showLoading(context);
-
-        // Changing Password through UI Service.
         ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<BaseResponse> passwordUpgradeCall = service.updatePassword(oldPassword, newPassword, confirmPassword, mobileNo);
+        Call<BaseResponse> call = service.updatePassword(oldPassword, newPassword, confirmPassword, mobileNo);
 
-        // Gathering results.
-        passwordUpgradeCall.enqueue(new Callback<BaseResponse>() {
+        call.enqueue(new Callback<BaseResponse>() {
             @Override
             public void onResponse(@NonNull Call<BaseResponse> call, @NonNull Response<BaseResponse> response) {
-
                 Timber.e("change password response body-> %s", new Gson().toJson(response.body()));
-
                 hideLoading();
-
                 if (response.body() != null) {
                     if (!response.body().getError()) {
                         ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
-
                         Preferences.getInstance(context).logout();
                         Intent intentLogout = new Intent(context, LoginActivity.class);
                         startActivity(intentLogout);
@@ -277,26 +249,13 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
         });
     }
 
-    private boolean checkPassWordAndConfirmPassword(String password, String confirmPassword) {
+    protected boolean checkNewPasswordAndConfirmPassword(String password, String confirmPassword) {
         boolean passStatus = false;
         if (confirmPassword != null && password != null) {
             if (password.equals(confirmPassword)) {
                 passStatus = true;
             } else {
-                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.err_confirm_password));
-            }
-        }
-        return passStatus;
-    }
-
-    private boolean checkUserPasswordAndOldPasswordField(String password, String oldPassword) {
-
-        boolean passStatus = false;
-        if (password != null && oldPassword != null) {
-            if (password.equals(oldPassword)) {
-                passStatus = true;
-            } else {
-                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.err_old_password));
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.password_not_matched));
             }
         }
         return passStatus;

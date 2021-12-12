@@ -26,7 +26,6 @@ public class ForgetPasswordActivity extends BaseActivity {
         setContentView(view);
 
         Context context = this;
-
         setToolbar(context);
 
         // Initialize ForgetPasswordFragment

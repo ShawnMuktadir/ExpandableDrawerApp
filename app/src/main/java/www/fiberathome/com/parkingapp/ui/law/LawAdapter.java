@@ -1,7 +1,6 @@
 package www.fiberathome.com.parkingapp.ui.law;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,17 +37,53 @@ import www.fiberathome.com.parkingapp.model.response.law.LawItem;
  * Created by LEVI on 22/09/2018.
  */
 public class LawAdapter extends ExpandableRecyclerViewAdapter<TitleViewHolder, LawViewHolder> implements Filterable {
-    private List<LawItem> copylawItemList;
+    private final List<LawItem> copylawItemList;
     private Context context;
-    private LawFragment lawFragment;
-    private String TAG = getClass().getSimpleName();
+    private final LawFragment lawFragment;
+    private final String TAG = getClass().getSimpleName();
+    private final Filter queryFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<LawItem> queryLawItemList = new ArrayList<>();
+            if (constraint == null || constraint.length() == 0) {
+                queryLawItemList.addAll(copylawItemList);
+            } else {
+                String filterPattern = constraint.toString().toLowerCase().trim();
+
+                for (LawItem item : copylawItemList) {
+                    if (item.getTitle().toLowerCase().contains(filterPattern)) {
+                        queryLawItemList.add(item);
+                        //ApplicationUtils.highlightSearchText(SpannableStringBuilder.valueOf(item.getTitle()), filterPattern);
+                    }
+                }
+            }
+            FilterResults results = new FilterResults();
+            results.values = queryLawItemList;
+
+            return results;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            List groups = (ArrayList<? extends ExpandableGroup>) results.values; // has the filtered values
+            if (groups.size() == 0) {
+                Timber.e("LawAdapter no data found");
+                lawFragment.setNoData();
+            } else {
+                lawFragment.hideNoData();
+            }
+            getGroups().clear();
+            getGroups().addAll(groups);
+            notifyDataSetChanged();
+        }
+    };
 
     @SuppressWarnings("unchecked")
     public LawAdapter(List<? extends ExpandableGroup> groups, LawFragment lawFragment) {
         super(groups);
-        copylawItemList = new ArrayList<LawItem>((Collection<? extends LawItem>) groups);
+        copylawItemList = new ArrayList<>((Collection<? extends LawItem>) groups);
         this.lawFragment = lawFragment;
-        Log.d(TAG, "LawAdapter: " + copylawItemList.size());
     }
 
     @Override
@@ -81,45 +116,5 @@ public class LawAdapter extends ExpandableRecyclerViewAdapter<TitleViewHolder, L
     public Filter getFilter() {
         return queryFilter;
     }
-
-    private Filter queryFilter = new Filter() {
-        @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
-            List<LawItem> queryLawItemList = new ArrayList<>();
-            if (constraint == null || constraint.length() == 0) {
-                queryLawItemList.addAll(copylawItemList);
-            } else {
-                String filterPattern = constraint.toString().toLowerCase().trim();
-
-                for (LawItem item : copylawItemList) {
-                    if (item.getTitle().toLowerCase().contains(filterPattern)) {
-                        queryLawItemList.add(item);
-//                        ApplicationUtils.highlightSearchText(SpannableStringBuilder.valueOf(item.getTitle()), filterPattern);
-                    }
-                }
-            }
-
-            FilterResults results = new FilterResults();
-            results.values = queryLawItemList;
-
-            return results;
-
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-            List groups = (ArrayList<? extends ExpandableGroup>) results.values; // has the filtered values
-            if (groups.size() == 0) {
-                Timber.e("LawAdapter no data found");
-                lawFragment.setNoData();
-            } else {
-                lawFragment.hideNoData();
-            }
-            getGroups().clear();
-            getGroups().addAll(groups);
-            notifyDataSetChanged();
-        }
-    };
 }
 

@@ -2,7 +2,6 @@ package www.fiberathome.com.parkingapp.base;
 
 import android.app.Application;
 import android.content.Context;
-import android.location.LocationManager;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
@@ -21,6 +20,7 @@ import java.util.Map;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.BuildConfig;
 import www.fiberathome.com.parkingapp.ui.splash.SplashActivity;
+import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.ForceUpdateChecker;
 import www.fiberathome.com.parkingapp.utils.ForceUpgradeManager;
 import www.fiberathome.com.parkingapp.utils.internet.ConnectivityReceiver;
@@ -54,10 +54,8 @@ public class ParkingApp extends Application implements LifecycleObserver {
 
         //setAppDefaults();
 
-        if (isGPSEnabled(getApplicationContext()) && !getClass().getSimpleName().equalsIgnoreCase(SplashActivity.class.getSimpleName())) {
-
+        if (ConnectivityUtils.getInstance().isGPSEnabled(getApplicationContext()) && !getClass().getSimpleName().equalsIgnoreCase(SplashActivity.class.getSimpleName())) {
             initForceUpgradeManager();
-
             ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         }
     }
@@ -129,19 +127,5 @@ public class ParkingApp extends Application implements LifecycleObserver {
 
     public void setConnectivityListener(ConnectivityReceiver.ConnectivityReceiverListener listener) {
         ConnectivityReceiver.listener = listener;
-    }
-
-    public boolean isGPSEnabled(Context context) {
-
-        LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-
-        boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-        if (providerEnabled) {
-            return true;
-        } else {
-            Timber.e("else called");
-        }
-        return false;
     }
 }

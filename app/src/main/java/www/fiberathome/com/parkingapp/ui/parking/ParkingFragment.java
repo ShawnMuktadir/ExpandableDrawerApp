@@ -6,7 +6,6 @@ import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
 import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
@@ -27,6 +26,7 @@ import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -55,7 +55,6 @@ import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.KeyboardUtils;
 import www.fiberathome.com.parkingapp.utils.MathUtils;
 import www.fiberathome.com.parkingapp.utils.RecyclerTouchListener;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
@@ -112,13 +111,10 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         context = (ParkingActivity) getActivity();
-
         setListeners();
 
         if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
-            Timber.e("check internet method called");
             fetchParkingSlotSensors();
         } else {
             DialogUtils.getInstance().alertDialog(context,
@@ -133,7 +129,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                             if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
                                 fetchParkingSlotSensors();
                             } else {
-                                TastyToastUtils.showTastyWarningToast(context,
+                                ToastUtils.getInstance().showToastMessage(context,
                                         context.getResources().getString(R.string.connect_to_internet_gps));
                             }
                         }
@@ -143,46 +139,11 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                             Timber.e("Negative Button Clicked");
                             if (context != null) {
                                 context.finish();
-                                TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
                             }
                         }
                     }).show();
         }
-    }
-
-    @Override
-    public void onStart() {
-        Timber.e("onStart called");
-        super.onStart();
-    }
-
-    @Override
-    public void onResume() {
-        Timber.e("onResume called");
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        Timber.e("onPause called");
-        super.onPause();
-    }
-
-    @Override
-    public void onStop() {
-        Timber.e("onStop called");
-        super.onStop();
-    }
-
-    @Override
-    public void onDestroy() {
-        Timber.e("onDestroy called");
-        super.onDestroy();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
     }
 
     @Override
@@ -194,13 +155,13 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                         .addToBackStack(null)
                         .commit();
             } else {
-                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_gps));
             }
         }
         return false;
     }
 
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint({"ClickableViewAccessibility", "NotifyDataSetChanged"})
     private void setListeners() {
 
         binding.ivClearSearchText.setOnClickListener(view -> {
@@ -209,7 +170,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
             if (ConnectivityUtils.getInstance().checkInternet(context)) {
                 updateAdapter();
             } else {
-                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
             }
         });
 
@@ -252,7 +213,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                         updateAdapter();
                     } else {
                         Timber.e("else length 0 called");
-                        //TastyToastUtils.showTastyWarningToast(context, "Please connect to internet");
+                        //ToastUtils.getInstance().showToastMessage(context, "Please connect to internet");
                     }
                 }
             }
@@ -283,7 +244,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                             KeyboardUtils.getInstance().hideKeyboard(context, binding.editTextParking);
                         }
                     } else {
-                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
+                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_gps));
                     }
                 } else {
                     //if something to do for empty edittext
@@ -291,7 +252,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                         updateAdapter();
                         KeyboardUtils.getInstance().hideKeyboard(context, binding.editTextParking);
                     } else {
-                        TastyToastUtils.showTastyWarningToast(context,
+                        ToastUtils.getInstance().showToastMessage(context,
                                 context.getResources().getString(R.string.connect_to_internet_gps));
                     }
                     return true;
@@ -302,8 +263,6 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
     }
 
     private void fetchParkingSlotSensors() {
-        Timber.e("fetchParkingSlotSensors called");
-
         showLoading(context);
 
         if (SharedData.getInstance().getOnConnectedLocation() != null) {
@@ -358,15 +317,8 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                                 }
                             }
 
-                            Timber.e("distance before adjust:" + fetchDistance + parkingArea +
-                                    "  mine lat " + onConnectedLocation.getLatitude() + " lon " + onConnectedLocation.getLongitude()
-                                    + " area lat " + endLat + " lon " + endLng);
-
-                            SensorArea sensorArea = new SensorArea(parkingArea, placeId, endLat, endLng, count,
-                                    fetchDistance);
-
-                            Timber.e("distanceAbdur after adjust:" + sensorArea.getDistance() + parkingArea);
-
+                            SensorArea sensorArea = new SensorArea(parkingArea, placeId, endLat, endLng,
+                                    count, null, fetchDistance);
                             sensorAreaArrayList.add(sensorArea);
                         }
                         Collections.sort(sensorAreaArrayList, (c1, c2) -> Double.compare(c1.getDistance(), c2.getDistance()));
@@ -386,12 +338,10 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
 
     private void setFragmentControls(ArrayList<SensorArea> sensorAreas) {
         this.sensorAreas = sensorAreas;
-        binding.recyclerViewParking.setHasFixedSize(true);
-        binding.recyclerViewParking.setItemViewCacheSize(20);
+        binding.recyclerViewParking.setHasFixedSize(false);
         binding.recyclerViewParking.setNestedScrollingEnabled(false);
-        binding.recyclerViewParking.setMotionEventSplittingEnabled(false);
-
-        binding.recyclerViewParking.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(context);
+        binding.recyclerViewParking.setLayoutManager(mLayoutManager);
         binding.recyclerViewParking.addItemDecoration(new DividerItemDecoration(context, LinearLayoutManager.VERTICAL));
         binding.recyclerViewParking.setItemAnimator(new DefaultItemAnimator());
         binding.recyclerViewParking.addOnItemTouchListener(new RecyclerTouchListener(context, binding.recyclerViewParking, new RecyclerTouchListener.ClickListener() {
@@ -408,9 +358,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
 
             }
         }));
-
         ViewCompat.setNestedScrollingEnabled(binding.recyclerViewParking, false);
-
         setAdapter(sensorAreas);
     }
 
@@ -420,47 +368,31 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
 
     private void setAdapter(ArrayList<SensorArea> sensorAreas) {
         this.sensorAreas = sensorAreas;
-        parkingAdapter = new ParkingAdapter(context, sensorAreas, onConnectedLocation, (position, lat, lng, parkingAreaName, count) -> {
-
-            long now = System.currentTimeMillis();
-
-            if (now - mLastClickTime < CLICK_TIME_INTERVAL) {
-                return;
-            }
-
-            mLastClickTime = now;
-
-            if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
-                try {
-                    Timber.e("try called");
-                    SharedData.getInstance().setSensorArea(this.sensorAreas.get(position));
-                    Bundle bundle = new Bundle();
-                    bundle.putDouble("lat", lat);
-                    bundle.putDouble("lng", lng);
-                    bundle.putString("areaName", parkingAreaName);
-                    bundle.putString("count", count);
-                    context.startActivityWithFinishBundle(HomeActivity.class, bundle);
-                } catch (Exception e) {
-                    Timber.e("try catch called -> %s", e.getMessage());
-                }
-            } else {
-                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet_gps));
-            }
-        });
+        parkingAdapter = new ParkingAdapter(context, sensorAreas, onConnectedLocation,
+                (position, lat, lng, parkingAreaName, count, placeId) -> {
+                    long now = System.currentTimeMillis();
+                    if (now - mLastClickTime < CLICK_TIME_INTERVAL) {
+                        return;
+                    }
+                    mLastClickTime = now;
+                    if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
+                        try {
+                            Timber.e("try called");
+                            Bundle bundle = new Bundle();
+                            bundle.putDouble("lat", lat);
+                            bundle.putDouble("lng", lng);
+                            bundle.putString("areaName", parkingAreaName);
+                            bundle.putString("count", count);
+                            bundle.putString("placeId", placeId);
+                            context.startActivityWithFinishBundle(HomeActivity.class, bundle);
+                        } catch (Exception e) {
+                            Timber.e("try catch called -> %s", e.getMessage());
+                        }
+                    } else {
+                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_gps));
+                    }
+                });
         binding.recyclerViewParking.setAdapter(parkingAdapter);
-    }
-
-    private double adjustDistance(double distance) {
-
-        if (distance > 1.9) {
-            distance = distance + 2;
-        } else if (distance < 1.9 && distance > 1) {
-            distance = distance + 1;
-        } else {
-            distance = distance + 0.5;
-        }
-
-        return distance;
     }
 
     private void setNoDataForEnglish() {
@@ -492,13 +424,12 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                 } else {
                     hideNoData();
                 }
-
                 parkingAdapter.filterList(filteredList);
             } else {
                 Timber.e("sensorAreas is empty");
             }
         } else {
-            TastyToastUtils.showTastyWarningToast(context,
+            ToastUtils.getInstance().showToastMessage(context,
                     context.getResources().getString(R.string.connect_to_internet_gps));
         }
     }
@@ -517,22 +448,16 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
             return true;
         } else {
             AlertDialog alertDialog = new AlertDialog.Builder(context)
-                    .setTitle("GPS Permissions")
-                    .setMessage("GPS is required for this app to work. Please enable GPS.")
-                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
+                    .setTitle(context.getResources().getString(R.string.gps_permission))
+                    .setMessage(context.getResources().getString(R.string.gps_required))
+                    .setPositiveButton(context.getResources().getString(R.string.yes), (dialogInterface, i) -> {
                         Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                         startActivityForResult(intent, GPS_REQUEST_CODE);
-                    }))
+                    })
                     .setCancelable(false)
                     .show();
-
         }
         return false;
-    }
-
-    public boolean checkGpsStatus() {
-        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 
     private void setNoData() {

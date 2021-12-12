@@ -1,5 +1,7 @@
 package www.fiberathome.com.parkingapp.ui.home;
 
+import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_BN;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -12,13 +14,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
@@ -34,9 +33,6 @@ import com.karumi.dexter.PermissionToken;
 import java.util.List;
 import java.util.Objects;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -46,6 +42,7 @@ import www.fiberathome.com.parkingapp.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
+import www.fiberathome.com.parkingapp.model.data.preference.LanguagePreferences;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingParkStatusResponse;
@@ -65,44 +62,36 @@ import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressLint("NonConstantResourceId")
 public class HomeActivity extends NavigationActivity implements FragmentChangeListener, PermissionInterface {
 
-    @BindView(R.id.toolbar)
-    public Toolbar toolbar;
-
-    @BindView(R.id.tvTimeToolbar)
-    public TextView tvTimeToolbar;
-
-    @BindView(R.id.linearLayoutToolbarTime)
-    public LinearLayout linearLayoutToolbarTime;
-
-    private Unbinder unbinder;
+    public static final int GPS_REQUEST_CODE = 9003;
 
     private LocationCallback locationCallback;
     private Location lastLocation;
-
     private Toast exitToast;
+
     private int exitCounter = 1;
-
-    public static final int GPS_REQUEST_CODE = 9003;
-
-    private Context context;
     private double lat;
     private double lng;
     private String areaName;
     private String count;
+    private String placeId;
+
+    //Boolean variable to mark if the transaction is safe
+    private boolean isTransactionSafe;
+
+    //Boolean variable to mark if there is any transaction pending
+    private boolean isTransactionPending;
+
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         context = this;
-
-        unbinder = ButterKnife.bind(this);
 
         setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
 
@@ -135,11 +124,12 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
         lng = getIntent().getDoubleExtra("lng", 0.0);
         areaName = getIntent().getStringExtra("areaName");
         count = getIntent().getStringExtra("count");
+        placeId = getIntent().getStringExtra("placeId");
 
         if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
             //initialize home fragment
             getBookingParkStatus(Preferences.getInstance(context).getUser().getMobileNo());
-            linearLayoutToolbarTime.setVisibility(View.GONE);
+            binding.appBarMain.linearLayoutToolbarTime.setVisibility(View.GONE);
             navigationView.getMenu().getItem(0).setChecked(true);
         }
 
@@ -149,6 +139,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
         }
 
         setListeners();
+        hideLoading();
     }
 
     @Override
@@ -161,6 +152,38 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
     @Override
     protected void onResume() {
         super.onResume();
+        hideLoading();
+        if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
+            setAppLocale(LANGUAGE_BN);
+        } else {
+            setAppLocale(Preferences.getInstance(context).getAppLanguage());
+        }
+    }
+
+    /*
+    onPostResume is called only when the activity's state is completely restored. In this we will
+    set our boolean variable to true. Indicating that transaction is safe now
+    */
+    @Override
+    public void onPostResume() {
+        super.onPostResume();
+        isTransactionSafe = true;
+
+        /* Here after the activity is restored we check if there is any transaction pending from
+        the last restoration */
+        if (isTransactionPending) {
+            fragmentChange(HomeFragment.newInstance());
+        }
+    }
+
+    /*
+    onPause is called just before the activity moves to background and also before onSaveInstanceState. In this
+    we will mark the transaction as unsafe
+    */
+    @Override
+    public void onPause() {
+        super.onPause();
+        isTransactionSafe = false;
     }
 
     @Override
@@ -171,9 +194,6 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
 
     @Override
     protected void onDestroy() {
-        if (unbinder != null) {
-            unbinder.unbind();
-        }
         super.onDestroy();
     }
 
@@ -252,8 +272,8 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                         toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
                     }
                 }
-                tvTimeToolbar.setVisibility(View.GONE);
-                linearLayoutToolbarTime.setVisibility(View.GONE);
+                binding.appBarMain.tvTimeToolbar.setVisibility(View.GONE);
+                binding.appBarMain.linearLayoutToolbarTime.setVisibility(View.GONE);
                 drawerLayout.closeDrawers();
                 navigationView.getMenu().getItem(0).setChecked(true);
                 navigationView.getMenu().getItem(1).setChecked(false);
@@ -268,7 +288,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                 navigationView.getMenu().getItem(10).setChecked(false);
             }
         } else {
-            TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_parking_app));
+            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_parking_app));
             DialogUtils.getInstance().alertDialog(context,
                     (Activity) context,
                     context.getResources().getString(R.string.exit_message_main),
@@ -278,7 +298,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                         public void onPositiveClick() {
                             Timber.e("Positive Button clicked");
                             finishAffinity();
-                            TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
                         }
 
                         @Override
@@ -338,19 +358,38 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
 
     @Override
     public void fragmentChange(Fragment fragment) {
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.nav_host_fragment, fragment);
-        ft.addToBackStack(null);
-        ft.commit();
+        try {
+            if (isTransactionSafe) {
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction().setCustomAnimations(
+                        R.anim.slide_in,  // enter
+                        R.anim.fade_out,  // exit
+                        R.anim.fade_in,   // popEnter
+                        R.anim.slide_out  // popExit
+                );
+                ft.replace(R.id.nav_host_fragment, fragment);
+                ft.addToBackStack(null);
+                ft.commit();
+                isTransactionPending = false;
+            } else {
+                 /*
+                 If any transaction is not done because the activity is in background. We set the
+                 isTransactionPending variable to true so that we can pick this up when we come back to
+                 foreground */
+                isTransactionPending = true;
+            }
+        } catch (IllegalStateException e) {
+            // There's no way to avoid getting this if saveInstanceState has already been called.
+            Timber.e(e.getCause());
+        }
     }
 
     private void setListeners() {
-        linearLayoutToolbarTime.setOnClickListener(v -> {
+        binding.appBarMain.linearLayoutToolbarTime.setOnClickListener(v -> {
             if (isGPSEnabled()) {
                 ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
                         ScheduleFragment.newInstance(), R.id.nav_host_fragment);
             } else {
-                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.please_enable_gps));
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.please_enable_gps));
             }
         });
     }
@@ -369,21 +408,6 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
             Preferences.getInstance(context).setIsLocationPermissionGiven(true);
 
         }
-    }
-
-    public boolean isGPSEnabled() {
-
-        LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-
-        boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-        if (providerEnabled) {
-            return true;
-        } else {
-            Timber.e("provider not Enabled");
-        }
-
-        return false;
     }
 
     private void buildLocationCallBack() {
@@ -417,7 +441,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                                     BookingParkFragment.newInstance(sensors), R.id.nav_host_fragment);
                         } else {
                             ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
-                                    HomeFragment.newInstance(lat, lng, areaName, count), R.id.nav_host_fragment);
+                                    HomeFragment.newInstance(lat, lng, areaName, count, placeId), R.id.nav_host_fragment);
                         }
                     }
                 }

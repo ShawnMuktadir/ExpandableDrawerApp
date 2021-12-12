@@ -68,7 +68,6 @@ import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DateTimeUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.MathUtils;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
 
@@ -343,7 +342,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                                     if (ConnectivityUtils.getInstance().checkInternet(context)) {
                                         submitRegistration();
                                     } else {
-                                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
                                     }
                                 }
 
@@ -352,7 +351,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                                     Timber.e("Negative Button Clicked");
                                     if (context != null) {
                                         context.finish();
-                                        TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
                                     }
                                 }
                             }).show();
@@ -408,12 +407,16 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                 if (data.getExtras() != null) {
                     if (!vehicleImage) {
                         profileBitmap = (Bitmap) data.getExtras().get("data");
-                        profileBitmap = Bitmap.createScaledBitmap(profileBitmap, 828, 828, true);
-                        binding.imageViewUploadProfileImage.setImageBitmap(profileBitmap);
+                        if (profileBitmap != null) {
+                            profileBitmap = Bitmap.createScaledBitmap(profileBitmap, 828, 828, true);
+                            binding.imageViewUploadProfileImage.setImageBitmap(profileBitmap);
+                        }
                     } else {
                         vehicleBitmap = (Bitmap) data.getExtras().get("data");
-                        vehicleBitmap = Bitmap.createScaledBitmap(vehicleBitmap, 828, 828, true);
-                        binding.ivVehiclePlatePreview.setImageBitmap(vehicleBitmap);
+                        if (vehicleBitmap != null) {
+                            vehicleBitmap = Bitmap.createScaledBitmap(vehicleBitmap, 828, 828, true);
+                            binding.ivVehiclePlatePreview.setImageBitmap(vehicleBitmap);
+                        }
                     }
                 }
             } catch (Exception e) {
@@ -457,7 +460,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                 if (ConnectivityUtils.getInstance().checkInternet(context)) {
                     context.startActivity(new Intent(context, TermsConditionsActivity.class));
                 } else {
-                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
                 }
             }
 
@@ -477,7 +480,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                 if (ConnectivityUtils.getInstance().checkInternet(context)) {
                     context.startActivity(new Intent(context, PrivacyPolicyActivity.class));
                 } else {
-                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
                 }
             }
 
@@ -530,7 +533,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                                             if (ConnectivityUtils.getInstance().checkInternet(context)) {
                                                 submitRegistration();
                                             } else {
-                                                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                                                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
                                             }
                                         }
 
@@ -539,7 +542,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                                             Timber.e("Negative Button Clicked");
                                             if (context != null) {
                                                 context.finish();
-                                                TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                                                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
                                             }
                                         }
                                     }).show();
@@ -799,9 +802,9 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                     if (profileBitmap != null && vehicleBitmap != null) {
                         registerUser(fullName, password, mobileNo, licencePlateInfo);
                     } else if (vehicleBitmap == null) {
-                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.upload_vehicle_pic));
+                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.upload_vehicle_pic));
                     } else {
-                        TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.upload_profile_photo));
+                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.upload_profile_photo));
                     }
                 }
             } else if (binding.radioGroup.getCheckedRadioButtonId() == R.id.radioMilitary) {
@@ -810,9 +813,9 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                 if (profileBitmap != null && vehicleBitmap != null) {
                     registerUser(fullName, password, mobileNo, licencePlateInfo);
                 } else if (vehicleBitmap == null) {
-                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.upload_vehicle_pic));
+                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.upload_vehicle_pic));
                 } else {
-                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.upload_profile_photo));
+                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.upload_profile_photo));
                 }
             }
         } else {
@@ -821,11 +824,8 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     }
 
     private void registerUser(final String fullName, final String password, final String mobileNo, final String vehicleNo) {
-
         showLoading(context);
-
         showProgress();
-
         ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
         Call<BaseResponse> call = service.createUser(fullName, password, mobileNo, vehicleNo,
                 imageToString(profileBitmap),
@@ -892,7 +892,17 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         boolean isNameValid = Validator.checkValidity(binding.textInputLayoutFullName, binding.editTextFullName.getText().toString(), context.getResources().getString(R.string.err_msg_fullname), "text");
         boolean isPhoneValid = Validator.checkValidity(binding.textInputLayoutMobile, binding.editTextMobileNumber.getText().toString(), context.getResources().getString(R.string.err_msg_mobile), "phone");
         boolean isPasswordValid = Validator.checkValidity(binding.textInputLayoutPassword, binding.editTextPassword.getText().toString(), context.getResources().getString(R.string.err_msg_password_signup), "textPassword");
+
         boolean isLicencePlateValid = false;
+        boolean isConfirmPasswordValid = false;
+
+        if (binding.editTextConfirmPassword.getText().toString().equals(binding.editTextPassword.getText().toString())) {
+            isConfirmPasswordValid = true;
+            binding.textInputLayoutConfirmPassword.setErrorEnabled(false);
+        } else {
+            binding.textInputLayoutConfirmPassword.setError(context.getResources().getString(R.string.err_confirm_password));
+            binding.textInputLayoutConfirmPassword.setErrorEnabled(true);
+        }
 
         if (binding.radioGroup.getCheckedRadioButtonId() == R.id.radioGeneral) {
             isVehicleRegValid = Validator.checkValidity(binding.textInputLayoutVehicle, binding.editTextVehicleRegNumber.getText().toString(), context.getResources().getString(R.string.err_msg_vehicle), "vehicleNumber");
@@ -917,9 +927,9 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         }
 
         if (binding.radioGroup.getCheckedRadioButtonId() == R.id.radioGeneral) {
-            return isNameValid && isPhoneValid && isVehicleRegValid && isPasswordValid && isLicencePlateValid;
+            return isNameValid && isPhoneValid && isVehicleRegValid && isPasswordValid && isConfirmPasswordValid && isLicencePlateValid;
         } else if (binding.radioGroup.getCheckedRadioButtonId() == R.id.radioMilitary) {
-            return isNameValid && isPhoneValid && isVehicleRegValidForFirstTwoDigit && isVehicleRegValidForLastFourDigit && isPasswordValid && isLicencePlateValid;
+            return isNameValid && isPhoneValid && isVehicleRegValidForFirstTwoDigit && isVehicleRegValidForLastFourDigit && isPasswordValid && isConfirmPasswordValid && isLicencePlateValid;
         } else {
             return false;
         }

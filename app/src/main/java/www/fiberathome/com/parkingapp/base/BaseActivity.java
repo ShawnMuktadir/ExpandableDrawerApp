@@ -58,7 +58,7 @@ import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.GeoFenceBroadcastReceiver;
 import www.fiberathome.com.parkingapp.utils.GeofenceConstants;
 import www.fiberathome.com.parkingapp.utils.SnackBarUtils;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
+import www.fiberathome.com.parkingapp.utils.ToastUtils;
 import www.fiberathome.com.parkingapp.utils.internet.Connectivity;
 
 /**
@@ -114,7 +114,6 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
             getWindow().setStatusBarColor(ContextCompat.getColor(context, R.color.updatedColorPrimaryDark));
         }
 
-
         snackbar = Snackbar.make(this.findViewById(android.R.id.content), context.getResources().getString(R.string.connect_to_internet), 86400000);
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         context.registerReceiver(mNetworkDetectReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
@@ -151,9 +150,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
     @Override
     protected void onDestroy() {
         mLocationManager.removeUpdates(this);
-
         context.unregisterReceiver(mNetworkDetectReceiver);
-
         super.onDestroy();
     }
 
@@ -211,7 +208,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
                             @Override
                             public void onNegativeClick() {
                                 finishAffinity();
-                                TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
                             }
                         }).show();
             }*/
@@ -263,9 +260,9 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
             return true;
         } else {
             AlertDialog alertDialog = new AlertDialog.Builder(context)
-                    .setTitle("GPS Permissions")
-                    .setMessage("GPS is required for this app to work. Please enable GPS.")
-                    .setPositiveButton("Yes", ((dialogInterface, i) -> {
+                    .setTitle(context.getResources().getString(R.string.gps_permission))
+                    .setMessage(context.getResources().getString(R.string.gps_required))
+                    .setPositiveButton(context.getResources().getString(R.string.yes), ((dialogInterface, i) -> {
                         Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                         startActivityForResult(intent, GPS_REQUEST_CODE);
                     }))
@@ -321,7 +318,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
                     snackbar.dismiss();
                 } else {
                     snackbar.show();
-                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
                 }
             });
 
@@ -332,7 +329,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
                 snackbar.dismiss();
                 if (context != null) {
                     finishAffinity();
-                    TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
                 }
             });
 
@@ -370,6 +367,14 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         finishAffinity();
     }
 
+    @SuppressWarnings("rawtypes")
+    public void startActivityWithFinishBundle(Class activityClass, Bundle bundle) {
+        Intent intent = new Intent(getApplicationContext(), activityClass);
+        intent.putExtras(bundle);
+        startActivity(intent);
+        finishAffinity();
+    }
+
     public void setStatusBarColor(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             int startColor = getWindow().getStatusBarColor();
@@ -390,7 +395,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
                         (dialog, which) -> {
                             if (context != null) {
                                 finishAffinity();
-                                TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
                             }
                         });
         AlertDialog mGPSDialog = builder.create();
@@ -412,16 +417,14 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         } else {
             sbView.setBackgroundColor(getResources().getColor(R.color.transparent_gray));
             snackbar.setAction(context.getResources().getString(R.string.retry), view -> {
-
                 if (ConnectivityUtils.getInstance().checkInternet(context)) {
                     return;
                 } else {
-                    TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
                 }
             });
             snackbar.setActionTextColor(context.getResources().getColor(R.color.white));
         }
-
         snackbar.show();
     }
 
@@ -434,17 +437,16 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         builder.setTitle("Internet Disabled!");
         builder.setMessage("No active Internet connection found.");
         builder.setPositiveButton(context.getResources().getString(R.string.retry), (dialog, which) -> {
-
             if (ConnectivityUtils.getInstance().checkInternet(context)) {
                 return;
             } else {
-                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_internet));
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
             }
         }).setNegativeButton(context.getResources().getString(R.string.close_app), (dialog, which) -> {
             dialog.dismiss();
             if (context != null) {
                 finishAffinity();
-                TastyToastUtils.showTastySuccessToast(context, context.getResources().getString(R.string.thanks_message));
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
             }
         });
         mInternetDialog = builder.create();

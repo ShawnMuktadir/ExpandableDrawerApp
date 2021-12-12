@@ -1,10 +1,7 @@
 package www.fiberathome.com.parkingapp.ui.profile;
 
-import static android.content.Context.LOCATION_SERVICE;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,16 +21,16 @@ import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.user.User;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.ui.profile.edit.EditProfileActivity;
+import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
-import www.fiberathome.com.parkingapp.utils.TastyToastUtils;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
+import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressLint("NonConstantResourceId")
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class ProfileFragment extends Fragment implements IOnBackPressListener {
 
     private ProfileActivity context;
-
     FragmentProfileBinding binding;
 
     public ProfileFragment() {
@@ -83,14 +80,14 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
 
     @Override
     public boolean onBackPressed() {
-        if (isGPSEnabled()) {
+        if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
             if (getActivity() != null) {
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.nav_host_fragment, HomeFragment.newInstance())
                         .addToBackStack(null)
                         .commit();
             } else {
-                TastyToastUtils.showTastyWarningToast(context, context.getResources().getString(R.string.connect_to_gps));
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_gps));
             }
         }
         return false;
@@ -106,7 +103,6 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
         binding.tvUserName.setText(name);
 
         binding.tvUserMobileNo.setText(TextUtils.getInstance().addCountryPrefixWithPlus(user.getMobileNo()));
-        Timber.e("Mobile no -> %s", user.getMobileNo());
 
         if (TextUtils.getInstance().isNumeric(Preferences.getInstance(context).getUser().getVehicleNo())) {
             binding.tvUserVehicleNoArmy.setVisibility(View.VISIBLE);
@@ -116,34 +112,35 @@ public class ProfileFragment extends Fragment implements IOnBackPressListener {
             binding.tvUserVehicleNo.setText(user.getVehicleNo());
             binding.tvUserVehicleNoArmy.setVisibility(View.GONE);
         }
-
-        if (!user.getImage().endsWith(".jpg")) {
-            String url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
-            Timber.e("Image URL -> %s", url);
-            Glide.with(context).load(url).placeholder(R.drawable.blank_profile).dontAnimate().into(binding.ivUserProfilePic);
-
-            String vehicleUrl = AppConfig.IMAGES_URL + user.getVehicleImage() + ".jpg";
-            Timber.e("Vehicle Image URL -> %s", vehicleUrl);
-            Glide.with(context).load(vehicleUrl).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(binding.ivVehicleProfilePlatePreview);
-        } else {
-            String url = AppConfig.IMAGES_URL + user.getImage();
-            Timber.e("Image URL -> %s", url);
-            Glide.with(context).load(url).placeholder(R.drawable.blank_profile).dontAnimate().into(binding.ivUserProfilePic);
-
-            String vehicleUrl = AppConfig.IMAGES_URL + user.getVehicleImage();
-            Timber.e("Vehicle Image URL -> %s", vehicleUrl);
-            Glide.with(context).load(vehicleUrl).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(binding.ivVehicleProfilePlatePreview);
+        if (user.getImage() != null && !user.getImage().equals("")) {
+            try {
+                if (!user.getImage().endsWith(".jpg")) {
+                    String url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
+                    Timber.e("Image URL -> %s", url);
+                    Glide.with(context).load(url).placeholder(R.drawable.blank_profile).dontAnimate().into(binding.ivUserProfilePic);
+                } else {
+                    String url = AppConfig.IMAGES_URL + user.getImage();
+                    Timber.e("Image URL -> %s", url);
+                    Glide.with(context).load(url).placeholder(R.drawable.blank_profile).dontAnimate().into(binding.ivUserProfilePic);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-    }
-
-    private boolean isGPSEnabled() {
-        LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-        boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        if (providerEnabled) {
-            return true;
-        } else {
-            Timber.e("else called");
+        if (user.getVehicleImage() != null && !user.getVehicleImage().equals("")) {
+            try {
+                if (!user.getVehicleImage().endsWith(".jpg")) {
+                    String vehicleUrl = AppConfig.IMAGES_URL + user.getVehicleImage() + ".jpg";
+                    Timber.e("Vehicle Image URL -> %s", vehicleUrl);
+                    Glide.with(context).load(vehicleUrl).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(binding.ivVehicleProfilePlatePreview);
+                } else {
+                    String vehicleUrl = AppConfig.IMAGES_URL + user.getVehicleImage();
+                    Timber.e("Vehicle Image URL -> %s", vehicleUrl);
+                    Glide.with(context).load(vehicleUrl).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(binding.ivVehicleProfilePlatePreview);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-        return false;
     }
 }
