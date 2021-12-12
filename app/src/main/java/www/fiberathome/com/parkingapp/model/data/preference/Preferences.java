@@ -7,8 +7,15 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.List;
+
 import www.fiberathome.com.parkingapp.model.BookedPlace;
 import www.fiberathome.com.parkingapp.model.data.Constants;
+import www.fiberathome.com.parkingapp.model.response.sensors.SensorArea;
 import www.fiberathome.com.parkingapp.model.user.User;
 
 @SuppressLint("StaticFieldLeak")
@@ -251,5 +258,29 @@ public class Preferences {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt(KEY_CHECKED_ITEM, checkedItem);
         editor.apply();
+    }
+
+    public void saveSensorAreaList(Context context, List<SensorArea> sensorAreaList) {
+        Gson gson = new Gson();
+
+        // load tasks from preference
+        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        // save the SensorArea list to preference
+        SharedPreferences.Editor prefsEditor = prefs.edit();
+        String json = gson.toJson(sensorAreaList);
+        prefsEditor.putString("SENSOR_AREA_LIST", json);
+        prefsEditor.apply();
+    }
+
+    public List<SensorArea> getSensorAreaList() {
+        SharedPreferences mPrefs = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = mPrefs.getString("SENSOR_AREA_LIST", "");
+        Type type = new TypeToken<List<SensorArea>>() {
+        }.getType();
+        if (json != null && json.length() > 1) {
+            return gson.fromJson(json, type);
+        }
+        return null;
     }
 }

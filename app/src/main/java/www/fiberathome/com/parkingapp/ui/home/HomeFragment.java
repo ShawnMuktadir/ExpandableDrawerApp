@@ -1108,6 +1108,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             renderParkingSensors(sensorArea, location);
                         }
                         setBottomSheetFragmentControls(bookingSensorsArrayListGlobal);
+                        Preferences.getInstance(context).saveSensorAreaList(context, sensorAreaArrayList);
                     }
                 }
             }

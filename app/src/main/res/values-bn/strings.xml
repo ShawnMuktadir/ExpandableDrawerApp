@@ -574,5 +574,6 @@
     <string name="invalid_qr_code_message">অনুগ্রহ করে একটি বৈধ পার্কিং স্লট QR কোড স্ক্যান করুন</string>
     <string name="enter_scratch_card_number">আপনার স্ক্র্যাচ কার্ড নাম্বার লিখুন</string>
     <string name="invalid_qr">সঠিক QR কোড স্ক্যান করুন</string>
+    <string name="scan_text">Scan Parking slot QR code for faster booking confirmation</string>
 </resources>
 

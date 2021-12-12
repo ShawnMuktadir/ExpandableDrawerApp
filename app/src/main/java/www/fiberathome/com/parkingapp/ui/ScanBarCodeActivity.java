@@ -86,8 +86,6 @@ public class ScanBarCodeActivity extends BaseActivity implements FragmentChangeL
         if (currentLocation == null) {
             currentLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         }
-
-        setListeners();
     }
 
     /*
@@ -161,15 +159,6 @@ public class ScanBarCodeActivity extends BaseActivity implements FragmentChangeL
         initialiseDetectorsAndSources();
     }
 
-    private void setListeners() {
-        binding.btnAction.setOnClickListener(v -> {
-            if (intentData.length() > 0) {
-                //startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(intentData)));
-                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.confirm_booking));
-            }
-        });
-    }
-
     private void initialiseDetectorsAndSources() {
         barcodeDetector = new BarcodeDetector.Builder(this)
                 .setBarcodeFormats(Barcode.ALL_FORMATS)
@@ -219,7 +208,6 @@ public class ScanBarCodeActivity extends BaseActivity implements FragmentChangeL
                 final SparseArray<Barcode> barcodes = detections.getDetectedItems();
                 if (barcodes.size() != 0) {
                     binding.txtBarcodeValue.post(() -> {
-                        binding.btnAction.setText(context.getResources().getString(R.string.confirm_booking));
                         try {
                             intentData = barcodes.valueAt(0).displayValue;
 
@@ -241,7 +229,8 @@ public class ScanBarCodeActivity extends BaseActivity implements FragmentChangeL
                             try {
                                 if (sensorArea != null) {
                                     parseQRIntentData(sensorArea);
-                                } else {
+                                } else if (!isDialogShown) {
+                                    isDialogShown = true;
                                     DialogUtils.getInstance().alertDialog(context,
                                             context,
                                             context.getResources().getString(R.string.invalid_qr),
@@ -258,6 +247,7 @@ public class ScanBarCodeActivity extends BaseActivity implements FragmentChangeL
 
                                                 @Override
                                                 public void onNegativeClick() {
+                                                    isDialogShown = false;
                                                     Timber.e("Negative Button Clicked");
                                                 }
                                             }).show();

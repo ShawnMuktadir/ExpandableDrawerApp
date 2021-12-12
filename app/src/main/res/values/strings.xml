@@ -571,4 +571,5 @@
     <string name="enter_scratch_card_number">Enter your Scratch Card Number</string>
     <string name="invalid_qr_code_message">Please scan a valid parking slot QR code</string>
     <string name="invalid_qr">Invalid QR</string>
+    <string name="scan_text">Scan Parking slot QR code for faster booking confirmation</string>
 </resources>

@@ -30,6 +30,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import retrofit2.Call;
@@ -48,6 +49,7 @@ import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.booking.BookedList;
 import www.fiberathome.com.parkingapp.model.response.booking.BookedResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.ReservationCancelResponse;
+import www.fiberathome.com.parkingapp.model.response.sensors.SensorArea;
 import www.fiberathome.com.parkingapp.ui.booking.adapter.BookingAdapter;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
@@ -249,14 +251,24 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                     if (isBooked) {
                         DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.already_booked_msg), context);
                     } else {
-                        count = "25";
+                        List<SensorArea> sensorAreaArrayList = Preferences.getInstance(context).getSensorAreaList();
+                        SensorArea sensorArea = null;
+                        for (SensorArea status : sensorAreaArrayList) {
+                            if (status.getPlaceId().equalsIgnoreCase(placeId)) {
+                                sensorArea = status;
+                                count = sensorArea.getCount();
+                                break;
+                            }
+                        }
                         if (placeId != null && !placeId.equalsIgnoreCase("") && !placeId.equalsIgnoreCase("0") &&
                                 count != null && !count.equalsIgnoreCase("") && !count.equalsIgnoreCase("0")) {
                             Bundle bundle = new Bundle();
                             bundle.putBoolean("m", false); //m for more
                             bundle.putString("areaPlacedId", placeId);
                             bundle.putString("areaName", parkingArea);
-                            bundle.putString("parkingSlotCount", count);
+                            if (sensorArea != null) {
+                                bundle.putString("parkingSlotCount", sensorArea.getCount());
+                            }
                             bundle.putDouble("lat", lat);
                             bundle.putDouble("long", lng);
                             ScheduleFragment scheduleFragment = new ScheduleFragment();

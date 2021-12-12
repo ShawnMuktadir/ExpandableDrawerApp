@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="@dimen/dim10">
 
     <SurfaceView
@@ -19,17 +20,27 @@
         android:layout_alignParentTop="true"
         android:layout_marginStart="@dimen/dim10"
         android:text="@string/no_barcode_detected"
+        android:visibility="gone"
         android:textColor="@color/white"
         android:textSize="20sp" />
 
 
-    <Button
+    <TextView
         android:id="@+id/btnAction"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:textAllCaps="false"
-        android:text="@string/confirm_booking"
-        android:textColor="@color/white"
-        android:background="@color/black" />
+        android:text="@string/scan_text"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:maxLines="2"
+        android:textSize="@dimen/dimTex16"
+        android:textColor="@color/black"
+        android:background="@color/white"
+        android:paddingStart="@dimen/dim5"
+        app:drawableStartCompat="@drawable/ic_scanner"
+        app:drawableTint="@color/black" />
+
+
 </RelativeLayout>
