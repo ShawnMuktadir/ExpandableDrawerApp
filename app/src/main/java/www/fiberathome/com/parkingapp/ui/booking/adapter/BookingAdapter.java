@@ -17,15 +17,21 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.databinding.RowBookingsBinding;
+import www.fiberathome.com.parkingapp.model.BookedPlace;
+import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.booking.BookedList;
 import www.fiberathome.com.parkingapp.model.response.booking.BookingArea;
+import www.fiberathome.com.parkingapp.model.response.sensors.SensorArea;
 import www.fiberathome.com.parkingapp.ui.booking.BookingActivity;
+import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
+import www.fiberathome.com.parkingapp.utils.DateTimeUtils;
 import www.fiberathome.com.parkingapp.utils.MathUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
@@ -89,11 +95,38 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             bookingViewHolder.binding.tvStatus.setTextColor(context.getResources().getColor(R.color.green2));
             bookingViewHolder.binding.tvGetDirection.setVisibility(View.VISIBLE);
             bookingViewHolder.binding.tvRebooking.setVisibility(View.GONE);
+            checkBookingStatusChange(bookedList);
         } else if (bookedList.getC_Status().equalsIgnoreCase("0") && bookedList.getStatus().equalsIgnoreCase("0")) {
             bookingViewHolder.binding.tvCancel.setVisibility(View.VISIBLE);
             bookingViewHolder.binding.tvStatus.setVisibility(View.GONE);
             bookingViewHolder.binding.tvGetDirection.setVisibility(View.VISIBLE);
             bookingViewHolder.binding.tvRebooking.setVisibility(View.GONE);
+            if (!Preferences.getInstance(context).getBooked().getIsBooked()) {
+                List<SensorArea> sensorAreaArrayList = Preferences.getInstance(context).getSensorAreaList();
+                SensorArea sensorArea;
+                for (SensorArea status : sensorAreaArrayList) {
+                    if (status.getPlaceId().equalsIgnoreCase(bookedList.getAreaId())) {
+                        BookedPlace mBookedPlace = new BookedPlace();
+                        mBookedPlace.setBill(MathUtils.getInstance().convertToFloat(bookedList.getCurrentBill()));
+                        mBookedPlace.setLat(MathUtils.getInstance().convertToDouble(bookedList.getLatitude()));
+                        mBookedPlace.setLon(MathUtils.getInstance().convertToDouble(bookedList.getLongitude()));
+                        mBookedPlace.setAreaName(bookedList.getAddress());
+                        mBookedPlace.setParkingSlotCount(status.getCount());
+                        mBookedPlace.setDepartedDate(DateTimeUtils.getInstance().getStringDateToMillis(bookedList.getTimeEnd()));
+                        mBookedPlace.setArriveDate(DateTimeUtils.getInstance().getStringDateToMillis(bookedList.getTimeStart()));
+                        mBookedPlace.setPlaceId(bookedList.getAreaId());
+                        mBookedPlace.setPaid(true);
+                        mBookedPlace.setBookedUid(bookedList.getSpotId());
+                        mBookedPlace.setReservation(bookedList.getId());
+                        mBookedPlace.setIsBooked(true);
+                        mBookedPlace.setPsId(bookedList.getPsId());
+                        Preferences.getInstance(context).setBooked(mBookedPlace);
+                        Preferences.getInstance(context).isBookingCancelled = true;
+                        ApplicationUtils.startBookingTrackService(context);
+                        break;
+                    }
+                }
+            }
         } else if (bookedList.getC_Status().equalsIgnoreCase("0") && bookedList.getStatus().equalsIgnoreCase("1")) {
             bookingViewHolder.binding.tvStatus.setVisibility(View.VISIBLE);
             bookingViewHolder.binding.tvCancel.setVisibility(View.GONE);
@@ -101,6 +134,7 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             bookingViewHolder.binding.tvStatus.setTextColor(context.getResources().getColor(R.color.green2));
             bookingViewHolder.binding.tvGetDirection.setVisibility(View.GONE);
             bookingViewHolder.binding.tvRebooking.setVisibility(View.VISIBLE);
+            checkBookingStatusChange(bookedList);
         } else if (bookedList.getC_Status().equalsIgnoreCase("1") && bookedList.getStatus().equalsIgnoreCase("1")) {
             bookingViewHolder.binding.tvStatus.setVisibility(View.VISIBLE);
             bookingViewHolder.binding.tvStatus.setText(context.getResources().getString(R.string.canceled));
@@ -108,6 +142,7 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             bookingViewHolder.binding.tvStatus.setTextColor(Color.RED);
             bookingViewHolder.binding.tvGetDirection.setVisibility(View.GONE);
             bookingViewHolder.binding.tvRebooking.setVisibility(View.VISIBLE);
+            checkBookingStatusChange(bookedList);
         } else if (bookedList.getC_Status().equalsIgnoreCase("1") && bookedList.getStatus().equalsIgnoreCase("0")) {
             bookingViewHolder.binding.tvStatus.setVisibility(View.VISIBLE);
             bookingViewHolder.binding.tvStatus.setText(context.getResources().getString(R.string.rejected));
@@ -115,6 +150,7 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             bookingViewHolder.binding.tvStatus.setTextColor(Color.RED);
             bookingViewHolder.binding.tvGetDirection.setVisibility(View.GONE);
             bookingViewHolder.binding.tvRebooking.setVisibility(View.VISIBLE);
+            checkBookingStatusChange(bookedList);
         }
 
         bookingViewHolder.binding.tvRebooking.setOnClickListener(v -> {
@@ -136,6 +172,16 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         bookingViewHolder.binding.btnViewReceipt.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
 
         bookingViewHolder.binding.btnGetHelp.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
+    }
+
+    private void checkBookingStatusChange(BookedList bookedList) {
+        if (Preferences.getInstance(context).getBooked().getIsBooked()) {
+            if (bookedList.getId().equalsIgnoreCase(Preferences.getInstance(context).getBooked().getReservation())) {
+                Preferences.getInstance(context).clearBooking();
+                ApplicationUtils.stopBookingTrackService(context);
+                Preferences.getInstance(context).isBookingCancelled = true;
+            }
+        }
     }
 
     public void setDataList(ArrayList<BookedList> dataList) {

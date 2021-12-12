@@ -78,4 +78,19 @@ public class DateTimeUtils {
             return null;
         }
     }
+
+    public long getStringDateToMillis(String date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        long timeInMilliseconds = 0;
+        try {
+            Date mDate = sdf.parse(date);
+            if (mDate != null) {
+                timeInMilliseconds = mDate.getTime();
+            }
+            System.out.println("Date in milli :: " + timeInMilliseconds);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return timeInMilliseconds;
+    }
 }

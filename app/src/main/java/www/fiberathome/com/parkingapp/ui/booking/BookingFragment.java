@@ -252,7 +252,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                         DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.already_booked_msg), context);
                     } else {
                         List<SensorArea> sensorAreaArrayList = Preferences.getInstance(context).getSensorAreaList();
-                        SensorArea sensorArea = null;
+                        SensorArea sensorArea;
                         for (SensorArea status : sensorAreaArrayList) {
                             if (status.getPlaceId().equalsIgnoreCase(placeId)) {
                                 sensorArea = status;
@@ -266,9 +266,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                             bundle.putBoolean("m", false); //m for more
                             bundle.putString("areaPlacedId", placeId);
                             bundle.putString("areaName", parkingArea);
-                            if (sensorArea != null) {
-                                bundle.putString("parkingSlotCount", sensorArea.getCount());
-                            }
+                            bundle.putString("parkingSlotCount", count);
                             bundle.putDouble("lat", lat);
                             bundle.putDouble("long", lng);
                             ScheduleFragment scheduleFragment = new ScheduleFragment();

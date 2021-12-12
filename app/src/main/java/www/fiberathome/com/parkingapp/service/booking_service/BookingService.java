@@ -147,7 +147,8 @@ public class BookingService extends Service {
                 sendNotification(context.getResources().getString(R.string.booked_time), context.getResources().getString(R.string.park_duration_about_to_end), false);
                 startCountDown((exceedTime - (new Date().getTime() - departureDate)) >= 0 ? (exceedTime - (new Date().getTime() - departureDate)) : 0, true);
             }
-        } else if (new Date().getTime() > (Preferences.getInstance(context).getBooked().getDepartedDate() + 60000L + exceedTime) && !endBookingCalled) {
+        }
+        else if (new Date().getTime() > (Preferences.getInstance(context).getBooked().getDepartedDate() + 60000L + exceedTime) && !endBookingCalled) {
             if (ConnectivityUtils.getInstance().checkInternet(context)) {
                 endBooking();
             }
