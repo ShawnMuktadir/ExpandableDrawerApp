@@ -1,17 +1,23 @@
 package www.fiberathome.com.parkingapp.ui.signUp;
 
 import android.os.Bundle;
+import android.view.View;
 
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
+import www.fiberathome.com.parkingapp.databinding.ActivityBaseBinding;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 
 public class SignUpActivity extends BaseActivity {
 
+    ActivityBaseBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_base);
+        binding = ActivityBaseBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
 
         //Initialize SignUp fragment
         ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),

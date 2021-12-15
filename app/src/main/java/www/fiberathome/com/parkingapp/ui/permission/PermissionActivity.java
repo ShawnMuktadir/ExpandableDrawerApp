@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 import android.view.View;
-import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
@@ -22,6 +21,7 @@ import com.karumi.dexter.PermissionToken;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
+import www.fiberathome.com.parkingapp.databinding.ActivityPermissionBinding;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.permission.listener.DexterPermissionListener;
@@ -33,16 +33,17 @@ import www.fiberathome.com.parkingapp.utils.ToastUtils;
 public class PermissionActivity extends BaseActivity implements PermissionInterface {
 
     private DexterPermissionListener permissionListener;
-    private TextView permissionTV;
     private BaseActivity context;
+
+    ActivityPermissionBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_permission);
+        binding = ActivityPermissionBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
         context = this;
-
-        permissionTV = findViewById(R.id.permissionTV);
         permissionListener = new DexterPermissionListener(this);
     }
 
@@ -85,9 +86,9 @@ public class PermissionActivity extends BaseActivity implements PermissionInterf
     public void handlePermanentDeniedPermission(String permissionName) {
 
         if (Manifest.permission.ACCESS_FINE_LOCATION.equals(permissionName)) {
-            permissionTV.setText(context.getResources().getString(R.string.permission_denied_permanently));
+            binding.permissionTV.setText(context.getResources().getString(R.string.permission_denied_permanently));
             Preferences.getInstance(context).setIsLocationPermissionGiven(false);
-            permissionTV.setTextColor(ContextCompat.getColor(this, R.color.LogoRed));
+            binding.permissionTV.setTextColor(ContextCompat.getColor(this, R.color.LogoRed));
         }
 
         DialogUtils.getInstance().alertDialog(context,
@@ -148,9 +149,9 @@ public class PermissionActivity extends BaseActivity implements PermissionInterf
     @Override
     public void showPermissionDenied(String permissionName) {
         if (Manifest.permission.ACCESS_FINE_LOCATION.equals(permissionName)) {
-            permissionTV.setText(context.getResources().getString(R.string.permission_denied_u_cant_search_nearest_parking_location_from_you));
+            binding.permissionTV.setText(context.getResources().getString(R.string.permission_denied_u_cant_search_nearest_parking_location_from_you));
             Preferences.getInstance(context).setIsLocationPermissionGiven(false);
-            permissionTV.setTextColor(ContextCompat.getColor(this, R.color.LogoRed));
+            binding.permissionTV.setTextColor(ContextCompat.getColor(this, R.color.LogoRed));
         }
     }
 

@@ -15,8 +15,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -30,6 +28,7 @@ import com.karumi.dexter.PermissionToken;
 
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.databinding.ActivityLocationPermissionBinding;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.permission.listener.DexterPermissionListener;
@@ -38,22 +37,21 @@ import www.fiberathome.com.parkingapp.utils.PermissionUtil;
 
 public class LocationPermissionActivity extends AppCompatActivity implements PermissionInterface {
 
-    private TextView permissionTV;
-    private Button btnPermissions;
-
     private Context context;
-
     private DexterPermissionListener permissionListener;
 
-    private String deviceOs; // e.g. myVersion := "10"
+    protected String deviceOs; // e.g. myVersion := "10"
     private int sdkVersion; // e.g. sdkVersion := 29;
-
+    ActivityLocationPermissionBinding binding;
     public static final int REQUEST_CODE_PERMISSIONS = 101;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_location_permission);
+        //setContentView(R.layout.activity_location_permission);
+        binding = ActivityLocationPermissionBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
 
         context = this;
         setStatusBarColor(context);
@@ -66,10 +64,11 @@ public class LocationPermissionActivity extends AppCompatActivity implements Per
         deviceOs = android.os.Build.VERSION.RELEASE;
         sdkVersion = android.os.Build.VERSION.SDK_INT;
 
-        initUI();
+        setListeners();
+    }
 
-
-        btnPermissions.setOnClickListener(view -> {
+    private void setListeners() {
+        binding.btnPermissions.setOnClickListener(v -> {
             if (sdkVersion >= 29) {
                 requestLocationPermission();
             } else {
@@ -84,11 +83,6 @@ public class LocationPermissionActivity extends AppCompatActivity implements Per
         if (isFinishing()) {
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         }
-    }
-
-    private void initUI() {
-        permissionTV = findViewById(R.id.permissionTV);
-        btnPermissions = findViewById(R.id.btnPermissions);
     }
 
     public void setStatusBarColor(Context context) {
@@ -126,7 +120,7 @@ public class LocationPermissionActivity extends AppCompatActivity implements Per
         Dexter.withContext(this).withPermission(Manifest.permission.ACCESS_FINE_LOCATION).withListener(permissionListener).check();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -139,13 +133,13 @@ public class LocationPermissionActivity extends AppCompatActivity implements Per
                     //foreground permission allowed
                     if (grantResults[i] >= 0) {
                         foreground = true;
-                        permissionTV.setText(context.getResources().getString(R.string.foreground_location_permission_allowed));
-                        permissionTV.setTextColor(ContextCompat.getColor(this, R.color.colorOrange));
+                        binding.permissionTV.setText(context.getResources().getString(R.string.foreground_location_permission_allowed));
+                        binding.permissionTV.setTextColor(ContextCompat.getColor(this, R.color.colorOrange));
                         //Toast.makeText(getApplicationContext(), "Foreground location permission allowed", Toast.LENGTH_SHORT).show();
                         continue;
                     } else {
-                        permissionTV.setText(context.getResources().getString(R.string.location_permission_denied_please_click_allow));
-                        permissionTV.setTextColor(ContextCompat.getColor(this, R.color.red));
+                        binding.permissionTV.setText(context.getResources().getString(R.string.location_permission_denied_please_click_allow));
+                        binding.permissionTV.setTextColor(ContextCompat.getColor(this, R.color.red));
                         Timber.e("Background location permission denied 1st");
 
                         PermissionUtil.checkPermission(context, Manifest.permission.ACCESS_FINE_LOCATION,
@@ -161,41 +155,25 @@ public class LocationPermissionActivity extends AppCompatActivity implements Per
 
                                     @Override
                                     public void onPermissionPreviouslyDenied() {
-
                                         Timber.e("Background location permission denied 2nd");
                                     }
 
+                                    @RequiresApi(api = Build.VERSION_CODES.Q)
                                     @Override
                                     public void onPermissionDisabled() {
-                                        /*SharedPreManager.getInstance(context).setIsLocationPermissionGiven(false);
-                                        SharedPreManager.getInstance(context).logout();
-                                        finish();*/
                                         new AlertDialog.Builder(context).setTitle(context.getResources().getString(R.string.permission_denied_permanently)).
-                                                //setMessage(context.getResources().getString(R.string.allow_this_permission_from_settings)).
-                                                        setMessage(context.getResources().getString(R.string.u_cant_use_this_app_anymore)).
-                                                setPositiveButton(context.getResources().getString(R.string.allow), new DialogInterface.OnClickListener() {
-
-                                                    @RequiresApi(api = Build.VERSION_CODES.Q)
-                                                    @Override
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        openSettings();
-                                                        dialog.dismiss();
-                                                    }
+                                                setMessage(context.getResources().getString(R.string.u_cant_use_this_app_anymore)).
+                                                setPositiveButton(context.getResources().getString(R.string.allow), (dialog, which) -> {
+                                                    openSettings();
+                                                    dialog.dismiss();
                                                 }).
-                                                setNegativeButton(context.getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        dialog.dismiss();
-                                                    }
-                                                }).show();
+                                                setNegativeButton(context.getResources().getString(R.string.cancel), (dialog, which) -> dialog.dismiss()).show();
                                     }
 
                                     @Override
                                     public void onPermissionGranted() {
                                         Toast.makeText(getApplicationContext(), "Location Permission granted", Toast.LENGTH_SHORT).show();
                                     }
-                                    //Toast.makeText(getApplicationContext(), "Location Permission denied", Toast.LENGTH_SHORT).show();
-                                    //break;
                                 });
                     }
 
@@ -204,26 +182,18 @@ public class LocationPermissionActivity extends AppCompatActivity implements Per
                             foreground = true;
                             background = true;
                             Preferences.getInstance(context).setIsLocationPermissionGiven(true);
-                            permissionTV.setText(context.getResources().getString(R.string.background_location_permission_allowed));
-                            permissionTV.setTextColor(ContextCompat.getColor(this, R.color.colorOrange));
-                            //Toast.makeText(getApplicationContext(), "Background location location permission allowed", Toast.LENGTH_SHORT).show();
+                            binding.permissionTV.setText(context.getResources().getString(R.string.background_location_permission_allowed));
+                            binding.permissionTV.setTextColor(ContextCompat.getColor(this, R.color.colorOrange));
                         } else {
-                            permissionTV.setText(context.getResources().getString(R.string.background_location_permission_denied_allow_all_the_time_for_using_parking_time));
-                            permissionTV.setTextColor(ContextCompat.getColor(this, R.color.red));
+                            binding.permissionTV.setText(context.getResources().getString(R.string.background_location_permission_denied_allow_all_the_time_for_using_parking_time));
+                            binding.permissionTV.setTextColor(ContextCompat.getColor(this, R.color.red));
                             Timber.e("Background location permission denied 2nd");
                             Preferences.getInstance(context).setIsLocationPermissionGiven(false);
-                            //Toast.makeText(getApplicationContext(), "Background location location permission denied", Toast.LENGTH_SHORT).show();
                             new AlertDialog.Builder(context).setTitle(context.getResources().getString(R.string.permission_all_time)).
-                                    //setMessage(context.getResources().getString(R.string.allow_this_permission_from_settings)).
-                                            setMessage(context.getResources().getString(R.string.u_cant_use_this_app_anymore)).
-                                    setPositiveButton(context.getResources().getString(R.string.allow), new DialogInterface.OnClickListener() {
-
-                                        @RequiresApi(api = Build.VERSION_CODES.Q)
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            openSettings();
-                                            dialog.dismiss();
-                                        }
+                                    setMessage(context.getResources().getString(R.string.u_cant_use_this_app_anymore)).
+                                    setPositiveButton(context.getResources().getString(R.string.allow), (dialog, which) -> {
+                                        openSettings();
+                                        dialog.dismiss();
                                     }).
                                     setNegativeButton(context.getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                                         @Override
@@ -240,33 +210,21 @@ public class LocationPermissionActivity extends AppCompatActivity implements Per
                         foreground = true;
                         background = true;
                         Preferences.getInstance(context).setIsLocationPermissionGiven(true);
-                        permissionTV.setText(context.getResources().getString(R.string.background_location_permission_allowed));
-                        permissionTV.setTextColor(ContextCompat.getColor(this, R.color.colorOrange));
+                        binding.permissionTV.setText(context.getResources().getString(R.string.background_location_permission_allowed));
+                        binding.permissionTV.setTextColor(ContextCompat.getColor(this, R.color.colorOrange));
                         //Toast.makeText(getApplicationContext(), "Background location location permission allowed", Toast.LENGTH_SHORT).show();
                     } else {
-                        permissionTV.setText(context.getResources().getString(R.string.background_location_permission_denied_allow_all_the_time_for_using_parking_time));
-                        permissionTV.setTextColor(ContextCompat.getColor(this, R.color.red));
+                        binding.permissionTV.setText(context.getResources().getString(R.string.background_location_permission_denied_allow_all_the_time_for_using_parking_time));
+                        binding.permissionTV.setTextColor(ContextCompat.getColor(this, R.color.red));
                         Timber.e("Background location permission denied 2nd");
                         Preferences.getInstance(context).setIsLocationPermissionGiven(false);
                         new AlertDialog.Builder(context).setTitle(context.getResources().getString(R.string.permission_all_time)).
-                                //setMessage(context.getResources().getString(R.string.allow_this_permission_from_settings)).
-                                        setMessage(context.getResources().getString(R.string.in_order_to_use_this_app)).
-                                setPositiveButton(context.getResources().getString(R.string.allow), new DialogInterface.OnClickListener() {
-
-                                    @RequiresApi(api = Build.VERSION_CODES.Q)
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        openSettings();
-                                        dialog.dismiss();
-                                    }
+                                setMessage(context.getResources().getString(R.string.in_order_to_use_this_app)).
+                                setPositiveButton(context.getResources().getString(R.string.allow), (dialog, which) -> {
+                                    openSettings();
+                                    dialog.dismiss();
                                 }).
-                                setNegativeButton(context.getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                }).show();
-                        //Toast.makeText(getApplicationContext(), "Background location location permission denied", Toast.LENGTH_SHORT).show();
+                                setNegativeButton(context.getResources().getString(R.string.cancel), (dialog, which) -> dialog.dismiss()).show();
                     }
                 }
                 if (foreground) {
@@ -291,73 +249,54 @@ public class LocationPermissionActivity extends AppCompatActivity implements Per
     private void handleLocationUpdates() {
         Timber.e("handleLocationUpdates");
         //foreground and background
-        permissionTV.setText(context.getResources().getString(R.string.start_foreground_background_updates));
-        permissionTV.setTextColor(ContextCompat.getColor(this, R.color.green));
+        binding.permissionTV.setText(context.getResources().getString(R.string.start_foreground_background_updates));
+        binding.permissionTV.setTextColor(ContextCompat.getColor(this, R.color.green));
 
         Preferences.getInstance(context).setIsLocationPermissionGiven(true);
 
         Intent intent = new Intent(LocationPermissionActivity.this, HomeActivity.class);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         startActivity(intent);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                finish();
-            }
-        }, 1000);
-
-        //Toast.makeText(getApplicationContext(),"Start Foreground and Background Location Updates",Toast.LENGTH_SHORT).show();
+        new Handler().postDelayed(this::finish, 1000);
     }
 
     private void handleForegroundLocationUpdates() {
         //handleForeground Location Updates
         Timber.e("handleForegroundLocationUpdates");
-        permissionTV.setText(context.getResources().getString(R.string.start_foreground_location_updates_please_click_allow_all_the_time_for_using_parking_app));
-        permissionTV.setTextColor(ContextCompat.getColor(this, R.color.colorOrange));
+        binding.permissionTV.setText(context.getResources().getString(R.string.start_foreground_location_updates_please_click_allow_all_the_time_for_using_parking_app));
+        binding.permissionTV.setTextColor(ContextCompat.getColor(this, R.color.colorOrange));
         Preferences.getInstance(context).setIsLocationPermissionGiven(false);
-        //Toast.makeText(getApplicationContext(),"Start foreground location updates",Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void showPermissionGranted(String permissionName) {
         switch (permissionName) {
             case Manifest.permission.ACCESS_FINE_LOCATION:
-                //Intent intent = new Intent(PermissionActivity.this, MainActivity.class);
                 Intent intent = new Intent(LocationPermissionActivity.this, HomeActivity.class);
                 Preferences.getInstance(context).setIsLocationPermissionGiven(true);
                 startActivity(intent);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        finish();
-                    }
-                }, 1000);
-
+                new Handler().postDelayed(this::finish, 1000);
                 break;
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     public void handlePermanentDeniedPermission(String permissionName) {
 
         switch (permissionName) {
             case Manifest.permission.ACCESS_FINE_LOCATION:
-                permissionTV.setText(context.getResources().getString(R.string.permission_denied_permanently));
+                binding.permissionTV.setText(context.getResources().getString(R.string.permission_denied_permanently));
                 Preferences.getInstance(context).setIsLocationPermissionGiven(false);
-                permissionTV.setTextColor(ContextCompat.getColor(this, R.color.LogoRed));
+                binding.permissionTV.setTextColor(ContextCompat.getColor(this, R.color.LogoRed));
                 break;
         }
 
         new AlertDialog.Builder(this).setTitle(context.getResources().getString(R.string.u_cant_use_this_app_anymore)).
                 setMessage(context.getResources().getString(R.string.allow_this_permission_from_settings)).
-                setPositiveButton(context.getResources().getString(R.string.allow), new DialogInterface.OnClickListener() {
-
-                    @RequiresApi(api = Build.VERSION_CODES.Q)
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        openSettings();
-                        dialog.dismiss();
-                    }
+                setPositiveButton(context.getResources().getString(R.string.allow), (dialog, which) -> {
+                    openSettings();
+                    dialog.dismiss();
                 }).
                 setNegativeButton(context.getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override
@@ -372,35 +311,24 @@ public class LocationPermissionActivity extends AppCompatActivity implements Per
     public void showPermissionDenied(String permissionName) {
         switch (permissionName) {
             case Manifest.permission.ACCESS_FINE_LOCATION:
-                permissionTV.setText("Permission Denied,You can't search nearest \n parking location from you. For further use please allow location");
+                binding.permissionTV.setText("Permission Denied,You can't search nearest \n parking location from you. For further use please allow location");
                 Preferences.getInstance(context).setIsLocationPermissionGiven(false);
-                permissionTV.setTextColor(ContextCompat.getColor(this, R.color.LogoRed));
+                binding.permissionTV.setTextColor(ContextCompat.getColor(this, R.color.LogoRed));
                 break;
         }
     }
 
     @Override
     public void showPermissionRational(PermissionToken token) {
-        new AlertDialog.Builder(this).setTitle("We need this permission for find nearest parking places").
-                setMessage("Please allow this permission to further use this app").
-                setPositiveButton("Allow", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        token.continuePermissionRequest();
-                        dialog.dismiss();
-                    }
+        new AlertDialog.Builder(context).setTitle(context.getResources().getString(R.string.we_need_this_permission_for_find_nearest_parking_places)).
+                setMessage(context.getResources().getString(R.string.please_allow_this_permission_for_further_use_of_app)).
+                setPositiveButton(context.getResources().getString(R.string.allow), (dialog, which) -> {
+                    token.continuePermissionRequest();
+                    dialog.dismiss();
                 }).
-                setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        token.cancelPermissionRequest();
-                        dialog.dismiss();
-                    }
-                }).setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                token.cancelPermissionRequest();
-            }
-        }).show();
+                setNegativeButton(context.getResources().getString(R.string.cancel), (dialog, which) -> {
+                    token.cancelPermissionRequest();
+                    dialog.dismiss();
+                }).setOnDismissListener(dialog -> token.cancelPermissionRequest()).show();
     }
 }

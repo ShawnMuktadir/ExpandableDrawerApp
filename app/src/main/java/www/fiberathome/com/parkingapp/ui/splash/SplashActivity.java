@@ -2,29 +2,36 @@ package www.fiberathome.com.parkingapp.ui.splash;
 
 import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_BN;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
+import www.fiberathome.com.parkingapp.databinding.ActivityBaseBinding;
 import www.fiberathome.com.parkingapp.model.data.preference.LanguagePreferences;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
+@SuppressLint("CustomSplashScreen")
 public class SplashActivity extends BaseActivity {
 
     private Context context;
+    ActivityBaseBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_base);
+        binding = ActivityBaseBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
 
         context = this;
 

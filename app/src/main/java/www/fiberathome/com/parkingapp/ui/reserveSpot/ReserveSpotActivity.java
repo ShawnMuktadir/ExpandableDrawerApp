@@ -2,32 +2,26 @@ package www.fiberathome.com.parkingapp.ui.reserveSpot;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.databinding.ActivityReserveSpotBinding;
 
-public class ReserveSpotActivity extends AppCompatActivity implements View.OnClickListener {
+public class ReserveSpotActivity extends AppCompatActivity {
 
-    private TextView selectedspot;
+    ActivityReserveSpotBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_reserve_spot);
-
-        //selectedspot = findViewById(R.id.selectedSpotTV);
+        binding = ActivityReserveSpotBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
 
         String selectedSpot = getIntent().getStringExtra("selectedSpot");
         Toast.makeText(this, selectedSpot, Toast.LENGTH_LONG).show();
 
-        //selectedspot.setText("Your selected: "+selectedSpot);
-    }
-
-    @Override
-    public void onClick(View view) {
-
+        //binding.selectedspot.setText("Your selected: "+selectedSpot);
     }
 }

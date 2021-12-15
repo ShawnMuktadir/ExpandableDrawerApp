@@ -1,11 +1,9 @@
 package www.fiberathome.com.parkingapp.ui.law;
 
-import static android.content.Context.LOCATION_SERVICE;
 import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_BN;
 import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
 
 import android.annotation.SuppressLint;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -38,6 +36,7 @@ import www.fiberathome.com.parkingapp.model.response.law.LawItem;
 import www.fiberathome.com.parkingapp.model.response.law.LocalJson;
 import www.fiberathome.com.parkingapp.model.response.law.Result;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
+import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.KeyboardUtils;
@@ -92,7 +91,7 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
 
     @Override
     public boolean onBackPressed() {
-        if (isGPSEnabled()) {
+        if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
             if (getActivity() != null) {
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.nav_host_fragment, HomeFragment.newInstance())
@@ -257,19 +256,5 @@ public class LawFragment extends BaseFragment implements IOnBackPressListener {
     public void setNoData() {
         binding.textViewNoData.setVisibility(View.VISIBLE);
         binding.textViewNoData.setText(context.getResources().getString(R.string.no_data_found));
-    }
-
-    private boolean isGPSEnabled() {
-
-        LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-
-        boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-        if (providerEnabled) {
-            return true;
-        } else {
-            Timber.e("isGPSEnabled else called");
-        }
-        return false;
     }
 }

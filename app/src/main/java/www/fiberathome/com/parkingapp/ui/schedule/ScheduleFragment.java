@@ -17,6 +17,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.google.gson.Gson;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -28,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.adapter.UniversalSpinnerAdapter;
@@ -42,6 +45,8 @@ import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.booking.ReservationResponse;
 import www.fiberathome.com.parkingapp.model.response.booking.TimeSlotResponse;
+import www.fiberathome.com.parkingapp.model.response.vehicle_list.UserVehicleListResponse;
+import www.fiberathome.com.parkingapp.model.response.vehicle_list.Vehicle;
 import www.fiberathome.com.parkingapp.ui.booking.BookingActivity;
 import www.fiberathome.com.parkingapp.ui.booking.PaymentFragment;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
@@ -61,8 +66,6 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
     public static String areaCount;
     public long arrived, departure, difference;
 
-    private BaseActivity context;
-
     private Date arrivedDate;
     private Date departedDate;
 
@@ -81,9 +84,14 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
     private final List<www.fiberathome.com.parkingapp.model.Spinner> departureTimeDataList = new ArrayList<>();
     private List<List<String>> sensorAreaStatusList = new ArrayList<>();
 
+    private List<Vehicle> vehicleList = new ArrayList<>();
+    private final List<www.fiberathome.com.parkingapp.model.Spinner> userVehicleDataList = new ArrayList<>();
+
+    private BaseActivity context;
     FragmentScheduleBinding binding;
     private FragmentChangeListener listener;
     private Date currentTime;
+    private String selectedVehicleNo;
 
     public ScheduleFragment() {
         // Required empty public constructor
@@ -157,7 +165,8 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
             setDatePickerTime();
             setListeners();
         }
-        getTimeSlots();
+        getUserVehicleList(Preferences.getInstance(context).getUser().getMobileNo());
+        //getTimeSlots();
     }
 
     private void setDatePickerTime() {
@@ -426,6 +435,51 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
         });
     }
 
+    private void getUserVehicleList(String mobileNo) {
+        showLoading(context);
+        ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+        Call<UserVehicleListResponse> bookedResponseCall = service.getUserVehicleList(mobileNo);
+        bookedResponseCall.enqueue(new Callback<UserVehicleListResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<UserVehicleListResponse> call, @NonNull Response<UserVehicleListResponse> response) {
+                hideLoading();
+                getTimeSlots();
+                Timber.e("UserVehicleListResponse -> %s", new Gson().toJson(response.body()));
+                if (response.body() != null && !response.body().getError()) {
+                    if (response.isSuccessful()) {
+                        UserVehicleListResponse vehicleListResponse = response.body();
+                        vehicleList = vehicleListResponse.getVehicle();
+                        if (vehicleList != null && !vehicleList.isEmpty()) {
+                            for (Vehicle userVehicleList : vehicleList) {
+                                try {
+                                    String vehicleNo = userVehicleList.getVehicleNo();
+                                    int priority = Integer.parseInt(userVehicleList.getPriority());
+                                    userVehicleDataList.add(new Spinner(priority, vehicleNo));
+                                } catch (Exception e) {
+                                    Timber.e(e.getCause());
+                                }
+                            }
+                            Timber.e("userVehicleDataList _. %s", new Gson().toJson(userVehicleDataList));
+                            setVehicleListSpinner(userVehicleDataList);
+                        } else {
+                            Timber.e("else called");
+                        }
+                    } else {
+                        Timber.e("response -> %s", new Gson().toJson(response.body()));
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure
+                    (@NonNull Call<UserVehicleListResponse> call, @NonNull Throwable errors) {
+                Timber.e("Throwable Errors: -> %s", errors.toString());
+                hideLoading();
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+            }
+        });
+    }
+
     private void getTimeSlots() {
         showLoading(context);
         ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
@@ -457,7 +511,7 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
                                             e.getCause();
                                         }
                                     }
-                                    setSpinner(departureTimeDataList);
+                                    setDepartureSpinner(departureTimeDataList);
                                 }
                             }
                         }
@@ -473,11 +527,11 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
         });
     }
 
-    private void setSpinner(List<www.fiberathome.com.parkingapp.model.Spinner> departureTimeDataList) {
+    private void setDepartureSpinner
+            (List<www.fiberathome.com.parkingapp.model.Spinner> departureTimeDataList) {
         UniversalSpinnerAdapter departureTimeAdapter = new UniversalSpinnerAdapter(context,
                 android.R.layout.simple_spinner_item,
                 departureTimeDataList);
-
         try {
             departure = (long) (departureTimeDataList.get(0).getTimeValue() * 3600000);
         } catch (Exception e) {
@@ -495,5 +549,25 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
             }
         });
         binding.spinnerDepartureTime.setAdapter(departureTimeAdapter);
+    }
+
+    private void setVehicleListSpinner
+            (List<www.fiberathome.com.parkingapp.model.Spinner> vehicleList) {
+        UniversalSpinnerAdapter userVehicleListAdapter = new UniversalSpinnerAdapter(context,
+                android.R.layout.simple_spinner_item,
+                vehicleList);
+
+        binding.spinnerUserVehicle.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedVehicleNo = vehicleList.get(0).getVehicleNo();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        binding.spinnerUserVehicle.setAdapter(userVehicleListAdapter);
     }
 }

@@ -9,7 +9,7 @@ import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 
 public class SearchActivity extends NavigationActivity {
 
-    private Context context;
+    protected Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -5,6 +5,7 @@ import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CO
 import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -52,9 +53,12 @@ import java.util.List;
 import java.util.Locale;
 
 import timber.log.Timber;
+import www.fiberathome.com.parkingapp.BuildConfig;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
+import www.fiberathome.com.parkingapp.utils.ForceUpdateChecker;
 import www.fiberathome.com.parkingapp.utils.GeoFenceBroadcastReceiver;
 import www.fiberathome.com.parkingapp.utils.GeofenceConstants;
 import www.fiberathome.com.parkingapp.utils.SnackBarUtils;
@@ -195,14 +199,14 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
 
         /*else if (requestCode == UPDATE_CODE) {
             if (!BuildConfig.VERSION_NAME.equalsIgnoreCase(ForceUpdateChecker.KEY_CURRENT_VERSION)) {
-                DialogUtil.getInstance().alertDialog(
+                DialogUtils.getInstance().alertDialog( context,
                         (Activity) context,
                         context.getResources().getString(R.string.new_version_available), context.getResources().getString(R.string.please_update_the_app),
                         context.getResources().getString(R.string.update), context.getResources().getString(R.string.no_thanks),
-                        new DialogUtil.DialogClickListener() {
+                        new DialogUtils.DialogClickListener() {
                             @Override
                             public void onPositiveClick() {
-                                redirectStore(ForceUpdateChecker.KEY_UPDATE_URL);
+                                ApplicationUtils.redirectStore(context);
                             }
 
                             @Override
@@ -211,9 +215,9 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
                                 ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
                             }
                         }).show();
-            }*/
+            }
 
-        //}
+        }*/
         else {
             super.onActivityResult(requestCode, resultCode, data);
         }

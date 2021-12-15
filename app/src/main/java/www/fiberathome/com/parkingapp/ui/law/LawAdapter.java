@@ -37,20 +37,19 @@ import www.fiberathome.com.parkingapp.model.response.law.LawItem;
  * Created by LEVI on 22/09/2018.
  */
 public class LawAdapter extends ExpandableRecyclerViewAdapter<TitleViewHolder, LawViewHolder> implements Filterable {
-    private final List<LawItem> copylawItemList;
-    private Context context;
+    private final List<LawItem> copyLawItemList;
+    protected Context context;
     private final LawFragment lawFragment;
-    private final String TAG = getClass().getSimpleName();
     private final Filter queryFilter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             List<LawItem> queryLawItemList = new ArrayList<>();
             if (constraint == null || constraint.length() == 0) {
-                queryLawItemList.addAll(copylawItemList);
+                queryLawItemList.addAll(copyLawItemList);
             } else {
                 String filterPattern = constraint.toString().toLowerCase().trim();
 
-                for (LawItem item : copylawItemList) {
+                for (LawItem item : copyLawItemList) {
                     if (item.getTitle().toLowerCase().contains(filterPattern)) {
                         queryLawItemList.add(item);
                         //ApplicationUtils.highlightSearchText(SpannableStringBuilder.valueOf(item.getTitle()), filterPattern);
@@ -82,7 +81,7 @@ public class LawAdapter extends ExpandableRecyclerViewAdapter<TitleViewHolder, L
     @SuppressWarnings("unchecked")
     public LawAdapter(List<? extends ExpandableGroup> groups, LawFragment lawFragment) {
         super(groups);
-        copylawItemList = new ArrayList<>((Collection<? extends LawItem>) groups);
+        copyLawItemList = new ArrayList<>((Collection<? extends LawItem>) groups);
         this.lawFragment = lawFragment;
     }
 

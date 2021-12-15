@@ -3,9 +3,11 @@ package www.fiberathome.com.parkingapp.ui.signIn;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.view.View;
 
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
+import www.fiberathome.com.parkingapp.databinding.ActivityBaseBinding;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
@@ -14,11 +16,14 @@ import www.fiberathome.com.parkingapp.utils.ToastUtils;
 public class LoginActivity extends BaseActivity {
 
     private Context context;
+    ActivityBaseBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_base);
+        binding = ActivityBaseBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
 
         context = this;
 

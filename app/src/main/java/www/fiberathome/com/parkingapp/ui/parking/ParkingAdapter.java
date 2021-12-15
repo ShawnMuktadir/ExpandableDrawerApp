@@ -32,7 +32,8 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private final ParkingAdapterClickListener mListener;
 
     public interface ParkingAdapterClickListener {
-        void onItemClick(int position, double lat, double lng, String parkingArea, String count, String placeId);
+        void onItemClick(int position, double lat, double lng, String parkingArea, String count,
+                         String placeId);
     }
 
     public ParkingAdapter(ParkingActivity context, ArrayList<SensorArea> sensorAreas,

@@ -18,6 +18,7 @@ import www.fiberathome.com.parkingapp.model.response.parkingSlot.ParkingSlotResp
 import www.fiberathome.com.parkingapp.model.response.search.SearchVisitedPlaceResponse;
 import www.fiberathome.com.parkingapp.model.response.sensors.SensorsResponse;
 import www.fiberathome.com.parkingapp.model.response.termsCondition.TermsConditionResponse;
+import www.fiberathome.com.parkingapp.model.response.vehicle_list.UserVehicleListResponse;
 
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public interface ApiService {
@@ -144,4 +145,8 @@ public interface ApiService {
 
     @GET("time_slot.php")
     Call<TimeSlotResponse> getTimeSlot();
+
+    @FormUrlEncoded
+    @POST("user_vehicle.php")
+    Call<UserVehicleListResponse> getUserVehicleList(@Field("user_id") String mobileNo);
 }

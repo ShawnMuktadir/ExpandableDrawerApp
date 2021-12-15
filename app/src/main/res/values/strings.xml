@@ -572,4 +572,5 @@
     <string name="invalid_qr_code_message">Please scan a valid parking slot QR code</string>
     <string name="invalid_qr">Invalid QR</string>
     <string name="scan_text">Scan Parking slot QR code for faster booking confirmation</string>
+    <string name="please_allow_this_permission_for_further_use_of_app">Please allow this permission to further use this app</string>
 </resources>

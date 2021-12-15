@@ -27,6 +27,6 @@ public class EditProfileActivity extends NavigationActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        setNavDrawerItem(R.id.nav_law);
+        setNavDrawerItem(R.id.nav_profile);
     }
 }
