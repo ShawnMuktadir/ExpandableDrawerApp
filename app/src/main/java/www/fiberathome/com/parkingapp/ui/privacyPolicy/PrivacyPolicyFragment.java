@@ -14,25 +14,22 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.volley.Request;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
-import www.fiberathome.com.parkingapp.base.ParkingApp;
 import www.fiberathome.com.parkingapp.databinding.FragmentPrivacyPolicyBinding;
+import www.fiberathome.com.parkingapp.model.api.ApiClient;
+import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
 import www.fiberathome.com.parkingapp.model.response.termsCondition.TermsCondition;
+import www.fiberathome.com.parkingapp.model.response.termsCondition.TermsConditionResponse;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
@@ -88,7 +85,7 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
         }
     }
 
-    private List<List<String>> list;
+   /* private List<List<String>> list;
 
     private void fetchPrivacyPolicy() {
         showLoading(context);
@@ -146,6 +143,95 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
 
         };
         ParkingApp.getInstance().addToRequestQueue(strReq);
+    }*/
+
+    private final ArrayList<TermsCondition> termsConditionArrayList = new ArrayList<>();
+    private List<List<String>> termConditionList = null;
+    private List<List<String>> list;
+    private TermsConditionResponse termsConditionResponse;
+
+    private String title = null;
+
+    private String description = null;
+
+    private String date = null;
+
+    private void fetchPrivacyPolicy() {
+        Timber.e("fetchPrivacyPolicy called");
+
+        showLoading(context);
+
+        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+
+        Call<TermsConditionResponse> call = request.getTermCondition();
+
+        call.enqueue(new Callback<TermsConditionResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<TermsConditionResponse> call,
+                                   @NonNull retrofit2.Response<TermsConditionResponse> response) {
+                hideLoading();
+                if (response.body() != null) {
+
+                    hideLoading();
+
+                    list = response.body().getTermsCondition();
+
+                    Timber.e("list -> %s", new Gson().toJson(list));
+
+
+                    termsConditionResponse = response.body();
+
+                    termConditionList = termsConditionResponse.getTermsCondition();
+
+
+                    if (termConditionList != null) {
+                        if (termConditionList.size() > 0) {
+                            for (List<String> baseStringList : termConditionList) {
+
+                            }
+                        }
+                        for (List<String> baseStringList : termConditionList) {
+                            TermsCondition termsConditionTemp = new TermsCondition();
+                            for (int j = 0; j < 1; j++) {
+                                termsConditionTemp.setTitle(baseStringList.get(j).trim());
+                                termsConditionTemp.setDescription(baseStringList.get(j).trim());
+                                termsConditionTemp.setDate(baseStringList.get(j).trim());
+                            }
+                            for (int i = 0; i < baseStringList.size(); i++) {
+
+
+                                Timber.d("onResponse: i ->  %s", i);
+
+                                if (i == 6) {
+                                    title = baseStringList.get(i).trim();
+                                }
+
+                                if (i == 2) {
+                                    if (termsConditionTemp.getTitle().equalsIgnoreCase(title)) {
+                                        description = termsConditionTemp.getDescription() + " " + baseStringList.get(i).trim();
+                                    }
+                                }
+
+                                if (i == 4) {
+                                    date = baseStringList.get(i).trim();
+                                }
+                            }
+
+                            TermsCondition termsCondition = new TermsCondition(title, description, date);
+                            termsConditionArrayList.add(termsCondition);
+
+                        }
+
+                        setTermsConditions(termsConditionArrayList);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<TermsConditionResponse> call, @NonNull Throwable t) {
+                Timber.e("onFailure -> %s", t.getMessage());
+            }
+        });
     }
 
     private void setTermsConditions(ArrayList<TermsCondition> termsConditions) {

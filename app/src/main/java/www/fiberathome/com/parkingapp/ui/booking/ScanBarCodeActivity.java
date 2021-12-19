@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.ui;
+package www.fiberathome.com.parkingapp.ui.booking;
 
 import android.Manifest;
 import android.content.Context;
@@ -37,7 +37,6 @@ import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.ui.schedule.ScheduleActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
-import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 public class ScanBarCodeActivity extends BaseActivity implements FragmentChangeListener {
 

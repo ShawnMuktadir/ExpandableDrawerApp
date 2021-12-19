@@ -52,7 +52,7 @@
         android:resizeableActivity="false">
 
         <activity
-            android:name=".ui.ScanBarCodeActivity"
+            android:name=".ui.booking.ScanBarCodeActivity"
             android:screenOrientation="portrait"
             android:configChanges="locale"
             android:theme="@style/AppTheme.DefaultActionBar" />

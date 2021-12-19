@@ -110,8 +110,8 @@ import www.fiberathome.com.parkingapp.service.geoFenceInterface.IOnLoadLocationL
 import www.fiberathome.com.parkingapp.service.geoFenceInterface.MyLatLng;
 import www.fiberathome.com.parkingapp.service.googleService.directionModules.DirectionFinder;
 import www.fiberathome.com.parkingapp.service.googleService.directionModules.DirectionFinderListener;
-import www.fiberathome.com.parkingapp.ui.ScanBarCodeActivity;
 import www.fiberathome.com.parkingapp.ui.booking.BookingParkFragment;
+import www.fiberathome.com.parkingapp.ui.booking.ScanBarCodeActivity;
 import www.fiberathome.com.parkingapp.ui.bottomSheet.BottomSheetAdapter;
 import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
 import www.fiberathome.com.parkingapp.ui.search.SearchActivity;
