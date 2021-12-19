@@ -185,43 +185,24 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
 
 
                     if (termConditionList != null) {
-                        if (termConditionList.size() > 0) {
-                            for (List<String> baseStringList : termConditionList) {
-
-                            }
-                        }
-                        for (List<String> baseStringList : termConditionList) {
-                            TermsCondition termsConditionTemp = new TermsCondition();
-                            for (int j = 0; j < 1; j++) {
-                                termsConditionTemp.setTitle(baseStringList.get(j).trim());
-                                termsConditionTemp.setDescription(baseStringList.get(j).trim());
-                                termsConditionTemp.setDate(baseStringList.get(j).trim());
-                            }
-                            for (int i = 0; i < baseStringList.size(); i++) {
-
-
-                                Timber.d("onResponse: i ->  %s", i);
-
-                                if (i == 6) {
-                                    title = baseStringList.get(i).trim();
+                        TermsCondition termsCondition = null;
+                        for (int i = 0; i < termConditionList.size(); i++) {
+                            title = termConditionList.get(i).get(6).trim();
+                            description = termConditionList.get(i).get(2).trim();
+                            date = termConditionList.get(i).get(4).trim();
+                            if (termsCondition != null) {
+                                if (termsCondition.getTitle().equalsIgnoreCase(title)) {
+                                    String tempDescription = termsCondition.getDescription() + " " + description;
+                                    termsCondition.setDescription(tempDescription);
+                                    termsConditionArrayList.remove(termsConditionArrayList.size() - 1);
+                                } else {
+                                    termsCondition = new TermsCondition(title, description, date);
                                 }
-
-                                if (i == 2) {
-                                    if (termsConditionTemp.getTitle().equalsIgnoreCase(title)) {
-                                        description = termsConditionTemp.getDescription() + " " + baseStringList.get(i).trim();
-                                    }
-                                }
-
-                                if (i == 4) {
-                                    date = baseStringList.get(i).trim();
-                                }
+                            } else {
+                                termsCondition = new TermsCondition(title, description, date);
                             }
-
-                            TermsCondition termsCondition = new TermsCondition(title, description, date);
                             termsConditionArrayList.add(termsCondition);
-
                         }
-
                         setTermsConditions(termsConditionArrayList);
                     }
                 }
