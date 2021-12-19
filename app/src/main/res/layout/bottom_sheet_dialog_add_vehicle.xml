@@ -53,14 +53,14 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
-            android:layout_weight="1" />
+            android:layout_weight="1.2" />
 
         <Spinner
             android:id="@+id/divSpinner"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
-            android:layout_weight="1" />
+            android:layout_weight="0.8" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textInputLayoutCarNumber"
