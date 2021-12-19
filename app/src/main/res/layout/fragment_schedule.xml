@@ -101,6 +101,7 @@
                         android:layout_height="match_parent"
                         android:layout_weight="0.5"
                         android:gravity="start|center"
+                        android:padding="@dimen/dim5"
                         android:text="@string/vehicle_no"
                         android:textColor="@color/arrivedColor"
                         android:textSize="@dimen/dimTex14"

@@ -567,7 +567,7 @@
     <string name="no_barcode_detected">কোন বারকোড সনাক্ত করা হয়নি</string>
     <string name="prevent_memory_leaks_scan_stopped">মেমোরি লিক প্রতিরোধে বারকোড স্ক্যানার বন্ধ করে দেওয়া হয়েছে</string>
     <string name="unable_to_load_map">মানচিত্র লোড করা সম্ভব হচ্ছে না</string>
-    <string name="scratchCard">Scratch Card</string>
+    <string name="scratchCard">স্ক্রার্চ কার্ড</string>
     <string name="e_pay">ই-পে</string>
     <string name="online_pay">অনলাইন পে</string>
     <string name="scratch_card">স্ক্রার্চ কার্ড</string>

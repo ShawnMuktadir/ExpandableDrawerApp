@@ -51,12 +51,6 @@ android {
         }
     }
 
-
-    dexOptions {
-        preDexLibraries false
-        javaMaxHeapSize "4g"
-    }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -69,7 +63,6 @@ android {
     useLibrary 'org.apache.http.legacy'
     buildToolsVersion = '30.0.3'
     compileOptions.encoding = 'ISO-8859-1'
-
 }
 
 repositories {
