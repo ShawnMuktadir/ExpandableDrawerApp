@@ -147,7 +147,7 @@
     <string name="by_using_this_app_you_agree_to_our_terms_and_conditions_amp_privacy_policy">
        <![CDATA[এই অ্যাপটি ব্যবহার এর মাধ্যমে আপনি আমাদের সকল শর্তাবলী,গোপনীয়তা এবং নীতি তে সম্মতি প্রদান করছেন]]></string>
 
-    <string-array name="CountryCodes">
+    <string-array name="country_codes">
         <item>93,AF</item>
         <item>355,AL</item>
         <item>213,DZ</item>
@@ -568,13 +568,17 @@
     <string name="prevent_memory_leaks_scan_stopped">মেমোরি লিক প্রতিরোধে বারকোড স্ক্যানার বন্ধ করে দেওয়া হয়েছে</string>
     <string name="unable_to_load_map">মানচিত্র লোড করা সম্ভব হচ্ছে না</string>
     <string name="scratchCard">Scratch Card</string>
-    <string name="e_pay">E-Pay</string>
-    <string name="online_pay">Online pay</string>
+    <string name="e_pay">ই-পে</string>
+    <string name="online_pay">অনলাইন পে</string>
     <string name="scratch_card">স্ক্রার্চ কার্ড</string>
     <string name="invalid_qr_code_message">অনুগ্রহ করে একটি বৈধ পার্কিং স্লট QR কোড স্ক্যান করুন</string>
     <string name="enter_scratch_card_number">আপনার স্ক্র্যাচ কার্ড নাম্বার লিখুন</string>
     <string name="invalid_qr">সঠিক QR কোড স্ক্যান করুন</string>
     <string name="scan_text">দ্রুত বুকিং নিশ্চিতকরণের জন্য পার্কিং স্লট QR কোড স্ক্যান করুন</string>
     <string name="please_allow_this_permission_for_further_use_of_app">অনুগ্রহ করে এই অ্যাপটিকে আরও ব্যবহার করার অনুমতি দিন</string>
+    <string name="add_vehicle">বাহন যোগ করুন</string>
+    <string name="select_image">ছবি নির্বাচন করুন</string>
+    <string name="select_photo_from_gallery">গ্যালারি থেকে ছবি নির্বাচন করুন</string>
+    <string name="capture_photo_from_camera">ক্যামেরা থেকে ছবি ক্যাপচার করুন</string>
 </resources>
 

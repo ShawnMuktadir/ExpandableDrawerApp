@@ -258,7 +258,7 @@ public class TextUtils {
         //getNetworkCountryIso
         assert manager != null;
         CountryID = manager.getSimCountryIso().toUpperCase();
-        String[] rl = context.getResources().getStringArray(R.array.CountryCodes);
+        String[] rl = context.getResources().getStringArray(R.array.country_codes);
         for (String s : rl) {
             String[] g = s.split(",");
             if (g[1].trim().equals(CountryID.trim())) {

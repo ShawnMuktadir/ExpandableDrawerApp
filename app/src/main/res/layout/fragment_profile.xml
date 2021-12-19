@@ -79,12 +79,14 @@
             android:id="@+id/linearLayoutPhoneVehicle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:weightSum="2.5"
             android:layout_margin="@dimen/dim10"
             android:gravity="start"
             android:orientation="horizontal">
 
             <ImageView
                 android:layout_width="@dimen/dim25"
+                android:layout_weight="0"
                 android:layout_height="@dimen/dim25"
                 android:layout_gravity="center"
                 android:layout_marginEnd="@dimen/dim10"
@@ -93,7 +95,8 @@
 
             <TextView
                 android:id="@+id/tvUserVehicleNo"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="2"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:paddingStart="@dimen/dim10"
@@ -104,14 +107,25 @@
 
             <TextView
                 android:id="@+id/tvUserVehicleNoArmy"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="2"
                 android:layout_height="wrap_content"
-                android:layout_gravity="start"
+                android:layout_gravity="bottom"
                 android:visibility="visible"
                 android:paddingTop="@dimen/dim10"
                 android:paddingBottom="@dimen/dim10"
                 android:text="@string/vehicle_no"
-                android:textSize="@dimen/dimTex25" />
+                android:textSize="@dimen/dimTex20" />
+
+            <ImageView
+                android:id="@+id/ivAddVehicle"
+                android:layout_width="0dp"
+                android:layout_weight="0.5"
+                android:layout_height="@dimen/dim25"
+                android:layout_marginEnd="@dimen/dim5"
+                android:layout_gravity="center|end"
+                app:srcCompat="@drawable/ic_add"
+                app:tint="@color/black" />
 
         </LinearLayout>
 

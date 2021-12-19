@@ -5,8 +5,8 @@ public class Spinner {
     private int id;
     private double timeValue;
     private String value;
-    private String vehicleNo;
-    private String priority;
+    /*private String vehicleNo;
+    private String priority;*/
 
     public Spinner(int id, String value) {
         this.id = id;
@@ -42,7 +42,7 @@ public class Spinner {
         this.timeValue = timeValue;
     }
 
-    public String getVehicleNo() {
+    /*public String getVehicleNo() {
         return vehicleNo;
     }
 
@@ -56,5 +56,5 @@ public class Spinner {
 
     public void setPriority(String priority) {
         this.priority = priority;
-    }
+    }*/
 }

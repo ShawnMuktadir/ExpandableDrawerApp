@@ -405,7 +405,7 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
     private void storeReservation(String mobileNo, String arrivalTime, String departureTime, String mPlaceId) {
         showLoading(context);
         ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<ReservationResponse> call = request.storeReservation(mobileNo, arrivalTime, departureTime, mPlaceId, "1"); // 1 for request availability
+        Call<ReservationResponse> call = request.storeReservation(mobileNo, arrivalTime, departureTime, mPlaceId, "1", selectedVehicleNo); // 1 for request availability
         call.enqueue(new Callback<ReservationResponse>() {
             @Override
             public void onResponse(@NonNull Call<ReservationResponse> call,
@@ -557,10 +557,16 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
                 android.R.layout.simple_spinner_item,
                 vehicleList);
 
+        try {
+            selectedVehicleNo = vehicleList.get(0).getValue();
+        } catch (Exception e) {
+            Timber.e(e.getCause());
+        }
         binding.spinnerUserVehicle.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedVehicleNo = vehicleList.get(0).getVehicleNo();
+                selectedVehicleNo = vehicleList.get(position).getValue();
+                Preferences.getInstance(context).setSelectedVehicleNo(selectedVehicleNo);
             }
 
             @Override

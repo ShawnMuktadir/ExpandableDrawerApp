@@ -100,7 +100,8 @@ public interface ApiService {
             @Field("time_start") String startTime,
             @Field("time_end") String endTime,
             @Field("spot_id") String spotId,
-            @Field("stage") String stage);
+            @Field("stage") String stage,
+            @Field("vehicle_no") String vehicleNo);
 
     @FormUrlEncoded
     @POST("visitor_place_tracker_get.php")
@@ -149,4 +150,9 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("user_vehicle.php")
     Call<UserVehicleListResponse> getUserVehicleList(@Field("user_id") String mobileNo);
+
+    @FormUrlEncoded
+    @POST("user_vehicle_input.php")
+    Call<BaseResponse> setUserVehicle(@Field("mobile_no") String mobileNo,
+                                                 @Field("vehicle_no") String vehicleNo);
 }

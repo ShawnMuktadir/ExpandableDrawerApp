@@ -260,7 +260,6 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == RESULT_CANCELED) {
@@ -710,9 +709,9 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
 
     private void showPictureDialog() {
         AlertDialog.Builder pictureDialog = new AlertDialog.Builder(context);
-        pictureDialog.setTitle("Select Image");
-        String[] pictureDialogItems = {"Select photo from gallery",
-                "Capture photo from camera"
+        pictureDialog.setTitle(context.getResources().getString(R.string.select_image));
+        String[] pictureDialogItems = {context.getResources().getString(R.string.select_photo_from_gallery),
+                context.getResources().getString(R.string.capture_photo_from_camera)
         };
 
         pictureDialog.setItems(pictureDialogItems, (dialog, which) -> {
@@ -764,7 +763,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                     editProfile(fullName, password, mobileNo, licencePlateInfo);
                 }
             } else if (binding.radioGroup.getCheckedRadioButtonId() == R.id.radioMilitary) {
-                licencePlateInfo = binding.editTextVehicleRegNumberMilitaryFirstTwoDigit.getText().toString().trim() +
+                licencePlateInfo = context.getResources().getString(R.string.army_vehicle_arrow) + binding.editTextVehicleRegNumberMilitaryFirstTwoDigit.getText().toString().trim() +
                         binding.editTextVehicleRegNumberMilitaryLastFourDigit.getText().toString().trim();
                 editProfile(fullName, password, mobileNo, licencePlateInfo);
             }

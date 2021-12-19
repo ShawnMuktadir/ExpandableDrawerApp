@@ -296,38 +296,21 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
     }
 
     private void fetchSearchedDestinationPlace(String mobileNo) {
-
-        Timber.e("fetchSearchVisitorPlace mobileNo -> %s,", mobileNo);
-
         showLoading(context);
-
         ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
         Call<SearchVisitedPlaceResponse> searchHistoryResponseCall = service.getSearchHistory(mobileNo);
-
-        // Gathering results.
         searchHistoryResponseCall.enqueue(new Callback<SearchVisitedPlaceResponse>() {
             @Override
             public void onResponse(@NonNull Call<SearchVisitedPlaceResponse> call, @NonNull Response<SearchVisitedPlaceResponse> response) {
-
                 Timber.e("response -> %s", new Gson().toJson(response.body()));
-
                 hideLoading();
-
                 if (response.body() != null) {
                     searchVisitedPlaceResponse = response.body();
-
                     if (!response.body().getError()) {
-
                         if (response.isSuccessful()) {
-
                             list = searchVisitedPlaceResponse.getVisitorData();
-
-                            Timber.e("list -> %s", list);
-
                             hideLoading();
-
                             visitedPlaceList = searchVisitedPlaceResponse.getVisitorData();
-
                             if (visitedPlaceList != null) {
                                 for (List<String> visitedPlaceData : visitedPlaceList) {
                                     for (int i = 0; i < visitedPlaceData.size(); i++) {
@@ -366,7 +349,6 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
                                     setFragmentControls(searchVisitorDataList);
                                 }
                             }
-
                         } else {
                             Timber.e("response -> %s", new Gson().toJson(response.body()));
                         }
@@ -382,9 +364,7 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
     }
 
     private void setFragmentControls(ArrayList<SearchVisitorData> searchVisitorDataList) {
-        Timber.e("setFragmentControls searchActivity called");
         this.searchVisitorDataList = searchVisitorDataList;
-
         binding.recyclerViewSearchPlaces.setHasFixedSize(true);
         binding.recyclerViewSearchPlaces.setNestedScrollingEnabled(false);
         binding.recyclerViewSearchPlaces.setMotionEventSplittingEnabled(false);

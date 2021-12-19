@@ -144,7 +144,7 @@
     <string name="by_using_this_app_you_agree_to_our_terms_and_conditions_amp_privacy_policy">
         <![CDATA[By Using this app you agree to our Terms and Conditions & Privacy Policy]]></string>
 
-    <string-array name="CountryCodes">
+    <string-array name="country_codes">
         <item>93,AF</item>
         <item>355,AL</item>
         <item>213,DZ</item>
@@ -573,4 +573,8 @@
     <string name="invalid_qr">Invalid QR</string>
     <string name="scan_text">Scan Parking slot QR code for faster booking confirmation</string>
     <string name="please_allow_this_permission_for_further_use_of_app">Please allow this permission to further use this app</string>
+    <string name="add_vehicle">Add Vehicle</string>
+    <string name="select_image">Select Image</string>
+    <string name="select_photo_from_gallery">Select photo from gallery</string>
+    <string name="capture_photo_from_camera">Capture photo from camera</string>
 </resources>

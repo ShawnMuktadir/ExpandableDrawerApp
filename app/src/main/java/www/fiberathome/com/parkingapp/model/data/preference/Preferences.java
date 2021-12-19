@@ -37,6 +37,7 @@ public class Preferences {
     private static final String KEY_IS_WAITING_FOR_SMS = "isWaitingForSMS22";
     private static final String KEY_IS_UPDATE_REQUIRED = "isUpdateRequired";
     private static final String KEY_CHECKED_ITEM = "checked_item";
+    private static final String KEY_SELECTED_VEHICLE = "selected_vehicle";
     private static final String SHARED_PREF_NAME_BOOKING = "SHARED_PREF_NAME_BOOKING";
 
 
@@ -45,6 +46,7 @@ public class Preferences {
     private static Context mContext;
     public boolean isBookingCancelled = false;
     public boolean isGetDirectionClicked = false;
+    public String selectedVehicleNo;
 
     public Preferences(Context context) {
         mContext = context;
@@ -264,7 +266,7 @@ public class Preferences {
         Gson gson = new Gson();
 
         // load tasks from preference
-        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         // save the SensorArea list to preference
         SharedPreferences.Editor prefsEditor = prefs.edit();
         String json = gson.toJson(sensorAreaList);
@@ -273,7 +275,7 @@ public class Preferences {
     }
 
     public List<SensorArea> getSensorAreaList() {
-        SharedPreferences mPrefs = mContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences mPrefs = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         Gson gson = new Gson();
         String json = mPrefs.getString("SENSOR_AREA_LIST", "");
         Type type = new TypeToken<List<SensorArea>>() {
@@ -282,5 +284,17 @@ public class Preferences {
             return gson.fromJson(json, type);
         }
         return null;
+    }
+
+    public String getSelectedVehicleNo() {
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        return sharedPreferences.getString(KEY_SELECTED_VEHICLE, "");
+    }
+
+    public void setSelectedVehicleNo(String selectedVehicle) {
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(KEY_SELECTED_VEHICLE, selectedVehicle);
+        editor.apply();
     }
 }
