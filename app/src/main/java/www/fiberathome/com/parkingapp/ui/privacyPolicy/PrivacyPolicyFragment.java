@@ -85,66 +85,6 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
         }
     }
 
-   /* private List<List<String>> list;
-
-    private void fetchPrivacyPolicy() {
-        showLoading(context);
-        StringRequest strReq = new StringRequest(Request.Method.GET, AppConfig.URL_PRIVACY_POLICY, response -> {
-            hideLoading();
-            try {
-                JSONObject object = new JSONObject(response);
-                JSONArray jsonArray = object.getJSONArray("termsCondition");
-
-                TermsCondition termsConditionTemp = new TermsCondition();
-
-                if (jsonArray.length() > 0) {
-                    JSONArray array2 = jsonArray.getJSONArray(1);
-                    termsConditionTemp.setTitle(array2.getString(6).trim());
-                    termsConditionTemp.setDescription(array2.getString(2).trim());
-                }
-
-                for (int i = 1; i < jsonArray.length(); i++) {
-                    JSONArray array = jsonArray.getJSONArray(i);
-
-                    TermsCondition termsCondition = new TermsCondition();
-                    termsCondition.setTitle(array.getString(6).trim());
-                    termsCondition.setDescription(array.getString(2).trim());
-                    termsCondition.setDate(array.getString(4).trim());
-
-
-                    if (array.getString(6).trim().equals(termsConditionTemp.getTitle()) && i != 1) {
-
-                        termsCondition.setTitle("");
-                        termsCondition.setDescription(array.getString(2).trim());
-
-                        JSONArray array2 = jsonArray.getJSONArray(i);
-                        termsConditionTemp.setTitle(array2.getString(6).trim());
-                        termsConditionTemp.setDescription(array2.getString(2).trim());
-                    } else {
-                        termsCondition.setTitle(array.getString(6).trim());
-                        termsCondition.setDescription(array.getString(2).trim());
-
-                        JSONArray array2 = jsonArray.getJSONArray(i);
-                        termsConditionTemp.setTitle(array2.getString(6).trim());
-                        termsConditionTemp.setDescription(array2.getString(2).trim());
-                    }
-                    termsConditionsGlobal.add(termsCondition);
-                    Timber.e("termsConditions -> %s", new Gson().toJson(termsConditionsGlobal));
-                }
-                setTermsConditions(termsConditionsGlobal);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }, (VolleyError e) -> {
-            e.printStackTrace();
-            hideLoading();
-            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
-        }) {
-
-        };
-        ParkingApp.getInstance().addToRequestQueue(strReq);
-    }*/
-
     private final ArrayList<TermsCondition> termsConditionArrayList = new ArrayList<>();
     private List<List<String>> termConditionList = null;
     private List<List<String>> list;
