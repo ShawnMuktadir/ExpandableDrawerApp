@@ -44,7 +44,6 @@ public class PrivacyPolicyAdapter extends RecyclerView.Adapter<RecyclerView.View
         PrivacyPolicyViewHolder privacyPolicyViewHolder = (PrivacyPolicyViewHolder) holder;
 
         TermsCondition termsCondition = termsConditions.get(position);
-
         Timber.e("termsConditions adapter-> %s", new Gson().toJson(termsConditions));
 
         if (!termsCondition.getTitle().equals("")) {
@@ -54,9 +53,7 @@ public class PrivacyPolicyAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
 
         privacyPolicyViewHolder.binding.tvPrivacyHeader.setText(termsCondition.getTitle());
-
         privacyPolicyViewHolder.binding.tvPrivacyBody.setText(termsCondition.getDescription());
-
         privacyPolicyViewHolder.binding.tvPrivacyBody.setOnClickListener(v -> {
             if (isTextViewClicked) {
                 //This will shrink textview to 2 lines if it is expanded.

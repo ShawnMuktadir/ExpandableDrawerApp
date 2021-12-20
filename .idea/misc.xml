@@ -26,9 +26,7 @@
         <entry key="app/src/main/res/layout/app_bar_main.xml" value="0.18541033434650456" />
         <entry key="app/src/main/res/layout/booking_dialog_form.xml" value="0.2875905797101449" />
         <entry key="app/src/main/res/layout/bookings_row.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/bottom_sheet_dialog_add_vehicle.xml" value="0.18072916666666666" />
         <entry key="app/src/main/res/layout/bottom_sheet_dialog_get_help.xml" value="0.17477203647416414" />
-        <entry key="app/src/main/res/layout/bottom_sheet_dialog_scratch_card.xml" value="0.17882472137791286" />
         <entry key="app/src/main/res/layout/content_main.xml" value="0.2151268115942029" />
         <entry key="app/src/main/res/layout/dialog_form.xml" value="0.2875905797101449" />
         <entry key="app/src/main/res/layout/fragment_booked.xml" value="0.2875905797101449" />
@@ -41,17 +39,15 @@
         <entry key="app/src/main/res/layout/fragment_login_2.xml" value="0.15885416666666666" />
         <entry key="app/src/main/res/layout/fragment_parking.xml" value="0.26222826086956524" />
         <entry key="app/src/main/res/layout/fragment_payment.xml" value="0.335" />
-        <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.335" />
-        <entry key="app/src/main/res/layout/fragment_profile_edit.xml" value="0.19479166666666667" />
+        <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.11277173913043478" />
         <entry key="app/src/main/res/layout/fragment_schedule.xml" value="0.2638888888888889" />
         <entry key="app/src/main/res/layout/fragment_sign_up.xml" value="0.17477203647416414" />
         <entry key="app/src/main/res/layout/fragment_verify_phone.xml" value="0.26222826086956524" />
-        <entry key="app/src/main/res/layout/layout_add_vehicle.xml" value="0.19479166666666667" />
-        <entry key="app/src/main/res/layout/layout_bottom_sheet.xml" value="0.17882472137791286" />
         <entry key="app/src/main/res/layout/layout_fragment.xml" value="0.153125" />
         <entry key="app/src/main/res/layout/nav_header.xml" value="0.16302083333333334" />
         <entry key="app/src/main/res/layout/nav_header_home.xml" value="0.16302083333333334" />
         <entry key="app/src/main/res/layout/parking_row.xml" value="0.15885416666666666" />
+        <entry key="app/src/main/res/layout/privacy_policy_row.xml" value="0.16590678824721378" />
         <entry key="app/src/main/res/layout/snackbar_internet.xml" value="0.13125" />
         <entry key="app/src/main/res/layout/voucher_dialog.xml" value="0.25" />
         <entry key="app/src/main/res/menu/drawer_menu.xml" value="0.20364583333333333" />
@@ -119,7 +115,7 @@
       </value>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

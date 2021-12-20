@@ -38,10 +38,14 @@ import www.fiberathome.com.parkingapp.utils.ToastUtils;
 @SuppressLint("NonConstantResourceId")
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressListener {
+    private final ArrayList<TermsCondition> termsConditionArrayList = new ArrayList<>();
+    private List<List<String>> termConditionList = null;
+    private List<List<String>> list;
+    private TermsConditionResponse termsConditionResponse;
+    private String title, description, date = null;
+
     private PrivacyPolicyActivity context;
     FragmentPrivacyPolicyBinding binding;
-
-    private final ArrayList<TermsCondition> termsConditionsGlobal = new ArrayList<>();
 
     public PrivacyPolicyFragment() {
         // Required empty public constructor
@@ -85,44 +89,23 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
         }
     }
 
-    private final ArrayList<TermsCondition> termsConditionArrayList = new ArrayList<>();
-    private List<List<String>> termConditionList = null;
-    private List<List<String>> list;
-    private TermsConditionResponse termsConditionResponse;
-
-    private String title = null;
-
-    private String description = null;
-
-    private String date = null;
-
     private void fetchPrivacyPolicy() {
         Timber.e("fetchPrivacyPolicy called");
-
         showLoading(context);
-
         ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-
         Call<TermsConditionResponse> call = request.getTermCondition();
-
         call.enqueue(new Callback<TermsConditionResponse>() {
             @Override
             public void onResponse(@NonNull Call<TermsConditionResponse> call,
                                    @NonNull retrofit2.Response<TermsConditionResponse> response) {
                 hideLoading();
                 if (response.body() != null) {
-
                     hideLoading();
-
                     list = response.body().getTermsCondition();
-
                     Timber.e("list -> %s", new Gson().toJson(list));
-
-
                     termsConditionResponse = response.body();
 
                     termConditionList = termsConditionResponse.getTermsCondition();
-
 
                     if (termConditionList != null) {
                         TermsCondition termsCondition = null;
@@ -132,7 +115,7 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
                             date = termConditionList.get(i).get(4).trim();
                             if (termsCondition != null) {
                                 if (termsCondition.getTitle().equalsIgnoreCase(title)) {
-                                    String tempDescription = termsCondition.getDescription() + " " + description;
+                                    String tempDescription = termsCondition.getDescription() + " \n" + description;
                                     termsCondition.setDescription(tempDescription);
                                     termsConditionArrayList.remove(termsConditionArrayList.size() - 1);
                                 } else {
