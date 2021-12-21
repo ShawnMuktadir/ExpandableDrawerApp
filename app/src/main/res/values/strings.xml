@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Parking App</string>
+    <string name="app_name_stag">Parking App (Staging)</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -556,7 +557,7 @@
     <string name="Booked_for">Booked for : \n</string>
     <string name="your_booked_parking_duration_has_ended">Your Booked Parking Duration Has Ended</string>
     <string name="book_now">Book Now</string>
-    <string name="reservation_closed_successfully">Reservation Closed Sucessfully</string>
+    <string name="reservation_closed_successfully">Reservation Closed Successfully</string>
     <string name="currently_rebook_not_available">Currently Re-book is not available for this parking spot</string>
     <string name="gps_permission">GPS Permission</string>
     <string name="gps_required">GPS is required for this app to work. Please enable GPS.</string>

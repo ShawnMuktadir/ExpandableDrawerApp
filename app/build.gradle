@@ -51,6 +51,42 @@ android {
         }
     }
 
+    ext {
+        APP_NAME = "@string/app_name"
+        APP_NAME_STAG = "@string/app_name_stag"
+    }
+
+    flavorDimensions "version"
+
+    productFlavors {
+        stag {
+            dimension "version"
+            versionNameSuffix "-STAG"
+            manifestPlaceholders = [appName: APP_NAME_STAG]
+            //buildConfigField "String", "BASE_URL", "\"http://staging.tappwaterapp.org/api/\""
+        }
+
+        prod {
+            dimension "version"
+            versionNameSuffix "-PROD"
+            manifestPlaceholders = [appName: APP_NAME]
+            //buildConfigField "String", "BASE_URL", "\"http://production.tappwaterapp.org/api/\""
+        }
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def project = "LOCC-PARKING-APP"
+            def separator = "-"
+            def version = variant.versionName
+            def date = new Date()
+            def formattedDate = date.format('yyyy-MM-dd-HH-mm')
+            def newApkName = "$project$separator$version$separator${formattedDate}.apk"
+
+            outputFileName = new File(newApkName)
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -91,7 +127,7 @@ dependencies {
 
     //google map services
     implementation 'com.google.maps:google-maps-services:0.18.0'
-    implementation 'com.google.android.gms:play-services-maps:18.0.0'
+    implementation 'com.google.android.gms:play-services-maps:18.0.1'
     implementation 'com.google.android.gms:play-services-places:17.0.0'
     implementation 'com.google.android.libraries.places:places:2.5.0'
     implementation 'com.google.maps.android:android-maps-utils:2.2.0'
@@ -99,9 +135,6 @@ dependencies {
     // QR code
     implementation 'com.google.zxing:core:3.4.1'
     implementation 'com.journeyapps:zxing-android-embedded:3.6.0@aar'
-
-    // Volley
-    implementation 'com.android.volley:volley:1.2.1'
 
     // GSON
     implementation 'com.google.code.gson:gson:2.8.6'
@@ -143,7 +176,7 @@ dependencies {
     implementation 'com.akexorcist:googledirectionlibrary:1.1.1' // Custom Google Direction API
 
     //for location
-    implementation 'com.google.android.gms:play-services-location:18.0.0'
+    implementation 'com.google.android.gms:play-services-location:19.0.0'
 
     //animated toast
     implementation 'com.github.vedraj360:AnimatedToast:0.1.0'
@@ -159,8 +192,8 @@ dependencies {
     implementation 'com.github.florent37:singledateandtimepicker:2.2.3'
 
     // Add the Firebase Crashlytics SDK.
-    implementation 'com.google.firebase:firebase-crashlytics:18.2.5'
-    implementation 'com.google.firebase:firebase-analytics:20.0.0'
+    implementation 'com.google.firebase:firebase-crashlytics:18.2.6'
+    implementation 'com.google.firebase:firebase-analytics:20.0.1'
     implementation 'com.google.firebase:firebase-config:21.0.1'
     implementation 'com.google.firebase:firebase-database:20.0.3'
 
@@ -177,8 +210,8 @@ dependencies {
     testImplementation "android.arch.persistence.room:testing:$room_version"
 
     // lib for SMS verification (Phone Auth)
-    implementation 'com.google.android.gms:play-services-auth:19.2.0'
-    implementation 'com.google.android.gms:play-services-auth-api-phone:17.5.1'
+    implementation 'com.google.android.gms:play-services-auth:20.0.0'
+    implementation 'com.google.android.gms:play-services-auth-api-phone:18.0.0'
 
     //pinview
     implementation 'com.github.poovamraj:PinEditTextField:1.2.6'
