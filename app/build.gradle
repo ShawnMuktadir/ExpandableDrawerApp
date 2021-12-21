@@ -3,8 +3,10 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 
 android {
-    defaultConfig.applicationId = "www.fiberathome.com.parkingapp"
     compileSdkVersion 31
+    useLibrary 'org.apache.http.legacy'
+    buildToolsVersion = '30.0.3'
+    compileOptions.encoding = 'ISO-8859-1'
 
     configurations {
         javadocDeps
@@ -95,10 +97,6 @@ android {
     buildFeatures {
         viewBinding true
     }
-
-    useLibrary 'org.apache.http.legacy'
-    buildToolsVersion = '30.0.3'
-    compileOptions.encoding = 'ISO-8859-1'
 }
 
 repositories {
