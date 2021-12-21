@@ -3,7 +3,6 @@ package www.fiberathome.com.parkingapp.ui.privacyPolicy;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -45,12 +44,6 @@ public class PrivacyPolicyAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         TermsCondition termsCondition = termsConditions.get(position);
         Timber.e("termsConditions adapter-> %s", new Gson().toJson(termsConditions));
-
-        if (!termsCondition.getTitle().equals("")) {
-            privacyPolicyViewHolder.binding.tvPrivacyHeader.setText(termsCondition.getTitle());
-        } else {
-            privacyPolicyViewHolder.binding.tvPrivacyHeader.setVisibility(View.GONE);
-        }
 
         privacyPolicyViewHolder.binding.tvPrivacyHeader.setText(termsCondition.getTitle());
         privacyPolicyViewHolder.binding.tvPrivacyBody.setText(termsCondition.getDescription());
