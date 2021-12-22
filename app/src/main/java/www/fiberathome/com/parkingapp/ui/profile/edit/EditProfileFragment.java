@@ -394,30 +394,28 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
 
         if (user.getImage() != null && !user.getImage().equals("")) {
             try {
+                String url;
                 if (!user.getImage().endsWith(".jpg")) {
-                    String url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
-                    Timber.e("Image URL -> %s", url);
-                    Glide.with(context).load(url).placeholder(R.drawable.ic_account_settings).dontAnimate().into(binding.imageViewEditProfileImage);
+                    url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
                 } else {
-                    String url = AppConfig.IMAGES_URL + user.getImage();
-                    Timber.e("Image URL -> %s", url);
-                    Glide.with(context).load(url).placeholder(R.drawable.ic_account_settings).dontAnimate().into(binding.imageViewEditProfileImage);
+                    url = AppConfig.IMAGES_URL + user.getImage();
                 }
+                Timber.e("Image URL -> %s", url);
+                Glide.with(context).load(url).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(binding.imageViewEditProfileImage);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
         if (user.getVehicleImage() != null && !user.getVehicleImage().equals("")) {
             try {
+                String vehicleUrl;
                 if (!user.getVehicleImage().endsWith(".jpg")) {
-                    String vehicleUrl = AppConfig.IMAGES_URL + user.getVehicleImage() + ".jpg";
-                    Timber.e("Vehicle Image URL -> %s", vehicleUrl);
-                    Glide.with(context).load(vehicleUrl).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(binding.ivVehicleEditPlatePreview);
+                    vehicleUrl = AppConfig.IMAGES_URL + user.getVehicleImage() + ".jpg";
                 } else {
-                    String vehicleUrl = AppConfig.IMAGES_URL + user.getVehicleImage();
-                    Timber.e("Vehicle Image URL -> %s", vehicleUrl);
-                    Glide.with(context).load(vehicleUrl).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(binding.ivVehicleEditPlatePreview);
+                    vehicleUrl = AppConfig.IMAGES_URL + user.getVehicleImage();
                 }
+                Timber.e("Vehicle Image URL -> %s", vehicleUrl);
+                Glide.with(context).load(vehicleUrl).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(binding.ivVehicleEditPlatePreview);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -667,7 +665,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                 hideProgress();
                 try {
                     Timber.e("Response -> %s", new Gson().toJson(response.body()));
-                    Timber.e("ResponseCall -> %s", new Gson().toJson(call.request().body()));
+//                    Timber.e("ResponseCall -> %s", new Gson().toJson(call.request().body()));
                     if (response.body() != null) {
                         if (!response.body().getError()) {
                             ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());

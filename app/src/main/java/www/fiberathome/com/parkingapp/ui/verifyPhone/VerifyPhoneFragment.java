@@ -102,11 +102,11 @@ public class VerifyPhoneFragment extends BaseFragment {
 
                 if (response.body() != null) {
                     if (!response.body().getError()) {
-                        ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
+//                        ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                     } else if (response.body().getError() && !response.body().getAuthentication()) {
                         // IF ERROR OCCURS AND AUTHENTICATION IS INVALID
                         Timber.e("error & authentication response -> %s", response.body().getMessage());
-                        ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
+//                        ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                     } else {
                         Timber.e("error -> %s", response.body().getMessage());
                     }

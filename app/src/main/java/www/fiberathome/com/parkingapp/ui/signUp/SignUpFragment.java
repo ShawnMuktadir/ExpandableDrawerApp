@@ -769,11 +769,15 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     }
 
     private String imageToString(Bitmap bitmap) {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-        byte[] imageByte = byteArrayOutputStream.toByteArray();
+        if (bitmap != null) {
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+            byte[] imageByte = byteArrayOutputStream.toByteArray();
 
-        return Base64.encodeToString(imageByte, Base64.DEFAULT);
+            return Base64.encodeToString(imageByte, Base64.DEFAULT);
+        } else {
+            return "";
+        }
 
     }
 
@@ -799,24 +803,24 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                         (vehicleDiv.equalsIgnoreCase("Ma") && vehicleClass.equalsIgnoreCase("Narayanganj") && vehicleNoInt < 51)) {
                     Toast.makeText(context, "Invalid vehicle number", Toast.LENGTH_SHORT).show();
                 } else {
-                    if (profileBitmap != null && vehicleBitmap != null) {
-                        registerUser(fullName, password, mobileNo, licencePlateInfo);
-                    } else if (vehicleBitmap == null) {
-                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.upload_vehicle_pic));
-                    } else {
-                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.upload_profile_photo));
-                    }
+//                    if (profileBitmap != null && vehicleBitmap != null) {
+                    registerUser(fullName, password, mobileNo, licencePlateInfo);
+//                    } else if (vehicleBitmap == null) {
+//                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.upload_vehicle_pic));
+//                    } else {
+//                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.upload_profile_photo));
+//                    }
                 }
             } else if (binding.radioGroup.getCheckedRadioButtonId() == R.id.radioMilitary) {
                 licencePlateInfo = context.getResources().getString(R.string.army_vehicle_arrow) + binding.editTextVehicleRegNumberMilitaryFirstTwoDigit.getText().toString().trim() +
                         binding.editTextVehicleRegNumberMilitaryLastFourDigit.getText().toString().trim();
-                if (profileBitmap != null && vehicleBitmap != null) {
-                    registerUser(fullName, password, mobileNo, licencePlateInfo);
-                } else if (vehicleBitmap == null) {
-                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.upload_vehicle_pic));
-                } else {
-                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.upload_profile_photo));
-                }
+//                if (profileBitmap != null && vehicleBitmap != null) {
+                registerUser(fullName, password, mobileNo, licencePlateInfo);
+//                } else if (vehicleBitmap == null) {
+//                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.upload_vehicle_pic));
+//                } else {
+//                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.upload_profile_photo));
+//                }
             }
         } else {
             Toast.makeText(context, "Please provide valid information", Toast.LENGTH_SHORT).show();
