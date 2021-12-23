@@ -78,13 +78,16 @@ import www.fiberathome.com.parkingapp.utils.Validator;
 
 public class SignUpFragment extends BaseFragment implements View.OnClickListener, ProgressView {
 
-    private String vehicleClass = "";
-    private String vehicleDiv = "";
-    private long classId, cityId;
-
     private boolean vehicleImage = false;
     private Bitmap profileBitmap;
     private Bitmap vehicleBitmap;
+
+    private String vehicleClass = "";
+    private String vehicleDiv = "";
+    private String licencePlateInfo = " ";
+    private long classId, cityId;
+    private List<www.fiberathome.com.parkingapp.model.Spinner> classDataList;
+    private List<www.fiberathome.com.parkingapp.model.Spinner> classDivList;
 
     private SignUpActivity context;
     FragmentSignUpBinding binding;
@@ -237,9 +240,6 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                 break;
         }
     }
-
-    private List<www.fiberathome.com.parkingapp.model.Spinner> classDataList;
-    private List<www.fiberathome.com.parkingapp.model.Spinner> classDivList;
 
     private void setVehicleClassCategory() {
         UniversalSpinnerAdapter vehicleClassAdapter = new UniversalSpinnerAdapter(context,
@@ -787,8 +787,6 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             return "";
         }
     }
-
-    private String licencePlateInfo = " ";
 
     private void submitRegistration() {
         if (checkFields()) {

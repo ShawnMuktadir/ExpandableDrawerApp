@@ -72,13 +72,16 @@ import www.fiberathome.com.parkingapp.utils.Validator;
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class EditProfileFragment extends BaseFragment implements IOnBackPressListener, View.OnClickListener, ProgressView {
 
-    private String vehicleClass = "";
-    private String vehicleDiv = "";
-    private long classId, divId;
-
     private boolean vehicleImage = false;
     protected Bitmap profileBitmap, convertedProfileBitmap;
     protected Bitmap vehicleBitmap, convertedVehicleBitmap;
+
+    private String vehicleClass = "";
+    private String vehicleDiv = "";
+    private String licencePlateInfo = " ";
+    private long classId, divId;
+    private List<www.fiberathome.com.parkingapp.model.Spinner> classDataList;
+    private List<www.fiberathome.com.parkingapp.model.Spinner> classDivList;
 
     private User user;
 
@@ -521,9 +524,6 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
             }
         }
     }
-    private List<www.fiberathome.com.parkingapp.model.Spinner> classDataList;
-
-    private List<www.fiberathome.com.parkingapp.model.Spinner> classDivList;
 
     private void setVehicleClassCategory() {
         UniversalSpinnerAdapter vehicleClassAdapter = new UniversalSpinnerAdapter(context,
@@ -808,8 +808,6 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
             }
         }
     }
-
-    private String licencePlateInfo = " ";
 
     private boolean checkFields() {
         boolean isVehicleRegValid = false;
