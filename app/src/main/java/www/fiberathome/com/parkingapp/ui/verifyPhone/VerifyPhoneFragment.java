@@ -86,27 +86,20 @@ public class VerifyPhoneFragment extends BaseFragment {
     }
 
     private void checkLogin(final String mobileNo, final String password) {
-
         showLoading(context);
-
         ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
         Call<LoginResponse> call = service.loginUser(mobileNo, password);
-
         call.enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
-
-                Timber.e("login response body-> %s", new Gson().toJson(response.body()));
-
+                Timber.e("response body-> %s", new Gson().toJson(response.body()));
                 hideLoading();
-
                 if (response.body() != null) {
                     if (!response.body().getError()) {
-//                        ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
+                        ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                     } else if (response.body().getError() && !response.body().getAuthentication()) {
-                        // IF ERROR OCCURS AND AUTHENTICATION IS INVALID
                         Timber.e("error & authentication response -> %s", response.body().getMessage());
-//                        ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
+                        ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
                     } else {
                         Timber.e("error -> %s", response.body().getMessage());
                     }

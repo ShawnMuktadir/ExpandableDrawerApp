@@ -581,5 +581,6 @@
     <string name="select_image">ছবি নির্বাচন করুন</string>
     <string name="select_photo_from_gallery">গ্যালারি থেকে ছবি নির্বাচন করুন</string>
     <string name="capture_photo_from_camera">ক্যামেরা থেকে ছবি ক্যাপচার করুন</string>
+    <string name="provide_valid_information">সঠিক তথ্য প্রদান করুন</string>
 </resources>
 

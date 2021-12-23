@@ -275,8 +275,8 @@
                         android:id="@+id/ivVehicleEditPlatePreview"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:scaleType="fitXY"
                         android:background="@drawable/ic_image_border"
+                        android:scaleType="fitXY"
                         app:srcCompat="@drawable/ic_image_place_holder" />
 
                     <de.hdodenhof.circleimageview.CircleImageView

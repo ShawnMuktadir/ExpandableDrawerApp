@@ -1,9 +1,7 @@
 package www.fiberathome.com.parkingapp.ui.signUp;
 
-import static android.app.Activity.RESULT_CANCELED;
-import static android.app.Activity.RESULT_OK;
-
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -27,12 +25,15 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.vision.CameraSource;
 import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
@@ -76,19 +77,17 @@ import www.fiberathome.com.parkingapp.utils.Validator;
 
 public class SignUpFragment extends BaseFragment implements View.OnClickListener, ProgressView {
 
-    public static final String TAG = SignUpActivity.class.getSimpleName();
-    private static final int REQUEST_PICK_GALLERY = 1001;
     private static final int REQUEST_PICK_CAMERA = 1002;
-
-    private SignUpActivity context;
 
     private String vehicleClass = "";
     private String vehicleDiv = "";
     private long classId, cityId;
+
+    private boolean vehicleImage = false;
     private Bitmap profileBitmap;
     private Bitmap vehicleBitmap;
-    private boolean vehicleImage = false;
 
+    private SignUpActivity context;
     FragmentSignUpBinding binding;
 
     public SignUpFragment() {
@@ -324,6 +323,30 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     }
 
     @Override
+    public void showProgress() {
+        //progressBarLogin.setVisibility(View.VISIBLE);
+        binding.relativeLayoutInvisible.setVisibility(View.VISIBLE);
+        binding.editTextFullName.setEnabled(false);
+        binding.editTextMobileNumber.setEnabled(false);
+        binding.editTextVehicleRegNumber.setEnabled(false);
+        binding.editTextPassword.setEnabled(false);
+        binding.btnSignup.setEnabled(false);
+        binding.btnSignup.setClickable(false);
+    }
+
+    @Override
+    public void hideProgress() {
+        //progressBarLogin.setVisibility(View.INVISIBLE);
+        binding.relativeLayoutInvisible.setVisibility(View.GONE);
+        binding.editTextFullName.setEnabled(true);
+        binding.editTextMobileNumber.setEnabled(true);
+        binding.editTextVehicleRegNumber.setEnabled(true);
+        binding.editTextPassword.setEnabled(true);
+        binding.btnSignup.setEnabled(true);
+        binding.btnSignup.setClickable(true);
+    }
+
+    @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btnSignup:
@@ -375,18 +398,38 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         }
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    private final ActivityResultLauncher<Intent> galleryPermissionResult = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    // There are no request codes
+                    Intent data = result.getData();
+                    if (data != null) {
+                        setGalleryPicture(data);
+                    }
+                } else {
+                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+                }
+            });
 
-        super.onActivityResult(requestCode, resultCode, data);
+    private final ActivityResultLauncher<Intent> cameraPermissionResult = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    // There are no request codes
+                    Intent data = result.getData();
+                    if (data != null) {
+                        setCameraPicture(data);
+                    }
+                } else {
+                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+                }
+            });
 
-        if (resultCode == RESULT_CANCELED) {
-            return;
-        }
-
-        if (requestCode == REQUEST_PICK_GALLERY && resultCode == RESULT_OK && data != null) {
-            Uri contentURI = data.getData();
-            try {
+    private void setGalleryPicture(Intent data) {
+        Uri contentURI = data.getData();
+        try {
+            if (contentURI != null) {
                 if (!vehicleImage) {
                     profileBitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), contentURI);
                     Bitmap convertedImage = Bitmap.createScaledBitmap(profileBitmap, 828, 828, true);
@@ -398,56 +441,36 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                     vehicleBitmap = convertedImage;
                     binding.ivVehiclePlatePreview.setImageBitmap(convertedImage);
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
+            } else {
                 ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
-        } else if (requestCode == REQUEST_PICK_CAMERA && resultCode == RESULT_OK && data != null) {
-            try {
-                if (data.getExtras() != null) {
-                    if (!vehicleImage) {
-                        profileBitmap = (Bitmap) data.getExtras().get("data");
-                        if (profileBitmap != null) {
-                            profileBitmap = Bitmap.createScaledBitmap(profileBitmap, 828, 828, true);
-                            binding.imageViewUploadProfileImage.setImageBitmap(profileBitmap);
-                        }
-                    } else {
-                        vehicleBitmap = (Bitmap) data.getExtras().get("data");
-                        if (vehicleBitmap != null) {
-                            vehicleBitmap = Bitmap.createScaledBitmap(vehicleBitmap, 828, 828, true);
-                            binding.ivVehiclePlatePreview.setImageBitmap(vehicleBitmap);
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                Toast.makeText(context, context.getResources().getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show();
-            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
         }
     }
 
-    @Override
-    public void showProgress() {
-        //progressBarLogin.setVisibility(View.VISIBLE);
-        binding.relativeLayoutInvisible.setVisibility(View.VISIBLE);
-        binding.editTextFullName.setEnabled(false);
-        binding.editTextMobileNumber.setEnabled(false);
-        binding.editTextVehicleRegNumber.setEnabled(false);
-        binding.editTextPassword.setEnabled(false);
-        binding.btnSignup.setEnabled(false);
-        binding.btnSignup.setClickable(false);
-    }
-
-    @Override
-    public void hideProgress() {
-        //progressBarLogin.setVisibility(View.INVISIBLE);
-        binding.relativeLayoutInvisible.setVisibility(View.GONE);
-        binding.editTextFullName.setEnabled(true);
-        binding.editTextMobileNumber.setEnabled(true);
-        binding.editTextVehicleRegNumber.setEnabled(true);
-        binding.editTextPassword.setEnabled(true);
-        binding.btnSignup.setEnabled(true);
-        binding.btnSignup.setClickable(true);
+    private void setCameraPicture(Intent data) {
+        try {
+            if (data.getExtras() != null) {
+                if (!vehicleImage) {
+                    profileBitmap = (Bitmap) data.getExtras().get("data");
+                    if (profileBitmap != null) {
+                        profileBitmap = Bitmap.createScaledBitmap(profileBitmap, 828, 828, true);
+                        binding.imageViewUploadProfileImage.setImageBitmap(profileBitmap);
+                    }
+                } else {
+                    vehicleBitmap = (Bitmap) data.getExtras().get("data");
+                    if (vehicleBitmap != null) {
+                        vehicleBitmap = Bitmap.createScaledBitmap(vehicleBitmap, 828, 828, true);
+                        binding.ivVehiclePlatePreview.setImageBitmap(vehicleBitmap);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+        }
     }
 
     private SpannableStringBuilder addMultipleClickablePart(String str) {
@@ -729,14 +752,15 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
     @SuppressLint("IntentReset")
     public void choosePhotoFromGallery() {
-        Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        Intent galleryIntent = new Intent();
         galleryIntent.setType("image/*");
-        startActivityForResult(galleryIntent, REQUEST_PICK_GALLERY);
+        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+        galleryPermissionResult.launch(galleryIntent);
     }
 
     private void takePhotoFromCamera() {
         Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(cameraIntent, REQUEST_PICK_CAMERA);
+        cameraPermissionResult.launch(cameraIntent);
     }
 
     private Bitmap getResizedBitmap(Bitmap image, int maxSize) {
@@ -755,14 +779,13 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     }
 
     private boolean isPermissionGranted() {
-        // Check Permission for Marshmallow
+        /* Check Permission for Marshmallow */
         if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
             ActivityCompat.requestPermissions(context, new String[]{android.Manifest.permission.CAMERA}, REQUEST_PICK_CAMERA);
             return true;
 
         } else if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             return true;
-
         } else {
             return true;
         }
@@ -773,12 +796,10 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
             byte[] imageByte = byteArrayOutputStream.toByteArray();
-
             return Base64.encodeToString(imageByte, Base64.DEFAULT);
         } else {
             return "";
         }
-
     }
 
     private String licencePlateInfo = " ";
@@ -801,29 +822,17 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                 if (vehicleNoInt < 11 || (vehicleDiv.equalsIgnoreCase("E") && vehicleNoIntForOther > 60) ||
                         (vehicleDiv.equalsIgnoreCase("Ma") && vehicleClass.equalsIgnoreCase("Munshiganj") && vehicleNoIntForOther > 50) ||
                         (vehicleDiv.equalsIgnoreCase("Ma") && vehicleClass.equalsIgnoreCase("Narayanganj") && vehicleNoInt < 51)) {
-                    Toast.makeText(context, "Invalid vehicle number", Toast.LENGTH_SHORT).show();
+                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.invalid_vehicle_number));
                 } else {
-//                    if (profileBitmap != null && vehicleBitmap != null) {
                     registerUser(fullName, password, mobileNo, licencePlateInfo);
-//                    } else if (vehicleBitmap == null) {
-//                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.upload_vehicle_pic));
-//                    } else {
-//                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.upload_profile_photo));
-//                    }
                 }
             } else if (binding.radioGroup.getCheckedRadioButtonId() == R.id.radioMilitary) {
                 licencePlateInfo = context.getResources().getString(R.string.army_vehicle_arrow) + binding.editTextVehicleRegNumberMilitaryFirstTwoDigit.getText().toString().trim() +
                         binding.editTextVehicleRegNumberMilitaryLastFourDigit.getText().toString().trim();
-//                if (profileBitmap != null && vehicleBitmap != null) {
                 registerUser(fullName, password, mobileNo, licencePlateInfo);
-//                } else if (vehicleBitmap == null) {
-//                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.upload_vehicle_pic));
-//                } else {
-//                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.upload_profile_photo));
-//                }
             }
         } else {
-            Toast.makeText(context, "Please provide valid information", Toast.LENGTH_SHORT).show();
+            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.provide_valid_information));
         }
     }
 
@@ -848,7 +857,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                     if (!response.body().getError()) {
                         Timber.e("Success ->%s", new Gson().toJson(response.body()));
                         ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
-                        // Moving the screen to next page i.e otp screen
+                        // Moving the screen to otp screen
                         Intent intent = new Intent(context, VerifyPhoneActivity.class);
                         intent.putExtra("mobile_no", mobileNo);
                         intent.putExtra("password", password);

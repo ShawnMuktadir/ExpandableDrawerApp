@@ -1,15 +1,17 @@
 package www.fiberathome.com.parkingapp.ui.profile.edit;
 
-import static android.app.Activity.RESULT_CANCELED;
-import static android.app.Activity.RESULT_OK;
-
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.ImageDecoder;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
@@ -22,6 +24,8 @@ import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -67,21 +71,19 @@ import www.fiberathome.com.parkingapp.utils.Validator;
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class EditProfileFragment extends BaseFragment implements IOnBackPressListener, View.OnClickListener, ProgressView {
 
-    private static final int REQUEST_PICK_GALLERY = 1001;
     private static final int REQUEST_PICK_CAMERA = 1002;
-
-    private EditProfileActivity context;
 
     private String vehicleClass = "";
     private String vehicleDiv = "";
     private long classId, divId;
 
-    private Bitmap bitmap;
+    private boolean vehicleImage = false;
+    private Bitmap profileBitmap, convertedProfileBitmap;
+    private Bitmap vehicleBitmap, convertedVehicleBitmap;
 
     private User user;
-    private Bitmap bitmap2;
-    private boolean vehicleImage = false;
 
+    private EditProfileActivity context;
     FragmentProfileEditBinding binding;
 
     public EditProfileFragment() {
@@ -259,47 +261,6 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (resultCode == RESULT_CANCELED) {
-            return;
-        }
-        if (requestCode == REQUEST_PICK_GALLERY && resultCode == RESULT_OK && data != null) {
-            Uri contentURI = data.getData();
-            try {
-                if (!vehicleImage) {
-                    bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), contentURI);
-                    Bitmap convertedImage = getResizedBitmap(bitmap, 500);
-                    binding.imageViewEditProfileImage.setImageBitmap(convertedImage);
-                } else {
-                    bitmap2 = MediaStore.Images.Media.getBitmap(context.getContentResolver(), contentURI);
-                    Bitmap convertedImage = getResizedBitmap(bitmap2, 500);
-                    binding.ivVehicleEditPlatePreview.setImageBitmap(convertedImage);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
-            }
-        } else if (requestCode == REQUEST_PICK_CAMERA && resultCode == RESULT_OK && data != null) {
-            try {
-                if (data.getExtras() != null) {
-                    if (!vehicleImage) {
-                        bitmap = (Bitmap) data.getExtras().get("data");
-                        binding.imageViewEditProfileImage.setImageBitmap(bitmap);
-                    } else {
-                        bitmap2 = (Bitmap) data.getExtras().get("data");
-                        binding.ivVehicleEditPlatePreview.setImageBitmap(bitmap2);
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                Toast.makeText(context, context.getResources().getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    @Override
     public boolean onBackPressed() {
         if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
             if (getActivity() != null) {
@@ -366,8 +327,116 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
         }
     }
 
-    private void setData(User user) {
+    private final ActivityResultLauncher<Intent> galleryPermissionResult = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    // There are no request codes
+                    Intent data = result.getData();
+                    if (data != null) {
+                        setGalleryPicture(data);
+                    }
+                } else {
+                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+                }
+            });
 
+    private final ActivityResultLauncher<Intent> cameraPermissionResult = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    // There are no request codes
+                    Intent data = result.getData();
+                    if (data != null) {
+                        setCameraPicture(data);
+                    }
+                } else {
+                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+                }
+            });
+
+    private void setGalleryPicture(Intent data) {
+        Uri contentURI = data.getData();
+        try {
+            if (contentURI != null) {
+                if (!vehicleImage) {
+                    //profileBitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), contentURI);
+                    profileBitmap = convertUriToBitmap(context, contentURI);
+                    convertedProfileBitmap = Bitmap.createScaledBitmap(profileBitmap, 828, 828, true);
+                    profileBitmap = convertedProfileBitmap;
+                    binding.imageViewEditProfileImage.setImageBitmap(convertedProfileBitmap);
+                } else {
+                    vehicleBitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), contentURI);
+                    convertedVehicleBitmap = Bitmap.createScaledBitmap(vehicleBitmap, 828, 828, true);
+                    vehicleBitmap = convertedVehicleBitmap;
+                    binding.ivVehicleEditPlatePreview.setImageBitmap(convertedVehicleBitmap);
+                }
+            } else {
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+        }
+    }
+
+    private void setCameraPicture(Intent data) {
+        try {
+            if (data.getExtras() != null) {
+                if (!vehicleImage) {
+                    profileBitmap = (Bitmap) data.getExtras().get("data");
+                    if (profileBitmap != null) {
+                        profileBitmap = Bitmap.createScaledBitmap(profileBitmap, 828, 828, true);
+                        binding.imageViewEditProfileImage.setImageBitmap(profileBitmap);
+                    }
+                } else {
+                    vehicleBitmap = (Bitmap) data.getExtras().get("data");
+                    if (vehicleBitmap != null) {
+                        vehicleBitmap = Bitmap.createScaledBitmap(vehicleBitmap, 828, 828, true);
+                        binding.ivVehicleEditPlatePreview.setImageBitmap(vehicleBitmap);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+        }
+    }
+
+    private void showPictureDialog() {
+        AlertDialog.Builder pictureDialog = new AlertDialog.Builder(context);
+        pictureDialog.setTitle(context.getResources().getString(R.string.select_image));
+        String[] pictureDialogItems = {context.getResources().getString(R.string.select_photo_from_gallery),
+                context.getResources().getString(R.string.capture_photo_from_camera)
+        };
+
+        pictureDialog.setItems(pictureDialogItems, (dialog, which) -> {
+            switch (which) {
+                case 0:
+                    choosePhotoFromGallery();
+                    break;
+                case 1:
+                    takePhotoFromCamera();
+                    break;
+            }
+        });
+        pictureDialog.show();
+    }
+
+    @SuppressLint("IntentReset")
+    public void choosePhotoFromGallery() {
+        Intent galleryIntent = new Intent();
+        galleryIntent.setType("image/*");
+        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+        galleryPermissionResult.launch(galleryIntent);
+    }
+
+    private void takePhotoFromCamera() {
+        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        cameraPermissionResult.launch(cameraIntent);
+    }
+
+    private void setData(User user) {
         String name = user.getFullName();
         name = TextUtils.getInstance().capitalizeFirstLetter(name);
         binding.editTextFullName.setText(name);
@@ -392,7 +461,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
 
         selectSpinnerItemByValue(binding.divSpinner, Preferences.getInstance(context).getVehicleDivData());
 
-        if (user.getImage() != null && !user.getImage().equals("")) {
+        /*if (user.getImage() != null && !user.getImage().equals("")) {
             try {
                 String url;
                 if (!user.getImage().endsWith(".jpg")) {
@@ -406,6 +475,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                 e.printStackTrace();
             }
         }
+
         if (user.getVehicleImage() != null && !user.getVehicleImage().equals("")) {
             try {
                 String vehicleUrl;
@@ -419,15 +489,19 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
+        }*/
     }
 
     public void selectSpinnerItemByValue(Spinner spinner, String value) {
         UniversalSpinnerAdapter adapter = (UniversalSpinnerAdapter) spinner.getAdapter();
         for (int position = 0; position < adapter.getCount(); position++) {
-            if (adapter.getItem(position).getValue().equalsIgnoreCase(value)) {
-                spinner.setSelection(position);
-                return;
+            try {
+                if (Objects.requireNonNull(adapter.getItem(position)).getValue().equalsIgnoreCase(value)) {
+                    spinner.setSelection(position);
+                    return;
+                }
+            } catch (NullPointerException e) {
+                Timber.e(e.getCause());
             }
         }
     }
@@ -642,20 +716,17 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
     }
 
     private void editProfile(final String fullName, final String password, final String mobileNo, final String vehicleNo) {
-
         showLoading(context);
-
         showProgress();
-
         ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
         Call<LoginResponse> call = service.editProfile(fullName,
                 password,
                 user.getMobileNo(),
                 vehicleNo,
-                bitmap != null ? imageToString(bitmap) :
+                profileBitmap != null ? imageToString(profileBitmap) :
                         imageToString(((BitmapDrawable) binding.imageViewEditProfileImage.getDrawable()).getBitmap()),
                 mobileNo + "_" + DateTimeUtils.getInstance().getCurrentTimeStamp(),
-                bitmap2 != null ? imageToString(bitmap2) :
+                vehicleBitmap != null ? imageToString(vehicleBitmap) :
                         imageToString(((BitmapDrawable) binding.ivVehicleEditPlatePreview.getDrawable()).getBitmap()),
                 mobileNo + "vehicle_" + DateTimeUtils.getInstance().getCurrentTimeStamp());
         call.enqueue(new Callback<LoginResponse>() {
@@ -665,7 +736,6 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                 hideProgress();
                 try {
                     Timber.e("Response -> %s", new Gson().toJson(response.body()));
-//                    Timber.e("ResponseCall -> %s", new Gson().toJson(call.request().body()));
                     if (response.body() != null) {
                         if (!response.body().getError()) {
                             ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
@@ -703,38 +773,6 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                 hideProgress();
             }
         });
-    }
-
-    private void showPictureDialog() {
-        AlertDialog.Builder pictureDialog = new AlertDialog.Builder(context);
-        pictureDialog.setTitle(context.getResources().getString(R.string.select_image));
-        String[] pictureDialogItems = {context.getResources().getString(R.string.select_photo_from_gallery),
-                context.getResources().getString(R.string.capture_photo_from_camera)
-        };
-
-        pictureDialog.setItems(pictureDialogItems, (dialog, which) -> {
-            switch (which) {
-                case 0:
-                    choosePhotoFromGallery();
-                    break;
-                case 1:
-                    takePhotoFromCamera();
-                    break;
-            }
-        });
-        pictureDialog.show();
-    }
-
-    @SuppressLint("IntentReset")
-    public void choosePhotoFromGallery() {
-        Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        galleryIntent.setType("image/*");
-        startActivityForResult(galleryIntent, REQUEST_PICK_GALLERY);
-    }
-
-    private void takePhotoFromCamera() {
-        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(cameraIntent, REQUEST_PICK_CAMERA);
     }
 
     private void submitEditProfileInfo() {
@@ -824,5 +862,21 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
         binding.editTextCarNumber.setEnabled(true);
         binding.btnUpdateInfo.setEnabled(true);
         binding.btnUpdateInfo.setClickable(true);
+    }
+
+    public Bitmap convertUriToBitmap(Context context, Uri imageUri) {
+        Bitmap bitmap = null;
+        ContentResolver contentResolver = context.getContentResolver();
+        try {
+            if (Build.VERSION.SDK_INT < 28) {
+                bitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri);
+            } else {
+                ImageDecoder.Source source = ImageDecoder.createSource(contentResolver, imageUri);
+                bitmap = ImageDecoder.decodeBitmap(source);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return bitmap;
     }
 }
