@@ -3,15 +3,20 @@ package www.fiberathome.com.parkingapp.utils;
 import static www.fiberathome.com.parkingapp.model.data.Constants.REQUEST_PICK_CAMERA;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.ImageDecoder;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
+import android.net.Uri;
+import android.os.Build;
+import android.provider.MediaStore;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.DrawableRes;
@@ -189,12 +194,27 @@ public class ImageUtils {
         if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
             ActivityCompat.requestPermissions((Activity) context, new String[]{android.Manifest.permission.CAMERA}, REQUEST_PICK_CAMERA);
             return true;
-
         } else if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             return true;
 
         } else {
             return true;
         }
+    }
+
+    public Bitmap convertUriToBitmap(Context context, Uri imageUri) {
+        Bitmap bitmap = null;
+        ContentResolver contentResolver = context.getContentResolver();
+        try {
+            if (Build.VERSION.SDK_INT < 28) {
+                bitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri);
+            } else {
+                ImageDecoder.Source source = ImageDecoder.createSource(contentResolver, imageUri);
+                bitmap = ImageDecoder.decodeBitmap(source);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return bitmap;
     }
 }

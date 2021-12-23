@@ -68,6 +68,7 @@ import www.fiberathome.com.parkingapp.ui.verifyPhone.VerifyPhoneActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DateTimeUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
+import www.fiberathome.com.parkingapp.utils.ImageUtils;
 import www.fiberathome.com.parkingapp.utils.MathUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
@@ -76,8 +77,6 @@ import www.fiberathome.com.parkingapp.utils.Validator;
 @SuppressWarnings({"unused", "RedundantSuppression"})
 
 public class SignUpFragment extends BaseFragment implements View.OnClickListener, ProgressView {
-
-    private static final int REQUEST_PICK_CAMERA = 1002;
 
     private String vehicleClass = "";
     private String vehicleDiv = "";
@@ -156,6 +155,87 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         binding.imageViewCaptureImage.setOnClickListener(this);
         binding.ivVehiclePlate.setOnClickListener(this);
         binding.ivVehiclePlatePreview.setOnClickListener(this);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
+
+    @Override
+    public void showProgress() {
+        //progressBarLogin.setVisibility(View.VISIBLE);
+        binding.relativeLayoutInvisible.setVisibility(View.VISIBLE);
+        binding.editTextFullName.setEnabled(false);
+        binding.editTextMobileNumber.setEnabled(false);
+        binding.editTextVehicleRegNumber.setEnabled(false);
+        binding.editTextPassword.setEnabled(false);
+        binding.btnSignup.setEnabled(false);
+        binding.btnSignup.setClickable(false);
+    }
+
+    @Override
+    public void hideProgress() {
+        //progressBarLogin.setVisibility(View.INVISIBLE);
+        binding.relativeLayoutInvisible.setVisibility(View.GONE);
+        binding.editTextFullName.setEnabled(true);
+        binding.editTextMobileNumber.setEnabled(true);
+        binding.editTextVehicleRegNumber.setEnabled(true);
+        binding.editTextPassword.setEnabled(true);
+        binding.btnSignup.setEnabled(true);
+        binding.btnSignup.setClickable(true);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btnSignup:
+                if (ConnectivityUtils.getInstance().checkInternet(context)) {
+                    submitRegistration();
+                } else {
+                    DialogUtils.getInstance().alertDialog(context,
+                            context,
+                            context.getResources().getString(R.string.connect_to_internet),
+                            context.getResources().getString(R.string.retry),
+                            context.getResources().getString(R.string.close_app),
+                            new DialogUtils.DialogClickListener() {
+                                @Override
+                                public void onPositiveClick() {
+                                    Timber.e("Positive Button clicked");
+                                    if (ConnectivityUtils.getInstance().checkInternet(context)) {
+                                        submitRegistration();
+                                    } else {
+                                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
+                                    }
+                                }
+
+                                @Override
+                                public void onNegativeClick() {
+                                    Timber.e("Negative Button Clicked");
+                                    if (context != null) {
+                                        context.finish();
+                                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
+                                    }
+                                }
+                            }).show();
+                }
+                break;
+
+            case R.id.imageViewUploadProfileImage:
+            case R.id.imageViewCaptureImage:
+                if (ImageUtils.getInstance().isCameraPermissionGranted(context)) {
+                    vehicleImage = false;
+                    showPictureDialog();
+                }
+                break;
+            case R.id.ivVehiclePlate:
+            case R.id.ivVehiclePlatePreview:
+                if (ImageUtils.getInstance().isCameraPermissionGranted(context)) {
+                    vehicleImage = true;
+                    showPictureDialog();
+                }
+                break;
+        }
     }
 
     private List<www.fiberathome.com.parkingapp.model.Spinner> classDataList;
@@ -317,87 +397,6 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         return classDivList;
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-    }
-
-    @Override
-    public void showProgress() {
-        //progressBarLogin.setVisibility(View.VISIBLE);
-        binding.relativeLayoutInvisible.setVisibility(View.VISIBLE);
-        binding.editTextFullName.setEnabled(false);
-        binding.editTextMobileNumber.setEnabled(false);
-        binding.editTextVehicleRegNumber.setEnabled(false);
-        binding.editTextPassword.setEnabled(false);
-        binding.btnSignup.setEnabled(false);
-        binding.btnSignup.setClickable(false);
-    }
-
-    @Override
-    public void hideProgress() {
-        //progressBarLogin.setVisibility(View.INVISIBLE);
-        binding.relativeLayoutInvisible.setVisibility(View.GONE);
-        binding.editTextFullName.setEnabled(true);
-        binding.editTextMobileNumber.setEnabled(true);
-        binding.editTextVehicleRegNumber.setEnabled(true);
-        binding.editTextPassword.setEnabled(true);
-        binding.btnSignup.setEnabled(true);
-        binding.btnSignup.setClickable(true);
-    }
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.btnSignup:
-                if (ConnectivityUtils.getInstance().checkInternet(context)) {
-                    submitRegistration();
-                } else {
-                    DialogUtils.getInstance().alertDialog(context,
-                            context,
-                            context.getResources().getString(R.string.connect_to_internet),
-                            context.getResources().getString(R.string.retry),
-                            context.getResources().getString(R.string.close_app),
-                            new DialogUtils.DialogClickListener() {
-                                @Override
-                                public void onPositiveClick() {
-                                    Timber.e("Positive Button clicked");
-                                    if (ConnectivityUtils.getInstance().checkInternet(context)) {
-                                        submitRegistration();
-                                    } else {
-                                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
-                                    }
-                                }
-
-                                @Override
-                                public void onNegativeClick() {
-                                    Timber.e("Negative Button Clicked");
-                                    if (context != null) {
-                                        context.finish();
-                                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
-                                    }
-                                }
-                            }).show();
-                }
-                break;
-
-            case R.id.imageViewUploadProfileImage:
-            case R.id.imageViewCaptureImage:
-                if (isPermissionGranted()) {
-                    vehicleImage = false;
-                    showPictureDialog();
-                }
-                break;
-            case R.id.ivVehiclePlate:
-            case R.id.ivVehiclePlatePreview:
-                if (isPermissionGranted()) {
-                    vehicleImage = true;
-                    showPictureDialog();
-                }
-                break;
-        }
-    }
-
     private final ActivityResultLauncher<Intent> galleryPermissionResult = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -431,12 +430,12 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         try {
             if (contentURI != null) {
                 if (!vehicleImage) {
-                    profileBitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), contentURI);
+                    profileBitmap = ImageUtils.getInstance().convertUriToBitmap(context, contentURI);;
                     Bitmap convertedImage = Bitmap.createScaledBitmap(profileBitmap, 828, 828, true);
                     profileBitmap = convertedImage;
                     binding.imageViewUploadProfileImage.setImageBitmap(convertedImage);
                 } else {
-                    vehicleBitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), contentURI);
+                    vehicleBitmap = ImageUtils.getInstance().convertUriToBitmap(context, contentURI);
                     Bitmap convertedImage = Bitmap.createScaledBitmap(vehicleBitmap, 828, 828, true);
                     vehicleBitmap = convertedImage;
                     binding.ivVehiclePlatePreview.setImageBitmap(convertedImage);
@@ -444,7 +443,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             } else {
                 ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
         }
@@ -778,19 +777,6 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         return Bitmap.createScaledBitmap(image, width, height, true);
     }
 
-    private boolean isPermissionGranted() {
-        /* Check Permission for Marshmallow */
-        if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
-            ActivityCompat.requestPermissions(context, new String[]{android.Manifest.permission.CAMERA}, REQUEST_PICK_CAMERA);
-            return true;
-
-        } else if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-            return true;
-        } else {
-            return true;
-        }
-    }
-
     private String imageToString(Bitmap bitmap) {
         if (bitmap != null) {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -836,7 +822,8 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         }
     }
 
-    private void registerUser(final String fullName, final String password, final String mobileNo, final String vehicleNo) {
+    private void registerUser(final String fullName, final String password, final String mobileNo,
+                              final String vehicleNo) {
         showLoading(context);
         showProgress();
         ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);

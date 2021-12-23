@@ -62,6 +62,7 @@ import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DateTimeUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
+import www.fiberathome.com.parkingapp.utils.ImageUtils;
 import www.fiberathome.com.parkingapp.utils.MathUtils;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
@@ -71,15 +72,13 @@ import www.fiberathome.com.parkingapp.utils.Validator;
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class EditProfileFragment extends BaseFragment implements IOnBackPressListener, View.OnClickListener, ProgressView {
 
-    private static final int REQUEST_PICK_CAMERA = 1002;
-
     private String vehicleClass = "";
     private String vehicleDiv = "";
     private long classId, divId;
 
     private boolean vehicleImage = false;
-    private Bitmap profileBitmap, convertedProfileBitmap;
-    private Bitmap vehicleBitmap, convertedVehicleBitmap;
+    protected Bitmap profileBitmap, convertedProfileBitmap;
+    protected Bitmap vehicleBitmap, convertedVehicleBitmap;
 
     private User user;
 
@@ -125,6 +124,96 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
         binding.imageViewCaptureImage.setOnClickListener(this);
         binding.ivVehiclePlateEdit.setOnClickListener(this);
         binding.ivVehicleEditPlatePreview.setOnClickListener(this);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
+
+    @Override
+    public void showProgress() {
+        binding.relativeLayoutInvisible.setVisibility(View.VISIBLE);
+        binding.editTextFullName.setEnabled(false);
+        binding.editTextCarNumber.setEnabled(false);
+        binding.btnUpdateInfo.setEnabled(false);
+        binding.btnUpdateInfo.setClickable(false);
+    }
+
+    @Override
+    public void hideProgress() {
+        binding.relativeLayoutInvisible.setVisibility(View.GONE);
+        binding.editTextFullName.setEnabled(true);
+        binding.editTextCarNumber.setEnabled(true);
+        binding.btnUpdateInfo.setEnabled(true);
+        binding.btnUpdateInfo.setClickable(true);
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
+            if (getActivity() != null) {
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.nav_host_fragment, HomeFragment.newInstance())
+                        .addToBackStack(null)
+                        .commit();
+            } else {
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_gps));
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btn_update_info:
+                if (ConnectivityUtils.getInstance().checkInternet(context)) {
+                    submitEditProfileInfo();
+                } else {
+                    DialogUtils.getInstance().alertDialog(context,
+                            context,
+                            context.getResources().getString(R.string.connect_to_internet),
+                            context.getResources().getString(R.string.retry),
+                            context.getResources().getString(R.string.close_app),
+                            new DialogUtils.DialogClickListener() {
+                                @Override
+                                public void onPositiveClick() {
+                                    Timber.e("Positive Button clicked");
+                                    if (ConnectivityUtils.getInstance().checkInternet(context)) {
+                                        submitEditProfileInfo();
+                                    } else {
+                                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
+                                    }
+                                }
+
+                                @Override
+                                public void onNegativeClick() {
+                                    Timber.e("Negative Button Clicked");
+                                    if (context != null) {
+                                        context.finish();
+                                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
+                                    }
+                                }
+                            }).show();
+                }
+                break;
+
+            case R.id.imageViewEditProfileImage:
+            case R.id.imageViewCaptureImage:
+                if (ImageUtils.getInstance().isCameraPermissionGranted(context)) {
+                    vehicleImage = false;
+                    showPictureDialog();
+                }
+                break;
+            case R.id.ivVehiclePlateEdit:
+            case R.id.ivVehicleEditPlatePreview:
+                if (ImageUtils.getInstance().isCameraPermissionGranted(context)) {
+                    vehicleImage = true;
+                    showPictureDialog();
+                }
+                break;
+        }
     }
 
     private void setListeners() {
@@ -255,78 +344,6 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
         });
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-    }
-
-    @Override
-    public boolean onBackPressed() {
-        if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
-            if (getActivity() != null) {
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.nav_host_fragment, HomeFragment.newInstance())
-                        .addToBackStack(null)
-                        .commit();
-            } else {
-                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_gps));
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.btn_update_info:
-                if (ConnectivityUtils.getInstance().checkInternet(context)) {
-                    submitEditProfileInfo();
-                } else {
-                    DialogUtils.getInstance().alertDialog(context,
-                            context,
-                            context.getResources().getString(R.string.connect_to_internet),
-                            context.getResources().getString(R.string.retry),
-                            context.getResources().getString(R.string.close_app),
-                            new DialogUtils.DialogClickListener() {
-                                @Override
-                                public void onPositiveClick() {
-                                    Timber.e("Positive Button clicked");
-                                    if (ConnectivityUtils.getInstance().checkInternet(context)) {
-                                        submitEditProfileInfo();
-                                    } else {
-                                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
-                                    }
-                                }
-
-                                @Override
-                                public void onNegativeClick() {
-                                    Timber.e("Negative Button Clicked");
-                                    if (context != null) {
-                                        context.finish();
-                                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.thanks_message));
-                                    }
-                                }
-                            }).show();
-                }
-                break;
-
-            case R.id.imageViewEditProfileImage:
-            case R.id.imageViewCaptureImage:
-                if (isPermissionGranted()) {
-                    vehicleImage = false;
-                    showPictureDialog();
-                }
-                break;
-            case R.id.ivVehiclePlateEdit:
-            case R.id.ivVehicleEditPlatePreview:
-                if (isPermissionGranted()) {
-                    vehicleImage = true;
-                    showPictureDialog();
-                }
-                break;
-        }
-    }
-
     private final ActivityResultLauncher<Intent> galleryPermissionResult = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -360,13 +377,12 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
         try {
             if (contentURI != null) {
                 if (!vehicleImage) {
-                    //profileBitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), contentURI);
-                    profileBitmap = convertUriToBitmap(context, contentURI);
+                    profileBitmap = ImageUtils.getInstance().convertUriToBitmap(context, contentURI);
                     convertedProfileBitmap = Bitmap.createScaledBitmap(profileBitmap, 828, 828, true);
                     profileBitmap = convertedProfileBitmap;
                     binding.imageViewEditProfileImage.setImageBitmap(convertedProfileBitmap);
                 } else {
-                    vehicleBitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), contentURI);
+                    vehicleBitmap = ImageUtils.getInstance().convertUriToBitmap(context, contentURI);
                     convertedVehicleBitmap = Bitmap.createScaledBitmap(vehicleBitmap, 828, 828, true);
                     vehicleBitmap = convertedVehicleBitmap;
                     binding.ivVehicleEditPlatePreview.setImageBitmap(convertedVehicleBitmap);
@@ -374,7 +390,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
             } else {
                 ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
         }
@@ -505,8 +521,8 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
             }
         }
     }
-
     private List<www.fiberathome.com.parkingapp.model.Spinner> classDataList;
+
     private List<www.fiberathome.com.parkingapp.model.Spinner> classDivList;
 
     private void setVehicleClassCategory() {
@@ -667,20 +683,6 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
         return classDivList;
     }
 
-    private boolean isPermissionGranted() {
-        // Check Permission for Marshmallow
-        if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
-            ActivityCompat.requestPermissions(context, new String[]{android.Manifest.permission.CAMERA}, REQUEST_PICK_CAMERA);
-            return true;
-
-        } else if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-            return true;
-
-        } else {
-            return true;
-        }
-    }
-
     @SuppressWarnings("SameParameterValue")
     private Bitmap getResizedBitmap(Bitmap image, int maxSize) {
         int width = image.getWidth();
@@ -715,7 +717,8 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
         }
     }
 
-    private void editProfile(final String fullName, final String password, final String mobileNo, final String vehicleNo) {
+    private void editProfile(final String fullName, final String password, final String mobileNo,
+                             final String vehicleNo) {
         showLoading(context);
         showProgress();
         ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
@@ -844,39 +847,5 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
         } else {
             return false;
         }
-    }
-
-    @Override
-    public void showProgress() {
-        binding.relativeLayoutInvisible.setVisibility(View.VISIBLE);
-        binding.editTextFullName.setEnabled(false);
-        binding.editTextCarNumber.setEnabled(false);
-        binding.btnUpdateInfo.setEnabled(false);
-        binding.btnUpdateInfo.setClickable(false);
-    }
-
-    @Override
-    public void hideProgress() {
-        binding.relativeLayoutInvisible.setVisibility(View.GONE);
-        binding.editTextFullName.setEnabled(true);
-        binding.editTextCarNumber.setEnabled(true);
-        binding.btnUpdateInfo.setEnabled(true);
-        binding.btnUpdateInfo.setClickable(true);
-    }
-
-    public Bitmap convertUriToBitmap(Context context, Uri imageUri) {
-        Bitmap bitmap = null;
-        ContentResolver contentResolver = context.getContentResolver();
-        try {
-            if (Build.VERSION.SDK_INT < 28) {
-                bitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri);
-            } else {
-                ImageDecoder.Source source = ImageDecoder.createSource(contentResolver, imageUri);
-                bitmap = ImageDecoder.decodeBitmap(source);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return bitmap;
     }
 }
