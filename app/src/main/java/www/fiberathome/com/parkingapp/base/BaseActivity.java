@@ -433,7 +433,6 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
     }
 
     private void showNoInternetDialog() {
-
         if (mInternetDialog != null && mInternetDialog.isShowing()) {
             return;
         }
@@ -543,8 +542,8 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         Intent intent = new Intent(context, GeoFenceBroadcastReceiver.class);
         // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when
         // calling addGeofences() and removeGeofences().
-        geoFencePendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.
-                FLAG_UPDATE_CURRENT);
+        geoFencePendingIntent = PendingIntent.getBroadcast(context, 0, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
         return geoFencePendingIntent;
     }
 

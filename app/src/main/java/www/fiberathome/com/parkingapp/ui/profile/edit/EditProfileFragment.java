@@ -2,18 +2,12 @@ package www.fiberathome.com.parkingapp.ui.profile.edit;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.ImageDecoder;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
@@ -29,14 +23,11 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -119,7 +110,6 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
         setVehicleClassCategory();
         setVehicleDivCategory();
 
-        setData(user);
         binding.editTextFullName.setSelection(binding.editTextFullName.getText().length());
         setListeners();
         binding.btnUpdateInfo.setOnClickListener(this);
@@ -127,6 +117,12 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
         binding.imageViewCaptureImage.setOnClickListener(this);
         binding.ivVehiclePlateEdit.setOnClickListener(this);
         binding.ivVehicleEditPlatePreview.setOnClickListener(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setData(user);
     }
 
     @Override
@@ -480,7 +476,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
 
         selectSpinnerItemByValue(binding.divSpinner, Preferences.getInstance(context).getVehicleDivData());
 
-        /*if (user.getImage() != null && !user.getImage().equals("")) {
+        if (user.getImage() != null && !user.getImage().equals("")) {
             try {
                 String url;
                 if (!user.getImage().endsWith(".jpg")) {
@@ -508,7 +504,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }*/
+        }
     }
 
     public void selectSpinnerItemByValue(Spinner spinner, String value) {
