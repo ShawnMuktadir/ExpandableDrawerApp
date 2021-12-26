@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
@@ -723,11 +722,11 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                 user.getMobileNo(),
                 vehicleNo,
                 profileBitmap != null ? imageToString(profileBitmap) :
-                        imageToString(((BitmapDrawable) binding.imageViewEditProfileImage.getDrawable()).getBitmap()),
-                mobileNo + "_" + DateTimeUtils.getInstance().getCurrentTimeStamp(),
+                        null,
+                (profileBitmap != null ? mobileNo + "_" + DateTimeUtils.getInstance().getCurrentTimeStamp() : ""),
                 vehicleBitmap != null ? imageToString(vehicleBitmap) :
-                        imageToString(((BitmapDrawable) binding.ivVehicleEditPlatePreview.getDrawable()).getBitmap()),
-                mobileNo + "vehicle_" + DateTimeUtils.getInstance().getCurrentTimeStamp());
+                        null,
+                (vehicleBitmap != null ? mobileNo + "vehicle_" + DateTimeUtils.getInstance().getCurrentTimeStamp() : ""));
         call.enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
