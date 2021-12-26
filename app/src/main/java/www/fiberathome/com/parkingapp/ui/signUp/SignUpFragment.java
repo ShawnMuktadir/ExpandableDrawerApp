@@ -3,11 +3,9 @@ package www.fiberathome.com.parkingapp.ui.signUp;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -30,10 +28,8 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.google.android.gms.vision.CameraSource;
 import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
@@ -822,14 +818,15 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
     private void registerUser(final String fullName, final String password, final String mobileNo,
                               final String vehicleNo) {
+        String profileImageName;
+        String vehicleImageName;
         showLoading(context);
         showProgress();
         ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
         Call<BaseResponse> call = service.createUser(fullName, password, mobileNo, vehicleNo,
                 imageToString(profileBitmap),
-                mobileNo + "_" + DateTimeUtils.getInstance().getCurrentTimeStamp(),
-                imageToString(vehicleBitmap),
-                mobileNo + "vehicle_" + DateTimeUtils.getInstance().getCurrentTimeStamp());
+                (profileBitmap != null ? mobileNo + "_" + DateTimeUtils.getInstance().getCurrentTimeStamp() : ""),
+                imageToString(vehicleBitmap), (vehicleBitmap != null ? mobileNo + "vehicle_" + DateTimeUtils.getInstance().getCurrentTimeStamp() : ""));
 
         call.enqueue(new Callback<BaseResponse>() {
             @Override

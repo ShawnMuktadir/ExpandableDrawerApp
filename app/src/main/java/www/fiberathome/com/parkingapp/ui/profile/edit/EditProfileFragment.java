@@ -379,7 +379,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                     profileBitmap = ImageUtils.getInstance().convertUriToBitmap(context, contentURI);
                     convertedProfileBitmap = Bitmap.createScaledBitmap(profileBitmap, 828, 828, true);
                     profileBitmap = convertedProfileBitmap;
-                    binding.imageViewEditProfileImage.setImageBitmap(convertedProfileBitmap);
+                    binding.imageViewEditProfileImage.setImageURI(contentURI);
                 } else {
                     vehicleBitmap = ImageUtils.getInstance().convertUriToBitmap(context, contentURI);
                     convertedVehicleBitmap = Bitmap.createScaledBitmap(vehicleBitmap, 828, 828, true);

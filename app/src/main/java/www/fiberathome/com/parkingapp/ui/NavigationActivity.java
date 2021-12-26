@@ -97,7 +97,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-            getWindow().setStatusBarColor(ContextCompat.getColor(context, R.color.gray_update));
+            getWindow().setStatusBarColor(ContextCompat.getColor(context, R.color.white));
         }
 
         toolbar = findViewById(R.id.toolbar);
