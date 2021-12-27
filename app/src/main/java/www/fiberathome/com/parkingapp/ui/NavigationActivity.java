@@ -338,6 +338,8 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        } else {
+            Glide.with(this).load("").apply(requestOptions).override(200, 200).into(ivUserProfile);
         }
         navHeaderView.setOnClickListener(v -> startActivity(ProfileActivity.class));
     }
