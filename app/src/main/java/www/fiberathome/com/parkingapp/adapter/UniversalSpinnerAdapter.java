@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 import java.util.List;
 
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.model.Spinner;
+import www.fiberathome.com.parkingapp.data.model.Spinner;
 
 public class UniversalSpinnerAdapter extends ArrayAdapter<Spinner> {
 

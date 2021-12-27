@@ -17,8 +17,8 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.data.model.response.sensors.SensorArea;
 import www.fiberathome.com.parkingapp.databinding.RowParkingBinding;
-import www.fiberathome.com.parkingapp.model.response.sensors.SensorArea;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
 
 @SuppressWarnings({"unused", "RedundantSuppression"})

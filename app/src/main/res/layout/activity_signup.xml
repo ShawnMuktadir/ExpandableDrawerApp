@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     android:windowSoftInputMode="adjustPan"
-    tools:context=".ui.signUp.SignUpActivity">
+    tools:context=".ui.registration.RegistrationActivity">
 
     <ScrollView
         android:layout_width="match_parent"

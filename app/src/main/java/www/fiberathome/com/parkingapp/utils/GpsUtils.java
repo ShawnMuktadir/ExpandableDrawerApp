@@ -21,7 +21,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import timber.log.Timber;
-import www.fiberathome.com.parkingapp.model.data.AppConstants;
+import www.fiberathome.com.parkingapp.data.model.data.AppConstants;
 
 public class GpsUtils {
 

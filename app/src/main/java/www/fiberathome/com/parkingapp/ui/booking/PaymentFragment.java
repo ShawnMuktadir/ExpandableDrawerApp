@@ -1,6 +1,6 @@
 package www.fiberathome.com.parkingapp.ui.booking;
 
-import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_BN;
+import static www.fiberathome.com.parkingapp.data.model.data.Constants.LANGUAGE_BN;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -40,18 +40,18 @@ import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
+import www.fiberathome.com.parkingapp.data.model.BookedPlace;
+import www.fiberathome.com.parkingapp.data.model.data.preference.LanguagePreferences;
+import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
+import www.fiberathome.com.parkingapp.data.model.response.booking.BookingParkStatusResponse;
+import www.fiberathome.com.parkingapp.data.model.response.booking.ReservationCancelResponse;
+import www.fiberathome.com.parkingapp.data.model.response.booking.ReservationResponse;
+import www.fiberathome.com.parkingapp.data.source.api.ApiClient;
+import www.fiberathome.com.parkingapp.data.source.api.ApiService;
+import www.fiberathome.com.parkingapp.data.source.api.AppConfig;
 import www.fiberathome.com.parkingapp.databinding.BottomSheetDialogScratchCardBinding;
 import www.fiberathome.com.parkingapp.databinding.FragmentPaymentBinding;
 import www.fiberathome.com.parkingapp.listener.FragmentChangeListener;
-import www.fiberathome.com.parkingapp.model.BookedPlace;
-import www.fiberathome.com.parkingapp.model.api.ApiClient;
-import www.fiberathome.com.parkingapp.model.api.ApiService;
-import www.fiberathome.com.parkingapp.model.api.AppConfig;
-import www.fiberathome.com.parkingapp.model.data.preference.LanguagePreferences;
-import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
-import www.fiberathome.com.parkingapp.model.response.booking.BookingParkStatusResponse;
-import www.fiberathome.com.parkingapp.model.response.booking.ReservationCancelResponse;
-import www.fiberathome.com.parkingapp.model.response.booking.ReservationResponse;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.ui.schedule.ScheduleActivity;

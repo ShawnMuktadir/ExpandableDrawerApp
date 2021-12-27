@@ -65,14 +65,16 @@ android {
             dimension "version"
             versionNameSuffix "-STAG"
             manifestPlaceholders = [appName: APP_NAME_STAG]
-            //buildConfigField "String", "BASE_URL", "\"http://staging.tappwaterapp.org/api/\""
+            buildConfigField "String", "BASE_URL", "\"http://163.47.157.198/parkingapp/\""
+            buildConfigField "String", "IMAGES_URL", "\"http://163.47.157.198/parkingapp/uploads/\""
         }
 
         prod {
             dimension "version"
             versionNameSuffix "-PROD"
             manifestPlaceholders = [appName: APP_NAME]
-            //buildConfigField "String", "BASE_URL", "\"http://production.tappwaterapp.org/api/\""
+            buildConfigField "String", "BASE_URL", "\"http://163.47.157.198/parkingapp/\""
+            buildConfigField "String", "IMAGES_URL", "\"http://163.47.157.198/parkingapp/uploads/\""
         }
     }
 

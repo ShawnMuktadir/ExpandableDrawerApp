@@ -13,24 +13,17 @@ import android.view.inputmethod.EditorInfo;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import com.google.gson.Gson;
+import androidx.lifecycle.ViewModelProvider;
 
 import java.util.Objects;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
+import www.fiberathome.com.parkingapp.data.model.data.preference.SharedData;
+import www.fiberathome.com.parkingapp.data.model.response.global.BaseResponse;
 import www.fiberathome.com.parkingapp.databinding.FragmentForgetPasswordBinding;
-import www.fiberathome.com.parkingapp.model.api.ApiClient;
-import www.fiberathome.com.parkingapp.model.api.ApiService;
-import www.fiberathome.com.parkingapp.model.api.AppConfig;
-import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
-import www.fiberathome.com.parkingapp.model.response.BaseResponse;
-import www.fiberathome.com.parkingapp.ui.changePassword.ChangePasswordOTPActivity;
+import www.fiberathome.com.parkingapp.ui.changePassword.changePassword.ChangePasswordOTPActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
@@ -40,7 +33,7 @@ import www.fiberathome.com.parkingapp.utils.Validator;
 public class ForgetPasswordFragment extends BaseFragment {
 
     private ForgetPasswordActivity context;
-
+    private ForgetPasswordViewModel viewModel;
     FragmentForgetPasswordBinding binding;
 
     public ForgetPasswordFragment() {
@@ -63,6 +56,7 @@ public class ForgetPasswordFragment extends BaseFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         context = (ForgetPasswordActivity) getActivity();
+        viewModel = new ViewModelProvider(this).get(ForgetPasswordViewModel.class);
         binding.editTextMobileNumber.requestFocus();
         binding.editTextMobileNumber.requestLayout();
         setListener();
@@ -184,52 +178,31 @@ public class ForgetPasswordFragment extends BaseFragment {
     }
 
     private void checkForgetPassword(final String mobileNo) {
-
         showLoading(context);
 
-        ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<BaseResponse> call = service.checkForgetPassword(mobileNo);
+        viewModel.init(mobileNo);
+        viewModel.getMutableData().observe(requireActivity(), (@NonNull BaseResponse response) -> {
+            if (response.getError()) {
+                ToastUtils.getInstance().showToastMessage(context, response.getMessage());
+            } else {
+                if (response.getMessage().equalsIgnoreCase("Try Again! Invalid Mobile Number.")) {
+                    ToastUtils.getInstance().showToastMessage(context,
+                            context.getResources().getString(R.string.mobile_number_not_exist));
+                } else {
+                    ToastUtils.getInstance().showToastMessage(context, response.getMessage());
+                    if (!response.getError()) {
 
-        // Gathering results.
-        call.enqueue(new Callback<BaseResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<BaseResponse> call, @NonNull Response<BaseResponse> response) {
+                        ToastUtils.getInstance().showToastMessage(context, response.getMessage());
 
-                Timber.e("response body-> %s", new Gson().toJson(response.body()));
-
-                hideLoading();
-
-                if (response.body() != null) {
-                    if (response.body().getError()) {
-                        ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
+                        Intent intent = new Intent(context, ChangePasswordOTPActivity.class);
+                        intent.putExtra("mobile_no", mobileNo);
+                        startActivity(intent);
+                        SharedData.getInstance().setForgetPasswordMobile(mobileNo);
+                        context.finish();
                     } else {
-                        if (response.body().getMessage().equalsIgnoreCase("Try Again! Invalid Mobile Number.")) {
-                            ToastUtils.getInstance().showToastMessage(context,
-                                    context.getResources().getString(R.string.mobile_number_not_exist));
-                        } else {
-                            ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
-                            if (!response.body().getError()) {
-
-                                ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
-
-                                Intent intent = new Intent(context, ChangePasswordOTPActivity.class);
-                                intent.putExtra("mobile_no", mobileNo);
-                                startActivity(intent);
-                                SharedData.getInstance().setForgetPasswordMobile(mobileNo);
-                                context.finish();
-                            } else {
-                                ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
-                            }
-                        }
+                        ToastUtils.getInstance().showToastMessage(context, response.getMessage());
                     }
                 }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<BaseResponse> call, @NonNull Throwable errors) {
-                Timber.e("Throwable Errors: -> %s", errors.toString());
-                hideLoading();
-                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
             }
         });
     }

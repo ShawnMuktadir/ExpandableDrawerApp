@@ -36,17 +36,17 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.adapter.UniversalSpinnerAdapter;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
+import www.fiberathome.com.parkingapp.data.model.Spinner;
+import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
+import www.fiberathome.com.parkingapp.data.model.response.booking.ReservationResponse;
+import www.fiberathome.com.parkingapp.data.model.response.booking.TimeSlotResponse;
+import www.fiberathome.com.parkingapp.data.model.response.vehicle_list.UserVehicleListResponse;
+import www.fiberathome.com.parkingapp.data.model.response.vehicle_list.Vehicle;
+import www.fiberathome.com.parkingapp.data.source.api.ApiClient;
+import www.fiberathome.com.parkingapp.data.source.api.ApiService;
+import www.fiberathome.com.parkingapp.data.source.api.AppConfig;
 import www.fiberathome.com.parkingapp.databinding.FragmentScheduleBinding;
 import www.fiberathome.com.parkingapp.listener.FragmentChangeListener;
-import www.fiberathome.com.parkingapp.model.Spinner;
-import www.fiberathome.com.parkingapp.model.api.ApiClient;
-import www.fiberathome.com.parkingapp.model.api.ApiService;
-import www.fiberathome.com.parkingapp.model.api.AppConfig;
-import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
-import www.fiberathome.com.parkingapp.model.response.booking.ReservationResponse;
-import www.fiberathome.com.parkingapp.model.response.booking.TimeSlotResponse;
-import www.fiberathome.com.parkingapp.model.response.vehicle_list.UserVehicleListResponse;
-import www.fiberathome.com.parkingapp.model.response.vehicle_list.Vehicle;
 import www.fiberathome.com.parkingapp.ui.booking.BookingActivity;
 import www.fiberathome.com.parkingapp.ui.booking.PaymentFragment;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
@@ -81,11 +81,11 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
     private String time = "";
     private String timeValue = "";
 
-    private final List<www.fiberathome.com.parkingapp.model.Spinner> departureTimeDataList = new ArrayList<>();
+    private final List<www.fiberathome.com.parkingapp.data.model.Spinner> departureTimeDataList = new ArrayList<>();
     private List<List<String>> sensorAreaStatusList = new ArrayList<>();
 
     private List<Vehicle> vehicleList = new ArrayList<>();
-    private final List<www.fiberathome.com.parkingapp.model.Spinner> userVehicleDataList = new ArrayList<>();
+    private final List<www.fiberathome.com.parkingapp.data.model.Spinner> userVehicleDataList = new ArrayList<>();
 
     private BaseActivity context;
     FragmentScheduleBinding binding;
@@ -528,7 +528,7 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
     }
 
     private void setDepartureSpinner
-            (List<www.fiberathome.com.parkingapp.model.Spinner> departureTimeDataList) {
+            (List<www.fiberathome.com.parkingapp.data.model.Spinner> departureTimeDataList) {
         UniversalSpinnerAdapter departureTimeAdapter = new UniversalSpinnerAdapter(context,
                 android.R.layout.simple_spinner_item,
                 departureTimeDataList);
@@ -552,7 +552,7 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
     }
 
     private void setVehicleListSpinner
-            (List<www.fiberathome.com.parkingapp.model.Spinner> vehicleList) {
+            (List<www.fiberathome.com.parkingapp.data.model.Spinner> vehicleList) {
         UniversalSpinnerAdapter userVehicleListAdapter = new UniversalSpinnerAdapter(context,
                 android.R.layout.simple_spinner_item,
                 vehicleList);

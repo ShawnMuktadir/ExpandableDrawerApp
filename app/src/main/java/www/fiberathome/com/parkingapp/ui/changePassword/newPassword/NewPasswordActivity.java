@@ -11,7 +11,7 @@ import android.view.View;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.databinding.ActivityBaseBinding;
-import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
+import www.fiberathome.com.parkingapp.ui.login.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;

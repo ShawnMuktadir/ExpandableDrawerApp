@@ -16,8 +16,8 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.data.model.response.booking.BookingSensors;
 import www.fiberathome.com.parkingapp.databinding.BottomSheetTextRecyclerItemBinding;
-import www.fiberathome.com.parkingapp.model.response.booking.BookingSensors;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.MathUtils;

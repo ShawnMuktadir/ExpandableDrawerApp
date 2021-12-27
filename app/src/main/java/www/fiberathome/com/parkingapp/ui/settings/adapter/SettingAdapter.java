@@ -10,8 +10,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import www.fiberathome.com.parkingapp.data.model.Settings;
 import www.fiberathome.com.parkingapp.databinding.RowSettingBinding;
-import www.fiberathome.com.parkingapp.model.Settings;
 import www.fiberathome.com.parkingapp.ui.settings.SettingsActivity;
 
 public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.SettingsViewHolder> {

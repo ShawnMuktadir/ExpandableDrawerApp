@@ -1,6 +1,6 @@
 package www.fiberathome.com.parkingapp.utils;
 
-import static www.fiberathome.com.parkingapp.model.data.Constants.REQUEST_PICK_CAMERA;
+import static www.fiberathome.com.parkingapp.data.model.data.Constants.REQUEST_PICK_CAMERA;
 
 import android.app.Activity;
 import android.content.ContentResolver;

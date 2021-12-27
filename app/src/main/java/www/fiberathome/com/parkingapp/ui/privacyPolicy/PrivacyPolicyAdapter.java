@@ -13,8 +13,8 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 
 import timber.log.Timber;
+import www.fiberathome.com.parkingapp.data.model.response.termsCondition.TermsCondition;
 import www.fiberathome.com.parkingapp.databinding.PrivacyPolicyRowBinding;
-import www.fiberathome.com.parkingapp.model.response.termsCondition.TermsCondition;
 
 public class PrivacyPolicyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 

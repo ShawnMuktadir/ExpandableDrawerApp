@@ -37,10 +37,10 @@ import java.util.concurrent.TimeoutException;
 
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.data.model.response.search.SearchVisitorData;
 import www.fiberathome.com.parkingapp.databinding.ItemListEmptyBinding;
 import www.fiberathome.com.parkingapp.databinding.SearchHistoryListItemBinding;
 import www.fiberathome.com.parkingapp.databinding.SearchListItemBinding;
-import www.fiberathome.com.parkingapp.model.response.search.SearchVisitorData;
 import www.fiberathome.com.parkingapp.ui.parking.EmptyViewHolder;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;

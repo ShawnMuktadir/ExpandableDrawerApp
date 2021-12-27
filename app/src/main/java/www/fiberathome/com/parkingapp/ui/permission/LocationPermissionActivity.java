@@ -28,8 +28,8 @@ import com.karumi.dexter.PermissionToken;
 
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.databinding.ActivityLocationPermissionBinding;
-import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.permission.listener.DexterPermissionListener;
 import www.fiberathome.com.parkingapp.ui.permission.listener.PermissionInterface;

@@ -1,6 +1,6 @@
 package www.fiberathome.com.parkingapp.service.booking_service;
 
-import static www.fiberathome.com.parkingapp.model.data.Constants.BOOKING_SERVICE_ID;
+import static www.fiberathome.com.parkingapp.data.model.data.Constants.BOOKING_SERVICE_ID;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -47,12 +47,12 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.model.api.ApiClient;
-import www.fiberathome.com.parkingapp.model.api.ApiService;
-import www.fiberathome.com.parkingapp.model.api.AppConfig;
-import www.fiberathome.com.parkingapp.model.data.Constants;
-import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
-import www.fiberathome.com.parkingapp.model.response.booking.CloseReservationResponse;
+import www.fiberathome.com.parkingapp.data.model.data.Constants;
+import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
+import www.fiberathome.com.parkingapp.data.model.response.booking.CloseReservationResponse;
+import www.fiberathome.com.parkingapp.data.source.api.ApiClient;
+import www.fiberathome.com.parkingapp.data.source.api.ApiService;
+import www.fiberathome.com.parkingapp.data.source.api.AppConfig;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 

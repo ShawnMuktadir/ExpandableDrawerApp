@@ -1,0 +1,20 @@
+package www.fiberathome.com.parkingapp.data.model.response.law;
+
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
+
+public class LocalJson {
+    @SerializedName("result")
+    @Expose
+    private List<Result> result = null;
+
+    public List<Result> getResult() {
+        return result;
+    }
+
+    public void setResult(List<Result> result) {
+        this.result = result;
+    }
+}

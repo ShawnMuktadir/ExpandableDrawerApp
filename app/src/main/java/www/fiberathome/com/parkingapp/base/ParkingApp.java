@@ -19,6 +19,7 @@ import java.util.Map;
 
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.BuildConfig;
+import www.fiberathome.com.parkingapp.data.source.APIClient;
 import www.fiberathome.com.parkingapp.ui.splash.SplashActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.ForceUpdateChecker;
@@ -49,6 +50,8 @@ public class ParkingApp extends Application implements LifecycleObserver {
         mInstance = this;
 
         initTimber();
+
+        APIClient.init();
 
         //firebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
 

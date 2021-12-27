@@ -17,23 +17,17 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import com.google.gson.Gson;
+import androidx.lifecycle.ViewModelProvider;
 
 import java.util.concurrent.TimeUnit;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
+import www.fiberathome.com.parkingapp.data.model.response.login.LoginResponse;
 import www.fiberathome.com.parkingapp.databinding.FragmentVerifyPhoneBinding;
-import www.fiberathome.com.parkingapp.model.api.ApiClient;
-import www.fiberathome.com.parkingapp.model.api.ApiService;
-import www.fiberathome.com.parkingapp.model.api.AppConfig;
-import www.fiberathome.com.parkingapp.model.response.login.LoginResponse;
-import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
+import www.fiberathome.com.parkingapp.ui.login.LoginActivity;
+import www.fiberathome.com.parkingapp.ui.login.LoginViewModel;
 import www.fiberathome.com.parkingapp.utils.NoUnderlineSpan;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
@@ -43,6 +37,8 @@ public class VerifyPhoneFragment extends BaseFragment {
 
     private VerifyPhoneActivity context;
 
+    private LoginViewModel loginViewModel;
+    private VerifyPhoneViewModel verifyPhoneViewModel;
     FragmentVerifyPhoneBinding binding;
 
     public VerifyPhoneFragment() {
@@ -70,6 +66,8 @@ public class VerifyPhoneFragment extends BaseFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         context = (VerifyPhoneActivity) getActivity();
+        loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
+        verifyPhoneViewModel = new ViewModelProvider(this).get(VerifyPhoneViewModel.class);
         setListeners();
         startCountDown();
     }
@@ -87,30 +85,16 @@ public class VerifyPhoneFragment extends BaseFragment {
 
     private void checkLogin(final String mobileNo, final String password) {
         showLoading(context);
-        ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<LoginResponse> call = service.loginUser(mobileNo, password);
-        call.enqueue(new Callback<LoginResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
-                Timber.e("response body-> %s", new Gson().toJson(response.body()));
-                hideLoading();
-                if (response.body() != null) {
-                    if (!response.body().getError()) {
-                        ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
-                    } else if (response.body().getError() && !response.body().getAuthentication()) {
-                        Timber.e("error & authentication response -> %s", response.body().getMessage());
-                        ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
-                    } else {
-                        Timber.e("error -> %s", response.body().getMessage());
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable errors) {
-                Timber.e("Throwable Errors: -> %s", errors.toString());
-                hideLoading();
-                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+        loginViewModel.init(mobileNo, password);
+        loginViewModel.getMutableData().observe(requireActivity(), (@NonNull LoginResponse loginResponse) -> {
+            hideLoading();
+            if (!loginResponse.getError()) {
+                ToastUtils.getInstance().showToastMessage(context, loginResponse.getMessage());
+            } else if (loginResponse.getError() && !loginResponse.getAuthentication()) {
+                Timber.e("error & authentication response -> %s", loginResponse.getMessage());
+                ToastUtils.getInstance().showToastMessage(context, loginResponse.getMessage());
+            } else {
+                Timber.e("error -> %s", loginResponse.getMessage());
             }
         });
     }
@@ -168,38 +152,16 @@ public class VerifyPhoneFragment extends BaseFragment {
         if (!otp.isEmpty()) {
             showLoading(context);
 
-            ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-            Call<LoginResponse> call = service.verifyOtp(otp);
-
-            call.enqueue(new Callback<LoginResponse>() {
-                @Override
-                public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
-
-                    Timber.e("response body-> %s", new Gson().toJson(response.body()));
-
-                    hideLoading();
-
-                    countDownTimer.cancel();
-
-                    if (response.body() != null) {
-                        Timber.e("response body not null -> %s", new Gson().toJson(response.body()));
-                        if (response.body().getError()) {
-                            ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
-                        } else if (!response.body().getError()) {
-                            ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
-                            context.startActivityWithFinishAffinity(LoginActivity.class);
-                            ToastUtils.getInstance().showToastMessage(context, "Dear " + response.body().getUser().getFullName() + ", Your Registration Completed Successfully...");
-                        }
-                    } else {
-                        ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
-                    }
-                }
-
-                @Override
-                public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable errors) {
-                    Timber.e("Throwable Errors: -> %s", errors.toString());
-                    hideLoading();
-                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+            verifyPhoneViewModel.init(otp);
+            verifyPhoneViewModel.getMutableData().observe(requireActivity(), (@NonNull LoginResponse loginResponse) -> {
+                hideLoading();
+                countDownTimer.cancel();
+                if (loginResponse.getError()) {
+                    ToastUtils.getInstance().showToastMessage(context, loginResponse.getMessage());
+                } else if (!loginResponse.getError()) {
+                    ToastUtils.getInstance().showToastMessage(context, loginResponse.getMessage());
+                    context.startActivityWithFinishAffinity(LoginActivity.class);
+                    ToastUtils.getInstance().showToastMessage(context, "Dear " + loginResponse.getUser().getFullName() + ", Your Registration Completed Successfully...");
                 }
             });
         } else {

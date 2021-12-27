@@ -1,6 +1,6 @@
 package www.fiberathome.com.parkingapp.ui.settings.adapter;
 
-import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_BN;
+import static www.fiberathome.com.parkingapp.data.model.data.Constants.LANGUAGE_BN;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -14,9 +14,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import timber.log.Timber;
+import www.fiberathome.com.parkingapp.data.model.Language;
+import www.fiberathome.com.parkingapp.data.model.data.preference.LanguagePreferences;
 import www.fiberathome.com.parkingapp.databinding.RowLanguageSettingBinding;
-import www.fiberathome.com.parkingapp.model.Language;
-import www.fiberathome.com.parkingapp.model.data.preference.LanguagePreferences;
 
 public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.SettingsViewHolder> {
 

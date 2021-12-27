@@ -8,7 +8,7 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.regex.Pattern;
 
-import www.fiberathome.com.parkingapp.model.data.StaticData;
+import www.fiberathome.com.parkingapp.data.model.data.StaticData;
 
 /**
  * Created by Zahidul_Islam_George on 08-November-2016.

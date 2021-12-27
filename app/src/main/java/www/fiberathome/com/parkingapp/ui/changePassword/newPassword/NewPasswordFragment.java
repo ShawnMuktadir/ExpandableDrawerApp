@@ -9,22 +9,17 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
+import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
+import www.fiberathome.com.parkingapp.data.model.data.preference.SharedData;
+import www.fiberathome.com.parkingapp.data.model.response.global.BaseResponse;
+import www.fiberathome.com.parkingapp.data.model.user.User;
 import www.fiberathome.com.parkingapp.databinding.FragmentChangeNewPasswordBinding;
-import www.fiberathome.com.parkingapp.model.api.ApiClient;
-import www.fiberathome.com.parkingapp.model.api.ApiService;
-import www.fiberathome.com.parkingapp.model.api.AppConfig;
-import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
-import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
-import www.fiberathome.com.parkingapp.model.response.BaseResponse;
-import www.fiberathome.com.parkingapp.model.user.User;
-import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
+import www.fiberathome.com.parkingapp.ui.login.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
 
@@ -33,6 +28,7 @@ import www.fiberathome.com.parkingapp.utils.Validator;
 public class NewPasswordFragment extends BaseFragment {
 
     private NewPasswordActivity context;
+    private NewPasswordViewModel viewModel;
     FragmentChangeNewPasswordBinding binding;
 
     public NewPasswordFragment() {
@@ -55,6 +51,7 @@ public class NewPasswordFragment extends BaseFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         context = (NewPasswordActivity) getActivity();
+        viewModel = new ViewModelProvider(this).get(NewPasswordViewModel.class);
         setListeners();
     }
 
@@ -97,35 +94,20 @@ public class NewPasswordFragment extends BaseFragment {
 
     private void updatePassword(String newPassword, String confirmPassword, String mobileNo) {
         showLoading(context);
-        ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<BaseResponse> call = service.setPasswordForForgetPassword(newPassword, confirmPassword, mobileNo);
-        call.enqueue(new Callback<BaseResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<BaseResponse> call, @NonNull Response<BaseResponse> response) {
-                Timber.e("response -> %s", response.message());
-
-                hideLoading();
-                if (response.body() != null) {
-                    if (!response.body().getError()) {
-                        ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
-                        Timber.e("response -> %s", response.body().getMessage());
-                        binding.editTextNewPassword.setText("");
-                        binding.editTextConfirmPassword.setText("");
-                        Preferences.getInstance(context).logout();
-                        Intent intentLogout = new Intent(context, LoginActivity.class);
-                        startActivity(intentLogout);
-                        context.finish();
-                    } else {
-                        ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<BaseResponse> call, @NonNull Throwable errors) {
-                Timber.e("Throwable Errors: -> %s", errors.toString());
-                hideLoading();
-                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+        viewModel.init(newPassword, confirmPassword, mobileNo);
+        viewModel.getMutableData().observe(requireActivity(), (@NonNull BaseResponse response) -> {
+            hideLoading();
+            if (!response.getError()) {
+                ToastUtils.getInstance().showToastMessage(context, response.getMessage());
+                Timber.e("response -> %s", response.getMessage());
+                binding.editTextNewPassword.setText("");
+                binding.editTextConfirmPassword.setText("");
+                Preferences.getInstance(context).logout();
+                Intent intentLogout = new Intent(context, LoginActivity.class);
+                startActivity(intentLogout);
+                context.finish();
+            } else {
+                ToastUtils.getInstance().showToastMessage(context, response.getMessage());
             }
         });
     }

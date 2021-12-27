@@ -22,12 +22,12 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.data.model.BookedPlace;
+import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
+import www.fiberathome.com.parkingapp.data.model.response.booking.BookedList;
+import www.fiberathome.com.parkingapp.data.model.response.booking.BookingArea;
+import www.fiberathome.com.parkingapp.data.model.response.sensors.SensorArea;
 import www.fiberathome.com.parkingapp.databinding.RowBookingsBinding;
-import www.fiberathome.com.parkingapp.model.BookedPlace;
-import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
-import www.fiberathome.com.parkingapp.model.response.booking.BookedList;
-import www.fiberathome.com.parkingapp.model.response.booking.BookingArea;
-import www.fiberathome.com.parkingapp.model.response.sensors.SensorArea;
 import www.fiberathome.com.parkingapp.ui.booking.BookingActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;

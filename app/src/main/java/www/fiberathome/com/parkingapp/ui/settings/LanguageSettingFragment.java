@@ -1,7 +1,7 @@
 package www.fiberathome.com.parkingapp.ui.settings;
 
-import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_BN;
-import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
+import static www.fiberathome.com.parkingapp.data.model.data.Constants.LANGUAGE_BN;
+import static www.fiberathome.com.parkingapp.data.model.data.Constants.LANGUAGE_EN;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -19,10 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.data.model.Language;
+import www.fiberathome.com.parkingapp.data.model.data.preference.LanguagePreferences;
+import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.databinding.FragmentSettingsBinding;
-import www.fiberathome.com.parkingapp.model.Language;
-import www.fiberathome.com.parkingapp.model.data.preference.LanguagePreferences;
-import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.ui.settings.adapter.LanguageAdapter;
 import www.fiberathome.com.parkingapp.ui.splash.SplashActivity;
 
