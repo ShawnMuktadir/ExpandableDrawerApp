@@ -8,7 +8,6 @@ import retrofit2.http.POST;
 import www.fiberathome.com.parkingapp.data.model.response.booking.CloseReservationResponse;
 import www.fiberathome.com.parkingapp.data.model.response.booking.TimeSlotResponse;
 import www.fiberathome.com.parkingapp.data.model.response.global.BaseResponse;
-import www.fiberathome.com.parkingapp.data.model.response.sensors.SensorsResponse;
 import www.fiberathome.com.parkingapp.data.model.response.termsCondition.TermsConditionResponse;
 import www.fiberathome.com.parkingapp.data.model.response.vehicle_list.UserVehicleListResponse;
 
@@ -99,23 +98,9 @@ public interface ApiService {
     @POST("visitor_place_tracker_get.php")
     Call<SearchVisitedPlaceResponse> getSearchHistory(@Field("mobile_number") String mobileNo);*/
 
-    @GET("sensors.php")
-    Call<SensorsResponse> getSensors();
-
-    @GET("terms_condition.php")
-    Call<TermsConditionResponse> getTermCondition();
-
-
-
     /*@FormUrlEncoded
     @POST("bookings.php")
     Call<BookedResponse> getBookedPlace(@Field("user_id") String mobileNo);*/
-
-    @FormUrlEncoded
-    @POST("booking_closed_new.php")
-    Call<CloseReservationResponse> endReservation(@Field("mobile_no") String mobileNo,
-                                                  @Field("spot_id") String bookedUid,
-                                                  @Field("tbl_id") String tbl_id);
 
     /*@FormUrlEncoded
     @POST("booking_cancel_new.php")
@@ -131,6 +116,15 @@ public interface ApiService {
     @POST("booking_park.php")
     Call<ReservationCancelResponse> setBookingPark(@Field("mobile_no") String mobileNo,
                                                    @Field("spot_id") String bookedUid);*/
+
+    @GET("terms_condition.php")
+    Call<TermsConditionResponse> getTermCondition();
+
+    @FormUrlEncoded
+    @POST("booking_closed_new.php")
+    Call<CloseReservationResponse> endReservation(@Field("mobile_no") String mobileNo,
+                                                  @Field("spot_id") String bookedUid,
+                                                  @Field("tbl_id") String tbl_id);
 
     @GET("time_slot.php")
     Call<TimeSlotResponse> getTimeSlot();
