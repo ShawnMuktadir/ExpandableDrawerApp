@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.ui.booking.adapter;
+package www.fiberathome.com.parkingapp.ui.reservation.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -28,7 +28,7 @@ import www.fiberathome.com.parkingapp.data.model.response.booking.BookedList;
 import www.fiberathome.com.parkingapp.data.model.response.booking.BookingArea;
 import www.fiberathome.com.parkingapp.data.model.response.sensors.SensorArea;
 import www.fiberathome.com.parkingapp.databinding.RowBookingsBinding;
-import www.fiberathome.com.parkingapp.ui.booking.BookingActivity;
+import www.fiberathome.com.parkingapp.ui.reservation.ReservationActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DateTimeUtils;
@@ -36,7 +36,7 @@ import www.fiberathome.com.parkingapp.utils.MathUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressWarnings({"unused", "RedundantSuppression"})
-public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ReservationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context context;
     public LatLng location;
@@ -44,8 +44,8 @@ public class BookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private ArrayList<BookedList> bookedLists;
     BookingAdapterClickListener bookingAdapterClickListener;
 
-    public BookingAdapter(BookingActivity context, ArrayList<BookedList> bookedLists,
-                          BookingAdapterClickListener bookingAdapterClickListener) {
+    public ReservationAdapter(ReservationActivity context, ArrayList<BookedList> bookedLists,
+                              BookingAdapterClickListener bookingAdapterClickListener) {
         this.context = context;
         this.bookedLists = bookedLists;
         this.bookingAdapterClickListener = bookingAdapterClickListener;

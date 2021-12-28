@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.ui.booking;
+package www.fiberathome.com.parkingapp.ui.reservation;
 
 import android.Manifest;
 import android.content.Context;
@@ -38,7 +38,7 @@ import www.fiberathome.com.parkingapp.ui.schedule.ScheduleActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 
-public class ScanBarCodeActivity extends BaseActivity implements FragmentChangeListener {
+public class ReservationScanBarCodeActivity extends BaseActivity implements FragmentChangeListener {
 
     protected BarcodeDetector barcodeDetector;
     private CameraSource cameraSource;
@@ -321,7 +321,7 @@ public class ScanBarCodeActivity extends BaseActivity implements FragmentChangeL
                 @Override
                 public void onActivityResult(Boolean result) {
                     if (result) {
-                        if (ActivityCompat.checkSelfPermission(ScanBarCodeActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                        if (ActivityCompat.checkSelfPermission(ReservationScanBarCodeActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
                             try {
                                 cameraSource.start(binding.surfaceView.getHolder());
                             } catch (IOException e) {

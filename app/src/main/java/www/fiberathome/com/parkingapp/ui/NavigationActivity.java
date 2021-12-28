@@ -51,7 +51,7 @@ import www.fiberathome.com.parkingapp.data.model.data.preference.LanguagePrefere
 import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.data.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.data.model.user.User;
-import www.fiberathome.com.parkingapp.ui.booking.BookingActivity;
+import www.fiberathome.com.parkingapp.databinding.ActivityNavigationBinding;
 import www.fiberathome.com.parkingapp.ui.changePassword.changePassword.ChangePasswordFragment;
 import www.fiberathome.com.parkingapp.ui.followUs.FollowUsActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
@@ -60,6 +60,7 @@ import www.fiberathome.com.parkingapp.ui.login.LoginActivity;
 import www.fiberathome.com.parkingapp.ui.parking.ParkingActivity;
 import www.fiberathome.com.parkingapp.ui.privacyPolicy.PrivacyPolicyActivity;
 import www.fiberathome.com.parkingapp.ui.profile.ProfileActivity;
+import www.fiberathome.com.parkingapp.ui.reservation.ReservationActivity;
 import www.fiberathome.com.parkingapp.ui.settings.SettingsActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
@@ -406,7 +407,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
                 break;
 
             case R.id.nav_booking:
-                startActivity(BookingActivity.class);
+                startActivity(ReservationActivity.class);
                 break;
 
             case R.id.nav_law:

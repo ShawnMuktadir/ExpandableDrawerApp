@@ -10,14 +10,12 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
@@ -33,22 +31,13 @@ import com.karumi.dexter.PermissionToken;
 import java.util.List;
 import java.util.Objects;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.data.model.data.preference.LanguagePreferences;
 import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.data.model.data.preference.SharedData;
-import www.fiberathome.com.parkingapp.data.model.response.booking.BookingParkStatusResponse;
-import www.fiberathome.com.parkingapp.data.source.api.ApiClient;
-import www.fiberathome.com.parkingapp.data.source.api.ApiService;
-import www.fiberathome.com.parkingapp.data.source.api.AppConfig;
 import www.fiberathome.com.parkingapp.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.ui.NavigationActivity;
-import www.fiberathome.com.parkingapp.ui.booking.BookingFragment;
-import www.fiberathome.com.parkingapp.ui.booking.BookingParkFragment;
 import www.fiberathome.com.parkingapp.ui.followUs.FollowUsFragment;
 import www.fiberathome.com.parkingapp.ui.law.LawFragment;
 import www.fiberathome.com.parkingapp.ui.login.LoginActivity;
@@ -57,6 +46,7 @@ import www.fiberathome.com.parkingapp.ui.permission.PermissionActivity;
 import www.fiberathome.com.parkingapp.ui.permission.listener.PermissionInterface;
 import www.fiberathome.com.parkingapp.ui.privacyPolicy.PrivacyPolicyFragment;
 import www.fiberathome.com.parkingapp.ui.profile.ProfileFragment;
+import www.fiberathome.com.parkingapp.ui.reservation.ReservationFragment;
 import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
 import www.fiberathome.com.parkingapp.ui.settings.SettingsFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
@@ -249,8 +239,8 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                     } else if (f instanceof ParkingFragment) {
                         ((ParkingFragment) f).onBackPressed();
                         toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
-                    } else if (f instanceof BookingFragment) {
-                        ((BookingFragment) f).onBackPressed();
+                    } else if (f instanceof ReservationFragment) {
+                        ((ReservationFragment) f).onBackPressed();
                         toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
                     } else if (f instanceof LawFragment) {
                         ((LawFragment) f).onBackPressed();
@@ -426,7 +416,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
 
     private void getBookingParkStatus(String mobileNo) {
         showLoading(context);
-        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+        /*ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
         Call<BookingParkStatusResponse> call = request.getBookingParkStatus(mobileNo);
         call.enqueue(new Callback<BookingParkStatusResponse>() {
             @RequiresApi(api = Build.VERSION_CODES.O)
@@ -438,7 +428,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                         if (response.body().getSensors() != null) {
                             BookingParkStatusResponse.Sensors sensors = response.body().getSensors();
                             ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
-                                    BookingParkFragment.newInstance(sensors), R.id.nav_host_fragment);
+                                    ReservationParkFragment.newInstance(sensors), R.id.nav_host_fragment);
                         } else {
                             ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
                                     HomeFragment.newInstance(lat, lng, areaName, count, placeId), R.id.nav_host_fragment);
@@ -452,6 +442,6 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                 Timber.e("onFailure -> %s", t.getMessage());
                 hideLoading();
             }
-        });
+        });*/
     }
 }

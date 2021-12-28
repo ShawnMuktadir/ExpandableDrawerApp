@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.gson.Gson;
 
@@ -47,10 +48,11 @@ import www.fiberathome.com.parkingapp.data.source.api.ApiService;
 import www.fiberathome.com.parkingapp.data.source.api.AppConfig;
 import www.fiberathome.com.parkingapp.databinding.FragmentScheduleBinding;
 import www.fiberathome.com.parkingapp.listener.FragmentChangeListener;
-import www.fiberathome.com.parkingapp.ui.booking.BookingActivity;
-import www.fiberathome.com.parkingapp.ui.booking.PaymentFragment;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
+import www.fiberathome.com.parkingapp.ui.reservation.PaymentFragment;
+import www.fiberathome.com.parkingapp.ui.reservation.ReservationActivity;
+import www.fiberathome.com.parkingapp.ui.reservation.ReservationViewModel;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DateTimeUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
@@ -88,6 +90,7 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
     private final List<www.fiberathome.com.parkingapp.data.model.Spinner> userVehicleDataList = new ArrayList<>();
 
     private BaseActivity context;
+    private ReservationViewModel reservationViewModel;
     FragmentScheduleBinding binding;
     private FragmentChangeListener listener;
     private Date currentTime;
@@ -154,11 +157,12 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
         if (isAdded()) {
             if (getActivity() instanceof HomeActivity) {
                 context = (HomeActivity) getActivity();
-            } else if (getActivity() instanceof BookingActivity) {
-                context = (BookingActivity) getActivity();
+            } else if (getActivity() instanceof ReservationActivity) {
+                context = (ReservationActivity) getActivity();
             } else if (getActivity() instanceof ScheduleActivity) {
                 context = (ScheduleActivity) getActivity();
             }
+            reservationViewModel = new ViewModelProvider(this).get(ReservationViewModel.class);
             currentTime = Calendar.getInstance().getTime();
             binding.textViewCurrentDate.setText(DateTimeUtils.getInstance().getCurrentDayTime());
             listener = (FragmentChangeListener) getActivity();
@@ -166,7 +170,6 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
             setListeners();
         }
         getUserVehicleList(Preferences.getInstance(context).getUser().getMobileNo());
-        //getTimeSlots();
     }
 
     private void setDatePickerTime() {
@@ -237,8 +240,8 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
         if (ConnectivityUtils.getInstance().isGPSEnabled(context)) {
             if (getActivity() instanceof HomeActivity) {
                 listener.fragmentChange(HomeFragment.newInstance());
-            } else if (getActivity() instanceof BookingActivity) {
-                startActivityWithFinish(context, BookingActivity.class);
+            } else if (getActivity() instanceof ReservationActivity) {
+                startActivityWithFinish(context, ReservationActivity.class);
             } else if (getActivity() instanceof ScheduleActivity) {
                 startActivityWithFinish(context, HomeActivity.class);
             }
@@ -404,33 +407,17 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
 
     private void storeReservation(String mobileNo, String arrivalTime, String departureTime, String mPlaceId) {
         showLoading(context);
-        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<ReservationResponse> call = request.storeReservation(mobileNo, arrivalTime, departureTime, mPlaceId, "1", selectedVehicleNo); // 1 for request availability
-        call.enqueue(new Callback<ReservationResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<ReservationResponse> call,
-                                   @NonNull retrofit2.Response<ReservationResponse> response) {
-                hideLoading();
-                if (response.isSuccessful()) {
-                    if (response.body() != null) {
-                        if (!response.body().getError()) {
-                            PaymentFragment paymentFragment = PaymentFragment.newInstance(arrivedDate, new Date((departure + arrivedDate.getTime())), getDate(arrivedDate.getTime()), getDate((departure + arrivedDate.getTime())),
-                                    getTimeDifference((departure + arrivedDate.getTime()) - arrivedDate.getTime()),
-                                    (departure + arrivedDate.getTime()) - arrivedDate.getTime(), mPlaceId, lat, lon, areaName, parkingSlotCount, isBookNowChecked, isInArea);
-                            listener.fragmentChange(paymentFragment);
-                        } else {
-                            DialogUtils.getInstance().showOnlyMessageDialog(response.body().getMessage(), context);
-                        }
-                    } else {
-                        Toast.makeText(getContext(), context.getResources().getString(R.string.reservation_failed), Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
 
-            @Override
-            public void onFailure(@NonNull Call<ReservationResponse> call, @NonNull Throwable t) {
-                Timber.e("onFailure -> %s", t.getMessage());
-                hideLoading();
+        reservationViewModel.storeReservationInit(mobileNo, arrivalTime, departureTime, mPlaceId, "1", selectedVehicleNo);
+        reservationViewModel.getStoreReservationMutableData().observe(requireActivity(), (@NonNull ReservationResponse response) -> {
+            hideLoading();
+            if (!response.getError()) {
+                PaymentFragment paymentFragment = PaymentFragment.newInstance(arrivedDate, new Date((departure + arrivedDate.getTime())), getDate(arrivedDate.getTime()), getDate((departure + arrivedDate.getTime())),
+                        getTimeDifference((departure + arrivedDate.getTime()) - arrivedDate.getTime()),
+                        (departure + arrivedDate.getTime()) - arrivedDate.getTime(), mPlaceId, lat, lon, areaName, parkingSlotCount, isBookNowChecked, isInArea);
+                listener.fragmentChange(paymentFragment);
+            } else {
+                DialogUtils.getInstance().showOnlyMessageDialog(response.getMessage(), context);
             }
         });
     }

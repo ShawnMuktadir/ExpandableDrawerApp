@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.ui.booking;
+package www.fiberathome.com.parkingapp.ui.reservation;
 
 import static www.fiberathome.com.parkingapp.utils.GoogleMapHelper.defaultMapSettings;
 
@@ -77,7 +77,7 @@ import www.fiberathome.com.parkingapp.utils.MathUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressLint("SimpleDateFormat")
-public class BookingParkFragment extends BaseFragment implements OnMapReadyCallback {
+public class ReservationParkFragment extends BaseFragment implements OnMapReadyCallback {
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     public static BookingParkStatusResponse.Sensors sensors;
@@ -130,13 +130,13 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         }
     };
 
-    public BookingParkFragment() {
+    public ReservationParkFragment() {
         // Required empty public constructor
     }
 
-    public static BookingParkFragment newInstance(BookingParkStatusResponse.Sensors mSensors) {
+    public static ReservationParkFragment newInstance(BookingParkStatusResponse.Sensors mSensors) {
         sensors = mSensors;
-        return new BookingParkFragment();
+        return new ReservationParkFragment();
     }
 
     @SuppressLint("SetTextI18n")
@@ -154,8 +154,8 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
         super.onViewCreated(view, savedInstanceState);
         if (getActivity() instanceof HomeActivity) {
             context = (HomeActivity) getActivity();
-        } else if (getActivity() instanceof BookingActivity) {
-            context = (BookingActivity) getActivity();
+        } else if (getActivity() instanceof ReservationActivity) {
+            context = (ReservationActivity) getActivity();
         } else if (getActivity() instanceof ScheduleActivity) {
             context = (ScheduleActivity) getActivity();
         }
@@ -168,8 +168,8 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
             if (context != null) {
                 if (getActivity() instanceof HomeActivity) {
                     ((HomeActivity) context).setActionToolBarVisibilityGone();
-                } else if (getActivity() instanceof BookingActivity) {
-                    ((BookingActivity) context).setActionToolBarVisibilityGone();
+                } else if (getActivity() instanceof ReservationActivity) {
+                    ((ReservationActivity) context).setActionToolBarVisibilityGone();
                 } else if (getActivity() instanceof ScheduleActivity) {
                     ((ScheduleActivity) context).setActionToolBarVisibilityGone();
                 }
@@ -445,7 +445,7 @@ public class BookingParkFragment extends BaseFragment implements OnMapReadyCallb
                                     public void onPositiveClick() {
                                         if (getActivity() instanceof HomeActivity) {
                                             listener.fragmentChange(HomeFragment.newInstance());
-                                        } else if (getActivity() instanceof BookingActivity) {
+                                        } else if (getActivity() instanceof ReservationActivity) {
                                             context.startActivity(HomeActivity.class);
                                         } else if (getActivity() instanceof ScheduleActivity) {
                                             context.startActivity(HomeActivity.class);

@@ -22,6 +22,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
@@ -31,9 +32,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.adapter.UniversalSpinnerAdapter;
@@ -42,12 +40,11 @@ import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.data.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.data.model.response.login.LoginResponse;
 import www.fiberathome.com.parkingapp.data.model.user.User;
-import www.fiberathome.com.parkingapp.data.source.api.ApiClient;
-import www.fiberathome.com.parkingapp.data.source.api.ApiService;
 import www.fiberathome.com.parkingapp.data.source.api.AppConfig;
 import www.fiberathome.com.parkingapp.databinding.FragmentProfileEditBinding;
 import www.fiberathome.com.parkingapp.ui.helper.ProgressView;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
+import www.fiberathome.com.parkingapp.ui.profile.ProfileViewModel;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DateTimeUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
@@ -76,6 +73,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
     private User user;
 
     private EditProfileActivity context;
+    private ProfileViewModel profileViewModel;
     FragmentProfileEditBinding binding;
 
     public EditProfileFragment() {
@@ -104,6 +102,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         context = (EditProfileActivity) getActivity();
+        profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
         user = Preferences.getInstance(context).getUser();
 
         setVehicleClassCategory();
@@ -716,8 +715,8 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                              final String vehicleNo) {
         showLoading(context);
         showProgress();
-        ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<LoginResponse> call = service.editProfile(fullName,
+
+        profileViewModel.init(fullName,
                 password,
                 user.getMobileNo(),
                 vehicleNo,
@@ -727,48 +726,32 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                 vehicleBitmap != null ? imageToString(vehicleBitmap) :
                         null,
                 (vehicleBitmap != null ? mobileNo + "vehicle_" + DateTimeUtils.getInstance().getCurrentTimeStamp() : ""));
-        call.enqueue(new Callback<LoginResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
-                hideLoading();
-                hideProgress();
-                try {
-                    Timber.e("Response -> %s", new Gson().toJson(response.body()));
-                    if (response.body() != null) {
-                        if (!response.body().getError()) {
-                            ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
+        profileViewModel.getMutableData().observe(requireActivity(), (@NonNull LoginResponse response) -> {
+            hideLoading();
+            hideProgress();
+            try {
+                if (!response.getError()) {
+                    ToastUtils.getInstance().showToastMessage(context, response.getMessage());
 
-                            User user = new User();
-                            user.setId(Preferences.getInstance(context).getUser().getId());
-                            user.setFullName(response.body().getUser().getFullName());
-                            user.setMobileNo(response.body().getUser().getMobileNo());
-                            user.setVehicleNo(response.body().getUser().getVehicleNo());
-                            user.setImage(response.body().getUser().getImage());
-                            user.setVehicleImage(response.body().getUser().getVehicleImage());
+                    User user = new User();
+                    user.setId(Preferences.getInstance(context).getUser().getId());
+                    user.setFullName(response.getUser().getFullName());
+                    user.setMobileNo(response.getUser().getMobileNo());
+                    user.setVehicleNo(response.getUser().getVehicleNo());
+                    user.setImage(response.getUser().getImage());
+                    user.setVehicleImage(response.getUser().getVehicleImage());
 
-                            // storing the user in sharedPreference
-                            Preferences.getInstance(context).setUser(user);
-                            Timber.e("user after update -> %s", new Gson().toJson(user));
-                            ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
-                            context.onBackPressed();
-                        } else {
-                            Timber.e("jsonObject else called");
-                            ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
-                        }
-                    } else {
-                        ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    // storing the user in sharedPreference
+                    Preferences.getInstance(context).setUser(user);
+                    Timber.e("user after update -> %s", new Gson().toJson(user));
+                    ToastUtils.getInstance().showToastMessage(context, response.getMessage());
+                    context.onBackPressed();
+                } else {
+                    Timber.e("jsonObject else called");
+                    ToastUtils.getInstance().showToastMessage(context, response.getMessage());
                 }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable errors) {
-                Timber.e("Throwable Errors: -> %s", errors.toString());
-                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
-                hideLoading();
-                hideProgress();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
     }

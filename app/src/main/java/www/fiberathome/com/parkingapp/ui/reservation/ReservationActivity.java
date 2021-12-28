@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.ui.booking;
+package www.fiberathome.com.parkingapp.ui.reservation;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -13,7 +13,7 @@ import www.fiberathome.com.parkingapp.ui.NavigationActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 
-public class BookingActivity extends NavigationActivity implements FragmentChangeListener {
+public class ReservationActivity extends NavigationActivity implements FragmentChangeListener {
 
     //Boolean variable to mark if the transaction is safe
     private boolean isTransactionSafe;
@@ -31,7 +31,7 @@ public class BookingActivity extends NavigationActivity implements FragmentChang
 
         // Initialize Booking fragment
         ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
-                BookingFragment.newInstance(), R.id.nav_host_fragment);
+                ReservationFragment.newInstance(), R.id.nav_host_fragment);
 
         changeDefaultActionBarDrawerToogleIconWithBackButton();
     }

@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.ui.booking;
+package www.fiberathome.com.parkingapp.ui.reservation;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,15 +28,11 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
@@ -44,14 +41,11 @@ import www.fiberathome.com.parkingapp.data.model.response.booking.BookedList;
 import www.fiberathome.com.parkingapp.data.model.response.booking.BookedResponse;
 import www.fiberathome.com.parkingapp.data.model.response.booking.ReservationCancelResponse;
 import www.fiberathome.com.parkingapp.data.model.response.sensors.SensorArea;
-import www.fiberathome.com.parkingapp.data.source.api.ApiClient;
-import www.fiberathome.com.parkingapp.data.source.api.ApiService;
-import www.fiberathome.com.parkingapp.data.source.api.AppConfig;
 import www.fiberathome.com.parkingapp.databinding.BottomSheetDialogGetHelpBinding;
 import www.fiberathome.com.parkingapp.databinding.FragmentBookingBinding;
 import www.fiberathome.com.parkingapp.listener.FragmentChangeListener;
-import www.fiberathome.com.parkingapp.ui.booking.adapter.BookingAdapter;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
+import www.fiberathome.com.parkingapp.ui.reservation.adapter.ReservationAdapter;
 import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
@@ -62,15 +56,13 @@ import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressLint("NonConstantResourceId")
 @SuppressWarnings({"unused", "RedundantSuppression", "InflateParams"})
-public class BookingFragment extends BaseFragment implements IOnBackPressListener {
-
-    private BookingActivity context;
-
+public class ReservationFragment extends BaseFragment implements IOnBackPressListener {
     private ArrayList<BookedList> bookedLists;
-
     private BookedResponse bookedResponse;
-    private BookingAdapter bookingAdapter;
+    private ReservationAdapter reservationAdapter;
 
+    private ReservationActivity context;
+    private ReservationViewModel reservationViewModel;
     FragmentBookingBinding binding;
     private FragmentChangeListener listener;
 
@@ -78,12 +70,12 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
     private LocationCallback locationCallback;
     private FusedLocationProviderClient fusedLocationProviderClient;
 
-    public BookingFragment() {
+    public ReservationFragment() {
         // Required empty public constructor
     }
 
-    public static BookingFragment newInstance() {
-        return new BookingFragment();
+    public static ReservationFragment newInstance() {
+        return new ReservationFragment();
     }
 
     @Override
@@ -103,8 +95,9 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        context = (BookingActivity) getActivity();
+        context = (ReservationActivity) getActivity();
         listener = (FragmentChangeListener) context;
+        reservationViewModel = new ViewModelProvider(this).get(ReservationViewModel.class);
         setupLocationBuilder();
         String mobileNo = Preferences.getInstance(context).getUser().getMobileNo();
         if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
@@ -158,33 +151,19 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
 
     private void fetchBookedParkingPlace(String mobileNo, boolean refresh) {
         showLoading(context);
-        ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<BookedResponse> bookedResponseCall = service.getBookedPlace(mobileNo);
-        bookedResponseCall.enqueue(new Callback<BookedResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<BookedResponse> call, @NonNull Response<BookedResponse> response) {
-                hideLoading();
-                if (response.body() != null && !response.body().getError()) {
-                    if (response.isSuccessful()) {
-                        bookedResponse = response.body();
-                        bookedLists = bookedResponse.getBookedLists();
-                        if (bookedLists != null && !bookedLists.isEmpty()) {
-                            setFragmentControls(bookedLists, refresh);
-                            hideNoData();
-                        } else {
-                            setNoData();
-                        }
-                    } else {
-                        Timber.e("response -> %s", new Gson().toJson(response.body()));
-                    }
-                }
-            }
 
-            @Override
-            public void onFailure(@NonNull Call<BookedResponse> call, @NonNull Throwable errors) {
-                Timber.e("Throwable Errors: -> %s", errors.toString());
-                hideLoading();
-                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+        reservationViewModel.getBookedPlaceInit(mobileNo);
+        reservationViewModel.getBookedResponseMutableData().observe(requireActivity(), (@NonNull BookedResponse response) -> {
+            hideLoading();
+            if (!response.getError()) {
+                bookedResponse = response;
+                bookedLists = bookedResponse.getBookedLists();
+                if (bookedLists != null && !bookedLists.isEmpty()) {
+                    setFragmentControls(bookedLists, refresh);
+                    hideNoData();
+                } else {
+                    setNoData();
+                }
             }
         });
     }
@@ -193,7 +172,7 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
         if (!refresh && isAdded()) {
             binding.recyclerViewBooking.setHasFixedSize(true);
             binding.recyclerViewBooking.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
-            bookingAdapter = new BookingAdapter(context, bookedLists, new BookingAdapter.BookingAdapterClickListener() {
+            reservationAdapter = new ReservationAdapter(context, bookedLists, new ReservationAdapter.BookingAdapterClickListener() {
                 @Override
                 public void onBookingItemCancel(int position, String uid, String id) {
                     DialogUtils.getInstance().alertDialog(context,
@@ -284,10 +263,10 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
                     }
                 }
             });
-            binding.recyclerViewBooking.setAdapter(bookingAdapter);
+            binding.recyclerViewBooking.setAdapter(reservationAdapter);
         } else {
-            if (bookingAdapter != null) {
-                bookingAdapter.updateList(bookedLists);
+            if (reservationAdapter != null) {
+                reservationAdapter.updateList(bookedLists);
             }
         }
     }
@@ -303,29 +282,16 @@ public class BookingFragment extends BaseFragment implements IOnBackPressListene
 
     private void cancelBooking(String mobileNo, String uid, String id) {
         showLoading(context);
-        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<ReservationCancelResponse> call = request.cancelReservation(Preferences.getInstance(context).getUser().getMobileNo(), uid, id);
-        call.enqueue(new Callback<ReservationCancelResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<ReservationCancelResponse> call, @NonNull Response<ReservationCancelResponse> response) {
-                hideLoading();
-                if (response.isSuccessful()) {
-                    if (response.body() != null) {
-                        ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
-                        Preferences.getInstance(context).clearBooking();
-                        Preferences.getInstance(context).isBookingCancelled = true;
-                        bookedLists.clear();
-                        fetchBookedParkingPlace(mobileNo, true);
-                        ApplicationUtils.stopBookingTrackService(context);
-                    }
-                }
-            }
 
-            @Override
-            public void onFailure(@NonNull Call<ReservationCancelResponse> call, @NonNull Throwable t) {
-                Timber.e("onFailure -> %s", t.getMessage());
-                hideLoading();
-            }
+        reservationViewModel.cancelReservationInit(Preferences.getInstance(context).getUser().getMobileNo(), uid, id);
+        reservationViewModel.getCancelReservationMutableData().observe(requireActivity(), (@NonNull ReservationCancelResponse response) -> {
+            hideLoading();
+            ToastUtils.getInstance().showToastMessage(context, response.getMessage());
+            Preferences.getInstance(context).clearBooking();
+            Preferences.getInstance(context).isBookingCancelled = true;
+            bookedLists.clear();
+            fetchBookedParkingPlace(mobileNo, true);
+            ApplicationUtils.stopBookingTrackService(context);
         });
     }
 

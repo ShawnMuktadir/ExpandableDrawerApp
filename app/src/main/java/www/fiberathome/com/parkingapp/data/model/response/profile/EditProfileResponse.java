@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.data.model.response.editProfile;
+package www.fiberathome.com.parkingapp.data.model.response.profile;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
