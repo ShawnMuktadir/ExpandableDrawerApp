@@ -6,8 +6,10 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import www.fiberathome.com.parkingapp.data.model.response.booking.CloseReservationResponse;
+import www.fiberathome.com.parkingapp.data.model.response.booking.SensorAreaStatusResponse;
 import www.fiberathome.com.parkingapp.data.model.response.booking.TimeSlotResponse;
 import www.fiberathome.com.parkingapp.data.model.response.global.BaseResponse;
+import www.fiberathome.com.parkingapp.data.model.response.parkingSlot.ParkingSlotResponse;
 import www.fiberathome.com.parkingapp.data.model.response.sensors.SensorsResponse;
 import www.fiberathome.com.parkingapp.data.model.response.termsCondition.TermsConditionResponse;
 import www.fiberathome.com.parkingapp.data.model.response.vehicle_list.UserVehicleListResponse;
@@ -102,14 +104,14 @@ public interface ApiService {
     @GET("sensors.php")
     Call<SensorsResponse> getSensors();
 
-    /*@GET("sensor_area.php")
-    Call<ParkingSlotResponse> getParkingSlots();*/
+    @GET("sensor_area.php")
+    Call<ParkingSlotResponse> getParkingSlots();
 
     @GET("terms_condition.php")
     Call<TermsConditionResponse> getTermCondition();
 
-    /*@GET("sensor_area_status.php")
-    Call<SensorAreaStatusResponse> getSensorAreaStatus();*/
+    @GET("sensor_area_status.php")
+    Call<SensorAreaStatusResponse> getSensorAreaStatus();
 
     /*@FormUrlEncoded
     @POST("bookings.php")

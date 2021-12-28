@@ -106,6 +106,58 @@ public class ReservationRepository {
         return data;
     }
 
+    public MutableLiveData<BookingParkStatusResponse> getBookingParkStatus(String mobileNo) {
+        MutableLiveData<BookingParkStatusResponse> data = new MutableLiveData<>();
+        reservationAPI.getBookingParkStatus(mobileNo).enqueue(new Callback<BookingParkStatusResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<BookingParkStatusResponse> call,
+                                   @NonNull Response<BookingParkStatusResponse> response) {
+                if (response.isSuccessful()) {
+                    data.setValue(response.body());
+                } else {
+                    ErrorResponse errorResponse = ErrorUtils.parseError(response);
+                    BookingParkStatusResponse bookingParkStatusResponse = new BookingParkStatusResponse();
+                    bookingParkStatusResponse.setError(errorResponse.getError());
+                    bookingParkStatusResponse.setMessage(errorResponse.getMessage());
+                    data.setValue(bookingParkStatusResponse);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<BookingParkStatusResponse> call, @NonNull Throwable t) {
+                Timber.e(t.getCause());
+                data.setValue(null);
+            }
+        });
+        return data;
+    }
+
+    public MutableLiveData<ReservationCancelResponse> setBookingPark(String mobileNo, String uid) {
+        MutableLiveData<ReservationCancelResponse> data = new MutableLiveData<>();
+        reservationAPI.setBookingPark(mobileNo, uid).enqueue(new Callback<ReservationCancelResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ReservationCancelResponse> call,
+                                   @NonNull Response<ReservationCancelResponse> response) {
+                if (response.isSuccessful()) {
+                    data.setValue(response.body());
+                } else {
+                    ErrorResponse errorResponse = ErrorUtils.parseError(response);
+                    ReservationCancelResponse reservationCancelResponse = new ReservationCancelResponse();
+                    reservationCancelResponse.setError(errorResponse.getError());
+                    reservationCancelResponse.setMessage(errorResponse.getMessage());
+                    data.setValue(reservationCancelResponse);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ReservationCancelResponse> call, @NonNull Throwable t) {
+                Timber.e(t.getCause());
+                data.setValue(null);
+            }
+        });
+        return data;
+    }
+
     private ReservationResponse convertErrorResponse(ErrorResponse errorResponse) {
         ReservationResponse response = new ReservationResponse();
         response.setError(errorResponse.getError());

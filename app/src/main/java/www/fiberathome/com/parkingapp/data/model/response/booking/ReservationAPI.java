@@ -25,4 +25,13 @@ public interface ReservationAPI {
     Call<ReservationCancelResponse> cancelReservation(@Field("mobile_no") String mobileNo,
                                                       @Field("spot_id") String bookedUid,
                                                       @Field("tbl_id") String tbl_id);
+
+    @FormUrlEncoded
+    @POST("booking_park_status.php")
+    Call<BookingParkStatusResponse> getBookingParkStatus(@Field("mobile_no") String mobileNo);
+
+    @FormUrlEncoded
+    @POST("booking_park.php")
+    Call<ReservationCancelResponse> setBookingPark(@Field("mobile_no") String mobileNo,
+                                                   @Field("spot_id") String bookedUid);
 }

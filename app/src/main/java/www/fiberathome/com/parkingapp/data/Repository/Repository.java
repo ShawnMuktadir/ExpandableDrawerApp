@@ -7,8 +7,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
-import www.fiberathome.com.parkingapp.data.model.response.booking.BookingParkStatusResponse;
-import www.fiberathome.com.parkingapp.data.model.response.booking.ReservationCancelResponse;
 import www.fiberathome.com.parkingapp.data.model.response.booking.SensorAreaStatusResponse;
 import www.fiberathome.com.parkingapp.data.model.response.global.ErrorResponse;
 import www.fiberathome.com.parkingapp.data.model.response.parkingSlot.ParkingSlotResponse;
@@ -85,7 +83,7 @@ public class Repository {
         return data;
     }
 
-    public MutableLiveData<ReservationCancelResponse> setBookingPark(String mobileNo, String uid) {
+    /*public MutableLiveData<ReservationCancelResponse> setBookingPark(String mobileNo, String uid) {
         MutableLiveData<ReservationCancelResponse> data = new MutableLiveData<>();
         request.setBookingPark(mobileNo, uid).enqueue(new Callback<ReservationCancelResponse>() {
             @Override
@@ -109,9 +107,9 @@ public class Repository {
             }
         });
         return data;
-    }
+    }*/
 
-    public MutableLiveData<BookingParkStatusResponse> getBookingParkStatus(String mobileNo) {
+    /*public MutableLiveData<BookingParkStatusResponse> getBookingParkStatus(String mobileNo) {
         MutableLiveData<BookingParkStatusResponse> data = new MutableLiveData<>();
         request.getBookingParkStatus(mobileNo).enqueue(new Callback<BookingParkStatusResponse>() {
             @Override
@@ -135,5 +133,5 @@ public class Repository {
             }
         });
         return data;
-    }
+    }*/
 }
