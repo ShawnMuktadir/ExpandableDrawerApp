@@ -23,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.ViewCompat;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -34,8 +35,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
@@ -43,12 +42,10 @@ import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.data.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.data.model.response.parkingSlot.ParkingSlotResponse;
 import www.fiberathome.com.parkingapp.data.model.response.sensors.SensorArea;
-import www.fiberathome.com.parkingapp.data.source.api.ApiClient;
-import www.fiberathome.com.parkingapp.data.source.api.ApiService;
-import www.fiberathome.com.parkingapp.data.source.api.AppConfig;
 import www.fiberathome.com.parkingapp.databinding.FragmentParkingBinding;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
+import www.fiberathome.com.parkingapp.ui.home.HomeViewModel;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
@@ -85,6 +82,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
     private double endLng = 0.0;
     private double fetchDistance = 0.0;
 
+    private HomeViewModel homeViewModel;
     FragmentParkingBinding binding;
 
     public ParkingFragment() {
@@ -112,6 +110,7 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         context = (ParkingActivity) getActivity();
+        homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         setListeners();
 
         if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
@@ -270,68 +269,55 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
             Timber.e("onConnectedLocation -> %s", onConnectedLocation);
         }
 
-        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<ParkingSlotResponse> call = request.getParkingSlots();
-        call.enqueue(new Callback<ParkingSlotResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<ParkingSlotResponse> call,
-                                   @NonNull retrofit2.Response<ParkingSlotResponse> response) {
-                hideLoading();
-                if (response.body() != null) {
-                    list = response.body().getSensors();
-                    parkingSlotResponse = response.body();
-                    parkingSlotList = parkingSlotResponse.getSensors();
-                    if (parkingSlotList != null) {
-                        for (List<String> baseStringList : parkingSlotList) {
-                            for (int i = 0; i < baseStringList.size(); i++) {
+        homeViewModel.initFetchParkingSlotSensors();
+        homeViewModel.getParkingSlotResponseLiveData().observe(context, parkingSlotResponse -> {
+            hideLoading();
+            if (parkingSlotResponse != null) {
+                list = parkingSlotResponse.getSensors();
+                parkingSlotList = parkingSlotResponse.getSensors();
+                if (parkingSlotList != null) {
+                    for (List<String> baseStringList : parkingSlotList) {
+                        for (int i = 0; i < baseStringList.size(); i++) {
 
-                                if (i == 1) {
-                                    parkingArea = baseStringList.get(i);
-                                }
-
-                                if (i == 0) {
-                                    placeId = baseStringList.get(i);
-                                }
-
-                                if (i == 2) {
-                                    endLat = Double.parseDouble(baseStringList.get(i).trim());
-                                }
-
-                                if (i == 3) {
-                                    endLng = Double.parseDouble(baseStringList.get(i).trim());
-                                }
-
-                                if (i == 4) {
-                                    count = baseStringList.get(i);
-                                }
-
-                                fetchDistance = MathUtils.getInstance().calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
-                                        endLat, endLng);
-
-                                if (fetchDistance > 1.9) {
-                                    fetchDistance = fetchDistance + 2;
-                                } else if (fetchDistance < 1.9 && fetchDistance > 1) {
-                                    fetchDistance = fetchDistance + 1;
-                                } else {
-                                    fetchDistance = fetchDistance + 0.5;
-                                }
+                            if (i == 1) {
+                                parkingArea = baseStringList.get(i);
                             }
 
-                            SensorArea sensorArea = new SensorArea(parkingArea, placeId, endLat, endLng,
-                                    count, null, fetchDistance);
-                            sensorAreaArrayList.add(sensorArea);
-                        }
-                        Collections.sort(sensorAreaArrayList, (c1, c2) -> Double.compare(c1.getDistance(), c2.getDistance()));
-                        setFragmentControls(sensorAreaArrayList);
-                    }
-                }
-            }
+                            if (i == 0) {
+                                placeId = baseStringList.get(i);
+                            }
 
-            @Override
-            public void onFailure(@NonNull Call<ParkingSlotResponse> call, @NonNull Throwable t) {
-                Timber.e("onFailure -> %s", t.getMessage());
-                hideLoading();
-                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+                            if (i == 2) {
+                                endLat = Double.parseDouble(baseStringList.get(i).trim());
+                            }
+
+                            if (i == 3) {
+                                endLng = Double.parseDouble(baseStringList.get(i).trim());
+                            }
+
+                            if (i == 4) {
+                                count = baseStringList.get(i);
+                            }
+
+                            fetchDistance = MathUtils.getInstance().calculateDistance(onConnectedLocation.getLatitude(), onConnectedLocation.getLongitude(),
+                                    endLat, endLng);
+
+                            if (fetchDistance > 1.9) {
+                                fetchDistance = fetchDistance + 2;
+                            } else if (fetchDistance < 1.9 && fetchDistance > 1) {
+                                fetchDistance = fetchDistance + 1;
+                            } else {
+                                fetchDistance = fetchDistance + 0.5;
+                            }
+                        }
+
+                        SensorArea sensorArea = new SensorArea(parkingArea, placeId, endLat, endLng,
+                                count, null, fetchDistance);
+                        sensorAreaArrayList.add(sensorArea);
+                    }
+                    Collections.sort(sensorAreaArrayList, (c1, c2) -> Double.compare(c1.getDistance(), c2.getDistance()));
+                    setFragmentControls(sensorAreaArrayList);
+                }
             }
         });
     }

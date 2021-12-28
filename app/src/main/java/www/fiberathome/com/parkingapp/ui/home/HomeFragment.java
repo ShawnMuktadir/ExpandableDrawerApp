@@ -1092,56 +1092,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
                 }
             }
-        /*ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<ParkingSlotResponse> call = request.getParkingSlots();
-        call.enqueue(new Callback<ParkingSlotResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<ParkingSlotResponse> call,
-                                   @NonNull retrofit2.Response<ParkingSlotResponse> response) {
-                hideLoading();
-                stopShimmer();
-                if (response.body() != null) {
-                    List<List<String>> parkingSlotList = response.body().getSensors();
-                    if (parkingSlotList != null) {
-                        for (List<String> baseStringList : parkingSlotList) {
-                            for (int i = 0; i < baseStringList.size(); i++) {
-                                if (i == 1) {
-                                    parkingArea = baseStringList.get(i);
-                                }
-                                if (i == 0) {
-                                    placeId = baseStringList.get(i);
-                                }
-                                if (i == 2) {
-                                    endLat = Double.parseDouble(baseStringList.get(i).trim());
-                                }
-                                if (i == 3) {
-                                    endLng = Double.parseDouble(baseStringList.get(i).trim());
-                                }
-                                if (i == 4) {
-                                    count = baseStringList.get(i);
-                                }
-                            }
-                            SensorArea sensorArea = createSensorAreaObj(parkingArea, placeId, endLat, endLng, count, null);
-                            sensorAreaArrayList.add(sensorArea);
-                        }
-
-                    Collections.sort(sensorAreaArrayList, (c1, c2) -> Double.compare(c1.getDistance(), c2.getDistance()));
-
-                    for (SensorArea sensorArea : sensorAreaArrayList) {
-                        renderParkingSensors(sensorArea, location);
-                    }
-                    setBottomSheetFragmentControls(bookingSensorsArrayListGlobal);
-                    Preferences.getInstance(context).saveSensorAreaList(context, sensorAreaArrayList);
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<ParkingSlotResponse> call, @NonNull Throwable t) {
-                Timber.e("onFailure -> %s", t.getMessage());
-                hideLoading();
-                t.getCause();
-            }
-        });*/
         });
     }
 
