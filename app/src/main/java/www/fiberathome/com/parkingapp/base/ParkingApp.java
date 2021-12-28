@@ -50,9 +50,8 @@ public class ParkingApp extends Application implements LifecycleObserver {
 
         initTimber();
 
-        //firebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
-
-        //setAppDefaults();
+        firebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
+//        setAppDefaults();
 
         if (ConnectivityUtils.getInstance().isGPSEnabled(getApplicationContext()) && !getClass().getSimpleName().equalsIgnoreCase(SplashActivity.class.getSimpleName())) {
             initForceUpgradeManager();
