@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.data.model.response.termsCondition;
+package www.fiberathome.com.parkingapp.data.model.response.termsCondition.privacyPolicy;
 
 import android.os.Parcel;
 import android.os.Parcelable;

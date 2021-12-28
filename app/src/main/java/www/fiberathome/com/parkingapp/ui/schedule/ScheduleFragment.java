@@ -29,9 +29,6 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.adapter.UniversalSpinnerAdapter;
@@ -39,13 +36,10 @@ import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.data.model.Spinner;
 import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
-import www.fiberathome.com.parkingapp.data.model.response.booking.ReservationResponse;
-import www.fiberathome.com.parkingapp.data.model.response.booking.TimeSlotResponse;
+import www.fiberathome.com.parkingapp.data.model.response.reservation.ReservationResponse;
+import www.fiberathome.com.parkingapp.data.model.response.reservation.TimeSlotResponse;
 import www.fiberathome.com.parkingapp.data.model.response.vehicle_list.UserVehicleListResponse;
 import www.fiberathome.com.parkingapp.data.model.response.vehicle_list.Vehicle;
-import www.fiberathome.com.parkingapp.data.source.api.ApiClient;
-import www.fiberathome.com.parkingapp.data.source.api.ApiService;
-import www.fiberathome.com.parkingapp.data.source.api.AppConfig;
 import www.fiberathome.com.parkingapp.databinding.FragmentScheduleBinding;
 import www.fiberathome.com.parkingapp.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
@@ -424,92 +418,61 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
 
     private void getUserVehicleList(String mobileNo) {
         showLoading(context);
-        ApiService service = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<UserVehicleListResponse> bookedResponseCall = service.getUserVehicleList(mobileNo);
-        bookedResponseCall.enqueue(new Callback<UserVehicleListResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<UserVehicleListResponse> call, @NonNull Response<UserVehicleListResponse> response) {
-                hideLoading();
-                getTimeSlots();
-                Timber.e("UserVehicleListResponse -> %s", new Gson().toJson(response.body()));
-                if (response.body() != null && !response.body().getError()) {
-                    if (response.isSuccessful()) {
-                        UserVehicleListResponse vehicleListResponse = response.body();
-                        vehicleList = vehicleListResponse.getVehicle();
-                        if (vehicleList != null && !vehicleList.isEmpty()) {
-                            for (Vehicle userVehicleList : vehicleList) {
-                                try {
-                                    String vehicleNo = userVehicleList.getVehicleNo();
-                                    int priority = Integer.parseInt(userVehicleList.getPriority());
-                                    userVehicleDataList.add(new Spinner(priority, vehicleNo));
-                                } catch (Exception e) {
-                                    Timber.e(e.getCause());
-                                }
-                            }
-                            Timber.e("userVehicleDataList _. %s", new Gson().toJson(userVehicleDataList));
-                            setVehicleListSpinner(userVehicleDataList);
-                        } else {
-                            Timber.e("else called");
-                        }
-                    } else {
-                        Timber.e("response -> %s", new Gson().toJson(response.body()));
-                    }
-                }
-            }
 
-            @Override
-            public void onFailure
-                    (@NonNull Call<UserVehicleListResponse> call, @NonNull Throwable errors) {
-                Timber.e("Throwable Errors: -> %s", errors.toString());
-                hideLoading();
-                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.something_went_wrong));
+        reservationViewModel.initUserVehicleList(mobileNo);
+        reservationViewModel.getUserVehicleListMutableLiveDat().observe(requireActivity(), (@NonNull UserVehicleListResponse response) -> {
+            hideLoading();
+            getTimeSlots();
+            if (!response.getError()) {
+                vehicleList = response.getVehicle();
+                if (vehicleList != null && !vehicleList.isEmpty()) {
+                    for (Vehicle userVehicleList : vehicleList) {
+                        try {
+                            String vehicleNo = userVehicleList.getVehicleNo();
+                            int priority = Integer.parseInt(userVehicleList.getPriority());
+                            userVehicleDataList.add(new Spinner(priority, vehicleNo));
+                        } catch (Exception e) {
+                            Timber.e(e.getCause());
+                        }
+                    }
+                    Timber.e("userVehicleDataList _. %s", new Gson().toJson(userVehicleDataList));
+                    setVehicleListSpinner(userVehicleDataList);
+                } else {
+                    Timber.e("else called");
+                }
             }
         });
     }
 
     private void getTimeSlots() {
         showLoading(context);
-        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<TimeSlotResponse> call = request.getTimeSlot();
-        call.enqueue(new Callback<TimeSlotResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<TimeSlotResponse> call,
-                                   @NonNull retrofit2.Response<TimeSlotResponse> response) {
-                hideLoading();
-                if (response.isSuccessful()) {
-                    if (response.body() != null) {
-                        if (!response.body().getError()) {
-                            if (response.body().getSensors() != null) {
-                                sensorAreaStatusList = response.body().getSensors();
-                                if (sensorAreaStatusList != null) {
-                                    for (List<String> baseStringList : sensorAreaStatusList) {
-                                        for (int i = 0; i < baseStringList.size(); i++) {
-                                            if (i == 1) {
-                                                time = baseStringList.get(i);
-                                            }
 
-                                            if (i == 2) {
-                                                timeValue = baseStringList.get(i);
-                                            }
-                                        }
-                                        try {
-                                            departureTimeDataList.add(new Spinner(Double.parseDouble(timeValue), time));
-                                        } catch (NumberFormatException e) {
-                                            e.getCause();
-                                        }
-                                    }
-                                    setDepartureSpinner(departureTimeDataList);
+        reservationViewModel.initTimeSlotList();
+        reservationViewModel.getTimeSlotListMutableLiveDat().observe(requireActivity(), (@NonNull TimeSlotResponse response) -> {
+            hideLoading();
+            if (!response.getError()) {
+                if (response.getSensors() != null) {
+                    sensorAreaStatusList = response.getSensors();
+                    if (sensorAreaStatusList != null) {
+                        for (List<String> baseStringList : sensorAreaStatusList) {
+                            for (int i = 0; i < baseStringList.size(); i++) {
+                                if (i == 1) {
+                                    time = baseStringList.get(i);
+                                }
+
+                                if (i == 2) {
+                                    timeValue = baseStringList.get(i);
                                 }
                             }
+                            try {
+                                departureTimeDataList.add(new Spinner(Double.parseDouble(timeValue), time));
+                            } catch (NumberFormatException e) {
+                                e.getCause();
+                            }
                         }
+                        setDepartureSpinner(departureTimeDataList);
                     }
                 }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<TimeSlotResponse> call, @NonNull Throwable t) {
-                Timber.e("onFailure -> %s", t.getMessage());
-                hideLoading();
             }
         });
     }

@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.data.model.response.booking;
+package www.fiberathome.com.parkingapp.data.model.response.reservation;
 
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class BookingSensors {

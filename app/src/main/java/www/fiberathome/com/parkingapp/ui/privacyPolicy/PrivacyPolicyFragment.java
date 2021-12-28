@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,16 +20,11 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.data.model.response.termsCondition.TermsCondition;
 import www.fiberathome.com.parkingapp.data.model.response.termsCondition.TermsConditionResponse;
-import www.fiberathome.com.parkingapp.data.source.api.ApiClient;
-import www.fiberathome.com.parkingapp.data.source.api.ApiService;
-import www.fiberathome.com.parkingapp.data.source.api.AppConfig;
 import www.fiberathome.com.parkingapp.databinding.FragmentPrivacyPolicyBinding;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
@@ -45,6 +41,7 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
     private String title, description, date = null;
 
     private PrivacyPolicyActivity context;
+    private PrivacyPolicyViewModel privacyPolicyViewModel;
     FragmentPrivacyPolicyBinding binding;
 
     public PrivacyPolicyFragment() {
@@ -82,6 +79,7 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         context = (PrivacyPolicyActivity) getActivity();
+        privacyPolicyViewModel = new ViewModelProvider(this).get(PrivacyPolicyViewModel.class);
         if (ConnectivityUtils.getInstance().checkInternet(context)) {
             fetchPrivacyPolicy();
         } else {
@@ -92,48 +90,38 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
     private void fetchPrivacyPolicy() {
         Timber.e("fetchPrivacyPolicy called");
         showLoading(context);
-        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<TermsConditionResponse> call = request.getTermCondition();
-        call.enqueue(new Callback<TermsConditionResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<TermsConditionResponse> call,
-                                   @NonNull retrofit2.Response<TermsConditionResponse> response) {
+
+        privacyPolicyViewModel.getTermCondition();
+        privacyPolicyViewModel.getTermConditionMutableData().observe(context, (TermsConditionResponse termsConditionResponse) -> {
+            hideLoading();
+            if (termsConditionResponse != null) {
                 hideLoading();
-                if (response.body() != null) {
-                    hideLoading();
-                    list = response.body().getTermsCondition();
-                    Timber.e("list -> %s", new Gson().toJson(list));
-                    termsConditionResponse = response.body();
+                list = termsConditionResponse.getTermsCondition();
+                Timber.e("list -> %s", new Gson().toJson(list));
 
-                    termConditionList = termsConditionResponse.getTermsCondition();
+                termConditionList = termsConditionResponse.getTermsCondition();
 
-                    if (termConditionList != null) {
-                        TermsCondition termsCondition = null;
-                        for (int i = 0; i < termConditionList.size(); i++) {
-                            title = termConditionList.get(i).get(6).trim();
-                            description = termConditionList.get(i).get(2).trim();
-                            date = termConditionList.get(i).get(4).trim();
-                            if (termsCondition != null) {
-                                if (termsCondition.getTitle().equalsIgnoreCase(title)) {
-                                    String tempDescription = termsCondition.getDescription() + " \n" + description;
-                                    termsCondition.setDescription(tempDescription);
-                                    termsConditionArrayList.remove(termsConditionArrayList.size() - 1);
-                                } else {
-                                    termsCondition = new TermsCondition(title, description, date);
-                                }
+                if (termConditionList != null) {
+                    TermsCondition termsCondition = null;
+                    for (int i = 0; i < termConditionList.size(); i++) {
+                        title = termConditionList.get(i).get(6).trim();
+                        description = termConditionList.get(i).get(2).trim();
+                        date = termConditionList.get(i).get(4).trim();
+                        if (termsCondition != null) {
+                            if (termsCondition.getTitle().equalsIgnoreCase(title)) {
+                                String tempDescription = termsCondition.getDescription() + " \n" + description;
+                                termsCondition.setDescription(tempDescription);
+                                termsConditionArrayList.remove(termsConditionArrayList.size() - 1);
                             } else {
                                 termsCondition = new TermsCondition(title, description, date);
                             }
-                            termsConditionArrayList.add(termsCondition);
+                        } else {
+                            termsCondition = new TermsCondition(title, description, date);
                         }
-                        setTermsConditions(termsConditionArrayList);
+                        termsConditionArrayList.add(termsCondition);
                     }
+                    setTermsConditions(termsConditionArrayList);
                 }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<TermsConditionResponse> call, @NonNull Throwable t) {
-                Timber.e("onFailure -> %s", t.getMessage());
             }
         });
     }

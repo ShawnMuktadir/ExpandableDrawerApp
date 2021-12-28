@@ -2,7 +2,6 @@ package www.fiberathome.com.parkingapp.ui.profile;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -16,7 +15,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -25,19 +24,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import timber.log.Timber;
+import www.fiberathome.com.parkingapp.BuildConfig;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.adapter.UniversalSpinnerAdapter;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.data.model.response.global.BaseResponse;
 import www.fiberathome.com.parkingapp.data.model.user.User;
-import www.fiberathome.com.parkingapp.data.source.api.ApiClient;
-import www.fiberathome.com.parkingapp.data.source.api.ApiService;
-import www.fiberathome.com.parkingapp.data.source.api.AppConfig;
 import www.fiberathome.com.parkingapp.databinding.BottomSheetDialogAddVehicleBinding;
 import www.fiberathome.com.parkingapp.databinding.FragmentProfileBinding;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
@@ -52,10 +46,6 @@ import www.fiberathome.com.parkingapp.utils.Validator;
 @SuppressLint("NonConstantResourceId")
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class ProfileFragment extends BaseFragment implements IOnBackPressListener {
-
-    private ProfileActivity context;
-    FragmentProfileBinding binding;
-
     private String vehicleClass = "";
     private String vehicleDiv = "";
     private long classId, divId;
@@ -63,6 +53,10 @@ public class ProfileFragment extends BaseFragment implements IOnBackPressListene
     private List<www.fiberathome.com.parkingapp.data.model.Spinner> classDataList;
     private List<www.fiberathome.com.parkingapp.data.model.Spinner> classDivList;
     private String licencePlateInfo = " ";
+
+    private ProfileActivity context;
+    private ProfileViewModel profileViewModel;
+    FragmentProfileBinding binding;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -90,6 +84,7 @@ public class ProfileFragment extends BaseFragment implements IOnBackPressListene
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         context = (ProfileActivity) getActivity();
+        profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
         setListeners();
     }
 
@@ -161,11 +156,11 @@ public class ProfileFragment extends BaseFragment implements IOnBackPressListene
         if (user.getImage() != null && !user.getImage().equals("")) {
             try {
                 if (!user.getImage().endsWith(".jpg")) {
-                    String url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
+                    String url = BuildConfig.IMAGES_URL + user.getImage() + ".jpg";
                     Timber.e("Image URL -> %s", url);
                     Glide.with(context).load(url).placeholder(R.drawable.blank_profile).dontAnimate().into(binding.ivUserProfilePic);
                 } else {
-                    String url = AppConfig.IMAGES_URL + user.getImage();
+                    String url = BuildConfig.IMAGES_URL + user.getImage();
                     Timber.e("Image URL -> %s", url);
                     Glide.with(context).load(url).placeholder(R.drawable.blank_profile).dontAnimate().into(binding.ivUserProfilePic);
                 }
@@ -176,11 +171,11 @@ public class ProfileFragment extends BaseFragment implements IOnBackPressListene
         if (user.getVehicleImage() != null && !user.getVehicleImage().equals("")) {
             try {
                 if (!user.getVehicleImage().endsWith(".jpg")) {
-                    String vehicleUrl = AppConfig.IMAGES_URL + user.getVehicleImage() + ".jpg";
+                    String vehicleUrl = BuildConfig.IMAGES_URL + user.getVehicleImage() + ".jpg";
                     Timber.e("Vehicle Image URL -> %s", vehicleUrl);
                     Glide.with(context).load(vehicleUrl).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(binding.ivVehicleProfilePlatePreview);
                 } else {
-                    String vehicleUrl = AppConfig.IMAGES_URL + user.getVehicleImage();
+                    String vehicleUrl = BuildConfig.IMAGES_URL + user.getVehicleImage();
                     Timber.e("Vehicle Image URL -> %s", vehicleUrl);
                     Glide.with(context).load(vehicleUrl).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(binding.ivVehicleProfilePlatePreview);
                 }
@@ -529,25 +524,11 @@ public class ProfileFragment extends BaseFragment implements IOnBackPressListene
 
     private void submitAddVehicle(String mobileNo, String licencePlateInfo) {
         showLoading(context);
-        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<BaseResponse> call = request.setUserVehicle(mobileNo, licencePlateInfo);
-        call.enqueue(new Callback<BaseResponse>() {
-            @RequiresApi(api = Build.VERSION_CODES.O)
-            @Override
-            public void onResponse(@NonNull Call<BaseResponse> call, @NonNull Response<BaseResponse> response) {
-                hideLoading();
-                if (response.isSuccessful()) {
-                    if (response.body() != null) {
-                        ToastUtils.getInstance().showToastMessage(context, response.body().getMessage());
-                    }
-                }
-            }
 
-            @Override
-            public void onFailure(@NonNull Call<BaseResponse> call, @NonNull Throwable t) {
-                Timber.e("onFailure -> %s", t.getMessage());
-                hideLoading();
-            }
+        profileViewModel.initAddVehicle(mobileNo, licencePlateInfo);
+        profileViewModel.getAddVehicleMutableData().observe(requireActivity(), (@NonNull BaseResponse response) -> {
+            hideLoading();
+            ToastUtils.getInstance().showToastMessage(context, response.getMessage());
         });
     }
 }

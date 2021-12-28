@@ -7,9 +7,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
-import www.fiberathome.com.parkingapp.data.model.response.booking.SensorAreaStatusResponse;
 import www.fiberathome.com.parkingapp.data.model.response.global.ErrorResponse;
 import www.fiberathome.com.parkingapp.data.model.response.parkingSlot.ParkingSlotResponse;
+import www.fiberathome.com.parkingapp.data.model.response.reservation.SensorAreaStatusResponse;
 import www.fiberathome.com.parkingapp.data.source.APIClient;
 import www.fiberathome.com.parkingapp.utils.ErrorUtils;
 

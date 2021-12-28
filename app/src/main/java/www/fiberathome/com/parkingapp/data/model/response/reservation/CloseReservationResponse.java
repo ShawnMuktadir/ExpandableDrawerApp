@@ -1,10 +1,10 @@
-package www.fiberathome.com.parkingapp.data.model.response.booking;
+package www.fiberathome.com.parkingapp.data.model.response.reservation;
 
 import com.google.gson.annotations.SerializedName;
 
 import www.fiberathome.com.parkingapp.data.model.response.global.BaseResponse;
 
-public class ReservationCancelResponse extends BaseResponse {
+public class CloseReservationResponse extends BaseResponse {
 
     @SerializedName("uid")
     private String uid;

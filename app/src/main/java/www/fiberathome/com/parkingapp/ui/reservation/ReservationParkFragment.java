@@ -26,6 +26,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -50,20 +51,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.data.model.BookedPlace;
 import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
-import www.fiberathome.com.parkingapp.data.model.response.booking.BookingParkStatusResponse;
-import www.fiberathome.com.parkingapp.data.model.response.booking.CloseReservationResponse;
-import www.fiberathome.com.parkingapp.data.source.api.ApiClient;
-import www.fiberathome.com.parkingapp.data.source.api.ApiService;
-import www.fiberathome.com.parkingapp.data.source.api.AppConfig;
+import www.fiberathome.com.parkingapp.data.model.response.reservation.BookingParkStatusResponse;
+import www.fiberathome.com.parkingapp.data.model.response.reservation.CloseReservationResponse;
 import www.fiberathome.com.parkingapp.databinding.FragmentBookingParkBinding;
 import www.fiberathome.com.parkingapp.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
@@ -92,6 +87,7 @@ public class ReservationParkFragment extends BaseFragment implements OnMapReadyC
     protected Marker mCurrLocationMarker;
 
     private FragmentBookingParkBinding binding;
+    private ReservationViewModel reservationViewModel;
     private FusedLocationProviderClient mFusedLocationClient;
     private BaseActivity context;
 
@@ -159,6 +155,7 @@ public class ReservationParkFragment extends BaseFragment implements OnMapReadyC
         } else if (getActivity() instanceof ScheduleActivity) {
             context = (ScheduleActivity) getActivity();
         }
+        reservationViewModel = new ViewModelProvider(this).get(ReservationViewModel.class);
         mHandlerTask.run();
         setBroadcast();
         listener = (FragmentChangeListener) getActivity();
@@ -421,52 +418,42 @@ public class ReservationParkFragment extends BaseFragment implements OnMapReadyC
             spotUid = sensors.getSpotId();
             reservationId = sensors.getId();
         }
-        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<CloseReservationResponse> call = request.endReservation(Preferences.getInstance(context).getUser().getMobileNo(), spotUid, reservationId);
-        call.enqueue(new Callback<CloseReservationResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<CloseReservationResponse> call, @NonNull Response<CloseReservationResponse> response) {
-                hideLoading();
+
+        reservationViewModel.initCloseReservatn(Preferences.getInstance(context).getUser().getMobileNo(), spotUid, reservationId);
+        reservationViewModel.getCloseReservationMutableLiveDat().observe(requireActivity(), (@NonNull CloseReservationResponse response) -> {
+            hideLoading();
+            if (!response.getError()) {
                 if (isAdded() && countDownTimer != null) {
                     countDownTimer.cancel();
                 }
                 mHandler.removeCallbacks(mHandlerTask);
                 sensors = null;
-                if (response.isSuccessful()) {
-                    if (response.body() != null) {
-                        Preferences.getInstance(context).clearBooking();
-                        ApplicationUtils.stopBookingTrackService(context);
-                        DialogUtils.getInstance().alertDialog(context,
-                                context,
-                                context.getResources().getString(R.string.reservation_closed_successfully),
-                                context.getResources().getString(R.string.ok), "",
-                                new DialogUtils.DialogClickListener() {
-                                    @Override
-                                    public void onPositiveClick() {
-                                        if (getActivity() instanceof HomeActivity) {
-                                            listener.fragmentChange(HomeFragment.newInstance());
-                                        } else if (getActivity() instanceof ReservationActivity) {
-                                            context.startActivity(HomeActivity.class);
-                                        } else if (getActivity() instanceof ScheduleActivity) {
-                                            context.startActivity(HomeActivity.class);
-                                        }
-                                    }
+                Preferences.getInstance(context).clearBooking();
+                ApplicationUtils.stopBookingTrackService(context);
+                DialogUtils.getInstance().alertDialog(context,
+                        context,
+                        context.getResources().getString(R.string.reservation_closed_successfully),
+                        context.getResources().getString(R.string.ok), "",
+                        new DialogUtils.DialogClickListener() {
+                            @Override
+                            public void onPositiveClick() {
+                                if (getActivity() instanceof HomeActivity) {
+                                    listener.fragmentChange(HomeFragment.newInstance());
+                                } else if (getActivity() instanceof ReservationActivity) {
+                                    context.startActivity(HomeActivity.class);
+                                } else if (getActivity() instanceof ScheduleActivity) {
+                                    context.startActivity(HomeActivity.class);
+                                }
+                            }
 
-                                    @Override
-                                    public void onNegativeClick() {
-                                    }
-                                }).show();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<CloseReservationResponse> call, @NonNull Throwable t) {
-                Timber.e("onFailure -> %s", t.getMessage());
+                            @Override
+                            public void onNegativeClick() {
+                            }
+                        }).show();
+            } else {
                 if (isAdded() && countDownTimer != null) {
                     countDownTimer.cancel();
                 }
-                hideLoading();
             }
         });
     }

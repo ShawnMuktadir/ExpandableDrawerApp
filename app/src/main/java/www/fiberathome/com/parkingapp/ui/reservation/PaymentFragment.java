@@ -39,10 +39,8 @@ import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.data.model.BookedPlace;
 import www.fiberathome.com.parkingapp.data.model.data.preference.LanguagePreferences;
 import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
-import www.fiberathome.com.parkingapp.data.model.response.booking.ReservationResponse;
-import www.fiberathome.com.parkingapp.data.source.api.ApiClient;
-import www.fiberathome.com.parkingapp.data.source.api.ApiService;
-import www.fiberathome.com.parkingapp.data.source.api.AppConfig;
+import www.fiberathome.com.parkingapp.data.model.response.reservation.BookingParkStatusResponse;
+import www.fiberathome.com.parkingapp.data.model.response.reservation.ReservationResponse;
 import www.fiberathome.com.parkingapp.databinding.BottomSheetDialogScratchCardBinding;
 import www.fiberathome.com.parkingapp.databinding.FragmentPaymentBinding;
 import www.fiberathome.com.parkingapp.listener.FragmentChangeListener;
@@ -386,57 +384,30 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
 
     private void setBookingPark(String mobileNo, String uid) {
         showLoading(context);
-        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        /*Call<ReservationCancelResponse> call = request.setBookingPark(mobileNo, uid);
-        call.enqueue(new Callback<ReservationCancelResponse>() {
-            @RequiresApi(api = Build.VERSION_CODES.O)
-            @Override
-            public void onResponse(@NonNull Call<ReservationCancelResponse> call, @NonNull Response<ReservationCancelResponse> response) {
-                hideLoading();
-                if (response.isSuccessful()) {
-                    if (response.body() != null) {
-                        BookedPlace mBookedPlace = Preferences.getInstance(context).getBooked();
-                        mBookedPlace.setCarParked(true);
-                        Preferences.getInstance(context).setBooked(mBookedPlace);
-                        ApplicationUtils.stopBookingTrackService(context);
-                        getBookingParkStatus(Preferences.getInstance(context).getUser().getMobileNo());
-                    }
-                }
-            }
 
-            @Override
-            public void onFailure(@NonNull Call<ReservationCancelResponse> call, @NonNull Throwable t) {
-                Timber.e("onFailure -> %s", t.getMessage());
-                hideLoading();
+        reservationViewModel.initReservation(mobileNo, uid);
+        reservationViewModel.setParkedCar().observe(context, reservationCancelResponse -> {
+            hideLoading();
+            if (!reservationCancelResponse.getError()) {
+                BookedPlace mBookedPlace = Preferences.getInstance(context).getBooked();
+                mBookedPlace.setCarParked(true);
+                Preferences.getInstance(context).setBooked(mBookedPlace);
+                ApplicationUtils.stopBookingTrackService(context);
+                getBookingParkStatus(Preferences.getInstance(context).getUser().getMobileNo());
             }
-        });*/
+        });
     }
 
     private void getBookingParkStatus(String mobileNo) {
         showLoading(context);
-        /*ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<BookingParkStatusResponse> call = request.getBookingParkStatus(mobileNo);
-        call.enqueue(new Callback<BookingParkStatusResponse>() {
-            @RequiresApi(api = Build.VERSION_CODES.O)
-            @Override
-            public void onResponse(@NonNull Call<BookingParkStatusResponse> call, @NonNull Response<BookingParkStatusResponse> response) {
-                hideLoading();
-                if (response.isSuccessful()) {
-                    if (response.body() != null) {
-                        if (response.body().getSensors() != null) {
-                            BookingParkStatusResponse.Sensors sensors = response.body().getSensors();
-                            listener.fragmentChange(ReservationParkFragment.newInstance(sensors));
-                        }
-                    }
-                }
-            }
 
-            @Override
-            public void onFailure(@NonNull Call<BookingParkStatusResponse> call, @NonNull Throwable t) {
-                Timber.e("onFailure -> %s", t.getMessage());
-                hideLoading();
+        reservationViewModel.initBookingParkStatus(mobileNo);
+        reservationViewModel.getBookingParkStatus().observe(context, bookingParkStatusResponse -> {
+            hideLoading();
+            if (bookingParkStatusResponse.getSensors() != null) {
+                BookingParkStatusResponse.Sensors sensors = bookingParkStatusResponse.getSensors();
+                listener.fragmentChange(ReservationParkFragment.newInstance(sensors));
             }
-        });*/
+        });
     }
-
 }

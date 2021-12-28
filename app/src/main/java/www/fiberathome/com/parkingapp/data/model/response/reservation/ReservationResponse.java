@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.data.model.response.booking;
+package www.fiberathome.com.parkingapp.data.model.response.reservation;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

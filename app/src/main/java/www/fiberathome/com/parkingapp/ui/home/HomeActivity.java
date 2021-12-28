@@ -37,7 +37,7 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.data.model.data.preference.LanguagePreferences;
 import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.data.model.data.preference.SharedData;
-import www.fiberathome.com.parkingapp.data.model.response.booking.BookingParkStatusResponse;
+import www.fiberathome.com.parkingapp.data.model.response.reservation.BookingParkStatusResponse;
 import www.fiberathome.com.parkingapp.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.ui.NavigationActivity;
 import www.fiberathome.com.parkingapp.ui.followUs.FollowUsFragment;

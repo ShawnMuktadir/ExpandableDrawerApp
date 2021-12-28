@@ -51,7 +51,7 @@ import www.fiberathome.com.parkingapp.ui.helper.ProgressView;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.login.LoginActivity;
 import www.fiberathome.com.parkingapp.ui.privacyPolicy.PrivacyPolicyActivity;
-import www.fiberathome.com.parkingapp.ui.termsConditions.TermsConditionsActivity;
+import www.fiberathome.com.parkingapp.ui.privacyPolicy.termsConditions.TermsConditionsActivity;
 import www.fiberathome.com.parkingapp.ui.verifyPhone.VerifyPhoneActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DateTimeUtils;

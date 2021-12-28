@@ -26,6 +26,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -42,18 +45,13 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.data.model.data.Constants;
 import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
-import www.fiberathome.com.parkingapp.data.model.response.booking.CloseReservationResponse;
-import www.fiberathome.com.parkingapp.data.source.api.ApiClient;
-import www.fiberathome.com.parkingapp.data.source.api.ApiService;
-import www.fiberathome.com.parkingapp.data.source.api.AppConfig;
+import www.fiberathome.com.parkingapp.data.model.response.reservation.CloseReservationResponse;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
+import www.fiberathome.com.parkingapp.ui.reservation.ReservationViewModel;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 
 @SuppressLint("SimpleDateFormat")
@@ -77,6 +75,8 @@ public class BookingService extends Service {
     private boolean endBookingCalled = false;
     private boolean isServiceStarted = false;
 
+    private ReservationViewModel reservationViewModel;
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -87,6 +87,7 @@ public class BookingService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         context = getApplicationContext();
+        reservationViewModel = new ViewModelProvider((ViewModelStoreOwner) context).get(ReservationViewModel.class);
         String action = intent.getAction();
         if (action != null) {
             switch (action) {
@@ -370,27 +371,18 @@ public class BookingService extends Service {
 
     private void endBooking() {
         endBookingCalled = true;
-        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
         String user = Preferences.getInstance(context).getUser().getMobileNo();
         String bookedUid = Preferences.getInstance(context).getBooked().getBookedUid();
         String reservationId = Preferences.getInstance(context).getBooked().getReservation();
-        Call<CloseReservationResponse> call = request.endReservation(user, bookedUid, reservationId);
-        call.enqueue(new Callback<CloseReservationResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<CloseReservationResponse> call, @NonNull Response<CloseReservationResponse> response) {
-                if (response.isSuccessful()) {
-                    if (response.body() != null) {
-                        Preferences.getInstance(context).isBookingCancelled = true;
-                        Preferences.getInstance(context).clearBooking();
-                        sendNotification(context.getResources().getString(R.string.booked_time), getString(R.string.your_booked_parking_duration_has_ended), true);
-                        Timber.e("Booking closed");
-                    }
-                }
-            }
 
-            @Override
-            public void onFailure(@NonNull Call<CloseReservationResponse> call, @NonNull Throwable t) {
-                Timber.e("onFailure -> %s", t.getMessage());
+        reservationViewModel.initCloseReservatn(user, bookedUid, reservationId);
+        reservationViewModel.getCloseReservationMutableLiveDat().observe((LifecycleOwner) context, (@NonNull CloseReservationResponse response) -> {
+            if (!response.getError()) {
+                Preferences.getInstance(context).isBookingCancelled = true;
+                Preferences.getInstance(context).clearBooking();
+                sendNotification(context.getResources().getString(R.string.booked_time), getString(R.string.your_booked_parking_duration_has_ended), true);
+                Timber.e("Booking closed");
+            } else {
                 endBookingCalled = false;
             }
         });

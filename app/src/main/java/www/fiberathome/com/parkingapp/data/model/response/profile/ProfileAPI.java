@@ -4,6 +4,7 @@ import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.POST;
+import www.fiberathome.com.parkingapp.data.model.response.global.BaseResponse;
 import www.fiberathome.com.parkingapp.data.model.response.login.LoginResponse;
 
 public interface ProfileAPI {
@@ -19,4 +20,9 @@ public interface ProfileAPI {
             @Field("vehicle_image") String vehicleImage,
             @Field("vehicle_image_name") String vehicleImageName
     );
+
+    @FormUrlEncoded
+    @POST("user_vehicle_input.php")
+    Call<BaseResponse> setUserVehicle(@Field("mobile_no") String mobileNo,
+                                      @Field("vehicle_no") String vehicleNo);
 }

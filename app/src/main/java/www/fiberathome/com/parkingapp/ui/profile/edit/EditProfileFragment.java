@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Objects;
 
 import timber.log.Timber;
+import www.fiberathome.com.parkingapp.BuildConfig;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.adapter.UniversalSpinnerAdapter;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
@@ -40,7 +41,6 @@ import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.data.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.data.model.response.login.LoginResponse;
 import www.fiberathome.com.parkingapp.data.model.user.User;
-import www.fiberathome.com.parkingapp.data.source.api.AppConfig;
 import www.fiberathome.com.parkingapp.databinding.FragmentProfileEditBinding;
 import www.fiberathome.com.parkingapp.ui.helper.ProgressView;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
@@ -478,9 +478,9 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
             try {
                 String url;
                 if (!user.getImage().endsWith(".jpg")) {
-                    url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
+                    url = BuildConfig.IMAGES_URL + user.getImage() + ".jpg";
                 } else {
-                    url = AppConfig.IMAGES_URL + user.getImage();
+                    url = BuildConfig.IMAGES_URL + user.getImage();
                 }
                 Timber.e("Image URL -> %s", url);
                 Glide.with(context).load(url).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(binding.imageViewEditProfileImage);
@@ -493,9 +493,9 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
             try {
                 String vehicleUrl;
                 if (!user.getVehicleImage().endsWith(".jpg")) {
-                    vehicleUrl = AppConfig.IMAGES_URL + user.getVehicleImage() + ".jpg";
+                    vehicleUrl = BuildConfig.IMAGES_URL + user.getVehicleImage() + ".jpg";
                 } else {
-                    vehicleUrl = AppConfig.IMAGES_URL + user.getVehicleImage();
+                    vehicleUrl = BuildConfig.IMAGES_URL + user.getVehicleImage();
                 }
                 Timber.e("Vehicle Image URL -> %s", vehicleUrl);
                 Glide.with(context).load(vehicleUrl).placeholder(R.drawable.ic_image_place_holder).dontAnimate().into(binding.ivVehicleEditPlatePreview);
@@ -716,7 +716,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
         showLoading(context);
         showProgress();
 
-        profileViewModel.init(fullName,
+        profileViewModel.initEditProfile(fullName,
                 password,
                 user.getMobileNo(),
                 vehicleNo,
@@ -726,7 +726,7 @@ public class EditProfileFragment extends BaseFragment implements IOnBackPressLis
                 vehicleBitmap != null ? imageToString(vehicleBitmap) :
                         null,
                 (vehicleBitmap != null ? mobileNo + "vehicle_" + DateTimeUtils.getInstance().getCurrentTimeStamp() : ""));
-        profileViewModel.getMutableData().observe(requireActivity(), (@NonNull LoginResponse response) -> {
+        profileViewModel.getEditProfileMutableData().observe(requireActivity(), (@NonNull LoginResponse response) -> {
             hideLoading();
             hideProgress();
             try {

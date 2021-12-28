@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.ui.termsConditions;
+package www.fiberathome.com.parkingapp.ui.privacyPolicy.termsConditions;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;

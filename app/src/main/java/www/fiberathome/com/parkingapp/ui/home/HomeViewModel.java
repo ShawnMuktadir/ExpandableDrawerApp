@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import www.fiberathome.com.parkingapp.data.model.response.booking.SensorAreaStatusResponse;
 import www.fiberathome.com.parkingapp.data.model.response.home.HomeRepository;
 import www.fiberathome.com.parkingapp.data.model.response.parkingSlot.ParkingSlotResponse;
+import www.fiberathome.com.parkingapp.data.model.response.reservation.SensorAreaStatusResponse;
 
 public class HomeViewModel extends ViewModel {
     private MutableLiveData<SensorAreaStatusResponse> sensorAreaStatusResponseMutableLiveData;
