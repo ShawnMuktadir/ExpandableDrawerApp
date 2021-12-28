@@ -51,6 +51,7 @@ import www.fiberathome.com.parkingapp.data.model.data.preference.LanguagePrefere
 import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.data.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.data.model.user.User;
+import www.fiberathome.com.parkingapp.databinding.ActivityNavigationBinding;
 import www.fiberathome.com.parkingapp.ui.booking.BookingActivity;
 import www.fiberathome.com.parkingapp.ui.changePassword.changePassword.ChangePasswordFragment;
 import www.fiberathome.com.parkingapp.ui.followUs.FollowUsActivity;

@@ -22,7 +22,6 @@ import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.Parcelable;
@@ -35,11 +34,12 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -83,7 +83,6 @@ import java.util.Random;
 
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
@@ -92,11 +91,8 @@ import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.data.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.data.model.response.booking.BookingParkStatusResponse;
 import www.fiberathome.com.parkingapp.data.model.response.booking.BookingSensors;
-import www.fiberathome.com.parkingapp.data.model.response.booking.ReservationCancelResponse;
 import www.fiberathome.com.parkingapp.data.model.response.booking.ReservationResponse;
-import www.fiberathome.com.parkingapp.data.model.response.booking.SensorAreaStatusResponse;
 import www.fiberathome.com.parkingapp.data.model.response.global.BaseResponse;
-import www.fiberathome.com.parkingapp.data.model.response.parkingSlot.ParkingSlotResponse;
 import www.fiberathome.com.parkingapp.data.model.response.search.SearchVisitorData;
 import www.fiberathome.com.parkingapp.data.model.response.search.SelectedPlace;
 import www.fiberathome.com.parkingapp.data.model.response.sensors.SensorArea;
@@ -188,6 +184,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private List<LatLng> initialRoutePoints;
     private LatLng origin, parkingSpotLatLng;
 
+    private HomeViewModel homeViewModel;
+
     private HomeActivity context;
     private FragmentChangeListener listener;
     FragmentHomeBinding binding;
@@ -242,6 +240,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         setHasOptionsMenu(false);
         super.onCreate(savedInstanceState);
         context = (HomeActivity) getActivity();
+        homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         if (context != null) {
             FirebaseApp.initializeApp(context);
         }
@@ -956,49 +955,33 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         LocalBroadcastManager.getInstance(context).registerReceiver(bookingEndedReceiver,
                 new IntentFilter("booking_ended"));
     }
-
     private void getSensorAreaStatus() {
         showLoading(context);
-        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<SensorAreaStatusResponse> call = request.getSensorAreaStatus();
-        call.enqueue(new Callback<SensorAreaStatusResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<SensorAreaStatusResponse> call,
-                                   @NonNull retrofit2.Response<SensorAreaStatusResponse> response) {
-                hideLoading();
-                if (response.isSuccessful()) {
-                    if (response.body() != null) {
-                        if (!response.body().getError()) {
-                            if (response.body().getSensorAreaStatusArrayList() != null) {
-                                List<List<String>> sensorStatusList = response.body().getSensorAreaStatusArrayList();
-                                if (sensorStatusList != null) {
-                                    for (List<String> baseStringList : sensorStatusList) {
-                                        for (int i = 0; i < baseStringList.size(); i++) {
-                                            sensorAreaStatusAreaId = baseStringList.get(0);
-                                            sensorAreaStatusTotalSensorCount = baseStringList.get(1);
-                                            sensorAreaStatusTotalOccupied = baseStringList.get(2);
+        homeViewModel.initSensorAreaStatus();
+        homeViewModel.getSensorAreaStatusLiveData().observe(context, sensorAreaStatusResponse -> {
+            hideLoading();
+            if (!sensorAreaStatusResponse.getError()) {
+                if (sensorAreaStatusResponse.getSensorAreaStatusArrayList() != null) {
+                    List<List<String>> sensorStatusList = sensorAreaStatusResponse.getSensorAreaStatusArrayList();
+                    if (sensorStatusList != null) {
+                        for (List<String> baseStringList : sensorStatusList) {
+                            for (int i = 0; i < baseStringList.size(); i++) {
+                                sensorAreaStatusAreaId = baseStringList.get(0);
+                                sensorAreaStatusTotalSensorCount = baseStringList.get(1);
+                                sensorAreaStatusTotalOccupied = baseStringList.get(2);
 
-                                            SensorStatus sensorStatus = new SensorStatus();
-                                            sensorStatus.setAreaId(sensorAreaStatusAreaId);
-                                            sensorStatus.setTotalCount(sensorAreaStatusTotalSensorCount);
-                                            sensorStatus.setOccupiedCount(sensorAreaStatusTotalOccupied);
-                                            sensorStatusArrayList.add(sensorStatus);
-                                        }
-                                    }
-                                    commonBackOperation();
-                                }
-                            } else {
-                                commonBackOperation();
+                                SensorStatus sensorStatus = new SensorStatus();
+                                sensorStatus.setAreaId(sensorAreaStatusAreaId);
+                                sensorStatus.setTotalCount(sensorAreaStatusTotalSensorCount);
+                                sensorStatus.setOccupiedCount(sensorAreaStatusTotalOccupied);
+                                sensorStatusArrayList.add(sensorStatus);
                             }
                         }
+                        commonBackOperation();
                     }
+                } else {
+                    commonBackOperation();
                 }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<SensorAreaStatusResponse> call, @NonNull Throwable t) {
-                Timber.e("onFailure -> %s", t.getMessage());
-                hideLoading();
             }
         });
     }
@@ -1068,56 +1051,43 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         startShimmer();
         bookingSensorsArrayListGlobal.clear();
         sensorAreaArrayList.clear();
-
-        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
-        Call<ParkingSlotResponse> call = request.getParkingSlots();
-        call.enqueue(new Callback<ParkingSlotResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<ParkingSlotResponse> call,
-                                   @NonNull retrofit2.Response<ParkingSlotResponse> response) {
-                hideLoading();
-                stopShimmer();
-                if (response.body() != null) {
-                    List<List<String>> parkingSlotList = response.body().getSensors();
-                    if (parkingSlotList != null) {
-                        for (List<String> baseStringList : parkingSlotList) {
-                            for (int i = 0; i < baseStringList.size(); i++) {
-                                if (i == 1) {
-                                    parkingArea = baseStringList.get(i);
-                                }
-                                if (i == 0) {
-                                    placeId = baseStringList.get(i);
-                                }
-                                if (i == 2) {
-                                    endLat = Double.parseDouble(baseStringList.get(i).trim());
-                                }
-                                if (i == 3) {
-                                    endLng = Double.parseDouble(baseStringList.get(i).trim());
-                                }
-                                if (i == 4) {
-                                    count = baseStringList.get(i);
-                                }
+        homeViewModel.initFetchParkingSlotSensors();
+        homeViewModel.getParkingSlotResponseLiveData().observe(context, parkingSlotResponse -> {
+            hideLoading();
+            stopShimmer();
+            if (parkingSlotResponse != null) {
+                List<List<String>> parkingSlotList = parkingSlotResponse.getSensors();
+                if (parkingSlotList != null) {
+                    for (List<String> baseStringList : parkingSlotList) {
+                        for (int i = 0; i < baseStringList.size(); i++) {
+                            if (i == 1) {
+                                parkingArea = baseStringList.get(i);
                             }
-                            SensorArea sensorArea = createSensorAreaObj(parkingArea, placeId, endLat, endLng, count, null);
-                            sensorAreaArrayList.add(sensorArea);
+                            if (i == 0) {
+                                placeId = baseStringList.get(i);
+                            }
+                            if (i == 2) {
+                                endLat = Double.parseDouble(baseStringList.get(i).trim());
+                            }
+                            if (i == 3) {
+                                endLng = Double.parseDouble(baseStringList.get(i).trim());
+                            }
+                            if (i == 4) {
+                                count = baseStringList.get(i);
+                            }
                         }
-
-                        Collections.sort(sensorAreaArrayList, (c1, c2) -> Double.compare(c1.getDistance(), c2.getDistance()));
-
-                        for (SensorArea sensorArea : sensorAreaArrayList) {
-                            renderParkingSensors(sensorArea, location);
-                        }
-                        setBottomSheetFragmentControls(bookingSensorsArrayListGlobal);
-                        Preferences.getInstance(context).saveSensorAreaList(context, sensorAreaArrayList);
+                        SensorArea sensorArea = createSensorAreaObj(parkingArea, placeId, endLat, endLng, count, null);
+                        sensorAreaArrayList.add(sensorArea);
                     }
-                }
-            }
 
-            @Override
-            public void onFailure(@NonNull Call<ParkingSlotResponse> call, @NonNull Throwable t) {
-                Timber.e("onFailure -> %s", t.getMessage());
-                hideLoading();
-                t.getCause();
+                    Collections.sort(sensorAreaArrayList, (c1, c2) -> Double.compare(c1.getDistance(), c2.getDistance()));
+
+                    for (SensorArea sensorArea : sensorAreaArrayList) {
+                        renderParkingSensors(sensorArea, location);
+                    }
+                    setBottomSheetFragmentControls(bookingSensorsArrayListGlobal);
+                    Preferences.getInstance(context).saveSensorAreaList(context, sensorAreaArrayList);
+                }
             }
         });
     }
@@ -1603,7 +1573,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                                     @Override
                                     public void onPositiveClick() {
                                         if (isBooked) {
-                                            setBookingPark(Preferences.getInstance(context).getUser().getMobileNo(), bookedPlace.getBookedUid());
+                                            setParkedCar(Preferences.getInstance(context).getUser().getMobileNo(), bookedPlace.getBookedUid());
                                         } else {
                                             DialogUtils.getInstance().alertDialog(context,
                                                     requireActivity(),
@@ -1670,9 +1640,20 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         });
     }
 
-    private void setBookingPark(String mobileNo, String uid) {
+    private void setParkedCar(String mobileNo, String uid) {
         showLoading(context);
-        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+        homeViewModel.initReservation(mobileNo, uid);
+        homeViewModel.setParkedCar().observe(context, reservationCancelResponse -> {
+            hideLoading();
+            if (!reservationCancelResponse.getError()) {
+                BookedPlace mBookedPlace = Preferences.getInstance(context).getBooked();
+                mBookedPlace.setCarParked(true);
+                Preferences.getInstance(context).setBooked(mBookedPlace);
+                ApplicationUtils.stopBookingTrackService(context);
+                getBookingParkStatus(Preferences.getInstance(context).getUser().getMobileNo());
+            }
+        });
+       /* ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
         Call<ReservationCancelResponse> call = request.setBookingPark(mobileNo, uid);
         call.enqueue(new Callback<ReservationCancelResponse>() {
             @RequiresApi(api = Build.VERSION_CODES.O)
@@ -1695,7 +1676,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 Timber.e("onFailure -> %s", t.getMessage());
                 hideLoading();
             }
-        });
+        });*/
     }
 
     @SuppressWarnings("SameParameterValue")
@@ -1841,6 +1822,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     private void storeReservation(String mobileNo, String arrivalTime, String departureTime, String mPlaceId) {
         showLoading(context);
+        //TODO: call ScheduleViewModel
         ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
         Call<ReservationResponse> call = request.storeReservation(mobileNo, arrivalTime, departureTime, mPlaceId, "2", Preferences.getInstance(context).getSelectedVehicleNo());
         call.enqueue(new Callback<ReservationResponse>() {
@@ -1880,7 +1862,19 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     private void getBookingParkStatus(String mobileNo) {
         showLoading(context);
-        ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
+        homeViewModel.initBookingParkStatus(mobileNo);
+        homeViewModel.getBookingParkStatus().observe(context, new Observer<BookingParkStatusResponse>() {
+            @Override
+            public void onChanged(@NonNull BookingParkStatusResponse bookingParkStatusResponse) {
+                hideLoading();
+                if (bookingParkStatusResponse.getSensors() != null) {
+                    BookingParkStatusResponse.Sensors sensors = bookingParkStatusResponse.getSensors();
+                    isRouteDrawn = 0;
+                    listener.fragmentChange(BookingParkFragment.newInstance(sensors));
+                }
+            }
+        });
+     /*   ApiService request = ApiClient.getRetrofitInstance(AppConfig.BASE_URL).create(ApiService.class);
         Call<BookingParkStatusResponse> call = request.getBookingParkStatus(mobileNo);
         call.enqueue(new Callback<BookingParkStatusResponse>() {
             @RequiresApi(api = Build.VERSION_CODES.O)
@@ -1903,7 +1897,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 Timber.e("onFailure -> %s", t.getMessage());
                 hideLoading();
             }
-        });
+        });*/
     }
 
     public interface SetBottomSheetCallBack {
