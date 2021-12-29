@@ -197,7 +197,7 @@
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
-            android:name=".ui.termsConditions.TermsConditionsActivity"
+            android:name=".ui.privacyPolicy.termsConditions.TermsConditionsActivity"
             android:screenOrientation="portrait"
             android:configChanges="locale"
             android:theme="@style/AppTheme.DefaultActionBar" />
