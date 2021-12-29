@@ -63,7 +63,7 @@ import www.fiberathome.com.parkingapp.databinding.FragmentBookingParkBinding;
 import www.fiberathome.com.parkingapp.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
-import www.fiberathome.com.parkingapp.ui.schedule.ScheduleActivity;
+import www.fiberathome.com.parkingapp.ui.reservation.schedule.ScheduleActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DateTimeUtils;

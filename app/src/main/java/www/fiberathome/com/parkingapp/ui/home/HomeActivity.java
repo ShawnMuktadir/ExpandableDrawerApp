@@ -51,7 +51,7 @@ import www.fiberathome.com.parkingapp.ui.profile.ProfileFragment;
 import www.fiberathome.com.parkingapp.ui.reservation.ReservationFragment;
 import www.fiberathome.com.parkingapp.ui.reservation.ReservationParkFragment;
 import www.fiberathome.com.parkingapp.ui.reservation.ReservationViewModel;
-import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
+import www.fiberathome.com.parkingapp.ui.reservation.schedule.ScheduleFragment;
 import www.fiberathome.com.parkingapp.ui.settings.SettingsFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;

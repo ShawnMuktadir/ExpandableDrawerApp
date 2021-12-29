@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.ui.schedule;
+package www.fiberathome.com.parkingapp.ui.reservation.schedule;
 
 import android.content.Context;
 import android.os.Bundle;

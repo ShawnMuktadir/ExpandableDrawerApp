@@ -34,7 +34,7 @@ import www.fiberathome.com.parkingapp.data.model.response.sensors.SensorArea;
 import www.fiberathome.com.parkingapp.databinding.ActivityScanBarCodeBinding;
 import www.fiberathome.com.parkingapp.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
-import www.fiberathome.com.parkingapp.ui.schedule.ScheduleActivity;
+import www.fiberathome.com.parkingapp.ui.reservation.schedule.ScheduleActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 

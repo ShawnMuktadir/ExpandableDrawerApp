@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.ui.schedule;
+package www.fiberathome.com.parkingapp.ui.reservation.schedule;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -44,9 +44,9 @@ import www.fiberathome.com.parkingapp.databinding.FragmentScheduleBinding;
 import www.fiberathome.com.parkingapp.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
-import www.fiberathome.com.parkingapp.ui.reservation.PaymentFragment;
 import www.fiberathome.com.parkingapp.ui.reservation.ReservationActivity;
 import www.fiberathome.com.parkingapp.ui.reservation.ReservationViewModel;
+import www.fiberathome.com.parkingapp.ui.reservation.payment.PaymentFragment;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DateTimeUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;

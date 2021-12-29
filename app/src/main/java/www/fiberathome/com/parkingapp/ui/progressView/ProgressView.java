@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.ui.helper;
+package www.fiberathome.com.parkingapp.ui.progressView;
 
 public interface ProgressView {
     void showProgress();

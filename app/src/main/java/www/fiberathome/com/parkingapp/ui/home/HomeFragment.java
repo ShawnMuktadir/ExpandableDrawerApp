@@ -103,7 +103,7 @@ import www.fiberathome.com.parkingapp.ui.bottomSheet.BottomSheetAdapter;
 import www.fiberathome.com.parkingapp.ui.reservation.ReservationParkFragment;
 import www.fiberathome.com.parkingapp.ui.reservation.ReservationScanBarCodeActivity;
 import www.fiberathome.com.parkingapp.ui.reservation.ReservationViewModel;
-import www.fiberathome.com.parkingapp.ui.schedule.ScheduleFragment;
+import www.fiberathome.com.parkingapp.ui.reservation.schedule.ScheduleFragment;
 import www.fiberathome.com.parkingapp.ui.search.SearchActivity;
 import www.fiberathome.com.parkingapp.ui.search.SearchViewModel;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;

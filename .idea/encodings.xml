@@ -6,6 +6,8 @@
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/data/model/Language.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/data/model/Settings.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/data/model/Spinner.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/data/model/response/auth/AuthAPI.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/data/model/response/auth/AuthRepository.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/data/model/response/changePassword/ChangePasswordAPI.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/data/model/response/changePassword/ChangePasswordRepository.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/data/model/response/forgetPassword/ForgetPasswordAPI.java" charset="UTF-8" />
@@ -25,7 +27,6 @@
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/data/model/response/reservation/ReservationRepository.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/data/model/response/search/SearchAPI.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/data/model/response/search/SearchRepository.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/data/model/response/termsCondition/TermConditionAPI.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/data/model/response/termsCondition/TermConditionAPI.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/data/model/response/termsCondition/TermConditionRepository.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/www/fiberathome/com/parkingapp/data/source/APIClient.java" charset="UTF-8" />
