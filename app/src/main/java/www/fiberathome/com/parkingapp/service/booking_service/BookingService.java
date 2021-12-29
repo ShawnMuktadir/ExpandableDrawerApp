@@ -87,7 +87,7 @@ public class BookingService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         context = getApplicationContext();
-        reservationViewModel = new ViewModelProvider((ViewModelStoreOwner) context).get(ReservationViewModel.class);
+        reservationViewModel = new ReservationViewModel();
         String action = intent.getAction();
         if (action != null) {
             switch (action) {
