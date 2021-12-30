@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.ui.login;
+package www.fiberathome.com.parkingapp.ui.auth.login;
 
 import android.app.Activity;
 import android.content.Context;

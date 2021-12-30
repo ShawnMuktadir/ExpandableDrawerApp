@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.ui.authPassword.forgotPassword;
+package www.fiberathome.com.parkingapp.ui.auth.forgotPassword;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -23,7 +23,8 @@ import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.data.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.data.model.response.global.BaseResponse;
 import www.fiberathome.com.parkingapp.databinding.FragmentForgetPasswordBinding;
-import www.fiberathome.com.parkingapp.ui.authPassword.changePassword.ChangePasswordOTPActivity;
+import www.fiberathome.com.parkingapp.ui.auth.AuthViewModel;
+import www.fiberathome.com.parkingapp.ui.auth.changePassword.ChangePasswordOTPActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
@@ -33,7 +34,7 @@ import www.fiberathome.com.parkingapp.utils.Validator;
 public class ForgotPasswordFragment extends BaseFragment {
 
     private ForgotPasswordActivity context;
-    private ForgotPasswordViewModel viewModel;
+    private AuthViewModel viewModel;
     FragmentForgetPasswordBinding binding;
 
     public ForgotPasswordFragment() {
@@ -56,7 +57,7 @@ public class ForgotPasswordFragment extends BaseFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         context = (ForgotPasswordActivity) getActivity();
-        viewModel = new ViewModelProvider(this).get(ForgotPasswordViewModel.class);
+        viewModel = new ViewModelProvider(this).get(AuthViewModel.class);
         binding.editTextMobileNumber.requestFocus();
         binding.editTextMobileNumber.requestLayout();
         setListener();
@@ -179,11 +180,8 @@ public class ForgotPasswordFragment extends BaseFragment {
 
     private void checkForgetPassword(final String mobileNo) {
         showLoading(context);
-        viewModel.init(mobileNo);
-        viewModel.getMutableData().observe(requireActivity(), (@NonNull BaseResponse response) -> {
-            /*if (response.getError()) {
-                ToastUtils.getInstance().showToastMessage(context, response.getMessage());
-            } else {*/
+        viewModel.initForgotPassword(mobileNo);
+        viewModel.getForgotPasswordMutableLiveData().observe(requireActivity(), (@NonNull BaseResponse response) -> {
             if (response.getMessage().equalsIgnoreCase("Try Again! Invalid Mobile Number.")) {
                 ToastUtils.getInstance().showToastMessage(context,
                         context.getResources().getString(R.string.mobile_number_not_exist));
@@ -199,7 +197,6 @@ public class ForgotPasswordFragment extends BaseFragment {
                     ToastUtils.getInstance().showToastMessage(context, response.getMessage());
                 }
             }
-            //}
         });
     }
 }

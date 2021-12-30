@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.ui.authPassword.changePassword;
+package www.fiberathome.com.parkingapp.ui.auth.changePassword;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -23,7 +23,8 @@ import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.data.model.response.global.BaseResponse;
 import www.fiberathome.com.parkingapp.data.model.user.User;
 import www.fiberathome.com.parkingapp.databinding.FragmentChangePasswordBinding;
-import www.fiberathome.com.parkingapp.ui.login.LoginActivity;
+import www.fiberathome.com.parkingapp.ui.auth.AuthViewModel;
+import www.fiberathome.com.parkingapp.ui.auth.login.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
@@ -34,7 +35,7 @@ import www.fiberathome.com.parkingapp.utils.Validator;
 public class ChangePasswordFragment extends BaseFragment implements View.OnClickListener {
 
     private Context context;
-    private ChangePasswordViewModel viewModel;
+    private AuthViewModel viewModel;
     FragmentChangePasswordBinding binding;
 
     public ChangePasswordFragment() {
@@ -60,7 +61,7 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
         context = getActivity();
         if (getActivity() != null)
             getActivity().setTitle(R.string.title_change_password);
-        viewModel = new ViewModelProvider(this).get(ChangePasswordViewModel.class);
+        viewModel = new ViewModelProvider(this).get(AuthViewModel.class);
         binding.changePasswordBtn.setOnClickListener(this);
 
         setListeners();
@@ -212,8 +213,8 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
     private void updatePassword(String oldPassword, String newPassword, String confirmPassword, String mobileNo) {
         showLoading(context);
 
-        viewModel.init(oldPassword, newPassword, confirmPassword, mobileNo);
-        viewModel.getMutableData().observe(requireActivity(), (@NonNull BaseResponse response) -> {
+        viewModel.initChangePassword(oldPassword, newPassword, confirmPassword, mobileNo);
+        viewModel.getChangePasswordMutableData().observe(requireActivity(), (@NonNull BaseResponse response) -> {
             hideLoading();
             if (!response.getError()) {
                 ToastUtils.getInstance().showToastMessage(context, response.getMessage());

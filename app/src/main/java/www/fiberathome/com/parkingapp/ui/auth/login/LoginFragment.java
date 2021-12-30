@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.ui.login;
+package www.fiberathome.com.parkingapp.ui.auth.login;
 
 import static www.fiberathome.com.parkingapp.data.model.data.Constants.LANGUAGE_BN;
 import static www.fiberathome.com.parkingapp.data.model.data.Constants.LANGUAGE_EN;
@@ -35,12 +35,13 @@ import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.data.model.response.login.LoginResponse;
 import www.fiberathome.com.parkingapp.data.model.user.User;
 import www.fiberathome.com.parkingapp.databinding.FragmentLoginBinding;
-import www.fiberathome.com.parkingapp.ui.authPassword.forgotPassword.ForgotPasswordActivity;
+import www.fiberathome.com.parkingapp.ui.auth.AuthViewModel;
+import www.fiberathome.com.parkingapp.ui.auth.forgotPassword.ForgotPasswordActivity;
+import www.fiberathome.com.parkingapp.ui.auth.registration.RegistrationActivity;
+import www.fiberathome.com.parkingapp.ui.auth.verifyPhone.VerifyPhoneActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.permission.PermissionActivity;
 import www.fiberathome.com.parkingapp.ui.progressView.ProgressView;
-import www.fiberathome.com.parkingapp.ui.registration.RegistrationActivity;
-import www.fiberathome.com.parkingapp.ui.verifyPhone.VerifyPhoneActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
@@ -52,7 +53,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
 
     private LoginActivity context;
 
-    private LoginViewModel loginViewModel;
+    private AuthViewModel loginViewModel;
     FragmentLoginBinding binding;
 
     public LoginFragment() {
@@ -76,7 +77,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         context = (LoginActivity) getActivity();
-        loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
+        loginViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
 
         setListeners();
 
@@ -315,19 +316,21 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
     private void checkLogin(String mobileNo, String password) {
         showLoading(context);
         showProgress();
-        loginViewModel.init(mobileNo, password);
-        loginViewModel.getMutableData().observe(requireActivity(), (@NonNull LoginResponse loginResponse) -> {
+        loginViewModel.initLogin(mobileNo, password);
+        loginViewModel.getLoginMutableLiveData().observe(requireActivity(), (@NonNull LoginResponse loginResponse) -> {
             if (loginResponse.getError()) {
                 hideLoading();
                 hideProgress();
                 ToastUtils.getInstance().showToastMessage(requireActivity(), loginResponse.getMessage());
-                if (!loginResponse.getAuthentication()) {
-                    binding.btnOTP.setVisibility(View.GONE);
-                    Intent verifyPhoneIntent = new Intent(context, VerifyPhoneActivity.class);
-                    verifyPhoneIntent.putExtra("mobile_no", mobileNo);
-                    verifyPhoneIntent.putExtra("password", password);
-                    startActivity(verifyPhoneIntent);
-                    context.finish();
+                if (loginResponse.getAuthentication() != null) {
+                    if (!loginResponse.getAuthentication()) {
+                        binding.btnOTP.setVisibility(View.GONE);
+                        Intent verifyPhoneIntent = new Intent(context, VerifyPhoneActivity.class);
+                        verifyPhoneIntent.putExtra("mobile_no", mobileNo);
+                        verifyPhoneIntent.putExtra("password", password);
+                        startActivity(verifyPhoneIntent);
+                        context.finish();
+                    }
                 }
             } else {
                 hideLoading();

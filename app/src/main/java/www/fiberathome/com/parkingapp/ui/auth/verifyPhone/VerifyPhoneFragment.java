@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.ui.verifyPhone;
+package www.fiberathome.com.parkingapp.ui.auth.verifyPhone;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -26,8 +26,8 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.data.model.response.login.LoginResponse;
 import www.fiberathome.com.parkingapp.databinding.FragmentVerifyPhoneBinding;
-import www.fiberathome.com.parkingapp.ui.login.LoginActivity;
-import www.fiberathome.com.parkingapp.ui.login.LoginViewModel;
+import www.fiberathome.com.parkingapp.ui.auth.AuthViewModel;
+import www.fiberathome.com.parkingapp.ui.auth.login.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.NoUnderlineSpan;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
@@ -36,9 +36,7 @@ import www.fiberathome.com.parkingapp.utils.ToastUtils;
 public class VerifyPhoneFragment extends BaseFragment {
 
     private VerifyPhoneActivity context;
-
-    private LoginViewModel loginViewModel;
-    private VerifyPhoneViewModel verifyPhoneViewModel;
+    private AuthViewModel authViewModel;
     FragmentVerifyPhoneBinding binding;
 
     public VerifyPhoneFragment() {
@@ -66,8 +64,7 @@ public class VerifyPhoneFragment extends BaseFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         context = (VerifyPhoneActivity) getActivity();
-        loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
-        verifyPhoneViewModel = new ViewModelProvider(this).get(VerifyPhoneViewModel.class);
+        authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
         setListeners();
         startCountDown();
     }
@@ -85,8 +82,8 @@ public class VerifyPhoneFragment extends BaseFragment {
 
     private void checkLogin(final String mobileNo, final String password) {
         showLoading(context);
-        loginViewModel.init(mobileNo, password);
-        loginViewModel.getMutableData().observe(requireActivity(), (@NonNull LoginResponse loginResponse) -> {
+        authViewModel.initLogin(mobileNo, password);
+        authViewModel.getLoginMutableLiveData().observe(requireActivity(), (@NonNull LoginResponse loginResponse) -> {
             hideLoading();
             if (!loginResponse.getError()) {
                 ToastUtils.getInstance().showToastMessage(context, loginResponse.getMessage());
@@ -151,17 +148,16 @@ public class VerifyPhoneFragment extends BaseFragment {
     private void submitOTPVerification(String otp) {
         if (!otp.isEmpty()) {
             showLoading(context);
-
-            verifyPhoneViewModel.init(otp);
-            verifyPhoneViewModel.getMutableData().observe(requireActivity(), (@NonNull LoginResponse loginResponse) -> {
+            authViewModel.initVerifyPhone(otp);
+            authViewModel.getVerifyPhoneMutableData().observe(requireActivity(), (@NonNull LoginResponse response) -> {
                 hideLoading();
                 countDownTimer.cancel();
-                if (loginResponse.getError()) {
-                    ToastUtils.getInstance().showToastMessage(context, loginResponse.getMessage());
-                } else if (!loginResponse.getError()) {
-                    ToastUtils.getInstance().showToastMessage(context, loginResponse.getMessage());
+                if (response.getError()) {
+                    ToastUtils.getInstance().showToastMessage(context, response.getMessage());
+                } else if (!response.getError()) {
+                    ToastUtils.getInstance().showToastMessage(context, response.getMessage());
                     context.startActivityWithFinishAffinity(LoginActivity.class);
-                    ToastUtils.getInstance().showToastMessage(context, "Dear " + loginResponse.getUser().getFullName() + ", Your Registration Completed Successfully...");
+                    ToastUtils.getInstance().showToastMessage(context, "Dear " + response.getUser().getFullName() + ", Your Registration Completed Successfully...");
                 }
             });
         } else {

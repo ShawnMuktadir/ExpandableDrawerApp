@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.ui.registration;
+package www.fiberathome.com.parkingapp.ui.auth.registration;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -47,12 +47,13 @@ import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.data.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.data.model.response.global.BaseResponse;
 import www.fiberathome.com.parkingapp.databinding.FragmentSignUpBinding;
+import www.fiberathome.com.parkingapp.ui.auth.AuthViewModel;
+import www.fiberathome.com.parkingapp.ui.auth.login.LoginActivity;
+import www.fiberathome.com.parkingapp.ui.auth.verifyPhone.VerifyPhoneActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
-import www.fiberathome.com.parkingapp.ui.login.LoginActivity;
 import www.fiberathome.com.parkingapp.ui.privacyPolicy.PrivacyPolicyActivity;
 import www.fiberathome.com.parkingapp.ui.privacyPolicy.termsConditions.TermsConditionsActivity;
 import www.fiberathome.com.parkingapp.ui.progressView.ProgressView;
-import www.fiberathome.com.parkingapp.ui.verifyPhone.VerifyPhoneActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DateTimeUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
@@ -78,7 +79,7 @@ public class RegistrationFragment extends BaseFragment implements View.OnClickLi
     private List<Spinner> classDivList;
 
     private RegistrationActivity context;
-    private RegistrationViewModel registrationViewModel;
+    private AuthViewModel registrationViewModel;
     FragmentSignUpBinding binding;
 
     public RegistrationFragment() {
@@ -101,7 +102,7 @@ public class RegistrationFragment extends BaseFragment implements View.OnClickLi
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         context = (RegistrationActivity) getActivity();
-        registrationViewModel = new ViewModelProvider(this).get(RegistrationViewModel.class);
+        registrationViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
         setListeners();
 
         setVehicleClassCategory();
@@ -816,11 +817,11 @@ public class RegistrationFragment extends BaseFragment implements View.OnClickLi
         showLoading(context);
         showProgress();
 
-        registrationViewModel.init(fullName, password, mobileNo, vehicleNo,
+        registrationViewModel.initRegistration(fullName, password, mobileNo, vehicleNo,
                 imageToString(profileBitmap),
                 (profileBitmap != null ? mobileNo + "_" + DateTimeUtils.getInstance().getCurrentTimeStamp() : ""),
                 imageToString(vehicleBitmap), (vehicleBitmap != null ? mobileNo + "vehicle_" + DateTimeUtils.getInstance().getCurrentTimeStamp() : ""));
-        registrationViewModel.getMutableData().observe(requireActivity(), (@NonNull BaseResponse baseResponse) -> {
+        registrationViewModel.getRegistrationMutableLiveData().observe(requireActivity(), (@NonNull BaseResponse baseResponse) -> {
             hideLoading();
             hideProgress();
             if (!baseResponse.getError()) {

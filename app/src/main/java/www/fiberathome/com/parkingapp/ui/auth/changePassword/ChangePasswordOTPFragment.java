@@ -1,6 +1,7 @@
-package www.fiberathome.com.parkingapp.ui.authPassword.changePassword;
+package www.fiberathome.com.parkingapp.ui.auth.changePassword;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.Editable;
@@ -23,11 +24,12 @@ import java.util.concurrent.TimeUnit;
 
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
+import www.fiberathome.com.parkingapp.data.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.data.model.response.global.BaseResponse;
 import www.fiberathome.com.parkingapp.data.model.response.login.LoginResponse;
 import www.fiberathome.com.parkingapp.databinding.FragmentVerifyPhoneBinding;
-import www.fiberathome.com.parkingapp.ui.login.LoginActivity;
-import www.fiberathome.com.parkingapp.ui.verifyPhone.VerifyPhoneViewModel;
+import www.fiberathome.com.parkingapp.ui.auth.AuthViewModel;
+import www.fiberathome.com.parkingapp.ui.auth.newPassword.NewPasswordActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.NoUnderlineSpan;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
@@ -37,7 +39,7 @@ import www.fiberathome.com.parkingapp.utils.ToastUtils;
 public class ChangePasswordOTPFragment extends BaseFragment {
 
     private ChangePasswordOTPActivity context;
-    private VerifyPhoneViewModel verifyPhoneViewModel;
+    private AuthViewModel authViewModel;
 
     FragmentVerifyPhoneBinding binding;
 
@@ -61,7 +63,7 @@ public class ChangePasswordOTPFragment extends BaseFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         context = (ChangePasswordOTPActivity) getActivity();
-        verifyPhoneViewModel = new ViewModelProvider(this).get(VerifyPhoneViewModel.class);
+        authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
         setListeners();
         startCountDown();
     }
@@ -107,8 +109,8 @@ public class ChangePasswordOTPFragment extends BaseFragment {
 
     private void checkForgetPassword(final String mobileNo) {
         showLoading(context);
-        verifyPhoneViewModel.init(mobileNo);
-        verifyPhoneViewModel.getMutableData().observe(requireActivity(), (@NonNull BaseResponse response) -> {
+        authViewModel.initForgotPassword(mobileNo);
+        authViewModel.getForgotPasswordMutableLiveData().observe(requireActivity(), (@NonNull BaseResponse response) -> {
             hideLoading();
             if (!response.getError()) {
                 ToastUtils.getInstance().showToastMessage(context, response.getMessage());
@@ -148,17 +150,18 @@ public class ChangePasswordOTPFragment extends BaseFragment {
     private void submitOTPVerification(final String otp) {
         if (!otp.isEmpty()) {
             showLoading(context);
-
-            verifyPhoneViewModel.init(otp);
-            verifyPhoneViewModel.getMutableData().observe(requireActivity(), (@NonNull LoginResponse loginResponse) -> {
+            authViewModel.initVerifyPhone(otp);
+            authViewModel.getVerifyPhoneMutableData().observe(requireActivity(), (@NonNull LoginResponse response) -> {
                 hideLoading();
                 countDownTimer.cancel();
-                if (loginResponse.getError()) {
-                    ToastUtils.getInstance().showToastMessage(context, loginResponse.getMessage());
-                } else if (!loginResponse.getError()) {
-                    ToastUtils.getInstance().showToastMessage(context, loginResponse.getMessage());
-                    context.startActivityWithFinishAffinity(LoginActivity.class);
-                    ToastUtils.getInstance().showToastMessage(context, "Dear " + loginResponse.getUser().getFullName() + ", Your Registration Completed Successfully...");
+                if (response.getError()) {
+                    ToastUtils.getInstance().showToastMessage(context, response.getMessage());
+                } else if (!response.getError()) {
+                    ToastUtils.getInstance().showToastMessage(context, response.getMessage());
+                    SharedData.getInstance().setOtp(otp);
+                    Intent intent = new Intent(context, NewPasswordActivity.class);
+                    startActivity(intent);
+                    context.finish();
                 }
             });
         } else {

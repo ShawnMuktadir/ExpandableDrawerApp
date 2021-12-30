@@ -8,7 +8,7 @@
     android:layout_gravity="center"
     android:background="@color/white"
     android:windowSoftInputMode="adjustPan"
-    tools:context=".ui.login.LoginFragment">
+    tools:context=".ui.auth.login.LoginFragment">
 
     <ImageView
         android:id="@+id/circleImageView2"

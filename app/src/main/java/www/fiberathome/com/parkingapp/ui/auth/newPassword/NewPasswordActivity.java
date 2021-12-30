@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.ui.authPassword.changePassword;
+package www.fiberathome.com.parkingapp.ui.auth.newPassword;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -11,48 +11,33 @@ import android.view.View;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.databinding.ActivityBaseBinding;
-import www.fiberathome.com.parkingapp.ui.login.LoginActivity;
+import www.fiberathome.com.parkingapp.ui.auth.login.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressLint("NonConstantResourceId")
-public class ChangePasswordOTPActivity extends BaseActivity {
-
+public class NewPasswordActivity extends BaseActivity {
     private Context context;
-
     ActivityBaseBinding binding;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityBaseBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
+
         context = this;
         setToolbar();
 
-        // Initialize ChangePasswordFragmentForOTP
+        // Initialize NewPasswordFragment
         ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
-                ChangePasswordOTPFragment.newInstance(), R.id.frameLayout);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                startActivityWithFinishAffinity(LoginActivity.class);
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+                NewPasswordFragment.newInstance(), R.id.frameLayout);
     }
 
     @Override
     public void onBackPressed() {
-        // super.onBackPressed();
-        // Not calling **super**, disables back button in current screen.
         DialogUtils.getInstance().alertDialog(context,
                 (Activity) context,
                 context.getResources().getString(R.string.are_you_sure_you_want_to_exit),
@@ -72,13 +57,15 @@ public class ChangePasswordOTPActivity extends BaseActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-    }
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                startActivityWithFinishAffinity(LoginActivity.class);
+                return true;
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void setToolbar() {
@@ -87,7 +74,7 @@ public class ChangePasswordOTPActivity extends BaseActivity {
         setSupportActionBar(binding.toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setTitle(context.getResources().getString(R.string.verify_otp));
+        getSupportActionBar().setTitle(context.getResources().getString(R.string.title_change_password));
         binding.toolbar.setTitleTextColor(context.getResources().getColor(R.color.black));
         if (binding.toolbar.getNavigationIcon() != null) {
             binding.toolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.black), PorterDuff.Mode.SRC_ATOP);

@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.ui.registration;
+package www.fiberathome.com.parkingapp.ui.auth.registration;
 
 import android.os.Bundle;
 import android.view.View;

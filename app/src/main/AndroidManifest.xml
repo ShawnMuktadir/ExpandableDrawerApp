@@ -109,13 +109,13 @@
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
-            android:name=".ui.authPassword.newPassword.NewPasswordActivity"
+            android:name=".ui.auth.newPassword.NewPasswordActivity"
             android:screenOrientation="portrait"
             android:configChanges="locale"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
-            android:name=".ui.authPassword.changePassword.ChangePasswordOTPActivity"
+            android:name=".ui.auth.changePassword.ChangePasswordOTPActivity"
             android:screenOrientation="portrait"
             android:configChanges="locale"
             android:theme="@style/AppTheme.DefaultActionBar" />
@@ -159,26 +159,26 @@
         </activity>
 
         <activity
-            android:name=".ui.registration.RegistrationActivity"
+            android:name=".ui.auth.registration.RegistrationActivity"
             android:screenOrientation="portrait"
             android:configChanges="locale"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
-            android:name=".ui.verifyPhone.VerifyPhoneActivity"
-            android:parentActivityName=".ui.login.LoginActivity"
+            android:name=".ui.auth.verifyPhone.VerifyPhoneActivity"
+            android:parentActivityName=".ui.auth.login.LoginActivity"
             android:screenOrientation="portrait"
             android:configChanges="locale"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
-            android:name=".ui.login.LoginActivity"
+            android:name=".ui.auth.login.LoginActivity"
             android:screenOrientation="portrait"
             android:configChanges="locale"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
-            android:name=".ui.authPassword.forgotPassword.ForgotPasswordActivity"
+            android:name=".ui.auth.forgotPassword.ForgotPasswordActivity"
             android:screenOrientation="portrait"
             android:configChanges="locale"
             android:theme="@style/AppTheme.DefaultActionBar" />
