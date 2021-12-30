@@ -172,9 +172,9 @@ public class ReservationFragment extends BaseFragment implements IOnBackPressLis
         if (!refresh && isAdded()) {
             binding.recyclerViewBooking.setHasFixedSize(true);
             binding.recyclerViewBooking.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
-            reservationAdapter = new ReservationAdapter(context, bookedLists, new ReservationAdapter.BookingAdapterClickListener() {
+            reservationAdapter = new ReservationAdapter(context, bookedLists, new ReservationAdapter.ReservationAdapterClickListener() {
                 @Override
-                public void onBookingItemCancel(int position, String uid, String id) {
+                public void onReservationItemCancel(int position, String uid, String id) {
                     DialogUtils.getInstance().alertDialog(context,
                             context,
                             context.getResources().getString(R.string.do_u_want_to_cancel_booking),

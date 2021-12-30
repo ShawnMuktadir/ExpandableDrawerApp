@@ -42,10 +42,10 @@ public class ReservationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public LatLng location;
     private final ArrayList<BookingArea> bookingAreas = new ArrayList<>();
     private ArrayList<BookedList> bookedLists;
-    BookingAdapterClickListener bookingAdapterClickListener;
+    ReservationAdapterClickListener bookingAdapterClickListener;
 
     public ReservationAdapter(ReservationActivity context, ArrayList<BookedList> bookedLists,
-                              BookingAdapterClickListener bookingAdapterClickListener) {
+                              ReservationAdapterClickListener bookingAdapterClickListener) {
         this.context = context;
         this.bookedLists = bookedLists;
         this.bookingAdapterClickListener = bookingAdapterClickListener;
@@ -57,20 +57,20 @@ public class ReservationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         context = parent.getContext();
         LayoutInflater layoutInflater = LayoutInflater.from(context);
         RowBookingsBinding itemBinding = RowBookingsBinding.inflate(layoutInflater, parent, false);
-        return new BookingViewHolder(itemBinding);
+        return new ReservationViewHolder(itemBinding);
     }
 
     @SuppressLint({"SetTextI18n", "RecyclerView"})
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
-        BookingViewHolder bookingViewHolder = (BookingViewHolder) viewHolder;
+        ReservationViewHolder reservationViewHolder = (ReservationViewHolder) viewHolder;
 
         BookedList bookedList = bookedLists.get(position);
-        bookingViewHolder.binding.textViewParkingSlot.setText(bookedList.getAddress());
-        bookingViewHolder.binding.textViewReservationId.setText(context.getResources().getString(R.string.parking_reservation_id) + bookedList.getId());
-        bookingViewHolder.binding.textViewParkingTotalPaymentAmount.setText(context.getResources().getString(R.string.total_fair) + "  " + bookedList.getCurrentBill());
-        bookingViewHolder.binding.textViewSpotId.setText(context.getResources().getString(R.string.parking_spot_id) + bookedList.getPsId());
-        bookingViewHolder.binding.textViewParkingTime.setText(context.getString(R.string.arrival) + " " + bookedList.getTimeStart()
+        reservationViewHolder.binding.textViewParkingSlot.setText(bookedList.getAddress());
+        reservationViewHolder.binding.textViewReservationId.setText(context.getResources().getString(R.string.parking_reservation_id) + bookedList.getId());
+        reservationViewHolder.binding.textViewParkingTotalPaymentAmount.setText(context.getResources().getString(R.string.total_fair) + "  " + bookedList.getCurrentBill());
+        reservationViewHolder.binding.textViewSpotId.setText(context.getResources().getString(R.string.parking_spot_id) + bookedList.getPsId());
+        reservationViewHolder.binding.textViewParkingTime.setText(context.getString(R.string.arrival) + " " + bookedList.getTimeStart()
                 + " - \n" + context.getString(R.string.departuretxt) + " " + bookedList.getTimeEnd());
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
@@ -82,25 +82,25 @@ public class ReservationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             if (date1 != null && date2 != null) {
                 difference = date1.getTime() - date2.getTime();
             }
-            bookingViewHolder.binding.textViewParkingTotalTime.setText(getTimeDifference(difference));
+            reservationViewHolder.binding.textViewParkingTotalTime.setText(getTimeDifference(difference));
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
         if (bookedList.getC_Status().equalsIgnoreCase("0") && bookedList.getStatus().equalsIgnoreCase("0") &&
                 bookedList.getP_status().equalsIgnoreCase("1")) {
-            bookingViewHolder.binding.tvStatus.setVisibility(View.VISIBLE);
-            bookingViewHolder.binding.tvCancel.setVisibility(View.GONE);
-            bookingViewHolder.binding.tvStatus.setText(context.getResources().getString(R.string.parking));
-            bookingViewHolder.binding.tvStatus.setTextColor(context.getResources().getColor(R.color.green2));
-            bookingViewHolder.binding.tvGetDirection.setVisibility(View.VISIBLE);
-            bookingViewHolder.binding.tvRebooking.setVisibility(View.GONE);
+            reservationViewHolder.binding.tvStatus.setVisibility(View.VISIBLE);
+            reservationViewHolder.binding.tvCancel.setVisibility(View.GONE);
+            reservationViewHolder.binding.tvStatus.setText(context.getResources().getString(R.string.parking));
+            reservationViewHolder.binding.tvStatus.setTextColor(context.getResources().getColor(R.color.green2));
+            reservationViewHolder.binding.tvGetDirection.setVisibility(View.VISIBLE);
+            reservationViewHolder.binding.tvRebooking.setVisibility(View.GONE);
             checkBookingStatusChange(bookedList);
         } else if (bookedList.getC_Status().equalsIgnoreCase("0") && bookedList.getStatus().equalsIgnoreCase("0")) {
-            bookingViewHolder.binding.tvCancel.setVisibility(View.VISIBLE);
-            bookingViewHolder.binding.tvStatus.setVisibility(View.GONE);
-            bookingViewHolder.binding.tvGetDirection.setVisibility(View.VISIBLE);
-            bookingViewHolder.binding.tvRebooking.setVisibility(View.GONE);
+            reservationViewHolder.binding.tvCancel.setVisibility(View.VISIBLE);
+            reservationViewHolder.binding.tvStatus.setVisibility(View.GONE);
+            reservationViewHolder.binding.tvGetDirection.setVisibility(View.VISIBLE);
+            reservationViewHolder.binding.tvRebooking.setVisibility(View.GONE);
             if (!Preferences.getInstance(context).getBooked().getIsBooked()) {
                 List<SensorArea> sensorAreaArrayList = Preferences.getInstance(context).getSensorAreaList();
                 SensorArea sensorArea;
@@ -128,32 +128,32 @@ public class ReservationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 }
             }
         } else if (bookedList.getC_Status().equalsIgnoreCase("0") && bookedList.getStatus().equalsIgnoreCase("1")) {
-            bookingViewHolder.binding.tvStatus.setVisibility(View.VISIBLE);
-            bookingViewHolder.binding.tvCancel.setVisibility(View.GONE);
-            bookingViewHolder.binding.tvStatus.setText(context.getResources().getString(R.string.completed));
-            bookingViewHolder.binding.tvStatus.setTextColor(context.getResources().getColor(R.color.green2));
-            bookingViewHolder.binding.tvGetDirection.setVisibility(View.GONE);
-            bookingViewHolder.binding.tvRebooking.setVisibility(View.VISIBLE);
+            reservationViewHolder.binding.tvStatus.setVisibility(View.VISIBLE);
+            reservationViewHolder.binding.tvCancel.setVisibility(View.GONE);
+            reservationViewHolder.binding.tvStatus.setText(context.getResources().getString(R.string.completed));
+            reservationViewHolder.binding.tvStatus.setTextColor(context.getResources().getColor(R.color.green2));
+            reservationViewHolder.binding.tvGetDirection.setVisibility(View.GONE);
+            reservationViewHolder.binding.tvRebooking.setVisibility(View.VISIBLE);
             checkBookingStatusChange(bookedList);
         } else if (bookedList.getC_Status().equalsIgnoreCase("1") && bookedList.getStatus().equalsIgnoreCase("1")) {
-            bookingViewHolder.binding.tvStatus.setVisibility(View.VISIBLE);
-            bookingViewHolder.binding.tvStatus.setText(context.getResources().getString(R.string.canceled));
-            bookingViewHolder.binding.tvCancel.setVisibility(View.GONE);
-            bookingViewHolder.binding.tvStatus.setTextColor(Color.RED);
-            bookingViewHolder.binding.tvGetDirection.setVisibility(View.GONE);
-            bookingViewHolder.binding.tvRebooking.setVisibility(View.VISIBLE);
+            reservationViewHolder.binding.tvStatus.setVisibility(View.VISIBLE);
+            reservationViewHolder.binding.tvStatus.setText(context.getResources().getString(R.string.canceled));
+            reservationViewHolder.binding.tvCancel.setVisibility(View.GONE);
+            reservationViewHolder.binding.tvStatus.setTextColor(Color.RED);
+            reservationViewHolder.binding.tvGetDirection.setVisibility(View.GONE);
+            reservationViewHolder.binding.tvRebooking.setVisibility(View.VISIBLE);
             checkBookingStatusChange(bookedList);
         } else if (bookedList.getC_Status().equalsIgnoreCase("1") && bookedList.getStatus().equalsIgnoreCase("0")) {
-            bookingViewHolder.binding.tvStatus.setVisibility(View.VISIBLE);
-            bookingViewHolder.binding.tvStatus.setText(context.getResources().getString(R.string.rejected));
-            bookingViewHolder.binding.tvCancel.setVisibility(View.GONE);
-            bookingViewHolder.binding.tvStatus.setTextColor(Color.RED);
-            bookingViewHolder.binding.tvGetDirection.setVisibility(View.GONE);
-            bookingViewHolder.binding.tvRebooking.setVisibility(View.VISIBLE);
+            reservationViewHolder.binding.tvStatus.setVisibility(View.VISIBLE);
+            reservationViewHolder.binding.tvStatus.setText(context.getResources().getString(R.string.rejected));
+            reservationViewHolder.binding.tvCancel.setVisibility(View.GONE);
+            reservationViewHolder.binding.tvStatus.setTextColor(Color.RED);
+            reservationViewHolder.binding.tvGetDirection.setVisibility(View.GONE);
+            reservationViewHolder.binding.tvRebooking.setVisibility(View.VISIBLE);
             checkBookingStatusChange(bookedList);
         }
 
-        bookingViewHolder.binding.tvRebooking.setOnClickListener(v -> {
+        reservationViewHolder.binding.tvRebooking.setOnClickListener(v -> {
             if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
                 bookingAdapterClickListener.onItemRebookListener(position, MathUtils.getInstance().convertToDouble(bookedList.getLatitude()),
                         MathUtils.getInstance().convertToDouble(bookedList.getLongitude()), bookedList.getParkingArea(),
@@ -163,15 +163,15 @@ public class ReservationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
         });
 
-        bookingViewHolder.binding.tvGetHelp.setOnClickListener(v -> bookingAdapterClickListener.onItemGetHelp());
+        reservationViewHolder.binding.tvGetHelp.setOnClickListener(v -> bookingAdapterClickListener.onItemGetHelp());
 
-        bookingViewHolder.binding.tvGetDirection.setOnClickListener(v -> bookingAdapterClickListener.onItemGetDirection(position));
+        reservationViewHolder.binding.tvGetDirection.setOnClickListener(v -> bookingAdapterClickListener.onItemGetDirection(position));
 
-        bookingViewHolder.binding.tvCancel.setOnClickListener(v -> bookingAdapterClickListener.onBookingItemCancel(bookingViewHolder.getAbsoluteAdapterPosition(), bookedList.getSpotId(), bookedList.getId()));
+        reservationViewHolder.binding.tvCancel.setOnClickListener(v -> bookingAdapterClickListener.onReservationItemCancel(reservationViewHolder.getAbsoluteAdapterPosition(), bookedList.getSpotId(), bookedList.getId()));
 
-        bookingViewHolder.binding.btnViewReceipt.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
+        reservationViewHolder.binding.btnViewReceipt.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
 
-        bookingViewHolder.binding.btnGetHelp.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
+        reservationViewHolder.binding.btnGetHelp.setOnClickListener(v -> Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show());
     }
 
     private void checkBookingStatusChange(BookedList bookedList) {
@@ -211,17 +211,17 @@ public class ReservationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     @SuppressLint("NonConstantResourceId")
-    public static class BookingViewHolder extends RecyclerView.ViewHolder {
+    public static class ReservationViewHolder extends RecyclerView.ViewHolder {
         RowBookingsBinding binding;
 
-        public BookingViewHolder(RowBookingsBinding itemView) {
+        public ReservationViewHolder(RowBookingsBinding itemView) {
             super(itemView.getRoot());
             this.binding = itemView;
         }
     }
 
-    public interface BookingAdapterClickListener {
-        void onBookingItemCancel(int position, String uid, String id);
+    public interface ReservationAdapterClickListener {
+        void onReservationItemCancel(int position, String uid, String id);
 
         void onItemGetHelp();
 
