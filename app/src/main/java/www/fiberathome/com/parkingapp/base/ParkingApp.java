@@ -53,7 +53,7 @@ public class ParkingApp extends Application implements LifecycleObserver {
 
         APIClient.init();
 
-        //firebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
+        firebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
 
         //setAppDefaults();
 
