@@ -109,13 +109,13 @@
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
-            android:name=".ui.changePassword.newPassword.NewPasswordActivity"
+            android:name=".ui.authPassword.newPassword.NewPasswordActivity"
             android:screenOrientation="portrait"
             android:configChanges="locale"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
-            android:name=".ui.changePassword.changePassword.ChangePasswordOTPActivity"
+            android:name=".ui.authPassword.changePassword.ChangePasswordOTPActivity"
             android:screenOrientation="portrait"
             android:configChanges="locale"
             android:theme="@style/AppTheme.DefaultActionBar" />
@@ -178,7 +178,7 @@
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
-            android:name=".ui.forgetPassword.ForgetPasswordActivity"
+            android:name=".ui.authPassword.forgotPassword.ForgotPasswordActivity"
             android:screenOrientation="portrait"
             android:configChanges="locale"
             android:theme="@style/AppTheme.DefaultActionBar" />

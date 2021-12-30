@@ -35,7 +35,7 @@ import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.data.model.response.login.LoginResponse;
 import www.fiberathome.com.parkingapp.data.model.user.User;
 import www.fiberathome.com.parkingapp.databinding.FragmentLoginBinding;
-import www.fiberathome.com.parkingapp.ui.forgetPassword.ForgetPasswordActivity;
+import www.fiberathome.com.parkingapp.ui.authPassword.forgotPassword.ForgotPasswordActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.permission.PermissionActivity;
 import www.fiberathome.com.parkingapp.ui.progressView.ProgressView;
@@ -120,7 +120,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
             @Override
             public void onClick(@NonNull View textView) {
                 // do some thing
-                startActivity(new Intent(context, ForgetPasswordActivity.class));
+                startActivity(new Intent(context, ForgotPasswordActivity.class));
             }
         };
 

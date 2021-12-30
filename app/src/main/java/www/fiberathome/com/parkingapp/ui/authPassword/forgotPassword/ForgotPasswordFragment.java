@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.ui.forgetPassword;
+package www.fiberathome.com.parkingapp.ui.authPassword.forgotPassword;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -23,25 +23,25 @@ import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.data.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.data.model.response.global.BaseResponse;
 import www.fiberathome.com.parkingapp.databinding.FragmentForgetPasswordBinding;
-import www.fiberathome.com.parkingapp.ui.changePassword.changePassword.ChangePasswordOTPActivity;
+import www.fiberathome.com.parkingapp.ui.authPassword.changePassword.ChangePasswordOTPActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 import www.fiberathome.com.parkingapp.utils.Validator;
 
 @SuppressLint("NonConstantResourceId")
-public class ForgetPasswordFragment extends BaseFragment {
+public class ForgotPasswordFragment extends BaseFragment {
 
-    private ForgetPasswordActivity context;
-    private ForgetPasswordViewModel viewModel;
+    private ForgotPasswordActivity context;
+    private ForgotPasswordViewModel viewModel;
     FragmentForgetPasswordBinding binding;
 
-    public ForgetPasswordFragment() {
+    public ForgotPasswordFragment() {
         // Required empty public constructor
     }
 
-    public static ForgetPasswordFragment newInstance() {
-        return new ForgetPasswordFragment();
+    public static ForgotPasswordFragment newInstance() {
+        return new ForgotPasswordFragment();
     }
 
     @Override
@@ -55,8 +55,8 @@ public class ForgetPasswordFragment extends BaseFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        context = (ForgetPasswordActivity) getActivity();
-        viewModel = new ViewModelProvider(this).get(ForgetPasswordViewModel.class);
+        context = (ForgotPasswordActivity) getActivity();
+        viewModel = new ViewModelProvider(this).get(ForgotPasswordViewModel.class);
         binding.editTextMobileNumber.requestFocus();
         binding.editTextMobileNumber.requestLayout();
         setListener();
@@ -179,31 +179,27 @@ public class ForgetPasswordFragment extends BaseFragment {
 
     private void checkForgetPassword(final String mobileNo) {
         showLoading(context);
-
         viewModel.init(mobileNo);
         viewModel.getMutableData().observe(requireActivity(), (@NonNull BaseResponse response) -> {
-            if (response.getError()) {
+            /*if (response.getError()) {
                 ToastUtils.getInstance().showToastMessage(context, response.getMessage());
+            } else {*/
+            if (response.getMessage().equalsIgnoreCase("Try Again! Invalid Mobile Number.")) {
+                ToastUtils.getInstance().showToastMessage(context,
+                        context.getResources().getString(R.string.mobile_number_not_exist));
             } else {
-                if (response.getMessage().equalsIgnoreCase("Try Again! Invalid Mobile Number.")) {
-                    ToastUtils.getInstance().showToastMessage(context,
-                            context.getResources().getString(R.string.mobile_number_not_exist));
+                if (!response.getError()) {
+                    Intent intent = new Intent(context, ChangePasswordOTPActivity.class);
+                    intent.putExtra("mobile_no", mobileNo);
+                    startActivity(intent);
+                    SharedData.getInstance().setForgetPasswordMobile(mobileNo);
+                    ToastUtils.getInstance().showToastMessage(context, response.getMessage());
+                    context.finish();
                 } else {
                     ToastUtils.getInstance().showToastMessage(context, response.getMessage());
-                    if (!response.getError()) {
-
-                        ToastUtils.getInstance().showToastMessage(context, response.getMessage());
-
-                        Intent intent = new Intent(context, ChangePasswordOTPActivity.class);
-                        intent.putExtra("mobile_no", mobileNo);
-                        startActivity(intent);
-                        SharedData.getInstance().setForgetPasswordMobile(mobileNo);
-                        context.finish();
-                    } else {
-                        ToastUtils.getInstance().showToastMessage(context, response.getMessage());
-                    }
                 }
             }
+            //}
         });
     }
 }

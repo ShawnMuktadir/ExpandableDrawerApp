@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.ui.forgetPassword;
+package www.fiberathome.com.parkingapp.ui.authPassword.forgotPassword;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -14,7 +14,7 @@ import www.fiberathome.com.parkingapp.databinding.ActivityBaseBinding;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 
 @SuppressLint("NonConstantResourceId")
-public class ForgetPasswordActivity extends BaseActivity {
+public class ForgotPasswordActivity extends BaseActivity {
 
     ActivityBaseBinding binding;
 
@@ -30,7 +30,7 @@ public class ForgetPasswordActivity extends BaseActivity {
 
         // Initialize ForgetPasswordFragment
         ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
-                ForgetPasswordFragment.newInstance(), R.id.frameLayout);
+                ForgotPasswordFragment.newInstance(), R.id.frameLayout);
     }
 
     @Override

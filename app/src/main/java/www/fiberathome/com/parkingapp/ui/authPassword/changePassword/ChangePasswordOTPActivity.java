@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.ui.changePassword.changePassword;
+package www.fiberathome.com.parkingapp.ui.authPassword.changePassword;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;

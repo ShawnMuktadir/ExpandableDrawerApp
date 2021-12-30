@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.ui.changePassword.changePassword;
+package www.fiberathome.com.parkingapp.ui.authPassword.changePassword;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -93,7 +93,6 @@ public class ChangePasswordOTPFragment extends BaseFragment {
             public void afterTextChanged(Editable s) {
             }
         });
-
         binding.btnVerifyOtp.setOnClickListener(v -> {
             if (binding.txtPinEntry.getText() != null) {
                 if (binding.txtPinEntry.getText().length() == 4) {
