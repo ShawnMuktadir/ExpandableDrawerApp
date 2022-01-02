@@ -40,6 +40,9 @@ import www.fiberathome.com.parkingapp.data.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.data.model.response.reservation.BookingParkStatusResponse;
 import www.fiberathome.com.parkingapp.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.ui.NavigationActivity;
+import www.fiberathome.com.parkingapp.ui.booking.BookingFragment;
+import www.fiberathome.com.parkingapp.ui.booking.BookingParkFragment;
+import www.fiberathome.com.parkingapp.ui.booking.PaymentFragment;
 import www.fiberathome.com.parkingapp.ui.auth.login.LoginActivity;
 import www.fiberathome.com.parkingapp.ui.followUs.FollowUsFragment;
 import www.fiberathome.com.parkingapp.ui.law.LawFragment;
@@ -208,7 +211,8 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                         drawerLayout.closeDrawer(GravityCompat.START);
                     }
                 }
-            } else {
+            }
+            else {
                 List<Fragment> fragmentList = getSupportFragmentManager().getFragments();
                 for (Fragment f : fragmentList) {
                     if (f instanceof HomeFragment) {
@@ -282,6 +286,14 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                 navigationView.getMenu().getItem(8).setChecked(false);
                 navigationView.getMenu().getItem(9).setChecked(false);
                 navigationView.getMenu().getItem(10).setChecked(false);
+            }
+
+            List<Fragment> fragmentList = getSupportFragmentManager().getFragments();
+            for (Fragment f : fragmentList) {
+                if (f instanceof PaymentFragment) {
+                    fragmentChange(ScheduleFragment.newInstance());
+                    toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
+                }
             }
         } else {
             ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_parking_app));

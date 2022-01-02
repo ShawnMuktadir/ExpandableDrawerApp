@@ -1,5 +1,6 @@
 package www.fiberathome.com.parkingapp.base;
 
+import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
 import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
 
 import android.Manifest;
@@ -53,6 +54,9 @@ import java.util.Locale;
 
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.model.data.preference.LanguagePreferences;
+import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
+import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.GeoFenceBroadcastReceiver;
@@ -145,6 +149,11 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
     @Override
     protected void onResume() {
         super.onResume();
+        if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_EN)) {
+            setAppLocale(LANGUAGE_EN);
+        } else {
+            setAppLocale(Preferences.getInstance(context).getAppLanguage());
+        }
     }
 
     @Override
@@ -217,6 +226,11 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         else {
             super.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
     private ProgressDialog progressDialog;

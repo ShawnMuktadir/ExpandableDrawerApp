@@ -7,6 +7,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.SpannableString;
@@ -39,9 +40,21 @@ import www.fiberathome.com.parkingapp.ui.auth.AuthViewModel;
 import www.fiberathome.com.parkingapp.ui.auth.forgotPassword.ForgotPasswordActivity;
 import www.fiberathome.com.parkingapp.ui.auth.registration.RegistrationActivity;
 import www.fiberathome.com.parkingapp.ui.auth.verifyPhone.VerifyPhoneActivity;
+import www.fiberathome.com.parkingapp.model.api.ApiClient;
+import www.fiberathome.com.parkingapp.model.api.ApiService;
+import www.fiberathome.com.parkingapp.model.api.AppConfig;
+import www.fiberathome.com.parkingapp.model.data.preference.LanguagePreferences;
+import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
+import www.fiberathome.com.parkingapp.model.response.login.LoginResponse;
+import www.fiberathome.com.parkingapp.model.user.User;
+import www.fiberathome.com.parkingapp.ui.forgetPassword.ForgetPasswordActivity;
+import www.fiberathome.com.parkingapp.ui.helper.ProgressView;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.permission.PermissionActivity;
 import www.fiberathome.com.parkingapp.ui.progressView.ProgressView;
+import www.fiberathome.com.parkingapp.ui.signUp.SignUpActivity;
+import www.fiberathome.com.parkingapp.ui.splash.SplashActivity;
+import www.fiberathome.com.parkingapp.ui.verifyPhone.VerifyPhoneActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
@@ -63,7 +76,6 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
     public static LoginFragment newInstance() {
         return new LoginFragment();
     }
-
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -139,6 +151,19 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
         binding.textViewSignUp.setOnClickListener(this);
         binding.btnOTP.setOnClickListener(this);
         binding.tvForgetPassword.setOnClickListener(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        int s1 = binding.btnSignIn.getText().toString().codePointAt(0);
+        if (s1 >= 0x0980 && s1 <= 0x09E0) {
+            binding.tvEnglishLang.setVisibility(View.VISIBLE);
+            binding.tvBanglaLang.setVisibility(View.GONE);
+        } else {
+            binding.tvEnglishLang.setVisibility(View.GONE);
+            binding.tvBanglaLang.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -297,6 +322,32 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
 
             }
         });
+
+        binding.tvEnglishLang.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeLanguage(view);
+            }
+        });
+        binding.tvBanglaLang.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeLanguage(view);
+            }
+        });
+    }
+
+    private void changeLanguage(View view) {
+        if (view == binding.tvEnglishLang) {
+            Preferences.getInstance(context).setAppLanguage(LANGUAGE_EN);
+            LanguagePreferences.getInstance(context).setAppLanguage(LANGUAGE_EN);
+            context.setAppLocale(LANGUAGE_EN);
+        } else {
+            Preferences.getInstance(context).setAppLanguage(LANGUAGE_BN);
+            LanguagePreferences.getInstance(context).setAppLanguage(LANGUAGE_BN);
+            context.setAppLocale(LANGUAGE_BN);
+        }
+        context.startActivityWithFinishAffinity(LoginActivity.class);
     }
 
     private void submitLogin() {
