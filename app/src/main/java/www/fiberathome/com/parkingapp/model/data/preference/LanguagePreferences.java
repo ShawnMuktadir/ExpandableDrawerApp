@@ -1,6 +1,6 @@
 package www.fiberathome.com.parkingapp.model.data.preference;
 
-import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
+import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_BN;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -50,7 +50,7 @@ public class LanguagePreferences {
     }
 
     public String getAppLanguage() {
-        return getValue(Constants.LANGUAGE, LANGUAGE_EN);
+        return getValue(Constants.LANGUAGE, LANGUAGE_BN);
     }
 
     public void setAppLanguage(String language) {

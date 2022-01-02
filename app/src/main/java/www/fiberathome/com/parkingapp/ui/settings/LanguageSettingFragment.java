@@ -73,15 +73,16 @@ public class LanguageSettingFragment extends Fragment {
         }
 
         LanguageAdapter languageAdapter = new LanguageAdapter(
-                populateLanguageItem(names, subNames, isoCodes, new ArrayList<>()), (language) -> {
+                populateLanguageItem(names, subNames, isoCodes, new ArrayList<>()), (Language language) -> {
 
             if (Preferences.getInstance(context).getAppLanguage() != null &&
                     LanguagePreferences.getInstance(context).getAppLanguage() != null) {
                 Preferences.getInstance(context).setAppLanguage(language.getIsoCode());
                 LanguagePreferences.getInstance(context).setAppLanguage(language.getIsoCode());
+                context.setAppLocale(language.getIsoCode());
             }
-
-            context.startActivityWithFinishAffinity(SplashActivity.class);
+            //context.startActivityWithFinishAffinity(LanguageSettingActivity.class);
+            context.startActivity(LanguageSettingActivity.class);
         });
 
         binding.recyclerViewSettings.setLayoutManager(new LinearLayoutManager(context));

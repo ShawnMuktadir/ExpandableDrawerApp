@@ -1,6 +1,6 @@
 package www.fiberathome.com.parkingapp.ui.splash;
 
-import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_BN;
+import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -48,8 +48,8 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
-            setAppLocale(LANGUAGE_BN);
+        if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_EN)) {
+            setAppLocale(LANGUAGE_EN);
         } else {
             setAppLocale(Preferences.getInstance(context).getAppLanguage());
         }
@@ -58,8 +58,8 @@ public class SplashActivity extends BaseActivity {
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         // refresh your views here
-        if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
-            setAppLocale(LANGUAGE_BN);
+        if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_EN)) {
+            setAppLocale(LANGUAGE_EN);
         } else {
             setAppLocale(Preferences.getInstance(context).getAppLanguage());
         }

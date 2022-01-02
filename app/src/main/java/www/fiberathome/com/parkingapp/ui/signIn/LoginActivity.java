@@ -1,13 +1,20 @@
 package www.fiberathome.com.parkingapp.ui.signIn;
 
+import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
+
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
+
+import androidx.annotation.NonNull;
 
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.databinding.ActivityBaseBinding;
+import www.fiberathome.com.parkingapp.model.data.preference.LanguagePreferences;
+import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
@@ -30,16 +37,6 @@ public class LoginActivity extends BaseActivity {
         //Initialize login fragment
         ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
                 LoginFragment.newInstance(), R.id.frameLayout);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     @Override
