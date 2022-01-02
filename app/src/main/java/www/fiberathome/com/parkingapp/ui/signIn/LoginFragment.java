@@ -7,6 +7,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.SpannableString;
@@ -71,7 +72,6 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
         return new LoginFragment();
     }
 
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -83,15 +83,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         context = (LoginActivity) getActivity();
-
-        String deviceOs = android.os.Build.VERSION.RELEASE; // e.g. myVersion := "10"
-        int sdkVersion = android.os.Build.VERSION.SDK_INT; // e.g. sdkVersion := 29;
-
-        Timber.e("device OS -> %s", deviceOs);
-        Timber.e("device sdkVersion -> %s", sdkVersion);
-
         setListeners();
 
         if (Preferences.getInstance(context).isLoggedIn() && Preferences.getInstance(context) != null && Preferences.getInstance(context).isWaitingForLocationPermission()) {
@@ -157,12 +149,13 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
     @Override
     public void onResume() {
         super.onResume();
-        if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_EN)) {
-            binding.tvEnglishLang.setVisibility(View.GONE);
-            binding.tvBanglaLang.setVisibility(View.VISIBLE);
-        } else {
+        int s1 = binding.btnSignIn.getText().toString().codePointAt(0);
+        if (s1 >= 0x0980 && s1 <= 0x09E0) {
             binding.tvEnglishLang.setVisibility(View.VISIBLE);
             binding.tvBanglaLang.setVisibility(View.GONE);
+        } else {
+            binding.tvEnglishLang.setVisibility(View.GONE);
+            binding.tvBanglaLang.setVisibility(View.VISIBLE);
         }
     }
 
@@ -341,11 +334,13 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
         if (view == binding.tvEnglishLang) {
             Preferences.getInstance(context).setAppLanguage(LANGUAGE_EN);
             LanguagePreferences.getInstance(context).setAppLanguage(LANGUAGE_EN);
+            context.setAppLocale(LANGUAGE_EN);
         } else {
             Preferences.getInstance(context).setAppLanguage(LANGUAGE_BN);
             LanguagePreferences.getInstance(context).setAppLanguage(LANGUAGE_BN);
+            context.setAppLocale(LANGUAGE_BN);
         }
-        context.startActivityWithFinishAffinity(SplashActivity.class);
+        context.startActivityWithFinishAffinity(LoginActivity.class);
     }
 
     private void submitLogin() {

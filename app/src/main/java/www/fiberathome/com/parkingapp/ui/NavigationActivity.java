@@ -1,6 +1,7 @@
 package www.fiberathome.com.parkingapp.ui;
 
 import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_BN;
+import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
 
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
@@ -75,7 +76,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
     public ActionBarDrawerToggle actionBarDrawerToggle;
     public Toolbar toolbar;
 
-    private Context context;
+    private BaseActivity context;
 
     protected ActivityNavigationBinding binding;
 
@@ -93,7 +94,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         binding = ActivityNavigationBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
-        context = this;
+        context = (BaseActivity) this;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
@@ -133,7 +134,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            onBackPressed();
+            context.onBackPressed();
             return true;
         } else if (item.getItemId() == R.id.menu_change_password) {
             // do your code
