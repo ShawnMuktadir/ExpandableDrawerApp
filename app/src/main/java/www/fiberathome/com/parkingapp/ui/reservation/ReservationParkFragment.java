@@ -419,8 +419,8 @@ public class ReservationParkFragment extends BaseFragment implements OnMapReadyC
             reservationId = sensors.getId();
         }
 
-        reservationViewModel.initCloseReservatn(Preferences.getInstance(context).getUser().getMobileNo(), spotUid, reservationId);
-        reservationViewModel.getCloseReservationMutableLiveDat().observe(requireActivity(), (@NonNull CloseReservationResponse response) -> {
+        reservationViewModel.initCloseReservation(Preferences.getInstance(context).getUser().getMobileNo(), spotUid, reservationId);
+        reservationViewModel.getCloseReservationMutableLiveData().observe(requireActivity(), (@NonNull CloseReservationResponse response) -> {
             hideLoading();
             if (!response.getError()) {
                 if (isAdded() && countDownTimer != null) {

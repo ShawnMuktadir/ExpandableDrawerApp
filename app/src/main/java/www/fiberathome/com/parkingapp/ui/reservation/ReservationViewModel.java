@@ -81,12 +81,12 @@ public class ReservationViewModel extends ViewModel {
         return timeSlotResponseMutableLiveData;
     }
 
-    public void initCloseReservatn(String mobileNo, String bookedUid,
-                                   String tbl_id) {
+    public void initCloseReservation(String mobileNo, String bookedUid,
+                                     String tbl_id) {
         closeReservationResponseMutableLiveData = ReservationRepository.getInstance().endReservation(mobileNo, bookedUid, tbl_id);
     }
 
-    public LiveData<CloseReservationResponse> getCloseReservationMutableLiveDat() {
+    public LiveData<CloseReservationResponse> getCloseReservationMutableLiveData() {
         return closeReservationResponseMutableLiveData;
     }
 }

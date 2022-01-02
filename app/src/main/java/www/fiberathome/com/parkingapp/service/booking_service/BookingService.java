@@ -26,7 +26,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -43,13 +42,17 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.data.model.data.Constants;
 import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.data.model.response.reservation.CloseReservationResponse;
+import www.fiberathome.com.parkingapp.data.model.response.reservation.ReservationAPI;
+import www.fiberathome.com.parkingapp.data.source.APIClient;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
-import www.fiberathome.com.parkingapp.ui.reservation.ReservationViewModel;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 
 @SuppressLint("SimpleDateFormat")
@@ -73,8 +76,6 @@ public class BookingService extends Service {
     private boolean endBookingCalled = false;
     private boolean isServiceStarted = false;
 
-    private ReservationViewModel reservationViewModel;
-
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -85,7 +86,6 @@ public class BookingService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         context = getApplicationContext();
-        reservationViewModel = new ReservationViewModel();
         String action = intent.getAction();
         if (action != null) {
             switch (action) {
@@ -369,18 +369,27 @@ public class BookingService extends Service {
 
     private void endBooking() {
         endBookingCalled = true;
+        ReservationAPI request = APIClient.createService(ReservationAPI.class);
         String user = Preferences.getInstance(context).getUser().getMobileNo();
         String bookedUid = Preferences.getInstance(context).getBooked().getBookedUid();
         String reservationId = Preferences.getInstance(context).getBooked().getReservation();
+        Call<CloseReservationResponse> call = request.endReservation(user, bookedUid, reservationId);
+        call.enqueue(new Callback<CloseReservationResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<CloseReservationResponse> call, @NonNull Response<CloseReservationResponse> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        Preferences.getInstance(context).isBookingCancelled = true;
+                        Preferences.getInstance(context).clearBooking();
+                        sendNotification(context.getResources().getString(R.string.booked_time), getString(R.string.your_booked_parking_duration_has_ended), true);
+                        Timber.e("Booking closed");
+                    }
+                }
+            }
 
-        reservationViewModel.initCloseReservatn(user, bookedUid, reservationId);
-        reservationViewModel.getCloseReservationMutableLiveDat().observe((LifecycleOwner) context, (@NonNull CloseReservationResponse response) -> {
-            if (!response.getError()) {
-                Preferences.getInstance(context).isBookingCancelled = true;
-                Preferences.getInstance(context).clearBooking();
-                sendNotification(context.getResources().getString(R.string.booked_time), getString(R.string.your_booked_parking_duration_has_ended), true);
-                Timber.e("Booking closed");
-            } else {
+            @Override
+            public void onFailure(@NonNull Call<CloseReservationResponse> call, @NonNull Throwable t) {
+                Timber.e("onFailure -> %s", t.getMessage());
                 endBookingCalled = false;
             }
         });
@@ -521,7 +530,7 @@ public class BookingService extends Service {
     public void onDestroy() {
         if (Preferences.getInstance(context).getBooked().getIsBooked() &&
                 !Preferences.getInstance(context).getBooked().isCarParked()) {
-//           Toast.makeText(context, "service restarted", Toast.LENGTH_SHORT).show();
+            //ToastUtils.getInstance().showToastMessage(context, "service restarted");
             Timber.e("abdur service restarted");
             Intent intent = new Intent(context, BookingService.class);
             intent.setAction(Constants.START_BOOKING_TRACKING);
@@ -533,7 +542,7 @@ public class BookingService extends Service {
         } else if (Preferences.getInstance(context).getBooked().getIsBooked()
                 && Preferences.getInstance(context).getBooked().isCarParked()
                 && Preferences.getInstance(context).getBooked().isExceedRunning()) {
-//           Toast.makeText(context, "service restarted", Toast.LENGTH_SHORT).show();
+            //ToastUtils.getInstance().showToastMessage(context, "service restarted");
             Timber.e("abdur service restarted");
             Intent intent = new Intent(context, BookingService.class);
             intent.setAction(Constants.BOOKING_EXCEED_CHECK);
@@ -543,8 +552,8 @@ public class BookingService extends Service {
                 context.startService(intent);
             }
         } else {
-//           Toast.makeText(context, "service destroyed", Toast.LENGTH_SHORT).show();
-            Timber.e("abdur service destroyed");
+            //ToastUtils.getInstance().showToastMessage(context, "service destroyed");
+            Timber.e("service destroyed");
             super.onDestroy();
         }
     }

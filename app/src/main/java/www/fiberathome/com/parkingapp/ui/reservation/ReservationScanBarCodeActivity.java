@@ -191,7 +191,9 @@ public class ReservationScanBarCodeActivity extends BaseActivity implements Frag
 
             @Override
             public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
-                cameraSource.stop();
+                if (cameraSource != null) {
+                    cameraSource.stop();
+                }
             }
         });
 
@@ -199,7 +201,7 @@ public class ReservationScanBarCodeActivity extends BaseActivity implements Frag
         barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
             @Override
             public void release() {
-                //Toast.makeText(getApplicationContext(), "To prevent memory leaks barcode scanner has been stopped", Toast.LENGTH_SHORT).show();
+                //ToastUtils.getInstance().showToastMessage(getApplicationContext(), "To prevent memory leaks barcode scanner has been stopped");
             }
 
             @Override
@@ -209,7 +211,7 @@ public class ReservationScanBarCodeActivity extends BaseActivity implements Frag
                     binding.txtBarcodeValue.post(() -> {
                         try {
                             intentData = barcodes.valueAt(0).displayValue;
-
+                            // for encrypt qr data
                             /*byte[] data = Base64.decode(intentData, Base64.DEFAULT);
                             String decodedBase64 = new String(data, StandardCharsets.UTF_8);*/
                             SensorArea sensorArea = null;
@@ -259,7 +261,7 @@ public class ReservationScanBarCodeActivity extends BaseActivity implements Frag
                         }
                     });
                 } else {
-                    Timber.e("else called");
+                    Timber.e("else called barcode size 0");
                 }
             }
         });
