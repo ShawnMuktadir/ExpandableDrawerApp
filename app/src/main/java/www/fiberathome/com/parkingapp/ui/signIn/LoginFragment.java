@@ -39,6 +39,7 @@ import www.fiberathome.com.parkingapp.databinding.FragmentLoginBinding;
 import www.fiberathome.com.parkingapp.model.api.ApiClient;
 import www.fiberathome.com.parkingapp.model.api.ApiService;
 import www.fiberathome.com.parkingapp.model.api.AppConfig;
+import www.fiberathome.com.parkingapp.model.data.preference.LanguagePreferences;
 import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.model.response.login.LoginResponse;
 import www.fiberathome.com.parkingapp.model.user.User;
@@ -47,6 +48,7 @@ import www.fiberathome.com.parkingapp.ui.helper.ProgressView;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.permission.PermissionActivity;
 import www.fiberathome.com.parkingapp.ui.signUp.SignUpActivity;
+import www.fiberathome.com.parkingapp.ui.splash.SplashActivity;
 import www.fiberathome.com.parkingapp.ui.verifyPhone.VerifyPhoneActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
@@ -150,6 +152,18 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
         binding.textViewSignUp.setOnClickListener(this);
         binding.btnOTP.setOnClickListener(this);
         binding.tvForgetPassword.setOnClickListener(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_EN)) {
+            binding.tvEnglishLang.setVisibility(View.GONE);
+            binding.tvBanglaLang.setVisibility(View.VISIBLE);
+        } else {
+            binding.tvEnglishLang.setVisibility(View.VISIBLE);
+            binding.tvBanglaLang.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -308,13 +322,36 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
 
             }
         });
+
+        binding.tvEnglishLang.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeLanguage(view);
+            }
+        });
+        binding.tvBanglaLang.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeLanguage(view);
+            }
+        });
+    }
+
+    private void changeLanguage(View view) {
+        if (view == binding.tvEnglishLang) {
+            Preferences.getInstance(context).setAppLanguage(LANGUAGE_EN);
+            LanguagePreferences.getInstance(context).setAppLanguage(LANGUAGE_EN);
+        } else {
+            Preferences.getInstance(context).setAppLanguage(LANGUAGE_BN);
+            LanguagePreferences.getInstance(context).setAppLanguage(LANGUAGE_BN);
+        }
+        context.startActivityWithFinishAffinity(SplashActivity.class);
     }
 
     private void submitLogin() {
         if (checkFields()) {
             String mobileNo = binding.editTextMobile.getText().toString().trim();
             String password = binding.editTextPassword.getText().toString().trim();
-
             checkLogin(mobileNo, password);
         }
     }

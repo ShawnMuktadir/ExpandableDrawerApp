@@ -24,6 +24,34 @@
         android:contentDescription="logo" />
 
     <TextView
+        android:id="@+id/tvBanglaLang"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/bangla_bn"
+        android:layout_margin="8dp"
+        android:textSize="17sp"
+        android:padding="4sp"
+        android:textColor="@color/black"
+        android:visibility="gone"
+        android:background="@drawable/rect_white_bg_gray_border_rounded"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvEnglishLang"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/english"
+        android:layout_margin="8dp"
+        android:textSize="17sp"
+        android:padding="4sp"
+        android:visibility="visible"
+        android:textColor="@color/black"
+        android:background="@drawable/rect_white_bg_gray_border_rounded"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
         android:id="@+id/textView2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
