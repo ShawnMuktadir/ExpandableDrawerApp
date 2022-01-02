@@ -1,7 +1,6 @@
 package www.fiberathome.com.parkingapp.ui.splash;
 
-import static www.fiberathome.com.parkingapp.data.model.data.Constants.LANGUAGE_BN;
-import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
+import static www.fiberathome.com.parkingapp.data.model.data.Constants.LANGUAGE_EN;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;

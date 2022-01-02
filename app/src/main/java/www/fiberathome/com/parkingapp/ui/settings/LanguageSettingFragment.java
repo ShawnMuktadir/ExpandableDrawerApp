@@ -24,7 +24,6 @@ import www.fiberathome.com.parkingapp.data.model.data.preference.LanguagePrefere
 import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.databinding.FragmentSettingsBinding;
 import www.fiberathome.com.parkingapp.ui.settings.adapter.LanguageAdapter;
-import www.fiberathome.com.parkingapp.ui.splash.SplashActivity;
 
 @SuppressLint("NonConstantResourceId")
 @SuppressWarnings({"unused", "RedundantSuppression"})
