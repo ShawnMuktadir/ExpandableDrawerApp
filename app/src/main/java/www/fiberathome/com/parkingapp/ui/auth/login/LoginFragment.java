@@ -311,18 +311,8 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
             }
         });
 
-        binding.tvEnglishLang.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                changeLanguage(view);
-            }
-        });
-        binding.tvBanglaLang.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                changeLanguage(view);
-            }
-        });
+        binding.tvEnglishLang.setOnClickListener(this::changeLanguage);
+        binding.tvBanglaLang.setOnClickListener(this::changeLanguage);
     }
 
     private void changeLanguage(View view) {

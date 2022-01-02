@@ -54,15 +54,6 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.Settin
             viewHolder.binding.imageViewCheckedIcon.setVisibility(View.VISIBLE);
         }
 
-        if (position == 1) {
-            Timber.e("language  position -> %s %s", LanguagePreferences.getInstance(context).getAppLanguage(), position);
-            if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
-                viewHolder.binding.imageViewCheckedIcon.setVisibility(View.VISIBLE);
-            } else {
-                viewHolder.binding.imageViewCheckedIcon.setVisibility(View.GONE);
-            }
-        }
-
         viewHolder.itemView.setOnClickListener(v -> listener.onItemClick(data));
     }
 

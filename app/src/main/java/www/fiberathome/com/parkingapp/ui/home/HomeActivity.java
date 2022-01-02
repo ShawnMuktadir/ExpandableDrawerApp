@@ -209,8 +209,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                         drawerLayout.closeDrawer(GravityCompat.START);
                     }
                 }
-            }
-            else {
+            } else {
                 List<Fragment> fragmentList = getSupportFragmentManager().getFragments();
                 for (Fragment f : fragmentList) {
                     if (f instanceof HomeFragment) {
@@ -435,13 +434,15 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
         reservationViewModel.initBookingParkStatus(mobileNo);
         reservationViewModel.getBookingParkStatus().observe(this, bookingParkStatusResponse -> {
             hideLoading();
-            if (bookingParkStatusResponse.getSensors() != null) {
-                BookingParkStatusResponse.Sensors sensors = bookingParkStatusResponse.getSensors();
-                ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
-                        ReservationParkFragment.newInstance(sensors), R.id.nav_host_fragment);
-            } else {
-                ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
-                        HomeFragment.newInstance(lat, lng, areaName, count, placeId), R.id.nav_host_fragment);
+            if (bookingParkStatusResponse != null) {
+                if (bookingParkStatusResponse.getSensors() != null) {
+                    BookingParkStatusResponse.Sensors sensors = bookingParkStatusResponse.getSensors();
+                    ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
+                            ReservationParkFragment.newInstance(sensors), R.id.nav_host_fragment);
+                } else {
+                    ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
+                            HomeFragment.newInstance(lat, lng, areaName, count, placeId), R.id.nav_host_fragment);
+                }
             }
         });
     }
