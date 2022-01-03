@@ -309,7 +309,6 @@ public class ProfileFragment extends BaseFragment implements IOnBackPressListene
 
                 classId = id;
                 vehicleClass = classDataList.get(position).getValue();
-                Preferences.getInstance(context).saveVehicleClassData(vehicleClass);
             }
 
             @Override
@@ -405,7 +404,6 @@ public class ProfileFragment extends BaseFragment implements IOnBackPressListene
 
                 divId = id;
                 vehicleDiv = classDivList.get(position).getValue();
-                Preferences.getInstance(context).saveVehicleDivData(vehicleDiv);
             }
 
             @Override
@@ -528,6 +526,8 @@ public class ProfileFragment extends BaseFragment implements IOnBackPressListene
         profileViewModel.initAddVehicle(mobileNo, licencePlateInfo);
         profileViewModel.getAddVehicleMutableData().observe(requireActivity(), (@NonNull BaseResponse response) -> {
             hideLoading();
+            Preferences.getInstance(context).saveVehicleDivData(vehicleDiv);
+            Preferences.getInstance(context).saveVehicleClassData(vehicleClass);
             ToastUtils.getInstance().showToastMessage(context, response.getMessage());
         });
     }
