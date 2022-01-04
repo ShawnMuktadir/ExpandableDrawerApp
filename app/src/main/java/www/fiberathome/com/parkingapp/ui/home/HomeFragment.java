@@ -1165,7 +1165,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             (ArrayList<BookingSensors> bookingSensors) {
         bottomSheetAdapter = null;
         bottomSheetAdapter = new BottomSheetAdapter(context, this, onConnectedLocation, (BookingSensors sensors) -> {
-            if (sensors.getCount().equalsIgnoreCase("0")) {
+            if (!sensors.getCount().equalsIgnoreCase("0")) {
                 bookingSensorsArrayList.clear();
                 bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._142sdp));
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
