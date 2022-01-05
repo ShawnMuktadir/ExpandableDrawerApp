@@ -582,5 +582,8 @@
     <string name="select_photo_from_gallery">গ্যালারি থেকে ছবি নির্বাচন করুন</string>
     <string name="capture_photo_from_camera">ক্যামেরা থেকে ছবি ক্যাপচার করুন</string>
     <string name="provide_valid_information">সঠিক তথ্য প্রদান করুন</string>
+    <string name="spot_no">স্পট নং : </string>
+    <string name="km"> কি. মি.</string>
+    <string name="mins"> মিনিট</string>
 </resources>
 

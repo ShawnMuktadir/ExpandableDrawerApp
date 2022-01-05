@@ -39,6 +39,7 @@ public class MathUtils {
         try {
             intValue = Integer.parseInt(value);
         } catch (NumberFormatException | NullPointerException ex) {
+            ex.getCause();
             intValue = 0;
         }
         return intValue;

@@ -38,6 +38,7 @@ import java.util.List;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
+import www.fiberathome.com.parkingapp.data.model.data.preference.LanguagePreferences;
 import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.data.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.data.model.response.parkingSlot.ParkingSlotResponse;
@@ -279,8 +280,14 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
                     for (List<String> baseStringList : parkingSlotList) {
                         for (int i = 0; i < baseStringList.size(); i++) {
 
-                            if (i == 1) {
-                                parkingArea = baseStringList.get(i);
+                            if (!LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
+                                if (i == 1) {
+                                    parkingArea = baseStringList.get(i);
+                                }
+                            } else {
+                                if (i == 11) {
+                                    parkingArea = baseStringList.get(i);
+                                }
                             }
 
                             if (i == 0) {

@@ -19,6 +19,7 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.data.model.response.reservation.BookingSensors;
 import www.fiberathome.com.parkingapp.databinding.BottomSheetTextRecyclerItemBinding;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
+import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.MathUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
@@ -68,16 +69,16 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         }
         holder.binding.textViewParkingAreaName.setText(bookingSensors.getParkingArea());
         if (bookingSensors.getPsId() != null && !bookingSensors.getPsId().equalsIgnoreCase("")) {
-            holder.binding.textViewPsId.setText("( Spot No: " + bookingSensors.getPsId() + " )");
+            holder.binding.textViewPsId.setText("(" + context.getResources().getString(R.string.spot_no) + bookingSensors.getPsId() + " )");
         } else {
             holder.binding.textViewPsId.setText("");
         }
         if (bookingSensors.getOccupiedCount() != null) {
-            holder.binding.textViewParkingAreaCount.setText(bookingSensors.getOccupiedCount() + "/" + bookingSensors.getCount());
+            holder.binding.textViewParkingAreaCount.setText(ApplicationUtils.localeIntConverter(context, bookingSensors.getOccupiedCount()) + "/" + ApplicationUtils.localeIntConverter(context, bookingSensors.getCount()));
         } else {
-            holder.binding.textViewParkingAreaCount.setText(bookingSensors.getCount());
+            holder.binding.textViewParkingAreaCount.setText(ApplicationUtils.localeIntConverter(context, bookingSensors.getCount()));
         }
-        holder.binding.textViewParkingDistance.setText(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(bookingSensors.getDistance()) + " km");
+        holder.binding.textViewParkingDistance.setText(new DecimalFormat("##.#", new DecimalFormatSymbols()).format(bookingSensors.getDistance()) + " " + context.getResources().getString(R.string.km));
         holder.binding.rowFG.setOnClickListener(view -> {
             if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
                 clickListeners.onClick(bookingSensors);
@@ -89,7 +90,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         DecimalFormat decimalFormat = new DecimalFormat("00.0", new DecimalFormatSymbols(Locale.US));
         double tmp = MathUtils.getInstance().convertToDouble(decimalFormat.format(Double
                 .parseDouble(bookingSensors.getDuration())));
-        holder.binding.textViewParkingTravelTime.setText(tmp + " mins");
+        holder.binding.textViewParkingTravelTime.setText(tmp + " " + context.getResources().getString(R.string.mins));
     }
 
     @Override
