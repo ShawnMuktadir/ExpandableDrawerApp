@@ -1,6 +1,12 @@
 package www.fiberathome.com.parkingapp.utils;
 
+import android.content.Context;
 import android.location.Location;
+
+import java.text.NumberFormat;
+import java.util.Locale;
+
+import www.fiberathome.com.parkingapp.data.model.data.preference.LanguagePreferences;
 
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class MathUtils {
@@ -80,5 +86,23 @@ public class MathUtils {
         double distance = startPoint.distanceTo(endPoint);
 
         return (distance / 1000);
+    }
+
+    public String localeIntConverter(Context context, String number) {
+        try {
+            return NumberFormat.getInstance(new Locale(LanguagePreferences.getInstance(context).getAppLanguage(), "BAN")).format(MathUtils.getInstance().convertToInt(number));
+        } catch (Exception e) {
+            e.getCause();
+            return "0";
+        }
+    }
+
+    public String localeDoubleConverter(Context context, String number) {
+        try {
+            return NumberFormat.getInstance(new Locale(LanguagePreferences.getInstance(context).getAppLanguage(), "BAN")).format(MathUtils.getInstance().convertToDouble(number));
+        } catch (Exception e) {
+            e.getCause();
+            return "0.0";
+        }
     }
 }

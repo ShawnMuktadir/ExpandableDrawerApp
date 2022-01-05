@@ -19,7 +19,7 @@ import java.util.Locale;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.data.model.response.sensors.SensorArea;
 import www.fiberathome.com.parkingapp.databinding.RowParkingBinding;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.utils.MathUtils;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
 
 @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -62,12 +62,13 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         parkingViewHolder.binding.textViewParkingAreaName.setText(TextUtils.getInstance().capitalizeFirstLetter(sensorArea.getParkingArea()));
 
-        parkingViewHolder.binding.textViewParkingAreaCount.setText(ApplicationUtils.localeIntConverter(context, sensorArea.getCount()));
+        parkingViewHolder.binding.textViewParkingAreaCount.setText(MathUtils.getInstance().localeIntConverter(context, sensorArea.getCount()));
 
-        parkingViewHolder.binding.textViewParkingDistance.setText(new DecimalFormat("##.#",
-                new DecimalFormatSymbols(Locale.US)).format(sensorArea.getDistance()) + " " + context.getResources().getString(R.string.km));
+        DecimalFormat df = new DecimalFormat("00.0", new DecimalFormatSymbols(Locale.US));
+        double tmpDistance = MathUtils.getInstance().convertToDouble(df.format(sensorArea.getDistance()));
+        parkingViewHolder.binding.textViewParkingDistance.setText(MathUtils.getInstance().localeDoubleConverter(context, String.valueOf(tmpDistance)) + " " + context.getResources().getString(R.string.km));
 
-        parkingViewHolder.binding.textViewParkingTravelTime.setText(ApplicationUtils.localeDoubleConverter(context, sensorArea.getDuration()));
+        parkingViewHolder.binding.textViewParkingTravelTime.setText(MathUtils.getInstance().localeDoubleConverter(context, sensorArea.getDuration()));
 
         parkingViewHolder.binding.relativeLayout.setOnClickListener(view -> {
             selectedPosition = position;

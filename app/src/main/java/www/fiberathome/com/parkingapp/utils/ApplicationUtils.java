@@ -21,7 +21,6 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -36,7 +35,6 @@ import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.data.model.data.Constants;
 import www.fiberathome.com.parkingapp.data.model.data.StaticData;
-import www.fiberathome.com.parkingapp.data.model.data.preference.LanguagePreferences;
 import www.fiberathome.com.parkingapp.service.booking_service.BookingService;
 import www.fiberathome.com.parkingapp.service.notification.BookingServiceStarter;
 import www.fiberathome.com.parkingapp.utils.internet.ConnectivityInterceptor;
@@ -261,23 +259,5 @@ public class ApplicationUtils {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(source);
         return calendar;
-    }
-
-    public static String localeIntConverter(Context context, String number) {
-        try {
-            return NumberFormat.getInstance(new Locale(LanguagePreferences.getInstance(context).getAppLanguage(), "BAN")).format(MathUtils.getInstance().convertToInt(number));
-        } catch (Exception e) {
-            e.getCause();
-            return "0";
-        }
-    }
-
-    public static String localeDoubleConverter(Context context, String number) {
-        try {
-            return NumberFormat.getInstance(new Locale(LanguagePreferences.getInstance(context).getAppLanguage(), "BAN")).format(MathUtils.getInstance().convertToDouble(number));
-        } catch (Exception e) {
-            e.getCause();
-            return "0.0";
-        }
     }
 }
