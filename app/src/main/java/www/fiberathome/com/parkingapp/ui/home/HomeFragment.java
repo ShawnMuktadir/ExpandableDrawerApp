@@ -586,7 +586,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 Timber.e(e.getCause());
             }
         });
-
     }
 
     private void getDirectionPinMarkerDraw(LatLng pinPosition, String markerUid, boolean fromSearch) {
