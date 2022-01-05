@@ -19,6 +19,7 @@ import java.util.Locale;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.data.model.response.sensors.SensorArea;
 import www.fiberathome.com.parkingapp.databinding.RowParkingBinding;
+import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
 
 @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -61,12 +62,12 @@ public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         parkingViewHolder.binding.textViewParkingAreaName.setText(TextUtils.getInstance().capitalizeFirstLetter(sensorArea.getParkingArea()));
 
-        parkingViewHolder.binding.textViewParkingAreaCount.setText(sensorArea.getCount());
+        parkingViewHolder.binding.textViewParkingAreaCount.setText(ApplicationUtils.localeIntConverter(context, sensorArea.getCount()));
 
         parkingViewHolder.binding.textViewParkingDistance.setText(new DecimalFormat("##.#",
-                new DecimalFormatSymbols(Locale.US)).format(sensorArea.getDistance()) + " km");
+                new DecimalFormatSymbols(Locale.US)).format(sensorArea.getDistance()) + " " + context.getResources().getString(R.string.km));
 
-        parkingViewHolder.binding.textViewParkingTravelTime.setText(sensorArea.getDuration());
+        parkingViewHolder.binding.textViewParkingTravelTime.setText(ApplicationUtils.localeDoubleConverter(context, sensorArea.getDuration()));
 
         parkingViewHolder.binding.relativeLayout.setOnClickListener(view -> {
             selectedPosition = position;

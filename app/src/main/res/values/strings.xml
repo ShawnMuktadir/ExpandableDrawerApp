@@ -579,4 +579,7 @@
     <string name="select_photo_from_gallery">Select photo from gallery</string>
     <string name="capture_photo_from_camera">Capture photo from camera</string>
     <string name="provide_valid_information">Please provide valid information</string>
+    <string name="spot_no">Spot No : </string>
+    <string name="km"> km</string>
+    <string name="mins"> mins</string>
 </resources>
