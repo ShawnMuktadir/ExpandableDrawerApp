@@ -55,7 +55,6 @@ import java.util.Locale;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.data.model.data.preference.LanguagePreferences;
-import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.GeoFenceBroadcastReceiver;
@@ -151,7 +150,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_EN)) {
             setAppLocale(LANGUAGE_EN);
         } else {
-            setAppLocale(Preferences.getInstance(context).getAppLanguage());
+            setAppLocale(LanguagePreferences.getInstance(context).getAppLanguage());
         }
     }
 
