@@ -517,7 +517,7 @@ public class ReservationParkFragment extends BaseFragment implements OnMapReadyC
             }
 
             public void onFinish() {
-                binding.tvCountDown.setText(context.getString(R.string.remaining_time) + "00:00");
+                binding.tvCountDown.setText(context.getString(R.string.remaining_time) + context.getResources().getString(R.string.digit_00_00));
             }
         }.start();
     }

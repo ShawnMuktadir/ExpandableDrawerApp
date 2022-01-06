@@ -359,9 +359,9 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
         }
 
         if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
-            binding.tvDiscount.setText(context.getResources().getString(R.string.bdt) + "  " + TextUtils.getInstance().convertTextEnToBn(context.getResources().getString(R.string.bdt_00_00)));
+            binding.tvDiscount.setText(context.getResources().getString(R.string.bdt) + "  " + TextUtils.getInstance().convertTextEnToBn(context.getResources().getString(R.string.digit_00_00)));
         } else {
-            binding.tvDiscount.setText(context.getResources().getString(R.string.bdt) + "  " + context.getResources().getString(R.string.bdt_00_00));
+            binding.tvDiscount.setText(context.getResources().getString(R.string.bdt) + "  " + context.getResources().getString(R.string.digit_00_00));
         }
 
         if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {

@@ -505,7 +505,7 @@
     <string name="already_booked_msg">As you have already booked a parking spot, so you can\'t book now.</string>
     <string name="reservation_failed">Reservation Failed! Please Try Again…</string>
     <string name="reset">Reset</string>
-    <string name="bdt_00_00"> 00.00</string>
+    <string name="digit_00_00"> 00.00</string>
     <string name="use_promo">Use promo</string>
     <string name="bdt_hour_charge"> 20/0.5h</string>
     <string name="each_hour">Each hour</string>
