@@ -1,6 +1,7 @@
 package www.fiberathome.com.parkingapp.service.booking_service;
 
 import static www.fiberathome.com.parkingapp.data.model.data.Constants.BOOKING_SERVICE_ID;
+import static www.fiberathome.com.parkingapp.data.model.data.Constants.LANGUAGE_EN;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -12,6 +13,8 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
@@ -21,6 +24,7 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.util.DisplayMetrics;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -38,6 +42,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -48,6 +53,7 @@ import retrofit2.Response;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.data.model.data.Constants;
+import www.fiberathome.com.parkingapp.data.model.data.preference.LanguagePreferences;
 import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.data.model.response.reservation.CloseReservationResponse;
 import www.fiberathome.com.parkingapp.data.model.response.reservation.ReservationAPI;
@@ -84,8 +90,12 @@ public class BookingService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
         context = getApplicationContext();
+        if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_EN)) {
+            setAppLocale(LANGUAGE_EN);
+        } else {
+            setAppLocale(LanguagePreferences.getInstance(context).getAppLanguage());
+        }
         String action = intent.getAction();
         if (action != null) {
             switch (action) {
@@ -134,7 +144,7 @@ public class BookingService extends Service {
             Timber.e("car parked");
             //Toast.makeText(context, "car parked", Toast.LENGTH_LONG).show();
             notificationCaller(Constants.NOTIFICATION_CHANNEL_EXCEED_BOOKING, context.getResources().getString(R.string.car_parked), 3);
-            startForeground(Constants.BOOKING_Exceed_SERVICE_ID, mBuilder.build());
+            startForeground(Constants.BOOKING_EXCEED_SERVICE_ID, mBuilder.build());
         }
 
         //executes when booking time ends
@@ -333,12 +343,11 @@ public class BookingService extends Service {
         }
     };
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint({"SetTextI18n", "DefaultLocale"})
     private void startCountDown(long timerMilliDifference, boolean exceedCounter) {
         countDownTimer = new CountDownTimer(timerMilliDifference, 1000) {
-            @SuppressLint("DefaultLocale")
             public void onTick(long millisUntilFinished) {
-                mBuilder.setContentText("" + String.format(context.getString(R.string.remaining_time) + " %d min, %d sec",
+                mBuilder.setContentText("" + String.format(context.getResources().getString(R.string.remaining_time) + " %d min, %d sec",
                         TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
                         TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
                                 TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))))
@@ -348,7 +357,7 @@ public class BookingService extends Service {
                 // updated.
                 if (exceedCounter) {
                     notificationManager.notify(
-                            Constants.BOOKING_Exceed_SERVICE_ID,  // <-- Place your notification id here
+                            Constants.BOOKING_EXCEED_SERVICE_ID,  // <-- Place your notification id here
                             mBuilder.build());
                 } else {
                     notificationManager.notify(
@@ -531,7 +540,7 @@ public class BookingService extends Service {
         if (Preferences.getInstance(context).getBooked().getIsBooked() &&
                 !Preferences.getInstance(context).getBooked().isCarParked()) {
             //ToastUtils.getInstance().showToastMessage(context, "service restarted");
-            Timber.e("abdur service restarted");
+            Timber.e("service restarted");
             Intent intent = new Intent(context, BookingService.class);
             intent.setAction(Constants.START_BOOKING_TRACKING);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -543,7 +552,7 @@ public class BookingService extends Service {
                 && Preferences.getInstance(context).getBooked().isCarParked()
                 && Preferences.getInstance(context).getBooked().isExceedRunning()) {
             //ToastUtils.getInstance().showToastMessage(context, "service restarted");
-            Timber.e("abdur service restarted");
+            Timber.e("service restarted");
             Intent intent = new Intent(context, BookingService.class);
             intent.setAction(Constants.BOOKING_EXCEED_CHECK);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -556,5 +565,18 @@ public class BookingService extends Service {
             Timber.e("service destroyed");
             super.onDestroy();
         }
+    }
+
+    @SuppressLint("ObsoleteSdkInt")
+    public void setAppLocale(String localeCode) {
+        Resources resources = getResources();
+        DisplayMetrics dm = resources.getDisplayMetrics();
+        Configuration config = resources.getConfiguration();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            config.setLocale(new Locale(localeCode.toLowerCase()));
+        } else {
+            config.locale = new Locale(localeCode.toLowerCase());
+        }
+        resources.updateConfiguration(config, dm);
     }
 }

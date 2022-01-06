@@ -145,6 +145,7 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/tvEachHourBill"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_alignBaseline="@+id/eachHourText"
@@ -153,7 +154,6 @@
                     android:layout_weight="1"
                     android:gravity="end"
                     android:padding="@dimen/dim5"
-                    android:text="@string/bdt_hour_charge"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -248,7 +248,6 @@
                     android:layout_weight="1"
                     android:gravity="end"
                     android:padding="@dimen/dim5"
-                    android:text="@string/bdt_00_00"
                     android:textSize="14sp" />
 
             </LinearLayout>

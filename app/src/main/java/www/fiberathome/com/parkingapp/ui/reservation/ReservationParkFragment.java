@@ -56,6 +56,7 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.data.model.BookedPlace;
+import www.fiberathome.com.parkingapp.data.model.data.preference.LanguagePreferences;
 import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.data.model.response.reservation.BookingParkStatusResponse;
 import www.fiberathome.com.parkingapp.data.model.response.reservation.CloseReservationResponse;
@@ -69,6 +70,7 @@ import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DateTimeUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.MathUtils;
+import www.fiberathome.com.parkingapp.utils.TextUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressLint("SimpleDateFormat")
@@ -179,23 +181,58 @@ public class ReservationParkFragment extends BaseFragment implements OnMapReadyC
                     mBookedPlace.setExceedRunning(true);
                     Preferences.getInstance(context).setBooked(mBookedPlace);
                     ApplicationUtils.startBookingExceedService(context, DateTimeUtils.getInstance().getStringDateToMillis(sensors.getTimeEnd()));
-                    binding.tvArrivedTime.setText(String.format(context.getResources().getString(R.string.booking_time) + " %s", sensors.getTimeStart()));
-                    binding.tvDepartureTime.setText(String.format(context.getResources().getString(R.string.departuretime) + " %s", sensors.getTimeEnd()));
-                    binding.tvParkingAreaName.setText(sensors.getParkingArea());
-                    if (Preferences.getInstance(context).getBooked().getPsId() != null && !Preferences.getInstance(context).getBooked().getPsId().equalsIgnoreCase("")) {
-                        binding.tvParkingPsId.setText("( " + context.getResources().getString(R.string.parking_spot_id) + " " + Preferences.getInstance(context).getBooked().getPsId() + " )");
+
+                    if (!LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
+                        binding.tvArrivedTime.setText(String.format(context.getResources().getString(R.string.booking_time) + " %s", sensors.getTimeStart()));
                     } else {
-                        binding.tvParkingPsId.setText("");
+                        binding.tvArrivedTime.setText(String.format(context.getResources().getString(R.string.booking_time) + " %s", TextUtils.getInstance().convertTextEnToBn(sensors.getTimeStart())));
                     }
+
+                    if (!LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
+                        binding.tvDepartureTime.setText(String.format(context.getResources().getString(R.string.departuretime) + " %s", sensors.getTimeEnd()));
+                    } else {
+                        binding.tvDepartureTime.setText(String.format(context.getResources().getString(R.string.departuretime) + " %s", TextUtils.getInstance().convertTextEnToBn(sensors.getTimeEnd())));
+                    }
+
+                    binding.tvParkingAreaName.setText(sensors.getParkingArea());
+
+                    if (!LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
+                        if (Preferences.getInstance(context).getBooked().getPsId() != null && !Preferences.getInstance(context).getBooked().getPsId().equalsIgnoreCase("")) {
+                            binding.tvParkingPsId.setText("( " + context.getResources().getString(R.string.parking_spot_id) + " " + Preferences.getInstance(context).getBooked().getPsId() + " )");
+                        } else {
+                            binding.tvParkingPsId.setText("");
+                        }
+                    } else {
+                        if (Preferences.getInstance(context).getBooked().getPsId() != null && !Preferences.getInstance(context).getBooked().getPsId().equalsIgnoreCase("")) {
+                            binding.tvParkingPsId.setText("( " + context.getResources().getString(R.string.parking_spot_id) + " " + TextUtils.getInstance().convertTextEnToBn(Preferences.getInstance(context).getBooked().getPsId()) + " )");
+                        } else {
+                            binding.tvParkingPsId.setText("");
+                        }
+                    }
+
                     String currentDateAndTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-                    findDifference(currentDateAndTime, sensors.getTimeEnd(), "");
-                    findDifference(sensors.getTimeStart(), sensors.getTimeEnd(), "TimeStart");
+                    if (!LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
+                        findDifference(currentDateAndTime, sensors.getTimeEnd(), "");
+                        findDifference(sensors.getTimeStart(), sensors.getTimeEnd(), "TimeStart");
+                    } else {
+                        findDifference(currentDateAndTime, sensors.getTimeEnd(), "");
+                        findDifference(sensors.getTimeStart(), sensors.getTimeEnd(), "TimeStart");
+                    }
+
                     String extraTime;
                     String earlyParkingTime;
-                    earlyParkingTime = getTimeDifference(DateTimeUtils.getInstance().getStringDateToMillis(sensors.getTimeStart()) - DateTimeUtils.getInstance().getStringDateToMillis(sensors.getP_date()) >= 0 ? (DateTimeUtils.getInstance().getStringDateToMillis(sensors.getTimeStart()) - DateTimeUtils.getInstance().getStringDateToMillis(sensors.getP_date())) : 0);
-                    extraTime = getTimeDifference(System.currentTimeMillis() - DateTimeUtils.getInstance().getStringDateToMillis(sensors.getTimeEnd()) > 0 ? (System.currentTimeMillis() - DateTimeUtils.getInstance().getStringDateToMillis(sensors.getTimeEnd())) : 0);
+
+                    if (!LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
+                        earlyParkingTime = getTimeDifference(DateTimeUtils.getInstance().getStringDateToMillis(sensors.getTimeStart()) - DateTimeUtils.getInstance().getStringDateToMillis(sensors.getP_date()) >= 0 ? (DateTimeUtils.getInstance().getStringDateToMillis(sensors.getTimeStart()) - DateTimeUtils.getInstance().getStringDateToMillis(sensors.getP_date())) : 0);
+                        extraTime = getTimeDifference(System.currentTimeMillis() - DateTimeUtils.getInstance().getStringDateToMillis(sensors.getTimeEnd()) > 0 ? (System.currentTimeMillis() - DateTimeUtils.getInstance().getStringDateToMillis(sensors.getTimeEnd())) : 0);
+                    } else {
+                        earlyParkingTime = TextUtils.getInstance().convertTextEnToBn(getTimeDifference(DateTimeUtils.getInstance().getStringDateToMillis(sensors.getTimeStart()) - DateTimeUtils.getInstance().getStringDateToMillis(sensors.getP_date()) >= 0 ? (DateTimeUtils.getInstance().getStringDateToMillis(sensors.getTimeStart()) - DateTimeUtils.getInstance().getStringDateToMillis(sensors.getP_date())) : 0));
+                        extraTime = TextUtils.getInstance().convertTextEnToBn(getTimeDifference(System.currentTimeMillis() - DateTimeUtils.getInstance().getStringDateToMillis(sensors.getTimeEnd()) > 0 ? (System.currentTimeMillis() - DateTimeUtils.getInstance().getStringDateToMillis(sensors.getTimeEnd())) : 0));
+                    }
+
                     binding.tvEarlyParkingTime.setText(context.getResources().getString(R.string.earlyparkingtime) + " " + earlyParkingTime);
                     binding.tvExtraParkingTime.setText(context.getResources().getString(R.string.exceedParktime) + " " + extraTime);
+
                     if (System.currentTimeMillis() - DateTimeUtils.getInstance().getStringDateToMillis(sensors.getTimeEnd()) >= 0) {
                         binding.tvExtraParkingTime.setTextColor(context.getResources().getColor(R.color.red));
                     } else {
@@ -461,7 +498,7 @@ public class ReservationParkFragment extends BaseFragment implements OnMapReadyC
     @SuppressLint("DefaultLocale")
     private String getTimeDifference(long difference) {
 
-        return String.format("%02d hr: %02d min: %02d sec",
+        return String.format("%02d h: %02d min: %02d sec",
                 TimeUnit.MILLISECONDS.toHours(difference),
                 TimeUnit.MILLISECONDS.toMinutes(difference) -
                         TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(difference)), TimeUnit.MILLISECONDS.toSeconds(difference) -
@@ -469,10 +506,9 @@ public class ReservationParkFragment extends BaseFragment implements OnMapReadyC
                         ));
     }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint({"SetTextI18n", "DefaultLocale"})
     private void startCountDown(long timerMilliDifference) {
         countDownTimer = new CountDownTimer(timerMilliDifference, 1000) {
-            @SuppressLint("DefaultLocale")
             public void onTick(long millisUntilFinished) {
                 binding.tvCountDown.setText("" + String.format(context.getString(R.string.remaining_time) + " %d min, %d sec",
                         TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
@@ -542,7 +578,11 @@ public class ReservationParkFragment extends BaseFragment implements OnMapReadyC
                 // years, in days, in hours, in
                 // minutes, and in seconds
                 if (timeStart.equalsIgnoreCase("TimeStart")) {
-                    binding.tvDifferenceTime.setText(difference_In_Hours + " hr " + difference_In_Minutes + " min " + difference_In_Seconds + " sec");
+                    if (!LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
+                        binding.tvDifferenceTime.setText(difference_In_Hours + context.getResources().getString(R.string.hr) + difference_In_Minutes + context.getResources().getString(R.string.mins) + difference_In_Seconds + context.getResources().getString(R.string.sec));
+                    } else {
+                        binding.tvDifferenceTime.setText(TextUtils.getInstance().convertTextEnToBn(String.valueOf(difference_In_Hours)) + context.getResources().getString(R.string.hr) + TextUtils.getInstance().convertTextEnToBn(String.valueOf(difference_In_Minutes) + context.getResources().getString(R.string.mins) + TextUtils.getInstance().convertTextEnToBn(String.valueOf(difference_In_Seconds) + context.getResources().getString(R.string.sec))));
+                    }
                 } else {
                     startCountDown(difference_In_Time);
                 }

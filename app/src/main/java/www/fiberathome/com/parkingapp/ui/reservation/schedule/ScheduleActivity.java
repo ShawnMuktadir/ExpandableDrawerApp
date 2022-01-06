@@ -30,13 +30,14 @@ public class ScheduleActivity extends NavigationActivity implements FragmentChan
         double lat = getIntent().getDoubleExtra("lat", 0.0);
         double lng = getIntent().getDoubleExtra("long", 0.0);
         String areaName = getIntent().getStringExtra("areaName");
+        String areaNameBangla = getIntent().getStringExtra("areaNameBangla");
         String count = getIntent().getStringExtra("parkingSlotCount");
         String placeId = getIntent().getStringExtra("areaPlacedId");
         boolean isInArea = getIntent().getBooleanExtra("isInArea", false);
 
         //Initialize Schedule Fragment
         ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),
-                ScheduleFragment.newInstance(lat, lng, areaName, count, placeId, isInArea), R.id.nav_host_fragment);
+                ScheduleFragment.newInstance(lat, lng, areaName, areaNameBangla, count, placeId, isInArea), R.id.nav_host_fragment);
 
         changeDefaultActionBarDrawerToogleIconWithBackButton();
     }

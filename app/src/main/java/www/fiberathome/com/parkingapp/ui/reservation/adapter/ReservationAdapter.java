@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.data.model.BookedPlace;
+import www.fiberathome.com.parkingapp.data.model.data.preference.LanguagePreferences;
 import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.data.model.response.reservation.BookedList;
 import www.fiberathome.com.parkingapp.data.model.response.reservation.BookingArea;
@@ -33,6 +34,7 @@ import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DateTimeUtils;
 import www.fiberathome.com.parkingapp.utils.MathUtils;
+import www.fiberathome.com.parkingapp.utils.TextUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -66,12 +68,29 @@ public class ReservationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         ReservationViewHolder reservationViewHolder = (ReservationViewHolder) viewHolder;
 
         BookedList bookedList = bookedLists.get(position);
-        reservationViewHolder.binding.textViewParkingSlot.setText(bookedList.getAddress());
-        reservationViewHolder.binding.textViewReservationId.setText(context.getResources().getString(R.string.parking_reservation_id) + bookedList.getId());
-        reservationViewHolder.binding.textViewParkingTotalPaymentAmount.setText(context.getResources().getString(R.string.total_fair) + "  " + bookedList.getCurrentBill());
-        reservationViewHolder.binding.textViewSpotId.setText(context.getResources().getString(R.string.parking_spot_id) + bookedList.getPsId());
-        reservationViewHolder.binding.textViewParkingTime.setText(context.getString(R.string.arrival) + " " + bookedList.getTimeStart()
-                + " - \n" + context.getString(R.string.departuretxt) + " " + bookedList.getTimeEnd());
+
+        if (!LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
+            reservationViewHolder.binding.textViewParkingSlot.setText(bookedList.getAddress());
+        } else {
+            reservationViewHolder.binding.textViewParkingSlot.setText(bookedList.getAddressBangla());
+        }
+
+        double tmpReservationId = MathUtils.getInstance().convertToDouble(bookedList.getId());
+        reservationViewHolder.binding.textViewReservationId.setText(context.getResources().getString(R.string.parking_reservation_id) + " " + MathUtils.getInstance().localeDoubleConverter(context, String.valueOf(tmpReservationId)));
+
+        double tmpTotalBDT = MathUtils.getInstance().convertToDouble(bookedList.getCurrentBill());
+        reservationViewHolder.binding.textViewParkingTotalPaymentAmount.setText(context.getResources().getString(R.string.total_fair) + "  " + MathUtils.getInstance().localeDoubleConverter(context, String.valueOf(tmpTotalBDT)));
+
+        double tmpSpotId = MathUtils.getInstance().convertToDouble(bookedList.getPsId());
+        reservationViewHolder.binding.textViewSpotId.setText(context.getResources().getString(R.string.parking_spot_id) + "  " + MathUtils.getInstance().localeDoubleConverter(context, bookedList.getPsId()));
+
+        if (!LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
+            reservationViewHolder.binding.textViewParkingTime.setText(context.getString(R.string.arrival) + " " + bookedList.getTimeStart()
+                    + " - \n" + context.getString(R.string.departuretxt) + " " + bookedList.getTimeEnd());
+        } else {
+            reservationViewHolder.binding.textViewParkingTime.setText(context.getString(R.string.arrival) + " " + TextUtils.getInstance().convertTextEnToBn(bookedList.getTimeStart())
+                    + " - \n" + context.getString(R.string.departuretxt) + " " + TextUtils.getInstance().convertTextEnToBn(bookedList.getTimeEnd()));
+        }
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
         try {
@@ -82,7 +101,11 @@ public class ReservationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             if (date1 != null && date2 != null) {
                 difference = date1.getTime() - date2.getTime();
             }
-            reservationViewHolder.binding.textViewParkingTotalTime.setText(getTimeDifference(difference));
+            if (!LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
+                reservationViewHolder.binding.textViewParkingTotalTime.setText(getTimeDifference(difference));
+            } else {
+                reservationViewHolder.binding.textViewParkingTotalTime.setText(TextUtils.getInstance().convertTextEnToBn(getTimeDifference(difference)));
+            }
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -157,7 +180,7 @@ public class ReservationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
                 bookingAdapterClickListener.onItemRebookListener(position, MathUtils.getInstance().convertToDouble(bookedList.getLatitude()),
                         MathUtils.getInstance().convertToDouble(bookedList.getLongitude()), bookedList.getParkingArea(),
-                        bookedList.getNoOfParking(), bookedList.getAreaId());
+                        bookedList.getNoOfParking(), bookedList.getAreaId(), bookedList.getAddressBangla());
             } else {
                 ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_gps));
             }
@@ -227,6 +250,6 @@ public class ReservationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         void onItemGetDirection(int position);
 
-        void onItemRebookListener(int position, double lat, double lng, String parkingArea, String count, String placeId);
+        void onItemRebookListener(int position, double lat, double lng, String parkingArea, String count, String placeId, String areaNameBangla);
     }
 }

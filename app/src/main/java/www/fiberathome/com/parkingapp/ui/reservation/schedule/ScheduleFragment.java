@@ -58,7 +58,7 @@ import www.fiberathome.com.parkingapp.utils.ToastUtils;
 public class ScheduleFragment extends BaseFragment implements IOnBackPressListener {
 
     public static String areaPlaceId = "";
-    public static String areaName;
+    public static String areaName, areaNameBangla;
     public static String areaCount;
     public long arrived, departure, difference;
 
@@ -98,13 +98,14 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
         return new ScheduleFragment();
     }
 
-    public static ScheduleFragment newInstance(double lat, double lng, String areaName,
+    public static ScheduleFragment newInstance(double lat, double lng, String areaName, String areaNameBangla,
                                                String count, String placeId, boolean isInArea) {
         ScheduleFragment fragment = new ScheduleFragment();
         Bundle bundle = new Bundle();
         bundle.putDouble("lat", lat);
         bundle.putDouble("long", lng);
         bundle.putString("areaName", areaName);
+        bundle.putString("areaNameBangla", areaNameBangla);
         bundle.putString("parkingSlotCount", count);
         bundle.putString("areaPlacedId", placeId);
         bundle.putBoolean("isInArea", isInArea);
@@ -133,6 +134,7 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
             lat = getArguments().getDouble("lat");
             lon = getArguments().getDouble("long");
             areaName = getArguments().getString("areaName");
+            areaNameBangla = getArguments().getString("areaNameBangla");
             parkingSlotCount = getArguments().getString("parkingSlotCount");
         }
     }
@@ -408,7 +410,7 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
             if (!response.getError()) {
                 PaymentFragment paymentFragment = PaymentFragment.newInstance(arrivedDate, new Date((departure + arrivedDate.getTime())), getDate(arrivedDate.getTime()), getDate((departure + arrivedDate.getTime())),
                         getTimeDifference((departure + arrivedDate.getTime()) - arrivedDate.getTime()),
-                        (departure + arrivedDate.getTime()) - arrivedDate.getTime(), mPlaceId, lat, lon, areaName, parkingSlotCount, isBookNowChecked, isInArea);
+                        (departure + arrivedDate.getTime()) - arrivedDate.getTime(), mPlaceId, lat, lon, areaName, areaNameBangla, parkingSlotCount, isBookNowChecked, isInArea);
                 listener.fragmentChange(paymentFragment);
             } else {
                 DialogUtils.getInstance().showOnlyMessageDialog(response.getMessage(), context);

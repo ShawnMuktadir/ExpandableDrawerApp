@@ -7,6 +7,7 @@ import android.os.Parcelable;
 public class SensorArea implements Parcelable {
 
     private String parkingArea;
+    private String parkingAreaBangla;
     private double distance;
     private String count;
     private String duration;

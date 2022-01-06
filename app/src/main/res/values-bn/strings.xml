@@ -508,9 +508,9 @@
     <string name="already_booked_msg">যেহেতু আপনি ইতিমধ্যে একটি পার্কিং স্পট বুক করেছেন, তাই আপনি এখন বুক করতে পারবেন না।</string>
     <string name="reservation_failed">বুকিং সংরক্ষণ ব্যর্থ! অনুগ্রহপূর্বক আবার চেষ্টা করুন…</string>
     <string name="reset">পুনরায় করুন</string>
-    <string name="bdt_00_00">(BDT 00.00)</string>
+    <string name="bdt_00_00">  00.00</string>
     <string name="use_promo">প্রোমো ব্যবহার করুন</string>
-    <string name="bdt_hour_charge">BDT 20/0.5h</string>
+    <string name="bdt_hour_charge"> 20/0.5h</string>
     <string name="each_hour">প্রতি ঘণ্টায়</string>
     <string name="subtotal_parking">সাবটোটাল পার্কিং:</string>
     <string name="discount">ডিসকাউন্ট</string>
@@ -585,5 +585,9 @@
     <string name="spot_no">স্পট নং : </string>
     <string name="km"> কি. মি.</string>
     <string name="mins"> মিনিট</string>
+    <string name="coming_soon">শীঘ্রই আসছে</string>
+    <string name="hr"> ঘণ্টা</string>
+    <string name="bdt">টাকা </string>
+    <string name="sec">সেকেন্ড</string>
 </resources>
 

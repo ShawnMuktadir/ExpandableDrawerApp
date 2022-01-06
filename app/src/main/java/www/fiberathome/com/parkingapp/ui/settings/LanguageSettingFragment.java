@@ -62,14 +62,14 @@ public class LanguageSettingFragment extends Fragment {
         String[] subNames = new String[]{context.getResources().getString(R.string.english), context.getResources().getString(R.string.bangla_bn)};
         String[] isoCodes = new String[]{LANGUAGE_EN, LANGUAGE_BN};
 
-        int s1 = context.getResources().getString(R.string.language_settings).codePointAt(0);
+        /*int s1 = context.getResources().getString(R.string.language_settings).codePointAt(0);
         if (s1 >= 0x0980 && s1 <= 0x09E0) {
             Preferences.getInstance(context).setAppLanguage(LANGUAGE_BN);
             LanguagePreferences.getInstance(context).setAppLanguage(LANGUAGE_BN);
         } else {
             Preferences.getInstance(context).setAppLanguage(LANGUAGE_EN);
             LanguagePreferences.getInstance(context).setAppLanguage(LANGUAGE_EN);
-        }
+        }*/
 
         LanguageAdapter languageAdapter = new LanguageAdapter(
                 populateLanguageItem(names, subNames, isoCodes, new ArrayList<>()), (Language language) -> {

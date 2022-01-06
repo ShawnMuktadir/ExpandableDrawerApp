@@ -156,7 +156,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private String count = "";
     private String searchPlaceCount = "0";
     private String parkingNumberOfIndividualMarker = "";
-    private String parkingAreaPlaceName = "";
+    private String parkingAreaPlaceName, parkingAreaPlaceNameBangla = "";
     private String areaName, parkingSlotCount, parkingAreaPlacedId, parkingArea, placeId, previousOrigin;
     private String sensorAreaStatusAreaId, sensorAreaStatusTotalSensorCount, sensorAreaStatusTotalOccupied;
     private String destination = null;
@@ -717,6 +717,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 try {
                     parkingPlaceId = selectedSensorArea.getPlaceId();
                     parkingAreaPlaceName = selectedSensorArea.getParkingArea();
+                    parkingAreaPlaceNameBangla = selectedSensorArea.getParkingArea();
                     parkingAreaPlacedId = parkingPlaceId;
                     parkingNumberOfIndividualMarker = selectedSensorArea.getCount();
                 } catch (Exception e) {
@@ -999,9 +1000,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     private synchronized void setBottomSheetList(SetBottomSheetCallBack
                                                          setBottomSheetCallBack, List<SensorArea> sensorArrayList,
-                                                 LatLng
-                                                         latLng, ArrayList<BookingSensors> bookingSensorsArrayList, String
-                                                         mPlaceId) {
+                                                 LatLng latLng, ArrayList<BookingSensors> bookingSensorsArrayList,
+                                                 String mPlaceId) {
         String parkingNumberOfNearbyDistanceLoc = null;
         String nearbySearchStringDuration;
         for (int i = 0; i < sensorArrayList.size(); i++) {
@@ -1627,6 +1627,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         bundle.putBoolean("m", false); //m for more
                         bundle.putString("areaPlacedId", parkingAreaPlacedId);
                         bundle.putString("areaName", parkingAreaPlaceName);
+                        bundle.putString("areaNameBangla", parkingAreaPlaceNameBangla);
                         bundle.putString("parkingSlotCount", parkingNumberOfIndividualMarker);
                         bundle.putDouble("lat", parkingSpotLatLng.latitude);
                         bundle.putDouble("long", parkingSpotLatLng.longitude);

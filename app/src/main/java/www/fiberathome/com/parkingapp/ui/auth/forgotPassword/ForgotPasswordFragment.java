@@ -22,7 +22,7 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.data.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.data.model.response.global.BaseResponse;
-import www.fiberathome.com.parkingapp.databinding.FragmentForgetPasswordBinding;
+import www.fiberathome.com.parkingapp.databinding.FragmentForgotPasswordBinding;
 import www.fiberathome.com.parkingapp.ui.auth.AuthViewModel;
 import www.fiberathome.com.parkingapp.ui.auth.changePassword.ChangePasswordOTPActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
@@ -35,7 +35,7 @@ public class ForgotPasswordFragment extends BaseFragment {
 
     private ForgotPasswordActivity context;
     private AuthViewModel viewModel;
-    FragmentForgetPasswordBinding binding;
+    FragmentForgotPasswordBinding binding;
 
     public ForgotPasswordFragment() {
         // Required empty public constructor
@@ -49,7 +49,7 @@ public class ForgotPasswordFragment extends BaseFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        binding = FragmentForgetPasswordBinding.inflate(getLayoutInflater());
+        binding = FragmentForgotPasswordBinding.inflate(getLayoutInflater());
         return binding.getRoot();
     }
 

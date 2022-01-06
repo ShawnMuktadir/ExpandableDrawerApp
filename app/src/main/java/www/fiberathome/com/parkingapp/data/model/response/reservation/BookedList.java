@@ -63,6 +63,9 @@ public class BookedList {
     @SerializedName("ps_id")
     @Expose
     private String psId;
+    @SerializedName("address_bangla")
+    @Expose
+    private String addressBangla;
 
     @SerializedName("no_of_parking")
     @Expose
@@ -243,6 +246,14 @@ public class BookedList {
 
     public void setPsId(String psId) {
         this.psId = psId;
+    }
+
+    public String getAddressBangla() {
+        return addressBangla;
+    }
+
+    public void setAddressBangla(String addressBangla) {
+        this.addressBangla = addressBangla;
     }
 
     public String getNoOfParking() {

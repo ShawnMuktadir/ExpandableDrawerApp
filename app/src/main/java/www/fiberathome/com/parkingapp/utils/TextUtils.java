@@ -442,4 +442,22 @@ public class TextUtils {
                 return Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Regular.ttf");
         }
     }
+
+    public String convertTextEnToBn(String data) {
+        return data.replaceAll("0", "\u09E6")
+                .replaceAll("1", "\u09E7")
+                .replaceAll("2", "\u09E8")
+                .replaceAll("3", "\u09E9")
+                .replaceAll("4", "\u09EA")
+                .replaceAll("5", "\u09EB")
+                .replaceAll("6", "\u09EC")
+                .replaceAll("7", "\u09ED")
+                .replaceAll("8", "\u09EE")
+                .replaceAll("9", "\u09EF")
+                .replaceAll("h", "\u0998\u09A3\u09CD\u099F\u09BE")
+                .replaceAll("hr", "\u0998\u09A3\u09CD\u099F\u09BE")
+                .replaceAll("min", "\u09AE\u09BF\u09A8\u09BF\u099F")
+                .replaceAll("sec", "\u09B8\u09C7\u0995\u09C7\u09A8\u09CD\u09A1")
+        ;
+    }
 }

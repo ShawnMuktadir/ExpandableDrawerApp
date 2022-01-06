@@ -225,7 +225,7 @@ public class ReservationFragment extends BaseFragment implements IOnBackPressLis
                 }
 
                 @Override
-                public void onItemRebookListener(int position, double lat, double lng, String parkingArea, String count, String placeId) {
+                public void onItemRebookListener(int position, double lat, double lng, String parkingArea, String count, String placeId, String areaNameBangla) {
                     boolean isBooked = Preferences.getInstance(context).getBooked().getIsBooked();
                     if (isBooked) {
                         DialogUtils.getInstance().showMessageDialog(context.getResources().getString(R.string.already_booked_msg), context);
@@ -245,6 +245,7 @@ public class ReservationFragment extends BaseFragment implements IOnBackPressLis
                             bundle.putBoolean("m", false); //m for more
                             bundle.putString("areaPlacedId", placeId);
                             bundle.putString("areaName", parkingArea);
+                            bundle.putString("areaNameBangla", areaNameBangla);
                             bundle.putString("parkingSlotCount", count);
                             bundle.putDouble("lat", lat);
                             bundle.putDouble("long", lng);
