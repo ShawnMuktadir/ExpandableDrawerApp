@@ -1808,7 +1808,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             }
         } catch (Exception e) {
             e.printStackTrace();
-            //Toast.makeText(context, "Error occurred on finding the directions...", Toast.LENGTH_SHORT).show();
+            //ToastUtils.getInstance().showToastMessage(context, "Error occurred on finding the directions...");
         }
     }
 
