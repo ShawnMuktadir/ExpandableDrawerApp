@@ -18,7 +18,6 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -118,7 +117,7 @@ public class ReservationParkFragment extends BaseFragment implements OnMapReadyC
         public void run() {
             if (sensors != null) {
                 String extraTime = getTimeDifference(System.currentTimeMillis() - DateTimeUtils.getInstance().getStringDateToMillis(sensors.getTimeEnd()) > 0 ? (System.currentTimeMillis() - DateTimeUtils.getInstance().getStringDateToMillis(sensors.getTimeEnd())) : 0);
-                binding.tvExtraParkingTime.setText(String.format(context.getResources().getString(R.string.exceedParktime) + " %s", extraTime));
+                binding.tvExtraParkingTime.setText(TextUtils.getInstance().convertTextEnToBn(String.format(context.getResources().getString(R.string.exceedParktime) + " %s", extraTime)));
 
                 if (System.currentTimeMillis() - DateTimeUtils.getInstance().getStringDateToMillis(sensors.getTimeEnd()) >= 0) {
                     binding.tvExtraParkingTime.setTextColor(context.getResources().getColor(R.color.red));
@@ -223,8 +222,8 @@ public class ReservationParkFragment extends BaseFragment implements OnMapReadyC
                     String earlyParkingTime;
 
                     if (!LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
-                        earlyParkingTime = getTimeDifference(DateTimeUtils.getInstance().getStringDateToMillis(sensors.getTimeStart()) - DateTimeUtils.getInstance().getStringDateToMillis(sensors.getP_date()) >= 0 ? (DateTimeUtils.getInstance().getStringDateToMillis(sensors.getTimeStart()) - DateTimeUtils.getInstance().getStringDateToMillis(sensors.getP_date())) : 0);
-                        extraTime = getTimeDifference(System.currentTimeMillis() - DateTimeUtils.getInstance().getStringDateToMillis(sensors.getTimeEnd()) > 0 ? (System.currentTimeMillis() - DateTimeUtils.getInstance().getStringDateToMillis(sensors.getTimeEnd())) : 0);
+                        earlyParkingTime = TextUtils.getInstance().convertTextEnToBn(getTimeDifference(DateTimeUtils.getInstance().getStringDateToMillis(sensors.getTimeStart()) - DateTimeUtils.getInstance().getStringDateToMillis(sensors.getP_date()) >= 0 ? (DateTimeUtils.getInstance().getStringDateToMillis(sensors.getTimeStart()) - DateTimeUtils.getInstance().getStringDateToMillis(sensors.getP_date())) : 0));
+                        extraTime = TextUtils.getInstance().convertTextEnToBn(getTimeDifference(System.currentTimeMillis() - DateTimeUtils.getInstance().getStringDateToMillis(sensors.getTimeEnd()) > 0 ? (System.currentTimeMillis() - DateTimeUtils.getInstance().getStringDateToMillis(sensors.getTimeEnd())) : 0));
                     } else {
                         earlyParkingTime = TextUtils.getInstance().convertTextEnToBn(getTimeDifference(DateTimeUtils.getInstance().getStringDateToMillis(sensors.getTimeStart()) - DateTimeUtils.getInstance().getStringDateToMillis(sensors.getP_date()) >= 0 ? (DateTimeUtils.getInstance().getStringDateToMillis(sensors.getTimeStart()) - DateTimeUtils.getInstance().getStringDateToMillis(sensors.getP_date())) : 0));
                         extraTime = TextUtils.getInstance().convertTextEnToBn(getTimeDifference(System.currentTimeMillis() - DateTimeUtils.getInstance().getStringDateToMillis(sensors.getTimeEnd()) > 0 ? (System.currentTimeMillis() - DateTimeUtils.getInstance().getStringDateToMillis(sensors.getTimeEnd())) : 0));
@@ -242,13 +241,13 @@ public class ReservationParkFragment extends BaseFragment implements OnMapReadyC
                         binding.tvEarlyParkingTime.setTextColor(context.getResources().getColor(R.color.red));
                     }
                 } else {
-                    ToastUtils.getInstance().showToastMessage(context, "sensor null");
+                    Timber.e("sensor null");
                 }
             } else {
                 ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.unable_to_load_map));
             }
         } else {
-            ToastUtils.getInstance().showToastMessage(context, "Play services are required by this application");
+            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.google_play_services_are_required));
         }
         setListeners();
     }
@@ -308,9 +307,9 @@ public class ReservationParkFragment extends BaseFragment implements OnMapReadyC
                 animateCamera(mLastLocation);
         });
 
-        binding.btnLiveParking.setOnClickListener(v -> Toast.makeText(context, "Live Parking Coming Soon!!!", Toast.LENGTH_SHORT).show());
+        binding.btnLiveParking.setOnClickListener(v -> ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.coming_soon)));
 
-        binding.textViewTermsCondition.setOnClickListener(v -> Toast.makeText(context, "T&C Coming Soon!!!", Toast.LENGTH_SHORT).show());
+        binding.textViewTermsCondition.setOnClickListener(v -> ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.coming_soon)));
     }
 
     @Override
@@ -384,9 +383,9 @@ public class ReservationParkFragment extends BaseFragment implements OnMapReadyC
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
                 new AlertDialog.Builder(context)
-                        .setTitle("Location Permission Needed")
-                        .setMessage("This app needs the Location permission, please accept to use location functionality")
-                        .setPositiveButton("OK", (dialogInterface, i) -> {
+                        .setTitle(context.getResources().getString(R.string.initialize_location))
+                        .setMessage(context.getResources().getString(R.string.locc_smart_parking_app_needs_permission_to_access_device_location_to_provide_required_services_please_allow_the_permission))
+                        .setPositiveButton(context.getResources().getString(R.string.ok), (dialogInterface, i) -> {
                             //Prompt the user once explanation has been shown
                             ActivityCompat.requestPermissions(context,
                                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
@@ -497,8 +496,7 @@ public class ReservationParkFragment extends BaseFragment implements OnMapReadyC
 
     @SuppressLint("DefaultLocale")
     private String getTimeDifference(long difference) {
-
-        return String.format("%02d h: %02d min: %02d sec",
+        return String.format("%02d " + context.getResources().getString(R.string.hr) + ": %02d " + context.getResources().getString(R.string.mins) + ": %02d " + context.getResources().getString(R.string.sec),
                 TimeUnit.MILLISECONDS.toHours(difference),
                 TimeUnit.MILLISECONDS.toMinutes(difference) -
                         TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(difference)), TimeUnit.MILLISECONDS.toSeconds(difference) -
@@ -510,10 +508,10 @@ public class ReservationParkFragment extends BaseFragment implements OnMapReadyC
     private void startCountDown(long timerMilliDifference) {
         countDownTimer = new CountDownTimer(timerMilliDifference, 1000) {
             public void onTick(long millisUntilFinished) {
-                binding.tvCountDown.setText("" + String.format(context.getString(R.string.remaining_time) + " %d min, %d sec",
+                binding.tvCountDown.setText(TextUtils.getInstance().convertTextEnToBn("" + String.format(context.getString(R.string.remaining_time) + " %d " + context.getResources().getString(R.string.mins) + ", %d " + context.getResources().getString(R.string.sec),
                         TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
                         TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
-                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))));
+                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)))));
             }
 
             public void onFinish() {
@@ -579,9 +577,9 @@ public class ReservationParkFragment extends BaseFragment implements OnMapReadyC
                 // minutes, and in seconds
                 if (timeStart.equalsIgnoreCase("TimeStart")) {
                     if (!LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
-                        binding.tvDifferenceTime.setText(difference_In_Hours + context.getResources().getString(R.string.hr) + difference_In_Minutes + context.getResources().getString(R.string.mins) + difference_In_Seconds + context.getResources().getString(R.string.sec));
+                        binding.tvDifferenceTime.setText(difference_In_Hours + " " + context.getResources().getString(R.string.hr) + difference_In_Minutes + " " + context.getResources().getString(R.string.mins) + difference_In_Seconds + " " + context.getResources().getString(R.string.sec));
                     } else {
-                        binding.tvDifferenceTime.setText(TextUtils.getInstance().convertTextEnToBn(String.valueOf(difference_In_Hours)) + context.getResources().getString(R.string.hr) + TextUtils.getInstance().convertTextEnToBn(String.valueOf(difference_In_Minutes) + context.getResources().getString(R.string.mins) + TextUtils.getInstance().convertTextEnToBn(String.valueOf(difference_In_Seconds) + context.getResources().getString(R.string.sec))));
+                        binding.tvDifferenceTime.setText(TextUtils.getInstance().convertTextEnToBn(String.valueOf(difference_In_Hours)) + context.getResources().getString(R.string.hr) + TextUtils.getInstance().convertTextEnToBn(difference_In_Minutes + context.getResources().getString(R.string.mins) + TextUtils.getInstance().convertTextEnToBn(difference_In_Seconds + context.getResources().getString(R.string.sec))));
                     }
                 } else {
                     startCountDown(difference_In_Time);

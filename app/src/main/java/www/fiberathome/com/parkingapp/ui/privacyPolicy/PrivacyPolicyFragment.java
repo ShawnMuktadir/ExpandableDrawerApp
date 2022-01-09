@@ -23,6 +23,7 @@ import java.util.List;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
+import www.fiberathome.com.parkingapp.data.model.data.preference.LanguagePreferences;
 import www.fiberathome.com.parkingapp.data.model.response.termsCondition.TermsCondition;
 import www.fiberathome.com.parkingapp.data.model.response.termsCondition.TermsConditionResponse;
 import www.fiberathome.com.parkingapp.databinding.FragmentPrivacyPolicyBinding;
@@ -104,8 +105,19 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
                 if (termConditionList != null) {
                     TermsCondition termsCondition = null;
                     for (int i = 0; i < termConditionList.size(); i++) {
-                        title = termConditionList.get(i).get(6).trim();
-                        description = termConditionList.get(i).get(2).trim();
+                        if (!LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
+                            title = termConditionList.get(i).get(6).trim();
+                        } else {
+                            title = termConditionList.get(i).get(7).trim();
+                        }
+
+                        if (!LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
+                            description = termConditionList.get(i).get(2).trim();
+                        } else {
+                            description = termConditionList.get(i).get(8).trim();
+                        }
+
+
                         date = termConditionList.get(i).get(4).trim();
                         if (termsCondition != null) {
                             if (termsCondition.getTitle().equalsIgnoreCase(title)) {

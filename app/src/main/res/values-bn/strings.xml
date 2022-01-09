@@ -551,7 +551,7 @@
     <string name="completed">সম্পন্ন</string>
     <string name="canceled">বাতিল করা হয়েছে</string>
     <string name="rejected">প্রত্যাখ্যাত</string>
-    <string name="t_amp_c"><![CDATA[T&C]]></string>
+    <string name="t_amp_c"><![CDATA[টি অ্যান্ড সি]]></string>
     <string name="pay_bdt"> পরিশোধ করুন</string>
     <string name="car_parked">গাড়ি পার্ক করা আছে</string>
     <string name="booked_time">বুক করা সময়</string>
@@ -589,5 +589,6 @@
     <string name="hr"> ঘণ্টা</string>
     <string name="bdt">টাকা </string>
     <string name="sec">সেকেন্ড</string>
+    <string name="google_play_services_are_required">এই অ্যাপ্লিকেশনটির জন্য গুগল প্লে পরিষেবাগুলি প্রয়োজন</string>
 </resources>
 
