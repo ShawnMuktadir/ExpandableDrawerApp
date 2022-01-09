@@ -265,17 +265,16 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 ft.commit();
                 supportMapFragment.getMapAsync(this);
             } else {
-                ToastUtils.getInstance().showToastMessage(context, "Unable to load map");
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.unable_to_load_map));
             }
         } else {
-            ToastUtils.getInstance().showToastMessage(context, "Play services are required by this application");
+            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.google_play_services_are_required));
         }
         return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        Timber.e("onViewCreated called");
         super.onViewCreated(view, savedInstanceState);
         if (context != null) {
             context.changeDefaultActionBarDrawerToogleIcon();
