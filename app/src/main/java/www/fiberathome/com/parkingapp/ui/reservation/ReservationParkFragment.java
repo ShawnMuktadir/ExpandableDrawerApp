@@ -193,7 +193,11 @@ public class ReservationParkFragment extends BaseFragment implements OnMapReadyC
                         binding.tvDepartureTime.setText(String.format(context.getResources().getString(R.string.departuretime) + " %s", TextUtils.getInstance().convertTextEnToBn(sensors.getTimeEnd())));
                     }
 
-                    binding.tvParkingAreaName.setText(sensors.getParkingArea());
+                    if (!LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
+                        binding.tvParkingAreaName.setText(sensors.getParkingArea());
+                    } else {
+                        binding.tvParkingAreaName.setText(sensors.getAddressBangla());
+                    }
 
                     if (!LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
                         if (Preferences.getInstance(context).getBooked().getPsId() != null && !Preferences.getInstance(context).getBooked().getPsId().equalsIgnoreCase("")) {

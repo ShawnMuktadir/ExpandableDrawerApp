@@ -29,6 +29,7 @@
         <entry key="app/src/main/res/layout/booking_dialog_form.xml" value="0.2875905797101449" />
         <entry key="app/src/main/res/layout/bookings_row.xml" value="0.25" />
         <entry key="app/src/main/res/layout/bottom_sheet_dialog_get_help.xml" value="0.17477203647416414" />
+        <entry key="app/src/main/res/layout/bottom_sheet_text_recycler_item.xml" value="0.375" />
         <entry key="app/src/main/res/layout/content_main.xml" value="0.2151268115942029" />
         <entry key="app/src/main/res/layout/dialog_form.xml" value="0.2875905797101449" />
         <entry key="app/src/main/res/layout/fragment_booked.xml" value="0.2875905797101449" />
@@ -52,7 +53,9 @@
         <entry key="app/src/main/res/layout/nav_header_home.xml" value="0.16302083333333334" />
         <entry key="app/src/main/res/layout/parking_row.xml" value="0.15885416666666666" />
         <entry key="app/src/main/res/layout/privacy_policy_row.xml" value="0.16590678824721378" />
-        <entry key="app/src/main/res/layout/row_bookings.xml" value="0.1421875" />
+        <entry key="app/src/main/res/layout/row_bookings.xml" value="0.335" />
+        <entry key="app/src/main/res/layout/row_parking.xml" value="0.17882472137791286" />
+        <entry key="app/src/main/res/layout/search_list_item.xml" value="0.17882472137791286" />
         <entry key="app/src/main/res/layout/snackbar_internet.xml" value="0.13125" />
         <entry key="app/src/main/res/layout/voucher_dialog.xml" value="0.25" />
         <entry key="app/src/main/res/menu/drawer_menu.xml" value="0.20364583333333333" />

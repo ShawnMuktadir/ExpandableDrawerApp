@@ -837,15 +837,19 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     // There are no request codes
                     Intent data = result.getData();
                     if (data != null) {
-                        if (NEW_PLACE_SELECTED.equalsIgnoreCase(data.getStringExtra(NEW_PLACE_SELECTED))) {
-                            SelectedPlace selectedPlace = data.getParcelableExtra(NEW_PLACE_SELECTED_OBJ); //This line may produce null point exception
-                            setupSearchResult(selectedPlace);
-                        } else if (HISTORY_PLACE_SELECTED.equalsIgnoreCase(data.getStringExtra(HISTORY_PLACE_SELECTED))) {
-                            SearchVisitorData sVData = data.getParcelableExtra(HISTORY_PLACE_SELECTED_OBJ); //This line may produce null point exception
-                            if (sVData != null) {
-                                SelectedPlace selectedPlace = new SelectedPlace(sVData.getPlaceId(), sVData.getVisitedArea(), "", sVData.getEndLat(), sVData.getEndLng());
+                        try {
+                            if (NEW_PLACE_SELECTED.equalsIgnoreCase(data.getStringExtra(NEW_PLACE_SELECTED))) {
+                                SelectedPlace selectedPlace = data.getParcelableExtra(NEW_PLACE_SELECTED_OBJ); //This line may produce null point exception
                                 setupSearchResult(selectedPlace);
+                            } else if (HISTORY_PLACE_SELECTED.equalsIgnoreCase(data.getStringExtra(HISTORY_PLACE_SELECTED))) {
+                                SearchVisitorData sVData = data.getParcelableExtra(HISTORY_PLACE_SELECTED_OBJ); //This line may produce null point exception
+                                if (sVData != null) {
+                                    SelectedPlace selectedPlace = new SelectedPlace(sVData.getPlaceId(), sVData.getVisitedArea(), "", sVData.getEndLat(), sVData.getEndLng());
+                                    setupSearchResult(selectedPlace);
+                                }
                             }
+                        } catch (Exception e) {
+                            e.getCause();
                         }
                     }
                 }

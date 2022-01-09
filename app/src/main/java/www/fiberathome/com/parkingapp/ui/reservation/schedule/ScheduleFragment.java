@@ -472,14 +472,14 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
                                 e.getCause();
                             }
                         }
-                        setDepartureSpinner(departureTimeDataList);
+                        setTotalDepartureTimeSpinner(departureTimeDataList);
                     }
                 }
             }
         });
     }
 
-    private void setDepartureSpinner
+    private void setTotalDepartureTimeSpinner
             (List<www.fiberathome.com.parkingapp.data.model.Spinner> departureTimeDataList) {
         UniversalSpinnerAdapter departureTimeAdapter = new UniversalSpinnerAdapter(context,
                 android.R.layout.simple_spinner_item,

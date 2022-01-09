@@ -77,6 +77,10 @@ public class BookingParkStatusResponse extends BaseResponse {
         @Expose
         private String longitude;
 
+        @SerializedName("address_bangla")
+        @Expose
+        private String addressBangla;
+
         public String getId() {
             return id;
         }
@@ -219,6 +223,14 @@ public class BookingParkStatusResponse extends BaseResponse {
 
         public void setLongitude(String longitude) {
             this.longitude = longitude;
+        }
+
+        public String getAddressBangla() {
+            return addressBangla;
+        }
+
+        public void setAddressBangla(String addressBangla) {
+            this.addressBangla = addressBangla;
         }
     }
 }

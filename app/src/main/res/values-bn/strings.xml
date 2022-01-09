@@ -540,7 +540,7 @@
     <string name="please_contact_our_support_team_for_your_queries">আপনার প্রয়োজনীয় প্রশ্নের জন্য যোগাযোগ করুন</string>
     <string name="sms">এসএমএস</string>
     <string name="others">অন্যান্য</string>
-    <string name="parking_reservation_id">রিসার্ভেসন নং: </string>
+    <string name="parking_reservation_id">রিজার্ভেসন নং: </string>
     <string name="arrival">অ্যারাইভাল</string>
     <string name="departuretxt">ডিপার্চার</string>
     <string name="remaining_time">কতক্ষণ সময় বাকি আছে:</string>
@@ -593,5 +593,6 @@
     <string name="dialog_cancelled_by_user">ডায়ালগ ব্যবহারকারী দ্বারা বাতিল করা হয়েছে</string>
     <string name="near_your_parking_spot">আপনি আপনার পার্কিং স্পটের কাছাকাছি আছে</string>
     <string name="you_can_park">আপনি পার্ক করতে পারেন</string>
+    <string name="no_places_found">কোন লোকেশন পাওয়া যায়নি!</string>
 </resources>
 

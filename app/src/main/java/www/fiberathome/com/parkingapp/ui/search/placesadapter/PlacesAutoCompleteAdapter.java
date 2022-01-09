@@ -44,6 +44,7 @@ import www.fiberathome.com.parkingapp.databinding.SearchListItemBinding;
 import www.fiberathome.com.parkingapp.ui.parking.EmptyViewHolder;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
+import www.fiberathome.com.parkingapp.utils.TextUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressLint("NotifyDataSetChanged")
@@ -109,7 +110,7 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
                     searchVisitorDataList.clear();
                     notifyDataSetChanged();
 
-                    Toast toast = Toast.makeText(mContext, "No Places found!", Toast.LENGTH_SHORT);
+                    Toast toast = Toast.makeText(mContext, context.getResources().getString(R.string.no_places_found), Toast.LENGTH_SHORT);
                     toast.show();
                     Handler handler = new Handler();
                     handler.postDelayed(toast::cancel, 700);
@@ -182,7 +183,6 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder viewHolder, @SuppressLint("RecyclerView") final int position) {
         if (viewHolder instanceof SearchPredictionViewHolder) {
-
             SearchPredictionViewHolder mSearchPredictionViewHolder = (SearchPredictionViewHolder) viewHolder;
             if (charSequence != null) {
                 mSearchPredictionViewHolder.binding.address.setText(mResultList.get(position).address);
@@ -221,7 +221,7 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
                                 handler.postDelayed(() -> clickListener.onClick(place), 100);
                             }).addOnFailureListener(exception -> {
                                 if (exception instanceof ApiException) {
-                                    Toast.makeText(mContext, exception.getMessage() + "", Toast.LENGTH_SHORT).show();
+                                    ToastUtils.getInstance().showToastMessage(mContext, exception.getMessage() + "");
                                 }
                             });
                         }
@@ -279,17 +279,17 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
     @Override
     public int getItemCount() {
         if (!mResultList.isEmpty()) {
-            Timber.e("getItemCount if");
+            //Timber.e("getItemCount if");
             return mResultList.size();
         } else if (!searchVisitorDataList.isEmpty()) {
-            Timber.e("getItemCount else if");
+            //Timber.e("getItemCount else if");
             if (searchVisitorDataList.size() > 10) {
                 return 10;
             } else {
                 return searchVisitorDataList.size();
             }
         } else {
-            Timber.e("getItemCount else ");
+            //Timber.e("getItemCount else ");
             return mResultList.size();
         }
     }
@@ -297,13 +297,13 @@ public class PlacesAutoCompleteAdapter extends RecyclerView.Adapter<RecyclerView
     @Override
     public int getItemViewType(int position) {
         if (searchVisitorDataList.size() == 0 && mResultList.isEmpty()) {
-            Timber.e("getItemViewType if");
+            //Timber.e("getItemViewType if");
             return VIEW_TYPE_EMPTY;
         } else if (mResultList.size() == 0) {
-            Timber.e("getItemViewType else if");
+            //Timber.e("getItemViewType else if");
             return VIEW_TYPE_HISTORY;
         } else {
-            Timber.e("getItemViewType else");
+            //Timber.e("getItemViewType else");
             return VIEW_TYPE_PLACE;
         }
     }

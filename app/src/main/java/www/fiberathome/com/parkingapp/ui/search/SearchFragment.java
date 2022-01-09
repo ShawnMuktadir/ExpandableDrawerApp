@@ -33,10 +33,12 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
+import www.fiberathome.com.parkingapp.data.model.data.preference.LanguagePreferences;
 import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.data.model.response.search.SearchVisitedPlaceResponse;
 import www.fiberathome.com.parkingapp.data.model.response.search.SearchVisitorData;
@@ -46,6 +48,7 @@ import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.search.placesadapter.PlacesAutoCompleteAdapter;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.KeyboardUtils;
+import www.fiberathome.com.parkingapp.utils.TextUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressLint("NonConstantResourceId")
@@ -93,7 +96,12 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
         searchViewModel = new ViewModelProvider(this).get(SearchViewModel.class);
         setListeners();
 
-        Places.initialize(context, context.getResources().getString(R.string.google_maps_key));
+        if (!LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
+            Places.initialize(context, context.getResources().getString(R.string.google_maps_key), new Locale("en"));
+        } else {
+            Places.initialize(context, context.getResources().getString(R.string.google_maps_key), new Locale("bn"));
+        }
+
         placesClient = Places.createClient(context);
 
         if (ConnectivityUtils.getInstance().checkInternet(context)) {
@@ -109,6 +117,85 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
             setNoData();
         } else {
             hideNoData();
+        }
+    }
+
+    @Override
+    public void onClick(Place place) {
+        if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
+            Intent resultIntent = new Intent();
+            if (place == null) {
+                ////Timber.e("place null");
+                context.setResult(RESULT_CANCELED, resultIntent);
+                context.finish();
+            } else {
+                //Timber.e("place not null");
+                String areaName;
+                LatLng latLng = place.getLatLng();
+                if (!LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
+                    areaName = place.getName();
+                } else {
+                    areaName = place.getName();
+                }
+
+                String areaAddress = place.getAddress();
+                //Timber.e("place address -> %s", areaAddress);
+                String placeId = place.getId();
+                //Timber.e("place id -> %s", placeId);
+                if (latLng != null && areaName != null) {
+                    double latitude = latLng.latitude;
+                    double longitude = latLng.longitude;
+                    SelectedPlace selectedplace = new SelectedPlace(placeId, areaName, areaAddress, latitude, longitude);
+                    resultIntent.putExtra(NEW_PLACE_SELECTED_OBJ, selectedplace);
+                    resultIntent.putExtra(NEW_PLACE_SELECTED, NEW_PLACE_SELECTED);
+                    context.setResult(RESULT_OK, resultIntent);
+                    context.finish();
+                }
+            }
+        } else {
+            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_gps));
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (context.isFinishing()) {
+            context.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        }
+        hideLoading();
+    }
+
+    @Override
+    public void onDestroy() {
+        Timber.e("onDestroy called");
+        super.onDestroy();
+        hideLoading();
+    }
+
+    @Override
+    public void onClick(SearchVisitorData visitorData) {
+        if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
+            Intent resultIntent = new Intent();
+            LatLng endLatLng = new LatLng(visitorData.getEndLat(), visitorData.getEndLng());
+            String areaName = visitorData.getVisitedArea();
+            String placeId = visitorData.getPlaceId();
+            if (areaName != null) {
+                double latitude = endLatLng.latitude;
+                double longitude = endLatLng.longitude;
+                SearchVisitorData searchVisitorData = new SearchVisitorData(areaName, placeId, latitude, longitude, latitude, longitude);
+                resultIntent.putExtra(HISTORY_PLACE_SELECTED_OBJ, searchVisitorData);
+                resultIntent.putExtra(HISTORY_PLACE_SELECTED, HISTORY_PLACE_SELECTED);
+                context.setResult(RESULT_OK, resultIntent);
+                context.finish();
+            }
+        } else {
+            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_gps));
         }
     }
 
@@ -219,79 +306,6 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
         });
     }
 
-    @Override
-    public void onClick(Place place) {
-        if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
-            Intent resultIntent = new Intent();
-            if (place == null) {
-                Timber.e("place null");
-                context.setResult(RESULT_CANCELED, resultIntent);
-                context.finish();
-            } else {
-                Timber.e("place not null");
-                LatLng latLng = place.getLatLng();
-                String areaName = place.getName();
-                String areaAddress = place.getAddress();
-                Timber.e("place address -> %s", areaAddress);
-                String placeId = place.getId();
-                Timber.e("place id -> %s", placeId);
-                if (latLng != null && areaName != null) {
-                    double latitude = latLng.latitude;
-                    double longitude = latLng.longitude;
-                    SelectedPlace selectedplace = new SelectedPlace(placeId, areaName, areaAddress, latitude, longitude);
-                    resultIntent.putExtra(NEW_PLACE_SELECTED_OBJ, selectedplace);
-                    resultIntent.putExtra(NEW_PLACE_SELECTED, NEW_PLACE_SELECTED);
-                    context.setResult(RESULT_OK, resultIntent);
-                    context.finish();
-                }
-            }
-        } else {
-            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_gps));
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (context.isFinishing()) {
-            context.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-        }
-        hideLoading();
-    }
-
-    @Override
-    public void onDestroy() {
-        Timber.e("onDestroy called");
-        super.onDestroy();
-        hideLoading();
-    }
-
-    @Override
-    public void onClick(SearchVisitorData visitorData) {
-        if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
-            Intent resultIntent = new Intent();
-            LatLng endLatLng = new LatLng(visitorData.getEndLat(), visitorData.getEndLng());
-            String areaName = visitorData.getVisitedArea();
-            String placeId = visitorData.getPlaceId();
-            if (areaName != null) {
-                double latitude = endLatLng.latitude;
-                double longitude = endLatLng.longitude;
-                SearchVisitorData searchVisitorData = new SearchVisitorData(areaName, placeId, latitude, longitude, latitude, longitude);
-                resultIntent.putExtra(HISTORY_PLACE_SELECTED_OBJ, searchVisitorData);
-                resultIntent.putExtra(HISTORY_PLACE_SELECTED, HISTORY_PLACE_SELECTED);
-                context.setResult(RESULT_OK, resultIntent);
-                context.finish();
-            }
-        } else {
-            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_gps));
-        }
-    }
-
     private void fetchSearchedDestinationPlace(String mobileNo) {
         showLoading(context);
 
@@ -306,7 +320,7 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
                     for (List<String> visitedPlaceData : visitedPlaceList) {
                         for (int i = 0; i < visitedPlaceData.size(); i++) {
 
-                            Timber.e("onResponse: i= -> %s", i);
+                            //Timber.e("onResponse: i= -> %s", i);
 
                             if (i == 6) {
                                 parkingArea = visitedPlaceData.get(i);
@@ -334,7 +348,7 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
                         }
                         SearchVisitorData searchVisitorData = new SearchVisitorData(parkingArea, placeId, endLat, endLng, startLat, startLng);
                         searchVisitorDataList.add(searchVisitorData);
-                        Timber.e("searchVisitorData -> %s", new Gson().toJson(searchVisitorData));
+                        //Timber.e("searchVisitorData -> %s", new Gson().toJson(searchVisitorData));
                     }
                     if (isAdded()) {
                         setFragmentControls(searchVisitorDataList);

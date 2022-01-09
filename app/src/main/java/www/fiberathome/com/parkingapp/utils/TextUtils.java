@@ -19,6 +19,8 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.TextAppearanceSpan;
 import android.text.style.UnderlineSpan;
+import android.view.inputmethod.InputMethodManager;
+import android.view.inputmethod.InputMethodSubtype;
 import android.widget.TextView;
 
 import com.google.android.material.textfield.TextInputEditText;
@@ -118,6 +120,16 @@ public class TextUtils {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 
+    public String detectKeyBoardLanguage(Context context) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodSubtype ims = imm.getCurrentInputMethodSubtype();
+        String localeString = ims.getLocale();
+        Locale locale = new Locale(localeString);
+        String currentLanguage = locale.getDisplayLanguage();
+        Timber.e("currentLanguage-> %s", currentLanguage);
+        return currentLanguage;
+    }
+
     public String capitalizeFirstLetter(final String str) {
         int strLen;
         if (str == null || (strLen = str.length()) == 0) {
@@ -213,7 +225,6 @@ public class TextUtils {
         boolean b = matcher.find();
         if (b) {
             System.out.println("There is a special character in my string:- " + str);
-            //Toast.makeText(context, "Sorry, no places found!", Toast.LENGTH_SHORT).show();
         } else {
             System.out.println("There is no special character in my String :-  " + str);
         }
@@ -458,6 +469,6 @@ public class TextUtils {
                 .replaceAll("hr", "\u0998\u09A3\u09CD\u099F\u09BE")
                 .replaceAll("min", "\u09AE\u09BF\u09A8\u09BF\u099F")
                 .replaceAll("sec", "\u09B8\u09C7\u0995\u09C7\u09A8\u09CD\u09A1")
-        ;
+                ;
     }
 }
