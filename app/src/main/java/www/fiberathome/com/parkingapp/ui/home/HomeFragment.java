@@ -809,7 +809,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             if (distance[0] <= circle.getRadius() && !isNotificationSent) {
                 // Inside The Circle
                 isNotificationSent = true;
-                sendNotification("You are near your parking spot", "You can Park");
+                sendNotification(context.getResources().getString(R.string.near_your_parking_spot), context.getResources().getString(R.string.you_can_park));
                 isInAreaEnabled = true;
                 isBooked = Preferences.getInstance(context).getBooked().getIsBooked();
                 if (isBooked && bookedPlace != null) {
@@ -1314,11 +1314,13 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         searchViewModel.storeVisitedPlaceInit(mobileNo, placeId, String.valueOf(endLatitude),
                 String.valueOf(endLongitude), String.valueOf(startLatitude), String.valueOf(startLongitude), String.valueOf(areaAddress));
-        searchViewModel.getStoreVisitedMutableData().observe(requireActivity(), (@NonNull BaseResponse response) -> {
-            if (!response.getError()) {
-                Timber.e("response search result store -> %s", new Gson().toJson(response.getMessage()));
-            } else {
-                Timber.e("Errors: -> %s", new Gson().toJson(response.getMessage()));
+        searchViewModel.getStoreVisitedMutableData().observe(requireActivity(), (BaseResponse response) -> {
+            if (response != null) {
+                if (!response.getError()) {
+                    Timber.e("response search result store -> %s", new Gson().toJson(response.getMessage()));
+                } else {
+                    Timber.e("Errors: -> %s", new Gson().toJson(response.getMessage()));
+                }
             }
         });
     }
@@ -1735,7 +1737,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         if (!oldDestination.equalsIgnoreCase(destination)) {
             oldDestination = destination;
 
-//            polyline = mMap.addPolyline(getDefaultPolyLines(points));
+            //polyline = mMap.addPolyline(getDefaultPolyLines(points));
 
             if (isBooked && bookedPlace != null) {
                 if (!destination.equalsIgnoreCase(bookedDestination)) {

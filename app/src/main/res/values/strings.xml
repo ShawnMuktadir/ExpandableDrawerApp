@@ -554,7 +554,7 @@
     <string name="booked_time">Booked Time</string>
     <string name="park_duration_about_to_end">Parking Duration About To End</string>
     <string name="booked_parking">Booked Parking</string>
-    <string name="Booked_for">Booked for : \n</string>
+    <string name="booked_for">Booked for : \n</string>
     <string name="your_booked_parking_duration_has_ended">Your Booked Parking Duration Has Ended</string>
     <string name="book_now">Book Now</string>
     <string name="reservation_closed_successfully">Reservation Closed Successfully</string>
@@ -587,4 +587,7 @@
     <string name="bdt">BDT </string>
     <string name="sec">sec</string>
     <string name="google_play_services_are_required">Google Play services are required by this application</string>
+    <string name="dialog_cancelled_by_user">Dialog is cancelled by User</string>
+    <string name="near_your_parking_spot">You are near your parking spot</string>
+    <string name="you_can_park">You can Park</string>
 </resources>

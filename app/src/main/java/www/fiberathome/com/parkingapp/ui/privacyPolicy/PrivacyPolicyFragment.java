@@ -116,8 +116,6 @@ public class PrivacyPolicyFragment extends BaseFragment implements IOnBackPressL
                         } else {
                             description = termConditionList.get(i).get(8).trim();
                         }
-
-
                         date = termConditionList.get(i).get(4).trim();
                         if (termsCondition != null) {
                             if (termsCondition.getTitle().equalsIgnoreCase(title)) {

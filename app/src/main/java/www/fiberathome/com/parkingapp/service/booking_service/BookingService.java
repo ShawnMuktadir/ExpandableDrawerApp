@@ -60,6 +60,7 @@ import www.fiberathome.com.parkingapp.data.model.response.reservation.Reservatio
 import www.fiberathome.com.parkingapp.data.source.APIClient;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
+import www.fiberathome.com.parkingapp.utils.TextUtils;
 
 @SuppressLint("SimpleDateFormat")
 public class BookingService extends Service {
@@ -118,7 +119,7 @@ public class BookingService extends Service {
     private void startBookingTracking() {
         Timber.e("service running");
         if (!isServiceStarted) {
-            notificationCaller(Constants.NOTIFICATION_CHANNEL_BOOKING, context.getResources().getString(R.string.Booked_for) + Preferences.getInstance(context).getBooked().getAreaName(), 2);
+            notificationCaller(Constants.NOTIFICATION_CHANNEL_BOOKING, context.getResources().getString(R.string.booked_for) + Preferences.getInstance(context).getBooked().getAreaName(), 2);
             startForeground(BOOKING_SERVICE_ID, mBuilder.build());
             isServiceStarted = true;
         }
@@ -142,7 +143,6 @@ public class BookingService extends Service {
         if (!isExceedRunned) {
             isExceedRunned = true;
             Timber.e("car parked");
-            //Toast.makeText(context, "car parked", Toast.LENGTH_LONG).show();
             notificationCaller(Constants.NOTIFICATION_CHANNEL_EXCEED_BOOKING, context.getResources().getString(R.string.car_parked), 3);
             startForeground(Constants.BOOKING_EXCEED_SERVICE_ID, mBuilder.build());
         }
@@ -347,10 +347,10 @@ public class BookingService extends Service {
     private void startCountDown(long timerMilliDifference, boolean exceedCounter) {
         countDownTimer = new CountDownTimer(timerMilliDifference, 1000) {
             public void onTick(long millisUntilFinished) {
-                mBuilder.setContentText("" + String.format(context.getResources().getString(R.string.remaining_time) + " %d min, %d sec",
+                mBuilder.setContentText("" + TextUtils.getInstance().convertTextEnToBn("" + String.format(context.getString(R.string.remaining_time) + " %d " + context.getResources().getString(R.string.mins) + ", %d " + context.getResources().getString(R.string.sec),
                         TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
                         TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
-                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))))
+                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)))))
                         .setSound(null)
                         .setVibrate(null);
                 // Because the ID remains unchanged, the existing notification is
