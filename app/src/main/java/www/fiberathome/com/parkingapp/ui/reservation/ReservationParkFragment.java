@@ -460,39 +460,41 @@ public class ReservationParkFragment extends BaseFragment implements OnMapReadyC
         }
 
         reservationViewModel.initCloseReservation(Preferences.getInstance(context).getUser().getMobileNo(), spotUid, reservationId);
-        reservationViewModel.getCloseReservationMutableLiveData().observe(requireActivity(), (@NonNull CloseReservationResponse response) -> {
+        reservationViewModel.getCloseReservationMutableLiveData().observe(requireActivity(), (CloseReservationResponse response) -> {
             hideLoading();
-            if (!response.getError()) {
-                if (isAdded() && countDownTimer != null) {
-                    countDownTimer.cancel();
-                }
-                mHandler.removeCallbacks(mHandlerTask);
-                sensors = null;
-                Preferences.getInstance(context).clearBooking();
-                ApplicationUtils.stopBookingTrackService(context);
-                DialogUtils.getInstance().alertDialog(context,
-                        context,
-                        context.getResources().getString(R.string.reservation_closed_successfully),
-                        context.getResources().getString(R.string.ok), "",
-                        new DialogUtils.DialogClickListener() {
-                            @Override
-                            public void onPositiveClick() {
-                                if (getActivity() instanceof HomeActivity) {
-                                    listener.fragmentChange(HomeFragment.newInstance());
-                                } else if (getActivity() instanceof ReservationActivity) {
-                                    context.startActivity(HomeActivity.class);
-                                } else if (getActivity() instanceof ScheduleActivity) {
-                                    context.startActivity(HomeActivity.class);
+            if (response != null) {
+                if (!response.getError()) {
+                    if (isAdded() && countDownTimer != null) {
+                        countDownTimer.cancel();
+                    }
+                    mHandler.removeCallbacks(mHandlerTask);
+                    sensors = null;
+                    Preferences.getInstance(context).clearBooking();
+                    ApplicationUtils.stopBookingTrackService(context);
+                    DialogUtils.getInstance().alertDialog(context,
+                            context,
+                            context.getResources().getString(R.string.reservation_closed_successfully),
+                            context.getResources().getString(R.string.ok), "",
+                            new DialogUtils.DialogClickListener() {
+                                @Override
+                                public void onPositiveClick() {
+                                    if (getActivity() instanceof HomeActivity) {
+                                        listener.fragmentChange(HomeFragment.newInstance());
+                                    } else if (getActivity() instanceof ReservationActivity) {
+                                        context.startActivity(HomeActivity.class);
+                                    } else if (getActivity() instanceof ScheduleActivity) {
+                                        context.startActivity(HomeActivity.class);
+                                    }
                                 }
-                            }
 
-                            @Override
-                            public void onNegativeClick() {
-                            }
-                        }).show();
-            } else {
-                if (isAdded() && countDownTimer != null) {
-                    countDownTimer.cancel();
+                                @Override
+                                public void onNegativeClick() {
+                                }
+                            }).show();
+                } else {
+                    if (isAdded() && countDownTimer != null) {
+                        countDownTimer.cancel();
+                    }
                 }
             }
         });
