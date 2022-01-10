@@ -45,10 +45,13 @@ public class PermissionActivity extends BaseActivity implements PermissionInterf
         setContentView(view);
         context = this;
         permissionListener = new DexterPermissionListener(this);
+        setListeners();
     }
 
-    public void takeLocationPermission(View view) {
-        Dexter.withContext(this).withPermission(Manifest.permission.ACCESS_FINE_LOCATION).withListener(permissionListener).check();
+    private void setListeners() {
+        binding.btnGrant.setOnClickListener(v -> {
+            Dexter.withContext(this).withPermission(Manifest.permission.ACCESS_FINE_LOCATION).withListener(permissionListener).check();
+        });
     }
 
     @Override

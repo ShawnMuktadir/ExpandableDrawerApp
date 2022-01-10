@@ -591,4 +591,6 @@
     <string name="near_your_parking_spot">You are near your parking spot</string>
     <string name="you_can_park">You can Park</string>
     <string name="no_places_found">No Places found!</string>
+    <string name="exit_this_page_until_your_reservation_is_finished">
+        Please depart your vehicle otherwise You will not be able to exit this page until your reservation is finished</string>
 </resources>

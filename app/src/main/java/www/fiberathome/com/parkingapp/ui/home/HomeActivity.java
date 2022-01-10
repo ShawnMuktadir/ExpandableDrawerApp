@@ -257,7 +257,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                         toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
                     } else if (f instanceof ScheduleFragment) {
                         ((ScheduleFragment) f).onBackPressed();
-                        toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
+                        //toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
                     } else if (f instanceof SettingsFragment) {
                         ((SettingsFragment) f).onBackPressed();
                         toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
@@ -267,6 +267,11 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                     } else if (f instanceof PrivacyPolicyFragment) {
                         ((PrivacyPolicyFragment) f).onBackPressed();
                         toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
+                    } else if (f instanceof PaymentFragment) {
+                        fragmentChange(ScheduleFragment.newInstance());
+                        //toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
+                    } else if (f instanceof ReservationParkFragment) {
+                        DialogUtils.getInstance().showOnlyMessageDialog(context.getResources().getString(R.string.exit_this_page_until_your_reservation_is_finished), context);
                     }
                 }
                 binding.appBarMain.tvTimeToolbar.setVisibility(View.GONE);
@@ -283,14 +288,6 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                 navigationView.getMenu().getItem(8).setChecked(false);
                 navigationView.getMenu().getItem(9).setChecked(false);
                 navigationView.getMenu().getItem(10).setChecked(false);
-            }
-
-            List<Fragment> fragmentList = getSupportFragmentManager().getFragments();
-            for (Fragment f : fragmentList) {
-                if (f instanceof PaymentFragment) {
-                    fragmentChange(ScheduleFragment.newInstance());
-                    toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
-                }
             }
         } else {
             ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_parking_app));

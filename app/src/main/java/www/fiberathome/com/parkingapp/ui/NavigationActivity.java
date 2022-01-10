@@ -179,7 +179,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
             setAppLocale(LANGUAGE_BN);
         } else {
-            setAppLocale(Preferences.getInstance(context).getAppLanguage());
+            setAppLocale(LanguagePreferences.getInstance(context).getAppLanguage());
         }
     }
 
