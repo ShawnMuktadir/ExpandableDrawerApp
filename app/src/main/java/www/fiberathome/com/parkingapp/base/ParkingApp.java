@@ -1,8 +1,15 @@
 package www.fiberathome.com.parkingapp.base;
 
+import static www.fiberathome.com.parkingapp.data.model.data.Constants.LANGUAGE_BN;
+
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
+import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.os.Build;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleObserver;
@@ -15,10 +22,12 @@ import com.android.volley.toolbox.Volley;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.BuildConfig;
+import www.fiberathome.com.parkingapp.data.model.data.preference.LanguagePreferences;
 import www.fiberathome.com.parkingapp.data.source.APIClient;
 import www.fiberathome.com.parkingapp.ui.splash.SplashActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
@@ -67,6 +76,11 @@ public class ParkingApp extends Application implements LifecycleObserver {
     protected void attachBaseContext(Context context) {
         super.attachBaseContext(context);
         MultiDex.install(this);
+        if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
+            setAppLocale(LANGUAGE_BN);
+        } else {
+            setAppLocale(LanguagePreferences.getInstance(context).getAppLanguage());
+        }
     }
 
     private void setAppDefaults() {
@@ -130,5 +144,18 @@ public class ParkingApp extends Application implements LifecycleObserver {
 
     public void setConnectivityListener(ConnectivityReceiver.ConnectivityReceiverListener listener) {
         ConnectivityReceiver.listener = listener;
+    }
+
+    @SuppressLint("ObsoleteSdkInt")
+    public void setAppLocale(String localeCode) {
+        Resources resources = getResources();
+        DisplayMetrics dm = resources.getDisplayMetrics();
+        Configuration config = resources.getConfiguration();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            config.setLocale(new Locale(localeCode.toLowerCase()));
+        } else {
+            config.locale = new Locale(localeCode.toLowerCase());
+        }
+        resources.updateConfiguration(config, dm);
     }
 }
