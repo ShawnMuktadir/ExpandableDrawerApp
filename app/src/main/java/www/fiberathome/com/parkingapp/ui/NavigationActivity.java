@@ -1,7 +1,6 @@
 package www.fiberathome.com.parkingapp.ui;
 
-import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_BN;
-import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
+import static www.fiberathome.com.parkingapp.data.model.data.Constants.LANGUAGE_BN;
 
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
@@ -45,24 +44,24 @@ import java.util.Locale;
 import java.util.Objects;
 
 import timber.log.Timber;
+import www.fiberathome.com.parkingapp.BuildConfig;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
+import www.fiberathome.com.parkingapp.data.model.data.preference.LanguagePreferences;
+import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
+import www.fiberathome.com.parkingapp.data.model.data.preference.SharedData;
+import www.fiberathome.com.parkingapp.data.model.user.User;
 import www.fiberathome.com.parkingapp.databinding.ActivityNavigationBinding;
-import www.fiberathome.com.parkingapp.model.api.AppConfig;
-import www.fiberathome.com.parkingapp.model.data.preference.LanguagePreferences;
-import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
-import www.fiberathome.com.parkingapp.model.data.preference.SharedData;
-import www.fiberathome.com.parkingapp.model.user.User;
-import www.fiberathome.com.parkingapp.ui.booking.BookingActivity;
-import www.fiberathome.com.parkingapp.ui.changePassword.ChangePasswordFragment;
+import www.fiberathome.com.parkingapp.ui.auth.changePassword.ChangePasswordFragment;
+import www.fiberathome.com.parkingapp.ui.auth.login.LoginActivity;
 import www.fiberathome.com.parkingapp.ui.followUs.FollowUsActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.law.LawActivity;
 import www.fiberathome.com.parkingapp.ui.parking.ParkingActivity;
 import www.fiberathome.com.parkingapp.ui.privacyPolicy.PrivacyPolicyActivity;
 import www.fiberathome.com.parkingapp.ui.profile.ProfileActivity;
+import www.fiberathome.com.parkingapp.ui.reservation.ReservationActivity;
 import www.fiberathome.com.parkingapp.ui.settings.SettingsActivity;
-import www.fiberathome.com.parkingapp.ui.signIn.LoginActivity;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
@@ -180,7 +179,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
             setAppLocale(LANGUAGE_BN);
         } else {
-            setAppLocale(Preferences.getInstance(context).getAppLanguage());
+            setAppLocale(LanguagePreferences.getInstance(context).getAppLanguage());
         }
     }
 
@@ -330,17 +329,15 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         if (user.getImage() != null && !user.getImage().equals("")) {
             try {
                 if (!user.getImage().endsWith(".jpg")) {
-                    url = AppConfig.IMAGES_URL + user.getImage() + ".jpg";
+                    url = BuildConfig.IMAGES_URL + user.getImage() + ".jpg";
                 } else {
-                    url = AppConfig.IMAGES_URL + user.getImage();
+                    url = BuildConfig.IMAGES_URL + user.getImage();
                 }
                 Timber.e("user profile photo url -> %s", url);
                 Glide.with(this).load(url).apply(requestOptions).override(200, 200).into(ivUserProfile);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } else {
-            Glide.with(this).load("").apply(requestOptions).override(200, 200).into(ivUserProfile);
         }
         navHeaderView.setOnClickListener(v -> startActivity(ProfileActivity.class));
     }
@@ -410,7 +407,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
                 break;
 
             case R.id.nav_booking:
-                startActivity(BookingActivity.class);
+                startActivity(ReservationActivity.class);
                 break;
 
             case R.id.nav_law:

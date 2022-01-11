@@ -1,7 +1,5 @@
 package www.fiberathome.com.parkingapp.ui.settings.adapter;
 
-import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_BN;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -13,10 +11,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-import timber.log.Timber;
+import www.fiberathome.com.parkingapp.data.model.Language;
 import www.fiberathome.com.parkingapp.databinding.RowLanguageSettingBinding;
-import www.fiberathome.com.parkingapp.model.Language;
-import www.fiberathome.com.parkingapp.model.data.preference.LanguagePreferences;
 
 public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.SettingsViewHolder> {
 
@@ -52,15 +48,6 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.Settin
             viewHolder.binding.imageViewCheckedIcon.setVisibility(View.GONE);
         } else {
             viewHolder.binding.imageViewCheckedIcon.setVisibility(View.VISIBLE);
-        }
-
-        if (position == 1) {
-            Timber.e("language  position -> %s %s", LanguagePreferences.getInstance(context).getAppLanguage(), position);
-            if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
-                viewHolder.binding.imageViewCheckedIcon.setVisibility(View.VISIBLE);
-            } else {
-                viewHolder.binding.imageViewCheckedIcon.setVisibility(View.GONE);
-            }
         }
 
         viewHolder.itemView.setOnClickListener(v -> listener.onItemClick(data));

@@ -33,8 +33,8 @@ import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.model.data.Constants;
-import www.fiberathome.com.parkingapp.model.data.StaticData;
+import www.fiberathome.com.parkingapp.data.model.data.Constants;
+import www.fiberathome.com.parkingapp.data.model.data.StaticData;
 import www.fiberathome.com.parkingapp.service.booking_service.BookingService;
 import www.fiberathome.com.parkingapp.service.notification.BookingServiceStarter;
 import www.fiberathome.com.parkingapp.utils.internet.ConnectivityInterceptor;
@@ -153,7 +153,7 @@ public class ApplicationUtils {
             return true;
         } else if (googleApi.isUserResolvableError(result)) {
             Dialog dialog = googleApi.getErrorDialog((Activity) context, result, PLAY_SERVICES_ERROR_CODE, task ->
-                    ToastUtils.getInstance().showToastMessage(context, "Dialog is cancelled by User"));
+                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.dialog_cancelled_by_user)));
             if (dialog != null) {
                 dialog.show();
             }

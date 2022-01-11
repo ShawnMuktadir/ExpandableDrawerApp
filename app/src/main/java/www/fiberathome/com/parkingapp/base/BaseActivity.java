@@ -1,12 +1,11 @@
 package www.fiberathome.com.parkingapp.base;
 
-import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
+import static www.fiberathome.com.parkingapp.data.model.data.Constants.LANGUAGE_EN;
 import static www.fiberathome.com.parkingapp.ui.home.HomeActivity.GPS_REQUEST_CODE;
 
 import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -54,14 +53,10 @@ import java.util.List;
 import java.util.Locale;
 
 import timber.log.Timber;
-import www.fiberathome.com.parkingapp.BuildConfig;
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.model.data.preference.LanguagePreferences;
-import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
-import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
+import www.fiberathome.com.parkingapp.data.model.data.preference.LanguagePreferences;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
-import www.fiberathome.com.parkingapp.utils.ForceUpdateChecker;
 import www.fiberathome.com.parkingapp.utils.GeoFenceBroadcastReceiver;
 import www.fiberathome.com.parkingapp.utils.GeofenceConstants;
 import www.fiberathome.com.parkingapp.utils.SnackBarUtils;
@@ -155,7 +150,7 @@ public class BaseActivity extends AppCompatActivity implements LocationListener 
         if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_EN)) {
             setAppLocale(LANGUAGE_EN);
         } else {
-            setAppLocale(Preferences.getInstance(context).getAppLanguage());
+            setAppLocale(LanguagePreferences.getInstance(context).getAppLanguage());
         }
     }
 

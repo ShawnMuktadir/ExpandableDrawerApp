@@ -51,7 +51,7 @@
     <string name="err_new_password">Enter valid new password</string>
     <string name="err_confirm_password">Enter valid confirm password</string>
     <string name="no_account_yet_click_here">No account yet? Click Here</string>
-    <string name="forget_password_click_here">Forget Password? Click Here</string>
+    <string name="forget_password_click_here">Forgot Password? Click Here</string>
     <string name="password_not_matched">New Password &amp; Confirm password doesn\'t matched</string>
 
     //navigation
@@ -505,9 +505,9 @@
     <string name="already_booked_msg">As you have already booked a parking spot, so you can\'t book now.</string>
     <string name="reservation_failed">Reservation Failed! Please Try Again…</string>
     <string name="reset">Reset</string>
-    <string name="bdt_00_00">(BDT 00.00)</string>
+    <string name="digit_00_00"> 00.00</string>
     <string name="use_promo">Use promo</string>
-    <string name="bdt_hour_charge">BDT 20/0.5h</string>
+    <string name="bdt_hour_charge"> 20/0.5h</string>
     <string name="each_hour">Each hour</string>
     <string name="subtotal_parking">Subtotal Parking:</string>
     <string name="discount">Discount</string>
@@ -554,7 +554,7 @@
     <string name="booked_time">Booked Time</string>
     <string name="park_duration_about_to_end">Parking Duration About To End</string>
     <string name="booked_parking">Booked Parking</string>
-    <string name="Booked_for">Booked for : \n</string>
+    <string name="booked_for">Booked for : \n</string>
     <string name="your_booked_parking_duration_has_ended">Your Booked Parking Duration Has Ended</string>
     <string name="book_now">Book Now</string>
     <string name="reservation_closed_successfully">Reservation Closed Successfully</string>
@@ -579,4 +579,18 @@
     <string name="select_photo_from_gallery">Select photo from gallery</string>
     <string name="capture_photo_from_camera">Capture photo from camera</string>
     <string name="provide_valid_information">Please provide valid information</string>
+    <string name="spot_no">Spot No : </string>
+    <string name="km"> km</string>
+    <string name="mins"> mins</string>
+    <string name="hr"> hr</string>
+    <string name="coming_soon">Coming Soon</string>
+    <string name="bdt">BDT </string>
+    <string name="sec">sec</string>
+    <string name="google_play_services_are_required">Google Play services are required by this application</string>
+    <string name="dialog_cancelled_by_user">Dialog is cancelled by User</string>
+    <string name="near_your_parking_spot">You are near your parking spot</string>
+    <string name="you_can_park">You can Park</string>
+    <string name="no_places_found">No Places found!</string>
+    <string name="exit_this_page_until_your_reservation_is_finished">
+        Please depart your vehicle otherwise You will not be able to exit this page until your reservation is finished</string>
 </resources>

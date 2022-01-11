@@ -1,7 +1,7 @@
 package www.fiberathome.com.parkingapp.ui.law;
 
-import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_BN;
-import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
+import static www.fiberathome.com.parkingapp.data.model.data.Constants.LANGUAGE_BN;
+import static www.fiberathome.com.parkingapp.data.model.data.Constants.LANGUAGE_EN;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -30,11 +30,11 @@ import java.util.List;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
+import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
+import www.fiberathome.com.parkingapp.data.model.response.law.LawItem;
+import www.fiberathome.com.parkingapp.data.model.response.law.LocalJson;
+import www.fiberathome.com.parkingapp.data.model.response.law.Result;
 import www.fiberathome.com.parkingapp.databinding.FragmentLawBinding;
-import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
-import www.fiberathome.com.parkingapp.model.response.law.LawItem;
-import www.fiberathome.com.parkingapp.model.response.law.LocalJson;
-import www.fiberathome.com.parkingapp.model.response.law.Result;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;

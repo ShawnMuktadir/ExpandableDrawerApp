@@ -508,9 +508,9 @@
     <string name="already_booked_msg">যেহেতু আপনি ইতিমধ্যে একটি পার্কিং স্পট বুক করেছেন, তাই আপনি এখন বুক করতে পারবেন না।</string>
     <string name="reservation_failed">বুকিং সংরক্ষণ ব্যর্থ! অনুগ্রহপূর্বক আবার চেষ্টা করুন…</string>
     <string name="reset">পুনরায় করুন</string>
-    <string name="bdt_00_00">(BDT 00.00)</string>
+    <string name="digit_00_00">  ০০.০০</string>
     <string name="use_promo">প্রোমো ব্যবহার করুন</string>
-    <string name="bdt_hour_charge">BDT 20/0.5h</string>
+    <string name="bdt_hour_charge"> 20/0.5h</string>
     <string name="each_hour">প্রতি ঘণ্টায়</string>
     <string name="subtotal_parking">সাবটোটাল পার্কিং:</string>
     <string name="discount">ডিসকাউন্ট</string>
@@ -540,7 +540,7 @@
     <string name="please_contact_our_support_team_for_your_queries">আপনার প্রয়োজনীয় প্রশ্নের জন্য যোগাযোগ করুন</string>
     <string name="sms">এসএমএস</string>
     <string name="others">অন্যান্য</string>
-    <string name="parking_reservation_id">রিসার্ভেসন নং: </string>
+    <string name="parking_reservation_id">রিজার্ভেসন নং: </string>
     <string name="arrival">অ্যারাইভাল</string>
     <string name="departuretxt">ডিপার্চার</string>
     <string name="remaining_time">কতক্ষণ সময় বাকি আছে:</string>
@@ -551,13 +551,13 @@
     <string name="completed">সম্পন্ন</string>
     <string name="canceled">বাতিল করা হয়েছে</string>
     <string name="rejected">প্রত্যাখ্যাত</string>
-    <string name="t_amp_c"><![CDATA[T&C]]></string>
+    <string name="t_amp_c"><![CDATA[টি অ্যান্ড সি]]></string>
     <string name="pay_bdt"> পরিশোধ করুন</string>
     <string name="car_parked">গাড়ি পার্ক করা আছে</string>
     <string name="booked_time">বুক করা সময়</string>
     <string name="park_duration_about_to_end">পার্কিং সময়কাল প্রায় শেষ</string>
     <string name="booked_parking">বুক করা পার্কিং</string>
-    <string name="Booked_for">বুক করা হয়েছে : \n</string>
+    <string name="booked_for">বুক করা হয়েছে : \n</string>
     <string name="your_booked_parking_duration_has_ended">আপনার বুক করা পার্কিং সময়কাল শেষ হয়েছে</string>
     <string name="book_now">এখনই বুক করুন</string>
     <string name="reservation_closed_successfully">রিজার্ভেশন সফলতার সাথে শেষ হয়েছে</string>
@@ -582,5 +582,19 @@
     <string name="select_photo_from_gallery">গ্যালারি থেকে ছবি নির্বাচন করুন</string>
     <string name="capture_photo_from_camera">ক্যামেরা থেকে ছবি ক্যাপচার করুন</string>
     <string name="provide_valid_information">সঠিক তথ্য প্রদান করুন</string>
+    <string name="spot_no">স্পট নং : </string>
+    <string name="km"> কি. মি.</string>
+    <string name="mins"> মিনিট</string>
+    <string name="coming_soon">শীঘ্রই আসছে</string>
+    <string name="hr"> ঘণ্টা</string>
+    <string name="bdt">টাকা </string>
+    <string name="sec">সেকেন্ড</string>
+    <string name="google_play_services_are_required">এই অ্যাপ্লিকেশনটির জন্য গুগল প্লে পরিষেবাগুলি প্রয়োজন</string>
+    <string name="dialog_cancelled_by_user">ডায়ালগ ব্যবহারকারী দ্বারা বাতিল করা হয়েছে</string>
+    <string name="near_your_parking_spot">আপনি আপনার পার্কিং স্পটের কাছাকাছি আছেন</string>
+    <string name="you_can_park">আপনি পার্ক করতে পারেন</string>
+    <string name="no_places_found">কোন লোকেশন পাওয়া যায়নি!</string>
+    <string name="exit_this_page_until_your_reservation_is_finished">
+    অনুগ্রহ করে আপনার যানবাহন প্রস্থান করুন অন্যথায় আপনার রিজার্ভেশন শেষ না হওয়া পর্যন্ত আপনি এই পেজ থেকে প্রস্থান করতে পারবেন না</string>
 </resources>
 

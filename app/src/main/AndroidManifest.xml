@@ -52,7 +52,7 @@
         android:resizeableActivity="false">
 
         <activity
-            android:name=".ui.booking.ScanBarCodeActivity"
+            android:name=".ui.reservation.ReservationScanBarCodeActivity"
             android:screenOrientation="portrait"
             android:configChanges="locale"
             android:theme="@style/AppTheme.DefaultActionBar" />
@@ -82,7 +82,7 @@
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
-            android:name=".ui.booking.BookingActivity"
+            android:name=".ui.reservation.ReservationActivity"
             android:screenOrientation="portrait"
             android:configChanges="locale"
             android:theme="@style/AppTheme.DefaultActionBar" />
@@ -95,7 +95,7 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
-            android:name=".ui.schedule.ScheduleActivity"
+            android:name=".ui.reservation.schedule.ScheduleActivity"
             android:screenOrientation="portrait"
             android:configChanges="locale"
             android:theme="@style/AppTheme.DefaultActionBar"
@@ -109,13 +109,13 @@
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
-            android:name=".ui.changePassword.newPassword.NewPasswordActivity"
+            android:name=".ui.auth.newPassword.NewPasswordActivity"
             android:screenOrientation="portrait"
             android:configChanges="locale"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
-            android:name=".ui.changePassword.ChangePasswordOTPActivity"
+            android:name=".ui.auth.changePassword.ChangePasswordOTPActivity"
             android:screenOrientation="portrait"
             android:configChanges="locale"
             android:theme="@style/AppTheme.DefaultActionBar" />
@@ -159,32 +159,26 @@
         </activity>
 
         <activity
-            android:name=".ui.signUp.SignUpActivity"
+            android:name=".ui.auth.registration.RegistrationActivity"
             android:screenOrientation="portrait"
             android:configChanges="locale"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
-            android:name=".ui.verifyPhone.VerifyPhoneActivity"
-            android:parentActivityName=".ui.signIn.LoginActivity"
+            android:name=".ui.auth.verifyPhone.VerifyPhoneActivity"
+            android:parentActivityName=".ui.auth.login.LoginActivity"
             android:screenOrientation="portrait"
             android:configChanges="locale"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
-            android:name=".ui.signIn.LoginActivity"
+            android:name=".ui.auth.login.LoginActivity"
             android:screenOrientation="portrait"
             android:configChanges="locale"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
-            android:name=".ui.forgetPassword.ForgetPasswordActivity"
-            android:screenOrientation="portrait"
-            android:configChanges="locale"
-            android:theme="@style/AppTheme.DefaultActionBar" />
-
-        <activity
-            android:name=".ui.reserveSpot.ReserveSpotActivity"
+            android:name=".ui.auth.forgotPassword.ForgotPasswordActivity"
             android:screenOrientation="portrait"
             android:configChanges="locale"
             android:theme="@style/AppTheme.DefaultActionBar" />
@@ -197,7 +191,7 @@
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
-            android:name=".ui.termsConditions.TermsConditionsActivity"
+            android:name=".ui.privacyPolicy.termsConditions.TermsConditionsActivity"
             android:screenOrientation="portrait"
             android:configChanges="locale"
             android:theme="@style/AppTheme.DefaultActionBar" />

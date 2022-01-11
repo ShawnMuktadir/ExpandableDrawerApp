@@ -237,7 +237,7 @@ public class DialogUtils {
 
         tv_exit.setOnClickListener(v -> {
             alertDialog.dismiss();
-            activity.finish();
+            activity.finishAffinity();
             ToastUtils.getInstance().showToastMessage(activity, activity.getResources().getString(R.string.thanks_message));
         });
 

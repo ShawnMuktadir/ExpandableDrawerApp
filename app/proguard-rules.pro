@@ -24,7 +24,7 @@
     @retrofit2.http.* <methods>;
 }
 
--keep public class www.fiberathome.com.parkingapp.model.* {*;}
+-keep public class www.fiberathome.com.parkingapp.data.model.* {*;}
 
 # OkHttp3
 -dontwarn okio.**

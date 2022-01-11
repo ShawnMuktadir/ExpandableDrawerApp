@@ -16,11 +16,13 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.data.model.data.preference.LanguagePreferences;
+import www.fiberathome.com.parkingapp.data.model.response.reservation.BookingSensors;
 import www.fiberathome.com.parkingapp.databinding.BottomSheetTextRecyclerItemBinding;
-import www.fiberathome.com.parkingapp.model.response.booking.BookingSensors;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.MathUtils;
+import www.fiberathome.com.parkingapp.utils.TextUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -67,17 +69,27 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
             holder.binding.textBottom.setVisibility(View.GONE);
         }
         holder.binding.textViewParkingAreaName.setText(bookingSensors.getParkingArea());
-        if (bookingSensors.getPsId() != null && !bookingSensors.getPsId().equalsIgnoreCase("")) {
-            holder.binding.textViewPsId.setText("( Spot No: " + bookingSensors.getPsId() + " )");
+
+        if (!LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
+            if (bookingSensors.getPsId() != null && !bookingSensors.getPsId().equalsIgnoreCase("")) {
+                holder.binding.textViewPsId.setText("(" + context.getResources().getString(R.string.spot_no) + bookingSensors.getPsId() + " )");
+            } else {
+                holder.binding.textViewPsId.setText("");
+            }
         } else {
-            holder.binding.textViewPsId.setText("");
+            if (bookingSensors.getPsId() != null && !bookingSensors.getPsId().equalsIgnoreCase("")) {
+                holder.binding.textViewPsId.setText("(" + context.getResources().getString(R.string.spot_no) + TextUtils.getInstance().convertTextEnToBn(bookingSensors.getPsId()) + " )");
+            } else {
+                holder.binding.textViewPsId.setText("");
+            }
         }
+
+
         if (bookingSensors.getOccupiedCount() != null) {
-            holder.binding.textViewParkingAreaCount.setText(bookingSensors.getOccupiedCount() + "/" + bookingSensors.getCount());
+            holder.binding.textViewParkingAreaCount.setText(MathUtils.getInstance().localeIntConverter(context, bookingSensors.getOccupiedCount()) + "/" + MathUtils.getInstance().localeIntConverter(context, bookingSensors.getCount()));
         } else {
-            holder.binding.textViewParkingAreaCount.setText(bookingSensors.getCount());
+            holder.binding.textViewParkingAreaCount.setText(MathUtils.getInstance().localeIntConverter(context, bookingSensors.getCount()));
         }
-        holder.binding.textViewParkingDistance.setText(new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US)).format(bookingSensors.getDistance()) + " km");
         holder.binding.rowFG.setOnClickListener(view -> {
             if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
                 clickListeners.onClick(bookingSensors);
@@ -86,10 +98,13 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
             }
         });
 
-        DecimalFormat decimalFormat = new DecimalFormat("00.0", new DecimalFormatSymbols(Locale.US));
-        double tmp = MathUtils.getInstance().convertToDouble(decimalFormat.format(Double
+        DecimalFormat df = new DecimalFormat("00.0", new DecimalFormatSymbols(Locale.US));
+        double tmpDistance = MathUtils.getInstance().convertToDouble(df.format(bookingSensors.getDistance()));
+        holder.binding.textViewParkingDistance.setText(MathUtils.getInstance().localeDoubleConverter(context, String.valueOf(tmpDistance)) + " " + context.getResources().getString(R.string.km));
+
+        double tmpDuration = MathUtils.getInstance().convertToDouble(df.format(Double
                 .parseDouble(bookingSensors.getDuration())));
-        holder.binding.textViewParkingTravelTime.setText(tmp + " mins");
+        holder.binding.textViewParkingTravelTime.setText(MathUtils.getInstance().localeDoubleConverter(context, String.valueOf(tmpDuration)) + " " + context.getResources().getString(R.string.mins));
     }
 
     @Override

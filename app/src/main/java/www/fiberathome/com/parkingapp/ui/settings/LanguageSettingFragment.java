@@ -1,7 +1,7 @@
 package www.fiberathome.com.parkingapp.ui.settings;
 
-import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_BN;
-import static www.fiberathome.com.parkingapp.model.data.Constants.LANGUAGE_EN;
+import static www.fiberathome.com.parkingapp.data.model.data.Constants.LANGUAGE_BN;
+import static www.fiberathome.com.parkingapp.data.model.data.Constants.LANGUAGE_EN;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -19,12 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.data.model.Language;
+import www.fiberathome.com.parkingapp.data.model.data.preference.LanguagePreferences;
+import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.databinding.FragmentSettingsBinding;
-import www.fiberathome.com.parkingapp.model.Language;
-import www.fiberathome.com.parkingapp.model.data.preference.LanguagePreferences;
-import www.fiberathome.com.parkingapp.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.ui.settings.adapter.LanguageAdapter;
-import www.fiberathome.com.parkingapp.ui.splash.SplashActivity;
 
 @SuppressLint("NonConstantResourceId")
 @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -63,14 +62,14 @@ public class LanguageSettingFragment extends Fragment {
         String[] subNames = new String[]{context.getResources().getString(R.string.english), context.getResources().getString(R.string.bangla_bn)};
         String[] isoCodes = new String[]{LANGUAGE_EN, LANGUAGE_BN};
 
-        int s1 = context.getResources().getString(R.string.language_settings).codePointAt(0);
+        /*int s1 = context.getResources().getString(R.string.language_settings).codePointAt(0);
         if (s1 >= 0x0980 && s1 <= 0x09E0) {
             Preferences.getInstance(context).setAppLanguage(LANGUAGE_BN);
             LanguagePreferences.getInstance(context).setAppLanguage(LANGUAGE_BN);
         } else {
             Preferences.getInstance(context).setAppLanguage(LANGUAGE_EN);
             LanguagePreferences.getInstance(context).setAppLanguage(LANGUAGE_EN);
-        }
+        }*/
 
         LanguageAdapter languageAdapter = new LanguageAdapter(
                 populateLanguageItem(names, subNames, isoCodes, new ArrayList<>()), (Language language) -> {

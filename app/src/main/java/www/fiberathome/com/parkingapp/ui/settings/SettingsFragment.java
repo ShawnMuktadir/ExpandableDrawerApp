@@ -97,9 +97,9 @@ public class SettingsFragment extends BaseFragment implements SettingAdapter.OnI
         binding.recyclerViewSettings.setAdapter(settingAdapter);
     }
 
-    private List<www.fiberathome.com.parkingapp.model.Settings> populateSettingsItem(String[] nameArray, Integer[] drawableArray, List<www.fiberathome.com.parkingapp.model.Settings> settings) {
+    private List<www.fiberathome.com.parkingapp.data.model.Settings> populateSettingsItem(String[] nameArray, Integer[] drawableArray, List<www.fiberathome.com.parkingapp.data.model.Settings> settings) {
         for (int i = 0; i < nameArray.length; i++) {
-            settings.add(new www.fiberathome.com.parkingapp.model.Settings(
+            settings.add(new www.fiberathome.com.parkingapp.data.model.Settings(
                     nameArray[i],
                     drawableArray[i]
             ));

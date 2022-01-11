@@ -8,14 +8,13 @@
     android:layout_gravity="center"
     android:background="@color/white"
     android:windowSoftInputMode="adjustPan"
-    tools:context=".ui.signIn.LoginFragment">
+    tools:context=".ui.auth.login.LoginFragment">
 
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@+id/tvEnglishLang"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">

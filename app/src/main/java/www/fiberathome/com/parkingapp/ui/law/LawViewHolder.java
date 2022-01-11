@@ -6,7 +6,7 @@ import android.widget.TextView;
 import com.thoughtbot.expandablerecyclerview.viewholders.ChildViewHolder;
 
 import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.model.response.law.Law;
+import www.fiberathome.com.parkingapp.data.model.response.law.Law;
 
 /*
  * Copyright (C) 2018 Levi Rizki Saputra (levirs565@gmail.com).
