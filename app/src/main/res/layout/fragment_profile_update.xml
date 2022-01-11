@@ -7,7 +7,7 @@
     android:background="@color/white"
     android:layout_margin="@dimen/dim10"
     android:windowSoftInputMode="adjustPan"
-    tools:context=".ui.profile.ProfileFragment">
+    tools:context=".ui.navigation.profile.ProfileFragment">
 
     <ScrollView
         android:layout_width="match_parent"

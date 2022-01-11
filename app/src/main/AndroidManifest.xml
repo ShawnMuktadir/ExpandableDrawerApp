@@ -58,25 +58,25 @@
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
-            android:name=".ui.followUs.FollowUsActivity"
+            android:name=".ui.navigation.followUs.FollowUsActivity"
             android:screenOrientation="portrait"
             android:configChanges="locale"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
-            android:name=".ui.profile.ProfileActivity"
+            android:name=".ui.navigation.profile.ProfileActivity"
             android:screenOrientation="portrait"
             android:configChanges="locale"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
-            android:name=".ui.profile.edit.EditProfileActivity"
+            android:name=".ui.navigation.profile.edit.EditProfileActivity"
             android:screenOrientation="portrait"
             android:configChanges="locale"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
-            android:name=".ui.law.LawActivity"
+            android:name=".ui.navigation.law.LawActivity"
             android:screenOrientation="portrait"
             android:configChanges="locale"
             android:theme="@style/AppTheme.DefaultActionBar" />
@@ -88,7 +88,7 @@
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
-            android:name=".ui.parking.ParkingActivity"
+            android:name=".ui.navigation.notification.parking.ParkingActivity"
             android:screenOrientation="portrait"
             android:configChanges="locale"
             android:theme="@style/AppTheme.DefaultActionBar"
@@ -127,19 +127,19 @@
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
-            android:name=".ui.permission.LocationPermissionActivity"
+            android:name=".ui.permission.location.LocationPermissionActivity"
             android:screenOrientation="portrait"
             android:configChanges="locale"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
-            android:name=".ui.location.LocationActivity"
+            android:name=".ui.permission.location.LocationActivity"
             android:screenOrientation="portrait"
             android:configChanges="locale"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
-            android:name=".ui.search.SearchActivity"
+            android:name=".ui.home.search.SearchActivity"
             android:screenOrientation="portrait"
             android:configChanges="locale"
             android:theme="@style/AppTheme.DefaultActionBar"
@@ -184,26 +184,26 @@
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
-            android:name=".ui.privacyPolicy.PrivacyPolicyActivity"
+            android:name=".ui.navigation.privacyPolicy.PrivacyPolicyActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:configChanges="locale"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
-            android:name=".ui.privacyPolicy.termsConditions.TermsConditionsActivity"
+            android:name=".ui.navigation.privacyPolicy.termsConditions.TermsConditionsActivity"
             android:screenOrientation="portrait"
             android:configChanges="locale"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
-            android:name=".ui.settings.SettingsActivity"
+            android:name=".ui.navigation.settings.SettingsActivity"
             android:screenOrientation="portrait"
             android:configChanges="locale"
             android:theme="@style/AppTheme.DefaultActionBar" />
 
         <activity
-            android:name=".ui.settings.LanguageSettingActivity"
+            android:name=".ui.navigation.settings.LanguageSettingActivity"
             android:label="@string/language_settings" />
 
         <meta-data

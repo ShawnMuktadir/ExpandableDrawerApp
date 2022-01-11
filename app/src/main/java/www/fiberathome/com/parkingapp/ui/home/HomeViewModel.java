@@ -21,15 +21,15 @@ public class HomeViewModel extends ViewModel {
         sensorAreaStatusResponseMutableLiveData = repository.getSensorAreaStatus();
     }
 
+    public LiveData<SensorAreaStatusResponse> getSensorAreaStatusMutableLiveData() {
+        return sensorAreaStatusResponseMutableLiveData;
+    }
+
     public void initFetchParkingSlotSensors() {
         parkingSlotResponseMutableLiveData = repository.fetchParkingSlotSensors();
     }
 
-    public LiveData<SensorAreaStatusResponse> getSensorAreaStatusLiveData() {
-        return sensorAreaStatusResponseMutableLiveData;
-    }
-
-    public LiveData<ParkingSlotResponse> getParkingSlotResponseLiveData() {
+    public LiveData<ParkingSlotResponse> getParkingSlotResponseMutableLiveData() {
         return parkingSlotResponseMutableLiveData;
     }
 }

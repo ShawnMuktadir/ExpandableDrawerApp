@@ -9,9 +9,40 @@ import www.fiberathome.com.parkingapp.data.model.response.global.BaseResponse;
 import www.fiberathome.com.parkingapp.data.model.response.login.LoginResponse;
 
 public class AuthViewModel extends ViewModel {
+    private MutableLiveData<LoginResponse> loginMutableLiveData;
+    private MutableLiveData<BaseResponse> registrationMutableLiveData;
     private MutableLiveData<BaseResponse> changePasswordMutableLiveData;
     private MutableLiveData<BaseResponse> forgotPasswordMutableLiveData;
     private MutableLiveData<BaseResponse> newPasswordMutableLiveData;
+
+    public void initLogin(String mobileNo, String password) {
+        loginMutableLiveData = AuthRepository.getInstance().login(mobileNo, password);
+    }
+
+    public LiveData<LoginResponse> getLoginMutableLiveData() {
+        return loginMutableLiveData;
+    }
+
+    public void initRegistration(String fullName, String password, String mobileNo,
+                                 String vehicleNo, String profileImage,
+                                 String profileImageName, String vehicleImage, String vehicleImageName) {
+        registrationMutableLiveData = AuthRepository.getInstance().createUser(fullName, password, mobileNo, vehicleNo, profileImage,
+                profileImageName, vehicleImage, vehicleImageName);
+    }
+
+    public LiveData<BaseResponse> getRegistrationMutableLiveData() {
+        return registrationMutableLiveData;
+    }
+
+    private MutableLiveData<LoginResponse> verifyPhoneMutableLiveData;
+
+    public void initVerifyPhone(String otp) {
+        verifyPhoneMutableLiveData = AuthRepository.getInstance().verifyPhone(otp);
+    }
+
+    public LiveData<LoginResponse> getVerifyPhoneMutableData() {
+        return verifyPhoneMutableLiveData;
+    }
 
     public void initChangePassword(String oldPassword, String newPassword, String confirmPassword, String mobileNo) {
         changePasswordMutableLiveData = AuthRepository.getInstance().changePassword(oldPassword, newPassword,
@@ -36,38 +67,5 @@ public class AuthViewModel extends ViewModel {
 
     public LiveData<BaseResponse> getNewPasswordMutableData() {
         return newPasswordMutableLiveData;
-    }
-
-    private MutableLiveData<LoginResponse> loginMutableLiveData;
-
-    public void initLogin(String mobileNo, String password) {
-        loginMutableLiveData = AuthRepository.getInstance().login(mobileNo, password);
-    }
-
-    public LiveData<LoginResponse> getLoginMutableLiveData() {
-        return loginMutableLiveData;
-    }
-
-    private MutableLiveData<BaseResponse> registrationMutableLiveData;
-
-    public void initRegistration(String fullName, String password, String mobileNo,
-                                 String vehicleNo, String profileImage,
-                                 String profileImageName, String vehicleImage, String vehicleImageName) {
-        registrationMutableLiveData = AuthRepository.getInstance().createUser(fullName, password, mobileNo, vehicleNo, profileImage,
-                profileImageName, vehicleImage, vehicleImageName);
-    }
-
-    public LiveData<BaseResponse> getRegistrationMutableLiveData() {
-        return registrationMutableLiveData;
-    }
-
-    private MutableLiveData<LoginResponse> verifyPhoneMutableLiveData;
-
-    public void initVerifyPhone(String otp) {
-        verifyPhoneMutableLiveData = AuthRepository.getInstance().verifyPhone(otp);
-    }
-
-    public LiveData<LoginResponse> getVerifyPhoneMutableData() {
-        return verifyPhoneMutableLiveData;
     }
 }

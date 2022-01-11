@@ -456,8 +456,7 @@
 
     <string name="location_permission_denied_please_click_allow">অবস্থানের অনুমতি পাওয়া যায় নি,দয়া করে পার্কিং অ্যাপ ব্যবহার এর জন্য সর্বদা অনুমতি দিন</string>
 
-    <string name="install_bangla_keyboard">দয়া করে বাংলা ভাষায় খোঁজ করুন ফলাফল পাওার জন্য।বাংলা সক্রিয় কীবোর্ড ব্যাবহার করুন &amp;অ্যাপ এর ভাষা বাংলায় পরিবর্তন করুন</string>
-    <string name="not_available_at_bangla_search"> বাংলায় খোঁজ করা এখন পাওয়া যাবে না,অনুগ্রহপুর্বক পরবর্তি ভার্সনের জন্য অপেক্ষা করুন</string>
+    <string name="change_app_language_to_bangla">অ্যাপের ভাষা বাংলায় পরিবর্তন করুন</string>
     <string name="change_app_language_to_english">অ্যাপ এর ভাষা ইংরেজিতে পরিবর্তন করুন</string>
     <string name="permission_denied_u_cant_search_nearest_parking_location_from_you">
        অনুমতি দেওয়া হয় নি, আপনি আপনার নিকটতম পার্কিং এর স্থান খুঁজে পাবেন না.পরবর্তি ব্যবহার এর জন্য অবস্থান এর অনুমতি দিন</string>

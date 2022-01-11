@@ -9,7 +9,7 @@ import androidx.fragment.app.FragmentTransaction;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.listener.FragmentChangeListener;
-import www.fiberathome.com.parkingapp.ui.NavigationActivity;
+import www.fiberathome.com.parkingapp.ui.navigation.NavigationActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 

@@ -100,13 +100,13 @@ import www.fiberathome.com.parkingapp.service.geoFenceInterface.IOnLoadLocationL
 import www.fiberathome.com.parkingapp.service.geoFenceInterface.MyLatLng;
 import www.fiberathome.com.parkingapp.service.googleService.directionModules.DirectionFinder;
 import www.fiberathome.com.parkingapp.service.googleService.directionModules.DirectionFinderListener;
-import www.fiberathome.com.parkingapp.ui.bottomSheet.BottomSheetAdapter;
+import www.fiberathome.com.parkingapp.ui.home.bottomSheet.BottomSheetAdapter;
 import www.fiberathome.com.parkingapp.ui.reservation.ReservationParkFragment;
 import www.fiberathome.com.parkingapp.ui.reservation.ReservationScanBarCodeActivity;
 import www.fiberathome.com.parkingapp.ui.reservation.ReservationViewModel;
 import www.fiberathome.com.parkingapp.ui.reservation.schedule.ScheduleFragment;
-import www.fiberathome.com.parkingapp.ui.search.SearchActivity;
-import www.fiberathome.com.parkingapp.ui.search.SearchViewModel;
+import www.fiberathome.com.parkingapp.ui.home.search.SearchActivity;
+import www.fiberathome.com.parkingapp.ui.home.search.SearchViewModel;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
@@ -961,9 +961,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private void getSensorAreaStatus() {
         showLoading(context);
         homeViewModel.initSensorAreaStatus();
-        homeViewModel.getSensorAreaStatusLiveData().observe(context, sensorAreaStatusResponse -> {
-            hideLoading();
+        homeViewModel.getSensorAreaStatusMutableLiveData().observe(context, sensorAreaStatusResponse -> {
             if (!sensorAreaStatusResponse.getError()) {
+                hideLoading();
                 if (sensorAreaStatusResponse.getSensorAreaStatusArrayList() != null) {
                     List<List<String>> sensorStatusList = sensorAreaStatusResponse.getSensorAreaStatusArrayList();
                     if (sensorStatusList != null) {
@@ -1057,7 +1057,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         bookingSensorsArrayListGlobal.clear();
         sensorAreaArrayList.clear();
         homeViewModel.initFetchParkingSlotSensors();
-        homeViewModel.getParkingSlotResponseLiveData().observe(context, parkingSlotResponse -> {
+        homeViewModel.getParkingSlotResponseMutableLiveData().observe(context, parkingSlotResponse -> {
             hideLoading();
             stopShimmer();
             if (parkingSlotResponse != null) {

@@ -453,8 +453,7 @@
     <string name="background_location_permission_denied_allow_all_the_time_for_using_parking_time">
         Background location permission denied, Please click allow all the time for using Parking App</string>
     <string name="location_permission_denied_please_click_allow">Location Permission denied, Please click allow all the time for using Parking App</string>
-    <string name="install_bangla_keyboard">Please search in bangla language for getting result. Install bangla enable keyboard &amp; change app language into Bangla</string>
-    <string name="not_available_at_bangla_search">Bangla searching is not available right now, Please wait until next version is coming</string>
+    <string name="change_app_language_to_bangla">Change app language into Bangla</string>
     <string name="change_app_language_to_english">Change app language into english</string>
     <string name="permission_denied_u_cant_search_nearest_parking_location_from_you">
         Permission Denied,You can\'t search nearest parking location from you. For further use please allow location</string>

@@ -39,21 +39,21 @@ import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.data.model.data.preference.SharedData;
 import www.fiberathome.com.parkingapp.data.model.response.reservation.BookingParkStatusResponse;
 import www.fiberathome.com.parkingapp.listener.FragmentChangeListener;
-import www.fiberathome.com.parkingapp.ui.NavigationActivity;
+import www.fiberathome.com.parkingapp.ui.navigation.NavigationActivity;
 import www.fiberathome.com.parkingapp.ui.auth.login.LoginActivity;
-import www.fiberathome.com.parkingapp.ui.followUs.FollowUsFragment;
-import www.fiberathome.com.parkingapp.ui.law.LawFragment;
-import www.fiberathome.com.parkingapp.ui.parking.ParkingFragment;
+import www.fiberathome.com.parkingapp.ui.navigation.followUs.FollowUsFragment;
+import www.fiberathome.com.parkingapp.ui.navigation.law.LawFragment;
+import www.fiberathome.com.parkingapp.ui.navigation.notification.parking.ParkingFragment;
 import www.fiberathome.com.parkingapp.ui.permission.PermissionActivity;
 import www.fiberathome.com.parkingapp.ui.permission.listener.PermissionInterface;
-import www.fiberathome.com.parkingapp.ui.privacyPolicy.PrivacyPolicyFragment;
-import www.fiberathome.com.parkingapp.ui.profile.ProfileFragment;
+import www.fiberathome.com.parkingapp.ui.navigation.privacyPolicy.PrivacyPolicyFragment;
+import www.fiberathome.com.parkingapp.ui.navigation.profile.ProfileFragment;
 import www.fiberathome.com.parkingapp.ui.reservation.ReservationFragment;
 import www.fiberathome.com.parkingapp.ui.reservation.ReservationParkFragment;
 import www.fiberathome.com.parkingapp.ui.reservation.ReservationViewModel;
 import www.fiberathome.com.parkingapp.ui.reservation.payment.PaymentFragment;
 import www.fiberathome.com.parkingapp.ui.reservation.schedule.ScheduleFragment;
-import www.fiberathome.com.parkingapp.ui.settings.SettingsFragment;
+import www.fiberathome.com.parkingapp.ui.navigation.settings.SettingsFragment;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
@@ -127,7 +127,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
             //initialize home fragment
             getBookingParkStatus(Preferences.getInstance(context).getUser().getMobileNo());
             binding.appBarMain.linearLayoutToolbarTime.setVisibility(View.GONE);
-            navigationView.getMenu().getItem(0).setChecked(true);
+            binding.navView.getMenu().getItem(0).setChecked(true);
         }
 
         if (!Preferences.getInstance(context).isLoggedIn()) {
@@ -197,16 +197,16 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
     @Override
     public void onBackPressed() {
         if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
-            navigationView.getMenu().getItem(0).setChecked(true);
-            drawerLayout.closeDrawers();
+            binding.navView.getMenu().getItem(0).setChecked(true);
+            binding.drawerLayout.closeDrawers();
             //super.onBackPressed(); delete this line
             // and start your fragment:
 
             Fragment fragment = getSupportFragmentManager().findFragmentByTag(context.getResources().getString(R.string.welcome_to_locc_parking));
             if (fragment != null) {
                 if (fragment.isVisible()) {
-                    if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                        drawerLayout.closeDrawer(GravityCompat.START);
+                    if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                        binding.drawerLayout.closeDrawer(GravityCompat.START);
                     }
                 }
             } else {
@@ -221,7 +221,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                             if (exitCounter == 0) {
                                 Timber.e("onBackPressed exitCounter if");
                                 exitCounter = 1;
-                                drawerLayout.closeDrawers();
+                                binding.drawerLayout.closeDrawers();
                                 DialogUtils.getInstance().showExitDialog(this);
                             } else {
                                 Timber.e("onBackPressed exitCounter else");
@@ -245,28 +245,28 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                         }
                     } else if (f instanceof ParkingFragment) {
                         ((ParkingFragment) f).onBackPressed();
-                        toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
+                        binding.appBarMain.toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
                     } else if (f instanceof ReservationFragment) {
                         ((ReservationFragment) f).onBackPressed();
-                        toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
+                        binding.appBarMain.toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
                     } else if (f instanceof LawFragment) {
                         ((LawFragment) f).onBackPressed();
-                        toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
+                        binding.appBarMain.toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
                     } else if (f instanceof ProfileFragment) {
                         ((ProfileFragment) f).onBackPressed();
-                        toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
+                        binding.appBarMain.toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
                     } else if (f instanceof ScheduleFragment) {
                         ((ScheduleFragment) f).onBackPressed();
                         //toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
                     } else if (f instanceof SettingsFragment) {
                         ((SettingsFragment) f).onBackPressed();
-                        toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
+                        binding.appBarMain.toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
                     } else if (f instanceof FollowUsFragment) {
                         ((FollowUsFragment) f).onBackPressed();
-                        toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
+                        binding.appBarMain.toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
                     } else if (f instanceof PrivacyPolicyFragment) {
                         ((PrivacyPolicyFragment) f).onBackPressed();
-                        toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
+                        binding.appBarMain.toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
                     } else if (f instanceof PaymentFragment) {
                         fragmentChange(ScheduleFragment.newInstance());
                         //toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
@@ -276,18 +276,18 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                 }
                 binding.appBarMain.tvTimeToolbar.setVisibility(View.GONE);
                 binding.appBarMain.linearLayoutToolbarTime.setVisibility(View.GONE);
-                drawerLayout.closeDrawers();
-                navigationView.getMenu().getItem(0).setChecked(true);
-                navigationView.getMenu().getItem(1).setChecked(false);
-                navigationView.getMenu().getItem(2).setChecked(false);
-                navigationView.getMenu().getItem(3).setChecked(false);
-                navigationView.getMenu().getItem(4).setChecked(false);
-                navigationView.getMenu().getItem(5).setChecked(false);
-                navigationView.getMenu().getItem(6).setChecked(false);
-                navigationView.getMenu().getItem(7).setChecked(false);
-                navigationView.getMenu().getItem(8).setChecked(false);
-                navigationView.getMenu().getItem(9).setChecked(false);
-                navigationView.getMenu().getItem(10).setChecked(false);
+                binding.drawerLayout.closeDrawers();
+                binding.navView.getMenu().getItem(0).setChecked(true);
+                binding.navView.getMenu().getItem(1).setChecked(false);
+                binding.navView.getMenu().getItem(2).setChecked(false);
+                binding.navView.getMenu().getItem(3).setChecked(false);
+                binding.navView.getMenu().getItem(4).setChecked(false);
+                binding.navView.getMenu().getItem(5).setChecked(false);
+                binding.navView.getMenu().getItem(6).setChecked(false);
+                binding.navView.getMenu().getItem(7).setChecked(false);
+                binding.navView.getMenu().getItem(8).setChecked(false);
+                binding.navView.getMenu().getItem(9).setChecked(false);
+                binding.navView.getMenu().getItem(10).setChecked(false);
             }
         } else {
             ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_parking_app));

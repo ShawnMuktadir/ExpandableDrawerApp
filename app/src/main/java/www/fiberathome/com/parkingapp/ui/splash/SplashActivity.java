@@ -51,7 +51,7 @@ public class SplashActivity extends BaseActivity {
         if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_EN)) {
             setAppLocale(LANGUAGE_EN);
         } else {
-            setAppLocale(Preferences.getInstance(context).getAppLanguage());
+            setAppLocale(LanguagePreferences.getInstance(context).getAppLanguage());
         }
     }
 
