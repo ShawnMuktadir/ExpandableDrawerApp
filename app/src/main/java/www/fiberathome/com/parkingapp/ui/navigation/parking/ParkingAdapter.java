@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.ui.navigation.notification.parking;
+package www.fiberathome.com.parkingapp.ui.navigation.parking;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;

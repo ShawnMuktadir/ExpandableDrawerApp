@@ -8,8 +8,8 @@ import android.os.Bundle;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.data.model.data.preference.LanguagePreferences;
 import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
-import www.fiberathome.com.parkingapp.ui.navigation.NavigationActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
+import www.fiberathome.com.parkingapp.ui.navigation.NavigationActivity;
 import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 
 public class SettingsActivity extends NavigationActivity {

@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.ui.navigation.notification.parking;
+package www.fiberathome.com.parkingapp.ui.navigation.parking;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static www.fiberathome.com.parkingapp.data.model.data.Constants.LANGUAGE_BN;
@@ -41,7 +41,6 @@ import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.data.model.data.preference.LanguagePreferences;
 import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.data.model.data.preference.SharedData;
-import www.fiberathome.com.parkingapp.data.model.response.parkingSlot.ParkingSlotResponse;
 import www.fiberathome.com.parkingapp.data.model.response.sensors.SensorArea;
 import www.fiberathome.com.parkingapp.databinding.FragmentParkingBinding;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
@@ -76,7 +75,6 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
     private final ArrayList<SensorArea> sensorAreaArrayList = new ArrayList<>();
     private List<List<String>> parkingSlotList = null;
     private List<List<String>> list;
-    private ParkingSlotResponse parkingSlotResponse;
     private String parkingArea = null;
     private String placeId = null;
     private double endLat = 0.0;

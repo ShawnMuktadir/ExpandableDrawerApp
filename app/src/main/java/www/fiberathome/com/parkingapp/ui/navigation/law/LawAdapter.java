@@ -1,119 +1,88 @@
 package www.fiberathome.com.parkingapp.ui.navigation.law;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Build;
+import android.text.Html;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
 
-import com.thoughtbot.expandablerecyclerview.ExpandableRecyclerViewAdapter;
-import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
-import timber.log.Timber;
-import www.fiberathome.com.parkingapp.R;
-import www.fiberathome.com.parkingapp.data.model.response.law.Law;
-import www.fiberathome.com.parkingapp.data.model.response.law.LawItem;
+import www.fiberathome.com.parkingapp.data.model.response.law.LawData;
+import www.fiberathome.com.parkingapp.databinding.RowLawBinding;
 
-/*
- * Copyright (C) 2018 Levi Rizki Saputra (levirs565@gmail.com).
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * Created by LEVI on 22/09/2018.
- */
-public class LawAdapter extends ExpandableRecyclerViewAdapter<TitleViewHolder, LawViewHolder> implements Filterable {
-    private final List<LawItem> copyLawItemList;
-    protected Context context;
-    private final LawFragment lawFragment;
-    private final Filter queryFilter = new Filter() {
-        @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
-            List<LawItem> queryLawItemList = new ArrayList<>();
-            if (constraint == null || constraint.length() == 0) {
-                queryLawItemList.addAll(copyLawItemList);
-            } else {
-                String filterPattern = constraint.toString().toLowerCase().trim();
+public class LawAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-                for (LawItem item : copyLawItemList) {
-                    if (item.getTitle().toLowerCase().contains(filterPattern)) {
-                        queryLawItemList.add(item);
-                        //ApplicationUtils.highlightSearchText(SpannableStringBuilder.valueOf(item.getTitle()), filterPattern);
-                    }
-                }
-            }
-            FilterResults results = new FilterResults();
-            results.values = queryLawItemList;
+    private Context context;
 
-            return results;
+    private ArrayList<LawData> lawDataArrayList;
+
+    private boolean isTextViewClicked = false;
+
+    public LawAdapter(Context context, ArrayList<LawData> lawDataArrayList) {
+        this.context = context;
+        this.lawDataArrayList = lawDataArrayList;
+    }
+
+    @NonNull
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        context = parent.getContext();
+        LayoutInflater layoutInflater = LayoutInflater.from(context);
+        RowLawBinding itemBinding = RowLawBinding.inflate(layoutInflater, parent, false);
+        return new LawViewHolder(itemBinding);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        LawViewHolder lawViewHolder = (LawViewHolder) holder;
+        LawData lawData = lawDataArrayList.get(position);
+
+        lawViewHolder.binding.tvLawHeader.setText(lawData.getTitle());
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            lawViewHolder.binding.tvLawBody.setText(Html.fromHtml(lawData.getDescription(), Html.FROM_HTML_MODE_COMPACT));
+        } else {
+            lawViewHolder.binding.tvLawBody.setText(Html.fromHtml(lawData.getDescription()));
         }
 
-        @SuppressWarnings("unchecked")
-        @Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-            List groups = (ArrayList<? extends ExpandableGroup>) results.values; // has the filtered values
-            if (groups.size() == 0) {
-                Timber.e("LawAdapter no data found");
-                lawFragment.setNoData();
+        lawViewHolder.binding.tvLawBody.setOnClickListener(v -> {
+            if (isTextViewClicked) {
+                //This will shrink textview to 2 lines if it is expanded.
+                lawViewHolder.binding.tvLawBody.setMaxLines(2);
+                isTextViewClicked = false;
             } else {
-                lawFragment.hideNoData();
+                //This will expand the textview if it is of 2 lines
+                lawViewHolder.binding.tvLawBody.setMaxLines(Integer.MAX_VALUE);
+                isTextViewClicked = true;
             }
-            getGroups().clear();
-            getGroups().addAll(groups);
-            notifyDataSetChanged();
+        });
+    }
+
+    @Override
+    public int getItemCount() {
+        return lawDataArrayList.size();
+    }
+
+    //called by law fragment
+    @SuppressLint("NotifyDataSetChanged")
+    public void filterList(ArrayList<LawData> filteredList) {
+        lawDataArrayList = filteredList;
+        notifyDataSetChanged();
+    }
+
+    @SuppressLint("NonConstantResourceId")
+    public static class LawViewHolder extends RecyclerView.ViewHolder {
+
+        RowLawBinding binding;
+
+        public LawViewHolder(RowLawBinding itemView) {
+            super(itemView.getRoot());
+            this.binding = itemView;
         }
-    };
-
-    @SuppressWarnings("unchecked")
-    public LawAdapter(List<? extends ExpandableGroup> groups, LawFragment lawFragment) {
-        super(groups);
-        copyLawItemList = new ArrayList<>((Collection<? extends LawItem>) groups);
-        this.lawFragment = lawFragment;
-    }
-
-    @Override
-    public TitleViewHolder onCreateGroupViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.expandable_recyclerview_title, parent, false);
-        context = parent.getContext();
-        return new TitleViewHolder(v);
-    }
-
-    @Override
-    public LawViewHolder onCreateChildViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.expandable_recyclerview_laws, parent, false);
-        context = parent.getContext();
-        return new LawViewHolder(v);
-    }
-
-    @Override
-    public void onBindChildViewHolder(LawViewHolder holder, int flatPosition, ExpandableGroup group, int childIndex) {
-        final Law law = (Law) group.getItems().get(childIndex);
-        holder.bind(law);
-    }
-
-    @Override
-    public void onBindGroupViewHolder(TitleViewHolder holder, int flatPosition, ExpandableGroup group) {
-        final LawItem lawItem = (LawItem) group;
-        holder.bind(lawItem);
-    }
-
-    @Override
-    public Filter getFilter() {
-        return queryFilter;
     }
 }
-
