@@ -1,4 +1,4 @@
-package www.fiberathome.com.parkingapp.ui.navigation.notification.parking;
+package www.fiberathome.com.parkingapp.ui.navigation.parking;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;
@@ -22,7 +22,7 @@ import www.fiberathome.com.parkingapp.databinding.RowParkingBinding;
 import www.fiberathome.com.parkingapp.utils.MathUtils;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
 
-@SuppressWarnings({"unused", "RedundantSuppression"})
+@SuppressWarnings({"unused", "RedundantSuppression", "NotifyDataSetChanged"})
 public class ParkingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ParkingActivity context;

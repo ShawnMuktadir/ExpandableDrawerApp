@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.data.model.response.termsCondition.TermsCondition;
-import www.fiberathome.com.parkingapp.databinding.PrivacyPolicyRowBinding;
+import www.fiberathome.com.parkingapp.databinding.RowPrivacyPolicyBinding;
 
 public class PrivacyPolicyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -34,7 +34,7 @@ public class PrivacyPolicyAdapter extends RecyclerView.Adapter<RecyclerView.View
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         context = parent.getContext();
         LayoutInflater layoutInflater = LayoutInflater.from(context);
-        PrivacyPolicyRowBinding itemBinding = PrivacyPolicyRowBinding.inflate(layoutInflater, parent, false);
+        RowPrivacyPolicyBinding itemBinding = RowPrivacyPolicyBinding.inflate(layoutInflater, parent, false);
         return new PrivacyPolicyViewHolder(itemBinding);
     }
 
@@ -68,9 +68,9 @@ public class PrivacyPolicyAdapter extends RecyclerView.Adapter<RecyclerView.View
     @SuppressLint("NonConstantResourceId")
     public static class PrivacyPolicyViewHolder extends RecyclerView.ViewHolder {
 
-        PrivacyPolicyRowBinding binding;
+        RowPrivacyPolicyBinding binding;
 
-        public PrivacyPolicyViewHolder(PrivacyPolicyRowBinding itemView) {
+        public PrivacyPolicyViewHolder(RowPrivacyPolicyBinding itemView) {
             super(itemView.getRoot());
             this.binding = itemView;
         }

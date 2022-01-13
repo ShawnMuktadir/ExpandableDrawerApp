@@ -185,9 +185,6 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxjava:2.2.4'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
 
-    //expandable RecyclerView
-    implementation 'com.thoughtbot:expandablerecyclerview:1.4'
-
     //calendar and time dual view
     implementation 'com.github.florent37:singledateandtimepicker:2.2.3'
 

@@ -74,6 +74,8 @@
         <entry key="app/src/main/res/layout/parking_row.xml" value="0.15885416666666666" />
         <entry key="app/src/main/res/layout/privacy_policy_row.xml" value="0.16590678824721378" />
         <entry key="app/src/main/res/layout/row_bookings.xml" value="0.1421875" />
+        <entry key="app/src/main/res/layout/row_law.xml" value="0.15104166666666666" />
+        <entry key="app/src/main/res/layout/row_privacy_policy.xml" value="0.1793478260869565" />
         <entry key="app/src/main/res/layout/snackbar_internet.xml" value="0.13125" />
         <entry key="app/src/main/res/layout/voucher_dialog.xml" value="0.25" />
         <entry key="app/src/main/res/menu/drawer_menu.xml" value="0.20364583333333333" />
@@ -141,7 +143,7 @@
       </value>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">
