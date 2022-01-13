@@ -74,7 +74,6 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
 
     private final ArrayList<SensorArea> sensorAreaArrayList = new ArrayList<>();
     private List<List<String>> parkingSlotList = null;
-    private List<List<String>> list;
     private String parkingArea = null;
     private String placeId = null;
     private double endLat = 0.0;
@@ -272,7 +271,6 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
         homeViewModel.getParkingSlotResponseMutableLiveData().observe(context, parkingSlotResponse -> {
             hideLoading();
             if (parkingSlotResponse != null) {
-                list = parkingSlotResponse.getSensors();
                 parkingSlotList = parkingSlotResponse.getSensors();
                 if (parkingSlotList != null) {
                     for (List<String> baseStringList : parkingSlotList) {
