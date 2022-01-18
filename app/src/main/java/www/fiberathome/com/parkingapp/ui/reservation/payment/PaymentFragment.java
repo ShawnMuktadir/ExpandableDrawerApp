@@ -24,13 +24,9 @@ import com.sslwireless.sslcommerzlibrary.model.util.SSLCSdkType;
 import com.sslwireless.sslcommerzlibrary.view.singleton.IntegrateSSLCommerz;
 import com.sslwireless.sslcommerzlibrary.viewmodel.listener.SSLCTransactionResponseListener;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.Date;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.R;
@@ -55,7 +51,6 @@ import www.fiberathome.com.parkingapp.utils.ApplicationUtils;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
-import www.fiberathome.com.parkingapp.utils.MathUtils;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
@@ -73,7 +68,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
     private FragmentChangeListener listener;
 
     FragmentPaymentBinding binding;
-    private double netBill;
+    private static String netBill;
 
     public PaymentFragment() {
         // Required empty public constructor
@@ -82,7 +77,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
     public static PaymentFragment newInstance(Date mArrivedDate, Date mDepartedDate, String mArrivedTime,
                                               String mDepartureTime, String mTimeDifference, long mDifferenceUnit,
                                               String mMarkerUid, double mLat, double mLon, String mAreaName, String mAreaNameBangla,
-                                              String mParkingSlotCount, boolean mIsBookNowChecked, boolean mIsInArea) {
+                                              String mParkingSlotCount, boolean mIsBookNowChecked, boolean mIsInArea, String bill) {
         arrivedDate = mArrivedDate;
         departureDate = mDepartedDate;
         arrivedTime = mArrivedTime;
@@ -97,6 +92,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
         parkingSlotCount = mParkingSlotCount;
         isBookNowChecked = mIsBookNowChecked;
         isInArea = mIsInArea;
+        netBill = bill;
         return new PaymentFragment();
     }
 
@@ -128,7 +124,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
             reservationViewModel = new ViewModelProvider(this).get(ReservationViewModel.class);
             setListeners();
             setData();
-            netBill = setBill();
+            //netBill = setBill();
         }
     }
 
@@ -200,7 +196,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                 } else {
                     if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
                         if (!Preferences.getInstance(context).getBooked().getIsBooked()
-                                && Preferences.getInstance(context).getBooked().getBill() == Math.round(netBill)
+                                && Preferences.getInstance(context).getBooked().getBill() == Math.round(Float.parseFloat(netBill))
                                 && Preferences.getInstance(context).getBooked().isPaid()) {
                             storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
                                     ApplicationUtils.getDate(Preferences.getInstance(context).getBooked().getArriveDate()),
@@ -208,7 +204,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                                     Preferences.getInstance(context).getBooked().getPlaceId());
                         } else {
                             try {
-                                sslPayment(netBill);
+                                sslPayment(Double.parseDouble(netBill));
                             } catch (Exception e) {
                                 Timber.e(e.getCause());
                             }
@@ -225,8 +221,12 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                 BottomSheetDialogScratchCardBinding dialogScratchCardBinding = BottomSheetDialogScratchCardBinding.inflate(getLayoutInflater());
                 BottomSheetDialog dialog = new BottomSheetDialog(context);
                 dialog.setContentView(dialogScratchCardBinding.getRoot());
-                dialog.getWindow().setSoftInputMode(
-                        WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+                try {
+                    dialog.getWindow().setSoftInputMode(
+                            WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+                } catch (NullPointerException e) {
+                    e.getCause();
+                }
                 dialog.show();
 
                 dialogScratchCardBinding.buttonSubmit.setOnClickListener(v -> {
@@ -329,6 +329,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                 });
     }
 
+    @SuppressLint("SetTextI18n")
     private void setData() {
         if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
             binding.tvArrivedTime.setText(TextUtils.getInstance().convertTextEnToBn(arrivedTime));
@@ -374,23 +375,16 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
 
     @SuppressLint("SetTextI18n")
     private double setBill() {
-        final double perMintBill = 0.6666666667;
-        DecimalFormat df = new DecimalFormat("##.##",
-                new DecimalFormatSymbols(Locale.US));
-        long minutes = TimeUnit.MILLISECONDS.toMinutes(differenceUnit);
+        binding.tvSubTotal.setText(context.getResources().getString(R.string.bdt) + "  " + TextUtils.getInstance().convertTextEnToBn(netBill));
 
-        double tmpSubTotalBDT = perMintBill * minutes;
-        binding.tvSubTotal.setText(context.getResources().getString(R.string.bdt) + "  " + MathUtils.getInstance().localeDoubleConverter(context, String.valueOf(tmpSubTotalBDT)));
-
-        //binding.tvTotal.setText(String.format("BDT %s", df.format(perMintBill * minutes)));
-        binding.tvTotal.setText(context.getResources().getString(R.string.bdt) + "  " + MathUtils.getInstance().localeDoubleConverter(context, String.valueOf(tmpSubTotalBDT)));
+        binding.tvTotal.setText(context.getResources().getString(R.string.bdt) + "  " + TextUtils.getInstance().convertTextEnToBn(netBill));
 
         if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
-            binding.btnPay.setText(String.format("%s %s  %s", context.getResources().getString(R.string.money_sign), MathUtils.getInstance().localeDoubleConverter(context, String.valueOf(tmpSubTotalBDT)), context.getResources().getString(R.string.pay_bdt)));
+            binding.btnPay.setText(String.format("%s %s  %s", context.getResources().getString(R.string.money_sign), TextUtils.getInstance().convertTextEnToBn(netBill), context.getResources().getString(R.string.pay_bdt)));
         } else {
-            binding.btnPay.setText(String.format("%s  %s", context.getResources().getString(R.string.pay_bdt), MathUtils.getInstance().localeDoubleConverter(context, String.valueOf(tmpSubTotalBDT))));
+            binding.btnPay.setText(String.format("%s  %s", context.getResources().getString(R.string.pay_bdt), TextUtils.getInstance().convertTextEnToBn(netBill)));
         }
-        return perMintBill * minutes;
+        return Double.parseDouble(netBill);
     }
 
     private void storeReservation(String mobileNo, String arrivalTime, String departureTime, String mPlaceId) {

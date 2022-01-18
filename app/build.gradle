@@ -14,7 +14,13 @@ android {
 
     def versionMajor = 1
     def versionMinor = 4
-    def versionPatch = 12
+    def versionPatch = 13
+
+    bundle {
+        language {
+            enableSplit = false
+        }
+    }
 
     defaultConfig {
         applicationId "www.fiberathome.com.parkingapp"

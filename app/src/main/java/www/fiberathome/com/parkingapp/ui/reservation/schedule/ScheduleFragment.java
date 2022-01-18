@@ -410,7 +410,7 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
             if (!response.getError()) {
                 PaymentFragment paymentFragment = PaymentFragment.newInstance(arrivedDate, new Date((departure + arrivedDate.getTime())), getDate(arrivedDate.getTime()), getDate((departure + arrivedDate.getTime())),
                         getTimeDifference((departure + arrivedDate.getTime()) - arrivedDate.getTime()),
-                        (departure + arrivedDate.getTime()) - arrivedDate.getTime(), mPlaceId, lat, lon, areaName, areaNameBangla, parkingSlotCount, isBookNowChecked, isInArea);
+                        (departure + arrivedDate.getTime()) - arrivedDate.getTime(), mPlaceId, lat, lon, areaName, areaNameBangla, parkingSlotCount, isBookNowChecked, isInArea, response.getBill());
                 listener.fragmentChange(paymentFragment);
             } else {
                 DialogUtils.getInstance().showOnlyMessageDialog(response.getMessage(), context);

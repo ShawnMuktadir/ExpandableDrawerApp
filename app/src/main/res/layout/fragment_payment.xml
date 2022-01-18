@@ -50,8 +50,6 @@
                 android:id="@+id/topText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/relativeLayout"
-                android:layout_centerInParent="true"
                 android:layout_gravity="center"
                 android:layout_margin="@dimen/dim5"
                 android:gravity="center"
@@ -63,15 +61,13 @@
                 android:id="@+id/tvParkingSlotName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/topText"
-                android:layout_centerInParent="true"
                 android:layout_gravity="center"
                 android:layout_marginStart="@dimen/dim5"
                 android:layout_marginTop="@dimen/dim5"
                 android:layout_marginEnd="@dimen/dim5"
                 android:layout_marginBottom="@dimen/dim5"
                 android:padding="@dimen/dim5"
-                android:text="Parking slot 17"
+                android:text="@string/parking_spot"
                 android:textColor="@android:color/black"
                 android:textSize="15sp"
                 android:textStyle="bold" />
@@ -80,7 +76,6 @@
                 android:id="@+id/border1"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_below="@+id/tvParkingSlotName"
                 android:layout_marginTop="@dimen/dim2"
                 android:background="#978080"
                 android:padding="@dimen/dim5" />
@@ -89,7 +84,6 @@
                 android:id="@+id/second_layer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/border1"
                 android:layout_marginTop="@dimen/dim5"
                 android:padding="@dimen/dim5">
 
@@ -121,7 +115,7 @@
                     android:layout_marginEnd="@dimen/dim2"
                     android:layout_marginBottom="@dimen/dim2"
                     android:padding="@dimen/dim5"
-                    android:text="2:30h"
+                    android:text=""
                     android:textSize="15sp" />
             </RelativeLayout>
 
@@ -135,7 +129,6 @@
                     android:id="@+id/eachHourText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/second_layer"
                     android:layout_marginStart="@dimen/dim5"
                     android:layout_weight="1"
                     android:padding="@dimen/dim5"
@@ -148,8 +141,6 @@
                     android:id="@+id/tvEachHourBill"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_alignBaseline="@+id/eachHourText"
-                    android:layout_alignParentEnd="true"
                     android:layout_marginStart="@dimen/dim5"
                     android:layout_weight="1"
                     android:gravity="end"
@@ -163,7 +154,6 @@
                 android:id="@+id/border2"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_below="@+id/eachHourText"
                 android:layout_marginTop="2dp"
                 android:background="#978080" />
 
@@ -171,7 +161,6 @@
                 android:id="@+id/tvPromo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/border2"
                 android:layout_marginStart="@dimen/_7sdp"
                 android:layout_marginTop="@dimen/dim5"
                 android:background="@drawable/border_style"
@@ -191,7 +180,6 @@
                     android:id="@+id/tvSubTotalText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/tvPromo"
                     android:layout_marginStart="@dimen/dim5"
                     android:layout_marginTop="@dimen/dim5"
                     android:layout_weight="1"
@@ -205,14 +193,12 @@
                     android:id="@+id/tvSubTotal"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_alignBaseline="@+id/tvSubTotalText"
-                    android:layout_alignParentEnd="true"
                     android:layout_marginStart="@dimen/dim5"
                     android:layout_marginTop="@dimen/dim5"
                     android:layout_weight="1"
                     android:gravity="end"
                     android:padding="@dimen/dim5"
-                    android:text="BDT 700.00"
+                    android:text=""
                     android:textColor="@android:color/black"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -229,7 +215,6 @@
                     android:id="@+id/tvDiscountStaticText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/tvSubTotalText"
                     android:layout_marginStart="@dimen/dim5"
                     android:layout_marginTop="@dimen/dim5"
                     android:layout_weight="1"
@@ -241,8 +226,6 @@
                     android:id="@+id/tvDiscount"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_alignBaseline="@+id/tvDiscountStaticText"
-                    android:layout_alignParentEnd="true"
                     android:layout_marginStart="@dimen/dim5"
                     android:layout_marginTop="@dimen/dim5"
                     android:layout_weight="1"
@@ -262,7 +245,6 @@
                     android:id="@+id/tvTotalStaticText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/tvDiscountStaticText"
                     android:layout_marginStart="@dimen/dim5"
                     android:layout_marginTop="@dimen/dim2"
                     android:layout_weight="1"
@@ -276,14 +258,12 @@
                     android:id="@+id/tvTotal"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_alignBaseline="@+id/tvTotalStaticText"
-                    android:layout_alignParentEnd="true"
                     android:layout_marginStart="@dimen/dim5"
                     android:layout_marginTop="@dimen/dim5"
                     android:layout_weight="1"
                     android:gravity="end"
                     android:padding="@dimen/dim5"
-                    android:text="BDT400.00"
+                    android:text=""
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/dimTex15"
                     android:textStyle="bold" />
@@ -294,7 +274,6 @@
                 android:id="@+id/border3"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_below="@id/tvTotalStaticText"
                 android:layout_marginTop="2dp"
                 android:background="#9C9696" />
 
@@ -302,7 +281,6 @@
                 android:id="@+id/disclaimerTxt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/border3"
                 android:layout_marginStart="3dp"
                 android:layout_marginTop="3dp"
                 android:layout_marginEnd="3dp"
@@ -316,8 +294,6 @@
                 android:id="@+id/termConWrapLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/disclaimerTxt"
-                android:layout_alignParentEnd="true"
                 android:layout_margin="@dimen/dim2"
                 android:orientation="vertical"
                 android:padding="@dimen/dim5">
@@ -329,7 +305,7 @@
                     android:layout_gravity="end"
                     android:background="@drawable/border_style"
                     android:gravity="center"
-                    android:text="T&amp;C"
+                    android:text="@string/t_amp_c"
                     android:textSize="@dimen/dimTex14"
                     android:textStyle="bold" />
 
@@ -339,7 +315,6 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/termConWrapLayout"
                 android:padding="@dimen/dim5"
                 android:orientation="horizontal">
 
