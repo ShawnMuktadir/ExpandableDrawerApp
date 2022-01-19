@@ -366,24 +366,32 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
         }
 
         if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
+
+            binding.tvSubTotal.setText(context.getResources().getString(R.string.bdt) + "  " + TextUtils.getInstance().convertTextEnToBn(netBill));
+
+            binding.tvTotal.setText(context.getResources().getString(R.string.bdt) + "  " + TextUtils.getInstance().convertTextEnToBn(netBill));
+
             binding.tvEachHourBill.setText(context.getResources().getString(R.string.bdt) + "  " + TextUtils.getInstance().convertTextEnToBn(context.getResources().getString(R.string.bdt_hour_charge)));
         } else {
             binding.tvEachHourBill.setText(context.getResources().getString(R.string.bdt) + "  " + context.getResources().getString(R.string.bdt_hour_charge));
+
+            binding.tvSubTotal.setText(context.getResources().getString(R.string.bdt) + "  " + netBill);
+
+            binding.tvTotal.setText(context.getResources().getString(R.string.bdt) + "  " + netBill);
+
+        }
+
+        if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
+            binding.btnPay.setText(String.format("%s %s  %s", context.getResources().getString(R.string.money_sign), TextUtils.getInstance().convertTextEnToBn(netBill), context.getResources().getString(R.string.pay_bdt)));
+        } else {
+            binding.btnPay.setText(String.format("%s  %s", context.getResources().getString(R.string.pay_bdt), netBill));
         }
 
     }
 
     @SuppressLint("SetTextI18n")
     private double setBill() {
-        binding.tvSubTotal.setText(context.getResources().getString(R.string.bdt) + "  " + TextUtils.getInstance().convertTextEnToBn(netBill));
 
-        binding.tvTotal.setText(context.getResources().getString(R.string.bdt) + "  " + TextUtils.getInstance().convertTextEnToBn(netBill));
-
-        if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
-            binding.btnPay.setText(String.format("%s %s  %s", context.getResources().getString(R.string.money_sign), TextUtils.getInstance().convertTextEnToBn(netBill), context.getResources().getString(R.string.pay_bdt)));
-        } else {
-            binding.btnPay.setText(String.format("%s  %s", context.getResources().getString(R.string.pay_bdt), TextUtils.getInstance().convertTextEnToBn(netBill)));
-        }
         return Double.parseDouble(netBill);
     }
 

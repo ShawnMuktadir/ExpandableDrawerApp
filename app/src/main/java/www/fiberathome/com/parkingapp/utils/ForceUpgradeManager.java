@@ -62,8 +62,12 @@ public class ForceUpgradeManager implements LifecycleObserver {
 
                 @Override
                 public void onActivityPaused(@NonNull Activity activity) {
-                    if (bottomSheetDialogAppUpdate != null) {
-                        bottomSheetDialogAppUpdate.dismiss();
+                    try {
+                        if (bottomSheetDialogAppUpdate != null) {
+                            bottomSheetDialogAppUpdate.dismiss();
+                        }
+                    } catch (Exception e) {
+                        e.getCause();
                     }
                 }
 
