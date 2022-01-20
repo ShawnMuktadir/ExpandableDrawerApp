@@ -15,8 +15,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
 
@@ -34,6 +35,7 @@ import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.adapter.UniversalSpinnerAdapter;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
+import www.fiberathome.com.parkingapp.data.model.DepartureTimeData;
 import www.fiberathome.com.parkingapp.data.model.Spinner;
 import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.data.model.response.reservation.ReservationResponse;
@@ -89,6 +91,9 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
     private FragmentChangeListener listener;
     private Date currentTime;
     private String selectedVehicleNo;
+
+    private RecyclerView recyclerView;
+    private final ArrayList<DepartureTimeData> departureTimeDataArrayList = new ArrayList<>();
 
     public ScheduleFragment() {
         // Required empty public constructor
@@ -164,6 +169,8 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
             listener = (FragmentChangeListener) getActivity();
             setDatePickerTime();
             setListeners();
+
+            recyclerView = view.findViewById(R.id.recyclerViewDepartureTime);
         }
         getUserVehicleList(Preferences.getInstance(context).getUser().getMobileNo());
     }
@@ -178,10 +185,10 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
         Date futureTime = mFutureTime;
 
         binding.arrivedPicker.setIsAmPm(true);
-        binding.departurePicker.setIsAmPm(true);
+        //binding.departurePicker.setIsAmPm(true);
         binding.arrivedPicker.setDefaultDate(currentTime);
         binding.arrivedPicker.setMinDate(currentTime);
-        binding.departurePicker.setDefaultDate(mFutureTime);
+        //binding.departurePicker.setDefaultDate(mFutureTime);
         if (more) {
             setArrivedDate = true;
             binding.arrivedPicker.setEnabled(false);
@@ -192,12 +199,12 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
                 arrivedDate = arrived;
                 departedDate = departure;
                 binding.arrivedPicker.setDefaultDate(arrived);
-                binding.departurePicker.setDefaultDate(departure);
+                //binding.departurePicker.setDefaultDate(departure);
             }
         } else {
-            binding.departurePicker.setEnabled(false);
+            //binding.departurePicker.setEnabled(false);
             arrivedDate = binding.arrivedPicker.getDate();
-            departedDate = binding.departurePicker.getDate();
+            //departedDate = binding.departurePicker.getDate();
             arrived = arrivedDate.getTime();
         }
     }
@@ -290,7 +297,7 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
             }
         });
 
-        binding.departurePicker.addOnDateChangedListener((displayed, date) -> {
+        /*binding.departurePicker.addOnDateChangedListener((displayed, date) -> {
             departedDate = date;
             Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
             final long[] pattern = {0, 10};
@@ -305,15 +312,15 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
                 assert vibrator != null;
                 vibrator.vibrate(10);
             }
-        });
+        });*/
 
         binding.setBtn.setOnClickListener(v -> {
             if (!setArrivedDate) {
                 binding.cbBookNow.setEnabled(false);
                 binding.arrivedPicker.setEnabled(false);
                 binding.arriveDisableLayout.setBackgroundColor(context.getResources().getColor(R.color.disableColor));
-                binding.departureDisableLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.rect_white_bg_gray_border_rounded));
-                binding.departurePicker.setEnabled(true);
+                //binding.departureDisableLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.rect_white_bg_gray_border_rounded));
+                //binding.departurePicker.setEnabled(true);
                 setArrivedDate = true;
             } else {
                 if (departure != 0) {
@@ -348,7 +355,7 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
             if (setArrivedDate) {
                 binding.arrivedPicker.setEnabled(true);
                 binding.arriveDisableLayout.setBackgroundColor(context.getResources().getColor(R.color.enableColor));
-                binding.departureDisableLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.white_border));
+                //binding.departureDisableLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.white_border));
                 setArrivedDate = false;
                 if (getActivity() != null)
                     getActivity().getFragmentManager().popBackStack();
@@ -467,16 +474,34 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
                                 }
                             }
                             try {
-                                departureTimeDataList.add(new Spinner(Double.parseDouble(timeValue), time));
+                                //departureTimeDataList.add(new Spinner(Double.parseDouble(timeValue), time));
+                                DepartureTimeData sensorArea = new DepartureTimeData(time, Double.parseDouble(timeValue));
+                                departureTimeDataArrayList.add(sensorArea);
                             } catch (NumberFormatException e) {
                                 e.getCause();
                             }
                         }
-                        setTotalDepartureTimeSpinner(departureTimeDataList);
+                        //setTotalDepartureTimeSpinner(departureTimeDataList);
+                        setFragmentControls(departureTimeDataArrayList);
                     }
                 }
             }
         });
+    }
+
+    private void setFragmentControls(ArrayList<DepartureTimeData> departureTimeDataArrayList) {
+        // added data from arraylist to adapter class.
+        ScheduleDepartureTimeAdapter adapter = new ScheduleDepartureTimeAdapter(departureTimeDataArrayList, context, timeValue -> {
+            departure = (long) (timeValue * 3600000);
+        });
+
+        // setting grid layout manager to implement grid view.
+        // in this method '3' represents number of columns to be displayed in grid view.
+        GridLayoutManager layoutManager = new GridLayoutManager(context, 3);
+
+        // at last set adapter to recycler view.
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapter);
     }
 
     private void setTotalDepartureTimeSpinner
@@ -489,7 +514,7 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
         } catch (Exception e) {
             Timber.e(e.getCause());
         }
-        binding.spinnerDepartureTime.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        /*binding.spinnerDepartureTime.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 departure = (long) (departureTimeDataList.get(position).getTimeValue() * 3600000);
@@ -499,8 +524,8 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
             public void onNothingSelected(AdapterView<?> parent) {
 
             }
-        });
-        binding.spinnerDepartureTime.setAdapter(departureTimeAdapter);
+        });*/
+        //binding.spinnerDepartureTime.setAdapter(departureTimeAdapter);
     }
 
     private void setVehicleListSpinner

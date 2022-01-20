@@ -188,30 +188,17 @@
                     android:textSize="@dimen/dimTex14"
                     android:textStyle="bold" />
 
-                <LinearLayout
-                    android:id="@+id/departureDisableLayout"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/_30sdp"
-                    android:layout_margin="@dimen/dim5">
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/dim5">
 
-                    <Spinner
-                        android:id="@+id/spinner_departure_time"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center_vertical"
-                        android:layout_weight="1" />
-
-                    <com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker
-                        android:id="@+id/departurePicker"
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerViewDepartureTime"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone"
-                        app:picker_curved="true"
-                        app:picker_cyclic="true"
-                        app:picker_selectorColor="@android:color/transparent"
-                        app:picker_textSize="@dimen/dimTex14"
-                        app:picker_visibleItemCount="5" />
-                </LinearLayout>
+                        android:layout_height="match_parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
