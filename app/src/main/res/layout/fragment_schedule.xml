@@ -239,7 +239,7 @@
                         android:layout_margin="@dimen/dim3"
                         android:layout_weight="1"
                         android:background="@android:color/black"
-                        android:text="@string/set"
+                        android:text="@string/confirm"
                         android:textAllCaps="false"
                         android:textColor="@color/white"
                         android:textSize="@dimen/dimTex16" />

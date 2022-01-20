@@ -595,5 +595,8 @@
     <string name="no_places_found">কোন লোকেশন পাওয়া যায়নি!</string>
     <string name="exit_this_page_until_your_reservation_is_finished">
     অনুগ্রহ করে আপনার যানবাহন প্রস্থান করুন অন্যথায় আপনার রিজার্ভেশন শেষ না হওয়া পর্যন্ত আপনি এই পেজ থেকে প্রস্থান করতে পারবেন না</string>
+    <string name="confirm">নিশ্চিত করুন</string>
+    <string name="free_slots">খালি স্লট</string>
+    <string name="out_of"> মধ্যে </string>
 </resources>
 

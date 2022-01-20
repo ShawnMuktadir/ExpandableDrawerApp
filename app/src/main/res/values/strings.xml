@@ -592,4 +592,7 @@
     <string name="no_places_found">No Places found!</string>
     <string name="exit_this_page_until_your_reservation_is_finished">
         Please depart your vehicle otherwise You will not be able to exit this page until your reservation is finished</string>
+    <string name="confirm">Confirm</string>
+    <string name="free_slots">Free Slots</string>
+    <string name="out_of">Out of</string>
 </resources>
