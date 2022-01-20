@@ -23,6 +23,7 @@
         <entry key="app/src/main/res/drawable/button_shape.xml" value="0.14479166666666668" />
         <entry key="app/src/main/res/drawable/parking_textview_background.xml" value="0.15104166666666666" />
         <entry key="app/src/main/res/drawable/rect_white_bg_gray_border_rounded.xml" value="0.1875" />
+        <entry key="app/src/main/res/drawable/white_border.xml" value="0.17552083333333332" />
         <entry key="app/src/main/res/layout/action_bar_title_layout.xml" value="0.1921875" />
         <entry key="app/src/main/res/layout/activity_base.xml" value="0.153125" />
         <entry key="app/src/main/res/layout/activity_email.xml" value="0.15208333333333332" />
@@ -77,7 +78,9 @@
         <entry key="app/src/main/res/layout/parking_row.xml" value="0.15885416666666666" />
         <entry key="app/src/main/res/layout/privacy_policy_row.xml" value="0.16590678824721378" />
         <entry key="app/src/main/res/layout/row_bookings.xml" value="0.1421875" />
+        <entry key="app/src/main/res/layout/row_hour_layout.xml" value="0.25" />
         <entry key="app/src/main/res/layout/row_law.xml" value="0.15104166666666666" />
+        <entry key="app/src/main/res/layout/row_parking.xml" value="0.12" />
         <entry key="app/src/main/res/layout/row_privacy_policy.xml" value="0.1793478260869565" />
         <entry key="app/src/main/res/layout/snackbar_internet.xml" value="0.13125" />
         <entry key="app/src/main/res/layout/voucher_dialog.xml" value="0.25" />

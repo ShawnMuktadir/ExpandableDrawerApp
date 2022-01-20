@@ -17,7 +17,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
 
@@ -80,7 +79,7 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
     private String timeValue = "";
 
     private final List<www.fiberathome.com.parkingapp.data.model.Spinner> departureTimeDataList = new ArrayList<>();
-    private List<List<String>> sensorAreaStatusList = new ArrayList<>();
+    private List<List<String>> timeSlotArrayList = new ArrayList<>();
 
     private List<Vehicle> vehicleList = new ArrayList<>();
     private final List<www.fiberathome.com.parkingapp.data.model.Spinner> userVehicleDataList = new ArrayList<>();
@@ -92,7 +91,6 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
     private Date currentTime;
     private String selectedVehicleNo;
 
-    private RecyclerView recyclerView;
     private final ArrayList<DepartureTimeData> departureTimeDataArrayList = new ArrayList<>();
 
     public ScheduleFragment() {
@@ -169,8 +167,6 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
             listener = (FragmentChangeListener) getActivity();
             setDatePickerTime();
             setListeners();
-
-            recyclerView = view.findViewById(R.id.recyclerViewDepartureTime);
         }
         getUserVehicleList(Preferences.getInstance(context).getUser().getMobileNo());
     }
@@ -185,10 +181,8 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
         Date futureTime = mFutureTime;
 
         binding.arrivedPicker.setIsAmPm(true);
-        //binding.departurePicker.setIsAmPm(true);
         binding.arrivedPicker.setDefaultDate(currentTime);
         binding.arrivedPicker.setMinDate(currentTime);
-        //binding.departurePicker.setDefaultDate(mFutureTime);
         if (more) {
             setArrivedDate = true;
             binding.arrivedPicker.setEnabled(false);
@@ -199,12 +193,9 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
                 arrivedDate = arrived;
                 departedDate = departure;
                 binding.arrivedPicker.setDefaultDate(arrived);
-                //binding.departurePicker.setDefaultDate(departure);
             }
         } else {
-            //binding.departurePicker.setEnabled(false);
             arrivedDate = binding.arrivedPicker.getDate();
-            //departedDate = binding.departurePicker.getDate();
             arrived = arrivedDate.getTime();
         }
     }
@@ -297,30 +288,11 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
             }
         });
 
-        /*binding.departurePicker.addOnDateChangedListener((displayed, date) -> {
-            departedDate = date;
-            Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-            final long[] pattern = {0, 10};
-            final int[] amplitudes = {50, 50};
-
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                VibrationEffect effect = VibrationEffect.createWaveform(pattern, amplitudes, 0);
-                assert vibrator != null;
-                vibrator.vibrate(effect);
-                (new Handler()).postDelayed(vibrator::cancel, 50);
-            } else {
-                assert vibrator != null;
-                vibrator.vibrate(10);
-            }
-        });*/
-
         binding.setBtn.setOnClickListener(v -> {
             if (!setArrivedDate) {
                 binding.cbBookNow.setEnabled(false);
                 binding.arrivedPicker.setEnabled(false);
                 binding.arriveDisableLayout.setBackgroundColor(context.getResources().getColor(R.color.disableColor));
-                //binding.departureDisableLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.rect_white_bg_gray_border_rounded));
-                //binding.departurePicker.setEnabled(true);
                 setArrivedDate = true;
             } else {
                 if (departure != 0) {
@@ -355,7 +327,6 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
             if (setArrivedDate) {
                 binding.arrivedPicker.setEnabled(true);
                 binding.arriveDisableLayout.setBackgroundColor(context.getResources().getColor(R.color.enableColor));
-                //binding.departureDisableLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.white_border));
                 setArrivedDate = false;
                 if (getActivity() != null)
                     getActivity().getFragmentManager().popBackStack();
@@ -460,10 +431,10 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
         reservationViewModel.getTimeSlotListMutableLiveDat().observe(requireActivity(), (@NonNull TimeSlotResponse response) -> {
             hideLoading();
             if (!response.getError()) {
-                if (response.getSensors() != null) {
-                    sensorAreaStatusList = response.getSensors();
-                    if (sensorAreaStatusList != null) {
-                        for (List<String> baseStringList : sensorAreaStatusList) {
+                if (response.getTimeSlots() != null) {
+                    timeSlotArrayList = response.getTimeSlots();
+                    if (timeSlotArrayList != null) {
+                        for (List<String> baseStringList : timeSlotArrayList) {
                             for (int i = 0; i < baseStringList.size(); i++) {
                                 if (i == 1) {
                                     time = baseStringList.get(i);
@@ -474,14 +445,12 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
                                 }
                             }
                             try {
-                                //departureTimeDataList.add(new Spinner(Double.parseDouble(timeValue), time));
                                 DepartureTimeData sensorArea = new DepartureTimeData(time, Double.parseDouble(timeValue));
                                 departureTimeDataArrayList.add(sensorArea);
                             } catch (NumberFormatException e) {
                                 e.getCause();
                             }
                         }
-                        //setTotalDepartureTimeSpinner(departureTimeDataList);
                         setFragmentControls(departureTimeDataArrayList);
                     }
                 }
@@ -491,8 +460,8 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
 
     private void setFragmentControls(ArrayList<DepartureTimeData> departureTimeDataArrayList) {
         // added data from arraylist to adapter class.
-        ScheduleDepartureTimeAdapter adapter = new ScheduleDepartureTimeAdapter(departureTimeDataArrayList, context, timeValue -> {
-            departure = (long) (timeValue * 3600000);
+        ScheduleDepartureTimeAdapter adapter = new ScheduleDepartureTimeAdapter(departureTimeDataArrayList, context, (value) -> {
+            departure = (long) (value * 3600000);
         });
 
         // setting grid layout manager to implement grid view.
@@ -500,8 +469,8 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
         GridLayoutManager layoutManager = new GridLayoutManager(context, 3);
 
         // at last set adapter to recycler view.
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(adapter);
+        binding.recyclerViewDepartureTime.setLayoutManager(layoutManager);
+        binding.recyclerViewDepartureTime.setAdapter(adapter);
     }
 
     private void setTotalDepartureTimeSpinner
@@ -514,18 +483,6 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
         } catch (Exception e) {
             Timber.e(e.getCause());
         }
-        /*binding.spinnerDepartureTime.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                departure = (long) (departureTimeDataList.get(position).getTimeValue() * 3600000);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });*/
-        //binding.spinnerDepartureTime.setAdapter(departureTimeAdapter);
     }
 
     private void setVehicleListSpinner

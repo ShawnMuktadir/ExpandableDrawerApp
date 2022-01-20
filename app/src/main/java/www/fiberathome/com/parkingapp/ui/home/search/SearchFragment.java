@@ -347,7 +347,6 @@ public class SearchFragment extends BaseFragment implements PlacesAutoCompleteAd
                         }
                         SearchVisitorData searchVisitorData = new SearchVisitorData(parkingArea, placeId, endLat, endLng, startLat, startLng);
                         searchVisitorDataList.add(searchVisitorData);
-                        //Timber.e("searchVisitorData -> %s", new Gson().toJson(searchVisitorData));
                     }
                     if (isAdded()) {
                         setFragmentControls(searchVisitorDataList);

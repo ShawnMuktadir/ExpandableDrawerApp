@@ -11,13 +11,13 @@ public class TimeSlotResponse extends BaseResponse {
 
     @SerializedName("sensors")
     @Expose
-    private List<List<String>> sensors = null;
+    private List<List<String>> timeSlots = null;
 
-    public List<List<String>> getSensors() {
-        return sensors;
+    public List<List<String>> getTimeSlots() {
+        return timeSlots;
     }
 
-    public void setSensors(List<List<String>> sensors) {
-        this.sensors = sensors;
+    public void setTimeSlots(List<List<String>> timeSlots) {
+        this.timeSlots = timeSlots;
     }
 }

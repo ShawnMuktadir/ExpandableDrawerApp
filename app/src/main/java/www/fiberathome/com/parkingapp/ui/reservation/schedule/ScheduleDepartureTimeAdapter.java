@@ -1,6 +1,8 @@
 package www.fiberathome.com.parkingapp.ui.reservation.schedule;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -12,13 +14,16 @@ import java.util.ArrayList;
 import www.fiberathome.com.parkingapp.data.model.DepartureTimeData;
 import www.fiberathome.com.parkingapp.databinding.RowHourLayoutBinding;
 
-public class ScheduleDepartureTimeAdapter extends RecyclerView.Adapter<ScheduleDepartureTimeAdapter.ScheduleDepartureTimeViewHolder> {
+@SuppressWarnings({"unused", "RedundantSuppression", "NotifyDataSetChanged"})
+public class ScheduleDepartureTimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final ArrayList<DepartureTimeData> departureTimeDataArrayList;
     private final Context mContext;
-    private final OnItemClickListeners clickListeners;
+    private final ScheduleDepartureTimeAdapterOnItemClickListeners clickListeners;
+    private int selectedPosition = -1;
 
-    public ScheduleDepartureTimeAdapter(ArrayList<DepartureTimeData> departureTimeDataArrayList, Context mContext, OnItemClickListeners clickListeners) {
+    public ScheduleDepartureTimeAdapter(ArrayList<DepartureTimeData> departureTimeDataArrayList,
+                                        Context mContext, ScheduleDepartureTimeAdapterOnItemClickListeners clickListeners) {
         this.departureTimeDataArrayList = departureTimeDataArrayList;
         this.mContext = mContext;
         this.clickListeners = clickListeners;
@@ -26,19 +31,29 @@ public class ScheduleDepartureTimeAdapter extends RecyclerView.Adapter<ScheduleD
 
     @NonNull
     @Override
-    public ScheduleDepartureTimeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // Inflate Layout
         LayoutInflater layoutInflater = LayoutInflater.from(mContext);
         RowHourLayoutBinding itemBinding = RowHourLayoutBinding.inflate(layoutInflater, parent, false);
         return new ScheduleDepartureTimeViewHolder(itemBinding);
     }
 
+    @SuppressLint({"SetTextI18n", "RecyclerView"})
     @Override
-    public void onBindViewHolder(@NonNull ScheduleDepartureTimeViewHolder holder, int position) {
-        // Set the data to textview and imageview.
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
+        ScheduleDepartureTimeViewHolder holder = (ScheduleDepartureTimeViewHolder) viewHolder;
         DepartureTimeData departureTimeData = departureTimeDataArrayList.get(position);
         holder.binding.tvTime.setText(departureTimeData.getTitle());
-        holder.binding.cvHourLayout.setOnClickListener(v -> clickListeners.onClick(departureTimeData.getTimeValue()));
+        holder.binding.cvHourLayout.setOnClickListener(v -> {
+            selectedPosition = position;
+            notifyDataSetChanged();
+            clickListeners.onClick(departureTimeData.getTimeValue());
+        });
+        if (selectedPosition == position) {
+            holder.binding.cvHourLayout.setBackgroundColor(mContext.getResources().getColor(www.fiberathome.com.parkingapp.R.color.selectedColor));
+        } else {
+            holder.binding.cvHourLayout.setBackgroundColor(Color.TRANSPARENT);
+        }
     }
 
     @Override
@@ -47,8 +62,8 @@ public class ScheduleDepartureTimeAdapter extends RecyclerView.Adapter<ScheduleD
         return departureTimeDataArrayList.size();
     }
 
-    public interface OnItemClickListeners {
-        void onClick(double timeValue);
+    public interface ScheduleDepartureTimeAdapterOnItemClickListeners {
+        void onClick(double value);
     }
 
     // View Holder Class to handle Recycler View.

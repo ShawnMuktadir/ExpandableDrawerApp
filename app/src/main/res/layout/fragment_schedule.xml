@@ -191,12 +191,31 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:id="@+id/departureDisableLayout"
                     android:padding="@dimen/dim5">
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recyclerViewDepartureTime"
+                    <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/recyclerViewDepartureTime"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+
+                        <View
+                            android:id="@+id/overlayRecyclerView"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@color/transparent_gray"
+                            android:clickable="false"
+                            android:focusable="false"
+                            android:visibility="gone" />
+                    </FrameLayout>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
