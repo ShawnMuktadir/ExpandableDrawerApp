@@ -4,13 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
     tools:context=".ui.reservation.schedule.ScheduleFragment">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
         tools:context=".ui.reservation.schedule.ScheduleFragment">
 
         <LinearLayout
@@ -88,7 +86,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="3dp"
-                    android:background="#000" />
+                    android:background="@color/gray2" />
 
                 <LinearLayout
                     android:id="@+id/linearLayoutUserVehicle"
@@ -120,70 +118,99 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/linearLayoutBookNow"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:weightSum="2">
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <CheckBox
+                        android:id="@+id/cbBookNow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/dim5"
+                        android:text="@string/book_now"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/dimTex14"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
                     <TextView
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1.2"
                         android:padding="@dimen/dim5"
-                        android:text="@string/arrived"
+                        android:text="@string/arrived_text"
                         android:textColor="@color/arrivedColor"
                         android:textSize="@dimen/dimTex14"
                         android:textStyle="bold" />
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.8"
-                        android:gravity="end|center"
-                        android:orientation="vertical">
-
-                        <CheckBox
-                            android:id="@+id/cbBookNow"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:padding="@dimen/dim5"
-                            android:text="@string/book_now"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/dimTex14"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/arriveDisableLayout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dim5">
-
-                    <com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker
-                        android:id="@+id/arrivedPicker"
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/arriveDisableLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:picker_curved="true"
-                        app:picker_cyclic="true"
-                        app:picker_mustBeOnFuture="true"
-                        app:picker_selectorColor="@android:color/transparent"
-                        app:picker_textSize="@dimen/dimTex14"
-                        app:picker_visibleItemCount="5" />
-                </LinearLayout>
+                        android:layout_marginStart="@dimen/dim5"
+                        android:layout_marginTop="@dimen/dim5"
+                        android:layout_marginEnd="@dimen/dim5"
+                        android:layout_marginBottom="@dimen/dim5"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/dim5"
+                        android:weightSum="2">
 
-                <View
-                    android:id="@+id/view1"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="3dp"
-                    android:background="#000" />
+                        <TextView
+                            android:id="@+id/tvArriveDateTime"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/white_border"
+                            android:elevation="@dimen/dim5"
+                            android:gravity="center"
+                            android:padding="@dimen/dim5"
+                            android:layout_margin="@dimen/dim5"
+                            android:text="@string/date"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_16ssp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/tvArriveTime"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintHorizontal_chainStyle="spread_inside"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tvArriveTime"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_margin="@dimen/dim5"
+                            android:layout_weight="1"
+                            android:background="@drawable/white_border"
+                            android:elevation="@dimen/dim5"
+                            android:gravity="center"
+                            android:padding="@dimen/dim5"
+                            android:text="@string/time"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_16ssp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toEndOf="@+id/tvArriveDateTime"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </LinearLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dim5"
                     android:padding="@dimen/dim5"
-                    android:text="@string/departure"
+                    android:text="@string/departure_text"
                     android:textColor="@color/arrivedColor"
                     android:textSize="@dimen/dimTex14"
                     android:textStyle="bold" />

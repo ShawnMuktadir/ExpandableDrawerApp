@@ -83,8 +83,13 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
                 holder.binding.textViewPsId.setText("");
             }
         }
-        holder.binding.textViewParkingAreaOccupiedCount.setText(bookingSensors.getOccupiedCount() != null ? MathUtils.getInstance().localeIntConverter(context, bookingSensors.getOccupiedCount()) : MathUtils.getInstance().localeIntConverter(context, bookingSensors.getCount()));
+
+        int freeSpotCount = MathUtils.getInstance().convertToInt(bookingSensors.getCount()) - MathUtils.getInstance().convertToInt(bookingSensors.getOccupiedCount());
+
+        holder.binding.textViewParkingAreaOccupiedCount.setText(freeSpotCount > 0 ? MathUtils.getInstance().localeIntConverter(context, String.valueOf(freeSpotCount)) : MathUtils.getInstance().localeIntConverter(context, bookingSensors.getCount()));
+
         holder.binding.textViewParkingAreaCount.setText(MathUtils.getInstance().localeIntConverter(context, bookingSensors.getCount()));
+
         holder.binding.rowFG.setOnClickListener(view -> {
             if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
                 clickListeners.onClick(bookingSensors);

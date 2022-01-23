@@ -7,10 +7,13 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.data.model.DepartureTimeData;
 import www.fiberathome.com.parkingapp.databinding.RowHourLayoutBinding;
 
@@ -20,7 +23,7 @@ public class ScheduleDepartureTimeAdapter extends RecyclerView.Adapter<RecyclerV
     private final ArrayList<DepartureTimeData> departureTimeDataArrayList;
     private final Context mContext;
     private final ScheduleDepartureTimeAdapterOnItemClickListeners clickListeners;
-    private int selectedPosition = -1;
+    private CardView previousSelectedTimeLayout;
 
     public ScheduleDepartureTimeAdapter(ArrayList<DepartureTimeData> departureTimeDataArrayList,
                                         Context mContext, ScheduleDepartureTimeAdapterOnItemClickListeners clickListeners) {
@@ -45,12 +48,16 @@ public class ScheduleDepartureTimeAdapter extends RecyclerView.Adapter<RecyclerV
         DepartureTimeData departureTimeData = departureTimeDataArrayList.get(position);
         holder.binding.tvTime.setText(departureTimeData.getTitle());
         holder.binding.cvHourLayout.setOnClickListener(v -> {
-            selectedPosition = position;
-            notifyDataSetChanged();
+            if (previousSelectedTimeLayout != null) {
+                previousSelectedTimeLayout.setBackgroundColor(Color.TRANSPARENT);
+            }
+            previousSelectedTimeLayout = holder.binding.cvHourLayout;
+            holder.binding.cvHourLayout.setBackground(ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.white_border, null));
             clickListeners.onClick(departureTimeData.getTimeValue());
         });
-        if (selectedPosition == position) {
-            holder.binding.cvHourLayout.setBackgroundColor(mContext.getResources().getColor(www.fiberathome.com.parkingapp.R.color.selectedColor));
+        if (position == 0 && previousSelectedTimeLayout == null) {
+            holder.binding.cvHourLayout.setBackground(ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.white_border, null));
+            previousSelectedTimeLayout = holder.binding.cvHourLayout;
         } else {
             holder.binding.cvHourLayout.setBackgroundColor(Color.TRANSPARENT);
         }
@@ -60,6 +67,10 @@ public class ScheduleDepartureTimeAdapter extends RecyclerView.Adapter<RecyclerV
     public int getItemCount() {
         // this method returns the size of recyclerview
         return departureTimeDataArrayList.size();
+    }
+
+    public void onReset() {
+        previousSelectedTimeLayout = null;
     }
 
     public interface ScheduleDepartureTimeAdapterOnItemClickListeners {

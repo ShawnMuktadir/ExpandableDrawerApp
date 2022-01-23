@@ -346,18 +346,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     }
                 });
 
-                if (mMap == null) {
-                    showLoading(context, context.getResources().getString(R.string.please_wait));
-                } else {
-                    hideLoading();
-                }
-
                 if (isBooked && bookedPlace != null) {
                     hideLoading();
                     oldDestination = "" + bookedPlace.getLat() + ", " + bookedPlace.getLon();
-                    Timber.e("bookedPlace.getLat(), bookedPlace.getLon() -> %s, %s", bookedPlace.getLat(), bookedPlace.getLon());
                 }
-
             }
         } catch (Resources.NotFoundException e) {
             e.getCause();
@@ -368,8 +360,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         Timber.e("onMapReady called");
-        hideLoading();
         mMap = googleMap;
+        hideLoading();
         if (Preferences.getInstance(context).getBooked() != null && Preferences.getInstance(context).getBooked().getIsBooked()) {
             setCircleOnLocation(new LatLng(Preferences.getInstance(context).getBooked().getLat(),
                     Preferences.getInstance(context).getBooked().getLon()));
@@ -409,7 +401,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
         if (Preferences.getInstance(context).isBookingCancelled) {
             Preferences.getInstance(context).isBookingCancelled = false;
-            commonBackOperation();
+            getSensorAreaStatus();
         }
         if (isBooked) {
             binding.fabGetDirection.setVisibility(View.VISIBLE);
@@ -966,6 +958,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 hideLoading();
                 if (sensorAreaStatusResponse.getSensorAreaStatusArrayList() != null) {
                     List<List<String>> sensorStatusList = sensorAreaStatusResponse.getSensorAreaStatusArrayList();
+                    if(!sensorStatusArrayList.isEmpty()){
+                        sensorStatusArrayList.clear();
+                    }
                     if (sensorStatusList != null) {
                         for (List<String> baseStringList : sensorStatusList) {
                             for (int i = 0; i < baseStringList.size(); i++) {
@@ -1170,10 +1165,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         setBottomSheetRecyclerViewAdapter(sensors);
     }
 
-    private void setBottomSheetRecyclerViewAdapter
-            (ArrayList<BookingSensors> bookingSensors) {
+    private void setBottomSheetRecyclerViewAdapter(ArrayList<BookingSensors> bookingSensors) {
         bottomSheetAdapter = null;
-        bottomSheetAdapter = new BottomSheetAdapter(context, this, onConnectedLocation, (BookingSensors sensors) -> {
+        bottomSheetAdapter = new BottomSheetAdapter(context, this, onConnectedLocation,
+                (BookingSensors sensors) -> {
             if (!sensors.getCount().equalsIgnoreCase("0")) {
                 bookingSensorsArrayList.clear();
                 bottomSheetBehavior.setPeekHeight((int) context.getResources().getDimension(R.dimen._142sdp));

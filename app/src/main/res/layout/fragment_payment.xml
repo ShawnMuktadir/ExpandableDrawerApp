@@ -92,7 +92,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/dim5"
-                    android:text="@string/arrived"
+                    android:text="@string/arrived_text"
                     android:textSize="@dimen/dimTex15" />
 
                 <TextView
@@ -101,7 +101,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/tvArrivedTime"
                     android:padding="@dimen/dim5"
-                    android:text="@string/departure"
+                    android:text="@string/departure_text"
                     android:textSize="@dimen/dimTex15" />
 
                 <TextView
