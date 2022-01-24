@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -34,6 +33,7 @@ import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.data.model.DepartureTimeData;
 import www.fiberathome.com.parkingapp.data.model.Spinner;
+import www.fiberathome.com.parkingapp.data.model.data.preference.LanguagePreferences;
 import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.data.model.response.reservation.ReservationResponse;
 import www.fiberathome.com.parkingapp.data.model.response.reservation.TimeSlotResponse;
@@ -86,7 +86,6 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
     private ReservationViewModel reservationViewModel;
     FragmentScheduleBinding binding;
     private FragmentChangeListener listener;
-    private Date currentTime;
     private String selectedVehicleNo;
 
     private final ArrayList<DepartureTimeData> departureTimeDataArrayList = new ArrayList<>();
@@ -164,8 +163,7 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
             }
             reservationViewModel = new ViewModelProvider(this).get(ReservationViewModel.class);
             currentCalendar = Calendar.getInstance();
-            arrivedDate =  Calendar.getInstance().getTime();
-            currentTime = Calendar.getInstance().getTime();
+            arrivedDate = Calendar.getInstance().getTime();
             binding.textViewCurrentDate.setText(DateTimeUtils.getInstance().getCurrentDayTime());
             listener = (FragmentChangeListener) getActivity();
             setCurrentDateTimeData();
@@ -220,8 +218,15 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
         final Calendar calendar = Calendar.getInstance();
         String dateFormat = "MMMM dd, yyyy";
         String timeFormat = "hh:mm aa";
-        SimpleDateFormat mDateFormat = new SimpleDateFormat(dateFormat, Locale.US);
-        SimpleDateFormat mTimeFormat = new SimpleDateFormat(timeFormat, Locale.US);
+        SimpleDateFormat mDateFormat;
+        SimpleDateFormat mTimeFormat;
+        if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
+            mDateFormat = new SimpleDateFormat(dateFormat, new Locale("bn"));
+            mTimeFormat = new SimpleDateFormat(timeFormat, new Locale("bn"));
+        } else {
+            mDateFormat = new SimpleDateFormat(dateFormat, Locale.US);
+            mTimeFormat = new SimpleDateFormat(timeFormat, Locale.US);
+        }
         binding.tvArriveDateTime.setText(mDateFormat.format(calendar.getTime()));
         binding.tvArriveTime.setText(mTimeFormat.format(calendar.getTime()));
 
@@ -242,7 +247,7 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
         binding.cbBookNow.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 isBookNowChecked = true;
-                binding.arriveDisableLayout.setBackgroundColor(getResources().getColor(R.color.disableColor));
+                binding.arriveDisableLayout.setBackgroundColor(context.getResources().getColor(R.color.disableColor));
                 binding.arriveDisableLayout.setEnabled(false);
                 binding.tvArriveDateTime.setEnabled(false);
                 binding.tvArriveTime.setEnabled(false);
@@ -253,7 +258,7 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
                 binding.arriveDisableLayout.setEnabled(true);
                 binding.tvArriveDateTime.setEnabled(true);
                 binding.tvArriveTime.setEnabled(true);
-                binding.arriveDisableLayout.setBackgroundColor(getResources().getColor(R.color.enableColor));
+                binding.arriveDisableLayout.setBackgroundColor(context.getResources().getColor(R.color.enableColor));
             }
         });
 
@@ -261,23 +266,20 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
             if (!setArrivedDate) {
                 binding.cbBookNow.setEnabled(false);
                 binding.arriveDisableLayout.setBackgroundColor(context.getResources().getColor(R.color.disableColor));
+                binding.arriveDisableLayout.setEnabled(false);
+                binding.tvArriveDateTime.setEnabled(false);
+                binding.tvArriveTime.setEnabled(false);
                 setArrivedDate = true;
             } else {
+                binding.arriveDisableLayout.setEnabled(true);
+                binding.tvArriveDateTime.setEnabled(true);
+                binding.tvArriveTime.setEnabled(true);
+                binding.arriveDisableLayout.setBackgroundColor(context.getResources().getColor(R.color.enableColor));
                 if (departure != 0) {
-                    long diff = (departure + arrivedDate.getTime()) - arrivedDate.getTime();
-                    long seconds = diff / 1000;
-                    long minutes = seconds / 60;
-                    long hours = minutes / 60;
-                    long days = hours / 24;
-
-                    if (diff < 0) {
-                        Toast.makeText(requireActivity(), context.getResources().getString(R.string.departure_time_less_arrive_time), Toast.LENGTH_SHORT).show();
+                    if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
+                        storeReservation(Preferences.getInstance(context).getUser().getMobileNo(), getDate(arrivedDate.getTime()), getDate((departure + arrivedDate.getTime())), areaPlaceId);
                     } else {
-                        if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
-                            storeReservation(Preferences.getInstance(context).getUser().getMobileNo(), getDate(arrivedDate.getTime()), getDate((departure + arrivedDate.getTime())), areaPlaceId);
-                        } else {
-                            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_gps));
-                        }
+                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_gps));
                     }
                 }
             }
@@ -292,6 +294,9 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
                 binding.cbBookNow.setEnabled(true);
             }
             if (setArrivedDate) {
+                binding.arriveDisableLayout.setEnabled(true);
+                binding.tvArriveDateTime.setEnabled(true);
+                binding.tvArriveTime.setEnabled(true);
                 binding.arriveDisableLayout.setBackgroundColor(context.getResources().getColor(R.color.enableColor));
                 setArrivedDate = false;
                 if (getActivity() != null)
@@ -313,9 +318,9 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
                 currentCalendar.set(Calendar.YEAR, year);
                 currentCalendar.set(Calendar.MONTH, month);
                 currentCalendar.set(Calendar.DAY_OF_MONTH, day);
-                String myFormat = "MMMM dd, yyyy";
+                String mFormat = "MMMM dd, yyyy";
                 arrivedDate = currentCalendar.getTime();
-                SimpleDateFormat dateFormat = new SimpleDateFormat(myFormat, Locale.US);
+                SimpleDateFormat dateFormat = new SimpleDateFormat(mFormat, Locale.US);
                 binding.tvArriveDateTime.setText(dateFormat.format(currentCalendar.getTime()));
             };
             DatePickerDialog datePickerDialog = new DatePickerDialog(context, date, currentCalendar.get(Calendar.YEAR),
@@ -332,7 +337,7 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
 
     private String getDate(long milliSeconds) {
         // Create a DateFormatter object for displaying date in specified format.
-        SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.US);
+        SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy, hh:mm a", Locale.US);
         // Create a calendar object that will convert the date and time value in milliseconds to date.
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(milliSeconds);
@@ -430,9 +435,16 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
                     if (timeSlotArrayList != null) {
                         for (List<String> baseStringList : timeSlotArrayList) {
                             for (int i = 0; i < baseStringList.size(); i++) {
-                                if (i == 1) {
-                                    time = baseStringList.get(i);
+                                if (!LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
+                                    if (i == 1) {
+                                        time = baseStringList.get(i);
+                                    }
+                                } else {
+                                    if (i == 5) {
+                                        time = baseStringList.get(i);
+                                    }
                                 }
+
 
                                 if (i == 2) {
                                     timeValue = baseStringList.get(i);
@@ -457,9 +469,8 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
         if (departureTimeDataArrayList.size() > 0) {
             departure = (long) (departureTimeDataArrayList.get(0).getTimeValue() * 3600000);
         }
-        adapter = new ScheduleDepartureTimeAdapter(departureTimeDataArrayList, context, (value) -> {
-            departure = (long) (value * 3600000);
-        });
+        adapter = new ScheduleDepartureTimeAdapter(departureTimeDataArrayList, context,
+                (value) -> departure = (long) (value * 3600000));
 
         // setting grid layout manager to implement grid view.
         // in this method '3' represents number of columns to be displayed in grid view.
