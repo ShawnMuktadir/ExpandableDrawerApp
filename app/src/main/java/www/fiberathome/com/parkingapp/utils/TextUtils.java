@@ -469,6 +469,18 @@ public class TextUtils {
                 .replaceAll("hr", "\u0998\u09A3\u09CD\u099F\u09BE")
                 .replaceAll("min", "\u09AE\u09BF\u09A8\u09BF\u099F")
                 .replaceAll("sec", "\u09B8\u09C7\u0995\u09C7\u09A8\u09CD\u09A1")
+                .replaceAll("January", "\u099C\u09BE\u09A8\u09C1\u09DF\u09BE\u09B0\u09BF")
+                .replaceAll("February", "\u09AB\u09C7\u09AC\u09CD\u09B0\u09C1\u09DF\u09BE\u09B0\u09C0")
+                .replaceAll("March", "\u09AE\u09BE\u09B0\u09CD\u099A")
+                .replaceAll("April", "\u098F\u09AA\u09CD\u09B0\u09BF\u09B2")
+                .replaceAll("May", "\u09AE\u09C7")
+                .replaceAll("June", "\u099C\u09C1\u09A8")
+                .replaceAll("July", "\u099C\u09C1\u09B2\u09BE\u0987")
+                .replaceAll("August", "\u0986\u0997\u09B7\u09CD\u099F")
+                .replaceAll("September", "\u09B8\u09C7\u09AA\u09CD\u099F\u09C7\u09AE\u09CD\u09AC\u09B0")
+                .replaceAll("October", "\u0985\u0995\u09CD\u099F\u09CB\u09AC\u09B0")
+                .replaceAll("November", "\u09A8\u09AD\u09C7\u09AE\u09CD\u09AC\u09B0")
+                .replaceAll("December", "\u09A1\u09BF\u09B8\u09C7\u09AE\u09CD\u09AC\u09B0")
                 ;
     }
 }

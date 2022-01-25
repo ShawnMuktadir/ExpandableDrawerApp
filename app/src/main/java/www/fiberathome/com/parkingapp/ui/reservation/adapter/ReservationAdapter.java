@@ -92,14 +92,14 @@ public class ReservationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     + " - \n" + context.getString(R.string.departuretxt) + " " + TextUtils.getInstance().convertTextEnToBn(bookedList.getTimeEnd()));
         }
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         try {
-            Date date1 = simpleDateFormat.parse(bookedList.getTimeEnd());
-            Date date2 = simpleDateFormat.parse(bookedList.getTimeStart());
+            Date endTime = simpleDateFormat.parse(bookedList.getTimeEnd());
+            Date startTime = simpleDateFormat.parse(bookedList.getTimeStart());
 
             long difference = 0;
-            if (date1 != null && date2 != null) {
-                difference = date1.getTime() - date2.getTime();
+            if (endTime != null && startTime != null) {
+                difference = endTime.getTime() - startTime.getTime();
             }
             if (!LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
                 reservationViewHolder.binding.textViewParkingTotalTime.setText(getTimeDifference(difference));
@@ -212,13 +212,11 @@ public class ReservationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         notifyDataSetChanged();
     }
 
-    @SuppressLint("DefaultLocale")
     private String getTimeDifference(long difference) {
-        return String.format("%02dh:%02dmin",
+        return String.format(Locale.US, "%02d " + context.getResources().getString(R.string.hr) + ": %02d " + context.getResources().getString(R.string.mins),
                 TimeUnit.MILLISECONDS.toHours(difference),
                 TimeUnit.MILLISECONDS.toMinutes(difference) -
-                        TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(difference)) // The change is in this line
-        );
+                        TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(difference)));
     }
 
     @Override

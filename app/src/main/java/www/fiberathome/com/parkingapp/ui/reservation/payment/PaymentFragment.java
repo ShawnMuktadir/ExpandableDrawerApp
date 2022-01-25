@@ -222,7 +222,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                 BottomSheetDialog dialog = new BottomSheetDialog(context);
                 dialog.setContentView(dialogScratchCardBinding.getRoot());
                 try {
-                    dialog.getWindow().setSoftInputMode(
+                    Objects.requireNonNull(dialog.getWindow()).setSoftInputMode(
                             WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
                 } catch (NullPointerException e) {
                     e.getCause();

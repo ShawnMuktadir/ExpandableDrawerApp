@@ -77,7 +77,7 @@
         <entry key="app/src/main/res/layout/nav_header_home.xml" value="0.16302083333333334" />
         <entry key="app/src/main/res/layout/parking_row.xml" value="0.15885416666666666" />
         <entry key="app/src/main/res/layout/privacy_policy_row.xml" value="0.16590678824721378" />
-        <entry key="app/src/main/res/layout/row_bookings.xml" value="0.1421875" />
+        <entry key="app/src/main/res/layout/row_bookings.xml" value="0.33" />
         <entry key="app/src/main/res/layout/row_hour_layout.xml" value="0.25" />
         <entry key="app/src/main/res/layout/row_law.xml" value="0.15104166666666666" />
         <entry key="app/src/main/res/layout/row_parking.xml" value="0.12" />

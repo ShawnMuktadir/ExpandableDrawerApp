@@ -1,16 +1,13 @@
 package www.fiberathome.com.parkingapp.ui.reservation.schedule;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -36,6 +33,7 @@ import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.data.model.DepartureTimeData;
 import www.fiberathome.com.parkingapp.data.model.Spinner;
+import www.fiberathome.com.parkingapp.data.model.data.preference.LanguagePreferences;
 import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.data.model.response.reservation.ReservationResponse;
 import www.fiberathome.com.parkingapp.data.model.response.reservation.TimeSlotResponse;
@@ -64,7 +62,7 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
     public long arrived, departure, difference;
 
     private Date arrivedDate;
-    private Date departedDate;
+    protected Date departedDate;
 
     private boolean setArrivedDate = false;
     private boolean more = false;
@@ -88,10 +86,12 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
     private ReservationViewModel reservationViewModel;
     FragmentScheduleBinding binding;
     private FragmentChangeListener listener;
-    private Date currentTime;
     private String selectedVehicleNo;
 
     private final ArrayList<DepartureTimeData> departureTimeDataArrayList = new ArrayList<>();
+    private ScheduleDepartureTimeAdapter adapter;
+    private TimePickerDialog mTimePicker;
+    private Calendar currentCalendar;
 
     public ScheduleFragment() {
         // Required empty public constructor
@@ -162,42 +162,14 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
                 context = (ScheduleActivity) getActivity();
             }
             reservationViewModel = new ViewModelProvider(this).get(ReservationViewModel.class);
-            currentTime = Calendar.getInstance().getTime();
+            currentCalendar = Calendar.getInstance();
+            arrivedDate = Calendar.getInstance().getTime();
             binding.textViewCurrentDate.setText(DateTimeUtils.getInstance().getCurrentDayTime());
             listener = (FragmentChangeListener) getActivity();
-            setDatePickerTime();
+            setCurrentDateTimeData();
             setListeners();
         }
         getUserVehicleList(Preferences.getInstance(context).getUser().getMobileNo());
-    }
-
-    private void setDatePickerTime() {
-        //add 30 minutes to date
-        Date mFutureTime = new Date(); // Instantiate a Date object
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(mFutureTime);
-        cal.add(Calendar.MINUTE, 30);
-        mFutureTime = cal.getTime();
-        Date futureTime = mFutureTime;
-
-        binding.arrivedPicker.setIsAmPm(true);
-        binding.arrivedPicker.setDefaultDate(currentTime);
-        binding.arrivedPicker.setMinDate(currentTime);
-        if (more) {
-            setArrivedDate = true;
-            binding.arrivedPicker.setEnabled(false);
-            binding.arriveDisableLayout.setBackgroundColor(getResources().getColor(R.color.disableColor));
-            if (getArguments() != null) {
-                Date arrived = new Date(getArguments().getLong("a"));
-                Date departure = new Date(getArguments().getLong("d"));
-                arrivedDate = arrived;
-                departedDate = departure;
-                binding.arrivedPicker.setDefaultDate(arrived);
-            }
-        } else {
-            arrivedDate = binding.arrivedPicker.getDate();
-            arrived = arrivedDate.getTime();
-        }
     }
 
     @Override
@@ -212,13 +184,10 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
     @Override
     public void onResume() {
         super.onResume();
-        binding.arrivedPicker.setIsAmPm(true);
-        binding.arrivedPicker.setDefaultDate(currentTime);
-        binding.arrivedPicker.setMinDate(currentTime);
         if (isInArea) {
-            binding.cbBookNow.setVisibility(View.VISIBLE);
+            binding.linearLayoutBookNow.setVisibility(View.VISIBLE);
         } else {
-            binding.cbBookNow.setVisibility(View.GONE);
+            binding.linearLayoutBookNow.setVisibility(View.GONE);
         }
         Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).hide();
     }
@@ -245,9 +214,39 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
         return false;
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+    private void setCurrentDateTimeData() {
+        final Calendar calendar = Calendar.getInstance();
+        String dateFormat = "MMMM dd, yyyy";
+        String timeFormat = "hh:mm aa";
+        SimpleDateFormat mDateFormat;
+        SimpleDateFormat mTimeFormat;
+        if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
+            mDateFormat = new SimpleDateFormat(dateFormat, new Locale("bn"));
+            mTimeFormat = new SimpleDateFormat(timeFormat, new Locale("bn"));
+        } else {
+            mDateFormat = new SimpleDateFormat(dateFormat, Locale.US);
+            mTimeFormat = new SimpleDateFormat(timeFormat, Locale.US);
+        }
+        binding.tvArriveDateTime.setText(mDateFormat.format(calendar.getTime()));
+        binding.tvArriveTime.setText(mTimeFormat.format(calendar.getTime()));
+
+        int hour = currentCalendar.get(Calendar.HOUR_OF_DAY);
+        int minute = currentCalendar.get(Calendar.MINUTE);
+        mTimePicker = new TimePickerDialog(context, (timePicker, selectedHour, selectedMinute) -> {
+            currentCalendar.set(Calendar.HOUR_OF_DAY, selectedHour);
+            currentCalendar.set(Calendar.MINUTE, selectedMinute);
+            if (calendar.getTime().getTime() > currentCalendar.getTime().getTime()) {
+                mTimePicker.updateTime(Calendar.HOUR_OF_DAY, Calendar.MINUTE);
+                currentCalendar.set(Calendar.HOUR_OF_DAY, Calendar.HOUR_OF_DAY);
+                currentCalendar.set(Calendar.MINUTE, Calendar.MINUTE);
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.please_do_not_select_past_time));
+            } else {
+                binding.tvArriveTime.setText(mTimeFormat.format(currentCalendar.getTime()));
+                arrivedDate = currentCalendar.getTime();
+            }
+        }, hour, minute, false); //Yes 24 hour time
+
+        mTimePicker.setTitle(context.getResources().getString(R.string.select_time));
     }
 
     private void setListeners() {
@@ -256,60 +255,39 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
         binding.cbBookNow.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 isBookNowChecked = true;
-                binding.arrivedPicker.setEnabled(false);
-                binding.arriveDisableLayout.setBackgroundColor(getResources().getColor(R.color.disableColor));
+                binding.arriveDisableLayout.setBackgroundColor(context.getResources().getColor(R.color.disableColor));
+                binding.arriveDisableLayout.setEnabled(false);
+                binding.tvArriveDateTime.setEnabled(false);
+                binding.tvArriveTime.setEnabled(false);
                 arrivedDate = new Date();
             } else {
                 isBookNowChecked = false;
                 setArrivedDate = true;
-                binding.arrivedPicker.setEnabled(true);
-                binding.arriveDisableLayout.setBackgroundColor(getResources().getColor(R.color.enableColor));
-            }
-        });
-
-        binding.arrivedPicker.addOnDateChangedListener((displayed, date) -> {
-            arrivedDate = date;
-            isBookNowChecked = false;
-            binding.cbBookNow.setChecked(false);
-            binding.cbBookNow.setVisibility(View.INVISIBLE);
-
-            Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-            final long[] pattern = {0, 10};
-            final int[] amplitudes = {50, 50};
-
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                VibrationEffect effect = VibrationEffect.createWaveform(pattern, amplitudes, 0);
-                assert vibrator != null;
-                vibrator.vibrate(effect);
-                (new Handler()).postDelayed(vibrator::cancel, 50);
-            } else {
-                assert vibrator != null;
-                vibrator.vibrate(10);
+                binding.arriveDisableLayout.setEnabled(true);
+                binding.tvArriveDateTime.setEnabled(true);
+                binding.tvArriveTime.setEnabled(true);
+                binding.arriveDisableLayout.setBackgroundColor(context.getResources().getColor(R.color.enableColor));
             }
         });
 
         binding.setBtn.setOnClickListener(v -> {
             if (!setArrivedDate) {
                 binding.cbBookNow.setEnabled(false);
-                binding.arrivedPicker.setEnabled(false);
                 binding.arriveDisableLayout.setBackgroundColor(context.getResources().getColor(R.color.disableColor));
+                binding.arriveDisableLayout.setEnabled(false);
+                binding.tvArriveDateTime.setEnabled(false);
+                binding.tvArriveTime.setEnabled(false);
                 setArrivedDate = true;
             } else {
+                binding.arriveDisableLayout.setEnabled(true);
+                binding.tvArriveDateTime.setEnabled(true);
+                binding.tvArriveTime.setEnabled(true);
+                binding.arriveDisableLayout.setBackgroundColor(context.getResources().getColor(R.color.enableColor));
                 if (departure != 0) {
-                    long diff = (departure + arrivedDate.getTime()) - arrivedDate.getTime();
-                    long seconds = diff / 1000;
-                    long minutes = seconds / 60;
-                    long hours = minutes / 60;
-                    long days = hours / 24;
-
-                    if (diff < 0) {
-                        Toast.makeText(requireActivity(), context.getResources().getString(R.string.departure_time_less_arrive_time), Toast.LENGTH_SHORT).show();
+                    if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
+                        storeReservation(Preferences.getInstance(context).getUser().getMobileNo(), getDate(arrivedDate.getTime()), getDate((departure + arrivedDate.getTime())), areaPlaceId);
                     } else {
-                        if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
-                            storeReservation(Preferences.getInstance(context).getUser().getMobileNo(), getDate(arrivedDate.getTime()), getDate((departure + arrivedDate.getTime())), areaPlaceId);
-                        } else {
-                            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_gps));
-                        }
+                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet_gps));
                     }
                 }
             }
@@ -319,13 +297,14 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
             if (binding.cbBookNow.isChecked()) {
                 binding.cbBookNow.toggle();
             }
-            binding.arrivedPicker.setDefaultDate(new Date());
             if (isInArea) {
                 binding.cbBookNow.setVisibility(View.VISIBLE);
                 binding.cbBookNow.setEnabled(true);
             }
             if (setArrivedDate) {
-                binding.arrivedPicker.setEnabled(true);
+                binding.arriveDisableLayout.setEnabled(true);
+                binding.tvArriveDateTime.setEnabled(true);
+                binding.tvArriveTime.setEnabled(true);
                 binding.arriveDisableLayout.setBackgroundColor(context.getResources().getColor(R.color.enableColor));
                 setArrivedDate = false;
                 if (getActivity() != null)
@@ -333,12 +312,40 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
             } else {
                 Timber.e("else called");
             }
+            if (adapter != null) {
+                adapter.onReset();
+                adapter.notifyDataSetChanged();
+                if (departureTimeDataArrayList.size() > 0) {
+                    departure = (long) (departureTimeDataArrayList.get(0).getTimeValue() * 3600000);
+                }
+            }
+        });
+
+        binding.tvArriveDateTime.setOnClickListener(view -> {
+            DatePickerDialog.OnDateSetListener date = (view1, year, month, day) -> {
+                currentCalendar.set(Calendar.YEAR, year);
+                currentCalendar.set(Calendar.MONTH, month);
+                currentCalendar.set(Calendar.DAY_OF_MONTH, day);
+                String mFormat = "MMMM dd, yyyy";
+                arrivedDate = currentCalendar.getTime();
+                SimpleDateFormat dateFormat = new SimpleDateFormat(mFormat, Locale.US);
+                binding.tvArriveDateTime.setText(dateFormat.format(currentCalendar.getTime()));
+            };
+            DatePickerDialog datePickerDialog = new DatePickerDialog(context, date, currentCalendar.get(Calendar.YEAR),
+                    currentCalendar.get(Calendar.MONTH), currentCalendar.get(Calendar.DAY_OF_MONTH));
+            datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
+            datePickerDialog.show();
+        });
+
+        binding.tvArriveTime.setOnClickListener(view -> {
+            arrivedDate = currentCalendar.getTime();
+            mTimePicker.show();
         });
     }
 
     private String getDate(long milliSeconds) {
         // Create a DateFormatter object for displaying date in specified format.
-        SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.US);
+        SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy, hh:mm a", Locale.US);
         // Create a calendar object that will convert the date and time value in milliseconds to date.
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(milliSeconds);
@@ -436,17 +443,24 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
                     if (timeSlotArrayList != null) {
                         for (List<String> baseStringList : timeSlotArrayList) {
                             for (int i = 0; i < baseStringList.size(); i++) {
-                                if (i == 1) {
-                                    time = baseStringList.get(i);
+                                if (!LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
+                                    if (i == 1) {
+                                        time = baseStringList.get(i);
+                                    }
+                                } else {
+                                    if (i == 5) {
+                                        time = baseStringList.get(i);
+                                    }
                                 }
+
 
                                 if (i == 2) {
                                     timeValue = baseStringList.get(i);
                                 }
                             }
                             try {
-                                DepartureTimeData sensorArea = new DepartureTimeData(time, Double.parseDouble(timeValue));
-                                departureTimeDataArrayList.add(sensorArea);
+                                DepartureTimeData departureTimeData = new DepartureTimeData(time, Double.parseDouble(timeValue));
+                                departureTimeDataArrayList.add(departureTimeData);
                             } catch (NumberFormatException e) {
                                 e.getCause();
                             }
@@ -460,9 +474,11 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
 
     private void setFragmentControls(ArrayList<DepartureTimeData> departureTimeDataArrayList) {
         // added data from arraylist to adapter class.
-        ScheduleDepartureTimeAdapter adapter = new ScheduleDepartureTimeAdapter(departureTimeDataArrayList, context, (value) -> {
-            departure = (long) (value * 3600000);
-        });
+        if (departureTimeDataArrayList.size() > 0) {
+            departure = (long) (departureTimeDataArrayList.get(0).getTimeValue() * 3600000);
+        }
+        adapter = new ScheduleDepartureTimeAdapter(departureTimeDataArrayList, context,
+                (value) -> departure = (long) (value * 3600000));
 
         // setting grid layout manager to implement grid view.
         // in this method '3' represents number of columns to be displayed in grid view.

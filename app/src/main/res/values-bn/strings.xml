@@ -132,8 +132,8 @@
 
     <string name="date">বুধবার,৫ ফেব্রুয়ারি</string>
     <string name="schedule_heading">পরিকল্পনা</string>
-    <string name="arrived">পার্কিং এর স্থানে পৌঁছানোর সময়:</string>
-    <string name="departure">আপনি কতক্ষণ বুক করতে চান তা নির্বাচন করুন</string>
+    <string name="arrived_text">পার্কিং এর সময় সেট করুনঃ</string>
+    <string name="departure_text">আপনি কতক্ষণ বুক করতে চান তা নির্বাচন করুনঃ</string>
     <string name="book">আপনার বুকিং</string>
     <string name="gps_network_not_enabled">জিপিএস নেটওয়ার্ক সক্রিয় করুন!</string>
     <string name="open_location_settings">লোকেশান সেটিং ওপেন করুন</string>
@@ -385,7 +385,7 @@
     <string name="spinner_title">বাহন নিবন্ধন</string>
     <string name="edit_profile">প্রোফাইল সম্পাদনা করুন</string>
     <string name="your_books">আপনার বুকিং</string>
-    <string name="developed_by">Developed Byঃ</string>
+    <string name="developed_by">নির্মাণেঃ</string>
     <string name="locc">LOCC</string>
     <string name="parking_slot">পার্কিং এর স্থান ১৭</string>h
     <string name="total_time">২.৩০ ঘন্টা</string>
@@ -422,8 +422,8 @@
     <string name="set">সেট</string>
     <string name="you_can_book_parking_slot"> আপন এখনি আপনার পছন্দের পার্কিং এর এলাকা বুকিং করতে পারেন</string>
     <string name="parking_spot_selection_rules">নতুন পার্কিং স্পট এ যাওয়ার আগে আপনাকে বর্তমান গন্তব্য পরিবর্তন করতে হবে। আপনি কি পার্কিং এর স্থানটি পরিবর্তন করতে চান?</string>
-    <string name="schedule_fragment_title">00ঃ00–00ঃ00pm</string>
-    <string name="parking_total_time">00ঃ00min</string>
+    <string name="schedule_fragment_title">০০ঃ০০–০০ঃ০০pm</string>
+    <string name="parking_total_time">০০ঃ০০min</string>
     <string name="please_wait">অনুগ্রহপুর্বক অপেক্ষা করুন</string>
     <string name="are_you_sure"> আপনি কি বের হয়ে যাওয়ার ব্যাপারে নিশ্চিত?</string>
     <string name="get_support">সাহায্য</string>
@@ -489,11 +489,11 @@
     <string name="not_implemented_yet">এখনো বাস্তবায়িত হয় নি</string>
     <string name="update_info">আপডেট তথ্য</string>
     <string name="save">"সংরক্ষণ "</string>
-    <string name="select_vehicle_city_and_class">যানবাহনের নিবন্ধকরণ শহর এবং শ্রেণি নির্বাচন করুন:</string>
-    <string name="upload_vehicle_picture_text">লাইসেন্স প্লেট সহ গাড়ির ছবি আপলোড করুন: </string>
+    <string name="select_vehicle_city_and_class">যানবাহনের নিবন্ধকরণ শহর এবং শ্রেণি নির্বাচন করুনঃ</string>
+    <string name="upload_vehicle_picture_text">লাইসেন্স প্লেট সহ গাড়ির ছবি আপলোড করুনঃ </string>
     <string name="upload_vehicle_pic">গাড়ির ছবি আপলোড করুন</string>
-    <string name="vehicle_license_plate">যানবাহন লাইসেন্স প্লেট:</string>
-    <string name="vehicle_license_plate_image">যানবাহন লাইসেন্স প্লেটের ছবি: </string>
+    <string name="vehicle_license_plate">যানবাহন লাইসেন্স প্লেটঃ</string>
+    <string name="vehicle_license_plate_image">যানবাহন লাইসেন্স প্লেটের ছবিঃ </string>
     <string name="radio_general">সাধারণ</string>
     <string name="radio_military">মিলিটারি</string>
     <string name="first_two_digit">প্রথম দুই অঙ্ক</string>
@@ -509,18 +509,18 @@
     <string name="reset">পুনরায় করুন</string>
     <string name="digit_00_00">  ০০.০০</string>
     <string name="use_promo">প্রোমো ব্যবহার করুন</string>
-    <string name="bdt_hour_charge"> 20/0.5h</string>
+    <string name="bdt_hour_charge"> ২০/০.৫ ঘণ্টা</string>
     <string name="each_hour">প্রতি ঘণ্টায়</string>
-    <string name="subtotal_parking">সাবটোটাল পার্কিং:</string>
+    <string name="subtotal_parking">সাবটোটাল পার্কিংঃ</string>
     <string name="discount">ডিসকাউন্ট</string>
     <string name="total">সর্বমোট</string>
     <string name="edit_slot">স্লট সম্পাদনা করুন</string>
     <string name="your_booking">বুকিং তথ্য</string>
     <string name="pay_bdt_0">পে </string>
     <string name="booking_payment">বুকিং পেমেন্ট</string>
-    <string name="terms_condition_booking"><![CDATA[T&C ন্যূনতম 30 মিনিট প্রয়োজন]]></string>
+    <string name="terms_condition_booking"><![CDATA[T&C ন্যূনতম ৩০ মিনিট প্রয়োজন]]></string>
     <string name="departure_time_less_arrive_time">প্রস্থান সময় আগত সময়ের চেয়ে কম হতে পারবে না</string>
-    <string name="departure_time_less_thirty_arrive_time">প্রস্থান সময় 30 মিনিটের কম হতে পারবে না</string>
+    <string name="departure_time_less_thirty_arrive_time">প্রস্থান সময় ৩০ মিনিটের কম হতে পারবে না</string>
     <string name="parked">পার্ক করা হয়েছে</string>
     <string name="booking_cancel_rules"><![CDATA[বুকিং বাতিল করা যেতে পারে এবং বুকিং বাতিল করলে ব্যবহারকারীর চার্জ নেওয়া হবে (প্রস্থান সময় শেষ হওয়ার আগে ব্যবহারকারী যে কোন সময় বাতিল করতে পারেন)। আরও জানতে, টি অ্যান্ড সি পড়ুন]]></string>
     <string name="parking_slot_not_available">দুঃখিত,পার্কিং স্লট এখনই উপলব্ধ নয়!</string>
@@ -528,7 +528,7 @@
     <string name="booking_already_canceled">বুকিং ইতিমধ্যে বাতিল করা হয়েছে</string>
     <string name="booking_already_canceled_msg">আপনার রিজার্ভ সময় শেষ. আপনার পার্কিং বাতিল করা হয়েছে।</string>
     <string name="back">পেছনে</string>
-    <string name="parking_spot_id">স্পট নং: </string>
+    <string name="parking_spot_id">স্পট নংঃ </string>
     <string name="car_departure">গাড়ি ডিপার্চার</string>
     <string name="do_u_want_to_cancel_booking">আপনি কি বুকিং বাতিল করতে চান?</string>
     <string name="park_has_started">আপনার পার্ক শুরু হয়েছে</string>
@@ -539,14 +539,14 @@
     <string name="please_contact_our_support_team_for_your_queries">আপনার প্রয়োজনীয় প্রশ্নের জন্য যোগাযোগ করুন</string>
     <string name="sms">এসএমএস</string>
     <string name="others">অন্যান্য</string>
-    <string name="parking_reservation_id">রিজার্ভেসন নং: </string>
+    <string name="parking_reservation_id">রিজার্ভেসন নংঃ </string>
     <string name="arrival">অ্যারাইভাল</string>
     <string name="departuretxt">ডিপার্চার</string>
-    <string name="remaining_time">কতক্ষণ সময় বাকি আছে:</string>
-    <string name="booking_time">বুকিং সময়:</string>
-    <string name="departuretime">ডিপার্চার সময়:</string>
-    <string name="earlyparkingtime">কতক্ষণ আগে এসেছেন:</string>
-    <string name="exceedParktime">অতিরিক্ত কতক্ষণ থেকেছেন:</string>
+    <string name="remaining_time">কতক্ষণ সময় বাকি আছেঃ</string>
+    <string name="booking_time">বুকিং সময়ঃ</string>
+    <string name="departuretime">ডিপার্চার সময়ঃ</string>
+    <string name="earlyparkingtime">কতক্ষণ আগে এসেছেনঃ</string>
+    <string name="exceedParktime">অতিরিক্ত কতক্ষণ থেকেছেনঃ</string>
     <string name="completed">সম্পন্ন</string>
     <string name="canceled">বাতিল করা হয়েছে</string>
     <string name="rejected">প্রত্যাখ্যাত</string>
@@ -556,7 +556,7 @@
     <string name="booked_time">বুক করা সময়</string>
     <string name="park_duration_about_to_end">পার্কিং সময়কাল প্রায় শেষ</string>
     <string name="booked_parking">বুক করা পার্কিং</string>
-    <string name="booked_for">বুক করা হয়েছে : \n</string>
+    <string name="booked_for">বুক করা হয়েছেঃ \n</string>
     <string name="your_booked_parking_duration_has_ended">আপনার বুক করা পার্কিং সময়কাল শেষ হয়েছে</string>
     <string name="book_now">এখনই বুক করুন</string>
     <string name="reservation_closed_successfully">রিজার্ভেশন সফলতার সাথে শেষ হয়েছে</string>
@@ -581,7 +581,7 @@
     <string name="select_photo_from_gallery">গ্যালারি থেকে ছবি নির্বাচন করুন</string>
     <string name="capture_photo_from_camera">ক্যামেরা থেকে ছবি ক্যাপচার করুন</string>
     <string name="provide_valid_information">সঠিক তথ্য প্রদান করুন</string>
-    <string name="spot_no">স্পট নং : </string>
+    <string name="spot_no">স্পট নংঃ </string>
     <string name="km"> কি. মি.</string>
     <string name="mins"> মিনিট</string>
     <string name="coming_soon">শীঘ্রই আসছে</string>
@@ -597,7 +597,9 @@
     অনুগ্রহ করে আপনার যানবাহন প্রস্থান করুন অন্যথায় আপনার রিজার্ভেশন শেষ না হওয়া পর্যন্ত আপনি এই পেজ থেকে প্রস্থান করতে পারবেন না</string>
     <string name="confirm">নিশ্চিত করুন</string>
     <string name="free_slots">খালি স্লট</string>
-    <string name="out_of"> মধ্যে </string>
+    <string name="out_of"> সর্বমোট </string>
     <string name="image">image</string>
+    <string name="select_time">সময় নির্বাচন করুন</string>
+    <string name="please_do_not_select_past_time">অনুগ্রহ করে অতীতের সময় নির্ধারন করবেন না</string>
 </resources>
 
