@@ -235,9 +235,17 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
         mTimePicker = new TimePickerDialog(context, (timePicker, selectedHour, selectedMinute) -> {
             currentCalendar.set(Calendar.HOUR_OF_DAY, selectedHour);
             currentCalendar.set(Calendar.MINUTE, selectedMinute);
-            binding.tvArriveTime.setText(mTimeFormat.format(currentCalendar.getTime()));
-            arrivedDate = currentCalendar.getTime();
+            if (calendar.getTime().getTime() > currentCalendar.getTime().getTime()) {
+                mTimePicker.updateTime(Calendar.HOUR_OF_DAY, Calendar.MINUTE);
+                currentCalendar.set(Calendar.HOUR_OF_DAY, Calendar.HOUR_OF_DAY);
+                currentCalendar.set(Calendar.MINUTE, Calendar.MINUTE);
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.please_do_not_select_past_time));
+            } else {
+                binding.tvArriveTime.setText(mTimeFormat.format(currentCalendar.getTime()));
+                arrivedDate = currentCalendar.getTime();
+            }
         }, hour, minute, false); //Yes 24 hour time
+
         mTimePicker.setTitle(context.getResources().getString(R.string.select_time));
     }
 

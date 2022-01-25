@@ -22,6 +22,7 @@
             android:layout_height="@dimen/dim25"
             android:layout_gravity="center"
             android:layout_margin="@dimen/dim5"
+            android:visibility="gone"
             android:contentDescription="@string/image"
             android:src="@drawable/ic_time_clock" />
 
@@ -30,9 +31,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="start|center"
+            android:padding="4dp"
             android:text="@string/time"
             android:maxLines="2"
-            android:textColor="@color/black"
+            android:textColor="@color/gray"
             android:textSize="@dimen/dimTex16"
             android:textStyle="bold" />
 
