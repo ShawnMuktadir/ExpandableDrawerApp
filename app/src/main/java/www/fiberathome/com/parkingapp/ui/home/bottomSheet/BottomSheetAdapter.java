@@ -52,7 +52,8 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
     public TextBookingViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         context = parent.getContext();
         LayoutInflater layoutInflater = LayoutInflater.from(context);
-        BottomSheetTextRecyclerItemBinding itemBinding = BottomSheetTextRecyclerItemBinding.inflate(layoutInflater, parent, false);
+        BottomSheetTextRecyclerItemBinding itemBinding = BottomSheetTextRecyclerItemBinding.
+                inflate(layoutInflater, parent, false);
         return new TextBookingViewHolder(itemBinding);
     }
 
@@ -84,7 +85,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
             }
         }
 
-        int freeSpotCount = MathUtils.getInstance().convertToInt(bookingSensors.getCount()) - MathUtils.getInstance().convertToInt(bookingSensors.getOccupiedCount());
+        int freeSpotCount = MathUtils.getInstance().convertToInt(bookingSensors.getOccupiedCount());
 
         holder.binding.textViewParkingAreaOccupiedCount.setText(freeSpotCount > 0 ? MathUtils.getInstance().localeIntConverter(context, String.valueOf(freeSpotCount)) : MathUtils.getInstance().localeIntConverter(context, bookingSensors.getCount()));
 

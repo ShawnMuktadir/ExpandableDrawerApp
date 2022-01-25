@@ -954,13 +954,13 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         showLoading(context);
         homeViewModel.initSensorAreaStatus();
         homeViewModel.getSensorAreaStatusMutableLiveData().observe(context, sensorAreaStatusResponse -> {
+            if (!sensorStatusArrayList.isEmpty()) {
+                sensorStatusArrayList.clear();
+            }
             if (!sensorAreaStatusResponse.getError()) {
                 hideLoading();
                 if (sensorAreaStatusResponse.getSensorAreaStatusArrayList() != null) {
                     List<List<String>> sensorStatusList = sensorAreaStatusResponse.getSensorAreaStatusArrayList();
-                    if (!sensorStatusArrayList.isEmpty()) {
-                        sensorStatusArrayList.clear();
-                    }
                     if (sensorStatusList != null) {
                         for (List<String> baseStringList : sensorStatusList) {
                             for (int i = 0; i < baseStringList.size(); i++) {
