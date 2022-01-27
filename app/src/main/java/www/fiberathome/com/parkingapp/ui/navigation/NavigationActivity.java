@@ -427,6 +427,24 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
                 startActivity(PrivacyPolicyActivity.class);
                 break;
 
+            case R.id.nav_contact_us:
+                Intent contactUsIntent = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("http://smartparking.fiberathome.net/parkingapp/web/contact_us.php"));
+                startActivity(contactUsIntent);
+                break;
+
+            case R.id.nav_user_guide:
+                Intent userGuideIntent = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("http://smartparking.fiberathome.net/parkingapp/web/user_guide.php"));
+                startActivity(userGuideIntent);
+                break;
+
+            case R.id.nav_parallel_parking:
+                Intent parallelParkingIntent = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("https://www.youtube.com/watch?v=l4LcfZeS4qw&ab_channel=ParkingTutorial"));
+                startActivity(parallelParkingIntent);
+                break;
+
             case R.id.nav_share:
                 binding.navView.getMenu().getItem(0).setChecked(true);
                 shareApp();

@@ -604,5 +604,7 @@
     <string name="read_online_payment_policy">আমি ওয়েবসাইটের শর্তাবলী পড়েছি এবং তাতে  সম্মতি পোষণ করছি</string>
     <string name="contact_us">যোগাযোগ করুন</string>
     <string name="please_agrre_term_condition">অর্থপ্রদানের আগে কোম্পানির শর্তাবলীতে সম্মত হন</string>
+    <string name="user_guide">ব্যবহারকারীর নির্দেশিকা</string>
+    <string name="parallel_parking">সমান্তরাল পার্কিং</string>
 </resources>
 

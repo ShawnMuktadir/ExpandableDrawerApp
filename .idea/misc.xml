@@ -19,8 +19,12 @@
         <entry key="..\:/Users/TEMP-1/StudioProjects/ParkingApp/app/src/main/res/layout/fragment_schedule.xml" value="0.12273550724637682" />
         <entry key="..\:/Users/TEMP-1/StudioProjects/ParkingApp/app/src/main/res/layout/fragment_sign_up.xml" value="0.12635869565217392" />
         <entry key="app/src/main/res/drawable-anydpi/ic_scanner.xml" value="0.1865" />
+        <entry key="app/src/main/res/drawable-anydpi/ic_user_guide.xml" value="0.21458333333333332" />
+        <entry key="app/src/main/res/drawable-anydpi/ic_vehicle.xml" value="0.21458333333333332" />
         <entry key="app/src/main/res/drawable/border_shadow.xml" value="0.15104166666666666" />
         <entry key="app/src/main/res/drawable/button_shape.xml" value="0.14479166666666668" />
+        <entry key="app/src/main/res/drawable/ic_directions_car_white_48px.xml" value="0.21458333333333332" />
+        <entry key="app/src/main/res/drawable/ic_phone_msg_white.xml" value="0.21458333333333332" />
         <entry key="app/src/main/res/drawable/parking_textview_background.xml" value="0.15104166666666666" />
         <entry key="app/src/main/res/drawable/rect_white_bg_gray_border_rounded.xml" value="0.1875" />
         <entry key="app/src/main/res/drawable/white_border.xml" value="0.17552083333333332" />
@@ -84,7 +88,7 @@
         <entry key="app/src/main/res/layout/row_privacy_policy.xml" value="0.1793478260869565" />
         <entry key="app/src/main/res/layout/snackbar_internet.xml" value="0.13125" />
         <entry key="app/src/main/res/layout/voucher_dialog.xml" value="0.25" />
-        <entry key="app/src/main/res/menu/drawer_menu.xml" value="0.20364583333333333" />
+        <entry key="app/src/main/res/menu/drawer_menu.xml" value="0.33" />
         <entry key="app/src/main/res/menu/menu_main.xml" value="0.13125" />
       </map>
     </option>

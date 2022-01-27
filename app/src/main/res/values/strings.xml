@@ -601,4 +601,6 @@
     <string name="read_online_payment_policy">I have read and agree to the website terms and condition</string>
     <string name="contact_us">Contact Us</string>
     <string name="please_agrre_term_condition">Please agree to the company terms and condition before payment</string>
+    <string name="user_guide">User Guide</string>
+    <string name="parallel_parking">Parallel Parking</string>
 </resources>

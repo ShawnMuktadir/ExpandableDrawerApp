@@ -90,7 +90,7 @@
                 android:layout_height="@dimen/dim25"
                 android:layout_gravity="center"
                 android:layout_marginEnd="@dimen/dim10"
-                app:srcCompat="@drawable/ic_directions_car_white_48px"
+                app:srcCompat="@drawable/ic_car"
                 app:tint="@color/black" />
 
             <TextView
