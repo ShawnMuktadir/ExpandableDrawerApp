@@ -77,7 +77,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginTop="@dimen/dim2"
-                android:background="#978080"
+                android:background="@color/light_gray"
                 android:padding="@dimen/dim5" />
 
             <RelativeLayout
@@ -153,9 +153,9 @@
             <View
                 android:id="@+id/border2"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="2dp"
-                android:background="#978080" />
+                android:layout_height="@dimen/dim1"
+                android:layout_marginTop="@dimen/dim2"
+                android:background="@color/light_gray" />
 
             <TextView
                 android:id="@+id/tvPromo"
@@ -275,7 +275,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginTop="2dp"
-                android:background="#9C9696" />
+                android:background="@color/light_gray" />
 
             <TextView
                 android:id="@+id/disclaimerTxt"
@@ -291,24 +291,28 @@
                 android:visibility="gone" />
 
             <LinearLayout
-                android:id="@+id/termConWrapLayout"
+                android:id="@+id/linearLayoutBookNow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/dim2"
-                android:orientation="vertical"
-                android:padding="@dimen/dim5">
+                android:layout_marginBottom="@dimen/dim5"
+                android:orientation="horizontal">
+
+                <CheckBox
+                    android:id="@+id/cbPaymentCheck"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dim5" />
 
                 <TextView
-                    android:id="@+id/tvTermCondition"
-                    android:layout_width="100dp"
+                    android:id="@+id/tvAgreeTermCondition"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:background="@drawable/border_style"
-                    android:gravity="center"
-                    android:text="@string/t_amp_c"
+                    android:layout_marginStart="@dimen/dim5"
+                    android:padding="@dimen/dim5"
+                    android:text="@string/read_online_payment_policy"
+                    android:textColor="@color/black"
                     android:textSize="@dimen/dimTex14"
-                    android:textStyle="bold" />
-
+                    android:textStyle="normal" />
 
             </LinearLayout>
 

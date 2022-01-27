@@ -130,7 +130,6 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
             ss.setSpan(span, 21, ss.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         } else {
             ss.setSpan(span, 17, ss.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
         }
         binding.tvForgetPassword.setText(ss);
         binding.tvForgetPassword.setMovementMethod(LinkMovementMethod.getInstance());

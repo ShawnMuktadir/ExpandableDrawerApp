@@ -3,7 +3,12 @@ package www.fiberathome.com.parkingapp.ui.reservation.payment;
 import static www.fiberathome.com.parkingapp.data.model.data.Constants.LANGUAGE_BN;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +47,7 @@ import www.fiberathome.com.parkingapp.databinding.FragmentPaymentBinding;
 import www.fiberathome.com.parkingapp.listener.FragmentChangeListener;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeFragment;
+import www.fiberathome.com.parkingapp.ui.navigation.privacyPolicy.PrivacyPolicyActivity;
 import www.fiberathome.com.parkingapp.ui.reservation.ReservationActivity;
 import www.fiberathome.com.parkingapp.ui.reservation.ReservationParkFragment;
 import www.fiberathome.com.parkingapp.ui.reservation.ReservationViewModel;
@@ -69,6 +75,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
 
     FragmentPaymentBinding binding;
     private static String netBill;
+    private boolean isTermsConditionClicked = false;
 
     public PaymentFragment() {
         // Required empty public constructor
@@ -124,7 +131,6 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
             reservationViewModel = new ViewModelProvider(this).get(ReservationViewModel.class);
             setListeners();
             setData();
-            //netBill = setBill();
         }
     }
 
@@ -171,6 +177,10 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
     }
 
     private void setListeners() {
+        binding.cbPaymentCheck.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            isTermsConditionClicked = isChecked;
+        });
+
         binding.ivBackArrow.setOnClickListener(v -> {
             ScheduleFragment scheduleFragment = ScheduleFragment.newInstance(placeId, areaName,
                     parkingSlotCount, lat, lon, isInArea);
@@ -179,97 +189,102 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
 
         binding.tvPromo.setOnClickListener(v -> ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.coming_soon)));
 
-        binding.tvTermCondition.setOnClickListener(v -> ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.coming_soon)));
-
         binding.btnPay.setOnClickListener(v -> {
-            if (ConnectivityUtils.getInstance().checkInternet(context)) {
-                long diff = arrivedDate.getTime() - departureDate.getTime();
-                long seconds = diff / 1000;
-                long minutes = seconds / 60;
-                long hours = minutes / 60;
-                long days = hours / 24;
-                Timber.e("days -> %s", days);
-                Timber.e("hours -> %s", hours);
-                Timber.e("minutes -> %s", minutes);
-                if (minutes > 120) {
-                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.booking_time_rules));
-                } else {
-                    if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
-                        if (!Preferences.getInstance(context).getBooked().getIsBooked()
-                                && Preferences.getInstance(context).getBooked().getBill() == Math.round(Float.parseFloat(netBill))
-                                && Preferences.getInstance(context).getBooked().isPaid()) {
-                            storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
-                                    ApplicationUtils.getDate(Preferences.getInstance(context).getBooked().getArriveDate()),
-                                    ApplicationUtils.getDate(Preferences.getInstance(context).getBooked().getDepartedDate()),
-                                    Preferences.getInstance(context).getBooked().getPlaceId());
-                        } else {
-                            try {
-                                sslPayment(Double.parseDouble(netBill));
-                            } catch (Exception e) {
-                                Timber.e(e.getCause());
-                            }
-                        }
-                    }
-                }
-            } else {
-                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
-            }
-        });
-
-        binding.btnScratchCard.setOnClickListener(v1 -> {
-            try {
-                BottomSheetDialogScratchCardBinding dialogScratchCardBinding = BottomSheetDialogScratchCardBinding.inflate(getLayoutInflater());
-                BottomSheetDialog dialog = new BottomSheetDialog(context);
-                dialog.setContentView(dialogScratchCardBinding.getRoot());
-                try {
-                    Objects.requireNonNull(dialog.getWindow()).setSoftInputMode(
-                            WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-                } catch (NullPointerException e) {
-                    e.getCause();
-                }
-                dialog.show();
-
-                dialogScratchCardBinding.buttonSubmit.setOnClickListener(v -> {
-                    if (ConnectivityUtils.getInstance().checkInternet(context)) {
-                        long diff = arrivedDate.getTime() - departureDate.getTime();
-                        long seconds = diff / 1000;
-                        long minutes = seconds / 60;
-                        long hours = minutes / 60;
-                        long days = hours / 24;
-                        Timber.e("days -> %s", days);
-                        Timber.e("hours -> %s", hours);
-                        Timber.e("minutes -> %s", minutes);
-                        if (minutes > 120) {
-                            ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.booking_time_rules));
-                        } else {
-                            if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
-                                BookedPlace mBookedPlace = new BookedPlace();
-                                mBookedPlace.setBill((float) setBill());
-                                mBookedPlace.setLat(lat);
-                                mBookedPlace.setLon(lon);
-                                mBookedPlace.setAreaName(areaName);
-                                mBookedPlace.setParkingSlotCount(parkingSlotCount);
-                                mBookedPlace.setDepartedDate(departureDate.getTime());
-                                mBookedPlace.setArriveDate(arrivedDate.getTime());
-                                mBookedPlace.setPlaceId(placeId);
-                                mBookedPlace.setPaid(true);
-                                Preferences.getInstance(context).setBooked(mBookedPlace);
+            if (isTermsConditionClicked) {
+                if (ConnectivityUtils.getInstance().checkInternet(context)) {
+                    long diff = arrivedDate.getTime() - departureDate.getTime();
+                    long seconds = diff / 1000;
+                    long minutes = seconds / 60;
+                    long hours = minutes / 60;
+                    long days = hours / 24;
+                    Timber.e("days -> %s", days);
+                    Timber.e("hours -> %s", hours);
+                    Timber.e("minutes -> %s", minutes);
+                    if (minutes > 120) {
+                        ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.booking_time_rules));
+                    } else {
+                        if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
+                            if (!Preferences.getInstance(context).getBooked().getIsBooked()
+                                    && Preferences.getInstance(context).getBooked().getBill() == Math.round(Float.parseFloat(netBill))
+                                    && Preferences.getInstance(context).getBooked().isPaid()) {
                                 storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
                                         ApplicationUtils.getDate(Preferences.getInstance(context).getBooked().getArriveDate()),
                                         ApplicationUtils.getDate(Preferences.getInstance(context).getBooked().getDepartedDate()),
                                         Preferences.getInstance(context).getBooked().getPlaceId());
-                                dialog.dismiss();
+                            } else {
+                                try {
+                                    sslPayment(Double.parseDouble(netBill));
+                                } catch (Exception e) {
+                                    Timber.e(e.getCause());
+                                }
                             }
                         }
                     }
-                });
-
-                dialogScratchCardBinding.buttonCancel.setOnClickListener(v -> dialog.dismiss());
-            } catch (Exception e) {
-                // generic exception handling
-                e.printStackTrace();
+                } else {
+                    ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
+                }
+            } else {
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.please_agrre_term_condition));
             }
+        });
 
+        binding.btnScratchCard.setOnClickListener(v1 -> {
+            if (isTermsConditionClicked) {
+                try {
+                    BottomSheetDialogScratchCardBinding dialogScratchCardBinding = BottomSheetDialogScratchCardBinding.inflate(getLayoutInflater());
+                    BottomSheetDialog dialog = new BottomSheetDialog(context);
+                    dialog.setContentView(dialogScratchCardBinding.getRoot());
+                    try {
+                        Objects.requireNonNull(dialog.getWindow()).setSoftInputMode(
+                                WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+                    } catch (NullPointerException e) {
+                        e.getCause();
+                    }
+                    dialog.show();
+
+                    dialogScratchCardBinding.buttonSubmit.setOnClickListener(v -> {
+                        if (ConnectivityUtils.getInstance().checkInternet(context)) {
+                            long diff = arrivedDate.getTime() - departureDate.getTime();
+                            long seconds = diff / 1000;
+                            long minutes = seconds / 60;
+                            long hours = minutes / 60;
+                            long days = hours / 24;
+                            Timber.e("days -> %s", days);
+                            Timber.e("hours -> %s", hours);
+                            Timber.e("minutes -> %s", minutes);
+                            if (minutes > 120) {
+                                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.booking_time_rules));
+                            } else {
+                                if (ConnectivityUtils.getInstance().isGPSEnabled(context) && ConnectivityUtils.getInstance().checkInternet(context)) {
+                                    BookedPlace mBookedPlace = new BookedPlace();
+                                    mBookedPlace.setBill((float) setBill());
+                                    mBookedPlace.setLat(lat);
+                                    mBookedPlace.setLon(lon);
+                                    mBookedPlace.setAreaName(areaName);
+                                    mBookedPlace.setParkingSlotCount(parkingSlotCount);
+                                    mBookedPlace.setDepartedDate(departureDate.getTime());
+                                    mBookedPlace.setArriveDate(arrivedDate.getTime());
+                                    mBookedPlace.setPlaceId(placeId);
+                                    mBookedPlace.setPaid(true);
+                                    Preferences.getInstance(context).setBooked(mBookedPlace);
+                                    storeReservation(Preferences.getInstance(context).getUser().getMobileNo(),
+                                            ApplicationUtils.getDate(Preferences.getInstance(context).getBooked().getArriveDate()),
+                                            ApplicationUtils.getDate(Preferences.getInstance(context).getBooked().getDepartedDate()),
+                                            Preferences.getInstance(context).getBooked().getPlaceId());
+                                    dialog.dismiss();
+                                }
+                            }
+                        }
+                    });
+
+                    dialogScratchCardBinding.buttonCancel.setOnClickListener(v -> dialog.dismiss());
+                } catch (Exception e) {
+                    // generic exception handling
+                    e.printStackTrace();
+                }
+            } else {
+                ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.please_agrre_term_condition));
+            }
         });
     }
 
@@ -331,6 +346,27 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
 
     @SuppressLint("SetTextI18n")
     private void setData() {
+        //makes an underline on for Registration Click Here
+        SpannableString spannableString = new SpannableString(context.getResources().getString(R.string.read_online_payment_policy));
+        ClickableSpan clickableSpan = new ClickableSpan() {
+            @Override
+            public void onClick(@NonNull View textView) {
+                // start PrivacyPolicyActivity
+                startActivity(new Intent(context, PrivacyPolicyActivity.class));
+            }
+        };
+
+        int s1 = spannableString.toString().codePointAt(0);
+        if (s1 >= 0x0980 && s1 <= 0x09E0) {
+            spannableString.setSpan(clickableSpan, 16, 25, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            binding.tvAgreeTermCondition.setText(spannableString);
+            binding.tvAgreeTermCondition.setMovementMethod(LinkMovementMethod.getInstance());
+        } else {
+            spannableString.setSpan(clickableSpan, 37, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            binding.tvAgreeTermCondition.setText(spannableString);
+            binding.tvAgreeTermCondition.setMovementMethod(LinkMovementMethod.getInstance());
+        }
+
         if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
             binding.tvArrivedTime.setText(TextUtils.getInstance().convertTextEnToBn(arrivedTime));
         } else {
@@ -391,7 +427,6 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
 
     @SuppressLint("SetTextI18n")
     private double setBill() {
-
         return Double.parseDouble(netBill);
     }
 
