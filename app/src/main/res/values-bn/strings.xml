@@ -601,7 +601,7 @@
     <string name="image">image</string>
     <string name="select_time">সময় নির্বাচন করুন</string>
     <string name="please_do_not_select_past_time">অনুগ্রহ করে অতীতের সময় নির্ধারন করবেন না</string>
-    <string name="read_online_payment_policy">আমি ওয়েবসাইটের শর্তাবলী পড়েছি এবং তাতে  সম্মতি পোষণ করছি</string>
+    <string name="read_online_payment_policy">আমি বিধি - নিষেধ এবং শর্তাবলী, গোপনীয়তা নীতি এবং রিটার্ন পলিসিতে সম্মত</string>
     <string name="contact_us">যোগাযোগ করুন</string>
     <string name="please_agrre_term_condition">অর্থপ্রদানের আগে কোম্পানির শর্তাবলীতে সম্মত হন</string>
     <string name="user_guide">ব্যবহারকারীর নির্দেশিকা</string>

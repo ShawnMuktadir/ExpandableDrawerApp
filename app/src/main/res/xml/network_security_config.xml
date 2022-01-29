@@ -3,6 +3,14 @@
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">163.47.157.198</domain>
         <domain includeSubdomains="true">192.168.41.21</domain>
-        <!--        <domain includeSubdomains="true">163.47.157.195</domain>-->
+        <domain includeSubdomains="true">
+            http://smartparking.fiberathome.net/parkingapp/web/terms_and_condition.php
+        </domain>
+        <domain includeSubdomains="true">
+            http://smartparking.fiberathome.net/parkingapp/web/user_guide.php
+        </domain>
+        <domain includeSubdomains="true">
+            http://smartparking.fiberathome.net/parkingapp/web/return_policy.php
+        </domain>
     </domain-config>
 </network-security-config>

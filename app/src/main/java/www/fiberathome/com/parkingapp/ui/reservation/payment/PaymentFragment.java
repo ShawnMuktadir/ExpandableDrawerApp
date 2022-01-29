@@ -4,9 +4,10 @@ import static www.fiberathome.com.parkingapp.data.model.data.Constants.LANGUAGE_
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.text.SpannableString;
-import android.text.Spanned;
+import android.text.SpannableStringBuilder;
+import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import android.view.WindowManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -28,6 +30,8 @@ import com.sslwireless.sslcommerzlibrary.model.util.SSLCCurrencyType;
 import com.sslwireless.sslcommerzlibrary.model.util.SSLCSdkType;
 import com.sslwireless.sslcommerzlibrary.view.singleton.IntegrateSSLCommerz;
 import com.sslwireless.sslcommerzlibrary.viewmodel.listener.SSLCTransactionResponseListener;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Date;
 import java.util.Objects;
@@ -60,6 +64,7 @@ import www.fiberathome.com.parkingapp.utils.IOnBackPressListener;
 import www.fiberathome.com.parkingapp.utils.TextUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
+@SuppressLint("SetTextI18n")
 public class PaymentFragment extends BaseFragment implements IOnBackPressListener {
 
     static Date arrivedDate, departureDate;
@@ -129,8 +134,8 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
         super.onViewCreated(view, savedInstanceState);
         if (isAdded()) {
             reservationViewModel = new ViewModelProvider(this).get(ReservationViewModel.class);
-            setListeners();
             setData();
+            setListeners();
         }
     }
 
@@ -174,6 +179,89 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
     @Override
     public void onDestroy() {
         super.onDestroy();
+    }
+
+    private void setData() {
+
+        binding.tvAgreeTermCondition.setMovementMethod(LinkMovementMethod.getInstance());
+        binding.tvAgreeTermCondition.setText(addMultipleClickablePart(context.getResources().getString(R.string.read_online_payment_policy)));
+
+        /*//makes an underline on for Registration Click Here
+        SpannableString spannableString = new SpannableString(context.getResources().getString(R.string.read_online_payment_policy));
+        ClickableSpan clickableSpan = new ClickableSpan() {
+            @Override
+            public void onClick(@NonNull View textView) {
+                // start PrivacyPolicyActivity
+                startActivity(new Intent(context, PrivacyPolicyActivity.class));
+            }
+        };
+
+        int s1 = spannableString.toString().codePointAt(0);
+        if (s1 >= 0x0980 && s1 <= 0x09E0) {
+            spannableString.setSpan(clickableSpan, 16, 25, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            binding.tvAgreeTermCondition.setText(spannableString);
+            binding.tvAgreeTermCondition.setMovementMethod(LinkMovementMethod.getInstance());
+        } else {
+            spannableString.setSpan(clickableSpan, 37, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            binding.tvAgreeTermCondition.setText(spannableString);
+            binding.tvAgreeTermCondition.setMovementMethod(LinkMovementMethod.getInstance());
+        }*/
+
+        if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
+            binding.tvArrivedTime.setText(TextUtils.getInstance().convertTextEnToBn(arrivedTime));
+        } else {
+            binding.tvArrivedTime.setText(arrivedTime);
+        }
+
+        if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
+            binding.tvDepartureTime.setText(TextUtils.getInstance().convertTextEnToBn(departureTime));
+        } else {
+            binding.tvDepartureTime.setText(departureTime);
+        }
+
+        if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
+            binding.tvDifferenceTime.setText(String.format("%s " + context.getResources().getString(R.string.hr), TextUtils.getInstance().convertTextEnToBn(timeDifference)));
+        } else {
+            binding.tvDifferenceTime.setText(String.format("%s " + context.getResources().getString(R.string.hr), timeDifference));
+        }
+
+        if (!LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
+            binding.tvParkingSlotName.setText(areaName);
+        } else {
+            if (areaNameBangla != null) {
+                binding.tvParkingSlotName.setText(areaNameBangla);
+            } else {
+                binding.tvParkingSlotName.setText(areaName);
+            }
+        }
+
+        if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
+            binding.tvDiscount.setText(context.getResources().getString(R.string.bdt) + "  " + TextUtils.getInstance().convertTextEnToBn(context.getResources().getString(R.string.digit_00_00)));
+        } else {
+            binding.tvDiscount.setText(context.getResources().getString(R.string.bdt) + "  " + context.getResources().getString(R.string.digit_00_00));
+        }
+
+        if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
+
+            binding.tvSubTotal.setText(context.getResources().getString(R.string.bdt) + "  " + TextUtils.getInstance().convertTextEnToBn(netBill));
+
+            binding.tvTotal.setText(context.getResources().getString(R.string.bdt) + "  " + TextUtils.getInstance().convertTextEnToBn(netBill));
+
+            binding.tvEachHourBill.setText(context.getResources().getString(R.string.bdt) + "  " + TextUtils.getInstance().convertTextEnToBn(context.getResources().getString(R.string.bdt_hour_charge)));
+        } else {
+            binding.tvEachHourBill.setText(context.getResources().getString(R.string.bdt) + "  " + context.getResources().getString(R.string.bdt_hour_charge));
+
+            binding.tvSubTotal.setText(context.getResources().getString(R.string.bdt) + "  " + netBill);
+
+            binding.tvTotal.setText(context.getResources().getString(R.string.bdt) + "  " + netBill);
+
+        }
+
+        if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
+            binding.btnPay.setText(String.format("%s %s  %s", context.getResources().getString(R.string.money_sign), TextUtils.getInstance().convertTextEnToBn(netBill), context.getResources().getString(R.string.pay_bdt)));
+        } else {
+            binding.btnPay.setText(String.format("%s  %s", context.getResources().getString(R.string.pay_bdt), netBill));
+        }
     }
 
     private void setListeners() {
@@ -344,88 +432,6 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                 });
     }
 
-    @SuppressLint("SetTextI18n")
-    private void setData() {
-        //makes an underline on for Registration Click Here
-        SpannableString spannableString = new SpannableString(context.getResources().getString(R.string.read_online_payment_policy));
-        ClickableSpan clickableSpan = new ClickableSpan() {
-            @Override
-            public void onClick(@NonNull View textView) {
-                // start PrivacyPolicyActivity
-                startActivity(new Intent(context, PrivacyPolicyActivity.class));
-            }
-        };
-
-        int s1 = spannableString.toString().codePointAt(0);
-        if (s1 >= 0x0980 && s1 <= 0x09E0) {
-            spannableString.setSpan(clickableSpan, 16, 25, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            binding.tvAgreeTermCondition.setText(spannableString);
-            binding.tvAgreeTermCondition.setMovementMethod(LinkMovementMethod.getInstance());
-        } else {
-            spannableString.setSpan(clickableSpan, 37, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            binding.tvAgreeTermCondition.setText(spannableString);
-            binding.tvAgreeTermCondition.setMovementMethod(LinkMovementMethod.getInstance());
-        }
-
-        if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
-            binding.tvArrivedTime.setText(TextUtils.getInstance().convertTextEnToBn(arrivedTime));
-        } else {
-            binding.tvArrivedTime.setText(arrivedTime);
-        }
-
-        if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
-            binding.tvDepartureTime.setText(TextUtils.getInstance().convertTextEnToBn(departureTime));
-        } else {
-            binding.tvDepartureTime.setText(departureTime);
-        }
-
-        if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
-            binding.tvDifferenceTime.setText(String.format("%s " + context.getResources().getString(R.string.hr), TextUtils.getInstance().convertTextEnToBn(timeDifference)));
-        } else {
-            binding.tvDifferenceTime.setText(String.format("%s " + context.getResources().getString(R.string.hr), timeDifference));
-        }
-
-        if (!LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
-            binding.tvParkingSlotName.setText(areaName);
-        } else {
-            if (areaNameBangla != null) {
-                binding.tvParkingSlotName.setText(areaNameBangla);
-            } else {
-                binding.tvParkingSlotName.setText(areaName);
-            }
-        }
-
-        if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
-            binding.tvDiscount.setText(context.getResources().getString(R.string.bdt) + "  " + TextUtils.getInstance().convertTextEnToBn(context.getResources().getString(R.string.digit_00_00)));
-        } else {
-            binding.tvDiscount.setText(context.getResources().getString(R.string.bdt) + "  " + context.getResources().getString(R.string.digit_00_00));
-        }
-
-        if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
-
-            binding.tvSubTotal.setText(context.getResources().getString(R.string.bdt) + "  " + TextUtils.getInstance().convertTextEnToBn(netBill));
-
-            binding.tvTotal.setText(context.getResources().getString(R.string.bdt) + "  " + TextUtils.getInstance().convertTextEnToBn(netBill));
-
-            binding.tvEachHourBill.setText(context.getResources().getString(R.string.bdt) + "  " + TextUtils.getInstance().convertTextEnToBn(context.getResources().getString(R.string.bdt_hour_charge)));
-        } else {
-            binding.tvEachHourBill.setText(context.getResources().getString(R.string.bdt) + "  " + context.getResources().getString(R.string.bdt_hour_charge));
-
-            binding.tvSubTotal.setText(context.getResources().getString(R.string.bdt) + "  " + netBill);
-
-            binding.tvTotal.setText(context.getResources().getString(R.string.bdt) + "  " + netBill);
-
-        }
-
-        if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
-            binding.btnPay.setText(String.format("%s %s  %s", context.getResources().getString(R.string.money_sign), TextUtils.getInstance().convertTextEnToBn(netBill), context.getResources().getString(R.string.pay_bdt)));
-        } else {
-            binding.btnPay.setText(String.format("%s  %s", context.getResources().getString(R.string.pay_bdt), netBill));
-        }
-
-    }
-
-    @SuppressLint("SetTextI18n")
     private double setBill() {
         return Double.parseDouble(netBill);
     }
@@ -498,5 +504,126 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                 listener.fragmentChange(ReservationParkFragment.newInstance(sensors));
             }
         });
+    }
+
+    private SpannableStringBuilder addMultipleClickablePart(String str) {
+        SpannableStringBuilder ssb = new SpannableStringBuilder(str);
+        int s1 = ssb.toString().codePointAt(0);
+        /*if (s1 >= 0x0980 && s1 <= 0x09E0) {
+            ssb.setSpan(clickableSpan, 16, 25, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            binding.tvAgreeTermCondition.setText(spannableString);
+            binding.tvAgreeTermCondition.setMovementMethod(LinkMovementMethod.getInstance());
+        } else {
+            spannableString.setSpan(clickableSpan, 37, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            binding.tvAgreeTermCondition.setText(spannableString);
+            binding.tvAgreeTermCondition.setMovementMethod(LinkMovementMethod.getInstance());
+        }*/
+
+        if (s1 >= 0x0980 && s1 <= 0x09E0) {
+            ssb.setSpan(new ClickableSpan() {
+
+                @Override
+                public void onClick(@NotNull View widget) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("http://smartparking.fiberathome.net/parkingapp/web/terms_and_condition.php"));
+                    startActivity(intent);
+                }
+
+                @Override
+                public void updateDrawState(@NotNull TextPaint ds) {
+                    super.updateDrawState(ds);
+                    int linkColor = ContextCompat.getColor(context, R.color.light_blue);
+                    ds.setColor(linkColor);
+                    ds.setUnderlineText(false);
+                }
+            }, 5, 28, 0);
+        } else {
+            ssb.setSpan(new ClickableSpan() {
+
+                @Override
+                public void onClick(@NotNull View widget) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("http://smartparking.fiberathome.net/parkingapp/web/terms_and_condition.php"));
+                    startActivity(intent);
+                }
+
+                @Override
+                public void updateDrawState(@NotNull TextPaint ds) {
+                    super.updateDrawState(ds);
+                    int linkColor = ContextCompat.getColor(context, R.color.light_blue);
+                    ds.setColor(linkColor);
+                    ds.setUnderlineText(false);
+                }
+            }, 14, 18, 0);
+        }
+
+        if (s1 >= 0x0980 && s1 <= 0x09E0) {
+            ssb.setSpan(new ClickableSpan() {
+                @Override
+                public void onClick(@NotNull View widget) {
+                    context.startActivity(new Intent(context, PrivacyPolicyActivity.class));
+                }
+
+                @Override
+                public void updateDrawState(@NotNull TextPaint ds) {
+                    super.updateDrawState(ds);
+                    int linkColor = ContextCompat.getColor(context, R.color.light_blue);
+                    ds.setColor(linkColor);
+                    ds.setUnderlineText(false);
+                }
+            }, 30, 44, 0);
+        } else {
+            ssb.setSpan(new ClickableSpan() {
+                @Override
+                public void onClick(@NotNull View widget) {
+                    context.startActivity(new Intent(context, PrivacyPolicyActivity.class));
+                }
+
+                @Override
+                public void updateDrawState(@NotNull TextPaint ds) {
+                    super.updateDrawState(ds);
+                    int linkColor = ContextCompat.getColor(context, R.color.light_blue);
+                    ds.setColor(linkColor);
+                    ds.setUnderlineText(false);
+                }
+            }, 18, 34, 0);
+        }
+
+        if (s1 >= 0x0980 && s1 <= 0x09E0) {
+            ssb.setSpan(new ClickableSpan() {
+                @Override
+                public void onClick(@NotNull View widget) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("http://smartparking.fiberathome.net/parkingapp/web/return_policy.php"));
+                    startActivity(intent);
+                }
+
+                @Override
+                public void updateDrawState(@NotNull TextPaint ds) {
+                    super.updateDrawState(ds);
+                    int linkColor = ContextCompat.getColor(context, R.color.light_blue);
+                    ds.setColor(linkColor);
+                    ds.setUnderlineText(false);
+                }
+            }, 49, 64, 0);
+        } else {
+            ssb.setSpan(new ClickableSpan() {
+                @Override
+                public void onClick(@NotNull View widget) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("http://smartparking.fiberathome.net/parkingapp/web/return_policy.php"));
+                    startActivity(intent);
+                }
+
+                @Override
+                public void updateDrawState(@NotNull TextPaint ds) {
+                    super.updateDrawState(ds);
+                    int linkColor = ContextCompat.getColor(context, R.color.light_blue);
+                    ds.setColor(linkColor);
+                    ds.setUnderlineText(false);
+                }
+            }, 39, ssb.length(), 0);
+        }
+        return ssb;
     }
 }

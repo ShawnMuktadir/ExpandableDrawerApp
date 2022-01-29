@@ -2,29 +2,26 @@ package www.fiberathome.com.parkingapp.ui.navigation.privacyPolicy.termsConditio
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Toast;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.databinding.ActivityTermsConditionsBinding;
 import www.fiberathome.com.parkingapp.utils.ConnectivityUtils;
 import www.fiberathome.com.parkingapp.utils.DialogUtils;
 import www.fiberathome.com.parkingapp.utils.ToastUtils;
 
 @SuppressLint("NonConstantResourceId")
-public class TermsConditionsActivity extends AppCompatActivity {
+public class TermsConditionsActivity extends BaseActivity {
 
     protected ActivityTermsConditionsBinding binding;
     private ProgressDialog progressDialog;
-    protected Context context;
+    protected BaseActivity context;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -33,7 +30,7 @@ public class TermsConditionsActivity extends AppCompatActivity {
         binding = ActivityTermsConditionsBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
-        context = this;
+        context = (BaseActivity) this;
 
         progressDialog = DialogUtils.getInstance().progressDialog(context, context.getResources().getString(R.string.please_wait));
 
@@ -57,8 +54,7 @@ public class TermsConditionsActivity extends AppCompatActivity {
                     if (progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
-                    Toast.makeText(TermsConditionsActivity.this, "Error:" + description, Toast.LENGTH_SHORT).show();
-
+                    ToastUtils.getInstance().showToastMessage(context, "Error: " + description);
                 }
             });
             binding.webView.getSettings().setJavaScriptEnabled(true);
@@ -69,7 +65,7 @@ public class TermsConditionsActivity extends AppCompatActivity {
             binding.webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
             binding.webView.setScrollbarFadingEnabled(false);
             binding.webView.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
-            binding.webView.loadUrl("https://docs.google.com/document/d/e/2PACX-1vQ5ikmuSBW8iYYSUXutxZkPGEZ_HhFlxxWKC5m0v9MpPvezmBvyb4WLZjSuuJnXl6xs6f7gc7UwQ223/pub");
+            binding.webView.loadUrl("http://smartparking.fiberathome.net/parkingapp/web/terms_and_condition.php");
         } else {
             ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_internet));
         }
