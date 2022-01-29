@@ -352,6 +352,16 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <ImageView
+                android:id="@+id/circleImageView2"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dim200"
+                android:layout_gravity="center"
+                android:scaleType="fitCenter"
+                android:focusable="true"
+                android:src="@drawable/ic_ssl"
+                android:contentDescription="@string/app_name" />
+
         </LinearLayout>
     </LinearLayout>
 

@@ -186,27 +186,6 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
         binding.tvAgreeTermCondition.setMovementMethod(LinkMovementMethod.getInstance());
         binding.tvAgreeTermCondition.setText(addMultipleClickablePart(context.getResources().getString(R.string.read_online_payment_policy)));
 
-        /*//makes an underline on for Registration Click Here
-        SpannableString spannableString = new SpannableString(context.getResources().getString(R.string.read_online_payment_policy));
-        ClickableSpan clickableSpan = new ClickableSpan() {
-            @Override
-            public void onClick(@NonNull View textView) {
-                // start PrivacyPolicyActivity
-                startActivity(new Intent(context, PrivacyPolicyActivity.class));
-            }
-        };
-
-        int s1 = spannableString.toString().codePointAt(0);
-        if (s1 >= 0x0980 && s1 <= 0x09E0) {
-            spannableString.setSpan(clickableSpan, 16, 25, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            binding.tvAgreeTermCondition.setText(spannableString);
-            binding.tvAgreeTermCondition.setMovementMethod(LinkMovementMethod.getInstance());
-        } else {
-            spannableString.setSpan(clickableSpan, 37, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            binding.tvAgreeTermCondition.setText(spannableString);
-            binding.tvAgreeTermCondition.setMovementMethod(LinkMovementMethod.getInstance());
-        }*/
-
         if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase("bn")) {
             binding.tvArrivedTime.setText(TextUtils.getInstance().convertTextEnToBn(arrivedTime));
         } else {
@@ -508,17 +487,8 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
 
     private SpannableStringBuilder addMultipleClickablePart(String str) {
         SpannableStringBuilder ssb = new SpannableStringBuilder(str);
-        int s1 = ssb.toString().codePointAt(0);
-        /*if (s1 >= 0x0980 && s1 <= 0x09E0) {
-            ssb.setSpan(clickableSpan, 16, 25, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            binding.tvAgreeTermCondition.setText(spannableString);
-            binding.tvAgreeTermCondition.setMovementMethod(LinkMovementMethod.getInstance());
-        } else {
-            spannableString.setSpan(clickableSpan, 37, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            binding.tvAgreeTermCondition.setText(spannableString);
-            binding.tvAgreeTermCondition.setMovementMethod(LinkMovementMethod.getInstance());
-        }*/
 
+        int s1 = ssb.toString().codePointAt(0);
         if (s1 >= 0x0980 && s1 <= 0x09E0) {
             ssb.setSpan(new ClickableSpan() {
 
@@ -536,7 +506,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                     ds.setColor(linkColor);
                     ds.setUnderlineText(false);
                 }
-            }, 5, 28, 0);
+            }, 4, 29, 0);
         } else {
             ssb.setSpan(new ClickableSpan() {
 
@@ -571,7 +541,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                     ds.setColor(linkColor);
                     ds.setUnderlineText(false);
                 }
-            }, 30, 44, 0);
+            }, 30, 46, 0);
         } else {
             ssb.setSpan(new ClickableSpan() {
                 @Override
@@ -586,7 +556,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                     ds.setColor(linkColor);
                     ds.setUnderlineText(false);
                 }
-            }, 18, 34, 0);
+            }, 20, 34, 0);
         }
 
         if (s1 >= 0x0980 && s1 <= 0x09E0) {
@@ -605,7 +575,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                     ds.setColor(linkColor);
                     ds.setUnderlineText(false);
                 }
-            }, 49, 64, 0);
+            }, 49, 66, 0);
         } else {
             ssb.setSpan(new ClickableSpan() {
                 @Override

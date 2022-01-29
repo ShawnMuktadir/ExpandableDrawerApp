@@ -56,25 +56,24 @@ import www.fiberathome.com.parkingapp.utils.ToastUtils;
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class ScheduleFragment extends BaseFragment implements IOnBackPressListener {
 
+    private static boolean isInArea = false;
     public static String areaPlaceId = "";
     public static String areaName, areaNameBangla;
     public static String areaCount;
     public long arrived, departure, difference;
 
-    private Date arrivedDate;
-    protected Date departedDate;
+    private Date arrivedDate, departedDate;
 
     private boolean setArrivedDate = false;
     private boolean more = false;
-    private static boolean isInArea = false;
     private boolean isBookNowChecked = false;
 
-    private static double lat;
-    private static double lon;
+    private static double lat, lon;
 
     private static String parkingSlotCount;
     private String time = "";
     private String timeValue = "";
+    private String selectedVehicleNo;
 
     private final List<www.fiberathome.com.parkingapp.data.model.Spinner> departureTimeDataList = new ArrayList<>();
     private List<List<String>> timeSlotArrayList = new ArrayList<>();
@@ -86,7 +85,6 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
     private ReservationViewModel reservationViewModel;
     FragmentScheduleBinding binding;
     private FragmentChangeListener listener;
-    private String selectedVehicleNo;
 
     private final ArrayList<DepartureTimeData> departureTimeDataArrayList = new ArrayList<>();
     private ScheduleDepartureTimeAdapter adapter;
@@ -270,7 +268,7 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
             }
         });
 
-        binding.setBtn.setOnClickListener(v -> {
+        binding.btnConfirm.setOnClickListener(v -> {
             if (!setArrivedDate) {
                 binding.cbBookNow.setEnabled(false);
                 binding.arriveDisableLayout.setBackgroundColor(context.getResources().getColor(R.color.disableColor));
@@ -293,7 +291,7 @@ public class ScheduleFragment extends BaseFragment implements IOnBackPressListen
             }
         });
 
-        binding.cancelBtn.setOnClickListener(v -> {
+        binding.btnReset.setOnClickListener(v -> {
             if (binding.cbBookNow.isChecked()) {
                 binding.cbBookNow.toggle();
             }

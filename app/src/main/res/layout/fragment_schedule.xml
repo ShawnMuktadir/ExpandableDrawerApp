@@ -254,7 +254,7 @@
                     android:weightSum="2">
 
                     <Button
-                        android:id="@+id/cancelBtn"
+                        android:id="@+id/btnReset"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/dim3"
@@ -266,7 +266,7 @@
                         android:textSize="@dimen/dimTex16" />
 
                     <Button
-                        android:id="@+id/setBtn"
+                        android:id="@+id/btn_confirm"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/dim3"
