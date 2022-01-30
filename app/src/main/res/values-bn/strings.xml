@@ -6,7 +6,7 @@
     <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">সেটিংস</string>
+    <string name="settings">সেটিংস</string>
 
     <string name="start_title">স্মার্ট পার্কিং অ্যাপ্লিকেশন</string>
     <string name="start_sub_title">ডিএমপি এবং এলওসিসির একটি প্রকল্প</string>
@@ -58,7 +58,7 @@
 
     //navigation
     <string name="home">হোম</string>
-    <string name="bookedLists">বুকিংস</string>
+    <string name="bookings">বুকিংস</string>
     <string name="profile">প্রোফাইল</string>
     <string name="logout">লগ আউট</string>>
     <string name="law">আইন</string>
@@ -105,7 +105,7 @@
     <string name="demo_number">৭০</string>
     <string name="subject_to_availability">প্রাপ্যতা সাপেক্ষে</string>
     <string name="get_direction">দিক নির্দেশনা</string>
-    <string name="welcome_to_locc_parking">এলওসিসি স্মার্ট পার্কিং এ স্বাগতম</string>
+    <string name="welcome_to_smart_parking">স্মার্ট পার্কিং এ স্বাগতম</string>
     <string name="exit_message">বাহির হবার জন্য এখানে চাপুন!</string>
     <string name="exit_message_main">বাহির হবার জন্য অকে চাপুন!</string>
     <string name="distance">%1$s</string>
@@ -607,5 +607,6 @@
     <string name="user_guide">ব্যবহারকারীর নির্দেশিকা</string>
     <string name="parallel_parking">সমান্তরাল পার্কিং</string>
     <string name="about_us">আমাদের সম্পর্কে</string>
+    <string name="smart_parking">স্মার্ট পার্কিং</string>
 </resources>
 

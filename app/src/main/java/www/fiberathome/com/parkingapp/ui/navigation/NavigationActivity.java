@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
@@ -31,6 +32,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -39,6 +41,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.navigation.NavigationView;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -46,7 +50,9 @@ import java.util.Objects;
 import timber.log.Timber;
 import www.fiberathome.com.parkingapp.BuildConfig;
 import www.fiberathome.com.parkingapp.R;
+import www.fiberathome.com.parkingapp.adapter.ExpandableListAdapter;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
+import www.fiberathome.com.parkingapp.data.model.MenuModel;
 import www.fiberathome.com.parkingapp.data.model.data.preference.LanguagePreferences;
 import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.data.model.data.preference.SharedData;
@@ -74,6 +80,10 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
     private BaseActivity context;
 
     public ActivityNavigationBinding binding;
+
+    ExpandableListAdapter expandableListAdapter;
+    List<MenuModel> headerList = new ArrayList<>();
+    HashMap<MenuModel, List<MenuModel>> childList = new HashMap<>();
 
     public static Drawable getTintedDrawable(@NonNull Context context, @NonNull Drawable inputDrawable,
                                              @ColorInt int color) {
@@ -113,6 +123,9 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         hideMenuItem(R.id.nav_home);
 
         hideMenuItem(R.id.nav_notification);
+
+        /*prepareNavigationMenuData();
+        populateNavigationExpandableList();*/
     }
 
     @Override
@@ -130,7 +143,6 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         } else if (item.getItemId() == R.id.menu_change_password) {
             // do your code
             binding.appBarMain.toolbar.setTitle(context.getResources().getString(R.string.title_change_password));
-            binding.navView.getMenu().getItem(0).setChecked(true);
             getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, ChangePasswordFragment.newInstance()).commit();
             return true;
         } else if (item.getItemId() == R.id.menu_logout) {
@@ -382,6 +394,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         closeNavDrawer();
         binding.navView.setCheckedItem(item.getItemId());
+        binding.navView.getMenu().setGroupVisible(R.id.grp2,false);
         int id = item.getItemId();
         switch (id) {
             case R.id.nav_home:
@@ -418,34 +431,6 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
                 openAppRating(context);
                 break;
 
-            case R.id.nav_about_us:
-                Intent intent = new Intent(Intent.ACTION_VIEW,
-                        Uri.parse("http://smartparking.fiberathome.net/parkingapp/web/about_us.php"));
-                startActivity(intent);
-                break;
-
-            case R.id.nav_privacy_policy:
-                startActivity(PrivacyPolicyActivity.class);
-                break;
-
-            case R.id.nav_contact_us:
-                Intent contactUsIntent = new Intent(Intent.ACTION_VIEW,
-                        Uri.parse("http://smartparking.fiberathome.net/parkingapp/web/contact_us.php"));
-                startActivity(contactUsIntent);
-                break;
-
-            case R.id.nav_user_guide:
-                Intent userGuideIntent = new Intent(Intent.ACTION_VIEW,
-                        Uri.parse("http://smartparking.fiberathome.net/parkingapp/web/user_guide.php"));
-                startActivity(userGuideIntent);
-                break;
-
-            case R.id.nav_parallel_parking:
-                Intent parallelParkingIntent = new Intent(Intent.ACTION_VIEW,
-                        Uri.parse("https://www.youtube.com/watch?v=l4LcfZeS4qw&ab_channel=ParkingTutorial"));
-                startActivity(parallelParkingIntent);
-                break;
-
             case R.id.nav_share:
                 binding.navView.getMenu().getItem(0).setChecked(true);
                 shareApp();
@@ -457,6 +442,137 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
 
         return true;
     }
+
+    public void onGroupItemClick(MenuItem item) {
+        // One of the group items (using the onClick attribute) was clicked
+        // The item parameter passed here indicates which item it is
+        // All other menu item clicks are handled by <code><a href="/reference/android/app/Activity.html#onOptionsItemSelected(android.view.MenuItem)">onOptionsItemSelected()</a></code>
+
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.grp2:
+                binding.navView.getMenu().setGroupVisible(R.id.grp2,true);
+                break;
+        }
+    }
+
+    /*private void prepareNavigationMenuData() {
+
+        MenuModel menuModel;
+
+        menuModel = new MenuModel(context.getResources().getString(R.string.parking), R.drawable.ic_parking_gray, true, false); //Menu of Python Tutorials
+        headerList.add(menuModel);
+        menuModel = new MenuModel(context.getResources().getString(R.string.bookings), R.drawable.ic_your_books, true, false); //Menu of Python Tutorials
+        headerList.add(menuModel);
+        menuModel = new MenuModel(context.getResources().getString(R.string.law),R.drawable.ic_laws_new, true, false); //Menu of Python Tutorials
+        headerList.add(menuModel);
+        menuModel = new MenuModel(context.getResources().getString(R.string.profile), R.drawable.ic_profile_settings, true, false); //Menu of Python Tutorials
+        headerList.add(menuModel);
+        menuModel = new MenuModel(context.getResources().getString(R.string.settings),  R.drawable.ic_settings, true, false); //Menu of Python Tutorials
+        headerList.add(menuModel);
+        menuModel = new MenuModel(context.getResources().getString(R.string.give_review_rating), R.drawable.ic_rating,  true, false); //Menu of Python Tutorials
+        headerList.add(menuModel);
+        menuModel = new MenuModel(context.getResources().getString(R.string.share),  R.drawable.ic_share, true, false); //Menu of Python Tutorials
+        headerList.add(menuModel);
+
+        if (!menuModel.hasChildren) {
+            childList.put(menuModel, null);
+        }
+
+        menuModel = new MenuModel(context.getResources().getString(R.string.smart_parking),R.drawable.ic_parking_spot,  true, true); //Menu of Smart Parking
+        headerList.add(menuModel);
+        List<MenuModel> childModelsList = new ArrayList<>();
+        MenuModel childModel = new MenuModel(context.getResources().getString(R.string.privacy_policy),  R.drawable.ic_privacy_policy,  false, false);
+        childModelsList.add(childModel);
+
+        childModel = new MenuModel(context.getResources().getString(R.string.contact_us),  R.drawable.ic_phone_msg, false, false);
+        childModelsList.add(childModel);
+
+        childModel = new MenuModel(context.getResources().getString(R.string.user_guide),  R.drawable.ic_user_guide, false, false);
+        childModelsList.add(childModel);
+
+        childModel = new MenuModel(context.getResources().getString(R.string.parallel_parking),R.drawable.ic_car,  false, false);
+        childModelsList.add(childModel);
+
+
+        if (menuModel.hasChildren) {
+            childList.put(menuModel, childModelsList);
+        }
+    }
+
+    private void populateNavigationExpandableList() {
+
+        expandableListAdapter = new ExpandableListAdapter(this, headerList, childList);
+        binding.expandableListView.setAdapter(expandableListAdapter);
+
+        binding.expandableListView.setOnGroupClickListener((parent, v, groupPosition, id) -> {
+            if (headerList.get(groupPosition).isGroup) {
+                if (!headerList.get(groupPosition).hasChildren) {
+                    closeNavDrawer();
+                    v.setSelected(true);
+                    switch (groupPosition) {
+                        case 0:
+                            startActivity(ParkingActivity.class);
+                            break;
+                        case 1:
+                            startActivity(ReservationActivity.class);
+                            break;
+                        case 2:
+                            startActivity(LawActivity.class);
+                            break;
+                        case 3:
+                            startActivity(ProfileActivity.class);
+                            break;
+                        case 4:
+                            startActivity(SettingsActivity.class);
+                            break;
+                        case 5:
+                            openAppRating(context);
+                            break;
+                        case 6:
+                            shareApp();
+                            break;
+                    }
+                }
+            } else {
+                Timber.e("else called");
+            }
+            return false;
+        });
+
+        binding.expandableListView.setOnChildClickListener((parent, v, groupPosition, childPosition, id) -> {
+
+            if (childList.get(headerList.get(groupPosition)) != null) {
+                closeNavDrawer();
+                MenuModel model = childList.get(headerList.get(groupPosition)).get(childPosition);
+                switch (childPosition) {
+                    case 0:
+                        startActivity(PrivacyPolicyActivity.class);
+                        break;
+                    case 1:
+                        Intent contactUsIntent = new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("http://smartparking.fiberathome.net/parkingapp/web/contact_us.php"));
+                        startActivity(contactUsIntent);
+                        break;
+                    case 2:
+                        Intent userGuideIntent = new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("http://smartparking.fiberathome.net/parkingapp/web/user_guide.php"));
+                        startActivity(userGuideIntent);
+                        break;
+                    case 3:
+                        Intent parallelParkingIntent = new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("https://www.youtube.com/watch?v=l4LcfZeS4qw&ab_channel=ParkingTutorial"));
+                        startActivity(parallelParkingIntent);
+                        break;
+                }
+            }
+            else {
+                Timber.e("else called");
+            }
+
+            return false;
+        });
+    }*/
 
     @SuppressWarnings("rawtypes")
     public void startActivity(Class activityClass) {

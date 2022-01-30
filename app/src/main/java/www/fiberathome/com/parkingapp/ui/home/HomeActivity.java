@@ -90,7 +90,7 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
         context = this;
         reservationViewModel = new ViewModelProvider(this).get(ReservationViewModel.class);
 
-        setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
+        setTitle(context.getResources().getString(R.string.welcome_to_smart_parking));
 
         //location permission check
         handleLocationPermissionCheck(context);
@@ -127,7 +127,6 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
             //initialize home fragment
             getBookingParkStatus(Preferences.getInstance(context).getUser().getMobileNo());
             binding.appBarMain.linearLayoutToolbarTime.setVisibility(View.GONE);
-            binding.navView.getMenu().getItem(0).setChecked(true);
         }
 
         if (!Preferences.getInstance(context).isLoggedIn()) {
@@ -197,12 +196,11 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
     @Override
     public void onBackPressed() {
         if (isGPSEnabled() && ConnectivityUtils.getInstance().checkInternet(context)) {
-            binding.navView.getMenu().getItem(0).setChecked(true);
             binding.drawerLayout.closeDrawers();
             //super.onBackPressed(); delete this line
             // and start your fragment:
 
-            Fragment fragment = getSupportFragmentManager().findFragmentByTag(context.getResources().getString(R.string.welcome_to_locc_parking));
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag(context.getResources().getString(R.string.welcome_to_smart_parking));
             if (fragment != null) {
                 if (fragment.isVisible()) {
                     if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -245,28 +243,28 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                         }
                     } else if (f instanceof ParkingFragment) {
                         ((ParkingFragment) f).onBackPressed();
-                        binding.appBarMain.toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
+                        binding.appBarMain.toolbar.setTitle(context.getResources().getString(R.string.welcome_to_smart_parking));
                     } else if (f instanceof ReservationFragment) {
                         ((ReservationFragment) f).onBackPressed();
-                        binding.appBarMain.toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
+                        binding.appBarMain.toolbar.setTitle(context.getResources().getString(R.string.welcome_to_smart_parking));
                     } else if (f instanceof LawFragment) {
                         ((LawFragment) f).onBackPressed();
-                        binding.appBarMain.toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
+                        binding.appBarMain.toolbar.setTitle(context.getResources().getString(R.string.welcome_to_smart_parking));
                     } else if (f instanceof ProfileFragment) {
                         ((ProfileFragment) f).onBackPressed();
-                        binding.appBarMain.toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
+                        binding.appBarMain.toolbar.setTitle(context.getResources().getString(R.string.welcome_to_smart_parking));
                     } else if (f instanceof ScheduleFragment) {
                         ((ScheduleFragment) f).onBackPressed();
                         //toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
                     } else if (f instanceof SettingsFragment) {
                         ((SettingsFragment) f).onBackPressed();
-                        binding.appBarMain.toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
+                        binding.appBarMain.toolbar.setTitle(context.getResources().getString(R.string.welcome_to_smart_parking));
                     } else if (f instanceof FollowUsFragment) {
                         ((FollowUsFragment) f).onBackPressed();
-                        binding.appBarMain.toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
+                        binding.appBarMain.toolbar.setTitle(context.getResources().getString(R.string.welcome_to_smart_parking));
                     } else if (f instanceof PrivacyPolicyFragment) {
                         ((PrivacyPolicyFragment) f).onBackPressed();
-                        binding.appBarMain.toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
+                        binding.appBarMain.toolbar.setTitle(context.getResources().getString(R.string.welcome_to_smart_parking));
                     } else if (f instanceof PaymentFragment) {
                         fragmentChange(ScheduleFragment.newInstance());
                         //toolbar.setTitle(context.getResources().getString(R.string.welcome_to_locc_parking));
@@ -277,17 +275,6 @@ public class HomeActivity extends NavigationActivity implements FragmentChangeLi
                 binding.appBarMain.tvTimeToolbar.setVisibility(View.GONE);
                 binding.appBarMain.linearLayoutToolbarTime.setVisibility(View.GONE);
                 binding.drawerLayout.closeDrawers();
-                binding.navView.getMenu().getItem(0).setChecked(true);
-                binding.navView.getMenu().getItem(1).setChecked(false);
-                binding.navView.getMenu().getItem(2).setChecked(false);
-                binding.navView.getMenu().getItem(3).setChecked(false);
-                binding.navView.getMenu().getItem(4).setChecked(false);
-                binding.navView.getMenu().getItem(5).setChecked(false);
-                binding.navView.getMenu().getItem(6).setChecked(false);
-                binding.navView.getMenu().getItem(7).setChecked(false);
-                binding.navView.getMenu().getItem(8).setChecked(false);
-                binding.navView.getMenu().getItem(9).setChecked(false);
-                binding.navView.getMenu().getItem(10).setChecked(false);
             }
         } else {
             ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.connect_to_parking_app));

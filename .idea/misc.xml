@@ -23,6 +23,7 @@
         <entry key="app/src/main/res/drawable-anydpi/ic_vehicle.xml" value="0.21458333333333332" />
         <entry key="app/src/main/res/drawable/border_shadow.xml" value="0.15104166666666666" />
         <entry key="app/src/main/res/drawable/button_shape.xml" value="0.14479166666666668" />
+        <entry key="app/src/main/res/drawable/ic_car.xml" value="0.157" />
         <entry key="app/src/main/res/drawable/ic_directions_car_white_48px.xml" value="0.21458333333333332" />
         <entry key="app/src/main/res/drawable/ic_phone_msg_white.xml" value="0.21458333333333332" />
         <entry key="app/src/main/res/drawable/parking_textview_background.xml" value="0.15104166666666666" />
@@ -77,6 +78,8 @@
         <entry key="app/src/main/res/layout/hour_layout.xml" value="0.25" />
         <entry key="app/src/main/res/layout/item_list_empty.xml" value="0.13125" />
         <entry key="app/src/main/res/layout/layout_fragment.xml" value="0.153125" />
+        <entry key="app/src/main/res/layout/list_group_child.xml" value="0.335" />
+        <entry key="app/src/main/res/layout/list_group_header.xml" value="0.375" />
         <entry key="app/src/main/res/layout/nav_header.xml" value="0.16302083333333334" />
         <entry key="app/src/main/res/layout/nav_header_home.xml" value="0.16302083333333334" />
         <entry key="app/src/main/res/layout/parking_row.xml" value="0.15885416666666666" />
@@ -153,7 +156,7 @@
       </value>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

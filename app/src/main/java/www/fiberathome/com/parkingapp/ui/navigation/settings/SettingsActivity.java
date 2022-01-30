@@ -22,7 +22,7 @@ public class SettingsActivity extends NavigationActivity {
 
         context = this;
 
-        setTitle(context.getResources().getString(R.string.action_settings));
+        setTitle(context.getResources().getString(R.string.settings));
 
         //Initialize Settings fragment
         ApplicationUtils.addFragmentToActivity(getSupportFragmentManager(),

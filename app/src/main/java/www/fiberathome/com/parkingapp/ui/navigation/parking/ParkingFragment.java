@@ -337,7 +337,6 @@ public class ParkingFragment extends BaseFragment implements IOnBackPressListene
             @Override
             public void onClick(View view, int position) {
                 if (context != null) {
-                    context.binding.navView.getMenu().getItem(1).setChecked(false);
                     KeyboardUtils.getInstance().hideKeyboard(context, binding.editTextParking);
                 }
             }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
@@ -15,7 +16,7 @@
 
         <item
             android:id="@+id/nav_parking"
-            android:icon="@drawable/ic_parkingspot"
+            android:icon="@drawable/ic_parking_spot"
             android:iconTint="@color/black"
             android:title="@string/parking_spot" />
 
@@ -23,7 +24,7 @@
             android:id="@+id/nav_booking"
             android:icon="@drawable/ic_your_books"
             android:iconTint="@color/black"
-            android:title="@string/bookedLists" />
+            android:title="@string/bookings" />
 
         <item
             android:id="@+id/nav_law"
@@ -39,27 +40,22 @@
 
         <item
             android:id="@+id/nav_profile"
-            android:icon="@drawable/ic_profilesettings"
+            android:icon="@drawable/ic_profile_settings"
             android:iconTint="@color/black"
             android:title="@string/my_account" />
-    </group>
 
-    <group
-        android:id="@+id/grp7"
-        android:checkableBehavior="none"
-        tools:targetApi="o">
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_settings"
             android:iconTint="@color/black"
-            android:title="@string/action_settings" />
+            android:title="@string/settings" />
 
         <item
             android:id="@+id/nav_get_discount"
             android:icon="@drawable/ic_discount"
             android:iconTint="@color/black"
-            android:visible="false"
-            android:title="@string/get_discount" />
+            android:title="@string/get_discount"
+            android:visible="false" />
 
         <item
             android:id="@+id/nav_rating_review"
@@ -68,40 +64,52 @@
             android:title="@string/give_review_rating" />
 
         <item
-            android:id="@+id/nav_about_us"
-            android:icon="@drawable/ic_followus"
-            android:iconTint="@color/black"
-            android:title="@string/about_us" />
-
-        <item
-            android:id="@+id/nav_privacy_policy"
-            android:icon="@drawable/ic_privacypolicy"
-            android:iconTint="@color/black"
-            android:title="@string/privacy_policy" />
-
-        <item
-            android:id="@+id/nav_contact_us"
-            android:icon="@drawable/ic_phone_msg_white"
-            android:iconTint="@color/black"
-            android:title="@string/contact_us" />
-
-        <item
-            android:id="@+id/nav_user_guide"
-            android:icon="@drawable/ic_user_guide"
-            android:iconTint="@color/black"
-            android:title="@string/user_guide" />
-
-        <item
-            android:id="@+id/nav_parallel_parking"
-            android:icon="@drawable/ic_car"
-            android:iconTint="@color/black"
-            android:title="@string/parallel_parking" />
-
-        <item
             android:id="@+id/nav_share"
             android:icon="@drawable/ic_share"
             android:iconTint="@color/black"
             android:title="@string/share" />
+    </group>
+
+    <group
+        android:id="@+id/grp2"
+        android:checkableBehavior="single"
+        tools:targetApi="o">
+        <item
+            android:id="@+id/submenu"
+            android:title="@string/smart_parking"
+            app:showAsAction="ifRoom|withText">
+            <menu>
+                <item
+                    android:id="@+id/nav_about_us"
+                    android:icon="@drawable/ic_followus"
+                    android:iconTint="@color/black"
+                    android:title="@string/about_us" />
+
+                <item
+                    android:id="@+id/nav_privacy_policy"
+                    android:icon="@drawable/ic_privacy_policy"
+                    android:iconTint="@color/black"
+                    android:title="@string/privacy_policy" />
+
+                <item
+                    android:id="@+id/nav_contact_us"
+                    android:icon="@drawable/ic_phone_msg"
+                    android:iconTint="@color/black"
+                    android:title="@string/contact_us" />
+
+                <item
+                    android:id="@+id/nav_user_guide"
+                    android:icon="@drawable/ic_user_guide"
+                    android:iconTint="@color/black"
+                    android:title="@string/user_guide" />
+
+                <item
+                    android:id="@+id/nav_parallel_parking"
+                    android:icon="@drawable/ic_car"
+                    android:iconTint="@color/black"
+                    android:title="@string/parallel_parking" />
+            </menu>
+        </item>
     </group>
 
 </menu>

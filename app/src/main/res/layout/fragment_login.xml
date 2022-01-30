@@ -65,7 +65,7 @@
             android:layout_gravity="center"
             android:focusable="true"
             android:src="@drawable/ic_logo_original"
-            android:contentDescription="logo" />
+            android:contentDescription="@string/app_name" />
 
     </LinearLayout>
 

@@ -308,6 +308,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/dim5"
+                    android:layout_marginTop="@dimen/dim5"
                     android:padding="@dimen/dim5"
                     android:text="@string/read_online_payment_policy"
                     android:textColor="@color/black"
