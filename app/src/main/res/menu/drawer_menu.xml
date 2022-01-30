@@ -68,11 +68,10 @@
             android:title="@string/give_review_rating" />
 
         <item
-            android:id="@+id/nav_follow_us"
+            android:id="@+id/nav_about_us"
             android:icon="@drawable/ic_followus"
             android:iconTint="@color/black"
-            android:visible="false"
-            android:title="@string/follow_us" />
+            android:title="@string/about_us" />
 
         <item
             android:id="@+id/nav_privacy_policy"

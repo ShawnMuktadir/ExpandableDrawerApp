@@ -27,6 +27,5 @@ public class FollowUsActivity extends NavigationActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        setNavDrawerItem(R.id.nav_follow_us);
     }
 }

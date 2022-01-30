@@ -55,7 +55,6 @@ import www.fiberathome.com.parkingapp.databinding.ActivityNavigationBinding;
 import www.fiberathome.com.parkingapp.ui.auth.changePassword.ChangePasswordFragment;
 import www.fiberathome.com.parkingapp.ui.auth.login.LoginActivity;
 import www.fiberathome.com.parkingapp.ui.home.HomeActivity;
-import www.fiberathome.com.parkingapp.ui.navigation.followUs.FollowUsActivity;
 import www.fiberathome.com.parkingapp.ui.navigation.law.LawActivity;
 import www.fiberathome.com.parkingapp.ui.navigation.parking.ParkingActivity;
 import www.fiberathome.com.parkingapp.ui.navigation.privacyPolicy.PrivacyPolicyActivity;
@@ -208,7 +207,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         MenuItem settings = menu.findItem(R.id.nav_settings);
         MenuItem getDiscount = menu.findItem(R.id.nav_get_discount);
         MenuItem ratingReview = menu.findItem(R.id.nav_rating_review);
-        MenuItem followUs = menu.findItem(R.id.nav_follow_us);
+        MenuItem aboutUs = menu.findItem(R.id.nav_about_us);
         MenuItem privacyPolicy = menu.findItem(R.id.nav_privacy_policy);
         MenuItem share = menu.findItem(R.id.nav_share);
     }
@@ -419,8 +418,10 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
                 openAppRating(context);
                 break;
 
-            case R.id.nav_follow_us:
-                startActivity(FollowUsActivity.class);
+            case R.id.nav_about_us:
+                Intent intent = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("http://smartparking.fiberathome.net/parkingapp/web/about_us.php"));
+                startActivity(intent);
                 break;
 
             case R.id.nav_privacy_policy:
