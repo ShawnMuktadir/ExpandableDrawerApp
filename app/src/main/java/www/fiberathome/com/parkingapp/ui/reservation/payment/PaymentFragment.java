@@ -38,10 +38,12 @@ import java.util.Objects;
 import java.util.Random;
 
 import timber.log.Timber;
+import www.fiberathome.com.parkingapp.BuildConfig;
 import www.fiberathome.com.parkingapp.R;
 import www.fiberathome.com.parkingapp.base.BaseActivity;
 import www.fiberathome.com.parkingapp.base.BaseFragment;
 import www.fiberathome.com.parkingapp.data.model.BookedPlace;
+import www.fiberathome.com.parkingapp.data.model.data.AppConstants;
 import www.fiberathome.com.parkingapp.data.model.data.preference.LanguagePreferences;
 import www.fiberathome.com.parkingapp.data.model.data.preference.Preferences;
 import www.fiberathome.com.parkingapp.data.model.response.reservation.BookingParkStatusResponse;
@@ -233,7 +235,6 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
             binding.tvSubTotal.setText(context.getResources().getString(R.string.bdt) + "  " + netBill);
 
             binding.tvTotal.setText(context.getResources().getString(R.string.bdt) + "  " + netBill);
-
         }
 
         if (LanguagePreferences.getInstance(context).getAppLanguage().equalsIgnoreCase(LANGUAGE_BN)) {
@@ -257,6 +258,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
         binding.tvPromo.setOnClickListener(v -> ToastUtils.getInstance().showToastMessage(context, context.getResources().getString(R.string.coming_soon)));
 
         binding.btnPay.setOnClickListener(v -> {
+            isTermsConditionClicked = binding.cbPaymentCheck.isChecked();
             if (isTermsConditionClicked) {
                 if (ConnectivityUtils.getInstance().checkInternet(context)) {
                     long diff = arrivedDate.getTime() - departureDate.getTime();
@@ -359,10 +361,14 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
         Random random = new Random();
         int tnxId = random.nextInt(9999999);
         final SSLCommerzInitialization sslCommerzInitialization = new SSLCommerzInitialization
-                ("fiber61877740d2a85", "fiber61877740d2a85@ssl", mNetBill, SSLCCurrencyType.BDT, tnxId + Preferences.getInstance(context).getUser().getMobileNo(),
-                        "CarParkingBill", SSLCSdkType.TESTBOX);
-        final SSLCCustomerInfoInitializer customerInfoInitializer = new SSLCCustomerInfoInitializer(Preferences.getInstance(context).getUser().getFullName(), "customer email",
-                "address", "dhaka", "1214", "Bangladesh", Preferences.getInstance(context).getUser().getMobileNo());
+                (BuildConfig.SSL_STORE_ID, BuildConfig.SSL_STORE_PASSWORD, mNetBill,
+                        SSLCCurrencyType.BDT,
+                        tnxId + Preferences.getInstance(context).getUser().getMobileNo(),
+                        "CarParkingBill", BuildConfig.SSLCSdkType);
+        final SSLCCustomerInfoInitializer customerInfoInitializer = new SSLCCustomerInfoInitializer(
+                Preferences.getInstance(context).getUser().getFullName(), "N/A",
+                "N/A", "Dhaka", "N/A",
+                "Bangladesh", Preferences.getInstance(context).getUser().getMobileNo());
 
         BookedPlace mBookedPlace = new BookedPlace();
         mBookedPlace.setBill((float) mNetBill);
@@ -402,6 +408,7 @@ public class PaymentFragment extends BaseFragment implements IOnBackPressListene
                     @Override
                     public void transactionFail(String s) {
                         Timber.e("transactionFail -> %s", s);
+
                     }
 
                     @Override

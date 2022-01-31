@@ -151,8 +151,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private Location lastLocation;
     private Location onConnectedLocation;
 
-    String parkingPlaceId = "";
-    String oldDestination = "";
+    private String parkingPlaceId = "";
+    private String oldDestination = "";
     private String count = "";
     private String searchPlaceCount = "0";
     private String parkingNumberOfIndividualMarker = "";

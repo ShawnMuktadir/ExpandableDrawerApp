@@ -1,7 +1,5 @@
 package www.fiberathome.com.parkingapp.data.model;
 
-import android.graphics.drawable.Drawable;
-
 public class MenuModel {
 
     public String menuName;

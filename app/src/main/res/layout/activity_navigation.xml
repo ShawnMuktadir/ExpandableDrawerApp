@@ -20,7 +20,18 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        app:headerLayout="@layout/nav_header"
-        app:menu="@menu/drawer_menu" />
+        app:headerLayout="@layout/nav_header">
+
+        <ExpandableListView
+            android:id="@+id/expandableListView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:cacheColorHint="@color/black"
+            android:layout_marginTop="@dimen/nav_header_height"
+            android:groupIndicator="@color/gray_update" />
+
+    </com.google.android.material.navigation.NavigationView>
+
+<!--    app:menu="@menu/drawer_menu"-->
 
 </androidx.drawerlayout.widget.DrawerLayout>

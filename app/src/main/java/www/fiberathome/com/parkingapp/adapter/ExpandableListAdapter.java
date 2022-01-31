@@ -2,7 +2,6 @@ package www.fiberathome.com.parkingapp.adapter;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,8 +54,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         TextView textViewHeader = convertView.findViewById(R.id.textViewHeader);
         textViewHeader.setText(childText);
 
-        ImageView imageView = convertView.findViewById(R.id.imageView);
-        imageView.setImageResource(drawableIcon);
+        /*ImageView imageView = convertView.findViewById(R.id.imageView);
+        imageView.setImageResource(drawableIcon);*/
 
         return convertView;
     }
@@ -100,14 +99,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         lblListHeader.setTypeface(null, Typeface.BOLD);
         lblListHeader.setText(headerTitle);
 
-        // adding icon to expandable list view
-        ImageView imgListGroup = (ImageView) convertView
+        ImageView imgViewHeader = (ImageView) convertView
                 .findViewById(R.id.imageView);
-
-        imgListGroup.setImageResource(drawableIcon);
-
-//        ImageView imageView = convertView.findViewById(R.id.imageView);
-//        imageView.setImageDrawable(drawableIcon);
+        imgViewHeader.setBackgroundResource(drawableIcon);
 
         return convertView;
     }

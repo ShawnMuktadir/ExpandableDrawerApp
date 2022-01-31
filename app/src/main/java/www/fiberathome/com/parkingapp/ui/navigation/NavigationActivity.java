@@ -20,7 +20,6 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.SubMenu;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
@@ -32,7 +31,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -120,12 +118,12 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
 
         setNavMenuItemThemeColors(context.getResources().getColor(R.color.black));
 
-        hideMenuItem(R.id.nav_home);
+        //hideMenuItem(R.id.nav_home);
 
-        hideMenuItem(R.id.nav_notification);
+        //hideMenuItem(R.id.nav_notification);
 
-        /*prepareNavigationMenuData();
-        populateNavigationExpandableList();*/
+        prepareNavigationMenuData();
+        populateNavigationExpandableList();
     }
 
     @Override
@@ -358,7 +356,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
 
     private void hideMenuItem(int id) {
         Menu nav_Menu = binding.navView.getMenu();
-        nav_Menu.findItem(id).setVisible(false);
+        //nav_Menu.findItem(id).setVisible(false);
     }
 
     public void changeDefaultActionBarDrawerToogleIcon() {
@@ -456,30 +454,30 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         }
     }
 
-    /*private void prepareNavigationMenuData() {
+    private void prepareNavigationMenuData() {
 
         MenuModel menuModel;
 
-        menuModel = new MenuModel(context.getResources().getString(R.string.parking), R.drawable.ic_parking_gray, true, false); //Menu of Python Tutorials
+        menuModel = new MenuModel(context.getResources().getString(R.string.parking), R.drawable.ic_parking_gray, true, false);
         headerList.add(menuModel);
-        menuModel = new MenuModel(context.getResources().getString(R.string.bookings), R.drawable.ic_your_books, true, false); //Menu of Python Tutorials
+        menuModel = new MenuModel(context.getResources().getString(R.string.bookings), R.drawable.ic_your_books, true, false);
         headerList.add(menuModel);
-        menuModel = new MenuModel(context.getResources().getString(R.string.law),R.drawable.ic_laws_new, true, false); //Menu of Python Tutorials
+        menuModel = new MenuModel(context.getResources().getString(R.string.law),R.drawable.ic_laws_new, true, false);
         headerList.add(menuModel);
-        menuModel = new MenuModel(context.getResources().getString(R.string.profile), R.drawable.ic_profile_settings, true, false); //Menu of Python Tutorials
+        menuModel = new MenuModel(context.getResources().getString(R.string.profile), R.drawable.ic_profile_settings, true, false);
         headerList.add(menuModel);
-        menuModel = new MenuModel(context.getResources().getString(R.string.settings),  R.drawable.ic_settings, true, false); //Menu of Python Tutorials
+        menuModel = new MenuModel(context.getResources().getString(R.string.settings),  R.drawable.ic_settings, true, false);
         headerList.add(menuModel);
-        menuModel = new MenuModel(context.getResources().getString(R.string.give_review_rating), R.drawable.ic_rating,  true, false); //Menu of Python Tutorials
+        menuModel = new MenuModel(context.getResources().getString(R.string.give_review_rating), R.drawable.ic_rating,  true, false);
         headerList.add(menuModel);
-        menuModel = new MenuModel(context.getResources().getString(R.string.share),  R.drawable.ic_share, true, false); //Menu of Python Tutorials
+        menuModel = new MenuModel(context.getResources().getString(R.string.share),  R.drawable.ic_share, true, false);
         headerList.add(menuModel);
 
         if (!menuModel.hasChildren) {
             childList.put(menuModel, null);
         }
 
-        menuModel = new MenuModel(context.getResources().getString(R.string.smart_parking),R.drawable.ic_parking_spot,  true, true); //Menu of Smart Parking
+        menuModel = new MenuModel(context.getResources().getString(R.string.smart_parking),R.drawable.ic_parking_spot,  true, true);
         headerList.add(menuModel);
         List<MenuModel> childModelsList = new ArrayList<>();
         MenuModel childModel = new MenuModel(context.getResources().getString(R.string.privacy_policy),  R.drawable.ic_privacy_policy,  false, false);
@@ -572,7 +570,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
 
             return false;
         });
-    }*/
+    }
 
     @SuppressWarnings("rawtypes")
     public void startActivity(Class activityClass) {
