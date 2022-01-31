@@ -53,9 +53,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         TextView textViewHeader = convertView.findViewById(R.id.textViewHeader);
         textViewHeader.setText(childText);
-
-        /*ImageView imageView = convertView.findViewById(R.id.imageView);
-        imageView.setImageResource(drawableIcon);*/
+        textViewHeader.setCompoundDrawablesWithIntrinsicBounds(drawableIcon, 0, 0, 0);
 
         return convertView;
     }
@@ -98,10 +96,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         TextView lblListHeader = convertView.findViewById(R.id.lblListHeader);
         lblListHeader.setTypeface(null, Typeface.BOLD);
         lblListHeader.setText(headerTitle);
-
-        ImageView imgViewHeader = (ImageView) convertView
-                .findViewById(R.id.imageView);
-        imgViewHeader.setBackgroundResource(drawableIcon);
+        lblListHeader.setCompoundDrawablesWithIntrinsicBounds(drawableIcon, 0, 0, 0);
 
         return convertView;
     }

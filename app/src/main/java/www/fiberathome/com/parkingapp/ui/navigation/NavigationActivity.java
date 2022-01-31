@@ -392,7 +392,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         closeNavDrawer();
         binding.navView.setCheckedItem(item.getItemId());
-        binding.navView.getMenu().setGroupVisible(R.id.grp2,false);
+        binding.navView.getMenu().setGroupVisible(R.id.grp2, false);
         int id = item.getItemId();
         switch (id) {
             case R.id.nav_home:
@@ -449,7 +449,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         int id = item.getItemId();
         switch (id) {
             case R.id.grp2:
-                binding.navView.getMenu().setGroupVisible(R.id.grp2,true);
+                binding.navView.getMenu().setGroupVisible(R.id.grp2, true);
                 break;
         }
     }
@@ -462,34 +462,34 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
         headerList.add(menuModel);
         menuModel = new MenuModel(context.getResources().getString(R.string.bookings), R.drawable.ic_your_books, true, false);
         headerList.add(menuModel);
-        menuModel = new MenuModel(context.getResources().getString(R.string.law),R.drawable.ic_laws_new, true, false);
+        menuModel = new MenuModel(context.getResources().getString(R.string.law), R.drawable.ic_laws, true, false);
         headerList.add(menuModel);
         menuModel = new MenuModel(context.getResources().getString(R.string.profile), R.drawable.ic_profile_settings, true, false);
         headerList.add(menuModel);
-        menuModel = new MenuModel(context.getResources().getString(R.string.settings),  R.drawable.ic_settings, true, false);
+        menuModel = new MenuModel(context.getResources().getString(R.string.settings), R.drawable.ic_settings, true, false);
         headerList.add(menuModel);
-        menuModel = new MenuModel(context.getResources().getString(R.string.give_review_rating), R.drawable.ic_rating,  true, false);
+        menuModel = new MenuModel(context.getResources().getString(R.string.give_review_rating), R.drawable.ic_rating, true, false);
         headerList.add(menuModel);
-        menuModel = new MenuModel(context.getResources().getString(R.string.share),  R.drawable.ic_share, true, false);
+        menuModel = new MenuModel(context.getResources().getString(R.string.share), R.drawable.ic_share, true, false);
         headerList.add(menuModel);
 
         if (!menuModel.hasChildren) {
             childList.put(menuModel, null);
         }
 
-        menuModel = new MenuModel(context.getResources().getString(R.string.smart_parking),R.drawable.ic_parking_spot,  true, true);
+        menuModel = new MenuModel(context.getResources().getString(R.string.smart_parking), R.drawable.ic_parking_spot, true, true);
         headerList.add(menuModel);
         List<MenuModel> childModelsList = new ArrayList<>();
-        MenuModel childModel = new MenuModel(context.getResources().getString(R.string.privacy_policy),  R.drawable.ic_privacy_policy,  false, false);
+        MenuModel childModel = new MenuModel(context.getResources().getString(R.string.privacy_policy), R.drawable.ic_privacy_policy, false, false);
         childModelsList.add(childModel);
 
-        childModel = new MenuModel(context.getResources().getString(R.string.contact_us),  R.drawable.ic_phone_msg, false, false);
+        childModel = new MenuModel(context.getResources().getString(R.string.contact_us), R.drawable.ic_phone_msg, false, false);
         childModelsList.add(childModel);
 
-        childModel = new MenuModel(context.getResources().getString(R.string.user_guide),  R.drawable.ic_user_guide, false, false);
+        childModel = new MenuModel(context.getResources().getString(R.string.user_guide), R.drawable.ic_user_guide, false, false);
         childModelsList.add(childModel);
 
-        childModel = new MenuModel(context.getResources().getString(R.string.parallel_parking),R.drawable.ic_car,  false, false);
+        childModel = new MenuModel(context.getResources().getString(R.string.parallel_parking), R.drawable.ic_car, false, false);
         childModelsList.add(childModel);
 
 
@@ -563,8 +563,7 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
                         startActivity(parallelParkingIntent);
                         break;
                 }
-            }
-            else {
+            } else {
                 Timber.e("else called");
             }
 

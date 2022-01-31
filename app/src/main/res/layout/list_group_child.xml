@@ -4,35 +4,20 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="@dimen/dim5"
-    android:weightSum="2">
-
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="0dp"
-        android:layout_height="?attr/listPreferredItemHeightSmall"
-        android:layout_weight=".3"
-        android:contentDescription="@string/app_name"
-        android:focusable="true"
-        android:gravity="center"
-        android:padding="@dimen/dim10"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    android:padding="@dimen/dim5">
 
     <TextView
         android:id="@+id/textViewHeader"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="?attr/listPreferredItemHeightSmall"
-        android:layout_weight="1.7"
         android:gravity="center_vertical"
-        android:paddingStart="?android:attr/expandableListPreferredChildPaddingLeft"
-        android:paddingEnd="?attr/listPreferredItemPaddingRight"
         android:textColor="@color/black"
         android:textSize="@dimen/dimTex15"
+        android:drawablePadding="@dimen/dim10"
+        android:paddingStart="@dimen/dim10"
+        android:paddingEnd="@dimen/dim10"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
