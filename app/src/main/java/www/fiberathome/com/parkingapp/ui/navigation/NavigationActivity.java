@@ -655,7 +655,6 @@ public class NavigationActivity extends BaseActivity implements NavigationView.O
                 break;
             }
         }
-
         // if GP not present on device, open web browser
         if (!marketFound) {
             Intent webIntent = new Intent(Intent.ACTION_VIEW,
